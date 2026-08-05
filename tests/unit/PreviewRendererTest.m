@@ -43,6 +43,12 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
                 ["0", "2", "4", "6", "8", "10"]);
             testCase.verifyEqual(string(controlHandles("parsed-ModeSwitch").Items), ...
                 ["Manual", "Auto"]);
+            previewSurface = controlHandles("parsed-MainGrid").Parent;
+            sourceSize = [580 460];
+            scale = min(controlPanel.InnerPosition(3:4) ./ sourceSize);
+            testCase.verifyEqual(previewSurface.Position, ...
+                [(controlPanel.InnerPosition(3:4) - sourceSize .* scale) ./ 2, ...
+                sourceSize .* scale], "AbsTol", 1e-10);
             clear controlCleanup
 
             % Keep pixel axes proportional to the fitted figure surface.

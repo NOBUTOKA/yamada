@@ -152,8 +152,8 @@ classdef PreviewRenderer < handle
             availablePosition = obj.parentInnerPosition(parent);
             obj.RenderScale = min(availablePosition(3:4) ./ sourceSize);
             surfaceSize = sourceSize .* obj.RenderScale;
-            surfacePosition = [availablePosition(1:2) + ...
-                (availablePosition(3:4) - surfaceSize) ./ 2, surfaceSize];
+            surfacePosition = [(availablePosition(3:4) - surfaceSize) ./ 2, ...
+                surfaceSize];
             obj.PreviewSurface = uipanel(parent, "BorderType", "none", ...
                 "Position", surfacePosition);
             obj.MenuBar = [];
@@ -316,7 +316,7 @@ classdef PreviewRenderer < handle
                 position (1, 4) double
             end
 
-            % Prefer InnerPosition so panel borders and titles do not offset children.
+            % Use the inner dimensions; child Position values are always parent-local.
             if isprop(parent, "InnerPosition")
                 position = double(parent.InnerPosition);
             else
