@@ -131,34 +131,6 @@ Absolute positioning and `uigridlayout` require different editing behavior:
 
 The first version should prioritize clear selection and property editing over visual polish. Delete must always be an explicit command. Save must be disabled when fatal validation or generation diagnostics exist. The save dialog must let users select `CRLF` or `LF` for new output; opened source retains its detected convention by default.
 
-## Initial supported components
-
-- `uifigure`
-- `uipanel`
-- `uigridlayout`
-- `uilabel`
-- `uibutton`
-- `uieditfield`
-- `uidropdown`
-- `uiaxes`
-
-Initial editable properties should be registry-defined and limited to values that can be parsed and generated safely. Candidate properties include `Position`, `Visible`, `Enable`, `Text`, `Value`, `Items`, `Limits`, `RowHeight`, `ColumnWidth`, `Layout.Row`, and `Layout.Column`, subject to component compatibility.
-
-### Phase 4.5: Standard MATLAB R2024 component catalog
-
-- [x] Register the standard common controls, containers, axes, instrumentation
-  components, HTML component, menus, context menus, and toolbar tools.
-- [x] Include R2024a `uicolorpicker` support and style metadata for components
-  whose factory has multiple creation forms.
-- [x] Record programmatic-only axes and parent-dependent components as metadata
-  so later UI and generation phases can apply their special construction rules.
-- [ ] Add dedicated model and generator support for style-specific constructors,
-  tree-node/menu/toolbar hierarchy, and programmatic-only axes.
-- [ ] Add property type and validation metadata for the full property inspector.
-
-Dialog invocation functions are excluded from this phase because they do not
-represent persistent components in the AppBase component hierarchy.
-
 ## Proposed project structure
 
 ```text
@@ -266,6 +238,36 @@ Its New and Open commands converge on `DocumentModel`; Open remains a parser-onl
 workflow. The shell displays a component hierarchy, a registry-only preview that
 never constructs the opened class, read-only property inspection, structured
 diagnostics, validation, Save As, and an original-versus-generated source view.
+
+### Phase 4.5: Standard MATLAB R2024 component catalog (complete)
+
+- [x] Register the standard persistent MATLAB R2024 AppBase component catalog:
+  common controls, containers, navigation and data controls, axes,
+  instrumentation components, HTML component, menus, context menus, and toolbar
+  tools.
+- [x] Include R2024a `uicolorpicker` support and style metadata for components
+  whose factory has multiple creation forms.
+- [x] Record programmatic-only axes and parent-dependent components as metadata
+  so later UI and generation phases can apply their special construction rules.
+- [x] Add and runtime-validate `ControlGalleryApp`, `AxesExplorerApp`,
+  `NavigationDataApp`, and `FigureToolsApp` fixtures in addition to the
+  representative `SimpleCalculatorApp` fixture.
+- [x] Use fixture parsing and Safe Preview tests to improve string and logical
+  literal handling, continued factory calls, safe name/value factory arguments,
+  nested grids, fitted preview geometry, and self-host parsing.
+- [x] Keep callback name/value pairs and other non-literal creation values as
+  read-only source while retaining the renderable parts of their component.
+- [x] Omit native menus and toolbars from Safe Preview while preserving their
+  parsed model/source representation; dialog invocation functions remain out of
+  scope because they are not persistent AppBase components.
+- [x] Add a manual screenshot-comparison procedure for all fixtures and the
+  editor itself in `VISUAL_VERIFICATION.md` while preview fidelity work remains
+  active.
+
+Dedicated editing and generation semantics for style-specific constructors,
+tree-node/menu/toolbar hierarchy, programmatic-only axes, and full inspector
+property type metadata remain later-phase work. They do not limit the Phase 4.5
+registry, parsing, or Safe Preview coverage recorded above.
 
 ### Phase 5: Canvas editing
 
