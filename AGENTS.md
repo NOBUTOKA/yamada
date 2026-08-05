@@ -57,6 +57,14 @@
 - This project is a programmatic MATLAB application. Do not convert the application itself to `.mlapp`.
 - Preserve the input `matlab.apps.AppBase` class source; generated or modified source should remain reviewable as text.
 
+## Commit discipline
+
+- Commit implementation changes in cohesive feature-sized units. Before creating
+  every commit, run the relevant MATLAB unit test suite and create the commit
+  only when the tests pass.
+- Commit changes to this `AGENTS.md` file separately from source, tests, and
+  other documentation. An `AGENTS.md` commit must contain no unrelated files.
+
 ## License notices
 
 - The project is licensed under GNU GPL version 3 or any later version (`GPL-3.0-or-later`).
