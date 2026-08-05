@@ -59,9 +59,16 @@
 
 ## Commit discipline
 
-- Commit implementation changes in cohesive feature-sized units. Before creating
-  every commit, run the relevant MATLAB unit test suite and create the commit
-  only when the tests pass.
+- Commit implementation changes in cohesive feature-sized units. After completing
+  a cohesive implementation change and passing its relevant MATLAB unit test
+  suite, proactively create the Git commit without waiting for a user request.
+  Treat this local commit as a normal implementation step, not as an external
+  publication action.
+- Before the final response for any file-changing task, check `git status`. Do
+  not leave agent-authored implementation changes uncommitted. Do not commit
+  unrelated pre-existing user changes.
+- Do not create a commit when the user explicitly requests no commit, requests
+  review-only work, or the relevant tests do not pass.
 - Commit changes to this `AGENTS.md` file separately from source, tests, and
   other documentation. An `AGENTS.md` commit must contain no unrelated files.
 
