@@ -20,11 +20,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         UIFigure matlab.ui.Figure
         MainGrid matlab.ui.container.GridLayout
         CommandGrid matlab.ui.container.GridLayout
-        NewButton matlab.ui.control.Button
-        OpenButton matlab.ui.control.Button
-        SaveAsButton matlab.ui.control.Button
-        ValidateButton matlab.ui.control.Button
-        DiffButton matlab.ui.control.Button
         HierarchyTree matlab.ui.container.Tree
         PreviewPanel matlab.ui.container.Panel
         InspectorTable matlab.ui.control.Table
@@ -43,6 +38,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.Registry = macd.model.ComponentRegistry.createDefault();
             app.PreviewRenderer = macd.ui.PreviewRenderer(app.Registry);
             app.createComponents();
+            app.createMenus();
             app.newDocument("UntitledApp");
             app.UIFigure.Visible = "on";
         end
@@ -75,22 +71,10 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.MainGrid.RowHeight = {38, "1x", 150};
             app.MainGrid.ColumnWidth = {230, "1x", 330};
 
-            app.CommandGrid = uigridlayout(app.MainGrid, [1 6]);
+            app.CommandGrid = uigridlayout(app.MainGrid, [1 1]);
             app.CommandGrid.Layout.Row = 1;
             app.CommandGrid.Layout.Column = [1 3];
-            app.CommandGrid.ColumnWidth = {80, 80, 80, 80, 100, "1x"};
-            app.NewButton = uibutton(app.CommandGrid, "Text", "New", ...
-                "ButtonPushedFcn", @(~, ~) app.newButtonPushed());
-            app.OpenButton = uibutton(app.CommandGrid, "Text", "Open", ...
-                "ButtonPushedFcn", @(~, ~) app.openButtonPushed());
-            app.SaveAsButton = uibutton(app.CommandGrid, "Text", "Save As", ...
-                "ButtonPushedFcn", @(~, ~) app.saveAsButtonPushed());
-            app.ValidateButton = uibutton(app.CommandGrid, "Text", "Validate", ...
-                "ButtonPushedFcn", @(~, ~) app.validateButtonPushed());
-            app.DiffButton = uibutton(app.CommandGrid, "Text", "Diff Preview", ...
-                "ButtonPushedFcn", @(~, ~) app.diffButtonPushed());
             app.StatusLabel = uilabel(app.CommandGrid, "Text", "Ready");
-            app.StatusLabel.Layout.Column = 6;
 
             app.HierarchyTree = uitree(app.MainGrid, ...
                 "SelectionChangedFcn", @(~, event) app.hierarchySelectionChanged(event));
@@ -109,6 +93,28 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 "ColumnEditable", [false false false false]);
             app.DiagnosticsTable.Layout.Row = 3;
             app.DiagnosticsTable.Layout.Column = [1 3];
+        end
+
+        function createMenus(app)
+            % createMenus Build the menu bar and keyboard accelerators.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            % Keep menu actions connected to the same command methods as the former buttons.
+            fileMenu = uimenu(app.UIFigure, "Text", "&File");
+            uimenu(fileMenu, "Text", "&New", "Accelerator", "N", ...
+                "MenuSelectedFcn", @(~, ~) app.newButtonPushed());
+            uimenu(fileMenu, "Text", "&Open...", "Accelerator", "O", ...
+                "MenuSelectedFcn", @(~, ~) app.openButtonPushed());
+            uimenu(fileMenu, "Text", "Save As...", ...
+                "MenuSelectedFcn", @(~, ~) app.saveAsButtonPushed());
+
+            toolsMenu = uimenu(app.UIFigure, "Text", "&Tools");
+            uimenu(toolsMenu, "Text", "&Validate", ...
+                "MenuSelectedFcn", @(~, ~) app.validateButtonPushed());
+            uimenu(toolsMenu, "Text", "&Diff Preview", ...
+                "MenuSelectedFcn", @(~, ~) app.diffButtonPushed());
         end
 
         function newButtonPushed(app)
