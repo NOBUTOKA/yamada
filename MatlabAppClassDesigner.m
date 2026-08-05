@@ -327,11 +327,12 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app (1, 1) MatlabAppClassDesigner
             end
 
-            % Keep browser, preview, inspector, and diagnostics synchronized.
+            % Set the drawer state before measuring the preview panel geometry.
             app.refreshHierarchy();
+            app.refreshDiagnostics(app.Document.Diagnostics);
+            drawnow;
             app.refreshPreview();
             app.refreshInspector();
-            app.refreshDiagnostics(app.Document.Diagnostics);
         end
 
         function refreshHierarchy(app)
