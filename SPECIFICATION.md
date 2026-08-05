@@ -32,20 +32,27 @@ The editor application itself must be a MATLAB `.m` class derived from `matlab.a
 12. Preserve unsupported code and unknown statements whenever the parser can do so safely.
 13. Show parse or generation warnings instead of silently discarding source code.
 
-## Initial component scope
+## Standard component scope
 
-The first implementation should support these components:
+The component registry should cover the MATLAB R2024 standard UI component and
+container factories that can participate in an AppBase application:
 
-- `uifigure`
-- `uipanel`
-- `uigridlayout`
-- `uilabel`
-- `uibutton`
-- `uieditfield`
-- `uidropdown`
-- `uiaxes`
+- Common controls: `uilabel`, `uibutton`, `uicheckbox`, `uicolorpicker`,
+  `uidatepicker`, `uidropdown`, `uieditfield`, `uihyperlink`, `uiimage`,
+  `uilistbox`, `uiradiobutton`, `uislider`, `uispinner`, `uitable`,
+  `uitextarea`, `uitogglebutton`, `uitree`, and `uitreenode`.
+- Containers and layout: `uifigure`, `uipanel`, `uigridlayout`, `uitabgroup`,
+  `uitab`, and `uibuttongroup`.
+- Axes: `uiaxes`, plus the programmatic-only `axes`, `geoaxes`, and `polaraxes`.
+- Instrumentation: `uigauge`, `uiknob`, `uilamp`, and `uiswitch`.
+- Extensible and figure tools: `uihtml`, `uicontextmenu`, `uimenu`,
+  `uitoolbar`, `uipushtool`, and `uitoggletool`.
 
 The component model should be extensible so additional MATLAB UI components can be added later.
+
+Dialog functions such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolor`,
+and file-selection dialogs are intentionally out of scope. They are transient
+operations rather than persistent child components in the editor's document model.
 
 ## Source-generation requirements
 

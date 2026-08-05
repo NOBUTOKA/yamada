@@ -49,6 +49,30 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyEqual(component.getProperty("Layout.Row").LiteralValue, [1 2]);
         end
 
+        function defaultRegistryCoversR2024StandardComponents(testCase)
+            % defaultRegistryCoversR2024StandardComponents Verify the R2024 catalog.
+
+            % Keep the supported factory catalog explicit and reviewable.
+            registry = macd.model.ComponentRegistry.createDefault();
+            expected = ["axes", "geoaxes", "polaraxes", "uiaxes", "uibutton", ...
+                "uibuttongroup", "uicheckbox", "uicolorpicker", "uicontextmenu", ...
+                "uidatepicker", "uidropdown", "uieditfield", "uigauge", ...
+                "uihtml", "uihyperlink", "uiimage", "uiknob", "uilabel", ...
+                "uilamp", "uilistbox", "uimenu", "uipanel", "uipushtool", ...
+                "uiradiobutton", "uislider", "uispinner", "uitable", "uitab", ...
+                "uitabgroup", "uitextarea", "uitogglebutton", "uitoggletool", ...
+                "uitoolbar", "uitree", "uitreenode", "uifigure", "uigridlayout", ...
+                "uiswitch"];
+
+            % Compare sorted names so registration order remains an implementation detail.
+            testCase.verifyEqual(registry.listFactories(), sort(expected));
+            testCase.verifyEqual(numel(registry.listFactories()), numel(expected));
+            testCase.verifyEqual(registry.get("uicolorpicker").Metadata.Introduced, "R2024a");
+            testCase.verifyEqual(registry.get("uislider").Metadata.SupportedStyles, ...
+                ["slider", "range"]);
+            testCase.verifyTrue(registry.get("uitreenode").Metadata.RequiresParentComponent);
+        end
+
         function registryAcceptsFutureComponentDefinitions(testCase)
             % registryAcceptsFutureComponentDefinitions Verify additive extension.
 

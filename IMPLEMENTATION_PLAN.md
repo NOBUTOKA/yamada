@@ -144,6 +144,21 @@ The first version should prioritize clear selection and property editing over vi
 
 Initial editable properties should be registry-defined and limited to values that can be parsed and generated safely. Candidate properties include `Position`, `Visible`, `Enable`, `Text`, `Value`, `Items`, `Limits`, `RowHeight`, `ColumnWidth`, `Layout.Row`, and `Layout.Column`, subject to component compatibility.
 
+### Phase 4.5: Standard MATLAB R2024 component catalog
+
+- [x] Register the standard common controls, containers, axes, instrumentation
+  components, HTML component, menus, context menus, and toolbar tools.
+- [x] Include R2024a `uicolorpicker` support and style metadata for components
+  whose factory has multiple creation forms.
+- [x] Record programmatic-only axes and parent-dependent components as metadata
+  so later UI and generation phases can apply their special construction rules.
+- [ ] Add dedicated model and generator support for style-specific constructors,
+  tree-node/menu/toolbar hierarchy, and programmatic-only axes.
+- [ ] Add property type and validation metadata for the full property inspector.
+
+Dialog invocation functions are excluded from this phase because they do not
+represent persistent components in the AppBase component hierarchy.
+
 ## Proposed project structure
 
 ```text
