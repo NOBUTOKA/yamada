@@ -1,0 +1,28 @@
+# MATLAB autosave and backup files
+*.asv
+*.m~
+*.autosave
+
+# MATLAB generated folders and files
+slprj/
+*.slxc
+*.mex*
+*.p
+*.mltbx
+*.mlappinstall
+
+# MATLAB preferences and local paths
+matlab.prf
+pathdef.m
+
+# Test and coverage output
+coverage/
+testResults/
+*.xml
+
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
