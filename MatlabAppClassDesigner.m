@@ -135,9 +135,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             % Parse source only; no constructor, callback, or helper method is run.
             [fileName, folder] = uigetfile("*.m", "Open AppBase class");
             if isequal(fileName, 0)
+                app.focusEditor();
                 return
             end
             app.openDocument(string(fullfile(folder, fileName)));
+            app.focusEditor();
         end
 
         function saveAsButtonPushed(app)
@@ -443,6 +445,21 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             % Keep status text separate from persistent document diagnostics.
             app.StatusLabel.Text = message;
+        end
+
+        function focusEditor(app)
+            % focusEditor Bring the editor figure to the foreground after a dialog.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            % Restore the app window after native dialogs return focus to MATLAB.
+            if ~isempty(app.UIFigure) && isvalid(app.UIFigure)
+                app.UIFigure.Visible = "on";
+                drawnow;
+                figure(app.UIFigure);
+                drawnow;
+            end
         end
     end
 end
