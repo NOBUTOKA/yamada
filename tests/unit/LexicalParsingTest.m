@@ -46,6 +46,8 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
                 '["Add", "Subtract"]');
             [stringLines, isStringLines] = macd.source.MatlabLiteralParser.parse( ...
                 '["First"; "Second"]');
+            [logicalValues, isLogicalValues] = macd.source.MatlabLiteralParser.parse( ...
+                "[true false true]");
             [text, isText] = macd.source.MatlabLiteralParser.parse("'It''s ready'");
 
             testCase.verifyTrue(isMatrix);
@@ -56,6 +58,8 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             testCase.verifyEqual(stringItems, ["Add", "Subtract"]);
             testCase.verifyTrue(isStringLines);
             testCase.verifyEqual(stringLines, ["First"; "Second"]);
+            testCase.verifyTrue(isLogicalValues);
+            testCase.verifyEqual(logicalValues, [true false true]);
             testCase.verifyTrue(isText);
             testCase.verifyEqual(text, "It's ready");
         end

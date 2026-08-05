@@ -119,9 +119,11 @@ classdef AppSourceParser
                     continue
                 end
 
-                % Recover an optional parent and safe literal factory arguments.
-                [parentName, creationArguments, isSupported] = ...
-                    macd.source.AppSourceParser.creationArguments(creation.Arguments);
+                % Recover an optional parent and safe name/value factory arguments.
+                definition = registry.get(creation.Factory);
+                [parentName, creationArguments, skippedProperties, isSupported] = ...
+                    macd.source.AppSourceParser.creationArguments( ...
+                    creation.Arguments, definition);
                 if ~isSupported
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "nonliteral-creation-argument", "warning", ...
@@ -134,7 +136,6 @@ classdef AppSourceParser
                 end
 
                 % Resolve declaration metadata and parent identity before mutation.
-                definition = registry.get(creation.Factory);
                 declaredType = definition.DeclaredType;
                 declarationSpan = macd.model.SourceSpan.empty;
                 if isKey(declarations, char(creation.Name))
@@ -172,6 +173,12 @@ classdef AppSourceParser
                     "Declaration", declarationSpan, "Creation", statement.Span);
                 try
                     document.addComponent(component, parentId);
+                    for propertyIndex = 1:numel(skippedProperties)
+                        diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
+                            "source-creation-property", "warning", ...
+                            "Creation property was retained as source and omitted from Safe Preview.", ...
+                            component.Id, statement.Span);
+                    end
                 catch exception
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "invalid-component-creation", "warning", exception.message, ...
@@ -396,20 +403,24 @@ classdef AppSourceParser
             end
         end
 
-        function [parentName, values, isSupported] = creationArguments(text)
-            % creationArguments Parse an optional app parent and literal arguments.
+        function [parentName, values, skippedProperties, isSupported] = ...
+                creationArguments(text, definition)
+            % creationArguments Parse a parent plus safe name/value factory arguments.
             arguments (Input)
                 text string
+                definition (1, 1) macd.model.ComponentDefinition
             end
             arguments (Output)
                 parentName string
                 values cell
+                skippedProperties string
                 isSupported logical
             end
 
             % Split top-level commas while preserving nested and quoted arguments.
             parentName = "";
             values = {};
+            skippedProperties = strings(1, 0);
             isSupported = true;
             elements = macd.source.AppSourceParser.splitArguments(char(text));
             if isempty(elements)
@@ -423,15 +434,33 @@ classdef AppSourceParser
                 parentName = string(parentTokens.name);
                 startIndex = 2;
             end
-            for index = startIndex:numel(elements)
+            index = startIndex;
+            while index <= numel(elements)
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parse( ...
                     string(elements{index}));
                 if ~isLiteral
                     values = {};
+                    skippedProperties = strings(1, 0);
                     isSupported = false;
                     return
                 end
+                propertyDefinition = macd.model.PropertyDefinition.empty;
+                if isstring(value) && isscalar(value)
+                    propertyDefinition = definition.getProperty(value);
+                end
+                if ~isempty(propertyDefinition) && index < numel(elements)
+                    [propertyValue, isPropertyLiteral] = ...
+                        macd.source.MatlabLiteralParser.parse(string(elements{index + 1}));
+                    if isPropertyLiteral
+                        values(end + 1:end + 2) = {value, propertyValue};
+                    else
+                        skippedProperties(end + 1) = value;
+                    end
+                    index = index + 2;
+                    continue
+                end
                 values{end + 1} = value;
+                index = index + 1;
             end
         end
 

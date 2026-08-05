@@ -63,6 +63,10 @@ classdef MatlabLiteralParser
                     [value, isLiteral] = macd.source.MatlabLiteralParser.parseStringMatrix( ...
                         source(2:end - 1));
                 end
+                if ~isLiteral
+                    [value, isLiteral] = macd.source.MatlabLiteralParser.parseLogicalMatrix( ...
+                        source(2:end - 1));
+                end
                 return
             end
             if source(1) == '{' && source(end) == '}'
@@ -204,6 +208,43 @@ classdef MatlabLiteralParser
             end
 
             % Concatenate only after every row is composed entirely of text literals.
+            value = vertcat(rowValues{:});
+            isLiteral = true;
+        end
+
+        function [value, isLiteral] = parseLogicalMatrix(text)
+            % parseLogicalMatrix Parse a rectangular matrix of true and false values.
+            arguments (Input)
+                text char
+            end
+            arguments (Output)
+                value logical
+                isLiteral logical
+            end
+
+            % Accept only MATLAB logical keywords separated by whitespace or commas.
+            value = false(0, 0);
+            isLiteral = false;
+            rows = macd.source.MatlabLiteralParser.splitTopLevel(text, ';');
+            rowValues = cell(1, numel(rows));
+            columnCount = [];
+            for rowIndex = 1:numel(rows)
+                row = strtrim(rows{rowIndex});
+                tokens = regexp(row, '(?:true|false)', 'match');
+                remainder = regexprep(row, '(?:true|false)', '');
+                if isempty(tokens) || ~isempty(regexprep(remainder, '[\s,]', ''))
+                    return
+                end
+                values = strcmp(tokens, 'true');
+                if isempty(columnCount)
+                    columnCount = numel(values);
+                elseif numel(values) ~= columnCount
+                    return
+                end
+                rowValues{rowIndex} = values;
+            end
+
+            % Concatenate only after every row follows the safe logical grammar.
             value = vertcat(rowValues{:});
             isLiteral = true;
         end
