@@ -2,6 +2,11 @@
 
 - MATLAB source files and test files must use UTF-8 encoding without a BOM.
 - MATLAB source files and test files must use CRLF line endings.
+- On this Windows host, run MATLAB verification through an escalated command so
+  it uses the interactive `excelsior\nobut` account. The normal Codex sandbox
+  runs as `excelsior\codexsandboxoffline`, which cannot communicate with that
+  user's MathWorks Service Host and online license. Do not set `MATLAB_PREFDIR`
+  to a temporary directory for these verification runs.
 - Write comments in MATLAB source files in English.
 - Every project-owned MATLAB function and method, including test methods and
   local test helpers, must have an English docstring comment immediately after
