@@ -74,7 +74,10 @@ Each component record should contain at least:
 - Origin: generated, parsed, or template.
 - Editability and diagnostic state.
 
-New and opened apps use this same model. A registry maps each supported factory to its MATLAB type, permitted parents, editable properties, defaults, and generation rules.
+New and opened apps use this same model. A registry maps each supported factory
+to a typed `ComponentDefinition`, which owns its MATLAB type, permitted parents,
+creation arguments, metadata, and an ordered array of typed
+`PropertyDefinition` values describing editable properties and defaults.
 
 ### Parser
 
@@ -161,10 +164,34 @@ Package boundaries may be adjusted during the first implementation slice, but pa
 
 ### Phase 1: Model and new-app generation
 
-- Define diagnostics, component records, the document model, and the component registry.
-- Create an empty AppBase model with a root `uifigure`.
-- Generate a runnable minimal class.
-- Validate class names, component names, UTF-8 without BOM, CRLF, and GPL notices.
+- [x] Define diagnostics, source spans, property entries, component records, the document model, and the component registry.
+- [x] Create an empty AppBase model with a root `uifigure`.
+- [x] Generate a runnable minimal class.
+- [x] Validate class names, component names, hierarchy, safe literals, UTF-8 without BOM, CRLF, and GPL notices.
+
+Phase 1 uses a data-driven boundary between component records and typed component
+definitions. A component record stores a factory name, declared MATLAB type,
+creation arguments, hierarchy IDs, and an ordered `PropertyEntry` object array.
+Property entries use paths such as `Position` or `Layout.Row`; no component class
+has a fixed set of MATLAB UI properties. The registry supplies immutable
+`ComponentDefinition` objects containing parent rules, typed
+`PropertyDefinition` arrays, defaults, creation arguments, and extension
+metadata. Consequently, adding a component or property normally requires
+registering definition objects, not changing the document or component record
+classes.
+
+Homogeneous model collections use typed object arrays rather than cells:
+documents contain `ComponentRecord` and `Diagnostic` arrays, component records
+contain `PropertyEntry` and `Diagnostic` arrays, and property entries contain
+`Diagnostic` arrays. Cells remain only where values are intentionally
+heterogeneous, such as component creation arguments, or where a later phase has
+not yet defined the concrete model type.
+
+Parsed expressions also have a representation distinct from safe literal values.
+They can therefore remain source-backed and read-only in later phases instead of
+being coerced into a value or silently discarded. Source spans, diagnostics,
+unknown regions, original text, and pending edits already have dedicated model
+locations for the read-only parser and localized round-trip work in Phases 2 and 3.
 
 ### Phase 2: Read-only source parsing
 
