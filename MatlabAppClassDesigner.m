@@ -95,14 +95,14 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 "ColumnEditable", [false false false]);
             app.InspectorTable.Layout.Row = 2;
             app.InspectorTable.Layout.Column = 3;
-            app.DiagnosticsDrawer = uipanel(app.MainGrid, "Title", "Diagnostics");
+            app.DiagnosticsDrawer = uipanel(app.MainGrid);
             app.DiagnosticsDrawer.Layout.Row = 3;
             app.DiagnosticsDrawer.Layout.Column = [1 3];
             app.DiagnosticsGrid = uigridlayout(app.DiagnosticsDrawer, [2 2]);
             app.DiagnosticsGrid.RowHeight = {30, "1x"};
             app.DiagnosticsGrid.ColumnWidth = {"1x", 100};
             app.DiagnosticsSummaryLabel = uilabel(app.DiagnosticsGrid, ...
-                "Text", "No diagnostics");
+                "Text", "Diagnostics: No diagnostics");
             app.DiagnosticsToggleButton = uibutton(app.DiagnosticsGrid, ...
                 "Text", "Show", ...
                 "ButtonPushedFcn", @(~, ~) app.toggleDiagnostics());
@@ -452,10 +452,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             if errorCount > 0 || warningCount > 0
                 app.DiagnosticsSummaryLabel.Text = compose( ...
-                    "%d error(s), %d warning(s)", errorCount, warningCount);
+                    "Diagnostics: %d error(s), %d warning(s)", ...
+                    errorCount, warningCount);
                 app.setDiagnosticsDrawer(true);
             else
-                app.DiagnosticsSummaryLabel.Text = "No diagnostics";
+                app.DiagnosticsSummaryLabel.Text = "Diagnostics: No diagnostics";
                 app.setDiagnosticsDrawer(false);
             end
         end
@@ -578,7 +579,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.DiagnosticsTable.Visible = "on";
                 app.DiagnosticsToggleButton.Text = "Hide";
             else
-                app.MainGrid.RowHeight = {38, "1x", 34};
+                app.MainGrid.RowHeight = {38, "1x", 42};
                 app.DiagnosticsTable.Visible = "off";
                 app.DiagnosticsToggleButton.Text = "Show";
             end
