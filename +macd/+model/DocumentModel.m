@@ -24,7 +24,8 @@ classdef DocumentModel < handle
         % Diagnostics - Current document-level diagnostics.
         Diagnostics macd.model.Diagnostic = macd.model.Diagnostic.empty
         % UnknownRegions - Preserved source regions the editor does not interpret.
-        UnknownRegions cell = {}
+        UnknownRegions macd.model.UnknownSourceRegion = ...
+            macd.model.UnknownSourceRegion.empty
         % PendingEdits - Structured edits awaiting source application.
         PendingEdits cell = {}
         % Encoding - Text encoding used when the document is written.

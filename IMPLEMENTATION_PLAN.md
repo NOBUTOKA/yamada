@@ -195,10 +195,26 @@ locations for the read-only parser and localized round-trip work in Phases 2 and
 
 ### Phase 2: Read-only source parsing
 
-- Add representative AppBase fixtures.
-- Parse class inheritance, component declarations, factory calls, hierarchy, and simple assignments.
-- Produce explicit warnings for unsupported constructs.
-- Verify that parsing does not execute input code.
+- [x] Add a representative AppBase fixture.
+- [x] Parse class inheritance, component declarations, factory calls, hierarchy, and simple assignments.
+- [x] Produce explicit warnings for unsupported constructs.
+- [x] Verify that parsing does not execute input code.
+
+Phase 2 uses a lexical scanner to identify statement boundaries without evaluating
+the source. It handles quoted text, line and block comments, balanced delimiters,
+and continuations before the AppBase parser recognizes its limited structural
+subset. `AppSourceParser` retains the original decoded source, file path, line
+ending convention, component and property source spans, typed unknown source
+regions, and diagnostics in the shared document model.
+
+The parser accepts only Registry-supported direct factory calls and direct
+`app.Component.Property = value` assignments. A conservative literal parser
+accepts text, logicals, real numeric matrices, and row cell arrays; all other
+values remain read-only source expressions. Assignments found before a supported
+component creation are retained as unknown regions instead of being mistaken for
+initialization, which prevents callback behavior from overriding the initial UI
+model. The parser reads files as bytes and never instantiates or executes the
+input class.
 
 ### Phase 3: Safe round-trip generation
 
