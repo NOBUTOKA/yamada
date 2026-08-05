@@ -242,9 +242,15 @@ additional source reference blocks generation with an actionable diagnostic.
 
 ### Phase 4: Editor shell
 
-- Implement the main AppBase editor class.
-- Connect New and Open workflows.
-- Add hierarchy selection, preview rendering, property inspection, and diagnostics.
+- [x] Implement the main AppBase editor class.
+- [x] Connect New and Open workflows.
+- [x] Add hierarchy selection, preview rendering, property inspection, and diagnostics.
+
+Phase 4 adds `MatlabAppClassDesigner`, a programmatic AppBase editor shell.
+Its New and Open commands converge on `DocumentModel`; Open remains a parser-only
+workflow. The shell displays a component hierarchy, a registry-only preview that
+never constructs the opened class, read-only property inspection, structured
+diagnostics, validation, Save As, and an original-versus-generated source view.
 
 ### Phase 5: Canvas editing
 
