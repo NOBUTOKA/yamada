@@ -225,11 +225,20 @@ input class.
 
 ### Phase 3: Safe round-trip generation
 
-- Preserve exact source when no edits are made.
-- Implement localized changes for supported property assignments.
-- Add safe insertion of generated components.
-- Add conservative deletion with ownership checks.
-- Compare original and generated source before saving.
+- [x] Preserve exact source when no edits are made.
+- [x] Implement localized changes for supported property assignments.
+- [x] Add safe insertion of generated components.
+- [x] Add conservative deletion with ownership checks.
+- [x] Compare original and generated source before saving.
+
+Phase 3 adds `RoundTripGenerator`, which treats parsed source as immutable until
+an editable literal changes. It keeps no-edit output byte-for-byte identical,
+uses existing source spans for direct-assignment replacements, and exposes the
+rewritten `GeneratedText` alongside `OriginalText` for save-time diff preview.
+Generated components are inserted only after complete parsed declaration and
+creation anchors are found. Explicit deletion is limited to non-root leaf
+components with fully owned declaration, creation, and property spans; any
+additional source reference blocks generation with an actionable diagnostic.
 
 ### Phase 4: Editor shell
 

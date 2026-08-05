@@ -127,6 +127,17 @@ classdef ComponentRecord < handle
                 obj.Children(end + 1) = childId;
             end
         end
+
+        function removeChild(obj, childId)
+            % removeChild Remove one child identifier after a document deletion.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                childId string
+            end
+
+            % Keep the ordered hierarchy consistent with the document collection.
+            obj.Children(obj.Children == childId) = [];
+        end
     end
 end
 

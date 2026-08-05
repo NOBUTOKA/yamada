@@ -123,6 +123,38 @@ classdef DocumentModel < handle
                 end
             end
         end
+
+        function removeComponent(obj, id)
+            % removeComponent Remove one leaf component and retain its deletion intent.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                id string
+            end
+
+            % Locate the record before changing its parent or document ordering.
+            component = obj.getComponent(id);
+            if isempty(component)
+                error("macd:DocumentModel:UnknownComponent", ...
+                    "Component ID ""%s"" does not exist.", id);
+            end
+            if ~isempty(component.Children)
+                error("macd:DocumentModel:NonLeafDeletion", ...
+                    "Component ""%s"" has children and cannot be deleted safely.", id);
+            end
+            if id == obj.RootComponentId
+                error("macd:DocumentModel:RootDeletion", ...
+                    "The root component cannot be deleted.");
+            end
+
+            % Retain the exact record so a source generator can check ownership.
+            obj.PendingEdits{end + 1} = struct("Kind", "delete-component", ...
+                "Component", component);
+            parent = obj.getComponent(component.ParentId);
+            if ~isempty(parent)
+                parent.removeChild(id);
+            end
+            obj.Components(obj.Components == component) = [];
+        end
     end
 end
 
