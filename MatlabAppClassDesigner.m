@@ -20,6 +20,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         UIFigure matlab.ui.Figure
         MainGrid matlab.ui.container.GridLayout
         CommandGrid matlab.ui.container.GridLayout
+        SaveMenuItem matlab.ui.container.Menu
+        SavePathConfirmed logical = false
         HierarchyTree matlab.ui.container.Tree
         PreviewPanel matlab.ui.container.Panel
         InspectorTable matlab.ui.control.Table
@@ -107,6 +109,9 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 "MenuSelectedFcn", @(~, ~) app.newButtonPushed());
             uimenu(fileMenu, "Text", "&Open...", "Accelerator", "O", ...
                 "MenuSelectedFcn", @(~, ~) app.openButtonPushed());
+            app.SaveMenuItem = uimenu(fileMenu, "Text", "&Save", ...
+                "Accelerator", "S", "Enable", "off", ...
+                "MenuSelectedFcn", @(~, ~) app.saveButtonPushed());
             uimenu(fileMenu, "Text", "Save As...", ...
                 "MenuSelectedFcn", @(~, ~) app.saveAsButtonPushed());
 
@@ -169,7 +174,36 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             filePath = string(fullfile(folder, fileName));
             app.writeUtf8(filePath, source);
             app.Document.FilePath = filePath;
+            app.SavePathConfirmed = true;
+            app.updateSaveState(diagnostics);
             app.setStatus("Saved " + filePath);
+        end
+
+        function saveButtonPushed(app)
+            % saveButtonPushed Generate and save the current document to its known path.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            % Require an explicit path from Open or Save As before writing in place.
+            if ~app.SavePathConfirmed || strlength(app.Document.FilePath) == 0
+                app.setStatus("Save is unavailable until a file is selected.");
+                app.updateSaveState(app.Document.Diagnostics);
+                return
+            end
+            [source, diagnostics] = app.generateSource();
+            app.refreshDiagnostics(diagnostics);
+            app.updateSaveState(diagnostics);
+            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
+                app.setStatus("Save is blocked by errors.");
+                return
+            end
+            app.writeUtf8(app.Document.FilePath, source);
+            if strlength(app.Document.OriginalText) > 0
+                app.Document.OriginalText = source;
+            end
+            app.Document.GeneratedText = source;
+            app.setStatus("Saved " + app.Document.FilePath);
         end
 
         function validateButtonPushed(app)
@@ -186,6 +220,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             else
                 app.setStatus("Validation completed without blocking errors.");
             end
+            app.updateSaveState(diagnostics);
         end
 
         function diffButtonPushed(app)
@@ -227,6 +262,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.SelectedComponentId = app.Document.RootComponentId;
             app.refreshShell();
             app.setStatus("Created new document " + className);
+            app.SavePathConfirmed = false;
+            app.updateSaveState(app.Document.Diagnostics);
         end
 
         function openDocument(app, filePath)
@@ -246,6 +283,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             app.refreshShell();
             app.refreshDiagnostics(diagnostics);
+            app.SavePathConfirmed = ~macd.validation.ModelValidator.hasErrors(diagnostics);
+            app.updateSaveState(diagnostics);
             app.setStatus("Opened " + filePath);
         end
 
@@ -465,6 +504,21 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 drawnow;
                 figure(app.UIFigure);
                 drawnow;
+            end
+        end
+
+        function updateSaveState(app, diagnostics)
+            % updateSaveState Enable Save only for a confirmed path without fatal errors.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                diagnostics macd.model.Diagnostic
+            end
+
+            % Keep the menu state synchronized with the current safety validation.
+            if app.SavePathConfirmed && ~macd.validation.ModelValidator.hasErrors(diagnostics)
+                app.SaveMenuItem.Enable = "on";
+            else
+                app.SaveMenuItem.Enable = "off";
             end
         end
     end
