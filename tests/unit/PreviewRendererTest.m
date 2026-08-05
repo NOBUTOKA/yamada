@@ -1,66 +1,137 @@
 classdef PreviewRendererTest < matlab.unittest.TestCase
-    % PreviewRendererTest Compare safe preview layout with a trusted fixture app.
-    %   This test parses the preserved SimpleCalculator fixture, renders the model
-    %   without executing it, and compares key visual properties against a separate
-    %   runtime instance of that known fixture. It does not permit the editor to run
-    %   arbitrary opened source.
+    % PreviewRendererTest Compare safe previews against trusted fixture applications.
+    %   This data-driven test parses each explicitly trusted fixture, renders its
+    %   model without executing source, then compares every supported editable
+    %   literal property with a separate runtime instance of that known fixture.
+    %   It never permits the editor to execute arbitrary opened source.
 
     methods (Test)
-        function safePreviewMatchesTrustedCalculatorLayout(testCase)
-            % safePreviewMatchesTrustedCalculatorLayout Compare grid placement and text.
+        function safePreviewMatchesTrustedFixtureProperties(testCase)
+            % safePreviewMatchesTrustedFixtureProperties Compare every trusted fixture.
 
-            % Render parsed data into an editor-owned hidden preview surface.
+            % Keep fixture execution explicit while rendering always uses parsed data.
+            fixtures = PreviewRendererTest.trustedFixtures();
+            for fixtureIndex = 1:numel(fixtures)
+                fixture = fixtures(fixtureIndex);
+                testCase.compareFixture(string(fixture.Path));
+            end
+        end
+    end
+
+    methods (Access = private)
+        function compareFixture(testCase, fixturePath)
+            % compareFixture Compare one trusted app instance with its safe preview.
+            arguments (Input)
+                testCase (1, 1) PreviewRendererTest
+                fixturePath (1, 1) string
+            end
+
+            % Render only the parsed model into an editor-owned hidden surface.
             registry = macd.model.ComponentRegistry.createDefault();
-            fixturePath = PreviewRendererTest.fixturePath();
             document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
             previewFigure = uifigure("Visible", "off");
             previewPanel = uipanel(previewFigure);
+            previewCleanup = onCleanup(@() deleteIfValid(previewFigure));
             renderer = macd.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, previewPanel);
-            previewCleanup = onCleanup(@() deleteIfValid(previewFigure));
-            testCase.verifyEmpty(diagnostics);
+            testCase.verifyEmpty(diagnostics, fixturePath);
 
-            % Execute only the maintained trusted fixture as the visual oracle.
+            % Execute only the maintained fixture named in the explicit trusted list.
             fixtureFolder = fileparts(fixturePath);
             addpath(fixtureFolder);
             pathCleanup = onCleanup(@() rmpath(fixtureFolder));
-            actual = SimpleCalculatorApp();
+            actual = feval(char(document.ClassName));
             actual.UIFigure.Visible = "off";
             actualCleanup = onCleanup(@() deleteIfValid(actual));
 
-            % Compare the rows, columns, spans, and user-facing text at risk here.
-            testCase.verifyEqual(handles("parsed-CalculateButton").Layout.Row, ...
-                actual.CalculateButton.Layout.Row);
-            testCase.verifyEqual(handles("parsed-CalculateButton").Layout.Column, ...
-                actual.CalculateButton.Layout.Column);
-            testCase.verifyEqual(handles("parsed-ResultLabel").Layout.Row, ...
-                actual.ResultLabel.Layout.Row);
-            testCase.verifyEqual(handles("parsed-ResultLabel").Layout.Column, ...
-                actual.ResultLabel.Layout.Column);
-            testCase.verifyEqual(handles("parsed-ResultValueLabel").Layout.Row, ...
-                actual.ResultValueLabel.Layout.Row);
-            testCase.verifyEqual(handles("parsed-ResultValueLabel").Layout.Column, ...
-                actual.ResultValueLabel.Layout.Column);
-            testCase.verifyEqual(handles("parsed-OperatorDropDown").Value, ...
-                actual.OperatorDropDown.Value);
-            testCase.verifyEqual(handles("parsed-ResultValueLabel").Text, ...
-                actual.ResultValueLabel.Text);
+            % Traverse the model rather than hard-coding component or property names.
+            for componentIndex = 1:numel(document.Components)
+                component = document.Components(componentIndex);
+                if component.Id == document.RootComponentId
+                    continue
+                end
+                testCase.assertTrue(isKey(handles, char(component.Id)), ...
+                    fixturePath + ": preview is missing " + component.Name);
+                preview = handles(char(component.Id));
+                actualComponent = actual.(char(component.Name));
+                for propertyIndex = 1:numel(component.Properties)
+                    entry = component.Properties(propertyIndex);
+                    if entry.ValueKind ~= "literal" || ~entry.IsEditable
+                        continue
+                    end
+                    testCase.compareProperty(preview, actualComponent, entry.Path, ...
+                        fixturePath + ": " + component.Name + "." + entry.Path);
+                end
+            end
             clear actualCleanup pathCleanup previewCleanup
+        end
+
+        function compareProperty(testCase, preview, actual, path, context)
+            % compareProperty Compare one direct or nested property after text normalization.
+            arguments (Input)
+                testCase (1, 1) PreviewRendererTest
+                preview
+                actual
+                path (1, 1) string
+                context (1, 1) string
+            end
+
+            % Read both paths directly from controls after normalizing text containers.
+            previewValue = PreviewRendererTest.propertyValue(preview, path);
+            actualValue = PreviewRendererTest.propertyValue(actual, path);
+            testCase.verifyEqual(PreviewRendererTest.normalizeText(previewValue), ...
+                PreviewRendererTest.normalizeText(actualValue), context);
         end
     end
 
     methods (Static, Access = private)
-        function result = fixturePath()
-            % fixturePath Resolve the preserved trusted visual fixture path.
+        function fixtures = trustedFixtures()
+            % trustedFixtures List only repository-managed apps allowed to execute in tests.
             arguments (Output)
-                result (1, 1) string
+                fixtures (1, :) struct
             end
 
-            % Resolve relative to this class so test execution remains location-independent.
+            % Adding a fixture here opts it into runtime-oracle comparison explicitly.
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            result = string(fullfile(projectRoot, "tests", "fixtures", ...
-                "SimpleCalculatorApp.m"));
+            fixtures = struct("Path", string(fullfile(projectRoot, "tests", ...
+                "fixtures", "SimpleCalculatorApp.m")));
+        end
+
+        function value = propertyValue(target, path)
+            % propertyValue Read one direct or nested graphics property by model path.
+            arguments (Input)
+                target
+                path (1, 1) string
+            end
+            arguments (Output)
+                value
+            end
+
+            % Follow each safe model path segment without evaluating source text.
+            value = target;
+            parts = split(path, ".");
+            for partIndex = 1:numel(parts)
+                value = value.(char(parts(partIndex)));
+            end
+        end
+
+        function value = normalizeText(value)
+            % normalizeText Make equivalent UI text container representations comparable.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                value
+            end
+
+            % MATLAB UI APIs accept either char cells or string arrays for text lists.
+            if ischar(value)
+                value = string(value);
+            elseif iscell(value) && all(cellfun(@(item) ...
+                    ischar(item) || (isstring(item) && isscalar(item)), value))
+                value = string(value);
+            end
         end
     end
 end
@@ -78,7 +149,7 @@ end
 end
 
 %{
-MatlabAppClassDesigner - Tests for the safe registry-only preview renderer.
+MatlabAppClassDesigner - Data-driven tests for safe preview rendering.
 Copyright (C) 2026 MatlabAppClassDesigner contributors
 
 This file is part of MatlabAppClassDesigner.
