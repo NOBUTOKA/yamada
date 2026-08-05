@@ -12,10 +12,7 @@ classdef PreviewRenderer < handle
         Registry macd.model.ComponentRegistry
         PreviewSurface
         RenderScale double = 1
-        MenuBar
-        ToolbarBar
-        MenuCount double = 0
-        ToolbarCount double = 0
+        PreviewMargin double = 12
     end
 
     methods
@@ -85,10 +82,14 @@ classdef PreviewRenderer < handle
             if isempty(component) || ~obj.Registry.contains(component.Factory)
                 return
             end
+            if any(component.Factory == ["uicontextmenu", "uimenu", "uitoolbar", ...
+                    "uipushtool", "uitoggletool"])
+                return
+            end
             try
-                [preview, isEmulated] = obj.createPreviewComponent(component, parent);
+                preview = obj.createPreviewComponent(component, parent);
                 handles(char(component.Id)) = preview;
-                obj.applyProperties(preview, component, isEmulated);
+                obj.applyProperties(preview, component);
                 for index = 1:numel(component.Children)
                     obj.renderComponent(document, component.Children(index), preview, handles);
                 end
@@ -100,13 +101,12 @@ classdef PreviewRenderer < handle
             end
         end
 
-        function applyProperties(obj, preview, component, isEmulated)
+        function applyProperties(obj, preview, component)
             % applyProperties Assign editable literal properties without source evaluation.
             arguments (Input)
                 obj (1, 1) macd.ui.PreviewRenderer
                 preview
                 component (1, 1) macd.model.ComponentRecord
-                isEmulated (1, 1) logical = false
             end
 
             % Isolate unsupported preview assignments as nonblocking diagnostics.
@@ -116,12 +116,7 @@ classdef PreviewRenderer < handle
                     continue
                 end
                 try
-                    if isEmulated
-                        obj.setEmulatedProperty(preview, component.Factory, ...
-                            entry.Path, entry.LiteralValue);
-                    else
-                        obj.setProperty(preview, entry.Path, entry.LiteralValue);
-                    end
+                    obj.setProperty(preview, entry.Path, entry.LiteralValue);
                 catch exception
                     obj.Diagnostics(end + 1) = macd.model.Diagnostic( ...
                         "preview-property-failed", "warning", ...
@@ -150,127 +145,25 @@ classdef PreviewRenderer < handle
                 sourceSize = positionEntry.LiteralValue(3:4);
             end
             availablePosition = obj.parentInnerPosition(parent);
-            obj.RenderScale = min(availablePosition(3:4) ./ sourceSize);
+            usableSize = max(availablePosition(3:4) - 2 * obj.PreviewMargin, [1 1]);
+            obj.RenderScale = min(usableSize ./ sourceSize);
             surfaceSize = sourceSize .* obj.RenderScale;
-            surfacePosition = [(availablePosition(3:4) - surfaceSize) ./ 2, ...
+            surfacePosition = [obj.PreviewMargin + (usableSize - surfaceSize) ./ 2, ...
                 surfaceSize];
-            obj.PreviewSurface = uipanel(parent, "BorderType", "none", ...
+            obj.PreviewSurface = uipanel(parent, "BorderType", "line", ...
                 "Position", surfacePosition);
-            obj.MenuBar = [];
-            obj.ToolbarBar = [];
-            obj.MenuCount = 0;
-            obj.ToolbarCount = 0;
         end
 
-        function [preview, isEmulated] = createPreviewComponent(obj, component, parent)
-            % createPreviewComponent Create ordinary controls or safe figure-tool stand-ins.
+        function preview = createPreviewComponent(obj, component, parent)
+            % createPreviewComponent Create one ordinary control on the preview surface.
             arguments (Input)
-                obj (1, 1) macd.ui.PreviewRenderer
+                obj (1, 1) macd.ui.PreviewRenderer %#ok<INUSA>
                 component (1, 1) macd.model.ComponentRecord
                 parent
             end
-            arguments (Output)
-                preview
-                isEmulated (1, 1) logical
-            end
-
-            % Native menus and toolbars cannot be children of the preview panel.
-            isEmulated = true;
-            switch component.Factory
-                case "uicontextmenu"
-                    preview = uipanel(obj.PreviewSurface, "BorderType", "none", ...
-                        "Visible", "off");
-                case "uimenu"
-                    menuBar = obj.ensureMenuBar();
-                    obj.MenuCount = obj.MenuCount + 1;
-                    preview = uibutton(menuBar, "push", "Position", ...
-                        [4 + 76 * (obj.MenuCount - 1), 2, 72, 20]);
-                case "uitoolbar"
-                    preview = obj.ensureToolbarBar();
-                case "uipushtool"
-                    obj.ToolbarCount = obj.ToolbarCount + 1;
-                    preview = uibutton(parent, "push", "Position", ...
-                        [4 + 76 * (obj.ToolbarCount - 1), 2, 72, 20]);
-                case "uitoggletool"
-                    obj.ToolbarCount = obj.ToolbarCount + 1;
-                    preview = uibutton(parent, "state", "Position", ...
-                        [4 + 76 * (obj.ToolbarCount - 1), 2, 72, 20]);
-                otherwise
-                    isEmulated = false;
-                    preview = feval(char(component.Factory), parent, ...
-                        component.CreationArguments{:});
-            end
-        end
-
-        function menuBar = ensureMenuBar(obj)
-            % ensureMenuBar Create the shared top strip used to depict application menus.
-            arguments (Input)
-                obj (1, 1) macd.ui.PreviewRenderer
-            end
-            arguments (Output)
-                menuBar
-            end
-
-            % Keep menu emulation inside the fitted source-figure surface.
-            if isempty(obj.MenuBar) || ~isvalid(obj.MenuBar)
-                surfacePosition = obj.PreviewSurface.Position;
-                menuBar = uipanel(obj.PreviewSurface, "BorderType", "line", ...
-                    "Position", [0, surfacePosition(4) - 24, surfacePosition(3), 24]);
-                obj.MenuBar = menuBar;
-            else
-                menuBar = obj.MenuBar;
-            end
-        end
-
-        function toolbarBar = ensureToolbarBar(obj)
-            % ensureToolbarBar Create the shared strip used to depict toolbar controls.
-            arguments (Input)
-                obj (1, 1) macd.ui.PreviewRenderer
-            end
-            arguments (Output)
-                toolbarBar
-            end
-
-            % Keep toolbar emulation below the menu strip when both are present.
-            if isempty(obj.ToolbarBar) || ~isvalid(obj.ToolbarBar)
-                surfacePosition = obj.PreviewSurface.Position;
-                toolbarBar = uipanel(obj.PreviewSurface, "BorderType", "line", ...
-                    "Position", [0, surfacePosition(4) - 50, surfacePosition(3), 26]);
-                obj.ToolbarBar = toolbarBar;
-            else
-                toolbarBar = obj.ToolbarBar;
-            end
-        end
-
-        function setEmulatedProperty(obj, target, factory, path, value)
-            % setEmulatedProperty Map supported figure-tool state onto safe controls.
-            arguments (Input)
-                obj (1, 1) macd.ui.PreviewRenderer
-                target
-                factory string
-                path string
-                value
-            end
-
-            % Omit callbacks and separator metadata that have no safe visual analogue.
-            if any(path == ["Checked", "Separator", "HandleVisibility"])
-                return
-            end
-            if factory == "uipushtool" && path == "Tooltip"
-                target.Text = value;
-                target.Tooltip = value;
-                return
-            end
-            if factory == "uitoggletool" && path == "Tooltip"
-                target.Text = value;
-                target.Tooltip = value;
-                return
-            end
-            if factory == "uitoggletool" && path == "State"
-                target.Value = string(value) == "on";
-                return
-            end
-            obj.setProperty(target, path, value);
+            % Figure-only controls are filtered before this safe factory call.
+            preview = feval(char(component.Factory), parent, ...
+                component.CreationArguments{:});
         end
 
         function setProperty(obj, target, path, value)

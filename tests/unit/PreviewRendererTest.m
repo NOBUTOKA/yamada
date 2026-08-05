@@ -45,9 +45,11 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
                 ["Manual", "Auto"]);
             previewSurface = controlHandles("parsed-MainGrid").Parent;
             sourceSize = [580 460];
-            scale = min(controlPanel.InnerPosition(3:4) ./ sourceSize);
+            previewMargin = 12;
+            usableSize = controlPanel.InnerPosition(3:4) - 2 * previewMargin;
+            scale = min(usableSize ./ sourceSize);
             testCase.verifyEqual(previewSurface.Position, ...
-                [(controlPanel.InnerPosition(3:4) - sourceSize .* scale) ./ 2, ...
+                [previewMargin + (usableSize - sourceSize .* scale) ./ 2, ...
                 sourceSize .* scale], "AbsTol", 1e-10);
             clear controlCleanup
 
@@ -74,17 +76,18 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
                 ["Title"; "Rating"]);
             clear navigationCleanup
 
-            % Depict figure-only menus and toolbar tools without modifying the editor figure.
+            % Ignore figure-only tools while retaining ordinary controls on the surface.
             [toolsDocument, toolsHandles, toolsDiagnostics, toolsPanel] = ...
                 testCase.renderFixture(registry, fixtureFolder, "FigureToolsApp", previewFigure);
             toolsCleanup = onCleanup(@() deleteIfValid(toolsPanel));
             testCase.verifyEmpty(toolsDocument.Diagnostics);
             testCase.verifyEmpty(toolsDiagnostics);
-            testCase.verifyEqual(string(toolsHandles("parsed-FileMenu").Text), "File");
-            testCase.verifyEqual(string(toolsHandles("parsed-ExportMenu").Text), "Export");
-            testCase.verifyEqual(string(toolsHandles("parsed-RefreshTool").Text), "Refresh");
-            testCase.verifyEqual(string(toolsHandles("parsed-PinTool").Text), "Pin");
-            testCase.verifyFalse(toolsHandles("parsed-PinTool").Value);
+            testCase.verifyEqual(double(toolsHandles.Count), 1);
+            testCase.verifyTrue(isKey(toolsHandles, "parsed-PreviewLabel"));
+            testCase.verifyEqual(string(toolsHandles("parsed-PreviewLabel").Text), ...
+                "Figure tools are ignored in Safe Preview.");
+            testCase.verifyFalse(isKey(toolsHandles, "parsed-FileMenu"));
+            testCase.verifyFalse(isKey(toolsHandles, "parsed-Toolbar"));
             clear toolsCleanup previewCleanup
         end
     end

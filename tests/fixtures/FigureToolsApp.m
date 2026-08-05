@@ -9,6 +9,7 @@ classdef FigureToolsApp < matlab.apps.AppBase
         Toolbar matlab.ui.container.Toolbar
         RefreshTool matlab.ui.container.toolbar.PushTool
         PinTool matlab.ui.container.toolbar.ToggleTool
+        PreviewLabel matlab.ui.control.Label
     end
 
     methods (Access = private)
@@ -39,6 +40,11 @@ classdef FigureToolsApp < matlab.apps.AppBase
             app.PinTool = uitoggletool(app.Toolbar);
             app.PinTool.Tooltip = "Pin";
             app.PinTool.State = "off";
+
+            app.PreviewLabel = uilabel(app.UIFigure);
+            app.PreviewLabel.Position = [40 115 340 30];
+            app.PreviewLabel.Text = "Figure tools are ignored in Safe Preview.";
+            app.PreviewLabel.HorizontalAlignment = "center";
 
             app.UIFigure.Visible = "on";
         end

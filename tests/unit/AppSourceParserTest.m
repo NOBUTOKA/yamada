@@ -68,7 +68,7 @@ classdef AppSourceParserTest < matlab.unittest.TestCase
             % Keep each registry category covered by a non-executing source fixture.
             fixtureNames = ["ControlGalleryApp.m", "NavigationDataApp.m", ...
                 "AxesExplorerApp.m", "FigureToolsApp.m"];
-            expectedComponentCounts = [16 19 5 8];
+            expectedComponentCounts = [16 19 5 9];
             registry = macd.model.ComponentRegistry.createDefault();
 
             % Verify class identity and lossless structural recovery per fixture.

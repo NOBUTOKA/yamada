@@ -167,8 +167,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.focusEditor();
                 return
             end
-            app.openDocument(string(fullfile(folder, fileName)));
             app.focusEditor();
+            app.openDocument(string(fullfile(folder, fileName)));
         end
 
         function saveAsButtonPushed(app)
