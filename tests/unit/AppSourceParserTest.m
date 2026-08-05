@@ -107,6 +107,46 @@ classdef AppSourceParserTest < matlab.unittest.TestCase
                 testCase.verifyNotEmpty(caughtException);
             end
         end
+
+        function parseFileRejectsInvalidUtf8(testCase)
+            % parseFileRejectsInvalidUtf8 Block source that cannot decode losslessly.
+
+            % Write a malformed byte after an otherwise plausible AppBase header.
+            sourceBytes = [unicode2native( ...
+                "classdef EncodingApp < matlab.apps.AppBase", "UTF-8") ...
+                uint8(255)];
+            fixturePath = AppSourceParserTest.writeTemporaryBytes(sourceBytes);
+            cleanup = onCleanup(@() deleteIfPresent(fixturePath));
+            registry = macd.model.ComponentRegistry.createDefault();
+
+            % Report an error without constructing editable component records.
+            [document, diagnostics] = macd.source.AppSourceParser.parseFile( ...
+                fixturePath, registry);
+            encodingDiagnostic = diagnostics([diagnostics.Code] == "invalid-utf8");
+            testCase.verifyEqual(encodingDiagnostic.Severity, "error");
+            testCase.verifyEmpty(document.Components);
+            clear cleanup
+        end
+
+        function parseFilePreservesLfLineEndings(testCase)
+            % parseFilePreservesLfLineEndings Keep the opened source convention.
+
+            % Store a valid UTF-8 AppBase source using LF line endings only.
+            source = strjoin(["classdef LfApp < matlab.apps.AppBase", ...
+                "properties", "UIFigure matlab.ui.Figure", "end", "methods", ...
+                "function createComponents(app)", ...
+                "app.UIFigure = uifigure();", "end", "end", "end"], newline) + ...
+                newline;
+            fixturePath = AppSourceParserTest.writeTemporaryBytes( ...
+                unicode2native(source, "UTF-8"));
+            cleanup = onCleanup(@() deleteIfPresent(fixturePath));
+            registry = macd.model.ComponentRegistry.createDefault();
+
+            % Do not normalize an opened LF source to the new-document default.
+            document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
+            testCase.verifyEqual(document.LineEnding, "LF");
+            clear cleanup
+        end
     end
 
     methods (Static, Access = private)
@@ -124,7 +164,36 @@ classdef AppSourceParserTest < matlab.unittest.TestCase
             testRoot = fileparts(fileparts(testPath));
             result = string(fullfile(testRoot, "fixtures", name));
         end
+
+        function filePath = writeTemporaryBytes(bytes)
+            % writeTemporaryBytes Create one isolated raw-byte parser fixture.
+            arguments (Input)
+                bytes uint8
+            end
+            arguments (Output)
+                filePath string
+            end
+
+            % Preserve the requested test bytes without text-mode translation.
+            filePath = string(tempname) + ".m";
+            fileId = fopen(filePath, "wb");
+            cleanup = onCleanup(@() fclose(fileId));
+            fwrite(fileId, bytes, "uint8");
+            clear cleanup
+        end
     end
+end
+
+function deleteIfPresent(filePath)
+% deleteIfPresent Remove a temporary parser fixture when it remains on disk.
+arguments (Input)
+    filePath string
+end
+
+% Keep cleanup idempotent after a test interruption or partial setup.
+if isfile(filePath)
+    delete(filePath);
+end
 end
 
 %{

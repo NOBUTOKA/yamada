@@ -167,7 +167,7 @@ Package boundaries may be adjusted during the first implementation slice, but pa
 - [x] Define diagnostics, source spans, property entries, component records, the document model, and the component registry.
 - [x] Create an empty AppBase model with a root `uifigure`.
 - [x] Generate a runnable minimal class.
-- [x] Validate class names, component names, hierarchy, safe literals, UTF-8 without BOM, CRLF, and GPL notices.
+- [x] Validate class names, component names, hierarchy, safe literals, generated UTF-8 without BOM and CRLF output, and GPL notices.
 
 Phase 1 uses a data-driven boundary between component records and typed component
 definitions. A component record stores a factory name, declared MATLAB type,
@@ -206,6 +206,12 @@ and continuations before the AppBase parser recognizes its limited structural
 subset. `AppSourceParser` retains the original decoded source, file path, line
 ending convention, component and property source spans, typed unknown source
 regions, and diagnostics in the shared document model.
+
+Opened source files must be valid UTF-8. The parser reports invalid UTF-8 as a
+blocking error and does not create editable component records, preventing a
+lossy write-back. It retains the source file's detected line-ending convention
+(`CRLF`, `LF`, or `None`) for future round-trip output; CRLF is only the default
+for newly generated documents.
 
 The parser accepts only Registry-supported direct factory calls and direct
 `app.Component.Property = value` assignments. A conservative literal parser

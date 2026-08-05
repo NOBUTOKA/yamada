@@ -28,9 +28,9 @@ classdef DocumentModel < handle
             macd.model.UnknownSourceRegion.empty
         % PendingEdits - Structured edits awaiting source application.
         PendingEdits cell = {}
-        % Encoding - Text encoding used when the document is written.
+        % Encoding - Encoding preserved for opened source or used for new output.
         Encoding string = "UTF-8"
-        % LineEnding - Named line-ending policy used by source output.
+        % LineEnding - Convention preserved for opened source or used for new output.
         LineEnding string = "CRLF"
         % Metadata - Extensible document data not interpreted by the core model.
         Metadata struct = struct()

@@ -24,14 +24,30 @@ classdef AppSourceParser
                 diagnostics macd.model.Diagnostic
             end
 
-            % Read bytes directly so the source snapshot is never executed.
+            % Read and validate UTF-8 bytes without executing input source.
             [bytes, readDiagnostic] = macd.source.AppSourceParser.readBytes(filePath);
             hasBom = numel(bytes) >= 3 && ...
                 isequal(bytes(1:3), uint8([239 187 191]));
             if hasBom
                 bytes = bytes(4:end);
             end
+            isValidUtf8 = macd.source.AppSourceParser.isValidUtf8(bytes);
             source = string(native2unicode(bytes, "UTF-8"));
+
+            % Block editing when decoding would irreversibly replace input bytes.
+            if ~isValidUtf8
+                document = macd.model.DocumentModel("ParsedApp");
+                document.FilePath = filePath;
+                document.OriginalText = source;
+                document.Encoding = "UTF-8";
+                document.LineEnding = macd.source.AppSourceParser.lineEnding(source);
+                diagnostics = macd.source.AppSourceParser.diagnostic( ...
+                    "invalid-utf8", "error", ...
+                    "Input source is not valid UTF-8 and cannot be edited safely.", ...
+                    "", macd.model.SourceSpan.empty);
+                document.Diagnostics = diagnostics;
+                return
+            end
 
             % Parse decoded text and append file-format diagnostics afterwards.
             [document, diagnostics] = macd.source.AppSourceParser.parseText( ...
@@ -247,6 +263,21 @@ classdef AppSourceParser
             cleanup = onCleanup(@() fclose(fileId));
             bytes = fread(fileId, Inf, "*uint8")';
             clear cleanup
+        end
+
+        function result = isValidUtf8(bytes)
+            % isValidUtf8 Return true when bytes round-trip through UTF-8 unchanged.
+            arguments (Input)
+                bytes uint8
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            % Reject input that decoding would replace with a different byte sequence.
+            decoded = native2unicode(bytes, "UTF-8");
+            encoded = unicode2native(decoded, "UTF-8");
+            result = isequal(bytes, encoded);
         end
 
         function [className, isAppBase] = findAppBaseClass(statements)
