@@ -25,8 +25,13 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         HierarchyTree matlab.ui.container.Tree
         PreviewPanel matlab.ui.container.Panel
         InspectorTable matlab.ui.control.Table
+        DiagnosticsDrawer matlab.ui.container.Panel
+        DiagnosticsGrid matlab.ui.container.GridLayout
+        DiagnosticsSummaryLabel matlab.ui.control.Label
+        DiagnosticsToggleButton matlab.ui.control.Button
         DiagnosticsTable matlab.ui.control.Table
         StatusLabel matlab.ui.control.Label
+        DiagnosticsExpanded logical = false
     end
 
     methods
@@ -90,11 +95,24 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 "ColumnEditable", [false false false]);
             app.InspectorTable.Layout.Row = 2;
             app.InspectorTable.Layout.Column = 3;
-            app.DiagnosticsTable = uitable(app.MainGrid, ...
+            app.DiagnosticsDrawer = uipanel(app.MainGrid, "Title", "Diagnostics");
+            app.DiagnosticsDrawer.Layout.Row = 3;
+            app.DiagnosticsDrawer.Layout.Column = [1 3];
+            app.DiagnosticsGrid = uigridlayout(app.DiagnosticsDrawer, [2 2]);
+            app.DiagnosticsGrid.RowHeight = {30, "1x"};
+            app.DiagnosticsGrid.ColumnWidth = {"1x", 100};
+            app.DiagnosticsSummaryLabel = uilabel(app.DiagnosticsGrid, ...
+                "Text", "No diagnostics");
+            app.DiagnosticsToggleButton = uibutton(app.DiagnosticsGrid, ...
+                "Text", "Show", ...
+                "ButtonPushedFcn", @(~, ~) app.toggleDiagnostics());
+            app.DiagnosticsToggleButton.Layout.Column = 2;
+            app.DiagnosticsTable = uitable(app.DiagnosticsGrid, ...
                 "ColumnName", {"Severity", "Code", "Component", "Message"}, ...
                 "ColumnEditable", [false false false false]);
-            app.DiagnosticsTable.Layout.Row = 3;
-            app.DiagnosticsTable.Layout.Column = [1 3];
+            app.DiagnosticsTable.Layout.Row = 2;
+            app.DiagnosticsTable.Layout.Column = [1 2];
+            app.setDiagnosticsDrawer(false);
         end
 
         function createMenus(app)
@@ -426,6 +444,20 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 data{index, 4} = char(diagnostic.Message);
             end
             app.DiagnosticsTable.Data = data;
+            errorCount = 0;
+            warningCount = 0;
+            for index = 1:numel(diagnostics)
+                errorCount = errorCount + (diagnostics(index).Severity == "error");
+                warningCount = warningCount + (diagnostics(index).Severity == "warning");
+            end
+            if errorCount > 0 || warningCount > 0
+                app.DiagnosticsSummaryLabel.Text = compose( ...
+                    "%d error(s), %d warning(s)", errorCount, warningCount);
+                app.setDiagnosticsDrawer(true);
+            else
+                app.DiagnosticsSummaryLabel.Text = "No diagnostics";
+                app.setDiagnosticsDrawer(false);
+            end
         end
 
         function [source, diagnostics] = generateSource(app)
@@ -519,6 +551,36 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.SaveMenuItem.Enable = "on";
             else
                 app.SaveMenuItem.Enable = "off";
+            end
+        end
+
+        function toggleDiagnostics(app)
+            % toggleDiagnostics Toggle the diagnostics drawer near its summary.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            % Preserve the current diagnostics while changing only the drawer state.
+            app.setDiagnosticsDrawer(~app.DiagnosticsExpanded);
+        end
+
+        function setDiagnosticsDrawer(app, isExpanded)
+            % setDiagnosticsDrawer Show or collapse the diagnostics table drawer.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                isExpanded (1, 1) logical
+            end
+
+            % Resize the bottom grid row so collapsed diagnostics do not consume space.
+            app.DiagnosticsExpanded = isExpanded;
+            if isExpanded
+                app.MainGrid.RowHeight = {38, "1x", 150};
+                app.DiagnosticsTable.Visible = "on";
+                app.DiagnosticsToggleButton.Text = "Hide";
+            else
+                app.MainGrid.RowHeight = {38, "1x", 34};
+                app.DiagnosticsTable.Visible = "off";
+                app.DiagnosticsToggleButton.Text = "Show";
             end
         end
     end
