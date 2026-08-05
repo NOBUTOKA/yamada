@@ -8,13 +8,15 @@ classdef AppSourceParser
     %   Example:
     %       registry = macd.model.ComponentRegistry.createDefault();
     %       document = macd.source.AppSourceParser.parseFile( ...
-    %           "SimpleCalculatorApp.m", registry);
+    %           "ExampleApp.m", registry);
+
+    %#ok<*AGROW> Parsed source findings are intentionally accumulated in source order.
 
     methods (Static)
         function [document, diagnostics] = parseFile(filePath, registry)
             % parseFile Read UTF-8 AppBase source and parse it without execution.
             arguments (Input)
-                filePath string
+                filePath (1, 1) string {mustBeFile}
                 registry (1, 1) macd.model.ComponentRegistry
             end
             arguments (Output)
@@ -94,10 +96,10 @@ classdef AppSourceParser
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "unsupported-factory", "warning", ...
                         "Component factory is not registered and was retained as source.", ...
-                        creation.Name, statement.Span); %#ok<AGROW>
+                        creation.Name, statement.Span);
                     document.UnknownRegions(end + 1) = ...
                         macd.model.UnknownSourceRegion( ...
-                        statement.Text, statement.Span, "unsupported-factory"); %#ok<AGROW>
+                        statement.Text, statement.Span, "unsupported-factory");
                     continue
                 end
 
@@ -108,10 +110,10 @@ classdef AppSourceParser
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "nonliteral-creation-argument", "warning", ...
                         "Component creation has an unsupported argument and was retained as source.", ...
-                        creation.Name, statement.Span); %#ok<AGROW>
+                        creation.Name, statement.Span);
                     document.UnknownRegions(end + 1) = ...
                         macd.model.UnknownSourceRegion( ...
-                        statement.Text, statement.Span, "nonliteral-creation-argument"); %#ok<AGROW>
+                        statement.Text, statement.Span, "nonliteral-creation-argument");
                     continue
                 end
 
@@ -127,7 +129,7 @@ classdef AppSourceParser
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "missing-component-declaration", "warning", ...
                         "Component creation has no matching property declaration.", ...
-                        creation.Name, statement.Span); %#ok<AGROW>
+                        creation.Name, statement.Span);
                 end
                 parentId = "";
                 if strlength(parentName) > 0
@@ -136,10 +138,10 @@ classdef AppSourceParser
                         diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                             "missing-parent", "warning", ...
                             "Component parent is not available from supported prior source.", ...
-                            creation.Name, statement.Span); %#ok<AGROW>
+                            creation.Name, statement.Span);
                         document.UnknownRegions(end + 1) = ...
                             macd.model.UnknownSourceRegion( ...
-                            statement.Text, statement.Span, "missing-parent"); %#ok<AGROW>
+                            statement.Text, statement.Span, "missing-parent");
                         continue
                     end
                     parentId = parent.Id;
@@ -157,10 +159,10 @@ classdef AppSourceParser
                 catch exception
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "invalid-component-creation", "warning", exception.message, ...
-                        creation.Name, statement.Span); %#ok<AGROW>
+                        creation.Name, statement.Span);
                     document.UnknownRegions(end + 1) = ...
                         macd.model.UnknownSourceRegion( ...
-                        statement.Text, statement.Span, "invalid-component-creation"); %#ok<AGROW>
+                        statement.Text, statement.Span, "invalid-component-creation");
                 end
             end
 
@@ -176,10 +178,10 @@ classdef AppSourceParser
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "unknown-assignment-component", "warning", ...
                         "Property assignment has no supported component record.", ...
-                        assignment.ComponentName, statement.Span); %#ok<AGROW>
+                        assignment.ComponentName, statement.Span);
                     document.UnknownRegions(end + 1) = ...
                         macd.model.UnknownSourceRegion( ...
-                        statement.Text, statement.Span, "unknown-assignment-component"); %#ok<AGROW>
+                        statement.Text, statement.Span, "unknown-assignment-component");
                     continue
                 end
 
@@ -189,10 +191,10 @@ classdef AppSourceParser
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "assignment-before-creation", "warning", ...
                         "Property assignment precedes supported component creation and was retained as source.", ...
-                        component.Id, statement.Span); %#ok<AGROW>
+                        component.Id, statement.Span);
                     document.UnknownRegions(end + 1) = ...
                         macd.model.UnknownSourceRegion( ...
-                        statement.Text, statement.Span, "assignment-before-creation"); %#ok<AGROW>
+                        statement.Text, statement.Span, "assignment-before-creation");
                     continue
                 end
 
@@ -205,10 +207,10 @@ classdef AppSourceParser
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "source-expression", "warning", ...
                         "Property expression was retained as read-only source text.", ...
-                        component.Id, statement.Span); %#ok<AGROW>
+                        component.Id, statement.Span);
                     document.UnknownRegions(end + 1) = ...
                         macd.model.UnknownSourceRegion( ...
-                        statement.Text, statement.Span, "source-expression"); %#ok<AGROW>
+                        statement.Text, statement.Span, "source-expression");
                 end
                 entry.SourceSpan = statement.Span;
             end
@@ -387,7 +389,7 @@ classdef AppSourceParser
                     isSupported = false;
                     return
                 end
-                values{end + 1} = value; %#ok<AGROW>
+                values{end + 1} = value;
             end
         end
 
@@ -449,7 +451,7 @@ classdef AppSourceParser
                 end
                 if character == ',' && ~inCharacterVector && ~inString && ...
                         parenDepth == 0 && bracketDepth == 0 && braceDepth == 0
-                    elements{end + 1} = text(startOffset:index - 1); %#ok<AGROW>
+                    elements{end + 1} = text(startOffset:index - 1);
                     startOffset = index + 1;
                 end
                 index = index + 1;

@@ -87,6 +87,26 @@ classdef AppSourceParserTest < matlab.unittest.TestCase
             testCase.verifyEqual(document.ClassName, "NonExecutingApp");
             testCase.verifyNotEmpty(document.getComponentByName("UIFigure"));
         end
+
+        function parseFileRejectsMissingPathsAndDirectories(testCase)
+            % parseFileRejectsMissingPathsAndDirectories Validate file inputs early.
+
+            % Supply a nonexistent path and a directory instead of a source file.
+            registry = macd.model.ComponentRegistry.createDefault();
+            missingPath = string(tempname) + ".m";
+            inputPaths = [missingPath string(tempdir)];
+
+            % Confirm argument validation rejects both invalid file-path forms.
+            for inputPath = inputPaths
+                caughtException = MException.empty;
+                try
+                    macd.source.AppSourceParser.parseFile(inputPath, registry);
+                catch exception
+                    caughtException = exception;
+                end
+                testCase.verifyNotEmpty(caughtException);
+            end
+        end
     end
 
     methods (Static, Access = private)
