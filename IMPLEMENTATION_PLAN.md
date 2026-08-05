@@ -271,10 +271,152 @@ registry, parsing, or Safe Preview coverage recorded above.
 
 ### Phase 5: Canvas editing
 
-- Add palette insertion.
-- Add movement and resizing for absolute layouts.
-- Add row, column, and span editing for grid layouts.
-- Add explicit deletion and an undo mechanism or reversible edit history.
+#### Objective
+
+Turn the Phase 4 Safe Preview into an editing canvas without weakening the
+source-preserving boundary. Every canvas action must first mutate the shared
+`DocumentModel`; the hierarchy, inspector, preview, validation, and source
+generators then consume that model. Preview graphics handles are disposable UI
+state and must never be treated as the source of document state.
+
+The first Phase 5 slice covers ordinary persistent visual components that have
+a registry-supported factory, a selected supported parent, and canonical
+parent-first construction. It deliberately excludes the root `uifigure`,
+native menus/toolbars and their child tools, `uitreenode`, and factory styles or
+programmatic-only axes needing dedicated construction rules. Those records
+remain parseable and source-preserved, but their insertion or geometry editing
+will show an actionable unavailable-state message rather than guessing.
+
+#### Model and edit-history contract
+
+1. Add a model-owned component-creation helper that derives the declared type,
+   permitted parent, creation arguments, and safe initial editable properties
+   from `ComponentRegistry`. It will create opaque IDs and collision-free MATLAB
+   property names deterministically, seed an absolute `Position` for ordinary
+   children, and seed `Layout.Row`/`Layout.Column` when the selected parent is a
+   `uigridlayout`. The helper must reject ineligible factory/parent combinations
+   before mutating the document.
+2. Add explicit model operations for insertion, leaf deletion, property changes,
+   and component reattachment. `DocumentModel` remains responsible for the
+   ordered `Components` collection, the reciprocal parent/child links, and
+   `PendingEdits`; UI callbacks must not modify a `ComponentRecord` or its
+   `Children` collection directly.
+3. Represent each successful operation as a reversible, typed edit record in a
+   document-owned history. The record retains the component identity and prior
+   state needed to undo/redo: old/new literal values for property edits; parent
+   ID and sibling index for insert/delete; and the exact pending-deletion intent
+   for parsed leaves. Undoing an insertion removes the generated record without
+   adding a deletion intent; undoing a parsed deletion restores the same record
+   and removes only its matching intent. Redo reapplies the same operation.
+4. Clear the redo branch after a new edit, retain a bounded history, and expose
+   `canUndo`/`canRedo`. History is in-memory editor state: it is reset on New and
+   Open, and a successful Save establishes the new source baseline and clears
+   only history that has been persisted. No source is written by an edit or an
+   undo operation.
+5. Keep current conservative `RoundTripGenerator` ownership checks unchanged.
+   A parsed-component deletion is allowed to enter history but Save/Diff remains
+   blocked if its declaration, creation, property, or external-reference checks
+   are ambiguous. This preserves the existing safe failure mode.
+
+#### Canvas and palette UI
+
+1. Extend the main editor layout with a categorized palette and an edit command
+   surface containing Delete, Undo, and Redo. Categories come from registry
+   `Metadata.Category`; the palette lists only the Phase 5-eligible factories.
+   Selection changes recompute enabled state using the selected component and
+   registry parent rules.
+2. Palette insertion uses the selected component as the parent when valid. If a
+   leaf control is selected, it uses the nearest selected ancestor that is a
+   permitted parent; if none exists, insertion is disabled and the status line
+   explains the valid-parent requirement. This avoids silently moving a
+   component to an unrelated container.
+3. `PreviewRenderer` returns the existing component-ID-to-preview-handle map to
+   the editor. The editor attaches selection and interaction callbacks only to
+   those editor-owned handles after each render. A visible selection adornment is
+   rendered in preview-surface coordinates; it is rebuilt with the preview and
+   never stored in the model or generated source.
+4. Clicking a preview component selects its stable ID, synchronizes the
+   hierarchy and inspector, and does not invoke an application callback. The
+   root surface remains selectable but cannot be deleted or moved by canvas drag.
+5. Delete is always explicit: a toolbar/menu command and the Delete key invoke
+   the same confirmation-free, model-validated leaf deletion command. It is
+   disabled for the root, non-leaves, read-only components, and components whose
+   source safety will be known only at generation time; the latter remain
+   deletable but surface generator diagnostics before Save.
+
+#### Layout editing semantics
+
+1. Classify a selected component by its immediate model parent, not by the
+   preview handle: children of `uigridlayout` use grid editing; all other
+   eligible visual children use absolute editing. Do not mix `Position` with
+   `Layout.*` for a single command.
+2. For absolute children, support drag-to-move and eight-direction resize grips
+   on the selection adornment. Convert pointer deltas from scaled preview pixels
+   back to source pixels using the renderer's current scale, round to integer
+   pixels, constrain width/height to at least one, and clamp the result to the
+   editable parent client rectangle. Commit one history record on mouse release,
+   not one record per pointer-motion event. The inspector updates `Position` as
+   a normal editable literal.
+3. For grid children, expose integer Row, Column, RowSpan, and ColumnSpan
+   controls in the inspector/command surface. Read and write the existing model
+   paths directly (`Layout.Row` and `Layout.Column` accept either scalar or
+   two-element span values); do not edit a temporary `Layout` value. Normalize a
+   scalar to a one-cell span, reject values below one, and validate placement
+   against numeric or currently resolvable grid row/column definitions. Dragging
+   grid children is out of scope for this slice, so grid placement remains
+   explicit and predictable.
+4. If a parsed layout value is a nonliteral expression, retain it read-only and
+   disable the relevant editing control. If dimensions use flexible forms that
+   cannot be resolved safely (for example `"1x"`, `"fit"`, or expression-backed
+   definitions), permit only positive coordinates and defer occupancy/bounds
+   diagnostics to a later layout-aware phase; never coerce or rewrite the grid
+   definition.
+
+#### Validation, diagnostics, and generation
+
+1. Extend validation with editor-facing diagnostics for invalid insertion parent,
+   unsupported palette factory, nonleaf/root deletion, malformed `Position`,
+   malformed grid coordinate/span, and grid placement that is provably outside a
+   numeric layout. Existing source-generation errors remain authoritative for
+   parsed-source ownership.
+2. After every committed edit, refresh validation, hierarchy, preview,
+   inspector, diagnostics, command enablement, and Save state from the model.
+   A failed edit makes no model or history change and reports its reason in the
+   status/diagnostics area.
+3. Reuse the existing generators. New documents emit added components in normal
+   generation order. Parsed documents use the existing anchored insertion and
+   conservative deletion paths; Phase 5 must add focused round-trip tests for
+   palette-created components, position edits, grid-layout edits, undo, and
+   redo, proving localized source diffs.
+
+#### Tests and visual verification
+
+1. Add model tests for deterministic default creation, unique names, allowed
+   parents, reversible insertion/deletion, property undo/redo, redo-branch
+   clearing, and preservation/removal of matching pending-deletion intents.
+2. Add editor interaction tests that construct the editor, `drawnow`, invoke
+   callbacks or testable command methods, assert the model and enabled states,
+   and delete every fixture. Test absolute coordinate scaling separately from
+   the renderer so Safe Preview scaling cannot leak into generated `Position`.
+3. Add generator tests for localized `Position`, `Layout.Row`, and
+   `Layout.Column` replacements plus insertion/deletion after undo/redo. Keep a
+   no-edit parsed-source test byte-for-byte identical.
+4. Run the relevant MATLAB tests through the interactive licensed account, then
+   follow `VISUAL_VERIFICATION.md` for new-app absolute and grid examples and
+   for at least one parsed fixture. Confirm selection visibility, no callback
+   execution, source-coordinate geometry, grid span behavior, Delete/Undo/Redo,
+   and an intentional unsupported-component message.
+
+#### Delivery sequence
+
+1. Land the model creation, mutation, validation, and reversible-history layer
+   with unit tests.
+2. Land the palette, commands, and selection synchronization on the Safe
+   Preview, with construction/destruction editor tests.
+3. Land absolute geometry editing and its scale-aware tests.
+4. Land grid row/column/span controls and boundary tests.
+5. Finish round-trip coverage, manual visual verification, and an end-to-end
+   MATLAB test run before marking Phase 5 complete.
 
 ### Phase 6: Integration hardening
 
