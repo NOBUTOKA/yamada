@@ -31,7 +31,7 @@ Both workflows must converge on the same component model, editor, validation, an
 3. Create an in-memory component model containing a root `uifigure`.
 4. Add and configure components in the editor.
 5. Validate component names, hierarchy, property values, and generated class structure.
-6. Save a minimal runnable `matlab.apps.AppBase` class as a UTF-8, CRLF `.m` file.
+6. Save a minimal runnable `matlab.apps.AppBase` class as a UTF-8 `.m` file.
 
 ### Open an existing app
 
@@ -129,7 +129,7 @@ Absolute positioning and `uigridlayout` require different editing behavior:
 - Right side: property inspector.
 - Bottom: warnings and errors.
 
-The first version should prioritize clear selection and property editing over visual polish. Delete must always be an explicit command. Save must be disabled when fatal validation or generation diagnostics exist.
+The first version should prioritize clear selection and property editing over visual polish. Delete must always be an explicit command. Save must be disabled when fatal validation or generation diagnostics exist. The save dialog must let users select `CRLF` or `LF` for new output; opened source retains its detected convention by default.
 
 ## Initial supported components
 
@@ -167,7 +167,7 @@ Package boundaries may be adjusted during the first implementation slice, but pa
 - [x] Define diagnostics, source spans, property entries, component records, the document model, and the component registry.
 - [x] Create an empty AppBase model with a root `uifigure`.
 - [x] Generate a runnable minimal class.
-- [x] Validate class names, component names, hierarchy, safe literals, generated UTF-8 without BOM and CRLF output, and GPL notices.
+- [x] Validate class names, component names, hierarchy, safe literals, generated UTF-8 without BOM output, host-default line endings, and GPL notices.
 
 Phase 1 uses a data-driven boundary between component records and typed component
 definitions. A component record stores a factory name, declared MATLAB type,
@@ -210,8 +210,9 @@ regions, and diagnostics in the shared document model.
 Opened source files must be valid UTF-8. The parser reports invalid UTF-8 as a
 blocking error and does not create editable component records, preventing a
 lossy write-back. It retains the source file's detected line-ending convention
-(`CRLF`, `LF`, or `None`) for future round-trip output; CRLF is only the default
-for newly generated documents.
+(`CRLF`, `LF`, or `None`) for future round-trip output. New documents use CRLF
+on Windows and LF on Linux or macOS; the future save dialog will let the user
+choose either convention for new output.
 
 The parser accepts only Registry-supported direct factory calls and direct
 `app.Component.Property = value` assignments. A conservative literal parser
@@ -271,7 +272,7 @@ The MVP is complete when a user can:
 4. Make at least one safe property edit and obtain a localized text diff.
 5. Add and delete a supported component where source ownership is unambiguous.
 6. Receive actionable warnings instead of source loss for unsupported constructs.
-7. Save UTF-8 without BOM, CRLF source that remains reviewable in Git.
+7. Save UTF-8 without BOM source using a chosen line-ending convention that remains reviewable in Git.
 
 ## Known risks
 

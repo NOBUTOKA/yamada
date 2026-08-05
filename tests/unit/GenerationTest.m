@@ -37,7 +37,11 @@ classdef GenerationTest < matlab.unittest.TestCase
                 "% GeneratedApp Construct and register the application.");
             testCase.verifySubstring(source, "registerApp(app, app.UIFigure);");
             testCase.verifySubstring(source, "delete(app.UIFigure);");
-            testCase.verifyEmpty(regexp(source, "(?<!\r)\n", "once"));
+            if ispc
+                testCase.verifyEmpty(regexp(source, "(?<!\r)\n", "once"));
+            else
+                testCase.verifyEmpty(regexp(source, "\r", "once"));
+            end
             testCase.verifyEmpty(regexp(source, "GNU General Public License", "once"));
         end
 
@@ -78,8 +82,8 @@ classdef GenerationTest < matlab.unittest.TestCase
             testCase.verifyEqual(diagnostics(1).Code, "invalid-class-name");
         end
 
-        function writerUsesUtf8WithoutBomAndCrlf(testCase)
-            % writerUsesUtf8WithoutBomAndCrlf Verify exact output bytes.
+        function writerUsesUtf8WithoutBomAndRequestedLineEnding(testCase)
+            % writerUsesUtf8WithoutBomAndRequestedLineEnding Verify exact output bytes.
 
             % Prepare Unicode source and a recoverable temporary target.
             filePath = string(tempname) + ".m";
@@ -89,18 +93,18 @@ classdef GenerationTest < matlab.unittest.TestCase
                 japaneseText);
 
             % Read raw bytes so encoding and newline assertions are independent.
-            macd.source.SourceWriter.write(filePath, source);
+            macd.source.SourceWriter.write(filePath, source, "LF");
             fileId = fopen(filePath, "r");
             closeFile = onCleanup(@() fclose(fileId));
             bytes = fread(fileId, Inf, "*uint8")';
 
-            % Verify BOM absence, Unicode fidelity, and exact CRLF normalization.
+            % Verify BOM absence, Unicode fidelity, and exact LF normalization.
             testCase.verifyFalse(numel(bytes) >= 3 && ...
                 isequal(bytes(1:3), uint8([239 187 191])));
             text = string(native2unicode(bytes, "UTF-8"));
             testCase.verifySubstring(text, "Japanese text: " + japaneseText);
-            testCase.verifyEmpty(regexp(text, "(?<!\r)\n", "once"));
-            expected = regexprep(source, "\r\n|\r|\n", sprintf("\r\n"));
+            testCase.verifyEmpty(regexp(text, "\r", "once"));
+            expected = regexprep(source, "\r\n|\r|\n", newline);
             testCase.verifyEqual(text, expected);
             clear closeFile cleanup
         end

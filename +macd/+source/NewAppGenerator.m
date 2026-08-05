@@ -167,10 +167,36 @@ classdef NewAppGenerator
                 compose("            delete(app.%s);", root.Name), ...
                 "        end", "    end", "end"];
 
-            % Store the exact CRLF preview on the shared document model.
-            source = strjoin(lines, sprintf("\r\n")) + sprintf("\r\n");
+            % Store a preview using the document's selected source convention.
+            lineEnding = macd.source.NewAppGenerator.lineEndingText( ...
+                document.LineEnding);
+            source = strjoin(lines, lineEnding) + lineEnding;
             document.GeneratedText = source;
             document.Diagnostics = diagnostics;
+        end
+    end
+
+    methods (Static, Access = private)
+        function result = lineEndingText(convention)
+            % lineEndingText Convert one named source convention into its text.
+            arguments (Input)
+                convention (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) string
+            end
+
+            % Reject conventions that cannot delimit a generated multi-line class.
+            switch convention
+                case "CRLF"
+                    result = sprintf("\r\n");
+                case "LF"
+                    result = newline;
+                otherwise
+                    error("macd:NewAppGenerator:UnsupportedLineEnding", ...
+                        "Line ending convention ""%s"" is not supported for generation.", ...
+                        convention);
+            end
         end
     end
 end

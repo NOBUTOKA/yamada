@@ -13,6 +13,11 @@ classdef ModelTest < matlab.unittest.TestCase
             document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
 
             testCase.verifyEqual(numel(document.Components), 1);
+            if ispc
+                testCase.verifyEqual(document.LineEnding, "CRLF");
+            else
+                testCase.verifyEqual(document.LineEnding, "LF");
+            end
             testCase.verifyClass(document.Components, ...
                 "macd.model.ComponentRecord");
             root = document.getComponent(document.RootComponentId);

@@ -26,6 +26,7 @@ classdef NewAppFactory
             % Create the shared document and registry-backed root record.
             definition = registry.get("uifigure");
             document = macd.model.DocumentModel(className);
+            document.LineEnding = macd.model.NewAppFactory.defaultLineEnding();
             root = macd.model.ComponentRecord( ...
                 macd.model.NewAppFactory.createId(), "UIFigure", ...
                 definition.Factory, definition.DeclaredType, "generated");
@@ -40,6 +41,20 @@ classdef NewAppFactory
     end
 
     methods (Static, Access = private)
+        function result = defaultLineEnding()
+            % defaultLineEnding Return the host platform convention for new files.
+            arguments (Output)
+                result (1, 1) string
+            end
+
+            % Match the conventional line ending used for new local text files.
+            if ispc
+                result = "CRLF";
+            else
+                result = "LF";
+            end
+        end
+
         function id = createId()
             % createId Create a stable opaque identifier for a new component.
             arguments (Output)
