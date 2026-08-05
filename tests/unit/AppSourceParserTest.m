@@ -62,6 +62,29 @@ classdef AppSourceParserTest < matlab.unittest.TestCase
                 "source-expression"));
         end
 
+        function parsesExtendedComponentFixtures(testCase)
+            % parsesExtendedComponentFixtures Parse representative component sets.
+
+            % Keep each registry category covered by a non-executing source fixture.
+            fixtureNames = ["ControlGalleryApp.m", "NavigationDataApp.m", ...
+                "AxesExplorerApp.m", "FigureToolsApp.m"];
+            expectedComponentCounts = [16 19 5 8];
+            registry = macd.model.ComponentRegistry.createDefault();
+
+            % Verify class identity and lossless structural recovery per fixture.
+            for index = 1:numel(fixtureNames)
+                fixturePath = AppSourceParserTest.fixturePath(fixtureNames(index));
+                [document, diagnostics] = macd.source.AppSourceParser.parseFile( ...
+                    fixturePath, registry);
+                expectedClassName = erase(fixtureNames(index), ".m");
+                testCase.verifyEqual(document.ClassName, expectedClassName);
+                testCase.verifyEqual(numel(document.Components), ...
+                    expectedComponentCounts(index));
+                testCase.verifyFalse( ...
+                    macd.validation.ModelValidator.hasErrors(diagnostics));
+            end
+        end
+
         function parserNeverExecutesInputSource(testCase)
             % parserNeverExecutesInputSource Check parsing remains read-only.
 
