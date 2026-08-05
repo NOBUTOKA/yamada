@@ -16,6 +16,71 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
                 testCase.compareFixture(string(fixture.Path));
             end
         end
+
+        function safePreviewRendersExtendedFixtureSemantics(testCase)
+            % safePreviewRendersExtendedFixtureSemantics Cover string lists, axes, and tools.
+
+            % Render the source-derived models without executing any of these fixtures.
+            registry = macd.model.ComponentRegistry.createDefault();
+            testPath = mfilename("fullpath");
+            fixtureFolder = fullfile(fileparts(fileparts(fileparts(testPath))), ...
+                "tests", "fixtures");
+            previewFigure = uifigure("Visible", "off", ...
+                "Position", [100 100 900 700]);
+            previewCleanup = onCleanup(@() deleteIfValid(previewFigure));
+
+            % Verify string-array literals populate the control text shown in preview.
+            [controlDocument, controlHandles, controlDiagnostics, controlPanel] = ...
+                testCase.renderFixture(registry, fixtureFolder, "ControlGalleryApp", previewFigure);
+            controlCleanup = onCleanup(@() deleteIfValid(controlPanel));
+            testCase.verifyEmpty(controlDocument.Diagnostics);
+            testCase.verifyEmpty(controlDiagnostics);
+            testCase.verifyEqual(string(controlHandles("parsed-ThemeDropDown").Items), ...
+                ["Light", "Dark", "System"]);
+            testCase.verifyEqual(string(controlHandles("parsed-NotesTextArea").Value), ...
+                ["A multi-line"; "notes field"]);
+            testCase.verifyEqual(string(controlHandles("parsed-GainKnob").Items), ...
+                ["0", "2", "4", "6", "8", "10"]);
+            testCase.verifyEqual(string(controlHandles("parsed-ModeSwitch").Items), ...
+                ["Manual", "Auto"]);
+            clear controlCleanup
+
+            % Keep pixel axes proportional to the fitted figure surface.
+            [axesDocument, axesHandles, axesDiagnostics, axesPanel] = ...
+                testCase.renderFixture(registry, fixtureFolder, "AxesExplorerApp", previewFigure);
+            axesCleanup = onCleanup(@() deleteIfValid(axesPanel));
+            testCase.verifyEmpty(axesDocument.Diagnostics);
+            testCase.verifyEmpty(axesDiagnostics);
+            scale = axesHandles("parsed-UIAxes").Position(3) / 340;
+            testCase.verifyEqual(axesHandles("parsed-UIAxes").Position, ...
+                [20 230 340 180] .* scale, "AbsTol", 1e-10);
+            testCase.verifyEqual(axesHandles("parsed-StandardAxes").Position, ...
+                [0.55 0.55 0.35 0.35]);
+            clear axesCleanup
+
+            % Parse the table headers rather than retaining their source expression.
+            [navigationDocument, navigationHandles, navigationDiagnostics, navigationPanel] = ...
+                testCase.renderFixture(registry, fixtureFolder, "NavigationDataApp", previewFigure);
+            navigationCleanup = onCleanup(@() deleteIfValid(navigationPanel));
+            testCase.verifyEmpty(navigationDocument.Diagnostics);
+            testCase.verifyEmpty(navigationDiagnostics);
+            testCase.verifyEqual(string(navigationHandles("parsed-CatalogTable").ColumnName), ...
+                ["Title"; "Rating"]);
+            clear navigationCleanup
+
+            % Depict figure-only menus and toolbar tools without modifying the editor figure.
+            [toolsDocument, toolsHandles, toolsDiagnostics, toolsPanel] = ...
+                testCase.renderFixture(registry, fixtureFolder, "FigureToolsApp", previewFigure);
+            toolsCleanup = onCleanup(@() deleteIfValid(toolsPanel));
+            testCase.verifyEmpty(toolsDocument.Diagnostics);
+            testCase.verifyEmpty(toolsDiagnostics);
+            testCase.verifyEqual(string(toolsHandles("parsed-FileMenu").Text), "File");
+            testCase.verifyEqual(string(toolsHandles("parsed-ExportMenu").Text), "Export");
+            testCase.verifyEqual(string(toolsHandles("parsed-RefreshTool").Text), "Refresh");
+            testCase.verifyEqual(string(toolsHandles("parsed-PinTool").Text), "Pin");
+            testCase.verifyFalse(toolsHandles("parsed-PinTool").Value);
+            clear toolsCleanup previewCleanup
+        end
     end
 
     methods (Access = private)
@@ -81,6 +146,31 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
             actualValue = PreviewRendererTest.propertyValue(actual, path);
             testCase.verifyEqual(PreviewRendererTest.normalizeText(previewValue), ...
                 PreviewRendererTest.normalizeText(actualValue), context);
+        end
+
+        function [document, handles, diagnostics, panel] = renderFixture( ...
+                testCase, registry, fixtureFolder, fixtureName, previewFigure)
+            % renderFixture Render one maintained fixture into a disposable preview panel.
+            arguments (Input)
+                testCase (1, 1) PreviewRendererTest %#ok<INUSA>
+                registry (1, 1) macd.model.ComponentRegistry
+                fixtureFolder (1, 1) string
+                fixtureName (1, 1) string
+                previewFigure (1, 1) matlab.ui.Figure
+            end
+            arguments (Output)
+                document (1, 1) macd.model.DocumentModel
+                handles containers.Map
+                diagnostics macd.model.Diagnostic
+                panel (1, 1) matlab.ui.container.Panel
+            end
+
+            % Keep each fixture isolated while sharing a stable editor-sized surface.
+            document = macd.source.AppSourceParser.parseFile( ...
+                fullfile(fixtureFolder, fixtureName + ".m"), registry);
+            panel = uipanel(previewFigure, "Position", [1 1 900 700]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
         end
     end
 

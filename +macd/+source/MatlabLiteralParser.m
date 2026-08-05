@@ -1,7 +1,7 @@
 classdef MatlabLiteralParser
     % MatlabLiteralParser Parse a conservative non-evaluating literal subset.
-    %   This static utility accepts scalar text, logicals, real numeric matrices,
-    %   and row cell arrays of supported literals. All other expressions are
+    %   This static utility accepts scalar text, logicals, real numeric and string
+    %   matrices, and row cell arrays of supported literals. All other expressions are
     %   rejected so callers can retain them as source-backed text.
     %
     %   Example:
@@ -59,6 +59,10 @@ classdef MatlabLiteralParser
             if source(1) == '[' && source(end) == ']'
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parseMatrix( ...
                     source(2:end - 1));
+                if ~isLiteral
+                    [value, isLiteral] = macd.source.MatlabLiteralParser.parseStringMatrix( ...
+                        source(2:end - 1));
+                end
                 return
             end
             if source(1) == '{' && source(end) == '}'
@@ -152,6 +156,55 @@ classdef MatlabLiteralParser
                 end
                 value{index} = element;
             end
+            isLiteral = true;
+        end
+
+        function [value, isLiteral] = parseStringMatrix(text)
+            % parseStringMatrix Parse a rectangular matrix of quoted text literals.
+            arguments (Input)
+                text char
+            end
+            arguments (Output)
+                value string
+                isLiteral logical
+            end
+
+            % Keep each element quoted so no identifiers or expressions are accepted.
+            value = strings(0, 0);
+            isLiteral = false;
+            rows = macd.source.MatlabLiteralParser.splitTopLevel(text, ';');
+            rowValues = cell(1, numel(rows));
+            columnCount = [];
+            for rowIndex = 1:numel(rows)
+                elements = macd.source.MatlabLiteralParser.splitTopLevel(rows{rowIndex}, ',');
+                if isscalar(elements)
+                    elements = regexp(strtrim(rows{rowIndex}), '(?:''(?:[^'']|'''')*''|"(?:[^"]|"")*")', ...
+                        'match');
+                    remainder = regexprep(strtrim(rows{rowIndex}), ...
+                        '(?:''(?:[^'']|'''')*''|"(?:[^"]|"")*")', '');
+                    if isempty(elements) || ~isempty(regexprep(remainder, '\s', ''))
+                        return
+                    end
+                end
+                values = strings(1, numel(elements));
+                for elementIndex = 1:numel(elements)
+                    [element, isElementLiteral] = macd.source.MatlabLiteralParser.parse( ...
+                        string(elements{elementIndex}));
+                    if ~isElementLiteral || ~isstring(element) || ~isscalar(element)
+                        return
+                    end
+                    values(elementIndex) = element;
+                end
+                if isempty(columnCount)
+                    columnCount = numel(values);
+                elseif numel(values) ~= columnCount
+                    return
+                end
+                rowValues{rowIndex} = values;
+            end
+
+            % Concatenate only after every row is composed entirely of text literals.
+            value = vertcat(rowValues{:});
             isLiteral = true;
         end
 
