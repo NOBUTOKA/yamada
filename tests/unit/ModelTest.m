@@ -71,6 +71,8 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyEqual(registry.get("uislider").Metadata.SupportedStyles, ...
                 ["slider", "range"]);
             testCase.verifyTrue(registry.get("uitreenode").Metadata.RequiresParentComponent);
+            testCase.verifyTrue(any(registry.get("uigridlayout").AllowedParentFactories == ...
+                "uigridlayout"));
         end
 
         function registryAcceptsFutureComponentDefinitions(testCase)

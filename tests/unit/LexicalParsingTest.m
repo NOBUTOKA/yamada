@@ -32,6 +32,7 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             testCase.verifyEqual(numel(statements), 1);
             testCase.verifySubstring(statements.Text, "createCallbackFcn(");
             testCase.verifySubstring(statements.Text, "@Callback");
+            testCase.verifyFalse(contains(statements.Text, "..."));
         end
 
         function literalParserAcceptsSafeValuesWithoutEvaluation(testCase)

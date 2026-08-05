@@ -114,18 +114,23 @@ classdef MatlabLexicalScanner
                     continue
                 end
 
-                % A top-level newline completes non-continuation statements.
-                if character == newline && ~inCharacterVector && ~inString && ...
-                        parenDepth == 0 && bracketDepth == 0 && braceDepth == 0
+                % Remove continuation markers before considering statement boundaries.
+                if character == newline && ~inCharacterVector && ~inString
                     trimmed = strtrim(buffer);
                     if endsWith(string(trimmed), "...")
                         buffer = [extractBefore(trimmed, strlength(trimmed) - 2) ' '];
-                    else
-                        statements = macd.source.MatlabLexicalScanner.appendStatement( ...
-                            statements, buffer, startOffset, index - 1);
-                        buffer = '';
-                        startOffset = 0;
+                        index = index + 1;
+                        continue
                     end
+                end
+
+                % A top-level newline completes a statement after continuation cleanup.
+                if character == newline && ~inCharacterVector && ~inString && ...
+                        parenDepth == 0 && bracketDepth == 0 && braceDepth == 0
+                    statements = macd.source.MatlabLexicalScanner.appendStatement( ...
+                        statements, buffer, startOffset, index - 1);
+                    buffer = '';
+                    startOffset = 0;
                     index = index + 1;
                     continue
                 end
