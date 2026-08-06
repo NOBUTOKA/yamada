@@ -31,6 +31,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         HierarchyTree matlab.ui.container.Tree
         PreviewPanel matlab.ui.container.Panel
         InspectorTable matlab.ui.control.Table
+        PreviewHandles containers.Map
+        DragComponentId string = ""
+        DragStartPoint double = [0 0]
+        DragStartPosition double = [0 0 0 0]
+        PreviewScale double = 1
         DiagnosticsDrawer matlab.ui.container.Panel
         DiagnosticsGrid matlab.ui.container.GridLayout
         DiagnosticsSummaryLabel matlab.ui.control.Label
@@ -122,7 +127,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.PreviewPanel.Layout.Column = 2;
             app.InspectorTable = uitable(app.MainGrid, ...
                 "ColumnName", {"Property", "Value", "State"}, ...
-                "ColumnEditable", [false false false]);
+                "ColumnEditable", [false true false], ...
+                "CellEditCallback", @(~, event) app.inspectorCellEdited(event));
             app.InspectorTable.Layout.Row = 2;
             app.InspectorTable.Layout.Column = 3;
             app.DiagnosticsDrawer = uipanel(app.MainGrid);
@@ -638,12 +644,183 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             root = app.Document.getComponent(app.Document.RootComponentId);
             app.PreviewPanel.Title = "Safe preview: " + root.Name;
-            [~, diagnostics] = app.PreviewRenderer.render( ...
+            [app.PreviewHandles, diagnostics] = app.PreviewRenderer.render( ...
                 app.Document, app.PreviewPanel);
+            app.updatePreviewScale(root);
+            app.attachPreviewCallbacks();
             if ~isempty(diagnostics)
                 app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
                 app.refreshDiagnostics(app.Document.Diagnostics);
             end
+        end
+
+        function updatePreviewScale(app, root)
+            % updatePreviewScale Recover source-to-preview pixel scale.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                root (1, 1) macd.model.ComponentRecord
+            end
+
+            % The renderer fits the source figure into its editor-owned surface.
+            app.PreviewScale = 1;
+            position = root.getProperty("Position");
+            surfaces = app.PreviewPanel.Children;
+            if isempty(position) || position.ValueKind ~= "literal" || ...
+                    numel(position.LiteralValue) ~= 4 || isempty(surfaces)
+                return
+            end
+            sourceSize = double(position.LiteralValue(3:4));
+            surface = surfaces(1);
+            if sourceSize(1) > 0 && sourceSize(2) > 0 && ...
+                    isprop(surface, "Position")
+                app.PreviewScale = double(surface.Position(3)) / sourceSize(1);
+            end
+        end
+
+        function attachPreviewCallbacks(app)
+            % attachPreviewCallbacks Attach editor-only selection callbacks to previews.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if isempty(app.PreviewHandles)
+                return
+            end
+            keys = app.PreviewHandles.keys();
+            for index = 1:numel(keys)
+                componentId = string(keys{index});
+                preview = app.PreviewHandles(keys{index});
+                if isprop(preview, "ButtonDownFcn")
+                    preview.ButtonDownFcn = @(~, ~) ...
+                        app.previewComponentButtonDown(componentId);
+                end
+            end
+        end
+
+        function previewComponentButtonDown(app, componentId)
+            % previewComponentButtonDown Select and begin absolute drag editing.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId string
+            end
+
+            component = app.Document.getComponent(componentId);
+            if isempty(component)
+                return
+            end
+            app.SelectedComponentId = componentId;
+            app.refreshInspector();
+            if component.Id == app.Document.RootComponentId || ...
+                    strlength(component.ParentId) == 0
+                return
+            end
+            parent = app.Document.getComponent(component.ParentId);
+            position = component.getProperty("Position");
+            if isempty(position) || position.ValueKind ~= "literal" || ...
+                    ~isnumeric(position.LiteralValue) || parent.Factory == "uigridlayout"
+                app.refreshEditCommands();
+                return
+            end
+            app.DragComponentId = componentId;
+            app.DragStartPoint = double(app.UIFigure.CurrentPoint);
+            app.DragStartPosition = double(position.LiteralValue);
+            app.UIFigure.WindowButtonMotionFcn = @(~, ~) app.previewDragMoved();
+            app.UIFigure.WindowButtonUpFcn = @(~, ~) app.previewDragFinished();
+            app.refreshEditCommands();
+        end
+
+        function previewDragMoved(app)
+            % previewDragMoved Move the preview handle while preserving source units.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if strlength(app.DragComponentId) == 0 || isempty(app.PreviewHandles)
+                return
+            end
+            key = char(app.DragComponentId);
+            if ~isKey(app.PreviewHandles, key)
+                return
+            end
+            preview = app.PreviewHandles(key);
+            delta = (double(app.UIFigure.CurrentPoint) - app.DragStartPoint) / ...
+                max(app.PreviewScale, eps);
+            position = app.DragStartPosition;
+            position(1:2) = round(position(1:2) + delta(1:2));
+            parent = preview.Parent;
+            if isprop(parent, "InnerPosition")
+                bounds = double(parent.InnerPosition);
+            else
+                bounds = double(parent.Position);
+            end
+            position(1) = max(0, min(position(1), bounds(3) - position(3)));
+            position(2) = max(0, min(position(2), bounds(4) - position(4)));
+            preview.Position = position .* [app.PreviewScale app.PreviewScale ...
+                app.PreviewScale app.PreviewScale];
+        end
+
+        function previewDragFinished(app)
+            % previewDragFinished Commit one completed preview drag to the model.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if strlength(app.DragComponentId) == 0 || isempty(app.PreviewHandles)
+                return
+            end
+            componentId = app.DragComponentId;
+            preview = app.PreviewHandles(char(componentId));
+            sourcePosition = double(preview.Position) / max(app.PreviewScale, eps);
+            sourcePosition = round(sourcePosition);
+            app.UIFigure.WindowButtonMotionFcn = [];
+            app.UIFigure.WindowButtonUpFcn = [];
+            app.DragComponentId = "";
+            if ~isequal(sourcePosition, app.DragStartPosition)
+                try
+                    app.Document.setProperty(componentId, "Position", sourcePosition);
+                catch exception
+                    app.setStatus(string(exception.message));
+                end
+            end
+            app.refreshShell();
+        end
+
+        function inspectorCellEdited(app, event)
+            % inspectorCellEdited Parse and commit one editable property value.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                event
+            end
+
+            if isempty(event.Indices) || event.Indices(2) ~= 2
+                return
+            end
+            component = app.selectedComponent();
+            row = event.Indices(1);
+            if isempty(component) || row > numel(component.Properties)
+                return
+            end
+            entry = component.Properties(row);
+            if ~entry.IsEditable
+                app.refreshInspector();
+                app.setStatus("This source-backed property is read-only.");
+                return
+            end
+            [value, isLiteral] = macd.source.MatlabLiteralParser.parse( ...
+                string(event.NewData));
+            if ~isLiteral
+                app.refreshInspector();
+                app.setStatus("Enter a supported MATLAB literal.");
+                return
+            end
+            try
+                app.Document.setProperty(component.Id, entry.Path, value);
+            catch exception
+                app.refreshInspector();
+                app.setStatus(string(exception.message));
+                return
+            end
+            app.refreshShell();
         end
 
         function refreshInspector(app)

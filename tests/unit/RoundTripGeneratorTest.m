@@ -66,6 +66,23 @@ classdef RoundTripGeneratorTest < matlab.unittest.TestCase
             testCase.verifyFalse(contains(source, "LeftValueLabel  matlab.ui.control.Label"));
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
+
+        function documentEditRewritesPositionAndGridAssignment(testCase)
+            % documentEditRewritesPositionAndGridAssignment Verify Phase 5 edits.
+
+            % Route geometry changes through DocumentModel rather than records.
+            [document, generator] = RoundTripGeneratorTest.parsedFixture();
+            root = document.getComponent(document.RootComponentId);
+            result = document.getComponentByName("ResultLabel");
+            document.setProperty(root.Id, "Position", [120 130 360 250]);
+            document.setProperty(result.Id, "Layout.Row", 4);
+            [source, diagnostics] = generator.generate(document);
+
+            testCase.verifySubstring(source, ...
+                "app.UIFigure.Position = [120 130 360 250];");
+            testCase.verifySubstring(source, "app.ResultLabel.Layout.Row = 4;");
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+        end
     end
 
     methods (Static, Access = private)
