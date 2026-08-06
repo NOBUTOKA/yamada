@@ -204,8 +204,7 @@ classdef PreviewRenderer < handle
                     current = double(target.Position);
                     ratio = current(3) / max(current(4), eps);
                     value(4) = value(3) / max(ratio, eps);
-                    target.Position(1:2) = value(1:2);
-                    target.Position(3:4) = value(3:4);
+                    target.Position = value;
                     return
                 end
             end

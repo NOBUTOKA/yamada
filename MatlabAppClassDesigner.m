@@ -959,9 +959,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             if contains(app.InteractionKind, "w")
                 rectangle(1) = actual(1) + actual(3) - rectangle(3);
             end
-            if contains(app.InteractionKind, "n")
-                rectangle(2) = actual(2) + actual(4) - rectangle(4);
-            end
         end
 
         function attachPreviewCallbacks(app)
@@ -1221,9 +1218,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             if contains(kind, "w")
                 position(1) = startPosition(1) + startPosition(3) - position(3);
-            end
-            if contains(kind, "n")
-                position(2) = startPosition(2) + startPosition(4) - position(4);
             end
             position(3:4) = max(round(position(3:4)), 1);
         end

@@ -93,8 +93,8 @@ function outline(componentData) {
   }
   if (componentData.shape === "switch") {
     var group = svgElement("g", common);
-    group.appendChild(svgElement("rect", withAttributes(common, { x: x, y: y + h * 0.25, width: w, height: h * 0.5, rx: h * 0.25 })));
-    group.appendChild(svgElement("circle", withAttributes(common, { cx: x + w * 0.5, cy: y + h * 0.5, r: h * 0.32 })));
+    group.appendChild(svgElement("rect", withAttributes(common, { x: x, y: y, width: w, height: h, rx: h * 0.5 })));
+    group.appendChild(svgElement("circle", withAttributes(common, { cx: x + w * 0.25, cy: y + h * 0.5, r: h * 0.36 })));
     return group;
   }
   if (componentData.shape === "axes") {
