@@ -34,6 +34,12 @@ classdef DocumentModel < handle
         LineEnding string = "CRLF"
         % Metadata - Extensible document data not interpreted by the core model.
         Metadata struct = struct()
+        % History - Reversible editor operations, ordered from oldest to newest.
+        History cell = {}
+        % HistoryIndex - Number of operations currently applied in History.
+        HistoryIndex double = 0
+        % HistoryLimit - Maximum number of retained undoable operations.
+        HistoryLimit double = 100
     end
 
     methods
@@ -80,6 +86,94 @@ classdef DocumentModel < handle
                     strlength(obj.RootComponentId) == 0
                 obj.RootComponentId = component.Id;
             end
+        end
+
+        function component = insertComponent(obj, registry, factory, parentId)
+            % insertComponent Create and insert one registry-approved component.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+                factory string
+                parentId string
+            end
+            arguments (Output)
+                component (1, 1) macd.model.ComponentRecord
+            end
+
+            % Validate the factory and parent before changing document state.
+            definition = registry.get(factory);
+            if definition.IsRoot || isfield(definition.Metadata, "ProgrammaticOnly") && ...
+                    definition.Metadata.ProgrammaticOnly || ...
+                    isfield(definition.Metadata, "Category") && ...
+                    definition.Metadata.Category == "FigureTools" || ...
+                    isfield(definition.Metadata, "RequiresParentComponent") && ...
+                    definition.Metadata.RequiresParentComponent
+                error("macd:DocumentModel:UnsupportedInsertion", ...
+                    "Factory ""%s"" is not eligible for Phase 5 insertion.", factory);
+            end
+            parent = obj.getComponent(parentId);
+            if isempty(parent)
+                error("macd:DocumentModel:UnknownParent", ...
+                    "Parent component ID ""%s"" does not exist.", parentId);
+            end
+            if ~any(definition.AllowedParentFactories == parent.Factory)
+                error("macd:DocumentModel:InvalidInsertionParent", ...
+                    "Factory ""%s"" cannot be inserted under ""%s"".", ...
+                    factory, parent.Factory);
+            end
+
+            % Choose a stable MATLAB property name and safe initial geometry.
+            name = obj.uniqueComponentName(obj.displayName(factory));
+            component = macd.model.ComponentRecord(obj.newComponentId(), name, ...
+                definition.Factory, definition.DeclaredType, "generated");
+            component.CreationArguments = definition.CreationArguments;
+            if parent.Factory == "uigridlayout"
+                if ~isempty(definition.getProperty("Layout.Row"))
+                    component.setProperty("Layout.Row", 1);
+                end
+                if ~isempty(definition.getProperty("Layout.Column"))
+                    component.setProperty("Layout.Column", 1);
+                end
+            elseif ~isempty(definition.getProperty("Position"))
+                component.setProperty("Position", obj.nextAbsolutePosition(parent));
+            end
+            obj.addComponentAt(component, parentId, numel(obj.Components) + 1);
+            obj.recordHistory(struct("Kind", "insert", "Component", component, ...
+                "ParentId", parentId, "Index", find(obj.Components == component, 1)));
+        end
+
+        function entry = setProperty(obj, componentId, path, value)
+            % setProperty Change one component property and record its prior state.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId string
+                path string
+                value
+            end
+            arguments (Output)
+                entry (1, 1) macd.model.PropertyEntry
+            end
+
+            % Validate the component before capturing the reversible old value.
+            component = obj.getComponent(componentId);
+            if isempty(component)
+                error("macd:DocumentModel:UnknownComponent", ...
+                    "Component ID ""%s"" does not exist.", componentId);
+            end
+            oldEntry = component.getProperty(path);
+            oldValue = [];
+            hadOldValue = ~isempty(oldEntry);
+            if hadOldValue
+                if ~oldEntry.IsEditable
+                    error("macd:DocumentModel:ReadOnlyProperty", ...
+                        "Property ""%s"" is source-backed and read-only.", path);
+                end
+                oldValue = oldEntry.LiteralValue;
+            end
+            entry = component.setProperty(path, value);
+            obj.recordHistory(struct("Kind", "property", "ComponentId", componentId, ...
+                "Path", path, "HadOldValue", hadOldValue, "OldValue", oldValue, ...
+                "NewValue", value));
         end
 
         function component = getComponent(obj, id)
@@ -146,14 +240,177 @@ classdef DocumentModel < handle
                     "The root component cannot be deleted.");
             end
 
-            % Retain the exact record so a source generator can check ownership.
-            obj.PendingEdits{end + 1} = struct("Kind", "delete-component", ...
-                "Component", component);
+            % Retain parsed records so the source generator can check ownership.
+            index = find(obj.Components == component, 1);
+            pendingIndex = obj.addDeletionIntent(component);
+            obj.removeComponentAt(component);
+            obj.recordHistory(struct("Kind", "delete", "Component", component, ...
+                "ParentId", component.ParentId, "Index", index, ...
+                "PendingIndex", pendingIndex));
+        end
+
+        function result = canUndo(obj)
+            % canUndo Report whether one committed edit can be reversed.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = obj.HistoryIndex > 0;
+        end
+
+        function result = canRedo(obj)
+            % canRedo Report whether one undone edit can be reapplied.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = obj.HistoryIndex < numel(obj.History);
+        end
+
+        function undo(obj)
+            % undo Reverse the most recent document edit.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            if ~obj.canUndo()
+                error("macd:DocumentModel:NoUndo", "There is no edit to undo.");
+            end
+            edit = obj.History{obj.HistoryIndex};
+            obj.applyHistory(edit, false);
+            obj.HistoryIndex = obj.HistoryIndex - 1;
+        end
+
+        function redo(obj)
+            % redo Reapply the next edit in the document history.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            if ~obj.canRedo()
+                error("macd:DocumentModel:NoRedo", "There is no edit to redo.");
+            end
+            edit = obj.History{obj.HistoryIndex + 1};
+            obj.applyHistory(edit, true);
+            obj.HistoryIndex = obj.HistoryIndex + 1;
+        end
+    end
+
+    methods (Access = private)
+        function addComponentAt(obj, component, parentId, index)
+            % addComponentAt Insert one record at a deterministic collection index.
+            parent = obj.getComponent(parentId);
+            component.ParentId = parentId;
+            parent.addChild(component.Id);
+            index = min(max(index, 1), numel(obj.Components) + 1);
+            obj.Components = [obj.Components(1:index - 1), component, ...
+                obj.Components(index:end)];
+        end
+
+        function removeComponentAt(obj, component)
+            % removeComponentAt Remove one already-validated leaf without history.
             parent = obj.getComponent(component.ParentId);
             if ~isempty(parent)
-                parent.removeChild(id);
+                parent.removeChild(component.Id);
             end
             obj.Components(obj.Components == component) = [];
+        end
+
+        function index = addDeletionIntent(obj, component)
+            % addDeletionIntent Retain a parsed deletion for conservative generation.
+            index = 0;
+            if component.Origin ~= "parsed"
+                return
+            end
+            pending = struct("Kind", "delete-component", "Component", component);
+            obj.PendingEdits{end + 1} = pending;
+            index = numel(obj.PendingEdits);
+        end
+
+        function recordHistory(obj, edit)
+            % recordHistory Append an edit and discard any redo branch.
+            if obj.HistoryIndex < numel(obj.History)
+                obj.History = obj.History(1:obj.HistoryIndex);
+            end
+            obj.History{end + 1} = edit;
+            obj.HistoryIndex = numel(obj.History);
+            if numel(obj.History) > obj.HistoryLimit
+                obj.History(1) = [];
+                obj.HistoryIndex = obj.HistoryIndex - 1;
+            end
+        end
+
+        function applyHistory(obj, edit, forward)
+            % applyHistory Apply or reverse one history record without recording it.
+            switch edit.Kind
+                case "insert"
+                    if forward
+                        obj.addComponentAt(edit.Component, edit.ParentId, edit.Index);
+                    else
+                        obj.removeComponentAt(edit.Component);
+                    end
+                case "delete"
+                    if forward
+                        obj.removeComponentAt(edit.Component);
+                        obj.addDeletionIntent(edit.Component);
+                    else
+                        obj.addComponentAt(edit.Component, edit.ParentId, edit.Index);
+                        obj.removeDeletionIntent(edit.Component);
+                    end
+                case "property"
+                    component = obj.getComponent(edit.ComponentId);
+                    if forward
+                        component.setProperty(edit.Path, edit.NewValue);
+                    elseif edit.HadOldValue
+                        component.setProperty(edit.Path, edit.OldValue);
+                    else
+                        component.removeProperty(edit.Path);
+                    end
+            end
+        end
+
+        function removeDeletionIntent(obj, component)
+            % removeDeletionIntent Remove only the matching parsed deletion record.
+            for index = numel(obj.PendingEdits):-1:1
+                pending = obj.PendingEdits{index};
+                if isstruct(pending) && isfield(pending, "Kind") && ...
+                        pending.Kind == "delete-component" && ...
+                        pending.Component.Id == component.Id
+                    obj.PendingEdits(index) = [];
+                    return
+                end
+            end
+        end
+
+        function id = newComponentId(~)
+            % newComponentId Create a practical opaque identity for one component.
+            id = "component-" + string(randi([0 intmax("uint32")])) + "-" + ...
+                string(randi([0 intmax("uint32")]));
+        end
+
+        function name = uniqueComponentName(obj, base)
+            % uniqueComponentName Make a valid unused MATLAB property name.
+            name = string(matlab.lang.makeValidName(char(base)));
+            suffix = 1;
+            while ~isempty(obj.getComponentByName(name))
+                suffix = suffix + 1;
+                name = string(matlab.lang.makeValidName(char(base + suffix)));
+            end
+        end
+
+        function name = displayName(~, factory)
+            % displayName Convert a factory name into a readable property base.
+            base = regexprep(char(factory), "^ui", "");
+            name = string(upper(base(1)) + string(base(2:end)));
+        end
+
+        function position = nextAbsolutePosition(obj, parent)
+            % nextAbsolutePosition Choose a visible nonoverlapping default rectangle.
+            position = [20 20 100 30];
+            count = numel(parent.Children);
+            position(1:2) = position(1:2) + [20 20] * count;
         end
     end
 end

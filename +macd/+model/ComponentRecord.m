@@ -115,6 +115,21 @@ classdef ComponentRecord < handle
             end
         end
 
+        function removeProperty(obj, path)
+            % removeProperty Remove one editable property entry by full path.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                path string
+            end
+
+            % Keep removal explicit so undo can restore an absent property state.
+            entry = obj.getProperty(path);
+            if isempty(entry)
+                return
+            end
+            obj.Properties(obj.Properties == entry) = [];
+        end
+
         function addChild(obj, childId)
             % addChild Append a child identifier unless it is already present.
             arguments (Input)

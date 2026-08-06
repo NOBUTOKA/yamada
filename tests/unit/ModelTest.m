@@ -120,6 +120,101 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyEqual(entry.SourceExpression, "loadItems(app)");
         end
 
+        function registryInsertionSeedsSafeGeometry(testCase)
+            % registryInsertionSeedsSafeGeometry Verify model-owned palette insertion.
+
+            % Insert two controls through the same registry used by the editor.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            first = document.insertComponent(registry, "uilabel", ...
+                document.RootComponentId);
+            second = document.insertComponent(registry, "uibutton", ...
+                document.RootComponentId);
+
+            testCase.verifyEqual(first.Name, "Label");
+            testCase.verifyEqual(second.Name, "Button");
+            testCase.verifyEqual(first.ParentId, document.RootComponentId);
+            testCase.verifyEqual(first.getProperty("Position").LiteralValue, ...
+                [20 20 100 30]);
+            testCase.verifyEqual(second.getProperty("Position").LiteralValue, ...
+                [40 40 100 30]);
+            testCase.verifyTrue(document.canUndo());
+            testCase.verifyFalse(document.canRedo());
+        end
+
+        function gridInsertionSeedsLayoutCoordinates(testCase)
+            % gridInsertionSeedsLayoutCoordinates Verify grid insertion defaults.
+
+            % Build a grid parent and insert a label beneath it.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("GridApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", ...
+                document.RootComponentId);
+            label = document.insertComponent(registry, "uilabel", grid.Id);
+
+            testCase.verifyEqual(label.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(label.getProperty("Layout.Column").LiteralValue, 1);
+            testCase.verifyError(@() document.insertComponent( ...
+                registry, "uilabel", label.Id), ...
+                "macd:DocumentModel:InvalidInsertionParent");
+        end
+
+        function propertyEditsUndoAndRedo(testCase)
+            % propertyEditsUndoAndRedo Verify reversible literal property changes.
+
+            % Change one model value, then traverse both history directions.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            label = document.insertComponent(registry, "uilabel", ...
+                document.RootComponentId);
+            document.setProperty(label.Id, "Position", [30 40 120 30]);
+            testCase.verifyEqual(label.getProperty("Position").LiteralValue, ...
+                [30 40 120 30]);
+            document.undo();
+            testCase.verifyEqual(label.getProperty("Position").LiteralValue, ...
+                [20 20 100 30]);
+            document.redo();
+            testCase.verifyEqual(label.getProperty("Position").LiteralValue, ...
+                [30 40 120 30]);
+        end
+
+        function insertionUndoRemovesWithoutDeletionIntent(testCase)
+            % insertionUndoRemovesWithoutDeletionIntent Verify generated undo semantics.
+
+            % Undoing a new component must not create a source deletion request.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            label = document.insertComponent(registry, "uilabel", ...
+                document.RootComponentId);
+            document.undo();
+            testCase.verifyEmpty(document.getComponent(label.Id));
+            testCase.verifyEmpty(document.PendingEdits);
+            document.redo();
+            testCase.verifyEqual(document.getComponent(label.Id).Name, "Label");
+        end
+
+        function parsedDeletionUndoRestoresPendingIntent(testCase)
+            % parsedDeletionUndoRestoresPendingIntent Verify parsed deletion history.
+
+            % Use a parsed fixture so deletion remains source-backed and reversible.
+            testPath = mfilename("fullpath");
+            fixturePath = string(fullfile(fileparts(fileparts(testPath)), ...
+                "fixtures", "SimpleCalculatorApp.m"));
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
+            target = document.getComponentByName("LeftValueLabel");
+            document.removeComponent(target.Id);
+            testCase.verifyEmpty(document.getComponent(target.Id));
+            testCase.verifyEqual(numel(document.PendingEdits), 1);
+            document.undo();
+            testCase.verifyEqual(document.getComponent(target.Id).Name, ...
+                "LeftValueLabel");
+            testCase.verifyEmpty(document.PendingEdits);
+            document.redo();
+            testCase.verifyEmpty(document.getComponent(target.Id));
+            testCase.verifyEqual(numel(document.PendingEdits), 1);
+        end
+
         function publicPropertiesProvideMetadataHelp(testCase)
             % publicPropertiesProvideMetadataHelp Verify documented public state.
 
