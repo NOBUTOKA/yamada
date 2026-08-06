@@ -20,16 +20,22 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         UIFigure matlab.ui.Figure
         MainGrid matlab.ui.container.GridLayout
         CommandGrid matlab.ui.container.GridLayout
-        LeftGrid matlab.ui.container.GridLayout
+        RightGrid matlab.ui.container.GridLayout
         PaletteTable matlab.ui.control.Table
-        AddComponentButton matlab.ui.control.Button
-        DeleteComponentButton matlab.ui.control.Button
-        UndoButton matlab.ui.control.Button
-        RedoButton matlab.ui.control.Button
+        EditorToolbar matlab.ui.container.Toolbar
+        UndoTool matlab.ui.container.toolbar.PushTool
+        RedoTool matlab.ui.container.toolbar.PushTool
         SaveMenuItem matlab.ui.container.Menu
+        DeleteMenuItem matlab.ui.container.Menu
+        EditUndoMenuItem matlab.ui.container.Menu
+        EditRedoMenuItem matlab.ui.container.Menu
         SavePathConfirmed logical = false
+        HierarchyPanel matlab.ui.container.Panel
+        HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
         PreviewPanel matlab.ui.container.Panel
+        InspectorPanel matlab.ui.container.Panel
+        InspectorGrid matlab.ui.container.GridLayout
         InspectorTable matlab.ui.control.Table
         PreviewHandles containers.Map
         DragComponentId string = ""
@@ -44,6 +50,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         StatusLabel matlab.ui.control.Label
         DiagnosticsExpanded logical = false
         SelectedPaletteFactory string = ""
+        PaletteFactories string = strings(1, 0)
     end
 
     methods
@@ -85,52 +92,62 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             % Compose the command bar, browsers, preview, and diagnostic surfaces.
             app.UIFigure = uifigure("Visible", "off", ...
                 "Name", "MATLAB App Class Designer", ...
-                "Position", [100 100 1280 760]);
+                "Position", [100 100 1280 760], ...
+                "WindowKeyPressFcn", @(~, event) app.editorKeyPressed(event));
             app.MainGrid = uigridlayout(app.UIFigure, [3 3]);
             app.MainGrid.RowHeight = {38, "1x", 150};
             app.MainGrid.ColumnWidth = {230, "1x", 330};
 
-            app.CommandGrid = uigridlayout(app.MainGrid, [1 5]);
-            app.CommandGrid.ColumnWidth = {"1x", 70, 70, 70, 70};
+            app.CommandGrid = uigridlayout(app.MainGrid, [1 1]);
             app.CommandGrid.Layout.Row = 1;
             app.CommandGrid.Layout.Column = [1 3];
             app.StatusLabel = uilabel(app.CommandGrid, "Text", "Ready");
             app.StatusLabel.Layout.Column = 1;
-            app.AddComponentButton = uibutton(app.CommandGrid, "Text", "Add", ...
-                "ButtonPushedFcn", @(~, ~) app.addComponentButtonPushed());
-            app.AddComponentButton.Layout.Column = 2;
-            app.DeleteComponentButton = uibutton(app.CommandGrid, "Text", "Delete", ...
-                "ButtonPushedFcn", @(~, ~) app.deleteComponentButtonPushed());
-            app.DeleteComponentButton.Layout.Column = 3;
-            app.UndoButton = uibutton(app.CommandGrid, "Text", "Undo", ...
-                "ButtonPushedFcn", @(~, ~) app.undoButtonPushed());
-            app.UndoButton.Layout.Column = 4;
-            app.RedoButton = uibutton(app.CommandGrid, "Text", "Redo", ...
-                "ButtonPushedFcn", @(~, ~) app.redoButtonPushed());
-            app.RedoButton.Layout.Column = 5;
+            app.EditorToolbar = uitoolbar(app.UIFigure);
+            undoData = load(fullfile(matlabroot, "toolbox", "matlab", ...
+                "icons", "undo.mat"));
+            redoData = load(fullfile(matlabroot, "toolbox", "matlab", ...
+                "icons", "redo.mat"));
+            app.UndoTool = uipushtool(app.EditorToolbar, ...
+                "CData", undoData.undoCData, "Tooltip", "Undo (Ctrl+Z)", ...
+                "ClickedCallback", @(~, ~) app.undoButtonPushed());
+            app.RedoTool = uipushtool(app.EditorToolbar, ...
+                "CData", redoData.redoCData, "Tooltip", "Redo (Ctrl+R)", ...
+                "ClickedCallback", @(~, ~) app.redoButtonPushed());
 
-            app.LeftGrid = uigridlayout(app.MainGrid, [2 1]);
-            app.LeftGrid.RowHeight = {150, "1x"};
-            app.LeftGrid.Layout.Row = 2;
-            app.LeftGrid.Layout.Column = 1;
-            app.PaletteTable = uitable(app.LeftGrid, ...
+            app.PaletteTable = uitable(app.MainGrid, ...
                 "ColumnName", {"Component", "Category"}, ...
                 "ColumnEditable", [false false], ...
                 "CellSelectionCallback", @(~, event) ...
-                app.paletteSelectionChanged(event));
-            app.PaletteTable.Layout.Row = 1;
-            app.HierarchyTree = uitree(app.LeftGrid, ...
-                "SelectionChangedFcn", @(~, event) app.hierarchySelectionChanged(event));
-            app.HierarchyTree.Layout.Row = 2;
+                app.paletteSelectionChanged(event), ...
+                "DoubleClickedFcn", @(~, event) ...
+                app.paletteDoubleClicked(event));
+            app.PaletteTable.Layout.Row = 2;
+            app.PaletteTable.Layout.Column = 1;
+
             app.PreviewPanel = uipanel(app.MainGrid, "Title", "Safe preview");
             app.PreviewPanel.Layout.Row = 2;
             app.PreviewPanel.Layout.Column = 2;
-            app.InspectorTable = uitable(app.MainGrid, ...
+
+            app.RightGrid = uigridlayout(app.MainGrid, [2 1]);
+            app.RightGrid.RowHeight = {"1x", "1x"};
+            app.RightGrid.Layout.Row = 2;
+            app.RightGrid.Layout.Column = 3;
+            app.HierarchyPanel = uipanel(app.RightGrid, "Title", "Hierarchy");
+            app.HierarchyPanel.Layout.Row = 1;
+            app.HierarchyGrid = uigridlayout(app.HierarchyPanel, [1 1]);
+            app.HierarchyGrid.Padding = [0 0 0 0];
+            app.HierarchyTree = uitree(app.HierarchyGrid, ...
+                "SelectionChangedFcn", @(~, event) app.hierarchySelectionChanged(event));
+
+            app.InspectorPanel = uipanel(app.RightGrid, "Title", "Properties");
+            app.InspectorPanel.Layout.Row = 2;
+            app.InspectorGrid = uigridlayout(app.InspectorPanel, [1 1]);
+            app.InspectorGrid.Padding = [0 0 0 0];
+            app.InspectorTable = uitable(app.InspectorGrid, ...
                 "ColumnName", {"Property", "Value", "State"}, ...
                 "ColumnEditable", [false true false], ...
                 "CellEditCallback", @(~, event) app.inspectorCellEdited(event));
-            app.InspectorTable.Layout.Row = 2;
-            app.InspectorTable.Layout.Column = 3;
             app.DiagnosticsDrawer = uipanel(app.MainGrid);
             app.DiagnosticsDrawer.Layout.Row = 3;
             app.DiagnosticsDrawer.Layout.Column = [1 3];
@@ -157,7 +174,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app (1, 1) MatlabAppClassDesigner
             end
 
-            % Keep menu actions connected to the same command methods as the former buttons.
+            % Keep file actions separate from editing commands and shortcuts.
             fileMenu = uimenu(app.UIFigure, "Text", "&File");
             uimenu(fileMenu, "Text", "&New", "Accelerator", "N", ...
                 "MenuSelectedFcn", @(~, ~) app.newButtonPushed());
@@ -168,6 +185,16 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 "MenuSelectedFcn", @(~, ~) app.saveButtonPushed());
             uimenu(fileMenu, "Text", "Save As...", ...
                 "MenuSelectedFcn", @(~, ~) app.saveAsButtonPushed());
+
+            editMenu = uimenu(app.UIFigure, "Text", "&Edit");
+            app.DeleteMenuItem = uimenu(editMenu, "Text", "&Delete", ...
+                "MenuSelectedFcn", @(~, ~) app.deleteComponentButtonPushed());
+            app.EditUndoMenuItem = uimenu(editMenu, "Text", "&Undo", ...
+                "Accelerator", "Z", ...
+                "MenuSelectedFcn", @(~, ~) app.undoButtonPushed());
+            app.EditRedoMenuItem = uimenu(editMenu, "Text", "&Redo", ...
+                "Accelerator", "R", ...
+                "MenuSelectedFcn", @(~, ~) app.redoButtonPushed());
 
             toolsMenu = uimenu(app.UIFigure, "Text", "&Tools");
             uimenu(toolsMenu, "Text", "&Validate", ...
@@ -346,7 +373,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             % hierarchySelectionChanged Select the component stored on a tree node.
             arguments (Input)
                 app (1, 1) MatlabAppClassDesigner
-                event matlab.ui.eventdata.TreeSelectionChangedData
+                event
             end
 
             % NodeData carries only the stable model identity, never a UI handle.
@@ -382,6 +409,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             % Keep the palette deterministic while retaining registry categories.
             factories = app.Registry.listFactories();
             rows = cell(0, 2);
+            paletteFactories = strings(1, 0);
             for index = 1:numel(factories)
                 factory = factories(index);
                 if ~app.isPaletteFactory(factory)
@@ -392,8 +420,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 if isfield(definition.Metadata, "Category")
                     category = string(definition.Metadata.Category);
                 end
-                rows(end + 1, :) = {char(factory), char(category)}; %#ok<AGROW>
+                displayName = app.Registry.displayName(factory);
+                rows(end + 1, :) = {char(displayName), char(category)}; %#ok<AGROW>
+                paletteFactories(end + 1) = factory; %#ok<AGROW>
             end
+            app.PaletteFactories = paletteFactories;
             app.PaletteTable.Data = rows;
         end
 
@@ -412,9 +443,27 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             row = event.Indices(1, 1);
             if row <= size(app.PaletteTable.Data, 1)
-                app.SelectedPaletteFactory = string(app.PaletteTable.Data{row, 1});
+                app.SelectedPaletteFactory = app.PaletteFactories(row);
             end
             app.refreshEditCommands();
+        end
+
+        function paletteDoubleClicked(app, event)
+            % paletteDoubleClicked Insert the explicitly double-clicked palette item.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                event
+            end
+
+            interaction = event.InteractionInformation;
+            row = interaction.Row;
+            if isempty(row)
+                return
+            end
+            if row >= 1 && row <= numel(app.PaletteFactories)
+                app.SelectedPaletteFactory = app.PaletteFactories(row);
+                app.addComponentButtonPushed();
+            end
         end
 
         function addComponentButtonPushed(app)
@@ -498,6 +547,24 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.setStatus("Redid edit.");
         end
 
+        function editorKeyPressed(app, event)
+            % editorKeyPressed Dispatch Delete and Ctrl-based edit shortcuts.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                event
+            end
+
+            modifiers = string(event.Modifier);
+            hasControl = any(modifiers == "control") || any(modifiers == "command");
+            if strcmpi(event.Key, "delete") && ~hasControl
+                app.deleteComponentButtonPushed();
+            elseif hasControl && strcmpi(event.Key, "z")
+                app.undoButtonPushed();
+            elseif hasControl && strcmpi(event.Key, "r")
+                app.redoButtonPushed();
+            end
+        end
+
         function refreshEditCommands(app)
             % refreshEditCommands Synchronize palette and edit command enablement.
             arguments (Input)
@@ -507,25 +574,24 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             if isempty(app.Document)
                 return
             end
-            app.AddComponentButton.Enable = "off";
-            if strlength(app.SelectedPaletteFactory) > 0 && ...
-                    ~isempty(app.insertionParent(app.SelectedPaletteFactory))
-                app.AddComponentButton.Enable = "on";
-            end
             component = app.selectedComponent();
             canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
                 isempty(component.Children) && component.IsEditable;
-            app.DeleteComponentButton.Enable = "off";
+            app.DeleteMenuItem.Enable = "off";
             if canDelete
-                app.DeleteComponentButton.Enable = "on";
+                app.DeleteMenuItem.Enable = "on";
             end
-            app.UndoButton.Enable = "off";
-            app.RedoButton.Enable = "off";
+            app.UndoTool.Enable = "off";
+            app.RedoTool.Enable = "off";
+            app.EditUndoMenuItem.Enable = "off";
+            app.EditRedoMenuItem.Enable = "off";
             if app.Document.canUndo()
-                app.UndoButton.Enable = "on";
+                app.UndoTool.Enable = "on";
+                app.EditUndoMenuItem.Enable = "on";
             end
             if app.Document.canRedo()
-                app.RedoButton.Enable = "on";
+                app.RedoTool.Enable = "on";
+                app.EditRedoMenuItem.Enable = "on";
             end
         end
 

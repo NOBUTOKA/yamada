@@ -73,6 +73,8 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyTrue(registry.get("uitreenode").Metadata.RequiresParentComponent);
             testCase.verifyTrue(any(registry.get("uigridlayout").AllowedParentFactories == ...
                 "uigridlayout"));
+            testCase.verifyEqual(registry.displayName("uibutton"), "Button");
+            testCase.verifyEqual(registry.displayName("uigridlayout"), "Grid Layout");
         end
 
         function registryAcceptsFutureComponentDefinitions(testCase)
