@@ -53,7 +53,10 @@ classdef ComponentDefinition
     methods
         function obj = ComponentDefinition(factory, declaredType, ...
                 allowedParentFactories, isRoot, creationArguments, ...
-                propertyDefinitions, metadata)
+                propertyDefinitions, displayName, category, isProgrammaticOnly, ...
+                requiresParentComponent, supportedStyles, defaultStyle, ...
+                declaredTypesByStyle, overlayShape, overlayShapesByStyle, ...
+                resizeConstraint, resizeConstraintsByStyle, metadata)
             % ComponentDefinition Create an immutable component capability record.
             arguments (Input)
                 factory string = ""
@@ -63,43 +66,41 @@ classdef ComponentDefinition
                 creationArguments cell = {}
                 propertyDefinitions macd.model.PropertyDefinition = ...
                     macd.model.PropertyDefinition.empty
+                displayName string = ""
+                category string = ""
+                isProgrammaticOnly logical = false
+                requiresParentComponent logical = false
+                supportedStyles string = strings(1, 0)
+                defaultStyle string = ""
+                declaredTypesByStyle struct = struct()
+                overlayShape string = "rectangle"
+                overlayShapesByStyle struct = struct()
+                resizeConstraint string = "free"
+                resizeConstraintsByStyle struct = struct()
                 metadata struct = struct()
             end
             arguments (Output)
                 obj (1, 1) macd.model.ComponentDefinition
             end
 
-            % Promote stable editor capabilities while retaining extension metadata.
+            % Store explicit capabilities separately from arbitrary extension metadata.
             obj.Factory = factory;
             obj.DeclaredType = declaredType;
             obj.AllowedParentFactories = allowedParentFactories;
             obj.IsRoot = isRoot;
             obj.CreationArguments = creationArguments;
             obj.Properties = propertyDefinitions;
-            [obj.DisplayName, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "DisplayName", obj.DisplayName);
-            [obj.Category, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "Category", obj.Category);
-            [obj.IsProgrammaticOnly, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "ProgrammaticOnly", obj.IsProgrammaticOnly);
-            [obj.RequiresParentComponent, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "RequiresParentComponent", obj.RequiresParentComponent);
-            [obj.SupportedStyles, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "SupportedStyles", obj.SupportedStyles);
-            [obj.DefaultStyle, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "DefaultStyle", obj.DefaultStyle);
-            [obj.DeclaredTypesByStyle, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "DeclaredTypesByStyle", obj.DeclaredTypesByStyle);
-            [obj.OverlayShape, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "OverlayShape", obj.OverlayShape);
-            [obj.OverlayShapesByStyle, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "OverlayShapesByStyle", obj.OverlayShapesByStyle);
-            [obj.ResizeConstraint, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "ResizeConstraint", obj.ResizeConstraint);
-            [obj.ResizeConstraint, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "ResizePolicy", obj.ResizeConstraint);
-            [obj.ResizeConstraintsByStyle, metadata] = macd.model.ComponentDefinition.take(metadata, ...
-                "ResizeConstraintsByStyle", obj.ResizeConstraintsByStyle);
+            obj.DisplayName = displayName;
+            obj.Category = category;
+            obj.IsProgrammaticOnly = isProgrammaticOnly;
+            obj.RequiresParentComponent = requiresParentComponent;
+            obj.SupportedStyles = supportedStyles;
+            obj.DefaultStyle = defaultStyle;
+            obj.DeclaredTypesByStyle = declaredTypesByStyle;
+            obj.OverlayShape = overlayShape;
+            obj.OverlayShapesByStyle = overlayShapesByStyle;
+            obj.ResizeConstraint = resizeConstraint;
+            obj.ResizeConstraintsByStyle = resizeConstraintsByStyle;
             obj.Metadata = metadata;
             if strlength(obj.DisplayName) == 0
                 typeParts = split(obj.DeclaredType, ".");
@@ -185,24 +186,88 @@ classdef ComponentDefinition
         end
     end
 
-    methods (Static, Access = private)
-        function [value, metadata] = take(metadata, name, defaultValue)
-            % take Move one known field from extension metadata to a capability.
+    methods (Static)
+        function result = fromPaths(factory, declaredType, parents, isRoot, args, paths, capabilities)
+            % fromPaths Create a definition from property paths and capabilities.
             arguments (Input)
-                metadata struct
+                factory string
+                declaredType string
+                parents string
+                isRoot (1, 1) logical
+                args cell
+                paths
+                capabilities struct = struct()
+            end
+            arguments (Output)
+                result (1, 1) macd.model.ComponentDefinition
+            end
+
+            % Expand paths into independently typed property capabilities.
+            if isa(paths, "macd.model.PropertyDefinition")
+                propertyDefinitions = paths;
+            else
+                propertyDefinitions = macd.model.PropertyDefinition.empty;
+                for index = 1:numel(paths)
+                    propertyDefinitions(end + 1) = ...
+                        macd.model.PropertyDefinition(paths(index)); %#ok<AGROW>
+                end
+            end
+            result = macd.model.ComponentDefinition(factory, declaredType, ...
+                parents, isRoot, args, propertyDefinitions, ...
+                macd.model.ComponentDefinition.capability(capabilities, "DisplayName", ""), ...
+                macd.model.ComponentDefinition.capability(capabilities, "Category", ""), ...
+                macd.model.ComponentDefinition.capability(capabilities, "ProgrammaticOnly", false), ...
+                macd.model.ComponentDefinition.capability(capabilities, "RequiresParentComponent", false), ...
+                macd.model.ComponentDefinition.capability(capabilities, "SupportedStyles", strings(1, 0)), ...
+                macd.model.ComponentDefinition.capability(capabilities, "DefaultStyle", ""), ...
+                macd.model.ComponentDefinition.capability(capabilities, "DeclaredTypesByStyle", struct()), ...
+                macd.model.ComponentDefinition.capability(capabilities, "OverlayShape", "rectangle"), ...
+                macd.model.ComponentDefinition.capability(capabilities, "OverlayShapesByStyle", struct()), ...
+                macd.model.ComponentDefinition.capability(capabilities, "ResizeConstraint", "free"), ...
+                macd.model.ComponentDefinition.capability(capabilities, "ResizeConstraintsByStyle", struct()), ...
+                macd.model.ComponentDefinition.extensionMetadata(capabilities));
+        end
+
+    end
+
+    methods (Static, Access = private)
+        function value = capability(capabilities, name, defaultValue)
+            % capability Return one explicitly named capability or its default.
+            arguments (Input)
+                capabilities struct
                 name (1, 1) string
                 defaultValue
             end
             arguments (Output)
                 value
-                metadata struct
             end
 
             value = defaultValue;
             key = char(name);
-            if isfield(metadata, key)
-                value = metadata.(key);
-                metadata = rmfield(metadata, key);
+            if isfield(capabilities, key)
+                value = capabilities.(key);
+            end
+        end
+
+        function metadata = extensionMetadata(capabilities)
+            % extensionMetadata Retain only capabilities that have no typed property.
+            arguments (Input)
+                capabilities struct
+            end
+            arguments (Output)
+                metadata struct
+            end
+
+            metadata = capabilities;
+            known = ["DisplayName", "Category", "ProgrammaticOnly", ...
+                "RequiresParentComponent", "SupportedStyles", "DefaultStyle", ...
+                "DeclaredTypesByStyle", "OverlayShape", "OverlayShapesByStyle", ...
+                "ResizeConstraint", "ResizeConstraintsByStyle"];
+            for index = 1:numel(known)
+                key = char(known(index));
+                if isfield(metadata, key)
+                    metadata = rmfield(metadata, key);
+                end
             end
         end
     end
