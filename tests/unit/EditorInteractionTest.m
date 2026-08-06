@@ -125,6 +125,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(groups.SelectedTab, groups.Children(2));
 
             % A subsequent component interaction must preserve the chosen tab.
+            components = overlays.Data.components;
+            if ~isstruct(components)
+                components = struct(components);
+            end
             child = components(strcmp(string({components.shape}), "roundedRectangle"));
             child = child(1);
             overlays.HTMLEventReceivedFcn(overlays, struct( ...

@@ -710,6 +710,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             [app.PreviewHandles, diagnostics] = app.PreviewRenderer.render( ...
                 app.Document, app.PreviewPanel);
             app.restorePreviewTabSelections();
+            drawnow;
             app.updatePreviewScale(root);
             app.createInteractionOverlay();
             app.updateInteractionOverlay();
@@ -777,7 +778,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 componentId = string(keys{index});
                 component = app.Document.getComponent(componentId);
                 if isempty(component) || component.Id == app.Document.RootComponentId || ...
-                        strlength(component.ParentId) == 0
+                        strlength(component.ParentId) == 0 || component.Factory == "uitab" || ...
+                        ~app.isVisibleInSelectedTab(component.Id)
                     continue
                 end
                 parent = app.Document.getComponent(component.ParentId);
@@ -907,8 +909,38 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             try
                 group.SelectedTab = group.Children(tabIndex);
                 app.PreviewTabSelections(char(componentId)) = tabIndex;
+                drawnow;
+                app.updateInteractionOverlay();
             catch exception
                 app.setStatus(string(exception.message));
+            end
+        end
+
+        function visible = isVisibleInSelectedTab(app, componentId)
+            % isVisibleInSelectedTab Check whether a component belongs to the active tab.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId string
+            end
+            arguments (Output)
+                visible (1, 1) logical
+            end
+
+            visible = true;
+            component = app.Document.getComponent(componentId);
+            while ~isempty(component) && strlength(component.ParentId) > 0
+                if component.Factory == "uitab"
+                    group = app.Document.getComponent(component.ParentId);
+                    if ~isempty(group) && group.Factory == "uitabgroup" && ...
+                            isKey(app.PreviewHandles, char(group.Id)) && ...
+                            isKey(app.PreviewHandles, char(component.Id))
+                        groupPreview = app.PreviewHandles(char(group.Id));
+                        tabPreview = app.PreviewHandles(char(component.Id));
+                        visible = isequal(groupPreview.SelectedTab, tabPreview);
+                        return
+                    end
+                end
+                component = app.Document.getComponent(component.ParentId);
             end
         end
 
