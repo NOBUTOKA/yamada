@@ -786,11 +786,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 end
                 rectangle = app.previewDisplayPosition(app.PreviewHandles(keys{index}));
                 if componentId == app.InteractionComponentId
-                    rectangle = app.InteractionPosition .* app.PreviewScale;
-                    preview = app.PreviewHandles(keys{index});
-                    parentPosition = double(getpixelposition(preview.Parent, true));
-                    panelPosition = double(getpixelposition(app.PreviewPanel, true));
-                    rectangle(1:2) = rectangle(1:2) + parentPosition(1:2) - panelPosition(1:2);
+                    rectangle = app.interactionDisplayPosition(componentId, rectangle);
                 end
                 definition = app.Registry.get(component.Factory);
                 components(end + 1) = struct( ...
@@ -932,6 +928,39 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             position(2) = max(0, min(position(2), bounds(2) - position(4)));
             if isempty(component)
                 position = startPosition;
+            end
+        end
+
+        function rectangle = interactionDisplayPosition(app, componentId, actual)
+            % interactionDisplayPosition Preserve runtime control dimensions while editing.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId (1, 1) string
+                actual (1, 4) double
+            end
+            arguments (Output)
+                rectangle (1, 4) double
+            end
+
+            rectangle = actual;
+            if app.InteractionKind == "move"
+                delta = app.InteractionPosition(1:2) - app.InteractionStartPosition(1:2);
+                rectangle(1:2) = actual(1:2) + delta .* app.PreviewScale;
+                return
+            end
+            rectangle(1:2) = actual(1:2) + ...
+                (app.InteractionPosition(1:2) - app.InteractionStartPosition(1:2)) .* app.PreviewScale;
+            rectangle(3:4) = app.InteractionPosition(3:4) .* app.PreviewScale;
+            component = app.Document.getComponent(componentId);
+            definition = app.Registry.get(component.Factory);
+            if definition.resizeConstraintFor(component.CreationArguments) == "aspectRatio"
+                rectangle(4) = rectangle(3) * actual(4) / max(actual(3), eps);
+            end
+            if contains(app.InteractionKind, "w")
+                rectangle(1) = actual(1) + actual(3) - rectangle(3);
+            end
+            if contains(app.InteractionKind, "n")
+                rectangle(2) = actual(2) + actual(4) - rectangle(4);
             end
         end
 
@@ -1170,6 +1199,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 return
             end
             ratio = startPosition(3) / max(startPosition(4), 1);
+            if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
+                runtimePosition = app.previewDisplayPosition( ...
+                    app.PreviewHandles(char(component.Id)));
+                ratio = runtimePosition(3) / max(runtimePosition(4), eps);
+            end
             horizontal = contains(kind, "e") || contains(kind, "w");
             vertical = contains(kind, "n") || contains(kind, "s");
             if horizontal && ~vertical
