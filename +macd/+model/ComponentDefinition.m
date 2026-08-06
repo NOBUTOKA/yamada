@@ -24,6 +24,28 @@ classdef ComponentDefinition
         % Properties - Ordered property capabilities supported by this type.
         Properties macd.model.PropertyDefinition = ...
             macd.model.PropertyDefinition.empty
+        % DisplayName - Human-readable MATLAB documentation name for this component.
+        DisplayName string = ""
+        % Category - Palette and editor category for this component.
+        Category string = ""
+        % IsProgrammaticOnly - Whether palette creation is intentionally disabled.
+        IsProgrammaticOnly logical = false
+        % RequiresParentComponent - Whether creation requires a nonroot parent.
+        RequiresParentComponent logical = false
+        % SupportedStyles - Factory styles the editor can preserve and generate.
+        SupportedStyles string = strings(1, 0)
+        % DefaultStyle - Style used when a new component omits an explicit style.
+        DefaultStyle string = ""
+        % DeclaredTypesByStyle - Declared AppBase type for each supported style.
+        DeclaredTypesByStyle struct = struct()
+        % OverlayShape - Default SVG silhouette used by the editor interaction layer.
+        OverlayShape string = "rectangle"
+        % OverlayShapesByStyle - SVG silhouette overrides keyed by factory style.
+        OverlayShapesByStyle struct = struct()
+        % ResizeConstraint - Default editor resize constraint for this component.
+        ResizeConstraint string = "free"
+        % ResizeConstraintsByStyle - Resize constraint overrides keyed by style.
+        ResizeConstraintsByStyle struct = struct()
         % Metadata - Extensible component capability and editor metadata.
         Metadata struct = struct()
     end
@@ -47,14 +69,98 @@ classdef ComponentDefinition
                 obj (1, 1) macd.model.ComponentDefinition
             end
 
-            % Store all registry capabilities in one validated definition.
+            % Promote stable editor capabilities while retaining extension metadata.
             obj.Factory = factory;
             obj.DeclaredType = declaredType;
             obj.AllowedParentFactories = allowedParentFactories;
             obj.IsRoot = isRoot;
             obj.CreationArguments = creationArguments;
             obj.Properties = propertyDefinitions;
+            [obj.DisplayName, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "DisplayName", obj.DisplayName);
+            [obj.Category, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "Category", obj.Category);
+            [obj.IsProgrammaticOnly, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "ProgrammaticOnly", obj.IsProgrammaticOnly);
+            [obj.RequiresParentComponent, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "RequiresParentComponent", obj.RequiresParentComponent);
+            [obj.SupportedStyles, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "SupportedStyles", obj.SupportedStyles);
+            [obj.DefaultStyle, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "DefaultStyle", obj.DefaultStyle);
+            [obj.DeclaredTypesByStyle, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "DeclaredTypesByStyle", obj.DeclaredTypesByStyle);
+            [obj.OverlayShape, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "OverlayShape", obj.OverlayShape);
+            [obj.OverlayShapesByStyle, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "OverlayShapesByStyle", obj.OverlayShapesByStyle);
+            [obj.ResizeConstraint, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "ResizeConstraint", obj.ResizeConstraint);
+            [obj.ResizeConstraint, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "ResizePolicy", obj.ResizeConstraint);
+            [obj.ResizeConstraintsByStyle, metadata] = macd.model.ComponentDefinition.take(metadata, ...
+                "ResizeConstraintsByStyle", obj.ResizeConstraintsByStyle);
             obj.Metadata = metadata;
+            if strlength(obj.DisplayName) == 0
+                typeParts = split(obj.DeclaredType, ".");
+                obj.DisplayName = typeParts(end);
+            end
+        end
+
+        function style = styleFor(obj, creationArguments)
+            % styleFor Resolve a factory style from literal creation arguments.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentDefinition
+                creationArguments cell
+            end
+            arguments (Output)
+                style (1, 1) string
+            end
+
+            style = obj.DefaultStyle;
+            if isempty(creationArguments) || isempty(obj.SupportedStyles)
+                return
+            end
+            candidate = string(creationArguments{1});
+            if any(obj.SupportedStyles == candidate)
+                style = candidate;
+            end
+        end
+
+        function shape = overlayShapeFor(obj, creationArguments)
+            % overlayShapeFor Return the SVG silhouette for one factory style.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentDefinition
+                creationArguments cell
+            end
+            arguments (Output)
+                shape (1, 1) string
+            end
+
+            shape = obj.OverlayShape;
+            style = obj.styleFor(creationArguments);
+            key = char(style);
+            if ~isempty(key) && isfield(obj.OverlayShapesByStyle, key)
+                shape = string(obj.OverlayShapesByStyle.(key));
+            end
+        end
+
+        function constraint = resizeConstraintFor(obj, creationArguments)
+            % resizeConstraintFor Return the resize constraint for one factory style.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentDefinition
+                creationArguments cell
+            end
+            arguments (Output)
+                constraint (1, 1) string
+            end
+
+            constraint = obj.ResizeConstraint;
+            style = obj.styleFor(creationArguments);
+            key = char(style);
+            if ~isempty(key) && isfield(obj.ResizeConstraintsByStyle, key)
+                constraint = string(obj.ResizeConstraintsByStyle.(key));
+            end
         end
 
         function definition = getProperty(obj, path)
@@ -75,6 +181,28 @@ classdef ComponentDefinition
                     definition = candidate;
                     return
                 end
+            end
+        end
+    end
+
+    methods (Static, Access = private)
+        function [value, metadata] = take(metadata, name, defaultValue)
+            % take Move one known field from extension metadata to a capability.
+            arguments (Input)
+                metadata struct
+                name (1, 1) string
+                defaultValue
+            end
+            arguments (Output)
+                value
+                metadata struct
+            end
+
+            value = defaultValue;
+            key = char(name);
+            if isfield(metadata, key)
+                value = metadata.(key);
+                metadata = rmfield(metadata, key);
             end
         end
     end

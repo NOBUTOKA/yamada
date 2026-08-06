@@ -68,11 +68,12 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyEqual(registry.listFactories(), sort(expected));
             testCase.verifyEqual(numel(registry.listFactories()), numel(expected));
             testCase.verifyEqual(registry.get("uicolorpicker").Metadata.Introduced, "R2024a");
-            testCase.verifyEqual(registry.get("uislider").Metadata.SupportedStyles, ...
+            testCase.verifyEqual(registry.get("uislider").SupportedStyles, ...
                 ["slider", "range"]);
-            testCase.verifyTrue(registry.get("uitreenode").Metadata.RequiresParentComponent);
+            testCase.verifyTrue(registry.get("uitreenode").RequiresParentComponent);
             testCase.verifyTrue(any(registry.get("uigridlayout").AllowedParentFactories == ...
                 "uigridlayout"));
+            testCase.verifyEqual(registry.get("uibutton").DisplayName, "Button");
             testCase.verifyEqual(registry.displayName("uibutton"), "Button");
             testCase.verifyEqual(registry.displayName("uigridlayout"), "Grid Layout");
         end
@@ -98,7 +99,7 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyClass(stored.Properties, ...
                 "macd.model.PropertyDefinition");
             testCase.verifyEqual(stored.Properties.Path, "Multiselect");
-            testCase.verifyEqual(stored.Metadata.Category, "Navigation");
+            testCase.verifyEqual(stored.Category, "Navigation");
 
             % Confirm the shared model and validator require no code changes.
             document = macd.model.NewAppFactory.createEmpty("TreeApp", registry);

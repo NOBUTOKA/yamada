@@ -422,9 +422,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 end
                 definition = app.Registry.get(factory);
                 category = "Other";
-                if isfield(definition.Metadata, "Category")
-                    category = string(definition.Metadata.Category);
-                end
+                category = definition.Category;
                 displayName = app.Registry.displayName(factory);
                 rows(end + 1, :) = {char(displayName), char(category)}; %#ok<AGROW>
                 paletteFactories(end + 1) = factory; %#ok<AGROW>
@@ -640,15 +638,9 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             definition = app.Registry.get(factory);
             result = ~definition.IsRoot;
-            if isfield(definition.Metadata, "ProgrammaticOnly")
-                result = result && ~logical(definition.Metadata.ProgrammaticOnly);
-            end
-            if isfield(definition.Metadata, "Category")
-                result = result && string(definition.Metadata.Category) ~= "FigureTools";
-            end
-            if isfield(definition.Metadata, "RequiresParentComponent")
-                result = result && ~logical(definition.Metadata.RequiresParentComponent);
-            end
+            result = result && ~definition.IsProgrammaticOnly && ...
+                definition.Category ~= "FigureTools" && ...
+                ~definition.RequiresParentComponent;
         end
 
         function ensureSelectionExists(app)
@@ -975,10 +967,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 return
             end
             definition = app.Registry.get(component.Factory);
-            if ~isfield(definition.Metadata, "ResizePolicy")
-                return
-            end
-            policy = string(definition.Metadata.ResizePolicy);
+            policy = definition.resizeConstraintFor(component.CreationArguments);
             if policy == "fixedHeight"
                 position(4) = startPosition(4);
                 return
