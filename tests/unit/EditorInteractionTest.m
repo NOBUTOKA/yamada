@@ -72,6 +72,21 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(any(contains(menuText, "Redo")));
             clear cleanup
         end
+
+        function registryCarriesResizePolicies(testCase)
+            % registryCarriesResizePolicies Verify constrained controls are explicit.
+            registry = macd.model.ComponentRegistry.createDefault();
+            testCase.verifyEqual(string(registry.get("uigauge").Metadata.ResizePolicy), ...
+                "aspectRatio");
+            testCase.verifyEqual(string(registry.get("uiknob").Metadata.ResizePolicy), ...
+                "aspectRatio");
+            testCase.verifyEqual(string(registry.get("uiswitch").Metadata.ResizePolicy), ...
+                "aspectRatio");
+            testCase.verifyEqual(string(registry.get("uilamp").Metadata.ResizePolicy), ...
+                "aspectRatio");
+            testCase.verifyEqual(string(registry.get("uislider").Metadata.ResizePolicy), ...
+                "fixedHeight");
+        end
     end
 end
 

@@ -890,9 +890,13 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             delta = (double(app.UIFigure.CurrentPoint) - app.ResizeStartPoint) / ...
                 max(app.PreviewScale, eps);
             position = app.resizedPosition(app.ResizeStartPosition, delta, app.ResizeKind);
+            position = app.applyResizePolicy(position, app.ResizeStartPosition, app.ResizeKind);
             preview = app.PreviewHandles(key);
-            preview.Position = position .* app.PreviewScale;
-            app.refreshSelectionHandles();
+            displayPosition = position .* app.PreviewScale;
+            % Set the size pair together; constrained controls otherwise emit
+            % aspect-ratio warnings when Position is replaced.
+            preview.Position(1:2) = displayPosition(1:2);
+            preview.Position(3:4) = displayPosition(3:4);
         end
 
         function resizeHandleFinished(app)
@@ -951,6 +955,60 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 position(4) = 1;
             end
             position = round(position);
+        end
+
+        function position = applyResizePolicy(app, position, startPosition, kind)
+            % applyResizePolicy Apply registry-defined control size constraints.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                position (1, 4) double
+                startPosition (1, 4) double
+                kind (1, 1) string
+            end
+            arguments (Output)
+                position (1, 4) double
+            end
+
+            % Registry metadata captures documented MATLAB control constraints.
+            component = app.selectedComponent();
+            if isempty(component)
+                return
+            end
+            definition = app.Registry.get(component.Factory);
+            if ~isfield(definition.Metadata, "ResizePolicy")
+                return
+            end
+            policy = string(definition.Metadata.ResizePolicy);
+            if policy == "fixedHeight"
+                position(4) = startPosition(4);
+                return
+            end
+            if policy ~= "aspectRatio"
+                return
+            end
+            ratio = startPosition(3) / max(startPosition(4), 1);
+            horizontal = contains(kind, "e") || contains(kind, "w");
+            vertical = contains(kind, "n") || contains(kind, "s");
+            if horizontal && ~vertical
+                position(4) = position(3) / max(ratio, eps);
+            elseif vertical && ~horizontal
+                position(3) = position(4) * ratio;
+            else
+                widthDelta = abs(position(3) - startPosition(3));
+                heightDelta = abs(position(4) - startPosition(4));
+                if widthDelta >= heightDelta * ratio
+                    position(4) = position(3) / max(ratio, eps);
+                else
+                    position(3) = position(4) * ratio;
+                end
+            end
+            if contains(kind, "w")
+                position(1) = startPosition(1) + startPosition(3) - position(3);
+            end
+            if contains(kind, "n")
+                position(2) = startPosition(2) + startPosition(4) - position(4);
+            end
+            position(3:4) = max(round(position(3:4)), 1);
         end
 
         function previewComponentButtonDown(app, componentId)
