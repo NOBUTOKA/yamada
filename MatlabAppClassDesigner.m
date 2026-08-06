@@ -20,6 +20,12 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         UIFigure matlab.ui.Figure
         MainGrid matlab.ui.container.GridLayout
         CommandGrid matlab.ui.container.GridLayout
+        LeftGrid matlab.ui.container.GridLayout
+        PaletteTable matlab.ui.control.Table
+        AddComponentButton matlab.ui.control.Button
+        DeleteComponentButton matlab.ui.control.Button
+        UndoButton matlab.ui.control.Button
+        RedoButton matlab.ui.control.Button
         SaveMenuItem matlab.ui.container.Menu
         SavePathConfirmed logical = false
         HierarchyTree matlab.ui.container.Tree
@@ -32,6 +38,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         DiagnosticsTable matlab.ui.control.Table
         StatusLabel matlab.ui.control.Label
         DiagnosticsExpanded logical = false
+        SelectedPaletteFactory string = ""
     end
 
     methods
@@ -78,15 +85,38 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.MainGrid.RowHeight = {38, "1x", 150};
             app.MainGrid.ColumnWidth = {230, "1x", 330};
 
-            app.CommandGrid = uigridlayout(app.MainGrid, [1 1]);
+            app.CommandGrid = uigridlayout(app.MainGrid, [1 5]);
+            app.CommandGrid.ColumnWidth = {"1x", 70, 70, 70, 70};
             app.CommandGrid.Layout.Row = 1;
             app.CommandGrid.Layout.Column = [1 3];
             app.StatusLabel = uilabel(app.CommandGrid, "Text", "Ready");
+            app.StatusLabel.Layout.Column = 1;
+            app.AddComponentButton = uibutton(app.CommandGrid, "Text", "Add", ...
+                "ButtonPushedFcn", @(~, ~) app.addComponentButtonPushed());
+            app.AddComponentButton.Layout.Column = 2;
+            app.DeleteComponentButton = uibutton(app.CommandGrid, "Text", "Delete", ...
+                "ButtonPushedFcn", @(~, ~) app.deleteComponentButtonPushed());
+            app.DeleteComponentButton.Layout.Column = 3;
+            app.UndoButton = uibutton(app.CommandGrid, "Text", "Undo", ...
+                "ButtonPushedFcn", @(~, ~) app.undoButtonPushed());
+            app.UndoButton.Layout.Column = 4;
+            app.RedoButton = uibutton(app.CommandGrid, "Text", "Redo", ...
+                "ButtonPushedFcn", @(~, ~) app.redoButtonPushed());
+            app.RedoButton.Layout.Column = 5;
 
-            app.HierarchyTree = uitree(app.MainGrid, ...
+            app.LeftGrid = uigridlayout(app.MainGrid, [2 1]);
+            app.LeftGrid.RowHeight = {150, "1x"};
+            app.LeftGrid.Layout.Row = 2;
+            app.LeftGrid.Layout.Column = 1;
+            app.PaletteTable = uitable(app.LeftGrid, ...
+                "ColumnName", {"Component", "Category"}, ...
+                "ColumnEditable", [false false], ...
+                "CellSelectionCallback", @(~, event) ...
+                app.paletteSelectionChanged(event));
+            app.PaletteTable.Layout.Row = 1;
+            app.HierarchyTree = uitree(app.LeftGrid, ...
                 "SelectionChangedFcn", @(~, event) app.hierarchySelectionChanged(event));
             app.HierarchyTree.Layout.Row = 2;
-            app.HierarchyTree.Layout.Column = 1;
             app.PreviewPanel = uipanel(app.MainGrid, "Title", "Safe preview");
             app.PreviewPanel.Layout.Row = 2;
             app.PreviewPanel.Layout.Column = 2;
@@ -329,10 +359,229 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             % Set the drawer state before measuring the preview panel geometry.
             app.refreshHierarchy();
+            app.refreshPalette();
             app.refreshDiagnostics(app.Document.Diagnostics);
             drawnow;
             app.refreshPreview();
             app.refreshInspector();
+            app.refreshEditCommands();
+        end
+
+        function refreshPalette(app)
+            % refreshPalette Populate the palette from eligible registry definitions.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            % Keep the palette deterministic while retaining registry categories.
+            factories = app.Registry.listFactories();
+            rows = cell(0, 2);
+            for index = 1:numel(factories)
+                factory = factories(index);
+                if ~app.isPaletteFactory(factory)
+                    continue
+                end
+                definition = app.Registry.get(factory);
+                category = "Other";
+                if isfield(definition.Metadata, "Category")
+                    category = string(definition.Metadata.Category);
+                end
+                rows(end + 1, :) = {char(factory), char(category)}; %#ok<AGROW>
+            end
+            app.PaletteTable.Data = rows;
+        end
+
+        function paletteSelectionChanged(app, event)
+            % paletteSelectionChanged Store the selected palette factory name.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                event
+            end
+
+            % CellSelectionCallback may report an empty selection after refresh.
+            app.SelectedPaletteFactory = "";
+            if isempty(event.Indices)
+                app.refreshEditCommands();
+                return
+            end
+            row = event.Indices(1, 1);
+            if row <= size(app.PaletteTable.Data, 1)
+                app.SelectedPaletteFactory = string(app.PaletteTable.Data{row, 1});
+            end
+            app.refreshEditCommands();
+        end
+
+        function addComponentButtonPushed(app)
+            % addComponentButtonPushed Insert the selected palette component.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            parent = app.insertionParent(app.SelectedPaletteFactory);
+            if isempty(parent)
+                app.setStatus("Select a compatible parent before adding a component.");
+                return
+            end
+            try
+                component = app.Document.insertComponent(app.Registry, ...
+                    app.SelectedPaletteFactory, parent.Id);
+            catch exception
+                app.setStatus(string(exception.message));
+                app.refreshEditCommands();
+                return
+            end
+            app.SelectedComponentId = component.Id;
+            app.refreshShell();
+            app.setStatus("Added " + component.Name);
+        end
+
+        function deleteComponentButtonPushed(app)
+            % deleteComponentButtonPushed Delete the selected leaf explicitly.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            component = app.selectedComponent();
+            if isempty(component)
+                return
+            end
+            parentId = component.ParentId;
+            try
+                app.Document.removeComponent(component.Id);
+            catch exception
+                app.setStatus(string(exception.message));
+                app.refreshEditCommands();
+                return
+            end
+            app.SelectedComponentId = parentId;
+            app.refreshShell();
+            app.setStatus("Deleted " + component.Name);
+        end
+
+        function undoButtonPushed(app)
+            % undoButtonPushed Undo the most recent model edit.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            try
+                app.Document.undo();
+            catch exception
+                app.setStatus(string(exception.message));
+                return
+            end
+            app.ensureSelectionExists();
+            app.refreshShell();
+            app.setStatus("Undid last edit.");
+        end
+
+        function redoButtonPushed(app)
+            % redoButtonPushed Redo the next model edit.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            try
+                app.Document.redo();
+            catch exception
+                app.setStatus(string(exception.message));
+                return
+            end
+            app.ensureSelectionExists();
+            app.refreshShell();
+            app.setStatus("Redid edit.");
+        end
+
+        function refreshEditCommands(app)
+            % refreshEditCommands Synchronize palette and edit command enablement.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if isempty(app.Document)
+                return
+            end
+            app.AddComponentButton.Enable = "off";
+            if strlength(app.SelectedPaletteFactory) > 0 && ...
+                    ~isempty(app.insertionParent(app.SelectedPaletteFactory))
+                app.AddComponentButton.Enable = "on";
+            end
+            component = app.selectedComponent();
+            canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
+                isempty(component.Children) && component.IsEditable;
+            app.DeleteComponentButton.Enable = "off";
+            if canDelete
+                app.DeleteComponentButton.Enable = "on";
+            end
+            app.UndoButton.Enable = "off";
+            app.RedoButton.Enable = "off";
+            if app.Document.canUndo()
+                app.UndoButton.Enable = "on";
+            end
+            if app.Document.canRedo()
+                app.RedoButton.Enable = "on";
+            end
+        end
+
+        function parent = insertionParent(app, factory)
+            % insertionParent Find the nearest selected ancestor accepting a factory.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                factory string
+            end
+            arguments (Output)
+                parent
+            end
+
+            parent = [];
+            if strlength(factory) == 0 || isempty(app.Document)
+                return
+            end
+            candidate = app.selectedComponent();
+            while ~isempty(candidate)
+                definition = app.Registry.get(factory);
+                if any(definition.AllowedParentFactories == candidate.Factory)
+                    parent = candidate;
+                    return
+                end
+                if strlength(candidate.ParentId) == 0
+                    return
+                end
+                candidate = app.Document.getComponent(candidate.ParentId);
+            end
+        end
+
+        function result = isPaletteFactory(app, factory)
+            % isPaletteFactory Report whether a factory is in the initial edit scope.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                factory string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            definition = app.Registry.get(factory);
+            result = ~definition.IsRoot;
+            if isfield(definition.Metadata, "ProgrammaticOnly")
+                result = result && ~logical(definition.Metadata.ProgrammaticOnly);
+            end
+            if isfield(definition.Metadata, "Category")
+                result = result && string(definition.Metadata.Category) ~= "FigureTools";
+            end
+            if isfield(definition.Metadata, "RequiresParentComponent")
+                result = result && ~logical(definition.Metadata.RequiresParentComponent);
+            end
+        end
+
+        function ensureSelectionExists(app)
+            % ensureSelectionExists Move selection to the root after undoable removal.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+            if isempty(app.selectedComponent())
+                app.SelectedComponentId = app.Document.RootComponentId;
+            end
         end
 
         function refreshHierarchy(app)
@@ -581,8 +830,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.DiagnosticsToggleButton.Text = "Hide";
             else
                 app.MainGrid.RowHeight = {38, "1x", 42};
-                app.DiagnosticsTable.Visible = "off";
-                app.DiagnosticsToggleButton.Text = "Show";
+            app.DiagnosticsTable.Visible = "off";
+            app.DiagnosticsToggleButton.Text = "Show";
             end
         end
     end
