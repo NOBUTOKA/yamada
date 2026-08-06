@@ -38,15 +38,13 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         InspectorGrid matlab.ui.container.GridLayout
         InspectorTable matlab.ui.control.Table
         PreviewHandles containers.Map
-        DragComponentId string = ""
-        DragStartPoint double = [0 0]
-        DragStartPosition double = [0 0 0 0]
+        InteractionOverlay matlab.ui.control.HTML
+        InteractionComponentId string = ""
+        InteractionKind string = ""
+        InteractionStartPoint double = [0 0]
+        InteractionStartPosition double = [0 0 0 0]
+        InteractionPosition double = [0 0 0 0]
         PreviewScale double = 1
-        ResizeHandles matlab.ui.container.Panel = matlab.ui.container.Panel.empty
-        ResizeTargetId string = ""
-        ResizeKind string = ""
-        ResizeStartPoint double = [0 0]
-        ResizeStartPosition double = [0 0 0 0]
         DiagnosticsDrawer matlab.ui.container.Panel
         DiagnosticsGrid matlab.ui.container.GridLayout
         DiagnosticsSummaryLabel matlab.ui.control.Label
@@ -387,6 +385,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             app.SelectedComponentId = string(event.SelectedNodes.NodeData);
             app.refreshInspector();
+            app.updateInteractionOverlay();
         end
 
         function refreshShell(app)
@@ -710,8 +709,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             [app.PreviewHandles, diagnostics] = app.PreviewRenderer.render( ...
                 app.Document, app.PreviewPanel);
             app.updatePreviewScale(root);
-            app.attachPreviewCallbacks();
-            app.refreshSelectionHandles();
+            app.createInteractionOverlay();
+            app.updateInteractionOverlay();
             if ~isempty(diagnostics)
                 app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
                 app.refreshDiagnostics(app.Document.Diagnostics);
@@ -738,6 +737,201 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             if sourceSize(1) > 0 && sourceSize(2) > 0 && ...
                     isprop(surface, "Position")
                 app.PreviewScale = double(surface.Position(3)) / sourceSize(1);
+            end
+        end
+
+        function createInteractionOverlay(app)
+            % createInteractionOverlay Add the transparent SVG editing surface.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            % The overlay owns pointer capture and never changes preview controls.
+            overlayPath = fullfile(fileparts(mfilename("fullpath")), ...
+                "resources", "EditorInteractionOverlay.html");
+            app.InteractionOverlay = uihtml(app.PreviewPanel, ...
+                "HTMLSource", overlayPath, ...
+                "HTMLEventReceivedFcn", @(~, event) ...
+                app.interactionOverlayEvent(event));
+            innerPosition = double(app.PreviewPanel.InnerPosition);
+            app.InteractionOverlay.Position = [0 0 innerPosition(3:4)];
+        end
+
+        function updateInteractionOverlay(app)
+            % updateInteractionOverlay Send component silhouettes to the SVG layer.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if isempty(app.InteractionOverlay) || ~isvalid(app.InteractionOverlay) || ...
+                    isempty(app.PreviewHandles)
+                return
+            end
+            components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
+                "height", {}, "shape", {}, "selected", {});
+            keys = app.PreviewHandles.keys();
+            for index = 1:numel(keys)
+                componentId = string(keys{index});
+                component = app.Document.getComponent(componentId);
+                if isempty(component) || component.Id == app.Document.RootComponentId || ...
+                        strlength(component.ParentId) == 0
+                    continue
+                end
+                parent = app.Document.getComponent(component.ParentId);
+                position = component.getProperty("Position");
+                if isempty(parent) || parent.Factory == "uigridlayout" || ...
+                        isempty(position) || position.ValueKind ~= "literal" || ...
+                        ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
+                    continue
+                end
+                rectangle = app.previewDisplayPosition(app.PreviewHandles(keys{index}));
+                if componentId == app.InteractionComponentId
+                    rectangle = app.InteractionPosition .* app.PreviewScale;
+                    preview = app.PreviewHandles(keys{index});
+                    parentPosition = double(getpixelposition(preview.Parent, true));
+                    panelPosition = double(getpixelposition(app.PreviewPanel, true));
+                    rectangle(1:2) = rectangle(1:2) + parentPosition(1:2) - panelPosition(1:2);
+                end
+                definition = app.Registry.get(component.Factory);
+                components(end + 1) = struct( ...
+                    "id", char(component.Id), "x", rectangle(1), "y", rectangle(2), ...
+                    "width", rectangle(3), "height", rectangle(4), ...
+                    "shape", char(definition.overlayShapeFor(component.CreationArguments)), ...
+                    "selected", component.Id == app.SelectedComponentId); %#ok<AGROW>
+            end
+            innerPosition = double(app.PreviewPanel.InnerPosition);
+            app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
+                "height", innerPosition(4), "components", components);
+        end
+
+        function interactionOverlayEvent(app, event)
+            % interactionOverlayEvent Process pointer events from the SVG overlay.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                event
+            end
+
+            if string(event.HTMLEventName) ~= "Pointer"
+                return
+            end
+            data = event.HTMLEventData;
+            point = [double(data.x) double(data.y)];
+            phase = string(data.phase);
+            if phase == "pointerdown"
+                app.beginOverlayInteraction(string(data.componentId), ...
+                    string(data.handle), point);
+            elseif phase == "pointermove"
+                app.moveOverlayInteraction(point);
+            elseif phase == "pointerup" || phase == "pointercancel"
+                app.finishOverlayInteraction();
+            end
+        end
+
+        function beginOverlayInteraction(app, componentId, handle, point)
+            % beginOverlayInteraction Select a component and begin a move or resize.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId (1, 1) string
+                handle (1, 1) string
+                point (1, 2) double
+            end
+
+            component = app.Document.getComponent(componentId);
+            if isempty(component)
+                return
+            end
+            position = component.getProperty("Position");
+            if isempty(position) || position.ValueKind ~= "literal" || ...
+                    ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
+                return
+            end
+            app.SelectedComponentId = componentId;
+            app.InteractionComponentId = componentId;
+            app.InteractionKind = handle;
+            if strlength(handle) == 0
+                app.InteractionKind = "move";
+            end
+            app.InteractionStartPoint = point;
+            app.InteractionStartPosition = double(position.LiteralValue);
+            app.InteractionPosition = app.InteractionStartPosition;
+            app.refreshHierarchy();
+            app.refreshInspector();
+            app.updateInteractionOverlay();
+        end
+
+        function moveOverlayInteraction(app, point)
+            % moveOverlayInteraction Update the overlay-only candidate geometry.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                point (1, 2) double
+            end
+
+            if strlength(app.InteractionComponentId) == 0
+                return
+            end
+            delta = (point - app.InteractionStartPoint) / max(app.PreviewScale, eps);
+            if app.InteractionKind == "move"
+                app.InteractionPosition = app.movedPosition( ...
+                    app.InteractionComponentId, app.InteractionStartPosition, delta);
+            else
+                position = app.resizedPosition(app.InteractionStartPosition, delta, ...
+                    app.InteractionKind);
+                app.InteractionPosition = app.applyResizePolicy(position, ...
+                    app.InteractionStartPosition, app.InteractionKind);
+            end
+            app.updateInteractionOverlay();
+        end
+
+        function finishOverlayInteraction(app)
+            % finishOverlayInteraction Commit one completed overlay gesture.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if strlength(app.InteractionComponentId) == 0
+                return
+            end
+            componentId = app.InteractionComponentId;
+            position = app.InteractionPosition;
+            startPosition = app.InteractionStartPosition;
+            app.InteractionComponentId = "";
+            app.InteractionKind = "";
+            if ~isequal(position, startPosition)
+                try
+                    app.Document.setProperty(componentId, "Position", position);
+                catch exception
+                    app.setStatus(string(exception.message));
+                end
+            end
+            app.refreshShell();
+        end
+
+        function position = movedPosition(app, componentId, startPosition, delta)
+            % movedPosition Apply a bounded absolute-position translation.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId (1, 1) string
+                startPosition (1, 4) double
+                delta (1, 2) double
+            end
+            arguments (Output)
+                position (1, 4) double
+            end
+
+            component = app.Document.getComponent(componentId);
+            preview = app.PreviewHandles(char(componentId));
+            parent = preview.Parent;
+            if isprop(parent, "InnerPosition")
+                bounds = double(parent.InnerPosition(3:4)) / max(app.PreviewScale, eps);
+            else
+                bounds = double(parent.Position(3:4)) / max(app.PreviewScale, eps);
+            end
+            position = startPosition;
+            position(1:2) = round(startPosition(1:2) + delta);
+            position(1) = max(0, min(position(1), bounds(1) - position(3)));
+            position(2) = max(0, min(position(2), bounds(2) - position(4)));
+            if isempty(component)
+                position = startPosition;
             end
         end
 

@@ -32,6 +32,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(numel(toolbars.Children), 2);
             testCase.verifyTrue(all(arrayfun(@(tool) ...
                 ~isempty(tool.ClickedCallback), toolbars.Children)));
+            overlays = findall(0, "Type", "uihtml");
+            testCase.verifyEqual(numel(overlays), 1);
+            testCase.verifyNotEmpty(overlays.HTMLEventReceivedFcn);
             clear cleanup
         end
 
@@ -86,6 +89,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "aspectRatio");
             testCase.verifyEqual(registry.get("uislider").ResizeConstraint, ...
                 "fixedHeight");
+            testCase.verifyEqual(registry.get("uiknob").OverlayShape, "circle");
+            testCase.verifyEqual(registry.get("uislider").OverlayShape, "slider");
+            testCase.verifyEqual(registry.get("uiswitch").OverlayShape, "switch");
         end
     end
 end
