@@ -124,8 +124,23 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             groups = findall(figures, "Type", "uitabgroup");
             testCase.verifyEqual(groups.SelectedTab, groups.Children(2));
 
+            % Wait for the overlay to publish the selected tab's settled geometry.
+            child = struct.empty;
+            for attempt = 1:20
+                drawnow;
+                pause(0.05);
+                components = overlays.Data.components;
+                if ~isstruct(components)
+                    components = struct(components);
+                end
+                child = components(strcmp(string({components.shape}), "roundedRectangle"));
+                if ~isempty(child)
+                    break
+                end
+            end
+            testCase.verifyNotEmpty(child);
+
             % A subsequent component interaction must preserve the chosen tab.
-            child = components(strcmp(string({components.shape}), "roundedRectangle"));
             child = child(1);
             overlays.HTMLEventReceivedFcn(overlays, struct( ...
                 "HTMLEventName", "Pointer", ...

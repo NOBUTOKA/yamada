@@ -39,6 +39,10 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         InspectorTable matlab.ui.control.Table
         PreviewHandles containers.Map
         PreviewTabSelections containers.Map = containers.Map("KeyType", "char", "ValueType", "double")
+        TabLayoutTimer timer = timer.empty
+        TabLayoutSignature string = ""
+        TabLayoutStableCount double = 0
+        TabLayoutPollCount double = 0
         InteractionOverlay matlab.ui.control.HTML
         InteractionComponentId string = ""
         InteractionKind string = ""
@@ -77,6 +81,14 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             % delete Release the editor figure when the application is deleted.
             arguments (Input)
                 app (1, 1) MatlabAppClassDesigner
+            end
+
+            % Stop deferred UI work before releasing the editor figure.
+            if ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer)
+                stop(app.TabLayoutTimer);
+                wait(app.TabLayoutTimer);
+                delete(app.TabLayoutTimer);
+                app.TabLayoutTimer = timer.empty;
             end
 
             % Avoid deleting an already closed figure during AppBase cleanup.
@@ -713,6 +725,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.updatePreviewScale(root);
             app.createInteractionOverlay();
             app.updateInteractionOverlay();
+            app.scheduleOverlayRefresh();
             if ~isempty(diagnostics)
                 app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
                 app.refreshDiagnostics(app.Document.Diagnostics);
@@ -777,7 +790,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 componentId = string(keys{index});
                 component = app.Document.getComponent(componentId);
                 if isempty(component) || component.Id == app.Document.RootComponentId || ...
-                        strlength(component.ParentId) == 0
+                        strlength(component.ParentId) == 0 || component.Factory == "uitab" || ...
+                        ~app.isVisibleInSelectedTab(component.Id)
                     continue
                 end
                 parent = app.Document.getComponent(component.ParentId);
@@ -907,9 +921,129 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             try
                 group.SelectedTab = group.Children(tabIndex);
                 app.PreviewTabSelections(char(componentId)) = tabIndex;
+                app.scheduleOverlayRefresh();
             catch exception
                 app.setStatus(string(exception.message));
             end
+        end
+
+        function visible = isVisibleInSelectedTab(app, componentId)
+            % isVisibleInSelectedTab Check whether a component belongs to the active tab.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId string
+            end
+            arguments (Output)
+                visible (1, 1) logical
+            end
+
+            visible = true;
+            component = app.Document.getComponent(componentId);
+            while ~isempty(component) && strlength(component.ParentId) > 0
+                if component.Factory == "uitab"
+                    group = app.Document.getComponent(component.ParentId);
+                    if ~isempty(group) && group.Factory == "uitabgroup" && ...
+                            isKey(app.PreviewHandles, char(group.Id)) && ...
+                            isKey(app.PreviewHandles, char(component.Id))
+                        groupPreview = app.PreviewHandles(char(group.Id));
+                        tabPreview = app.PreviewHandles(char(component.Id));
+                        visible = isequal(groupPreview.SelectedTab, tabPreview);
+                        return
+                    end
+                end
+                component = app.Document.getComponent(component.ParentId);
+            end
+        end
+
+        function scheduleOverlayRefresh(app)
+            % scheduleOverlayRefresh Refresh tab-child geometry after layout completion.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if isempty(app.Document) || ~any([app.Document.Components.Factory] == "uitabgroup")
+                return
+            end
+            if isempty(app.TabLayoutTimer) || ~isvalid(app.TabLayoutTimer)
+                app.TabLayoutTimer = timer("ExecutionMode", "fixedSpacing", ...
+                    "Period", 0.05, "TasksToExecute", 40, ...
+                    "TimerFcn", @(timerObject, ~) ...
+                    app.refreshOverlayAfterTabLayout(timerObject), ...
+                    "ErrorFcn", @(timerObject, ~) stop(timerObject));
+            elseif strcmp(app.TabLayoutTimer.Running, "on")
+                stop(app.TabLayoutTimer);
+            end
+            app.TabLayoutSignature = "";
+            app.TabLayoutStableCount = 0;
+            app.TabLayoutPollCount = 0;
+            start(app.TabLayoutTimer);
+        end
+
+        function refreshOverlayAfterTabLayout(app, timerObject)
+            % refreshOverlayAfterTabLayout Update geometry after deferred tab layout.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                timerObject timer
+            end
+
+            if isempty(app.UIFigure) || ~isvalid(app.UIFigure) || ...
+                    isempty(app.TabLayoutTimer) || ~isvalid(app.TabLayoutTimer) || ...
+                    ~isequal(timerObject, app.TabLayoutTimer)
+                return
+            end
+            try
+                drawnow;
+                signature = app.activeTabGeometrySignature();
+            catch
+                if isvalid(timerObject)
+                    stop(timerObject);
+                end
+                return
+            end
+            app.TabLayoutPollCount = app.TabLayoutPollCount + 1;
+            if signature == app.TabLayoutSignature
+                app.TabLayoutStableCount = app.TabLayoutStableCount + 1;
+            else
+                app.TabLayoutSignature = signature;
+                app.TabLayoutStableCount = 0;
+            end
+            if app.TabLayoutStableCount >= 2 || app.TabLayoutPollCount >= 40
+                stop(timerObject);
+                app.updateInteractionOverlay();
+            end
+        end
+
+        function signature = activeTabGeometrySignature(app)
+            % activeTabGeometrySignature Summarize visible preview geometry for polling.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+            arguments (Output)
+                signature (1, 1) string
+            end
+
+            parts = strings(1, 0);
+            keys = sort(string(app.PreviewHandles.keys()));
+            for index = 1:numel(keys)
+                component = app.Document.getComponent(keys(index));
+                if isempty(component) || component.Factory == "uitab" || ...
+                        ~app.isVisibleInSelectedTab(component.Id)
+                    continue
+                end
+                preview = app.PreviewHandles(char(component.Id));
+                if ~isvalid(preview)
+                    continue
+                end
+                position = component.getProperty("Position");
+                if isempty(position) || position.ValueKind ~= "literal" || ...
+                        ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
+                    continue
+                end
+                rectangle = app.previewDisplayPosition(preview);
+                parts(end + 1) = component.Id + ":" + ...
+                    strjoin(string(round(rectangle)), ","); %#ok<AGROW>
+            end
+            signature = strjoin(parts, "|");
         end
 
         function restorePreviewTabSelections(app)
