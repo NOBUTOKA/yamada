@@ -18,7 +18,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 body { position: relative; }
 svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 #tab-controls { position: absolute; inset: 0; pointer-events: none; }
-.tab-selector { position: absolute; box-sizing: border-box; height: 28px; pointer-events: auto; font: 13px Arial; }
+.tab-selector { position: absolute; box-sizing: border-box; height: 22px; pointer-events: auto; font: 11px Arial; }
 .silhouette { fill: none; stroke: #2864c7; stroke-width: 1.25; stroke-dasharray: 4 3; pointer-events: all; }
 .selected { stroke: #124da8; stroke-width: 2; }
 .handle { fill: #2864c7; stroke: #ffffff; stroke-width: 1; pointer-events: all; }
@@ -71,9 +71,10 @@ function renderTabControls(components) {
     if (!item.tabGroup || !item.tabTitles || item.tabTitles.length === 0) return;
     var selector = document.createElement("select");
     selector.className = "tab-selector";
-    selector.style.left = item.x + "px";
-    selector.style.top = (currentData.height - item.y - item.height) + "px";
-    selector.style.width = item.width + "px";
+    var controlWidth = Math.min(110, item.width);
+    selector.style.left = (item.x + item.width - controlWidth) + "px";
+    selector.style.top = (currentData.height - item.y - item.height + 3) + "px";
+    selector.style.width = controlWidth + "px";
     selector.dataset.componentId = item.id;
     item.tabTitles.forEach(function(title, index) {
       var option = document.createElement("option");

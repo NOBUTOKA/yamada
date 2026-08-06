@@ -38,6 +38,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         InspectorGrid matlab.ui.container.GridLayout
         InspectorTable matlab.ui.control.Table
         PreviewHandles containers.Map
+        PreviewTabSelections containers.Map = containers.Map("KeyType", "char", "ValueType", "double")
         InteractionOverlay matlab.ui.control.HTML
         InteractionComponentId string = ""
         InteractionKind string = ""
@@ -708,6 +709,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.PreviewPanel.Title = "Safe preview: " + root.Name;
             [app.PreviewHandles, diagnostics] = app.PreviewRenderer.render( ...
                 app.Document, app.PreviewPanel);
+            app.restorePreviewTabSelections();
             app.updatePreviewScale(root);
             app.createInteractionOverlay();
             app.updateInteractionOverlay();
@@ -904,8 +906,35 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             tabIndex = round(tabIndex);
             try
                 group.SelectedTab = group.Children(tabIndex);
+                app.PreviewTabSelections(char(componentId)) = tabIndex;
             catch exception
                 app.setStatus(string(exception.message));
+            end
+        end
+
+        function restorePreviewTabSelections(app)
+            % restorePreviewTabSelections Restore transient preview tab selections after rendering.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if isempty(app.PreviewTabSelections) || isempty(app.PreviewHandles)
+                return
+            end
+            keys = app.PreviewTabSelections.keys();
+            for index = 1:numel(keys)
+                componentId = keys{index};
+                if ~isKey(app.PreviewHandles, componentId)
+                    continue
+                end
+                group = app.PreviewHandles(componentId);
+                if ~isa(group, "matlab.ui.container.TabGroup") || isempty(group.Children)
+                    continue
+                end
+                tabIndex = app.PreviewTabSelections(componentId);
+                if tabIndex >= 1 && tabIndex <= numel(group.Children)
+                    group.SelectedTab = group.Children(tabIndex);
+                end
             end
         end
 
