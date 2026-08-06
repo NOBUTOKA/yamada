@@ -953,7 +953,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             rectangle(3:4) = app.InteractionPosition(3:4) .* app.PreviewScale;
             component = app.Document.getComponent(componentId);
             definition = app.Registry.get(component.Factory);
-            if definition.resizeConstraintFor(component.CreationArguments) == "aspectRatio"
+            constraint = definition.resizeConstraintFor(component.CreationArguments);
+            if constraint == "fixedHeight"
+                % MATLAB keeps the slider-like control height independent of Position.
+                rectangle(4) = actual(4);
+            elseif constraint == "aspectRatio"
                 rectangle(4) = rectangle(3) * actual(4) / max(actual(3), eps);
             end
             if contains(app.InteractionKind, "w")
@@ -1189,6 +1193,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             definition = app.Registry.get(component.Factory);
             policy = definition.resizeConstraintFor(component.CreationArguments);
             if policy == "fixedHeight"
+                position(2) = startPosition(2);
                 position(4) = startPosition(4);
                 return
             end

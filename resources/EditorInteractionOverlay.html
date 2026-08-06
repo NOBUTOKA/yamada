@@ -87,6 +87,7 @@ function outline(componentData) {
   }
   if (componentData.shape === "slider") {
     var group = svgElement("g", common);
+    group.appendChild(svgElement("rect", withAttributes(common, { x: x, y: y, width: w, height: h })));
     group.appendChild(svgElement("line", withAttributes(common, { x1: x + 6, y1: y + h / 2, x2: x + w - 6, y2: y + h / 2 })));
     group.appendChild(svgElement("circle", withAttributes(common, { cx: x + w / 2, cy: y + h / 2, r: Math.min(7, h / 2) })));
     return group;
