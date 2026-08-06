@@ -418,6 +418,22 @@ will show an actionable unavailable-state message rather than guessing.
 5. Finish round-trip coverage, manual visual verification, and an end-to-end
    MATLAB test run before marking Phase 5 complete.
 
+#### Phase 5 completion record
+
+- Model creation, validation, property mutation, deletion, and reversible
+  history are implemented and covered by `ModelTest` and round-trip tests.
+- The editor shell now provides the documented Phase 5 palette, official MATLAB
+  toolbar, Edit menu commands, keyboard shortcuts, hierarchy selection,
+  inspector editing, drag-to-move, and eight-direction resize handles.
+- `EditorInteractionTest` constructs the real `uifigure`, verifies the palette,
+  hierarchy, inspector, toolbar, and Edit menu surfaces, and destroys the
+  fixture. The licensed R2024a suite passes 44 tests with zero failures.
+- A real new-document editor capture was inspected after `drawnow`; the
+  hierarchy and inspector remain inside the right pane, and the toolbar and
+  palette are visible without clipping. Maintained parsed fixtures remain
+  covered by parser, preview, round-trip, and construction/destruction tests;
+  callbacks are not executed during Safe Preview.
+
 ### Phase 6: Integration hardening
 
 - Run unit, round-trip, and generation tests.
