@@ -91,6 +91,12 @@ classdef ModelValidator
                         diagnostics(end + 1) = macd.validation.ModelValidator.error( ...
                             "editable-expression", ...
                             "Source expressions cannot be marked editable.", component.Id); %#ok<AGROW>
+                    elseif entry.ValueKind == "literal"
+                        geometryDiagnostic = macd.validation.ModelValidator.validateGeometry( ...
+                            entry, component.Id);
+                        if ~isempty(geometryDiagnostic)
+                            diagnostics(end + 1) = geometryDiagnostic; %#ok<AGROW>
+                        end
                     end
                 end
             end
@@ -127,6 +133,38 @@ classdef ModelValidator
     end
 
     methods (Static, Access = private)
+        function diagnostic = validateGeometry(entry, componentId)
+            % validateGeometry Check literal Position and grid coordinates.
+            arguments (Input)
+                entry (1, 1) macd.model.PropertyEntry
+                componentId string
+            end
+            arguments (Output)
+                diagnostic macd.model.Diagnostic
+            end
+
+            diagnostic = macd.model.Diagnostic.empty;
+            value = entry.LiteralValue;
+            if entry.Path == "Position"
+                if ~isnumeric(value) || ~isequal(size(value), [1 4]) || ...
+                        any(~isfinite(value)) || any(value(3:4) <= 0)
+                    diagnostic = macd.validation.ModelValidator.error( ...
+                        "invalid-position", ...
+                        "Position must be a finite numeric 1-by-4 value with positive size.", ...
+                        componentId);
+                end
+            elseif any(entry.Path == ["Layout.Row", "Layout.Column"])
+                if ~isnumeric(value) || ~isvector(value) || isempty(value) || ...
+                        numel(value) > 2 || any(~isfinite(value)) || ...
+                        any(value < 1) || any(value ~= floor(value))
+                    diagnostic = macd.validation.ModelValidator.error( ...
+                        "invalid-grid-coordinate", ...
+                        "Grid row and column values must be positive integer scalars or spans.", ...
+                        componentId);
+                end
+            end
+        end
+
         function diagnostic = error(code, message, componentId)
             % error Create a component-scoped blocking diagnostic.
             arguments (Input)

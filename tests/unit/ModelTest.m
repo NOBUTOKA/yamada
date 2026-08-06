@@ -215,6 +215,23 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyEqual(numel(document.PendingEdits), 1);
         end
 
+        function geometryValidationRejectsUnsafeLiterals(testCase)
+            % geometryValidationRejectsUnsafeLiterals Verify Phase 5 geometry checks.
+
+            % Invalid Position and grid coordinates must block generation safely.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            label = document.insertComponent(registry, "uilabel", ...
+                document.RootComponentId);
+            label.setProperty("Position", [10 10 0 30]);
+            label.setProperty("Layout.Row", [0 2]);
+            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+
+            testCase.verifyTrue(any([diagnostics.Code] == "invalid-position"));
+            testCase.verifyTrue(any([diagnostics.Code] == "invalid-grid-coordinate"));
+            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+        end
+
         function publicPropertiesProvideMetadataHelp(testCase)
             % publicPropertiesProvideMetadataHelp Verify documented public state.
 
