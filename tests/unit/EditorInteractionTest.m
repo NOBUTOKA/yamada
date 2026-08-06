@@ -1,0 +1,108 @@
+classdef EditorInteractionTest < matlab.unittest.TestCase
+    % EditorInteractionTest Verify the Phase 5 editor interaction surfaces.
+    %   These tests construct the real programmatic editor, allow its UI to lay
+    %   out, inspect public callback wiring through UI handles, and always delete
+    %   the editor fixture. They do not execute any opened application source.
+
+    methods (Test)
+        function editorBuildsPhase5Surfaces(testCase)
+            % editorBuildsPhase5Surfaces Verify palette, right pane, and toolbar.
+
+            % Construct the editor through its ordinary application entry point.
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+
+            % Locate the editor-owned controls through their public UI metadata.
+            tables = findall(0, "Type", "uitable");
+            palette = tables(arrayfun(@(table) numel(table.ColumnName) >= 2 && ...
+                string(table.ColumnName(2)) == "Category", tables));
+            testCase.verifyEqual(numel(palette), 1);
+            testCase.verifyNotEmpty(palette.DoubleClickedFcn);
+            testCase.verifyNotEmpty(palette.CellSelectionCallback);
+            testCase.verifyEqual(string(palette.Data{1, 1}), "UI Axes");
+
+            panels = findall(0, "Type", "uipanel");
+            titles = string({panels.Title});
+            testCase.verifyTrue(any(titles == "Hierarchy"));
+            testCase.verifyTrue(any(titles == "Properties"));
+
+            toolbars = findall(0, "Type", "uitoolbar");
+            testCase.verifyEqual(numel(toolbars), 1);
+            testCase.verifyEqual(numel(toolbars.Children), 2);
+            testCase.verifyTrue(all(arrayfun(@(tool) ...
+                ~isempty(tool.ClickedCallback), toolbars.Children)));
+            clear cleanup
+        end
+
+        function hierarchySelectionCallbackUpdatesInspector(testCase)
+            % hierarchySelectionCallbackUpdatesInspector Verify real tree selection.
+
+            % Select the root node through the live uitree callback path.
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            trees = findall(0, "Type", "uitree");
+            testCase.verifyEqual(numel(trees), 1);
+            trees.SelectedNodes = trees.Children(1);
+            drawnow;
+
+            % The callback must leave the root selected and show its properties.
+            testCase.verifyEqual(app.SelectedComponentId, app.Document.RootComponentId);
+            tables = findall(0, "Type", "uitable");
+            inspector = tables(arrayfun(@(table) any(string(table.ColumnName) == ...
+                "Property"), tables));
+            testCase.verifyEqual(numel(inspector), 1);
+            testCase.verifyGreaterThan(size(inspector.Data, 1), 0);
+            clear cleanup
+        end
+
+        function editMenuExposesPhase5Commands(testCase)
+            % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
+
+            % Inspect the actual menu hierarchy after editor construction.
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            menus = findall(0, "Type", "uimenu");
+            menuText = string({menus.Text});
+            testCase.verifyTrue(any(contains(menuText, "Edit")));
+            testCase.verifyTrue(any(contains(menuText, "Delete")));
+            testCase.verifyTrue(any(contains(menuText, "Undo")));
+            testCase.verifyTrue(any(contains(menuText, "Redo")));
+            clear cleanup
+        end
+    end
+end
+
+function deleteIfValid(value)
+% deleteIfValid Delete an editor fixture when it remains valid.
+arguments (Input)
+    value
+end
+
+% Keep cleanup safe if an assertion or UI construction fails midway.
+if ~isempty(value) && isvalid(value)
+    delete(value);
+end
+end
+
+%{
+MatlabAppClassDesigner - Editor interaction tests for the Phase 5 canvas shell.
+Copyright (C) 2026 MatlabAppClassDesigner contributors
+
+This file is part of MatlabAppClassDesigner.
+
+MatlabAppClassDesigner is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+MatlabAppClassDesigner is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MatlabAppClassDesigner. If not, see <https://www.gnu.org/licenses/>.
+%}
