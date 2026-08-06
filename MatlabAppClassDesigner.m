@@ -98,8 +98,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.UIFigure = uifigure("Visible", "off", ...
                 "Name", "MATLAB App Class Designer", ...
                 "Position", [100 100 1280 760], ...
-                "WindowKeyPressFcn", @(~, event) app.editorKeyPressed(event), ...
-                "WindowButtonDownFcn", @(~, ~) app.previewWindowButtonDown());
+                "WindowKeyPressFcn", @(~, event) app.editorKeyPressed(event));
             app.MainGrid = uigridlayout(app.UIFigure, [3 3]);
             app.MainGrid.RowHeight = {38, "1x", 150};
             app.MainGrid.ColumnWidth = {230, "1x", 330};
@@ -890,8 +889,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             delta = (double(app.UIFigure.CurrentPoint) - app.ResizeStartPoint) / ...
                 max(app.PreviewScale, eps);
-            % uifigure.CurrentPoint uses a top-origin vertical coordinate.
-            delta(2) = -delta(2);
             position = app.resizedPosition(app.ResizeStartPosition, delta, app.ResizeKind);
             position = app.applyResizePolicy(position, app.ResizeStartPosition, app.ResizeKind);
             preview = app.PreviewHandles(key);
@@ -1014,51 +1011,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             position(3:4) = max(round(position(3:4)), 1);
         end
 
-        function previewWindowButtonDown(app)
-            % previewWindowButtonDown Begin a move from a window-level pointer event.
-            arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
-            end
-
-            % Child controls may consume ButtonDownFcn, so hit-test at the window.
-            if strlength(app.DragComponentId) > 0 || strlength(app.ResizeTargetId) > 0 || ...
-                    isempty(app.PreviewHandles)
-                return
-            end
-            point = double(app.UIFigure.CurrentPoint);
-            figurePosition = double(getpixelposition(app.UIFigure, true));
-            panelPosition = double(getpixelposition(app.PreviewPanel, true));
-            point = [point(1) figurePosition(4) - point(2)] + figurePosition(1:2);
-            point = point - panelPosition(1:2);
-            for handle = app.ResizeHandles(:)'
-                if isvalid(handle)
-                    handlePosition = double(handle.Position);
-                    if point(1) >= handlePosition(1) && point(1) <= handlePosition(1) + handlePosition(3) && ...
-                            point(2) >= handlePosition(2) && point(2) <= handlePosition(2) + handlePosition(4)
-                        return
-                    end
-                end
-            end
-            keys = app.PreviewHandles.keys();
-            for index = numel(keys):-1:1
-                componentId = string(keys{index});
-                component = app.Document.getComponent(componentId);
-                if isempty(component) || strlength(component.ParentId) == 0
-                    continue
-                end
-                parent = app.Document.getComponent(component.ParentId);
-                if isempty(parent) || parent.Factory == "uigridlayout"
-                    continue
-                end
-                rectangle = app.previewDisplayPosition(app.PreviewHandles(keys{index}));
-                if point(1) >= rectangle(1) && point(1) <= rectangle(1) + rectangle(3) && ...
-                        point(2) >= rectangle(2) && point(2) <= rectangle(2) + rectangle(4)
-                    app.previewComponentButtonDown(componentId);
-                    return
-                end
-            end
-        end
-
         function previewComponentButtonDown(app, componentId)
             % previewComponentButtonDown Select and begin absolute drag editing.
             arguments (Input)
@@ -1107,8 +1059,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             preview = app.PreviewHandles(key);
             delta = (double(app.UIFigure.CurrentPoint) - app.DragStartPoint) / ...
                 max(app.PreviewScale, eps);
-            % uifigure.CurrentPoint uses a top-origin vertical coordinate.
-            delta(2) = -delta(2);
             position = app.DragStartPosition;
             position(1:2) = round(position(1:2) + delta(1:2));
             parent = preview.Parent;
@@ -1119,8 +1069,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             position(1) = max(0, min(position(1), bounds(3) - position(3)));
             position(2) = max(0, min(position(2), bounds(4) - position(4)));
-            displayPosition = position .* app.PreviewScale;
-            preview.Position(1:2) = displayPosition(1:2);
+            preview.Position = position .* [app.PreviewScale app.PreviewScale ...
+                app.PreviewScale app.PreviewScale];
         end
 
         function previewDragFinished(app)
