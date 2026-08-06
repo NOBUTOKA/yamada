@@ -42,6 +42,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         DragStartPoint double = [0 0]
         DragStartPosition double = [0 0 0 0]
         PreviewScale double = 1
+        ResizeHandles matlab.ui.container.Panel = matlab.ui.container.Panel.empty
+        ResizeTargetId string = ""
+        ResizeKind string = ""
+        ResizeStartPoint double = [0 0]
+        ResizeStartPosition double = [0 0 0 0]
         DiagnosticsDrawer matlab.ui.container.Panel
         DiagnosticsGrid matlab.ui.container.GridLayout
         DiagnosticsSummaryLabel matlab.ui.control.Label
@@ -714,6 +719,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.Document, app.PreviewPanel);
             app.updatePreviewScale(root);
             app.attachPreviewCallbacks();
+            app.refreshSelectionHandles();
             if ~isempty(diagnostics)
                 app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
                 app.refreshDiagnostics(app.Document.Diagnostics);
@@ -761,6 +767,190 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                         app.previewComponentButtonDown(componentId);
                 end
             end
+        end
+
+        function refreshSelectionHandles(app)
+            % refreshSelectionHandles Rebuild eight handles for an absolute selection.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            % Selection adornments are disposable editor-owned controls.
+            if ~isempty(app.ResizeHandles)
+                delete(app.ResizeHandles(isvalid(app.ResizeHandles)));
+            end
+            app.ResizeHandles = matlab.ui.container.Panel.empty;
+            component = app.selectedComponent();
+            if isempty(component) || component.Id == app.Document.RootComponentId || ...
+                    strlength(component.ParentId) == 0 || isempty(app.PreviewHandles) || ...
+                    ~isKey(app.PreviewHandles, char(component.Id))
+                return
+            end
+            parent = app.Document.getComponent(component.ParentId);
+            position = component.getProperty("Position");
+            if isempty(position) || position.ValueKind ~= "literal" || ...
+                    ~isnumeric(position.LiteralValue) || parent.Factory == "uigridlayout"
+                return
+            end
+            preview = app.PreviewHandles(char(component.Id));
+            displayPosition = app.previewDisplayPosition(preview);
+            kinds = ["sw", "s", "se", "w", "e", "nw", "n", "ne"];
+            for index = 1:numel(kinds)
+                point = app.resizeHandlePosition(displayPosition, kinds(index));
+                handle = uipanel(app.PreviewPanel, "Position", [point 8 8], ...
+                    "BorderType", "line", "BackgroundColor", [0.2 0.4 0.9], ...
+                    "ButtonDownFcn", @(~, ~) ...
+                    app.resizeHandleButtonDown(kinds(index)));
+                app.ResizeHandles(end + 1) = handle;
+            end
+        end
+
+        function position = previewDisplayPosition(app, preview)
+            % previewDisplayPosition Return a preview handle rectangle in panel pixels.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                preview
+            end
+            arguments (Output)
+                position (1, 4) double
+            end
+
+            % Use MATLAB's pixel conversion so nested panels and borders are included.
+            position = double(getpixelposition(preview, true));
+            parentPosition = double(getpixelposition(app.PreviewPanel, true));
+            position(1:2) = position(1:2) - parentPosition(1:2);
+        end
+
+        function position = resizeHandlePosition(app, target, kind) %#ok<INUSD>
+            % resizeHandlePosition Place one 8-pixel handle at a rectangle corner.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner %#ok<INUSA>
+                target (1, 4) double
+                kind (1, 1) string
+            end
+            arguments (Output)
+                position (1, 2) double
+            end
+
+            x = target(1);
+            y = target(2);
+            if contains(kind, "e")
+                x = target(1) + target(3) - 4;
+            elseif ~contains(kind, "w")
+                x = target(1) + target(3) / 2 - 4;
+            else
+                x = target(1) - 4;
+            end
+            if contains(kind, "n")
+                y = target(2) + target(4) - 4;
+            elseif ~contains(kind, "s")
+                y = target(2) + target(4) / 2 - 4;
+            else
+                y = target(2) - 4;
+            end
+            position = [x y];
+        end
+
+        function resizeHandleButtonDown(app, kind)
+            % resizeHandleButtonDown Begin one source-coordinate resize gesture.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                kind (1, 1) string
+            end
+
+            component = app.selectedComponent();
+            if isempty(component)
+                return
+            end
+            position = component.getProperty("Position");
+            if isempty(position) || position.ValueKind ~= "literal"
+                return
+            end
+            app.ResizeTargetId = component.Id;
+            app.ResizeKind = kind;
+            app.ResizeStartPoint = double(app.UIFigure.CurrentPoint);
+            app.ResizeStartPosition = double(position.LiteralValue);
+            app.UIFigure.WindowButtonMotionFcn = @(~, ~) app.resizeHandleMoved();
+            app.UIFigure.WindowButtonUpFcn = @(~, ~) app.resizeHandleFinished();
+        end
+
+        function resizeHandleMoved(app)
+            % resizeHandleMoved Update one resize handle gesture in the preview.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if strlength(app.ResizeTargetId) == 0 || isempty(app.PreviewHandles)
+                return
+            end
+            key = char(app.ResizeTargetId);
+            if ~isKey(app.PreviewHandles, key)
+                return
+            end
+            delta = (double(app.UIFigure.CurrentPoint) - app.ResizeStartPoint) / ...
+                max(app.PreviewScale, eps);
+            position = app.resizedPosition(app.ResizeStartPosition, delta, app.ResizeKind);
+            preview = app.PreviewHandles(key);
+            preview.Position = position .* app.PreviewScale;
+            app.refreshSelectionHandles();
+        end
+
+        function resizeHandleFinished(app)
+            % resizeHandleFinished Commit one completed resize to the document model.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if strlength(app.ResizeTargetId) == 0 || isempty(app.PreviewHandles)
+                return
+            end
+            componentId = app.ResizeTargetId;
+            preview = app.PreviewHandles(char(componentId));
+            position = round(double(preview.Position) / max(app.PreviewScale, eps));
+            app.UIFigure.WindowButtonMotionFcn = [];
+            app.UIFigure.WindowButtonUpFcn = [];
+            app.ResizeTargetId = "";
+            app.ResizeKind = "";
+            if ~isequal(position, app.ResizeStartPosition)
+                app.Document.setProperty(componentId, "Position", position);
+            end
+            app.refreshShell();
+        end
+
+        function position = resizedPosition(app, startPosition, delta, kind) %#ok<INUSD>
+            % resizedPosition Apply one directional resize with a one-pixel minimum.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner %#ok<INUSA>
+                startPosition (1, 4) double
+                delta (1, 2) double
+                kind (1, 1) string
+            end
+            arguments (Output)
+                position (1, 4) double
+            end
+
+            position = startPosition;
+            if contains(kind, "w")
+                position(1) = startPosition(1) + delta(1);
+                position(3) = startPosition(3) - delta(1);
+            elseif contains(kind, "e")
+                position(3) = startPosition(3) + delta(1);
+            end
+            if contains(kind, "s")
+                position(2) = startPosition(2) + delta(2);
+                position(4) = startPosition(4) - delta(2);
+            elseif contains(kind, "n")
+                position(4) = startPosition(4) + delta(2);
+            end
+            if position(3) < 1
+                position(1) = position(1) - (1 - position(3));
+                position(3) = 1;
+            end
+            if position(4) < 1
+                position(2) = position(2) - (1 - position(4));
+                position(4) = 1;
+            end
+            position = round(position);
         end
 
         function previewComponentButtonDown(app, componentId)
