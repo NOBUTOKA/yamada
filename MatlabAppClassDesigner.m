@@ -768,7 +768,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 return
             end
             components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
-                "height", {}, "shape", {}, "selected", {});
+                "height", {}, "shape", {}, "selected", {}, "tabGroup", {}, ...
+                "tabTitles", {}, "tabSelected", {});
             keys = app.PreviewHandles.keys();
             for index = 1:numel(keys)
                 componentId = string(keys{index});
@@ -789,11 +790,35 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     rectangle = app.interactionDisplayPosition(componentId, rectangle);
                 end
                 definition = app.Registry.get(component.Factory);
+                tabTitles = strings(1, 0);
+                tabSelected = 0;
+                if component.Factory == "uitabgroup"
+                    children = component.Children;
+                    for childIndex = 1:numel(children)
+                        child = app.Document.getComponent(children(childIndex));
+                        title = child.getProperty("Title");
+                        if ~isempty(title) && title.ValueKind == "literal" && ...
+                                isstring(title.LiteralValue)
+                            tabTitles(end + 1) = title.LiteralValue; %#ok<AGROW>
+                        else
+                            tabTitles(end + 1) = ""; %#ok<AGROW>
+                        end
+                    end
+                    preview = app.PreviewHandles(keys{index});
+                    if ~isempty(preview.SelectedTab)
+                        selected = find(preview.Children == preview.SelectedTab, 1);
+                        if ~isempty(selected)
+                            tabSelected = selected;
+                        end
+                    end
+                end
                 components(end + 1) = struct( ...
                     "id", char(component.Id), "x", rectangle(1), "y", rectangle(2), ...
                     "width", rectangle(3), "height", rectangle(4), ...
                     "shape", char(definition.overlayShapeFor(component.CreationArguments)), ...
-                    "selected", component.Id == app.SelectedComponentId); %#ok<AGROW>
+                    "selected", component.Id == app.SelectedComponentId, ...
+                    "tabGroup", component.Factory == "uitabgroup", ...
+                    "tabTitles", tabTitles, "tabSelected", tabSelected); %#ok<AGROW>
             end
             innerPosition = double(app.PreviewPanel.InnerPosition);
             app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
@@ -813,7 +838,9 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             data = event.HTMLEventData;
             point = [double(data.x) double(data.y)];
             phase = string(data.phase);
-            if phase == "pointerdown"
+            if phase == "tabselect"
+                app.selectTabFromOverlay(string(data.componentId), double(data.tabIndex));
+            elseif phase == "pointerdown"
                 app.beginOverlayInteraction(string(data.componentId), ...
                     string(data.handle), point);
             elseif phase == "pointermove"
@@ -853,6 +880,33 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.refreshHierarchy();
             app.refreshInspector();
             app.updateInteractionOverlay();
+        end
+
+        function selectTabFromOverlay(app, componentId, tabIndex)
+            % selectTabFromOverlay Select a preview tab from an overlay click.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId (1, 1) string
+                tabIndex (1, 1) double
+            end
+
+            if isempty(app.PreviewHandles) || ~isKey(app.PreviewHandles, char(componentId))
+                return
+            end
+            group = app.PreviewHandles(char(componentId));
+            if ~isa(group, "matlab.ui.container.TabGroup") || isempty(group.Children)
+                return
+            end
+            tabCount = numel(group.Children);
+            if ~isfinite(tabIndex) || tabIndex < 1 || tabIndex > tabCount
+                return
+            end
+            tabIndex = round(tabIndex);
+            try
+                group.SelectedTab = group.Children(tabIndex);
+            catch exception
+                app.setStatus(string(exception.message));
+            end
         end
 
         function moveOverlayInteraction(app, point)

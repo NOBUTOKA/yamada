@@ -76,6 +76,52 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function tabSelectorEventChangesPreviewTab(testCase)
+            % tabSelectorEventChangesPreviewTab Verify the overlay tab selector route.
+
+            % Add a tab group and two tabs through the same palette callback path users use.
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figures = findall(0, "Type", "figure", ...
+                "Name", "MATLAB App Class Designer");
+            tables = findall(figures, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == ...
+                "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Tab Group", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+            row = find(string(palette.Data(:, 1)) == "Tab", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            % Confirm the overlay exposes both titles and the current selection.
+            overlays = findall(figures, "Type", "uihtml");
+            components = overlays.Data.components;
+            if ~isstruct(components)
+                components = struct(components);
+            end
+            tabGroup = components([components.tabGroup]);
+            testCase.verifyEqual(numel(tabGroup.tabTitles), 2);
+            testCase.verifyEqual(tabGroup.tabSelected, 1);
+
+            % Exercise the same event payload emitted by the HTML select control.
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "tabselect", ...
+                "componentId", tabGroup.id, "tabIndex", 2, ...
+                "x", 0, "y", 0)));
+            drawnow;
+            groups = findall(figures, "Type", "uitabgroup");
+            testCase.verifyEqual(groups.SelectedTab, groups.Children(2));
+            clear cleanup
+        end
+
         function registryCarriesResizePolicies(testCase)
             % registryCarriesResizePolicies Verify constrained controls are explicit.
             registry = macd.model.ComponentRegistry.createDefault();
