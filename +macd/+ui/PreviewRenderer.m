@@ -115,8 +115,13 @@ classdef PreviewRenderer < handle
                 if entry.ValueKind ~= "literal" || ~entry.IsEditable
                     continue
                 end
+                if entry.Path == "Position" && ...
+                        isa(preview.Parent, "matlab.ui.container.GridLayout")
+                    % Grid layout owns child geometry through Layout.Row/Column.
+                    continue
+                end
                 try
-                    obj.setProperty(preview, entry.Path, entry.LiteralValue);
+                    obj.setProperty(preview, entry.Path, entry.LiteralValue, component);
                 catch exception
                     obj.Diagnostics(end + 1) = macd.model.Diagnostic( ...
                         "preview-property-failed", "warning", ...
@@ -166,13 +171,14 @@ classdef PreviewRenderer < handle
                 component.CreationArguments{:});
         end
 
-        function setProperty(obj, target, path, value)
+        function setProperty(obj, target, path, value, component)
             % setProperty Assign a direct or one-level nested graphics property.
             arguments (Input)
                 obj (1, 1) macd.ui.PreviewRenderer
                 target
                 path string
                 value
+                component (1, 1) macd.model.ComponentRecord
             end
 
             % Assign nested Layout properties directly, avoiding a detached value copy.
@@ -185,8 +191,23 @@ classdef PreviewRenderer < handle
                 value = string(value);
             end
             if path == "Position" && isnumeric(value) && numel(value) == 4 && ...
-                    obj.usesPixelPosition(target)
+                obj.usesPixelPosition(target)
                 value = value .* obj.RenderScale;
+                definition = obj.Registry.get(component.Factory);
+                constraint = definition.resizeConstraintFor(component.CreationArguments);
+                if constraint == "fixedHeight"
+                    % Slider-like controls reject height writes entirely.
+                    target.Position(1:3) = value(1:3);
+                    return
+                elseif constraint == "aspectRatio"
+                    % Preserve the control's runtime aspect ratio while moving/scaling it.
+                    current = double(target.Position);
+                    ratio = current(3) / max(current(4), eps);
+                    value(4) = value(3) / max(ratio, eps);
+                    target.Position(1:2) = value(1:2);
+                    target.Position(3:4) = value(3:4);
+                    return
+                end
             end
             parts = split(path, ".");
             if isscalar(parts)
@@ -227,8 +248,9 @@ classdef PreviewRenderer < handle
                 result (1, 1) logical
             end
 
-            % Preserve normalized axes geometry while scaling the figure client area.
-            result = isprop(target, "Units") && string(target.Units) == "pixels";
+            % UI controls without Units use pixel Position; normalized axes do not.
+            result = isprop(target, "Position") && ...
+                (~isprop(target, "Units") || string(target.Units) == "pixels");
         end
     end
 end

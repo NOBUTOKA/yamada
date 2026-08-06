@@ -90,6 +90,24 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
             testCase.verifyFalse(isKey(toolsHandles, "parsed-Toolbar"));
             clear toolsCleanup previewCleanup
         end
+
+        function constrainedControlsRenderWithoutPositionWarnings(testCase)
+            % constrainedControlsRenderWithoutPositionWarnings Verify safe Position writes.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ConstraintApp", registry);
+            document.insertComponent(registry, "uislider", document.RootComponentId);
+            document.insertComponent(registry, "uiswitch", document.RootComponentId);
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 700 500]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            lastwarn("");
+            [~, diagnostics] = renderer.render(document, panel);
+            [warningMessage, ~] = lastwarn;
+            testCase.verifyEmpty(diagnostics);
+            testCase.verifyEmpty(warningMessage);
+            clear cleanup
+        end
     end
 
     methods (Access = private)

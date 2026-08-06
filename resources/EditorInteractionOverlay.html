@@ -83,7 +83,7 @@ function outline(componentData) {
   var h = componentData.height;
   var common = { class: "silhouette" + (componentData.selected ? " selected" : ""), "data-component-id": componentData.id };
   if (componentData.shape === "circle") {
-    return svgElement("ellipse", withAttributes(common, { cx: x + w / 2, cy: y + h / 2, rx: w / 2, ry: h / 2 }));
+    return svgElement("circle", withAttributes(common, { cx: x + w / 2, cy: y + h / 2, r: Math.min(w, h) / 2 }));
   }
   if (componentData.shape === "slider") {
     var group = svgElement("g", common);
