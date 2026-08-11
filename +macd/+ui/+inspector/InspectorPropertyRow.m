@@ -5,6 +5,7 @@ classdef InspectorPropertyRow < handle
 
     properties (Access = private)
         Editor
+        Definition macd.model.PropertyDefinition
         CommitFcn function_handle
         ComponentId string
         Path string
@@ -32,6 +33,7 @@ classdef InspectorPropertyRow < handle
             grid.ColumnWidth = {105, "1x"};
             obj.ComponentId = componentId;
             obj.Path = definition.Path;
+            obj.Definition = definition;
             obj.CommitFcn = commitFcn;
             uilabel(grid, "Text", definition.DisplayName, "Tooltip", definition.Path, ...
                 "Tag", "macd-inspector-property-label");
@@ -48,7 +50,8 @@ classdef InspectorPropertyRow < handle
                 isEditable (1, 1) logical
             end
             macd.ui.inspector.PropertyEditorFactory.synchronize( ...
-                obj.Editor, value, isEditable);
+                obj.Editor, value, isEditable && ...
+                macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition));
         end
     end
 

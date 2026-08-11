@@ -28,10 +28,30 @@ classdef PropertyEditorFactory
                         "ValueChangedFcn", @(source, ~) commitFcn(source.Value));
                     macd.ui.inspector.PropertyEditorFactory.applyNumberSchema( ...
                         control, definition.ValueSchema);
-                otherwise
+                case {"literal", "text", "numericVector"}
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn(string(source.Value)));
+                otherwise
+                    control = uieditfield(parent, "text", ...
+                        "Tag", "macd-inspector-property-editor");
+                    control.UserData = "readOnlyFallback";
+            end
+        end
+
+        function result = supportsEditing(definition)
+            % supportsEditing Return whether the definition has a native editable adapter.
+            arguments (Input)
+                definition (1, 1) macd.model.PropertyDefinition
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = any(definition.Editor == ["literal", "text", "logical", ...
+                "onOff", "enum", "number", "numericVector"]);
+            if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
+                result = false;
             end
         end
 
@@ -54,7 +74,7 @@ classdef PropertyEditorFactory
                 control.Editable = isEditable;
             else
                 control.Value = char(value);
-                control.Editable = isEditable;
+                control.Editable = isEditable && ~macd.ui.inspector.PropertyEditorFactory.isReadOnlyFallback(control);
             end
         end
     end
@@ -78,6 +98,12 @@ classdef PropertyEditorFactory
             else
                 result = "off";
             end
+        end
+
+        function result = isReadOnlyFallback(control)
+            % isReadOnlyFallback Identify controls created for deferred editor kinds.
+            result = isstring(control.UserData) && isscalar(control.UserData) && ...
+                control.UserData == "readOnlyFallback";
         end
 
         function applyNumberSchema(control, schema)
