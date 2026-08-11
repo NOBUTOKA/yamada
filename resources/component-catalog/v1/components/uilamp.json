@@ -18,7 +18,8 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Color"
+                           "path":  "Color",
+                           "metadata": {"category": "Appearance", "order": 10, "editor": "color"}
                        }
                    ],
     "capabilities":  {

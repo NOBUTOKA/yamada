@@ -18,10 +18,12 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Value"
+                           "path":  "Value",
+                           "metadata": {"category": "Value", "order": 10, "editor": "color"}
                        },
                        {
-                           "path":  "ValueChangedFcn"
+                           "path":  "ValueChangedFcn",
+                           "metadata": {"category": "Callbacks", "order": 10, "auditDisposition": "readOnly"}
                        }
                    ],
     "capabilities":  {

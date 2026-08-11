@@ -28,6 +28,11 @@ classdef PropertyEditorFactory
                         "ValueChangedFcn", @(source, ~) commitFcn(source.Value));
                     macd.ui.inspector.PropertyEditorFactory.applyNumberSchema( ...
                         control, definition.ValueSchema);
+                case "color"
+                    control = uibutton(parent, "Text", "", ...
+                        "Tag", "macd-inspector-property-editor", ...
+                        "ButtonPushedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.pickColor(source, commitFcn));
                 case {"literal", "text", "numericVector"}
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -49,7 +54,7 @@ classdef PropertyEditorFactory
             end
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
-                "onOff", "enum", "number", "numericVector"]);
+                "onOff", "enum", "number", "numericVector", "color"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -72,6 +77,18 @@ classdef PropertyEditorFactory
                     control.Value = number;
                 end
                 control.Editable = isEditable;
+            elseif isa(control, "matlab.ui.control.Button")
+                control.Text = char(value);
+                control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
+                [rgb, isLiteral] = macd.source.MatlabLiteralParser.parse(value);
+                if isLiteral && isnumeric(rgb) && isequal(size(rgb), [1 3]) && ...
+                        all(isfinite(rgb)) && all(rgb >= 0) && all(rgb <= 1)
+                    control.BackgroundColor = rgb;
+                    control.UserData = rgb;
+                else
+                    control.BackgroundColor = [0.94 0.94 0.94];
+                    control.UserData = [];
+                end
             else
                 control.Value = char(value);
                 control.Editable = isEditable && ~macd.ui.inspector.PropertyEditorFactory.isReadOnlyFallback(control);
@@ -121,6 +138,24 @@ classdef PropertyEditorFactory
             end
             if isfield(schema, "integer") && schema.integer
                 control.RoundFractionalValues = "on";
+            end
+        end
+
+        function pickColor(control, commitFcn)
+            % pickColor Open the native picker and commit a valid RGB row vector.
+            arguments (Input)
+                control (1, 1) matlab.ui.control.Button
+                commitFcn (1, 1) function_handle
+            end
+
+            current = control.UserData;
+            if ~isnumeric(current) || ~isequal(size(current), [1 3])
+                current = [0 0 0];
+            end
+            selected = uisetcolor(current);
+            if isnumeric(selected) && isequal(size(selected), [1 3]) && ...
+                    all(isfinite(selected)) && all(selected >= 0) && all(selected <= 1)
+                commitFcn(selected);
             end
         end
     end

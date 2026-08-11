@@ -41,13 +41,29 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.PropertyDefinition("Icon", [], false, true, ...
+                struct("editor", "filePath"));
+            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+                figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
+            drawnow;
+            testCase.verifyFalse(control.Editable);
+            clear cleanup
+        end
+
+        function createsRgbColorAction(testCase)
+            % createsRgbColorAction Render one validated RGB value on a native action button.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
             definition = macd.model.PropertyDefinition("Color", [], false, true, ...
                 struct("editor", "color"));
             control = macd.ui.inspector.PropertyEditorFactory.create( ...
                 figure, definition, @(~) []);
             macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
             drawnow;
-            testCase.verifyFalse(control.Editable);
+            testCase.verifyClass(control, "matlab.ui.control.Button");
+            testCase.verifyEqual(control.BackgroundColor, [1 0 0]);
             clear cleanup
         end
     end
