@@ -47,17 +47,8 @@ classdef InspectorPropertyRow < handle
                 value (1, 1) string
                 isEditable (1, 1) logical
             end
-            if isa(obj.Editor, "matlab.ui.control.CheckBox")
-                obj.Editor.Value = value == "on" || value == "true" || value == "1";
-                if isEditable
-                    obj.Editor.Enable = "on";
-                else
-                    obj.Editor.Enable = "off";
-                end
-            else
-                obj.Editor.Value = char(value);
-                obj.Editor.Editable = isEditable;
-            end
+            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                obj.Editor, value, isEditable);
         end
     end
 
