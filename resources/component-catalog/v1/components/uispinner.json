@@ -18,16 +18,20 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Value"
+                           "path":  "Value",
+                           "metadata": {"category": "Value", "order": 10, "editor": "number"}
                        },
                        {
-                           "path":  "Limits"
+                           "path":  "Limits",
+                           "metadata": {"category": "Value", "order": 20, "editor": "numericVector", "valueSchema": {"length": 2}}
                        },
                        {
-                           "path":  "Step"
+                           "path":  "Step",
+                           "metadata": {"category": "Value", "order": 30, "editor": "number", "valueSchema": {"minimum": 0}}
                        },
                        {
-                           "path":  "ValueChangedFcn"
+                           "path":  "ValueChangedFcn",
+                           "metadata": {"category": "Callbacks", "order": 10, "auditDisposition": "readOnly"}
                        }
                    ],
     "capabilities":  {

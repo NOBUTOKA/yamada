@@ -18,13 +18,16 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Value"
+                           "path":  "Value",
+                           "metadata": {"category": "Value", "order": 10, "editor": "numericVector"}
                        },
                        {
-                           "path":  "Limits"
+                           "path":  "Limits",
+                           "metadata": {"category": "Value", "order": 20, "editor": "numericVector", "valueSchema": {"length": 2}}
                        },
                        {
-                           "path":  "Orientation"
+                           "path":  "Orientation",
+                           "metadata": {"category": "Appearance", "order": 10, "editor": "enum", "valueSchema": {"values": ["horizontal", "vertical"]}}
                        },
                        {
                            "path":  "MajorTicks"
@@ -36,10 +39,12 @@
                            "path":  "Step"
                        },
                        {
-                           "path":  "ValueChangedFcn"
+                           "path":  "ValueChangedFcn",
+                           "metadata": {"category": "Callbacks", "order": 10, "auditDisposition": "readOnly"}
                        },
                        {
-                           "path":  "ValueChangingFcn"
+                           "path":  "ValueChangingFcn",
+                           "metadata": {"category": "Callbacks", "order": 20, "auditDisposition": "readOnly"}
                        }
                    ],
     "capabilities":  {
