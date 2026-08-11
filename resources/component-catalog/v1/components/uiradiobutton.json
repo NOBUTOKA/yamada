@@ -20,9 +20,6 @@
                        },
                        {
                            "path":  "ValueChangedFcn"
-                       },
-                       {
-                           "group":  "layout"
                        }
                    ],
     "capabilities":  {

@@ -14,9 +14,6 @@
     "properties":  [
                        {
                            "path":  "Visible"
-                       },
-                       {
-                           "path":  "Position"
                        }
                    ],
     "capabilities":  {

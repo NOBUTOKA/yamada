@@ -221,13 +221,13 @@ passed 60 licensed R2024a tests with zero failures. Commits: `db5433f`,
 
 ### 6.4 Migrate the Phase 4.5 component catalog
 
-- [ ] Create the manifest and shared intrinsic property groups.
-- [ ] Move every existing factory into one component JSON file.
-- [ ] Compare intrinsic and direct-parent effective projections with the revised
+- [x] Create the manifest and shared intrinsic property groups.
+- [x] Move every existing factory into one component JSON file.
+- [x] Compare intrinsic and direct-parent effective projections with the revised
   frozen Phase 4.5 baselines.
-- [ ] Delegate `ComponentRegistry.createDefault()` to the loader.
-- [ ] Remove hard-coded inventory only after both parity layers pass.
-- [ ] Verify parser fixtures, palette order, styles, overlays, and resize
+- [x] Delegate `ComponentRegistry.createDefault()` to the loader.
+- [x] Remove hard-coded inventory only after both parity layers pass.
+- [x] Verify parser fixtures, palette order, styles, overlays, and resize
   constraints remain unchanged.
 
 **Required tests:** intrinsic/effective parity, existing registry/model/parser/
@@ -235,6 +235,13 @@ preview tests, and real editor construction, `drawnow`, validity, and deletion.
 
 **Exit gate:** JSON is the only standard catalog source with no effective Phase
 4.5 behavior change or duplicate MATLAB fallback.
+
+**Completion record (2026-08-11):** Migrated all 38 standard factories into
+`resources/component-catalog/v1`, removed parent-dependent geometry from static
+component definitions, and declared Grid, absolute, and structural contexts in
+the manifest. Intrinsic definitions and every allowed direct-parent effective
+surface are frozen independently. The licensed R2024a full suite passed after
+migration.
 
 ### 6.5 Expand typed capabilities and reset history
 

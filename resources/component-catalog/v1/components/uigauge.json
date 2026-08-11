@@ -28,9 +28,6 @@
                        },
                        {
                            "path":  "MinorTicks"
-                       },
-                       {
-                           "group":  "layout"
                        }
                    ],
     "capabilities":  {

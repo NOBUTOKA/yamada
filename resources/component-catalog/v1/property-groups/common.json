@@ -2,9 +2,6 @@
     "name":  "common",
     "entries":  [
                     {
-                        "path":  "Position"
-                    },
-                    {
                         "path":  "Visible"
                     },
                     {

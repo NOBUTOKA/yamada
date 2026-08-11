@@ -21,9 +21,6 @@
                        },
                        {
                            "path":  "SelectedObject"
-                       },
-                       {
-                           "group":  "layout"
                        }
                    ],
     "capabilities":  {

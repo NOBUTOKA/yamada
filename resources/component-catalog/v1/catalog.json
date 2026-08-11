@@ -2,8 +2,34 @@
     "schemaVersion":  1,
     "matlabRelease":  "R2024a",
     "propertyGroupFiles":  [
-                               "property-groups/common.json",
-                               "property-groups/layout.json"
+                               "property-groups/common.json"
+                           ],
+    "parentContextRules":  [
+                               {
+                                   "parentFactories":  [
+                                                           "uigridlayout"
+                                                       ],
+                                   "kind":  "grid"
+                               },
+                               {
+                                   "parentFactories":  [
+                                                           "uifigure",
+                                                           "uipanel",
+                                                           "uitab",
+                                                           "uibuttongroup"
+                                                       ],
+                                   "kind":  "absolute"
+                               },
+                               {
+                                   "parentFactories":  [
+                                                           "uitabgroup",
+                                                           "uitree",
+                                                           "uitreenode",
+                                                           "uimenu",
+                                                           "uitoolbar"
+                                                       ],
+                                   "kind":  "structural"
+                               }
                            ],
     "componentFiles":  [
                            "components/axes.json",

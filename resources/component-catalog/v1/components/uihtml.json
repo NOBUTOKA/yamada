@@ -28,9 +28,6 @@
                        },
                        {
                            "path":  "HTMLEventReceivedFcn"
-                       },
-                       {
-                           "group":  "layout"
                        }
                    ],
     "capabilities":  {

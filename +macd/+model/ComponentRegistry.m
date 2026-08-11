@@ -120,13 +120,9 @@ classdef ComponentRegistry < handle
                 properties macd.model.PropertyDefinition
             end
 
-            % Remove legacy geometry before composing a direct-parent rule.
+            % Compose only the parent rule selected by the direct parent factory.
             definition = obj.get(factory);
             properties = definition.Properties;
-            geometryPaths = ["Position", "Layout.Row", "Layout.Column"];
-            if ~definition.IsRoot
-                properties = properties(~ismember(string({properties.Path}), geometryPaths));
-            end
             for index = 1:numel(obj.ParentContextRules)
                 rule = obj.ParentContextRules(index);
                 if ~rule.appliesTo(parentFactory), continue, end

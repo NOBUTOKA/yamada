@@ -23,6 +23,16 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(baseline.SchemaVersion, 1);
             testCase.verifyNotEmpty(baseline.Definitions);
         end
+
+        function effectivePropertiesMatchFrozenPhase45Baseline(testCase)
+            % effectivePropertiesMatchFrozenPhase45Baseline Compare every allowed direct-parent surface.
+
+            % Verify context composition independently from intrinsic definitions.
+            registry = macd.model.ComponentRegistry.createDefault();
+            actual = ComponentRegistryBaselineTest.canonicalEffectiveJson(registry);
+            expected = ComponentRegistryBaselineTest.readEffectiveBaseline();
+            testCase.verifyEqual(actual, expected);
+        end
     end
 
     methods (Static, Access = private)
@@ -187,6 +197,63 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                 "IsEditable", true, "Metadata", struct());
         end
 
+        function text = canonicalEffectiveJson(registry)
+            % canonicalEffectiveJson Return direct-parent property projections in fixed JSON order.
+            arguments (Input)
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+
+            % Project every supported direct parent so parent rules cannot drift silently.
+            factories = registry.listFactories();
+            projections = repmat(ComponentRegistryBaselineTest.emptyEffectiveProjection(), 0, 1);
+            for factoryIndex = 1:numel(factories)
+                definition = registry.get(factories(factoryIndex));
+                parents = definition.AllowedParentFactories;
+                if definition.IsRoot
+                    parents = "";
+                end
+                for parentIndex = 1:numel(parents)
+                    projection = ComponentRegistryBaselineTest.emptyEffectiveProjection();
+                    projection.Factory = char(definition.Factory);
+                    projection.ParentFactory = char(parents(parentIndex));
+                    projection.Properties = ComponentRegistryBaselineTest.propertyProjection( ...
+                        registry.getEffectiveProperties(definition.Factory, parents(parentIndex)));
+                    projections(end + 1, 1) = projection; %#ok<AGROW>
+                end
+            end
+            document = struct("SchemaVersion", 1, "Projections", projections);
+            text = string(jsonencode(document, PrettyPrint=true));
+            text = ComponentRegistryBaselineTest.normalizedLineEndings(text);
+        end
+
+        function text = readEffectiveBaseline()
+            % readEffectiveBaseline Read the frozen direct-parent property projection fixture.
+            arguments (Output)
+                text (1, 1) string
+            end
+
+            % Resolve the companion fixture relative to this unit test class.
+            testPath = mfilename("fullpath");
+            projectRoot = fileparts(fileparts(fileparts(testPath)));
+            fixturePath = fullfile(projectRoot, "tests", "fixtures", ...
+                "componentCatalog", "phase45-effective-properties-baseline.json");
+            text = ComponentRegistryBaselineTest.normalizedLineEndings( ...
+                string(fileread(fixturePath)));
+        end
+
+        function result = emptyEffectiveProjection()
+            % emptyEffectiveProjection Return the fixed layout for one parent projection.
+            arguments (Output)
+                result (1, 1) struct
+            end
+
+            % Construct fields in the reviewed JSON order.
+            result = struct("Factory", "", "ParentFactory", "", ...
+                "Properties", ComponentRegistryBaselineTest.emptyProperty());
+        end
         function text = normalizedLineEndings(text)
             % normalizedLineEndings Compare fixture text independently of checkout line endings.
             arguments (Input)

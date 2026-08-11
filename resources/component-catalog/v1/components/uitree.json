@@ -25,9 +25,6 @@
                        },
                        {
                            "path":  "SelectionChangedFcn"
-                       },
-                       {
-                           "group":  "layout"
                        }
                    ],
     "capabilities":  {

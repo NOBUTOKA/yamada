@@ -16,13 +16,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -38,20 +31,6 @@
         },
         {
           "Path": "YLim",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -86,13 +65,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -108,20 +80,6 @@
         },
         {
           "Path": "LongitudeLimits",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -156,13 +114,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -178,20 +129,6 @@
         },
         {
           "Path": "RLim",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -225,13 +162,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -294,20 +224,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "UI Axes",
@@ -337,13 +253,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -392,20 +301,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Button",
@@ -440,13 +335,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -488,20 +376,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Button Group",
@@ -531,13 +405,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -586,20 +453,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Check Box",
@@ -629,13 +482,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -677,20 +523,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Color Picker",
@@ -719,22 +551,13 @@
       ],
       "IsRoot": false,
       "CreationArguments": [],
-      "Properties": [
-        {
-          "Path": "Visible",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        }
-      ],
+      "Properties": {
+        "Path": "Visible",
+        "DefaultValue": [],
+        "HasDefault": false,
+        "IsEditable": true,
+        "Metadata": {}
+      },
       "DisplayName": "Context Menu",
       "Category": "FigureTools",
       "IsProgrammaticOnly": false,
@@ -762,13 +585,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -817,20 +633,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Date Picker",
@@ -860,13 +662,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -929,20 +724,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Drop-down",
@@ -972,13 +753,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -1016,20 +790,6 @@
         },
         {
           "Path": "ValueChangedFcn",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -1115,13 +875,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -1176,20 +929,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Gauge",
@@ -1233,13 +972,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -1311,13 +1043,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -1372,20 +1097,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "HTML",
@@ -1415,13 +1126,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -1470,20 +1174,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Hyperlink",
@@ -1513,13 +1203,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -1568,20 +1251,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Image",
@@ -1611,13 +1280,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -1687,20 +1349,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Knob",
@@ -1736,13 +1384,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -1791,20 +1432,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Label",
@@ -1834,13 +1461,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -1875,20 +1495,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Lamp",
@@ -1918,13 +1524,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -1983,20 +1582,6 @@
         },
         {
           "Path": "ValueChangedFcn",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -2096,13 +1681,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -2146,20 +1724,6 @@
         },
         {
           "Path": "BorderType",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -2254,13 +1818,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -2308,20 +1865,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Radio Button",
@@ -2351,13 +1894,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -2395,20 +1931,6 @@
         },
         {
           "Path": "Limits",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -2491,13 +2013,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -2534,20 +2049,6 @@
         },
         {
           "Path": "Limits",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -2596,13 +2097,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -2650,20 +2144,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Switch",
@@ -2696,13 +2176,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -2744,20 +2217,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Tab",
@@ -2786,13 +2245,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -2827,20 +2279,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Tab Group",
@@ -2870,13 +2308,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -2946,20 +2377,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Table",
@@ -2989,13 +2406,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -3037,20 +2447,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Text Area",
@@ -3075,13 +2471,6 @@
       "IsRoot": false,
       "CreationArguments": [],
       "Properties": [
-        {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
         {
           "Path": "Visible",
           "DefaultValue": [],
@@ -3119,20 +2508,6 @@
         },
         {
           "Path": "Value",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,
@@ -3283,13 +2658,6 @@
       "CreationArguments": [],
       "Properties": [
         {
-          "Path": "Position",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
           "Path": "Visible",
           "DefaultValue": [],
           "HasDefault": false,
@@ -3333,20 +2701,6 @@
         },
         {
           "Path": "SelectionChangedFcn",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
           "DefaultValue": [],
           "HasDefault": false,
           "IsEditable": true,

@@ -15,9 +15,6 @@
                           ],
     "properties":  [
                        {
-                           "path":  "Position"
-                       },
-                       {
                            "path":  "Visible"
                        },
                        {
@@ -25,9 +22,6 @@
                        },
                        {
                            "path":  "YLim"
-                       },
-                       {
-                           "group":  "layout"
                        }
                    ],
     "capabilities":  {

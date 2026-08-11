@@ -34,9 +34,6 @@
                        },
                        {
                            "path":  "CellEditCallback"
-                       },
-                       {
-                           "group":  "layout"
                        }
                    ],
     "capabilities":  {
