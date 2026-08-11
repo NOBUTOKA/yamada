@@ -1603,7 +1603,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
 
             % Rebuild all category and row controls for a changed surface only.
-            states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
+            states = app.inspectorStates(component);
             [states, categories] = app.sortedInspectorStates(states);
             app.InspectorView.clear();
             app.InspectorRows = macd.ui.inspector.InspectorPropertyRow.empty;
@@ -1635,7 +1635,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
 
             % Preserve row controls when explicit values, history, or preview change.
-            states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
+            states = app.inspectorStates(component);
             [states, ~] = app.sortedInspectorStates(states);
             if numel(states) ~= numel(app.InspectorRows)
                 app.rebuildInspector(component, app.inspectorSurfaceKey(component));
@@ -1675,6 +1675,30 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 ordered = [ordered, members(order)]; %#ok<AGROW>
             end
             states = ordered;
+        end
+
+        function states = inspectorStates(app, component)
+            % inspectorStates Append retained source-only entries to effective definitions.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                component (1, 1) macd.model.ComponentRecord
+            end
+
+            % Preserve unsupported source assignments without making them editable.
+            states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
+            effectivePaths = arrayfun(@(state) state.Definition.Path, states);
+            for index = 1:numel(component.Properties)
+                entry = component.Properties(index);
+                if any(effectivePaths == entry.Path)
+                    continue
+                end
+                metadata = struct("category", "Source", "order", index, ...
+                    "auditDisposition", "readOnly", "displayName", entry.Path);
+                sourceState = struct("Definition", macd.model.PropertyDefinition( ...
+                    entry.Path, [], false, false, metadata), "Entry", entry, ...
+                    "IsExplicit", true);
+                states(end + 1) = sourceState; %#ok<AGROW>
+            end
         end
 
         function synchronizeInspectorRows(app, component, states)
