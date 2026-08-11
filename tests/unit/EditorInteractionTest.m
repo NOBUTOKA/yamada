@@ -52,11 +52,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             % The callback must leave the root selected and show its properties.
             testCase.verifyEqual(app.SelectedComponentId, app.Document.RootComponentId);
-            tables = findall(0, "Type", "uitable");
-            inspector = tables(arrayfun(@(table) any(string(table.ColumnName) == ...
-                "Property"), tables));
-            testCase.verifyEqual(numel(inspector), 1);
-            testCase.verifyGreaterThan(size(inspector.Data, 1), 0);
+            editors = findall(0, "Type", "uieditfield", ...
+                "Tag", "macd-inspector-property-editor");
+            testCase.verifyGreaterThan(numel(editors), 0);
             clear cleanup
         end
 
