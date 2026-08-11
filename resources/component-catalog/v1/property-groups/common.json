@@ -2,16 +2,20 @@
     "name":  "common",
     "entries":  [
                     {
-                        "path":  "Visible"
+                        "path":  "Visible",
+                        "metadata": {"category": "Interactivity", "order": 10, "editor": "logical"}
                     },
                     {
-                        "path":  "Enable"
+                        "path":  "Enable",
+                        "metadata": {"category": "Interactivity", "order": 20, "editor": "logical"}
                     },
                     {
-                        "path":  "Tooltip"
+                        "path":  "Tooltip",
+                        "metadata": {"category": "Interactivity", "order": 30, "editor": "text"}
                     },
                     {
-                        "path":  "Tag"
+                        "path":  "Tag",
+                        "metadata": {"category": "Identification", "order": 10, "editor": "text"}
                     }
                 ]
 }
