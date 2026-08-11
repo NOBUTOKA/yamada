@@ -1537,7 +1537,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.refreshShell();
         end
 
-        function inspectorValueCommitted(app, componentId, path, value)
+        function message = inspectorValueCommitted(app, componentId, path, value)
             % inspectorValueCommitted Parse and commit one native property-row value.
             arguments (Input)
                 app (1, 1) MatlabAppClassDesigner
@@ -1545,30 +1545,41 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 path (1, 1) string
                 value
             end
+            arguments (Output)
+                message (1, 1) string
+            end
 
+            message = "";
             component = app.Document.getComponent(componentId);
             if isempty(component) || componentId ~= app.SelectedComponentId
+                message = "Selection changed before the edit could be applied.";
                 return
             end
             entry = component.getProperty(path);
             if ~isempty(entry) && ~entry.IsEditable
-                app.refreshInspector();
-                app.setStatus("This source-backed property is read-only.");
+                message = "This source-backed property is read-only.";
+                app.setStatus(message);
                 return
             end
             if ~islogical(value)
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(value));
                 if ~isLiteral
-                    app.refreshInspector();
-                    app.setStatus("Enter a supported MATLAB literal.");
+                    message = "Enter a supported MATLAB literal.";
+                    app.setStatus(message);
                     return
                 end
+            end
+            definition = app.inspectorDefinition(component, path);
+            message = app.validateInspectorValue(definition, value);
+            if strlength(message) > 0
+                app.setStatus(message);
+                return
             end
             try
                 app.Document.setProperty(component.Id, path, value);
             catch exception
-                app.refreshInspector();
-                app.setStatus(string(exception.message));
+                message = string(exception.message);
+                app.setStatus(message);
                 return
             end
             % Revalidate immediately so property-row commits refresh diagnostics.
@@ -1705,6 +1716,78 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     entry.Path, [], false, false, metadata), "Entry", entry, ...
                     "IsExplicit", true);
                 states(end + 1) = sourceState; %#ok<AGROW>
+            end
+        end
+
+        function definition = inspectorDefinition(app, component, path)
+            % inspectorDefinition Find one currently effective inspector definition.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                component (1, 1) macd.model.ComponentRecord
+                path (1, 1) string
+            end
+            arguments (Output)
+                definition (1, 1) macd.model.PropertyDefinition
+            end
+
+            states = app.inspectorStates(component);
+            index = find(arrayfun(@(state) state.Definition.Path == path, states), 1);
+            if isempty(index)
+                definition = macd.model.PropertyDefinition(path, [], false, false, ...
+                    struct("auditDisposition", "readOnly"));
+            else
+                definition = states(index).Definition;
+            end
+        end
+
+        function message = validateInspectorValue(app, definition, value)
+            % validateInspectorValue Reject invalid editor values before model mutation.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner %#ok<INUSD>
+                definition (1, 1) macd.model.PropertyDefinition
+                value
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            message = "";
+            schema = definition.ValueSchema;
+            if definition.Editor == "enum" && isfield(schema, "values") && ...
+                    ~any(string(schema.values) == string(value))
+                message = "Choose one of the declared values.";
+                return
+            end
+            if definition.Editor == "number"
+                if ~isnumeric(value) || ~isscalar(value) || ~isfinite(value)
+                    message = "Enter one finite number.";
+                    return
+                end
+                if isfield(schema, "minimum") && value < schema.minimum
+                    message = "Value is below the allowed minimum.";
+                    return
+                end
+                if isfield(schema, "maximum") && value > schema.maximum
+                    message = "Value is above the allowed maximum.";
+                    return
+                end
+                if isfield(schema, "integer") && schema.integer && value ~= floor(value)
+                    message = "Enter an integer value.";
+                    return
+                end
+            elseif definition.Editor == "numericVector"
+                if ~isnumeric(value) || ~isvector(value) || any(~isfinite(value))
+                    message = "Enter a finite numeric vector.";
+                    return
+                end
+                if isfield(schema, "length") && numel(value) ~= schema.length
+                    message = "Enter a vector with the required number of values.";
+                    return
+                end
+                if isfield(schema, "minimum") && any(value < schema.minimum)
+                    message = "Vector values are below the allowed minimum.";
+                    return
+                end
             end
         end
 

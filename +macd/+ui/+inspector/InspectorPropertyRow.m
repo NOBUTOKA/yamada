@@ -5,6 +5,7 @@ classdef InspectorPropertyRow < handle
 
     properties (Access = private)
         Editor
+        ErrorLabel matlab.ui.control.Label
         Definition macd.model.PropertyDefinition
         CommitFcn function_handle
         ComponentId string
@@ -26,11 +27,12 @@ classdef InspectorPropertyRow < handle
             end
 
             % Keep layout and binding local to the inspector reconstruction.
-            grid = uigridlayout(parent, [1 2]);
+            grid = uigridlayout(parent, [2 2]);
             grid.Layout.Row = row;
             grid.Padding = [0 0 0 0];
             grid.ColumnSpacing = 4;
             grid.ColumnWidth = {105, "1x"};
+            grid.RowHeight = {28, 18};
             obj.ComponentId = componentId;
             obj.Path = definition.Path;
             obj.Definition = definition;
@@ -40,6 +42,10 @@ classdef InspectorPropertyRow < handle
             obj.Editor = macd.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
                 @(value) obj.commit(value));
             obj.Editor.Layout.Column = 2;
+            obj.ErrorLabel = uilabel(grid, "Text", "", "FontColor", [0.75 0 0], ...
+                "Tag", "macd-inspector-property-error");
+            obj.ErrorLabel.Layout.Row = 2;
+            obj.ErrorLabel.Layout.Column = [1 2];
         end
 
         function synchronize(obj, value, isEditable, rawValue)
@@ -53,6 +59,7 @@ classdef InspectorPropertyRow < handle
             macd.ui.inspector.PropertyEditorFactory.synchronize( ...
                 obj.Editor, value, isEditable && ...
                 macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue);
+            obj.ErrorLabel.Text = "";
         end
     end
 
@@ -63,7 +70,10 @@ classdef InspectorPropertyRow < handle
                 obj (1, 1) macd.ui.inspector.InspectorPropertyRow
                 value
             end
-            obj.CommitFcn(obj.ComponentId, obj.Path, value);
+            message = obj.CommitFcn(obj.ComponentId, obj.Path, value);
+            if strlength(message) > 0
+                obj.ErrorLabel.Text = message;
+            end
         end
     end
 end
