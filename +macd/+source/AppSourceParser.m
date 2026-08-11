@@ -221,6 +221,27 @@ classdef AppSourceParser
                     continue
                 end
 
+                % Preserve assignments outside the direct-parent surface as read-only source.
+                parentFactory = "";
+                if strlength(component.ParentId) > 0
+                    parent = document.getComponent(component.ParentId);
+                    if ~isempty(parent), parentFactory = parent.Factory; end
+                end
+                effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory);
+                if ~any(string({effectiveProperties.Path}) == assignment.Path)
+                    existingEntry = component.getProperty(assignment.Path);
+                    if ~isempty(existingEntry) && ~existingEntry.IsEditable
+                        continue
+                    end
+                    entry = component.setProperty(assignment.Path, []);
+                    entry.setSourceExpression(assignment.ValueText);
+                    entry.SourceSpan = statement.Span;
+                    diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
+                        "context-inapplicable-property", "warning", ...
+                        "Property assignment is preserved read-only outside its direct-parent context.", ...
+                        component.Id, statement.Span);
+                    continue
+                end
                 % Keep unsupported expressions opaque instead of evaluating them.
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parse( ...
                     assignment.ValueText);

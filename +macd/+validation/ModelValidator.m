@@ -78,8 +78,13 @@ classdef ModelValidator
                     end
                 end
 
-                % Report unknown paths without discarding their source data.
-                supportedPaths = [definition.Properties.Path];
+                % Resolve direct-parent applicability before reporting unknown paths.
+                parentFactory = "";
+                if strlength(component.ParentId) > 0 && ~isempty(parent)
+                    parentFactory = parent.Factory;
+                end
+                effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory);
+                supportedPaths = [effectiveProperties.Path];
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
                     if ~any(supportedPaths == entry.Path)

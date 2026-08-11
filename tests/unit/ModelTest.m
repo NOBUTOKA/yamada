@@ -227,7 +227,10 @@ classdef ModelTest < matlab.unittest.TestCase
             label = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
             label.setProperty("Position", [10 10 0 30]);
-            label.setProperty("Layout.Row", [0 2]);
+            grid = document.insertComponent(registry, "uigridlayout", ...
+                document.RootComponentId);
+            gridLabel = document.insertComponent(registry, "uilabel", grid.Id);
+            gridLabel.setProperty("Layout.Row", [0 2]);
             diagnostics = macd.validation.ModelValidator.validate(document, registry);
 
             testCase.verifyTrue(any([diagnostics.Code] == "invalid-position"));
@@ -235,13 +238,29 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
 
+        function effectivePropertiesFollowDirectParentContext(testCase)
+            % effectivePropertiesFollowDirectParentContext Verify geometry follows the direct parent.
+
+            % Compare the resolved surface without exposing registry implementation state.
+            registry = macd.model.ComponentRegistry.createDefault();
+            gridPaths = string({registry.getEffectiveProperties("uilabel", "uigridlayout").Path});
+            absolutePaths = string({registry.getEffectiveProperties("uilabel", "uifigure").Path});
+            tabPaths = string({registry.getEffectiveProperties("uitab", "uitabgroup").Path});
+            testCase.verifyTrue(all(ismember(["Layout.Row", "Layout.Column"], gridPaths)));
+            testCase.verifyFalse(any(gridPaths == "Position"));
+            testCase.verifyTrue(any(absolutePaths == "Position"));
+            testCase.verifyFalse(any(absolutePaths == "Layout.Row"));
+            testCase.verifyFalse(any(tabPaths == "Position"));
+            testCase.verifyFalse(any(tabPaths == "Layout.Row"));
+        end
         function publicPropertiesProvideMetadataHelp(testCase)
             % publicPropertiesProvideMetadataHelp Verify documented public state.
 
             % Inspect every Phase 1 model class through MATLAB property metadata.
             classNames = ["macd.model.ComponentRecord", ...
                 "macd.model.ComponentDefinition", "macd.model.Diagnostic", ...
-                "macd.model.DocumentModel", "macd.model.PropertyDefinition", ...
+                "macd.model.DocumentModel", "macd.model.ParentContextRule", ...
+                "macd.model.PropertyDefinition", ...
                 "macd.model.PropertyEntry", "macd.model.SourceSpan"];
             for className = classNames
                 classMetadata = meta.class.fromName(char(className));

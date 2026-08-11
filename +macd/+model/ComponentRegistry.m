@@ -10,6 +10,7 @@ classdef ComponentRegistry < handle
 
     properties (Access = private)
         Definitions containers.Map
+        ParentContextRules macd.model.ParentContextRule = macd.model.ParentContextRule.empty
     end
 
     methods
@@ -21,6 +22,7 @@ classdef ComponentRegistry < handle
 
             % Store definitions by factory without coupling the model to types.
             obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.ParentContextRules = [macd.model.ParentContextRule.grid(); macd.model.ParentContextRule.absolute()];
         end
 
         function register(obj, definition)
@@ -96,6 +98,33 @@ classdef ComponentRegistry < handle
 
             definition = obj.get(factory);
             name = definition.DisplayName;
+        end
+
+        function properties = getEffectiveProperties(obj, factory, parentFactory)
+            % getEffectiveProperties Return supported properties for one direct parent context.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+                factory (1, 1) string
+                parentFactory (1, 1) string = ""
+            end
+            arguments (Output)
+                properties macd.model.PropertyDefinition
+            end
+
+            % Remove legacy geometry before composing a direct-parent rule.
+            definition = obj.get(factory);
+            properties = definition.Properties;
+            geometryPaths = ["Position", "Layout.Row", "Layout.Column"];
+            if ~definition.IsRoot
+                properties = properties(~ismember(string({properties.Path}), geometryPaths));
+            end
+            for index = 1:numel(obj.ParentContextRules)
+                rule = obj.ParentContextRules(index);
+                if ~rule.appliesTo(parentFactory), continue, end
+                properties = properties(~ismember(string({properties.Path}), rule.SuppressedPaths));
+                properties = [properties(:); rule.AddedProperties(:)]; %#ok<AGROW>
+                break
+            end
         end
     end
 

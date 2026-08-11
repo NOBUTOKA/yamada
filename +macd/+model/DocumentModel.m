@@ -124,14 +124,15 @@ classdef DocumentModel < handle
             component = macd.model.ComponentRecord(obj.newComponentId(), name, ...
                 definition.Factory, definition.DeclaredType, "generated");
             component.CreationArguments = definition.CreationArguments;
-            if parent.Factory == "uigridlayout"
-                if ~isempty(definition.getProperty("Layout.Row"))
-                    component.setProperty("Layout.Row", 1);
-                end
-                if ~isempty(definition.getProperty("Layout.Column"))
-                    component.setProperty("Layout.Column", 1);
-                end
-            elseif ~isempty(definition.getProperty("Position"))
+            effectiveProperties = registry.getEffectiveProperties(definition.Factory, parent.Factory);
+            effectivePaths = string({effectiveProperties.Path});
+            if any(effectivePaths == "Layout.Row")
+                component.setProperty("Layout.Row", 1);
+            end
+            if any(effectivePaths == "Layout.Column")
+                component.setProperty("Layout.Column", 1);
+            end
+            if any(effectivePaths == "Position")
                 component.setProperty("Position", obj.nextAbsolutePosition(parent));
             end
             obj.addComponentAt(component, parentId, numel(obj.Components) + 1);
