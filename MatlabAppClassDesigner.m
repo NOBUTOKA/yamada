@@ -1688,16 +1688,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 value = "";
                 editable = states(index).Definition.IsEditable && ...
                     states(index).Definition.AuditDisposition == "editable";
-                stateText = "Default";
                 if ~isempty(entry)
                     value = macd.ui.InspectorValueFormatter.format(entry);
-                    stateText = "Explicit";
                     editable = editable && entry.IsEditable;
-                    if ~entry.IsEditable
-                        stateText = "Read-only";
-                    end
                 end
-                app.InspectorRows(index).synchronize(value, editable, stateText);
+                app.InspectorRows(index).synchronize(value, editable);
             end
         end
 

@@ -1,11 +1,10 @@
 classdef InspectorPropertyRow < handle
     % InspectorPropertyRow Present and synchronize one inspector property value.
-    %   The row owns native controls. Its callback identifies the component and
-    %   property without allowing the adapter layer to mutate the model directly.
+    %   The row owns a label and one native editor. Its callback identifies the
+    %   component and property without allowing adapters to mutate the model.
 
     properties (Access = private)
         Editor matlab.ui.control.EditField
-        StateLabel matlab.ui.control.Label
         CommitFcn function_handle
         ComponentId string
         Path string
@@ -26,11 +25,11 @@ classdef InspectorPropertyRow < handle
             end
 
             % Keep layout and binding local to the inspector reconstruction.
-            grid = uigridlayout(parent, [1 4]);
+            grid = uigridlayout(parent, [1 2]);
             grid.Layout.Row = row;
             grid.Padding = [0 0 0 0];
             grid.ColumnSpacing = 4;
-            grid.ColumnWidth = {105, "1x", 48, 80};
+            grid.ColumnWidth = {105, "1x"};
             obj.ComponentId = componentId;
             obj.Path = definition.Path;
             obj.CommitFcn = commitFcn;
@@ -39,24 +38,17 @@ classdef InspectorPropertyRow < handle
             obj.Editor = uieditfield(grid, "text", "Tag", "macd-inspector-property-editor", ...
                 "ValueChangedFcn", @(~, ~) obj.commit());
             obj.Editor.Layout.Column = 2;
-            resetButton = uibutton(grid, "Text", "Reset", "Tag", "macd-inspector-property-reset");
-            resetButton.Layout.Column = 3;
-            resetButton.Enable = "off";
-            obj.StateLabel = uilabel(grid, "Text", "", "Tag", "macd-inspector-property-state");
-            obj.StateLabel.Layout.Column = 4;
         end
 
-        function synchronize(obj, value, isEditable, stateText)
+        function synchronize(obj, value, isEditable)
             % synchronize Load a current value and editability presentation.
             arguments (Input)
                 obj (1, 1) macd.ui.inspector.InspectorPropertyRow
                 value (1, 1) string
                 isEditable (1, 1) logical
-                stateText (1, 1) string
             end
             obj.Editor.Value = char(value);
             obj.Editor.Editable = isEditable;
-            obj.StateLabel.Text = stateText;
         end
     end
 
