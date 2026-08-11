@@ -253,6 +253,50 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyFalse(any(tabPaths == "Position"));
             testCase.verifyFalse(any(tabPaths == "Layout.Row"));
         end
+        function propertyStatesKeepDefaultsImplicit(testCase)
+            % propertyStatesKeepDefaultsImplicit Join definitions without creating entries.
+
+            % A catalog capability remains absent until the document explicitly assigns it.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            states = document.getEffectivePropertyStates(registry, label.Id);
+            paths = arrayfun(@(state) state.Definition.Path, states);
+            textIndex = find(paths == "Text", 1);
+            testCase.verifyFalse(states(textIndex).IsExplicit);
+            testCase.verifyEmpty(states(textIndex).Entry);
+            testCase.verifyEmpty(label.getProperty("Text"));
+        end
+
+        function generatedPropertyResetIsUndoable(testCase)
+            % generatedPropertyResetIsUndoable Remove and restore one generated literal.
+
+            % Reset stores absence rather than the catalog default and keeps redo reversible.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            document.setProperty(label.Id, "Text", "Ready");
+            document.resetProperty(label.Id, "Text");
+            testCase.verifyEmpty(label.getProperty("Text"));
+            document.undo();
+            testCase.verifyEqual(label.getProperty("Text").LiteralValue, "Ready");
+            document.redo();
+            testCase.verifyEmpty(label.getProperty("Text"));
+            document.setProperty(label.Id, "Text", "New branch");
+            testCase.verifyFalse(document.canRedo());
+        end
+
+        function parsedPropertyResetIsRejected(testCase)
+            % parsedPropertyResetIsRejected Keep parsed assignments until owned deletion exists.
+
+            % Source preservation takes precedence over removing a parsed literal.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseFile(fullfile( ...
+                fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m"), registry);
+            label = document.getComponentByName("LeftValueLabel");
+            testCase.verifyError(@() document.resetProperty(label.Id, "Text"), ...
+                "macd:DocumentModel:ParsedPropertyResetUnsupported");
+        end
         function publicPropertiesProvideMetadataHelp(testCase)
             % publicPropertiesProvideMetadataHelp Verify documented public state.
 

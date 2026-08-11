@@ -174,6 +174,73 @@ classdef DocumentModel < handle
                 "NewValue", value));
         end
 
+        function states = getEffectivePropertyStates(obj, registry, componentId)
+            % getEffectivePropertyStates Join effective definitions with explicit entries only.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+                componentId string
+            end
+            arguments (Output)
+                states (1, :) struct
+            end
+
+            % Resolve parent context without materializing any catalog defaults.
+            component = obj.getComponent(componentId);
+            if isempty(component)
+                error("macd:DocumentModel:UnknownComponent", ...
+                    "Component ID ""%s"" does not exist.", componentId);
+            end
+            parentFactory = "";
+            if strlength(component.ParentId) > 0
+                parent = obj.getComponent(component.ParentId);
+                parentFactory = parent.Factory;
+            end
+            definitions = registry.getEffectiveProperties(component.Factory, parentFactory);
+            states = repmat(struct("Definition", macd.model.PropertyDefinition(), ...
+                "Entry", macd.model.PropertyEntry.empty, "IsExplicit", false), ...
+                1, numel(definitions));
+            for index = 1:numel(definitions)
+                entry = component.getProperty(definitions(index).Path);
+                states(index).Definition = definitions(index);
+                states(index).Entry = entry;
+                states(index).IsExplicit = ~isempty(entry);
+            end
+        end
+
+        function resetProperty(obj, componentId, path)
+            % resetProperty Remove one generated literal assignment with reversible history.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId string
+                path string
+            end
+
+            % Refuse source-backed and parsed assignments until deletion ownership exists.
+            component = obj.getComponent(componentId);
+            if isempty(component)
+                error("macd:DocumentModel:UnknownComponent", ...
+                    "Component ID ""%s"" does not exist.", componentId);
+            end
+            entry = component.getProperty(path);
+            if isempty(entry)
+                return
+            end
+            if ~entry.IsEditable
+                error("macd:DocumentModel:ReadOnlyProperty", ...
+                    "Property ""%s"" is source-backed and read-only.", path);
+            end
+            if entry.Origin == "parsed"
+                error("macd:DocumentModel:ParsedPropertyResetUnsupported", ...
+                    "Parsed property ""%s"" cannot be removed safely yet.", path);
+            end
+
+            % Keep absence as a first-class history state instead of materializing a default.
+            oldValue = entry.LiteralValue;
+            component.removeProperty(path);
+            obj.recordHistory(struct("Kind", "reset-property", ...
+                "ComponentId", componentId, "Path", path, "OldValue", oldValue));
+        end
         function component = getComponent(obj, id)
             % getComponent Find a component by stable identifier, or return empty.
             arguments (Input)
@@ -365,6 +432,13 @@ classdef DocumentModel < handle
                         component.setProperty(edit.Path, edit.OldValue);
                     else
                         component.removeProperty(edit.Path);
+                    end
+                case "reset-property"
+                    component = obj.getComponent(edit.ComponentId);
+                    if forward
+                        component.removeProperty(edit.Path);
+                    else
+                        component.setProperty(edit.Path, edit.OldValue);
                     end
             end
         end
