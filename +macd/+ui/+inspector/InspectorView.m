@@ -21,7 +21,7 @@ classdef InspectorView < handle
                 obj (1, 1) macd.ui.inspector.InspectorView
             end
 
-            % Panel exposes the public R2024a vertical scroll position API.
+            % Panel provides native scrolling; R2024a exposes no scroll-position API here.
             obj.Panel = uipanel(parent, "BorderType", "none");
             obj.Panel.Scrollable = "on";
             obj.Grid = uigridlayout(obj.Panel, [1 1]);

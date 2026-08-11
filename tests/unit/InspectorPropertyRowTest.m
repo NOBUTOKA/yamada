@@ -23,6 +23,32 @@ classdef InspectorPropertyRowTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(errorLabel.Text), "Enter a finite numeric vector.");
             clear cleanup
         end
+
+        function restoresRejectedDraftAcrossRowReplacement(testCase)
+            % restoresRejectedDraftAcrossRowReplacement Restore view-only invalid text.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            grid = uigridlayout(figure, [2 1]);
+            definition = macd.model.PropertyDefinition("Position", [], false, true, ...
+                struct("editor", "numericVector"));
+            first = macd.ui.inspector.InspectorPropertyRow(grid, 1, "component-1", ...
+                definition, @(~, ~, ~) "Enter a finite numeric vector.");
+            firstEditor = findall(grid, "Tag", "macd-inspector-property-editor");
+            firstEditor.Value = "bad draft";
+            firstEditor.ValueChangedFcn(firstEditor, struct());
+            state = first.snapshotTransientState();
+            second = macd.ui.inspector.InspectorPropertyRow(grid, 2, "component-1", ...
+                definition, @(~, ~, ~) ""); %#ok<NASGU>
+            second.synchronize("[10 20 30 40]", true, [10 20 30 40]);
+            second.restoreTransientState(state);
+            drawnow;
+            restored = second.snapshotTransientState();
+            testCase.verifyTrue(restored.HasDraft);
+            testCase.verifyEqual(string(restored.Value), "bad draft");
+            testCase.verifyEqual(restored.Message, "Enter a finite numeric vector.");
+            clear cleanup
+        end
     end
 end
 

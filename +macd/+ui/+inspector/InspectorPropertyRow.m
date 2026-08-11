@@ -61,6 +61,46 @@ classdef InspectorPropertyRow < handle
                 macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue);
             obj.ErrorLabel.Text = "";
         end
+
+        function state = snapshotTransientState(obj)
+            % snapshotTransientState Return an uncommitted invalid draft for later restoration.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+            end
+            arguments (Output)
+                state (1, 1) struct
+            end
+
+            % Only invalid drafts are transient state; committed values come from the model.
+            state = struct("Path", obj.Path, "HasDraft", strlength(obj.ErrorLabel.Text) > 0, ...
+                "Value", [], "Message", string(obj.ErrorLabel.Text), "HasFocus", obj.hasFocus());
+            if state.HasDraft
+                state.Value = macd.ui.inspector.PropertyEditorFactory.editorValue(obj.Editor);
+            end
+        end
+
+        function restoreTransientState(obj, state)
+            % restoreTransientState Restore one compatible invalid draft and focus state.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                state (1, 1) struct
+            end
+
+            if state.Path ~= obj.Path
+                return
+            end
+            if state.HasDraft
+                macd.ui.inspector.PropertyEditorFactory.restoreDraft(obj.Editor, state.Value);
+                obj.ErrorLabel.Text = state.Message;
+            end
+            if state.HasFocus
+                try
+                    focus(obj.Editor);
+                catch
+                    % Focus is best effort when the rebuilt control is not yet visible.
+                end
+            end
+        end
     end
 
     methods (Access = private)
@@ -73,6 +113,22 @@ classdef InspectorPropertyRow < handle
             message = obj.CommitFcn(obj.ComponentId, obj.Path, value);
             if strlength(message) > 0
                 obj.ErrorLabel.Text = message;
+            end
+        end
+
+        function result = hasFocus(obj)
+            % hasFocus Return whether this row editor currently owns UI focus.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = false;
+            figure = ancestor(obj.Editor, "figure");
+            if ~isempty(figure) && isvalid(figure) && isprop(figure, "CurrentObject")
+                result = isequal(figure.CurrentObject, obj.Editor);
             end
         end
     end

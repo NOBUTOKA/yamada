@@ -40,6 +40,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         InspectorRows macd.ui.inspector.InspectorPropertyRow = macd.ui.inspector.InspectorPropertyRow.empty
         InspectorComponentId string = ""
         InspectorSurfaceKey string = ""
+        InspectorViewState containers.Map = containers.Map("KeyType", "char", "ValueType", "any")
         PreviewHandles containers.Map
         PreviewTabSelections containers.Map = containers.Map("KeyType", "char", "ValueType", "double")
         TabLayoutTimer timer = timer.empty
@@ -1618,6 +1619,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             % Rebuild all category and row controls for a changed surface only.
             states = app.inspectorStates(component);
             [states, categories] = app.sortedInspectorStates(states);
+            app.saveInspectorViewState();
             app.InspectorView.clear();
             app.InspectorRows = macd.ui.inspector.InspectorPropertyRow.empty;
             content = app.InspectorView.contentGrid();
@@ -1636,6 +1638,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 end
             end
             app.synchronizeInspectorRows(component, states);
+            app.restoreInspectorViewState(component.Id);
             app.InspectorComponentId = component.Id;
             app.InspectorSurfaceKey = surfaceKey;
         end
@@ -1666,7 +1669,40 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.InspectorRows = macd.ui.inspector.InspectorPropertyRow.empty;
             app.InspectorComponentId = "";
             app.InspectorSurfaceKey = "";
+            app.InspectorViewState = containers.Map("KeyType", "char", "ValueType", "any");
             app.InspectorView.clear();
+        end
+
+        function saveInspectorViewState(app)
+            % saveInspectorViewState Cache invalid drafts before the active row tree is destroyed.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            if strlength(app.InspectorComponentId) == 0 || isempty(app.InspectorRows)
+                return
+            end
+            states = arrayfun(@(row) row.snapshotTransientState(), app.InspectorRows);
+            app.InspectorViewState(char(app.InspectorComponentId)) = states;
+        end
+
+        function restoreInspectorViewState(app, componentId)
+            % restoreInspectorViewState Restore compatible invalid drafts for a rebuilt component.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId (1, 1) string
+            end
+
+            key = char(componentId);
+            if ~isKey(app.InspectorViewState, key)
+                return
+            end
+            states = app.InspectorViewState(key);
+            for stateIndex = 1:numel(states)
+                for rowIndex = 1:numel(app.InspectorRows)
+                    app.InspectorRows(rowIndex).restoreTransientState(states(stateIndex));
+                end
+            end
         end
 
         function [states, categories] = sortedInspectorStates(app, states)

@@ -105,6 +105,44 @@ classdef PropertyEditorFactory
                 control.Editable = isEditable && ~macd.ui.inspector.PropertyEditorFactory.isReadOnlyFallback(control);
             end
         end
+
+        function value = editorValue(control)
+            % editorValue Return the current adapter value without parsing or committing it.
+            arguments (Input)
+                control
+            end
+
+            if isa(control, "matlab.ui.control.CheckBox") || ...
+                    isa(control, "matlab.ui.control.NumericEditField") || ...
+                    isa(control, "matlab.ui.control.EditField")
+                value = control.Value;
+            elseif isa(control, "matlab.ui.control.Button")
+                value = control.UserData;
+            else
+                value = [];
+            end
+        end
+
+        function restoreDraft(control, value)
+            % restoreDraft Restore an uncommitted adapter value without invoking its callback.
+            arguments (Input)
+                control
+                value
+            end
+
+            if isa(control, "matlab.ui.control.CheckBox") || ...
+                    isa(control, "matlab.ui.control.NumericEditField") || ...
+                    isa(control, "matlab.ui.control.EditField")
+                control.Value = value;
+            elseif isa(control, "matlab.ui.control.Button")
+                control.UserData = value;
+                if control.Tag == "macd-inspector-string-list-editor"
+                    control.Text = macd.ui.inspector.PropertyEditorFactory.listSummary(value);
+                elseif isnumeric(value) && isequal(size(value), [1 3])
+                    control.BackgroundColor = value;
+                end
+            end
+        end
     end
 
     methods (Static, Access = private)
