@@ -456,6 +456,27 @@ failures. Completion commits include `66e9bad`, `4a43417`, `2421893`,
 `117459f`, `df2429c`, `e17f220`, `1ef58dd`, `2163afd`, `a4f55b8`, `86a21dd`,
 and `d8367ed`.
 
+#### 6.6.10 Resolve runtime defaults without catalog duplication
+
+- [ ] Add a `DefaultValueProvider` that reads declared defaults from metadata
+  where available, then probes only allowlisted standard factories in a hidden,
+  editor-owned fixture hierarchy when metadata has no value.
+- [ ] Key cached values by MATLAB release, factory, direct-parent context,
+  style, creation arguments, and property path. Never execute opened-source
+  code, callbacks, or catalog-provided code.
+- [ ] Return display-only defaults without adding `PropertyEntry` objects,
+  history records, Preview assignments, or generated source. Preserve an
+  explicit/source-backed entry over any resolved default.
+- [ ] Treat handles, callbacks, dependent values, unsupported literals, and
+  failed probes as unavailable/read-only display values rather than coercing
+  them into source literals.
+- [ ] Add fixture construction, cleanup, parent/style variance, cache, and
+  no-materialization tests under licensed MATLAB R2024a.
+
+**Exit gate:** unassigned inspector rows show applicable runtime defaults from
+one controlled provider, while the standard JSON catalog remains capability and
+editor metadata rather than a duplicate table of MATLAB defaults.
+
 ### 6.7 Complete the Button vertical slice
 
 - [ ] Audit R2024a push and state Button properties.

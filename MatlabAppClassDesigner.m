@@ -1850,11 +1850,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                         rawValue = entry.LiteralValue;
                     end
                     editable = editable && entry.IsEditable;
-                elseif states(index).Definition.HasDefault
-                    defaultEntry = macd.model.PropertyEntry(states(index).Definition.Path, ...
-                        states(index).Definition.DefaultValue);
-                    value = macd.ui.InspectorValueFormatter.format(defaultEntry);
-                    rawValue = states(index).Definition.DefaultValue;
                 end
                 app.InspectorRows(index).synchronize(value, editable, rawValue);
             end
