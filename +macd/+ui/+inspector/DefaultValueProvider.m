@@ -46,6 +46,17 @@ classdef DefaultValueProvider < handle
             end
             obj.Cache(key) = struct("Found", found, "Value", value);
         end
+
+        function count = cacheEntryCount(obj)
+            % cacheEntryCount Return the number of resolved release/context/property keys.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.DefaultValueProvider
+            end
+            arguments (Output)
+                count (1, 1) double
+            end
+            count = obj.Cache.Count;
+        end
     end
 
     methods (Access = private)
