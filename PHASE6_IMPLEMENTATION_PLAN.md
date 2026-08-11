@@ -215,8 +215,9 @@ without losing supported Grid placement or advertising invalid geometry.
 **Completion record (2026-08-11):** Added `ParentContextRule`, the registry
 effective-property query, Grid/absolute/structural contexts, insertion/parser/
 validator integration, and strict JSON manifest loading of allowlisted rules.
-The licensed R2024a full suite passed 57 tests with zero failures. Commits:
-`db5433f`, `4798cd8`.
+The completion verification, including the safe inspector display regression,
+passed 60 licensed R2024a tests with zero failures. Commits: `db5433f`,
+`4798cd8`, `02196de`.
 
 ### 6.4 Migrate the Phase 4.5 component catalog
 
