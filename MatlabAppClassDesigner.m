@@ -37,6 +37,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         InspectorPanel matlab.ui.container.Panel
         InspectorGrid matlab.ui.container.GridLayout
         InspectorTable matlab.ui.control.Table
+        InspectorPaths string = strings(1, 0)
         PreviewHandles containers.Map
         PreviewTabSelections containers.Map = containers.Map("KeyType", "char", "ValueType", "double")
         TabLayoutTimer timer = timer.empty
@@ -161,8 +162,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.InspectorGrid = uigridlayout(app.InspectorPanel, [1 1]);
             app.InspectorGrid.Padding = [0 0 0 0];
             app.InspectorTable = uitable(app.InspectorGrid, ...
-                "ColumnName", {"Property", "Value", "State"}, ...
-                "ColumnEditable", [false true false], ...
+                "ColumnName", {"Category", "Property", "Value", "State"}, ...
+                "ColumnEditable", [false false true false], ...
                 "CellEditCallback", @(~, event) app.inspectorCellEdited(event));
             app.DiagnosticsDrawer = uipanel(app.MainGrid);
             app.DiagnosticsDrawer.Layout.Row = 3;
@@ -1533,35 +1534,35 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         end
 
         function inspectorCellEdited(app, event)
-            % inspectorCellEdited Parse and commit one editable property value.
+            % inspectorCellEdited Parse and commit one effective property value.
             arguments (Input)
                 app (1, 1) MatlabAppClassDesigner
                 event
             end
 
-            if isempty(event.Indices) || event.Indices(2) ~= 2
+            if isempty(event.Indices) || event.Indices(2) ~= 3
                 return
             end
             component = app.selectedComponent();
             row = event.Indices(1);
-            if isempty(component) || row > numel(component.Properties)
+            if isempty(component) || row > numel(app.InspectorPaths)
                 return
             end
-            entry = component.Properties(row);
-            if ~entry.IsEditable
+            path = app.InspectorPaths(row);
+            entry = component.getProperty(path);
+            if ~isempty(entry) && ~entry.IsEditable
                 app.refreshInspector();
                 app.setStatus("This source-backed property is read-only.");
                 return
             end
-            [value, isLiteral] = macd.source.MatlabLiteralParser.parse( ...
-                string(event.NewData));
+            [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(event.NewData));
             if ~isLiteral
                 app.refreshInspector();
                 app.setStatus("Enter a supported MATLAB literal.");
                 return
             end
             try
-                app.Document.setProperty(component.Id, entry.Path, value);
+                app.Document.setProperty(component.Id, path, value);
             catch exception
                 app.refreshInspector();
                 app.setStatus(string(exception.message));
@@ -1571,28 +1572,41 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         end
 
         function refreshInspector(app)
-            % refreshInspector Show the selected component's source-safe properties.
+            % refreshInspector Show effective properties and retained source-backed values.
             arguments (Input)
                 app (1, 1) MatlabAppClassDesigner
             end
 
-            % Display expressions as read-only source text rather than evaluating them.
+            % List effective definitions first without materializing their defaults.
             component = app.selectedComponent();
             if isempty(component)
-                app.InspectorTable.Data = cell(0, 3);
+                app.InspectorPaths = strings(1, 0);
+                app.InspectorTable.Data = cell(0, 4);
                 return
             end
-            data = cell(numel(component.Properties), 3);
+            states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
+            data = cell(0, 4);
+            app.InspectorPaths = strings(1, 0);
+            for index = 1:numel(states)
+                definition = states(index).Definition;
+                entry = states(index).Entry;
+                data(end + 1, :) = {'General', char(definition.Path), '', 'Editable'}; %#ok<AGROW>
+                if ~isempty(entry)
+                    data{end, 3} = char(macd.ui.InspectorValueFormatter.format(entry));
+                    if ~entry.IsEditable
+                        data{end, 4} = 'Read-only source';
+                    end
+                end
+                app.InspectorPaths(end + 1) = definition.Path;
+            end
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
-                data{index, 1} = char(entry.Path);
-                data{index, 2} = char(macd.ui.InspectorValueFormatter.format(entry));
-                if entry.IsEditable
-                    data{index, 3} = "Editable";
-                else
-                    data{index, 3} = "Read-only source";
+                if any(app.InspectorPaths == entry.Path)
+                    continue
                 end
-                data{index, 3} = char(data{index, 3});
+                data(end + 1, :) = {'Source', char(entry.Path), ...
+                    char(macd.ui.InspectorValueFormatter.format(entry)), 'Read-only source'}; %#ok<AGROW>
+                app.InspectorPaths(end + 1) = entry.Path;
             end
             app.InspectorTable.Data = data;
         end

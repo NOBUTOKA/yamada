@@ -87,7 +87,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "Name", "MATLAB App Class Designer");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == ...
-                "Category"), tables));
+                "Component") && any(string(table.ColumnName) == "Category"), tables));
             row = find(string(palette.Data(:, 1)) == "Tab Group", 1);
             palette.DoubleClickedFcn(palette, struct( ...
                 "InteractionInformation", struct("Row", row)));
