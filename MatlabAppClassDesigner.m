@@ -38,6 +38,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         InspectorGrid matlab.ui.container.GridLayout
         InspectorTable matlab.ui.control.Table
         InspectorPaths string = strings(1, 0)
+        InspectorComponentId string = ""
+        InspectorSurfaceKey string = ""
         PreviewHandles containers.Map
         PreviewTabSelections containers.Map = containers.Map("KeyType", "char", "ValueType", "double")
         TabLayoutTimer timer = timer.empty
@@ -356,6 +358,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
 
             % Factory-owned defaults keep new documents compatible with generation.
+            app.clearInspector();
             app.Document = macd.model.NewAppFactory.createEmpty(className, app.Registry);
             app.SelectedComponentId = app.Document.RootComponentId;
             app.refreshShell();
@@ -373,6 +376,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             % Preserve parser diagnostics even if a malformed source has no model.
             [document, diagnostics] = macd.source.AppSourceParser.parseFile(filePath, app.Registry);
+            app.clearInspector();
             app.Document = document;
             if ~isempty(document.Components)
                 app.SelectedComponentId = document.RootComponentId;
@@ -397,8 +401,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             if isempty(event.SelectedNodes) || isempty(event.SelectedNodes.NodeData)
                 return
             end
-            app.SelectedComponentId = string(event.SelectedNodes.NodeData);
-            app.refreshInspector();
+            componentId = string(event.SelectedNodes.NodeData);
+            if componentId ~= app.SelectedComponentId
+                app.SelectedComponentId = componentId;
+                app.refreshInspector();
+            end
             app.updateInteractionOverlay();
         end
 
@@ -1572,21 +1579,84 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         end
 
         function refreshInspector(app)
-            % refreshInspector Show effective properties and retained source-backed values.
+            % refreshInspector Rebuild or synchronize the current inspector surface.
             arguments (Input)
                 app (1, 1) MatlabAppClassDesigner
             end
 
-            % List effective definitions first without materializing their defaults.
             component = app.selectedComponent();
             if isempty(component)
-                app.InspectorPaths = strings(1, 0);
-                app.InspectorTable.Data = cell(0, 4);
+                app.clearInspector();
                 return
             end
+            surfaceKey = app.inspectorSurfaceKey(component);
+            if component.Id ~= app.InspectorComponentId || ...
+                    surfaceKey ~= app.InspectorSurfaceKey
+                app.rebuildInspector(component, surfaceKey);
+            else
+                app.refreshInspectorValues(component);
+            end
+        end
+
+        function rebuildInspector(app, component, surfaceKey)
+            % rebuildInspector Replace inspector rows for a new effective surface.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                component (1, 1) macd.model.ComponentRecord
+                surfaceKey (1, 1) string
+            end
+
+            % The transitional table follows the same lifecycle as native rows will.
+            [data, paths] = app.inspectorData(component);
+            app.InspectorPaths = paths;
+            app.InspectorTable.Data = data;
+            app.InspectorComponentId = component.Id;
+            app.InspectorSurfaceKey = surfaceKey;
+        end
+
+        function refreshInspectorValues(app, component)
+            % refreshInspectorValues Synchronize values without replacing the surface.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                component (1, 1) macd.model.ComponentRecord
+            end
+
+            % Preserve row controls when explicit values, history, or preview change.
+            [data, paths] = app.inspectorData(component);
+            if ~isequal(paths, app.InspectorPaths)
+                app.rebuildInspector(component, app.inspectorSurfaceKey(component));
+                return
+            end
+            app.InspectorTable.Data = data;
+        end
+
+        function clearInspector(app)
+            % clearInspector Remove transient inspector state for no selection.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+            end
+
+            app.InspectorPaths = strings(1, 0);
+            app.InspectorComponentId = "";
+            app.InspectorSurfaceKey = "";
+            app.InspectorTable.Data = cell(0, 4);
+        end
+
+        function [data, paths] = inspectorData(app, component)
+            % inspectorData Format one effective surface without materializing defaults.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                component (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                data cell
+                paths string
+            end
+
+            % List effective definitions first and append preserved source-only entries.
             states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
             data = cell(0, 4);
-            app.InspectorPaths = strings(1, 0);
+            paths = strings(1, 0);
             for index = 1:numel(states)
                 definition = states(index).Definition;
                 entry = states(index).Entry;
@@ -1597,20 +1667,49 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                         data{end, 4} = 'Read-only source';
                     end
                 end
-                app.InspectorPaths(end + 1) = definition.Path;
+                paths(end + 1) = definition.Path;
             end
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
-                if any(app.InspectorPaths == entry.Path)
+                if any(paths == entry.Path)
                     continue
                 end
                 data(end + 1, :) = {'Source', char(entry.Path), ...
                     char(macd.ui.InspectorValueFormatter.format(entry)), 'Read-only source'}; %#ok<AGROW>
-                app.InspectorPaths(end + 1) = entry.Path;
+                paths(end + 1) = entry.Path;
             end
-            app.InspectorTable.Data = data;
         end
 
+        function key = inspectorSurfaceKey(app, component)
+            % inspectorSurfaceKey Identify one component's ordered editor surface.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                component (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                key (1, 1) string
+            end
+
+            % Include identity, parent context, style, and all definition-owned rows.
+            parentFactory = "";
+            if strlength(component.ParentId) > 0
+                parent = app.Document.getComponent(component.ParentId);
+                parentFactory = parent.Factory;
+            end
+            definition = app.Registry.get(component.Factory);
+            style = definition.styleFor(component.CreationArguments);
+            states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
+            paths = arrayfun(@(state) state.Definition.Path, states);
+            sourcePaths = strings(1, 0);
+            for index = 1:numel(component.Properties)
+                entry = component.Properties(index);
+                if ~any(paths == entry.Path)
+                    sourcePaths(end + 1) = entry.Path;
+                end
+            end
+            key = strjoin([component.Id, component.Factory, parentFactory, style, ...
+                paths, sourcePaths], "|");
+        end
         function refreshDiagnostics(app, diagnostics)
             % refreshDiagnostics Present structured diagnostics in the bottom table.
             arguments (Input)

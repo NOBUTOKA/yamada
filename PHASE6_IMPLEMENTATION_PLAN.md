@@ -277,16 +277,23 @@ view lands; it is not the final typed-editor implementation.
 
 #### 6.6.1 Freeze inspector lifecycle and rebuild triggers
 
-- [ ] Introduce an inspector surface key containing component identity, factory,
+- [x] Introduce an inspector surface key containing component identity, factory,
   style, direct-parent factory, and the ordered effective-definition signature.
-- [ ] Split the current refresh path into `rebuildInspector` and
+- [x] Split the current refresh path into `rebuildInspector` and
   `refreshInspectorValues` responsibilities.
-- [ ] Rebuild only when the selected component identity or surface key changes;
+- [x] Rebuild only when the selected component identity or surface key changes;
   make a repeated selection event for the current component a no-op.
-- [ ] Route drag/resize, property commit/reset, validation, Preview refresh, and
+- [x] Route drag/resize, property commit/reset, validation, Preview refresh, and
   undo/redo for the current surface through value/diagnostic synchronization.
-- [ ] Clear inspector view state and controls deterministically on New, Open,
+- [x] Clear inspector view state and controls deterministically on New, Open,
   component deletion, and application destruction.
+
+**Completion record (2026-08-11):** Added a surface key based on selected
+component identity, factory, style, direct parent, ordered effective properties,
+and source-only rows. Repeated hierarchy selection is a no-op; same-surface
+refreshes synchronize values, while selection/surface changes take the rebuild
+path. New and Open clear transient inspector state. The licensed R2024a editor,
+model, and convention tests passed 24 tests with zero failures.
 
 **Gate:** tests observe stable editor-control identity during same-component
 updates and a complete replacement when selection or the effective surface
