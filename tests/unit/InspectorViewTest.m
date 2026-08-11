@@ -16,6 +16,9 @@ classdef InspectorViewTest < matlab.unittest.TestCase
             grid = view.contentGrid();
             testCase.verifyTrue(isvalid(grid));
             testCase.verifyTrue(view.isScrollable());
+            view.setContentHeight(800);
+            drawnow;
+            testCase.verifyGreaterThan(view.contentPixelHeight(), 100);
             clear cleanup
         end
 

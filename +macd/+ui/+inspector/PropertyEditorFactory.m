@@ -14,7 +14,7 @@ classdef PropertyEditorFactory
 
             switch definition.Editor
                 case {"logical", "onOff"}
-                    control = uicheckbox(parent, "Tag", "macd-inspector-property-editor", ...
+                    control = uicheckbox(parent, "Text", "", "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn(source.Value));
                     control.UserData = definition.Editor;
                 case "enum"

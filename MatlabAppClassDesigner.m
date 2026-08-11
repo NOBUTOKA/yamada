@@ -1624,9 +1624,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.InspectorRows = macd.ui.inspector.InspectorPropertyRow.empty;
             content = app.InspectorView.contentGrid();
             content.RowHeight = repmat({"fit"}, 1, numel(categories));
+            contentHeight = 0;
             for categoryIndex = 1:numel(categories)
                 category = categories(categoryIndex);
                 indices = find(arrayfun(@(state) state.Definition.Category == category, states));
+                contentHeight = contentHeight + 40 + 52 * numel(indices);
                 section = macd.ui.inspector.InspectorCategorySection(content, category, numel(indices));
                 section.setLayoutRow(categoryIndex);
                 for rowIndex = 1:numel(indices)
@@ -1637,6 +1639,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     app.InspectorRows(end + 1) = row;
                 end
             end
+            app.InspectorView.setContentHeight(max(contentHeight, 1));
             app.synchronizeInspectorRows(component, states);
             app.restoreInspectorViewState(component.Id);
             app.InspectorComponentId = component.Id;

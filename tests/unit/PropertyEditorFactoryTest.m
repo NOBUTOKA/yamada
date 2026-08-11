@@ -17,6 +17,7 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             drawnow;
             testCase.verifyClass(control, "matlab.ui.control.CheckBox");
             testCase.verifyTrue(control.Value);
+            testCase.verifyEqual(string(control.Text), "");
             clear cleanup
         end
 

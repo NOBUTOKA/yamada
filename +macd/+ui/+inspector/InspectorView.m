@@ -8,7 +8,9 @@ classdef InspectorView < handle
 
     properties (Access = private)
         Panel matlab.ui.container.Panel
+        ContentPanel matlab.ui.container.Panel
         Grid matlab.ui.container.GridLayout
+        ContentHeight double = 1
     end
 
     methods
@@ -24,12 +26,16 @@ classdef InspectorView < handle
             % Panel provides native scrolling; R2024a exposes no scroll-position API here.
             obj.Panel = uipanel(parent, "BorderType", "none");
             obj.Panel.Scrollable = "on";
-            obj.Grid = uigridlayout(obj.Panel, [1 1]);
+            obj.Panel.AutoResizeChildren = "off";
+            obj.Panel.SizeChangedFcn = @(~, ~) obj.layoutContent();
+            obj.ContentPanel = uipanel(obj.Panel, "BorderType", "none");
+            obj.Grid = uigridlayout(obj.ContentPanel, [1 1]);
             obj.Grid.Padding = [0 0 0 0];
             obj.Grid.RowSpacing = 0;
             obj.Grid.ColumnSpacing = 0;
             obj.Grid.RowHeight = {"1x"};
             obj.Grid.ColumnWidth = {"1x"};
+            obj.layoutContent();
         end
 
         function clear(obj)
@@ -41,6 +47,8 @@ classdef InspectorView < handle
             % Delete only children owned by this disposable inspector view.
             delete(obj.Grid.Children);
             obj.Grid.RowHeight = {"1x"};
+            obj.ContentHeight = 1;
+            obj.layoutContent();
         end
 
         function result = isScrollable(obj)
@@ -67,6 +75,29 @@ classdef InspectorView < handle
             grid = obj.Grid;
         end
 
+        function setContentHeight(obj, value)
+            % setContentHeight Set the pixel extent that activates native vertical scrolling.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorView
+                value (1, 1) double {mustBeFinite, mustBePositive}
+            end
+
+            obj.ContentHeight = value;
+            obj.layoutContent();
+        end
+
+        function value = contentPixelHeight(obj)
+            % contentPixelHeight Return the current native scroll-content height.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorView
+            end
+            arguments (Output)
+                value (1, 1) double
+            end
+
+            value = obj.ContentPanel.Position(4);
+        end
+
         function delete(obj)
             % delete Release the inspector grid when its editor host is disposed.
             arguments (Input)
@@ -76,6 +107,18 @@ classdef InspectorView < handle
             if ~isempty(obj.Panel) && isvalid(obj.Panel)
                 delete(obj.Panel);
             end
+        end
+    end
+
+    methods (Access = private)
+        function layoutContent(obj)
+            % layoutContent Keep the content panel wider than the visible scroll host.
+            if isempty(obj.Panel) || ~isvalid(obj.Panel) || ...
+                    isempty(obj.ContentPanel) || ~isvalid(obj.ContentPanel)
+                return
+            end
+            position = getpixelposition(obj.Panel, true);
+            obj.ContentPanel.Position = [1 1 max(position(3), 1) obj.ContentHeight];
         end
     end
 end
