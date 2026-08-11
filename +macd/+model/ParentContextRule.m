@@ -48,7 +48,8 @@ classdef ParentContextRule
             arguments (Output)
                 result (1, 1) macd.model.ParentContextRule
             end
-            metadata = struct("category", "Layout", "editor", "number");
+            metadata = struct("category", "Layout", "editor", "number", ...
+                "valueSchema", struct("integer", true, "minimum", 1));
             added = [macd.model.PropertyDefinition("Layout.Row", [], false, true, metadata); ...
                 macd.model.PropertyDefinition("Layout.Column", [], false, true, metadata)];
             result = macd.model.ParentContextRule("uigridlayout", added, "Position");
@@ -65,12 +66,14 @@ classdef ParentContextRule
             end
             switch kind
                 case "grid"
-                    metadata = struct("category", "Layout", "editor", "number");
+                    metadata = struct("category", "Layout", "editor", "number", ...
+                        "valueSchema", struct("integer", true, "minimum", 1));
                     added = [macd.model.PropertyDefinition("Layout.Row", [], false, true, metadata); ...
                         macd.model.PropertyDefinition("Layout.Column", [], false, true, metadata)];
                     result = macd.model.ParentContextRule(parentFactories, added, "Position");
                 case "absolute"
-                    metadata = struct("category", "Layout", "editor", "numericVector");
+                    metadata = struct("category", "Layout", "editor", "numericVector", ...
+                        "valueSchema", struct("length", 4, "minimum", 1));
                     result = macd.model.ParentContextRule(parentFactories, ...
                         macd.model.PropertyDefinition("Position", [], false, true, metadata), ...
                         ["Layout.Row", "Layout.Column"]);
@@ -87,7 +90,8 @@ classdef ParentContextRule
                 result (1, 1) macd.model.ParentContextRule
             end
             parents = ["uifigure", "uipanel", "uitab", "uibuttongroup"];
-            metadata = struct("category", "Layout", "editor", "numericVector");
+            metadata = struct("category", "Layout", "editor", "numericVector", ...
+                "valueSchema", struct("length", 4, "minimum", 1));
             result = macd.model.ParentContextRule(parents, ...
                 macd.model.PropertyDefinition("Position", [], false, true, metadata), ...
                 ["Layout.Row", "Layout.Column"]);

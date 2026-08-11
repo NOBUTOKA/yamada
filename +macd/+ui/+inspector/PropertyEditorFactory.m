@@ -26,6 +26,8 @@ classdef PropertyEditorFactory
                     control = uieditfield(parent, "numeric", ...
                         "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn(source.Value));
+                    macd.ui.inspector.PropertyEditorFactory.applyNumberSchema( ...
+                        control, definition.ValueSchema);
                 otherwise
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -75,6 +77,24 @@ classdef PropertyEditorFactory
                 result = "on";
             else
                 result = "off";
+            end
+        end
+
+        function applyNumberSchema(control, schema)
+            % applyNumberSchema Apply supported scalar constraints to a numeric editor.
+            arguments (Input)
+                control (1, 1) matlab.ui.control.NumericEditField
+                schema (1, 1) struct
+            end
+
+            if isfield(schema, "minimum")
+                control.Limits(1) = schema.minimum;
+            end
+            if isfield(schema, "maximum")
+                control.Limits(2) = schema.maximum;
+            end
+            if isfield(schema, "integer") && schema.integer
+                control.RoundFractionalValues = "on";
             end
         end
     end
