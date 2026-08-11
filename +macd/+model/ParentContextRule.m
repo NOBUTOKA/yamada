@@ -48,7 +48,9 @@ classdef ParentContextRule
             arguments (Output)
                 result (1, 1) macd.model.ParentContextRule
             end
-            added = [macd.model.PropertyDefinition("Layout.Row"); macd.model.PropertyDefinition("Layout.Column")];
+            metadata = struct("category", "Layout", "editor", "number");
+            added = [macd.model.PropertyDefinition("Layout.Row", [], false, true, metadata); ...
+                macd.model.PropertyDefinition("Layout.Column", [], false, true, metadata)];
             result = macd.model.ParentContextRule("uigridlayout", added, "Position");
         end
 
@@ -63,10 +65,15 @@ classdef ParentContextRule
             end
             switch kind
                 case "grid"
-                    added = [macd.model.PropertyDefinition("Layout.Row"); macd.model.PropertyDefinition("Layout.Column")];
+                    metadata = struct("category", "Layout", "editor", "number");
+                    added = [macd.model.PropertyDefinition("Layout.Row", [], false, true, metadata); ...
+                        macd.model.PropertyDefinition("Layout.Column", [], false, true, metadata)];
                     result = macd.model.ParentContextRule(parentFactories, added, "Position");
                 case "absolute"
-                    result = macd.model.ParentContextRule(parentFactories, macd.model.PropertyDefinition("Position"), ["Layout.Row", "Layout.Column"]);
+                    metadata = struct("category", "Layout", "editor", "numericVector");
+                    result = macd.model.ParentContextRule(parentFactories, ...
+                        macd.model.PropertyDefinition("Position", [], false, true, metadata), ...
+                        ["Layout.Row", "Layout.Column"]);
                 case "structural"
                     result = macd.model.ParentContextRule(parentFactories, macd.model.PropertyDefinition.empty, ["Position", "Layout.Row", "Layout.Column"]);
                 otherwise
@@ -80,7 +87,10 @@ classdef ParentContextRule
                 result (1, 1) macd.model.ParentContextRule
             end
             parents = ["uifigure", "uipanel", "uitab", "uibuttongroup"];
-            result = macd.model.ParentContextRule(parents, macd.model.PropertyDefinition("Position"), ["Layout.Row", "Layout.Column"]);
+            metadata = struct("category", "Layout", "editor", "numericVector");
+            result = macd.model.ParentContextRule(parents, ...
+                macd.model.PropertyDefinition("Position", [], false, true, metadata), ...
+                ["Layout.Row", "Layout.Column"]);
         end
     end
 end
