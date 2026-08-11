@@ -20,6 +20,14 @@ classdef PropertyDefinition
         IsEditable logical = true
         % Metadata - Extensible property capability and editor metadata.
         Metadata struct = struct()
+        % Editor - Allowlisted editor adapter identifier for this property.
+        Editor string = "literal"
+        % Validator - Allowlisted literal validation identifier for this property.
+        Validator string = "matlabLiteral"
+        % PreviewPolicy - Whether a committed literal may reach Safe Preview.
+        PreviewPolicy string = "apply"
+        % ResetPolicy - Allowlisted rule for resetting an explicit value.
+        ResetPolicy string = "remove"
     end
 
     methods
@@ -43,6 +51,10 @@ classdef PropertyDefinition
             obj.HasDefault = hasDefault;
             obj.IsEditable = isEditable;
             obj.Metadata = metadata;
+            if isfield(metadata, "editor"), obj.Editor = string(metadata.editor); end
+            if isfield(metadata, "validator"), obj.Validator = string(metadata.validator); end
+            if isfield(metadata, "previewPolicy"), obj.PreviewPolicy = string(metadata.previewPolicy); end
+            if isfield(metadata, "resetPolicy"), obj.ResetPolicy = string(metadata.resetPolicy); end
         end
     end
 end

@@ -253,6 +253,18 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyFalse(any(tabPaths == "Position"));
             testCase.verifyFalse(any(tabPaths == "Layout.Row"));
         end
+        function propertyDefinitionExposesTypedBehavior(testCase)
+            % propertyDefinitionExposesTypedBehavior Project validated metadata into typed fields.
+
+            % Keep adapter selection independent of metadata field access by consumers.
+            metadata = struct("editor", "logical", "validator", "logical", ...
+                "previewPolicy", "skip", "resetPolicy", "retain");
+            definition = macd.model.PropertyDefinition("Visible", [], false, true, metadata);
+            testCase.verifyEqual(definition.Editor, "logical");
+            testCase.verifyEqual(definition.Validator, "logical");
+            testCase.verifyEqual(definition.PreviewPolicy, "skip");
+            testCase.verifyEqual(definition.ResetPolicy, "retain");
+        end
         function propertyStatesKeepDefaultsImplicit(testCase)
             % propertyStatesKeepDefaultsImplicit Join definitions without creating entries.
 
