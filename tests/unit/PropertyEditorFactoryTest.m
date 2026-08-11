@@ -52,6 +52,22 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function defersItemsDataAsReadOnly(testCase)
+            % defersItemsDataAsReadOnly Keep arbitrary list-associated data out of the string editor.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.PropertyDefinition("ItemsData", [], false, true, ...
+                struct("editor", "itemsData", "auditDisposition", "readOnly"));
+            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+                figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 2 3]", false);
+            drawnow;
+            testCase.verifyFalse(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyFalse(control.Editable);
+            clear cleanup
+        end
+
         function createsRgbColorAction(testCase)
             % createsRgbColorAction Render one validated RGB value on a native action button.
 

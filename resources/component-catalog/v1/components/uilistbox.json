@@ -27,7 +27,7 @@
                        },
                        {
                            "path":  "ItemsData",
-                           "metadata": {"category": "Content", "order": 20, "editor": "stringList"}
+                           "metadata": {"category": "Content", "order": 20, "editor": "itemsData", "auditDisposition": "readOnly"}
                        },
                        {
                            "path":  "Multiselect",
