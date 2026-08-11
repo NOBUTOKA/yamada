@@ -26,6 +26,8 @@ classdef PropertyBehaviorRegistry
                 ["apply", "skip"], context);
             macd.catalog.PropertyBehaviorRegistry.validateIdentifier(metadata, "resetPolicy", ...
                 ["remove", "retain", "structural"], context);
+            macd.catalog.PropertyBehaviorRegistry.validateIdentifier(metadata, "auditDisposition", ...
+                ["editable", "readOnly", "omitted"], context);
         end
     end
 

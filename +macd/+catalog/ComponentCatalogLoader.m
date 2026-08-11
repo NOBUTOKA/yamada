@@ -231,12 +231,52 @@ classdef ComponentCatalogLoader
                 end
                 metadata = document.metadata;
                 macd.catalog.ComponentCatalogLoader.rejectUnknownFields(metadata, ...
-                    ["editor", "validator", "previewPolicy", "resetPolicy"], ...
+                    ["editor", "validator", "previewPolicy", "resetPolicy", ...
+                    "displayName", "category", "order", "valueSchema", ...
+                    "applicableStyles", "auditDisposition"], ...
                     context + ".metadata");
                 macd.catalog.PropertyBehaviorRegistry.validateMetadata(metadata, context);
+                macd.catalog.ComponentCatalogLoader.validatePropertyPresentationMetadata( ...
+                    metadata, context + ".metadata");
             end
             definition = macd.model.PropertyDefinition(path, defaultValue, hasDefault, ...
                 isEditable, metadata);
+        end
+
+        function validatePropertyPresentationMetadata(metadata, context)
+            % validatePropertyPresentationMetadata Validate non-behavior inspector metadata.
+            arguments (Input)
+                metadata (1, 1) struct
+                context (1, 1) string
+            end
+
+            % Validate value shapes before the immutable definition projects them.
+            if isfield(metadata, "displayName")
+                macd.catalog.ComponentCatalogLoader.scalarString(metadata.displayName, ...
+                    context + ".displayName");
+            end
+            if isfield(metadata, "category")
+                macd.catalog.ComponentCatalogLoader.scalarString(metadata.category, ...
+                    context + ".category");
+            end
+            if isfield(metadata, "order")
+                order = metadata.order;
+                if ~isnumeric(order) || ~isscalar(order) || ~isfinite(order)
+                    macd.catalog.ComponentCatalogLoader.fail(context + ".order", ...
+                        "Expected one finite numeric value.");
+                end
+            end
+            if isfield(metadata, "valueSchema")
+                schema = metadata.valueSchema;
+                if ~isstruct(schema) || ~isscalar(schema)
+                    macd.catalog.ComponentCatalogLoader.fail(context + ".valueSchema", ...
+                        "Expected one object.");
+                end
+            end
+            if isfield(metadata, "applicableStyles")
+                macd.catalog.ComponentCatalogLoader.stringList(metadata.applicableStyles, ...
+                    context + ".applicableStyles");
+            end
         end
 
         function result = capabilities(document, context)

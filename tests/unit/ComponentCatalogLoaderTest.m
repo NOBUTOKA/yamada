@@ -64,6 +64,40 @@ classdef ComponentCatalogLoaderTest < matlab.unittest.TestCase
             testCase.verifySubstring(string(exception.message), ".editor");
         end
 
+        function loadsTypedInspectorPresentationMetadata(testCase)
+            % loadsTypedInspectorPresentationMetadata Project JSON presentation metadata into definitions.
+
+            % Annotate one fixture property with the metadata consumed by native rows.
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.properties{2}.metadata.displayName = "Caption";
+            component.properties{2}.metadata.category = "Content";
+            component.properties{2}.metadata.order = 30;
+            component.properties{2}.metadata.valueSchema = struct("kind", "string");
+            component.properties{2}.metadata.applicableStyles = "standard";
+            component.properties{2}.metadata.auditDisposition = "readOnly";
+            testCase.writeJson(root, "components/uilabel.json", component);
+            definition = macd.catalog.ComponentCatalogLoader.load(root).get("uilabel").Properties(3);
+            testCase.verifyEqual(definition.DisplayName, "Caption");
+            testCase.verifyEqual(definition.Category, "Content");
+            testCase.verifyEqual(definition.Order, 30);
+            testCase.verifyEqual(string(definition.ValueSchema.kind), "string");
+            testCase.verifyEqual(definition.ApplicableStyles, "standard");
+            testCase.verifyEqual(definition.AuditDisposition, "readOnly");
+        end
+
+        function rejectsInvalidInspectorPresentationMetadata(testCase)
+            % rejectsInvalidInspectorPresentationMetadata Fail closed for invalid presentation shapes.
+
+            % A display order must remain a scalar finite number in catalog JSON.
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.properties{2}.metadata.order = [10, 20];
+            testCase.writeJson(root, "components/uilabel.json", component);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), ".order");
+        end
+
         function rejectsDuplicateExpandedProperties(testCase)
             % rejectsDuplicateExpandedProperties Reject duplicate paths after group expansion.
 

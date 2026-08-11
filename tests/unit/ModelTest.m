@@ -258,12 +258,22 @@ classdef ModelTest < matlab.unittest.TestCase
 
             % Keep adapter selection independent of metadata field access by consumers.
             metadata = struct("editor", "logical", "validator", "logical", ...
-                "previewPolicy", "skip", "resetPolicy", "retain");
+                "previewPolicy", "skip", "resetPolicy", "retain", ...
+                "displayName", "Shown", "category", "Appearance", "order", 20, ...
+                "valueSchema", struct("values", {{"on", "off"}}), ...
+                "applicableStyles", ["push", "state"], ...
+                "auditDisposition", "readOnly");
             definition = macd.model.PropertyDefinition("Visible", [], false, true, metadata);
             testCase.verifyEqual(definition.Editor, "logical");
             testCase.verifyEqual(definition.Validator, "logical");
             testCase.verifyEqual(definition.PreviewPolicy, "skip");
             testCase.verifyEqual(definition.ResetPolicy, "retain");
+            testCase.verifyEqual(definition.DisplayName, "Shown");
+            testCase.verifyEqual(definition.Category, "Appearance");
+            testCase.verifyEqual(definition.Order, 20);
+            testCase.verifyEqual(definition.ValueSchema.values, {"on", "off"});
+            testCase.verifyEqual(definition.ApplicableStyles, ["push", "state"]);
+            testCase.verifyEqual(definition.AuditDisposition, "readOnly");
         end
         function propertyStatesKeepDefaultsImplicit(testCase)
             % propertyStatesKeepDefaultsImplicit Join definitions without creating entries.
