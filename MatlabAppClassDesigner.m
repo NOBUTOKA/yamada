@@ -1571,6 +1571,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.setStatus(string(exception.message));
                 return
             end
+            % Revalidate immediately so property-row commits refresh diagnostics.
+            macd.validation.ModelValidator.validate(app.Document, app.Registry);
             app.refreshShell();
         end
 
