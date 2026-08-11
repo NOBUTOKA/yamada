@@ -469,6 +469,10 @@ later phases rather than incomplete Phase 5 work.
 
 ### Phase 6: Typed property editing and component-specific inspector
 
+The detailed execution order, work-package boundaries, required tests, and
+progress checklist are maintained in [`PHASE6_IMPLEMENTATION_PLAN.md`](PHASE6_IMPLEMENTATION_PLAN.md).
+This section remains the phase-level architectural and completion contract.
+
 #### Objective
 
 Replace the current literal-table inspector with a registry-driven property
