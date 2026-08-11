@@ -1688,6 +1688,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             % Preserve unsupported source assignments without making them editable.
             states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
+            definition = app.Registry.get(component.Factory);
+            style = definition.styleFor(component.CreationArguments);
+            applicable = arrayfun(@(state) isempty(state.Definition.ApplicableStyles) || ...
+                any(state.Definition.ApplicableStyles == style), states);
+            states = states(applicable);
             effectivePaths = arrayfun(@(state) state.Definition.Path, states);
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
