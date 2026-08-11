@@ -13,10 +13,12 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Text"
+                           "path":  "Text",
+                           "metadata": {"category": "Content", "order": 10, "editor": "text"}
                        },
                        {
-                           "path":  "Value"
+                           "path":  "Value",
+                           "metadata": {"category": "Value", "order": 10, "editor": "logical"}
                        }
                    ],
     "capabilities":  {
