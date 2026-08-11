@@ -309,7 +309,9 @@ changes. No adapter callback retains a previously selected component ID.
 - [ ] Build a selected component's complete control tree off the active update
   path where practical, publish it once, and avoid `drawnow` inside row loops.
 - [ ] Verify the public R2024a scrolling API used by the chosen native container
-  with real construction, `drawnow`, validity, and deletion tests.
+  with real construction, `drawnow`, validity, and deletion tests. If no public
+  scroll-position API exists, retain position by avoiding same-surface rebuilds,
+  reset position on replacement, and do not use undocumented UI internals.
 
 **Gate:** switching between representative small and large effective surfaces
 constructs one valid inspector tree with no leaked controls, callbacks, or
@@ -395,18 +397,20 @@ replace editor controls.
 
 #### 6.6.8 Preserve per-component transient view state
 
-- [ ] Save collapsed category IDs, scroll position when exposed by the verified
-  R2024a public API, focused property, and pending invalid editor text before a
-  selected component's control tree is destroyed.
-- [ ] Restore compatible state when returning to that component; discard entries
-  whose definitions or adapter kinds no longer match the current surface.
+- [ ] Save collapsed category IDs, scroll position only when exposed by a
+  verified R2024a public API, focused property, and pending invalid editor text
+  before a selected component's control tree is destroyed.
+- [ ] Restore compatible category, focus, and pending-text state when returning
+  to that component; restore scroll position only when the public API supports
+  it, otherwise reset it after rebuilding.
 - [ ] Keep this cache editor-owned and clear it on document replacement or
   component deletion; never serialize it as document or generated-source state.
 - [ ] Preserve state automatically during same-component value refresh by not
   rebuilding the control tree.
 
-**Gate:** selection A -> B -> A restores compatible view state, repeated A -> A
-does not rebuild, and New/Open cannot inherit state from the prior document.
+**Gate:** selection A -> B -> A restores compatible category/focus/draft state
+and restores scrolling where a public API supports it; repeated A -> A does not
+rebuild, and New/Open cannot inherit state from the prior document.
 
 #### 6.6.9 Remove the transitional table and complete integration
 
