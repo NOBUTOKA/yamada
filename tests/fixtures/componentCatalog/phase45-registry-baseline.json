@@ -1,0 +1,3446 @@
+{
+  "SchemaVersion": 1,
+  "Definitions": [
+    {
+      "Factory": "axes",
+      "DeclaredType": "matlab.graphics.axis.Axes",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "XLim",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "YLim",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Axes",
+      "Category": "Axes",
+      "IsProgrammaticOnly": true,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "geoaxes",
+      "DeclaredType": "matlab.graphics.axis.GeographicAxes",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "LatitudeLimits",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "LongitudeLimits",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Geographic Axes",
+      "Category": "Axes",
+      "IsProgrammaticOnly": true,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "polaraxes",
+      "DeclaredType": "matlab.graphics.axis.PolarAxes",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ThetaLim",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "RLim",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Polar Axes",
+      "Category": "Axes",
+      "IsProgrammaticOnly": true,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uiaxes",
+      "DeclaredType": "matlab.ui.control.UIAxes",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "XLim",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "YLim",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "XLabel",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "YLabel",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Title",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "UI Axes",
+      "Category": "Axes",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "axes",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uibutton",
+      "DeclaredType": "matlab.ui.control.Button",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Text",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Icon",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ButtonPushedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Button",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [
+        "push",
+        "state"
+      ],
+      "DefaultStyle": "push",
+      "DeclaredTypesByStyle": {
+        "push": "matlab.ui.control.Button",
+        "state": "matlab.ui.control.StateButton"
+      },
+      "OverlayShape": "roundedRectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uibuttongroup",
+      "DeclaredType": "matlab.ui.container.ButtonGroup",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Title",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "SelectedObject",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Button Group",
+      "Category": "Container",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uicheckbox",
+      "DeclaredType": "matlab.ui.control.CheckBox",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Text",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Check Box",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uicolorpicker",
+      "DeclaredType": "matlab.ui.control.ColorPicker",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Color Picker",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {
+        "Introduced": "R2024a"
+      }
+    },
+    {
+      "Factory": "uicontextmenu",
+      "DeclaredType": "matlab.ui.container.ContextMenu",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Context Menu",
+      "Category": "FigureTools",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uidatepicker",
+      "DeclaredType": "matlab.ui.control.DatePicker",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "DisplayFormat",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Date Picker",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uidropdown",
+      "DeclaredType": "matlab.ui.control.DropDown",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Items",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ItemsData",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Editable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Drop-down",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uieditfield",
+      "DeclaredType": "matlab.ui.control.EditField",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Edit Field",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [
+        "text",
+        "numeric"
+      ],
+      "DefaultStyle": "text",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {
+        "NumericProperties": [
+          "Limits",
+          "RoundFractionalValues",
+          "ValueDisplayFormat"
+        ]
+      }
+    },
+    {
+      "Factory": "uifigure",
+      "DeclaredType": "matlab.ui.Figure",
+      "AllowedParentFactories": [],
+      "IsRoot": true,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Name",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "UI Figure",
+      "Category": "Figure",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uigauge",
+      "DeclaredType": "matlab.ui.control.Gauge",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Limits",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "MajorTicks",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "MinorTicks",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Gauge",
+      "Category": "Instrumentation",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [
+        "circular",
+        "linear",
+        "ninetydegree",
+        "semicircular"
+      ],
+      "DefaultStyle": "circular",
+      "DeclaredTypesByStyle": {
+        "circular": "matlab.ui.control.Gauge",
+        "linear": "matlab.ui.control.LinearGauge",
+        "ninetydegree": "matlab.ui.control.NinetyDegreeGauge",
+        "semicircular": "matlab.ui.control.SemicircularGauge"
+      },
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {
+        "circular": "circle",
+        "linear": "rectangle",
+        "ninetydegree": "circle",
+        "semicircular": "circle"
+      },
+      "ResizeConstraint": "aspectRatio",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uigridlayout",
+      "DeclaredType": "matlab.ui.container.GridLayout",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "RowHeight",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ColumnWidth",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Padding",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "RowSpacing",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ColumnSpacing",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Grid Layout",
+      "Category": "Container",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uihtml",
+      "DeclaredType": "matlab.ui.control.HTML",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "HTMLSource",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "HTMLEditor",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Data",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "HTMLEventReceivedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "HTML",
+      "Category": "Extensible",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uihyperlink",
+      "DeclaredType": "matlab.ui.control.Hyperlink",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Text",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "URL",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "VisitedColor",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Hyperlink",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uiimage",
+      "DeclaredType": "matlab.ui.control.Image",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ImageSource",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ScaleMethod",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ImageClickedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Image",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uiknob",
+      "DeclaredType": "matlab.ui.control.Knob",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Items",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Limits",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "MajorTicks",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "MinorTicks",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Knob",
+      "Category": "Instrumentation",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [
+        "continuous",
+        "discrete"
+      ],
+      "DefaultStyle": "continuous",
+      "DeclaredTypesByStyle": {
+        "continuous": "matlab.ui.control.Knob",
+        "discrete": "matlab.ui.control.DiscreteKnob"
+      },
+      "OverlayShape": "circle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "aspectRatio",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uilabel",
+      "DeclaredType": "matlab.ui.control.Label",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Text",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "HorizontalAlignment",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "VerticalAlignment",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Label",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uilamp",
+      "DeclaredType": "matlab.ui.control.Lamp",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Color",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Lamp",
+      "Category": "Instrumentation",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "circle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "aspectRatio",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uilistbox",
+      "DeclaredType": "matlab.ui.control.ListBox",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Items",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ItemsData",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Multiselect",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "List Box",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uimenu",
+      "DeclaredType": "matlab.ui.container.Menu",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uimenu"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Text",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Checked",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Separator",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "MenuSelectedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Menu",
+      "Category": "FigureTools",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": true,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uipanel",
+      "DeclaredType": "matlab.ui.container.Panel",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Title",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "TitlePosition",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "BorderType",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Panel",
+      "Category": "Container",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uipushtool",
+      "DeclaredType": "matlab.ui.container.toolbar.PushTool",
+      "AllowedParentFactories": [
+        "uitoolbar"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "CData",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Separator",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ClickedCallback",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Push Tool",
+      "Category": "FigureTools",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": true,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uiradiobutton",
+      "DeclaredType": "matlab.ui.control.RadioButton",
+      "AllowedParentFactories": [
+        "uibuttongroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Text",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Radio Button",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uislider",
+      "DeclaredType": "matlab.ui.control.Slider",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Limits",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Orientation",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "MajorTicks",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "MinorTicks",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Step",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangingFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Slider",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [
+        "slider",
+        "range"
+      ],
+      "DefaultStyle": "slider",
+      "DeclaredTypesByStyle": {
+        "range": "matlab.ui.control.RangeSlider",
+        "slider": "matlab.ui.control.Slider"
+      },
+      "OverlayShape": "slider",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "fixedHeight",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uispinner",
+      "DeclaredType": "matlab.ui.control.Spinner",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Limits",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Step",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Spinner",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uiswitch",
+      "DeclaredType": "matlab.ui.control.Switch",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Items",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Switch",
+      "Category": "Instrumentation",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [
+        "slider",
+        "rocker",
+        "toggle"
+      ],
+      "DefaultStyle": "slider",
+      "DeclaredTypesByStyle": {
+        "rocker": "matlab.ui.control.RockerSwitch",
+        "slider": "matlab.ui.control.Switch",
+        "toggle": "matlab.ui.control.ToggleSwitch"
+      },
+      "OverlayShape": "switch",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "aspectRatio",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitab",
+      "DeclaredType": "matlab.ui.container.Tab",
+      "AllowedParentFactories": [
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Title",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Icon",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Tab",
+      "Category": "Container",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitabgroup",
+      "DeclaredType": "matlab.ui.container.TabGroup",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "SelectedTab",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Tab Group",
+      "Category": "Container",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitable",
+      "DeclaredType": "matlab.ui.control.Table",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Data",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ColumnName",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ColumnEditable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ColumnFormat",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "RowName",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "CellEditCallback",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Table",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitextarea",
+      "DeclaredType": "matlab.ui.control.TextArea",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ValueChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Text Area",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitogglebutton",
+      "DeclaredType": "matlab.ui.control.ToggleButton",
+      "AllowedParentFactories": [
+        "uibuttongroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Text",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Value",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Toggle Button",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitoggletool",
+      "DeclaredType": "matlab.ui.container.toolbar.ToggleTool",
+      "AllowedParentFactories": [
+        "uitoolbar"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "CData",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Separator",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "OnCallback",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "OffCallback",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "State",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Toggle Tool",
+      "Category": "FigureTools",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": true,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitoolbar",
+      "DeclaredType": "matlab.ui.container.Toolbar",
+      "AllowedParentFactories": [
+        "uifigure"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "HandleVisibility",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Toolbar",
+      "Category": "FigureTools",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitree",
+      "DeclaredType": "matlab.ui.container.Tree",
+      "AllowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Position",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Visible",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Enable",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tooltip",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Tag",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Root",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "SelectedNodes",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "SelectionChangedFcn",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Row",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Layout.Column",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Tree",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": false,
+      "SupportedStyles": [
+        "default",
+        "checkbox"
+      ],
+      "DefaultStyle": "default",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    },
+    {
+      "Factory": "uitreenode",
+      "DeclaredType": "matlab.ui.container.TreeNode",
+      "AllowedParentFactories": [
+        "uitree",
+        "uitreenode"
+      ],
+      "IsRoot": false,
+      "CreationArguments": [],
+      "Properties": [
+        {
+          "Path": "Text",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "NodeData",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Checked",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "Icon",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        },
+        {
+          "Path": "ContextMenu",
+          "DefaultValue": [],
+          "HasDefault": false,
+          "IsEditable": true,
+          "Metadata": {}
+        }
+      ],
+      "DisplayName": "Tree Node",
+      "Category": "Common",
+      "IsProgrammaticOnly": false,
+      "RequiresParentComponent": true,
+      "SupportedStyles": [],
+      "DefaultStyle": "",
+      "DeclaredTypesByStyle": {},
+      "OverlayShape": "rectangle",
+      "OverlayShapesByStyle": {},
+      "ResizeConstraint": "free",
+      "ResizeConstraintsByStyle": {},
+      "Metadata": {}
+    }
+  ]
+}

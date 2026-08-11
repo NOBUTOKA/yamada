@@ -8,7 +8,7 @@ the architectural and completion contract; this file records the implementation
 order, concrete work packages, verification gates, and progress so the work can
 be resumed without reconstructing prior design decisions.
 
-**Status: planned (2026-08-11).**
+**Status: in progress (6.1 complete, assessed 2026-08-11).**
 
 **Target MATLAB release: R2024a.**
 
@@ -144,13 +144,20 @@ catalog file and logical JSON path. No partial registry escapes a failed load.
 
 ### 6.1 Freeze the Phase 4.5 catalog baseline
 
-- [ ] Record a deterministic projection of every current registry definition.
-- [ ] Include factories, declared types, parents, creation arguments, properties,
+- [x] Record a deterministic projection of every current registry definition.
+- [x] Include factories, declared types, parents, creation arguments, properties,
   styles, overlay metadata, and resize constraints.
-- [ ] Add a baseline test insensitive to incidental struct-field ordering.
+- [x] Add a baseline test insensitive to incidental struct-field ordering.
 
 **Exit gate:** the current implementation reproduces a reviewed baseline under
 licensed MATLAB R2024a.
+
+**Completion record (2026-08-11):**
+`tests/fixtures/componentCatalog/phase45-registry-baseline.json` freezes 38
+factory definitions in a canonical JSON projection. `ComponentRegistryBaselineTest`
+compares the runtime projection after sorting factories and recursively ordering
+structure fields; it also parses the fixture independently. The licensed R2024a
+run passed 2 baseline tests and 2 project-convention tests with zero failures.
 
 ### 6.2 Implement the JSON schema boundary and loader
 
