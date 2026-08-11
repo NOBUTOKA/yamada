@@ -1852,44 +1852,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
         end
 
-        function [data, paths] = inspectorData(app, component)
-            % inspectorData Format one effective surface without materializing defaults.
-            arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
-                component (1, 1) macd.model.ComponentRecord
-            end
-            arguments (Output)
-                data cell
-                paths string
-            end
-
-            % List effective definitions first and append preserved source-only entries.
-            states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
-            data = cell(0, 4);
-            paths = strings(1, 0);
-            for index = 1:numel(states)
-                definition = states(index).Definition;
-                entry = states(index).Entry;
-                data(end + 1, :) = {'General', char(definition.Path), '', 'Editable'}; %#ok<AGROW>
-                if ~isempty(entry)
-                    data{end, 3} = char(macd.ui.InspectorValueFormatter.format(entry));
-                    if ~entry.IsEditable
-                        data{end, 4} = 'Read-only source';
-                    end
-                end
-                paths(end + 1) = definition.Path;
-            end
-            for index = 1:numel(component.Properties)
-                entry = component.Properties(index);
-                if any(paths == entry.Path)
-                    continue
-                end
-                data(end + 1, :) = {'Source', char(entry.Path), ...
-                    char(macd.ui.InspectorValueFormatter.format(entry)), 'Read-only source'}; %#ok<AGROW>
-                paths(end + 1) = entry.Path;
-            end
-        end
-
         function key = inspectorSurfaceKey(app, component)
             % inspectorSurfaceKey Identify one component's ordered editor surface.
             arguments (Input)
