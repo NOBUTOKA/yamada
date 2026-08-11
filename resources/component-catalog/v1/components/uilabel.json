@@ -18,13 +18,16 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Text"
+                           "path":  "Text",
+                           "metadata": {"category": "Content", "order": 10, "editor": "text"}
                        },
                        {
-                           "path":  "HorizontalAlignment"
+                           "path":  "HorizontalAlignment",
+                           "metadata": {"category": "Appearance", "order": 10, "editor": "enum", "valueSchema": {"values": ["left", "center", "right"]}}
                        },
                        {
-                           "path":  "VerticalAlignment"
+                           "path":  "VerticalAlignment",
+                           "metadata": {"category": "Appearance", "order": 20, "editor": "enum", "valueSchema": {"values": ["top", "center", "bottom"]}}
                        }
                    ],
     "capabilities":  {

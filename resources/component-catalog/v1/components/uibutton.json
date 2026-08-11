@@ -18,13 +18,16 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Text"
+                           "path":  "Text",
+                           "metadata": {"category": "Content", "order": 10, "editor": "text"}
                        },
                        {
-                           "path":  "Icon"
+                           "path":  "Icon",
+                           "metadata": {"category": "Content", "order": 20, "editor": "filePath"}
                        },
                        {
-                           "path":  "ButtonPushedFcn"
+                           "path":  "ButtonPushedFcn",
+                           "metadata": {"category": "Callbacks", "order": 10, "auditDisposition": "readOnly"}
                        }
                    ],
     "capabilities":  {

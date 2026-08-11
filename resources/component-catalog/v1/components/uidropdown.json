@@ -18,19 +18,24 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Value"
+                           "path":  "Value",
+                           "metadata": {"category": "Content", "order": 10, "editor": "text"}
                        },
                        {
-                           "path":  "Items"
+                           "path":  "Items",
+                           "metadata": {"category": "Content", "order": 20, "editor": "stringList"}
                        },
                        {
-                           "path":  "ItemsData"
+                           "path":  "ItemsData",
+                           "metadata": {"category": "Content", "order": 30, "editor": "stringList"}
                        },
                        {
-                           "path":  "Editable"
+                           "path":  "Editable",
+                           "metadata": {"category": "Interactivity", "order": 10, "editor": "onOff"}
                        },
                        {
-                           "path":  "ValueChangedFcn"
+                           "path":  "ValueChangedFcn",
+                           "metadata": {"category": "Callbacks", "order": 10, "auditDisposition": "readOnly"}
                        }
                    ],
     "capabilities":  {
