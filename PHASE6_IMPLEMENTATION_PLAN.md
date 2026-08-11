@@ -8,7 +8,7 @@ the architectural and completion contract; this file records the implementation
 order, concrete work packages, verification gates, and progress so the work can
 be resumed without reconstructing prior design decisions.
 
-**Status: in progress (6.1 and 6.2 complete, assessed 2026-08-11).**
+**Status: in progress (6.1 through 6.6 complete, assessed 2026-08-12).**
 
 **Target MATLAB release: R2024a.**
 
@@ -440,6 +440,21 @@ reset, history, and deterministic cleanup.
 select every implemented editor. Different-component selection rebuilds a clean
 native control tree, while same-component edits synchronize values without
 rebuilding or losing transient editor state.
+
+**Completion record (2026-08-12):** The native inspector renders definition-
+driven categories and retained Source rows, with an allowlisted editor factory
+for text, logical/on-off, enum, scalar number, numeric-vector, RGB color, and
+string-list values. Deferred editor kinds remain readable through the typed
+read-only fallback. Failed commits keep their draft and inline error outside the
+document model; returning from another selected component restores compatible
+invalid drafts and best-effort focus. The scrollable R2024a panel exposes no
+public scroll-position API, so replacement resets scrolling. The user-directed
+decision is to omit a permanent Reset button; `DocumentModel.resetProperty`
+remains available for a later context-menu action. The obsolete table formatter
+was removed. Licensed MATLAB R2024a verification passed 76 tests with zero
+failures. Completion commits include `66e9bad`, `4a43417`, `2421893`,
+`117459f`, `df2429c`, `e17f220`, `1ef58dd`, `2163afd`, `a4f55b8`, `86a21dd`,
+and `d8367ed`.
 
 ### 6.7 Complete the Button vertical slice
 
