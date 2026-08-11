@@ -8,7 +8,7 @@ the architectural and completion contract; this file records the implementation
 order, concrete work packages, verification gates, and progress so the work can
 be resumed without reconstructing prior design decisions.
 
-**Status: in progress (6.1 complete, assessed 2026-08-11).**
+**Status: in progress (6.1 and 6.2 complete, assessed 2026-08-11).**
 
 **Target MATLAB release: R2024a.**
 
@@ -53,7 +53,8 @@ flowchart LR
     JSON["Versioned JSON catalog"] --> Loader["ComponentCatalogLoader"]
     Loader --> Validate["Schema and semantic validation"]
     Validate --> Definitions["Typed component and property definitions"]
-    Definitions --> Registry["ComponentRegistry runtime index"]
+    Definitions --> Context["Parent-context rules"]
+    Context --> Registry["ComponentRegistry runtime index and effective query"]
     Registry --> Inspector["Typed property inspector"]
     Registry --> Preview["Safe Preview"]
     Registry --> Validator["Model validation"]
@@ -81,6 +82,7 @@ resources/
   +model/
     ComponentRegistry.m
     ComponentDefinition.m
+    ParentContextRule.m
     PropertyDefinition.m
     PropertyEntry.m
     DocumentModel.m
@@ -118,6 +120,16 @@ Definitions are composed in this order:
 Duplicate factories, paths, or implicit overrides are errors. An override names
 an existing definition and declares its intent. Property groups may not cycle,
 and component files do not form unrestricted inheritance graphs.
+
+### Parent-dependent property applicability
+
+Intrinsic definitions omit geometry supplied only by a direct parent. An
+allowlisted context rule composes the effective surface after component/style
+validation: Grid adds `Layout.Row` and `Layout.Column` and suppresses
+`Position`; ordinary absolute parents add `Position`; structural parents add no
+geometry unless explicitly reviewed. Hierarchy order and container references
+remain separate relationship capabilities. Context-inapplicable opened-source
+assignments are preserved read-only.
 
 ### Data and behavior boundary
 
@@ -161,43 +173,68 @@ run passed 2 baseline tests and 2 project-convention tests with zero failures.
 
 ### 6.2 Implement the JSON schema boundary and loader
 
-- [ ] Define schema version 1, manifest, component/group documents, style
-  overrides, tagged literals, and audit dispositions.
-- [ ] Add explicit catalog-root injection for tests and packaged-resource
-  resolution for the application.
-- [ ] Implement strict validation, deterministic composition, normalization of
-  `jsondecode` results, allowlisted behavior resolution, and atomic failure.
-- [ ] Create minimal valid and intentionally invalid fixture catalogs.
-
-**Required tests:** minimal load, deterministic order, explicit override, all
-defined rejection paths, file/JSON-path diagnostics, fixture-root isolation, and
-absence of partial results.
+- [x] Define schema version 1, manifest, component/group documents, and strict
+  style-override records. Expanded typed/audit fields remain owned by 6.5.
+- [x] Add explicit fixture catalog-root injection and packaged-resource lookup.
+- [x] Implement strict validation, deterministic composition, `jsondecode`
+  normalization, allowlisted behavior resolution, and atomic failure.
+- [x] Create isolated minimal valid and intentionally invalid test catalogs.
 
 **Exit gate:** a fixture catalog constructs typed definitions without the
 hard-coded standard catalog.
 
-### 6.3 Migrate the Phase 4.5 component catalog
+**Completion record (2026-08-11):** `ComponentCatalogLoader` and
+`PropertyBehaviorRegistry` passed 5 loader tests, 2 baseline tests, and 2
+project-convention tests under licensed R2024a. Commit: `9914aaa`.
 
-- [ ] Create the manifest and shared property groups.
+### 6.3 Introduce parent-dependent property rules
+
+- [ ] Extend schema version 1 with allowlisted direct-parent context kinds and
+  typed contributed/suppressed property rules.
+- [ ] Add one registry query such as `getEffectiveProperties(factory,
+  parentFactory)` and prohibit duplicated consumer-side parent conditionals.
+- [ ] Define Grid context to add `Layout.Row`/`Layout.Column` and suppress
+  `Position`; define ordinary absolute context to add `Position` only.
+- [ ] Define structural contexts for tab groups, button groups, trees, menus,
+  and toolbars so broad property groups do not advertise invalid geometry.
+- [ ] Switch `DocumentModel.insertComponent`, `AppSourceParser` property
+  recognition, and `ModelValidator` applicability checks to the shared query.
+- [ ] Preserve context-inapplicable opened-source assignments as read-only.
+- [ ] Split the 6.1 baseline into intrinsic definitions and representative
+  direct-parent effective projections.
+- [ ] Eliminate the duplicate `uispinner` `Layout.Row`/`Layout.Column` entries
+  through contextual composition rather than a compatibility exception.
+
+**Required tests:** Grid/absolute insertion, nested Grid, deterministic effective
+order, structural children, parser retention, invalid-parent diagnostics, and
+canonical intrinsic/effective projections.
+
+**Exit gate:** insertion, parsing, and validation resolve the same parent surface
+without losing supported Grid placement or advertising invalid geometry.
+
+### 6.4 Migrate the Phase 4.5 component catalog
+
+- [ ] Create the manifest and shared intrinsic property groups.
 - [ ] Move every existing factory into one component JSON file.
-- [ ] Compare the loaded projection with the frozen Phase 4.5 baseline.
+- [ ] Compare intrinsic and direct-parent effective projections with the revised
+  frozen Phase 4.5 baselines.
 - [ ] Delegate `ComponentRegistry.createDefault()` to the loader.
-- [ ] Remove hard-coded inventory only after parity passes.
+- [ ] Remove hard-coded inventory only after both parity layers pass.
 - [ ] Verify parser fixtures, palette order, styles, overlays, and resize
   constraints remain unchanged.
 
-**Required tests:** parity, existing registry/model/parser/preview tests, and real
-editor construction, `drawnow`, validity assertion, and deletion.
+**Required tests:** intrinsic/effective parity, existing registry/model/parser/
+preview tests, and real editor construction, `drawnow`, validity, and deletion.
 
-**Exit gate:** JSON is the only standard catalog source with no Phase 4.5 behavior
-change or duplicate MATLAB fallback.
+**Exit gate:** JSON is the only standard catalog source with no effective Phase
+4.5 behavior change or duplicate MATLAB fallback.
 
-### 6.4 Expand typed capabilities and reset history
+### 6.5 Expand typed capabilities and reset history
 
 - [ ] Add display/category/order, value schema, editor/validator identifiers,
   defaults, style/preview applicability, audit disposition, and reset policy to
   `PropertyDefinition`.
-- [ ] Join definitions with entries without materializing defaults.
+- [ ] Join effective definitions with entries without materializing defaults.
 - [ ] Add model-owned property removal/reset and typed history for absent,
   literal, and source-backed states.
 - [ ] Define safe removal rules for generated and parsed assignments.
@@ -209,9 +246,10 @@ restoration.
 **Exit gate:** model tests prove all state transitions without UI or preview
 handles as storage.
 
-### 6.5 Build the categorized inspector framework
+### 6.6 Build the categorized inspector framework
 
-- [ ] Replace the editable literal table with a scrollable categorized inspector.
+- [ ] Replace the editable literal table with a scrollable categorized inspector
+  driven by the direct-parent effective property surface.
 - [ ] Preserve selection, collapsed categories, and scroll position on refresh.
 - [ ] Implement text, logical, enum, number, vector, color, and string-list
   adapters.
@@ -225,11 +263,12 @@ retained UI state, inline errors, read-only values, reset, and history.
 **Exit gate:** the inspector has no component-specific conditionals; definitions
 select every implemented editor.
 
-### 6.6 Complete the Button vertical slice
+### 6.7 Complete the Button vertical slice
 
 - [ ] Audit R2024a push and state Button properties.
 - [ ] Define Button content, alignment, icon, font, color, interactivity,
-  position, callback-control, reference, and identity properties in JSON.
+  callback-control, reference, and identity properties in JSON; obtain geometry
+  properties from the parent context.
 - [ ] Add missing Button adapters and validators.
 - [ ] Apply supported visual changes to Safe Preview.
 - [ ] Generate new assignments and localized replacement/insertion/removal.
@@ -242,7 +281,7 @@ byte-identical no-edit output.
 **Exit gate:** Button works end to end through JSON, loader, registry, inspector,
 model/history, Preview, validation, and source generation.
 
-### 6.7 Expand audited component families
+### 6.8 Expand audited component families
 
 - [ ] Common controls and containers.
 - [ ] Navigation and data controls.
@@ -257,7 +296,7 @@ tests, representative Preview comparisons, and generator tests.
 **Exit gate:** every Phase 4.5 factory/style has a complete audit and every
 editable property names implemented allowlisted behavior.
 
-### 6.8 Add specialized reference and file-backed editors
+### 6.9 Add specialized reference and file-backed editors
 
 - [ ] Add model-owned selectors for `ContextMenu` and approved references.
 - [ ] Preserve unsupported handle expressions as read-only source.
@@ -269,7 +308,7 @@ editable property names implemented allowlisted behavior.
 **Exit gate:** specialized values round-trip without evaluation, asset mutation,
 or conversion of unsupported expressions to strings.
 
-### 6.9 Complete Preview, validation, generation, and packaging
+### 6.10 Complete Preview, validation, generation, and packaging
 
 - [ ] Share the property schema between inspector and model validation.
 - [ ] Apply only preview-safe values and report targeted mismatch diagnostics.
@@ -286,14 +325,15 @@ automated counts and manual evidence recorded before completion.
 | Layer | Required evidence |
 | --- | --- |
 | Catalog | Valid/invalid fixtures, deterministic merge, diagnostics, atomic failure |
-| Registry | Phase 4.5 parity, complete audit, allowlisted identifiers |
+| Registry | Intrinsic/context parity, complete audit, allowlisted identifiers |
 | Model/history | Add/change/reset, absent state, undo/redo, parsed restoration |
 | Inspector | Real construction/draw/deletion, adapters, errors, retained state |
 | Safe Preview | Runtime comparison; callbacks and expressions never executed |
 | Generators | New output, localized edits, no-edit identity, small diffs |
 | Files | JSON UTF-8, MATLAB UTF-8 without BOM and CRLF, packaged discovery |
 
-Focused suites run after each package. The full suite runs at catalog migration,
+Focused suites run after each package. The full suite runs after parent-context
+integration, at catalog migration,
 after Button, after each family when practical, and at Phase 6 completion. UI
 tests construct the fixture, call `drawnow`, assert validity/state, and delete it;
 parser or `checkcode` results alone are not UI verification.
@@ -303,7 +343,8 @@ parser or `checkcode` results alone are not UI verification.
 - Complete and verify one cohesive package or component family at a time.
 - Commit each passing unit as a feature-sized local commit.
 - Do not combine an `AGENTS.md` change with catalog, source, test, or plan work.
-- Do not remove hard-coded inventory until the parity gate passes.
+- Do not remove hard-coded inventory until the 6.4 intrinsic/effective parity
+  gate passes.
 - Update checkboxes and record test evidence as work completes.
 - Keep unrelated pre-existing worktree changes out of Phase 6 commits.
 
@@ -311,6 +352,8 @@ parser or `checkcode` results alone are not UI verification.
 
 - [ ] JSON is the only standard component/property catalog source.
 - [ ] Loading is versioned, deterministic, allowlisted, and fail-closed.
+- [ ] One typed registry API resolves intrinsic and direct-parent effective
+  properties for insertion, parsing, validation, and the inspector.
 - [ ] Every Phase 4.5 component/style has an audited property disposition.
 - [ ] Every editable property has a typed, tested adapter and validator.
 - [ ] Button acceptance works end to end in the supported scope.

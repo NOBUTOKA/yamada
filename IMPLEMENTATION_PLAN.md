@@ -539,6 +539,25 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
    should normally change one component file or shared group and its focused
    tests rather than a monolithic MATLAB registry method.
 
+#### Parent-dependent property applicability
+
+1. Separate intrinsic component properties from properties contributed or
+   suppressed by the direct parent. One typed registry effective-property query
+   is shared by insertion, parsing, validation, and the inspector.
+2. Represent allowlisted direct-parent contexts declaratively: Grid layout,
+   ordinary absolute positioning, and structural parents such as tab groups,
+   button groups, trees, menus, and toolbars.
+3. A direct `uigridlayout` parent contributes `Layout.Row` and
+   `Layout.Column` and suppresses `Position`. An ordinary absolute parent
+   contributes `Position` without `Layout.*`. Structural parents expose no
+   geometry unless a reviewed rule explicitly declares it.
+4. Keep hierarchy, ordering, `SelectedTab`, `SelectedObject`, and comparable
+   relationships separate from geometry-property injection.
+5. Preserve context-inapplicable opened-source assignments as source-backed
+   read-only state; never discard them silently.
+6. Freeze intrinsic definitions and representative direct-parent effective
+   projections. Compatibility uses the effective surface rather than duplicated
+   invalid `Layout.*` entries.
 #### Runtime property capability contract
 
 1. Extend `PropertyDefinition` so each loader-created typed definition exposes
@@ -546,23 +565,25 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
    allowed values or range, default behavior, style applicability, preview
    applicability, validation identifier, audit disposition, and reset policy.
    Consumers use this typed API and do not inspect decoded JSON structures.
-2. Keep `PropertyDefinition` as capability state and `PropertyEntry` as instance
+2. Resolve intrinsic definitions against the direct-parent context before
+   joining them with instance state.
+3. Keep `PropertyDefinition` as capability state and `PropertyEntry` as instance
    state. Join definitions with entries in the inspector so unassigned,
    explicitly assigned, and source-backed nonliteral values remain distinct.
-3. Audit every Phase 4.5 factory and supported style against MATLAB R2024a
+4. Audit every Phase 4.5 factory and supported style against MATLAB R2024a
    property documentation. Record a reason for every read-only or omitted
    candidate; runtime introspection alone must not silently expand the contract.
-4. Define separate property surfaces when styles have different declared types,
+5. Define separate property surfaces when styles have different declared types,
    including push/state buttons, text/numeric edit fields, slider/range slider,
    tree/check-box tree, gauges, knobs, and switches.
-5. Model document-owned handle references separately from literals. Initially
+6. Model document-owned handle references separately from literals. Initially
    provide safe selectors for `ContextMenu` and comparable registry-approved
    references; preserve unsupported handle expressions as read-only source.
 
 #### Inspector UI and typed editors
 
 1. Replace the editable three-column `uitable` with a scrollable categorized
-   inspector generated from the registry. Categories include component-specific
+   inspector generated from the registry effective-property query. Categories include component-specific
    content, font and color, interactivity, position/layout, callback execution
    control, and identifiers; read-only values and diagnostics remain visible.
 2. Provide adapters for text, logical values, enumerations, scalar numbers,
@@ -590,11 +611,13 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 2. Seed only structural and intentionally canonical properties on insertion.
    Show other effective defaults from the versioned catalog without creating
    redundant `PropertyEntry` assignments merely by selecting a component.
+   Resolve `Position` versus `Layout.*` from the direct parent before seeding.
 3. Apply committed preview-safe values through `PreviewRenderer`. On a preview
    mismatch or MATLAB rejection, retain model/source state, report a targeted
    diagnostic, and rebuild disposable preview state without executing callbacks.
-4. Use the same schema for inspector and model validation. Reject values or
-   properties incompatible with the selected factory/style before generation.
+4. Use the same schema and parent-context resolver for inspector, parsing, and
+   validation. Reject values incompatible with the factory, style, or parent
+   while preserving unsupported opened-source assignments.
 5. Emit only explicit and structurally required assignments for new apps. For
    parsed apps, insert, replace, or remove only unambiguously owned assignments
    and preserve unrelated source byte-for-byte; ambiguous anchors still block
@@ -604,31 +627,29 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 
 #### Delivery sequence
 
-1. Land the versioned JSON schema contract, manifest, loader, allowlisted symbol
-   resolvers, fixture catalogs, and fail-closed loader tests. Migrate the existing
-   Phase 4.5 component definitions without changing runtime behavior, and remove
-   the migrated hard-coded standard catalog from `ComponentRegistry.m`.
-2. Land expanded typed property definitions, reusable JSON property groups, the
-   audit format, and the model reset/history operation with tests.
-3. Land the categorized inspector and common adapters, completing Button end to
-   end and comparing it manually with the attached App Designer examples.
-4. Expand JSON definitions by family: common controls and containers;
-   navigation/data controls; axes; instrumentation; HTML and figure tools. Add
-   style-specific surfaces with each family.
-5. Add reference/path and remaining specialized adapters. A property without a
-   safe adapter remains visibly read-only until its adapter and tests land.
-6. Complete preview, validation, generation, localized round-trip removal,
-   resource packaging, and end-to-end verification before marking Phase 6
-   complete.
-
+1. Land the versioned JSON schema, loader, allowlisted resolvers, fixture
+   catalogs, and fail-closed loader tests.
+2. Land declarative parent-context rules and one effective-property resolver.
+   Switch insertion, parsing, and validation to it, then freeze intrinsic and
+   representative parent-context projections.
+3. Migrate Phase 4.5 definitions without changing effective behavior, removing
+   the hard-coded catalog only after both parity layers pass.
+4. Land expanded typed definitions, reusable groups, audit data, and model
+   reset/history operations.
+5. Land the categorized inspector and common adapters, completing Button end to
+   end against the supplied App Designer examples.
+6. Expand component families and style-specific surfaces.
+7. Add reference/path and remaining specialized adapters.
+8. Complete preview, validation, generation, packaging, and end-to-end checks.
 #### Tests and completion criteria
 
 1. Catalog-loader tests cover valid loading, deterministic ordering and merging,
    explicit overrides, schema-version rejection, unknown fields and symbols,
    duplicate/missing references, malformed defaults, actionable file/JSON-path
    diagnostics, failure atomicity, fixture-root isolation, and packaged resource
-   discovery. A focused compatibility test proves that the initial JSON migration
-   produces the same Phase 4.5 runtime registry definitions.
+   discovery. Parent-context tests cover Grid, absolute, and structural parents.
+   Compatibility tests compare intrinsic definitions and direct-parent effective
+   surfaces after reviewed duplicate cleanup.
 2. Registry tests require valid category/order, typed schema, allowlisted adapter
    and validator identifiers, style scope, and explicit audit disposition for
    every candidate property.
@@ -646,7 +667,8 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 7. Phase 6 completes only when every Phase 4.5 component/style has an audited
    disposition, every editable property has a typed tested adapter, the Button
    acceptance surface works end to end, preview and source flow through shared
-   model/history, the standard catalog contains no hard-coded component inventory
+   model/history, geometry is resolved from the direct parent, and the standard
+   catalog contains no hard-coded component inventory
    in `ComponentRegistry.m`, packaged resources load successfully, and the
    licensed MATLAB R2024a suite and visual checks pass.
 
