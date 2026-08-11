@@ -16,6 +16,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
     properties (Access = private)
         Registry macd.model.ComponentRegistry
+        DefaultValueProvider macd.ui.inspector.DefaultValueProvider
         PreviewRenderer macd.ui.PreviewRenderer
         UIFigure matlab.ui.Figure
         MainGrid matlab.ui.container.GridLayout
@@ -74,6 +75,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             % Keep capability definitions shared by New, Open, preview, and validation.
             app.Registry = macd.model.ComponentRegistry.createDefault();
+            app.DefaultValueProvider = macd.ui.inspector.DefaultValueProvider(app.Registry);
             app.PreviewRenderer = macd.ui.PreviewRenderer(app.Registry);
             app.createComponents();
             app.createMenus();
@@ -1850,6 +1852,18 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                         rawValue = entry.LiteralValue;
                     end
                     editable = editable && entry.IsEditable;
+                else
+                    parentFactory = "";
+                    if strlength(component.ParentId) > 0
+                        parentFactory = app.Document.getComponent(component.ParentId).Factory;
+                    end
+                    [hasDefault, defaultValue] = app.DefaultValueProvider.resolve( ...
+                        component, parentFactory, states(index).Definition);
+                    if hasDefault
+                        defaultEntry = macd.model.PropertyEntry(states(index).Definition.Path, defaultValue);
+                        value = macd.ui.InspectorValueFormatter.format(defaultEntry);
+                        rawValue = defaultValue;
+                    end
                 end
                 app.InspectorRows(index).synchronize(value, editable, rawValue);
             end
