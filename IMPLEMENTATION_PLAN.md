@@ -490,12 +490,58 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 `Tooltip`, `ContextMenu`, `Position`, `Interruptible`, `BusyAction`,
 `HandleVisibility`, and `Tag`, subject to the actual R2024a push/state type.
 
-#### Property capability and catalog contract
+#### JSON catalog architecture
 
-1. Extend `PropertyDefinition` so the registry owns display name, category and
-   order, value schema, editor kind, allowed values or range, default behavior,
-   style applicability, preview applicability, validation, and reset policy.
-   Reusable common groups must allow component-specific exceptions.
+1. Move declarative component and property specifications out of
+   `ComponentRegistry.m` into a strict JSON catalog under
+   `resources/component-catalog/v1`. Keep one component file per factory, shared
+   property-group files for genuinely common capabilities, and a `catalog.json`
+   manifest that fixes the schema version, MATLAB release, component file list,
+   and deterministic load order. Do not discover catalog files implicitly.
+2. Add a dedicated `ComponentCatalogLoader` that reads JSON with MATLAB's
+   built-in `fileread` and `jsondecode`, validates it, resolves property groups
+   and style overrides, normalizes decoded MATLAB values, and constructs typed
+   `ComponentDefinition` and `PropertyDefinition` arrays. `ComponentRegistry`
+   remains the runtime query/index API; `createDefault` delegates catalog
+   construction to this loader instead of containing the standard catalog.
+3. Use a small, versioned project schema rather than exposing arbitrary MATLAB
+   structures. Reject unknown fields, unsupported schema versions, duplicate
+   factories or property paths, missing references, invalid defaults, unknown
+   styles, and invalid category/order data. Report the source file and logical
+   JSON path for every load error, and fail the entire catalog load rather than
+   returning a partially usable registry.
+4. Resolve definitions in one documented order: shared property groups first,
+   component-local definitions second, and style-specific additions,
+   exclusions, or explicit overrides last. Duplicate definitions are errors
+   unless the later entry declares an override; do not implement unrestricted
+   or recursive inheritance between component files.
+5. Store only declarative data in JSON. Editor and validator names are symbolic
+   identifiers resolved through MATLAB-owned allowlists; the loader must not use
+   `eval`, deserialize function handles, or invoke a function named freely by a
+   catalog file. Specialized validation, preview assignment, model mutation,
+   and source editing remain project-owned MATLAB code.
+6. Use standard JSON values for strings, logicals, finite numbers, arrays, and
+   objects. Represent any required MATLAB-specific literal through an explicit,
+   schema-approved tagged form that is parsed by the existing safe literal
+   boundary; never embed executable MATLAB expressions. Keep audit notes and
+   omission reasons as data fields because strict JSON comments are not part of
+   the catalog format.
+7. Make the loader accept an explicit catalog root for unit fixtures while the
+   default application resolves the project-owned packaged resource directory.
+   Cache only a fully validated immutable catalog, and provide a deterministic
+   reload path for tests and future catalog-version selection.
+8. Keep catalog JSON reviewable as UTF-8 text, validate every catalog file in
+   tests, and include resources in packaging/deployment checks. Catalog edits
+   should normally change one component file or shared group and its focused
+   tests rather than a monolithic MATLAB registry method.
+
+#### Runtime property capability contract
+
+1. Extend `PropertyDefinition` so each loader-created typed definition exposes
+   the JSON-declared display name, category and order, value schema, editor kind,
+   allowed values or range, default behavior, style applicability, preview
+   applicability, validation identifier, audit disposition, and reset policy.
+   Consumers use this typed API and do not inspect decoded JSON structures.
 2. Keep `PropertyDefinition` as capability state and `PropertyEntry` as instance
    state. Join definitions with entries in the inspector so unassigned,
    explicitly assigned, and source-backed nonliteral values remain distinct.
@@ -554,37 +600,51 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 
 #### Delivery sequence
 
-1. Land the expanded schema, reusable property groups, audit format, and reset
-   history operation with tests.
-2. Land the categorized inspector and common adapters, completing Button end to
+1. Land the versioned JSON schema contract, manifest, loader, allowlisted symbol
+   resolvers, fixture catalogs, and fail-closed loader tests. Migrate the existing
+   Phase 4.5 component definitions without changing runtime behavior, and remove
+   the migrated hard-coded standard catalog from `ComponentRegistry.m`.
+2. Land expanded typed property definitions, reusable JSON property groups, the
+   audit format, and the model reset/history operation with tests.
+3. Land the categorized inspector and common adapters, completing Button end to
    end and comparing it manually with the attached App Designer examples.
-3. Expand by family: common controls and containers; navigation/data controls;
-   axes; instrumentation; HTML and figure tools. Add style-specific surfaces
-   with each family.
-4. Add reference/path and remaining specialized adapters. A property without a
+4. Expand JSON definitions by family: common controls and containers;
+   navigation/data controls; axes; instrumentation; HTML and figure tools. Add
+   style-specific surfaces with each family.
+5. Add reference/path and remaining specialized adapters. A property without a
    safe adapter remains visibly read-only until its adapter and tests land.
-5. Complete preview, validation, generation, localized round-trip removal, and
-   end-to-end verification before marking Phase 6 complete.
+6. Complete preview, validation, generation, localized round-trip removal,
+   resource packaging, and end-to-end verification before marking Phase 6
+   complete.
 
 #### Tests and completion criteria
 
-1. Registry tests require valid category/order, schema, adapter, style scope, and
-   explicit audit disposition for every candidate property.
-2. Model tests cover absent versus explicit values, typed validation, add/reset
+1. Catalog-loader tests cover valid loading, deterministic ordering and merging,
+   explicit overrides, schema-version rejection, unknown fields and symbols,
+   duplicate/missing references, malformed defaults, actionable file/JSON-path
+   diagnostics, failure atomicity, fixture-root isolation, and packaged resource
+   discovery. A focused compatibility test proves that the initial JSON migration
+   produces the same Phase 4.5 runtime registry definitions.
+2. Registry tests require valid category/order, typed schema, allowlisted adapter
+   and validator identifiers, style scope, and explicit audit disposition for
+   every candidate property.
+3. Model tests cover absent versus explicit values, typed validation, add/reset
    undo/redo, redo-branch clearing, and parsed source-state restoration.
-3. Editor tests construct real figures, call `drawnow`, exercise every adapter,
+4. Editor tests construct real figures, call `drawnow`, exercise every adapter,
    categories, inline errors, read-only expressions, reset, and Button editing,
    then assert validity/model state and delete every fixture.
-4. Safe Preview tests change representative visible properties for each family
+5. Safe Preview tests change representative visible properties for each family
    and compare safe preview handles with runtime fixtures while separately
    proving that callbacks and unsupported expressions are not executed.
-5. Generator tests cover insertion, replacement, and removal; byte-identical
+6. Generator tests cover insertion, replacement, and removal; byte-identical
    no-edit output; small diffs; enum/string/color/vector/path/reference encoding;
    ambiguous assignments; and CRLF UTF-8-without-BOM output.
-6. Phase 6 completes only when every Phase 4.5 component/style has an audited
+7. Phase 6 completes only when every Phase 4.5 component/style has an audited
    disposition, every editable property has a typed tested adapter, the Button
    acceptance surface works end to end, preview and source flow through shared
-   model/history, and the licensed MATLAB R2024a suite and visual checks pass.
+   model/history, the standard catalog contains no hard-coded component inventory
+   in `ComponentRegistry.m`, packaged resources load successfully, and the
+   licensed MATLAB R2024a suite and visual checks pass.
 
 ### Phase 7: Integration hardening
 
