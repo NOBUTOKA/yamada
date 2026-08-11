@@ -42,16 +42,17 @@ classdef InspectorPropertyRow < handle
             obj.Editor.Layout.Column = 2;
         end
 
-        function synchronize(obj, value, isEditable)
+        function synchronize(obj, value, isEditable, rawValue)
             % synchronize Load a current value and editability presentation.
             arguments (Input)
                 obj (1, 1) macd.ui.inspector.InspectorPropertyRow
                 value (1, 1) string
                 isEditable (1, 1) logical
+                rawValue = []
             end
             macd.ui.inspector.PropertyEditorFactory.synchronize( ...
                 obj.Editor, value, isEditable && ...
-                macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition));
+                macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue);
         end
     end
 

@@ -1719,13 +1719,17 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
+                rawValue = [];
                 editable = states(index).Definition.IsEditable && ...
                     states(index).Definition.AuditDisposition == "editable";
                 if ~isempty(entry)
                     value = macd.ui.InspectorValueFormatter.format(entry);
+                    if entry.ValueKind == "literal"
+                        rawValue = entry.LiteralValue;
+                    end
                     editable = editable && entry.IsEditable;
                 end
-                app.InspectorRows(index).synchronize(value, editable);
+                app.InspectorRows(index).synchronize(value, editable, rawValue);
             end
         end
 

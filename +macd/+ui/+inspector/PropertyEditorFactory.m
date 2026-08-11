@@ -33,6 +33,11 @@ classdef PropertyEditorFactory
                         "Tag", "macd-inspector-property-editor", ...
                         "ButtonPushedFcn", @(source, ~) ...
                         macd.ui.inspector.PropertyEditorFactory.pickColor(source, commitFcn));
+                case "stringList"
+                    control = uibutton(parent, "Text", "", ...
+                        "Tag", "macd-inspector-string-list-editor", ...
+                        "ButtonPushedFcn", @(source, ~) ...
+                        macd.ui.inspector.StringListEditorDialog.open(source.UserData, commitFcn));
                 case {"literal", "text", "numericVector"}
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -54,18 +59,19 @@ classdef PropertyEditorFactory
             end
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
-                "onOff", "enum", "number", "numericVector", "color"]);
+                "onOff", "enum", "number", "numericVector", "color", "stringList"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
         end
 
-        function synchronize(control, value, isEditable)
+        function synchronize(control, value, isEditable, rawValue)
             % synchronize Load a model value into one factory-created editor.
             arguments (Input)
                 control
                 value (1, 1) string
                 isEditable (1, 1) logical
+                rawValue = []
             end
 
             if isa(control, "matlab.ui.control.CheckBox")
@@ -80,6 +86,11 @@ classdef PropertyEditorFactory
             elseif isa(control, "matlab.ui.control.Button")
                 control.Text = char(value);
                 control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
+                if control.Tag == "macd-inspector-string-list-editor"
+                    control.UserData = rawValue;
+                    control.Text = macd.ui.inspector.PropertyEditorFactory.listSummary(rawValue);
+                    return
+                end
                 [rgb, isLiteral] = macd.source.MatlabLiteralParser.parse(value);
                 if isLiteral && isnumeric(rgb) && isequal(size(rgb), [1 3]) && ...
                         all(isfinite(rgb)) && all(rgb >= 0) && all(rgb <= 1)
@@ -156,6 +167,17 @@ classdef PropertyEditorFactory
             if isnumeric(selected) && isequal(size(selected), [1 3]) && ...
                     all(isfinite(selected)) && all(selected >= 0) && all(selected <= 1)
                 commitFcn(selected);
+            end
+        end
+
+        function text = listSummary(value)
+            % listSummary Describe a string-list value without flattening its shape.
+            if isstring(value)
+                text = sprintf("%d-by-%d string", size(value, 1), size(value, 2));
+            elseif iscell(value)
+                text = sprintf("%d item cell list", numel(value));
+            else
+                text = "Edit list";
             end
         end
     end

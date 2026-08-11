@@ -66,6 +66,24 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyEqual(control.BackgroundColor, [1 0 0]);
             clear cleanup
         end
+
+        function createsStringListSummaryAction(testCase)
+            % createsStringListSummaryAction Retain raw string arrays behind a native list action.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.PropertyDefinition("Items", [], false, true, ...
+                struct("editor", "stringList"));
+            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+                figure, definition, @(~) []);
+            values = ["Light", "Dark"];
+            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                control, "<unsupported: string array>", true, values);
+            drawnow;
+            testCase.verifyClass(control, "matlab.ui.control.Button");
+            testCase.verifyEqual(string(control.Text), "1-by-2 string");
+            clear cleanup
+        end
     end
 end
 
