@@ -262,20 +262,164 @@ handles as storage.
 
 ### 6.6 Build the categorized inspector framework
 
-- [ ] Replace the editable literal table with a scrollable categorized inspector
-  driven by the direct-parent effective property surface.
-- [ ] Preserve selection, collapsed categories, and scroll position on refresh.
-- [ ] Implement text, logical, enum, number, vector, color, and string-list
-  adapters.
-- [ ] Show inline validation without discarding invalid editor text.
-- [ ] Route commits/reset through `DocumentModel` and coalesce gestures.
-- [ ] Keep source-backed nonliteral values visible and read-only.
+Phase 6.6 uses a simple native-control lifecycle. The inspector does not cache,
+rebind, or diff individual controls across different selected components. It
+rebuilds all category sections and property rows only when selection moves to a
+different component or the selected component's effective property surface
+changes. Re-selecting the current component and changing values, geometry,
+validation, Preview, or history state update existing rows without rebuilding
+them. This keeps lifecycle and callback ownership explicit while avoiding work
+during frequent same-component edits.
+
+The current effective-property `uitable` is a transitional integration surface.
+It proves the model/registry join but is removed when the native categorized
+view lands; it is not the final typed-editor implementation.
+
+#### 6.6.1 Freeze inspector lifecycle and rebuild triggers
+
+- [ ] Introduce an inspector surface key containing component identity, factory,
+  style, direct-parent factory, and the ordered effective-definition signature.
+- [ ] Split the current refresh path into `rebuildInspector` and
+  `refreshInspectorValues` responsibilities.
+- [ ] Rebuild only when the selected component identity or surface key changes;
+  make a repeated selection event for the current component a no-op.
+- [ ] Route drag/resize, property commit/reset, validation, Preview refresh, and
+  undo/redo for the current surface through value/diagnostic synchronization.
+- [ ] Clear inspector view state and controls deterministically on New, Open,
+  component deletion, and application destruction.
+
+**Gate:** tests observe stable editor-control identity during same-component
+updates and a complete replacement when selection or the effective surface
+changes. No adapter callback retains a previously selected component ID.
+
+#### 6.6.2 Build the native scrollable inspector shell
+
+- [ ] Replace `InspectorTable` with one native scrollable container and an inner
+  single-column layout that owns category sections.
+- [ ] Add lightweight `InspectorView`, `InspectorCategorySection`, and
+  `InspectorPropertyRow` responsibilities under `+macd/+ui/+inspector` rather
+  than expanding component-specific logic in `MatlabAppClassDesigner`.
+- [ ] Build a selected component's complete control tree off the active update
+  path where practical, publish it once, and avoid `drawnow` inside row loops.
+- [ ] Verify the public R2024a scrolling API used by the chosen native container
+  with real construction, `drawnow`, validity, and deletion tests.
+
+**Gate:** switching between representative small and large effective surfaces
+constructs one valid inspector tree with no leaked controls, callbacks, or
+timers; ordinary selection remains responsive under an observed smoke test.
+
+#### 6.6.3 Render definition-driven categories and rows
+
+- [ ] Extend and validate typed definition fields for category ID/display name,
+  property display name, order, description/help, editor identifier, validator,
+  audit disposition, style scope, preview policy, and reset policy.
+- [ ] Sort categories and properties deterministically from catalog order data;
+  do not infer categories from property paths in the UI.
+- [ ] Render a consistent row structure containing label, editor host, optional
+  reset action, inline diagnostic area, and explicit/default/read-only state.
+- [ ] Append retained catalog-inapplicable or unknown opened-source entries to a
+  dedicated Source category without evaluating or discarding them.
+
+**Gate:** categories and row order are entirely definition-driven, and the
+inspector contains no factory- or component-specific property conditionals.
+
+#### 6.6.4 Define the adapter contract and allowlisted factory
+
+- [ ] Define a project-owned adapter interface for control creation, model-to-UI
+  loading, pending-text retention, validation, commit/reset availability,
+  read-only presentation, focus, and deterministic cleanup.
+- [ ] Resolve only allowlisted editor identifiers through
+  `PropertyEditorFactory`; never use `eval`, `str2func`, or JSON class names.
+- [ ] Keep current component/path binding in the property-row controller so
+  adapters remain value editors and cannot mutate documents directly.
+- [ ] Provide a read-only/unsupported adapter as a fail-closed presentation path
+  for audited visible values that have no editable adapter.
+
+**Gate:** unknown editor identifiers fail catalog loading, and every constructed
+row owns exactly one adapter whose cleanup releases all listeners and controls.
+
+#### 6.6.5 Implement common scalar adapters
+
+- [ ] Implement text and multiline-text adapters.
+- [ ] Implement logical and MATLAB `on`/`off` adapters using check boxes with
+  explicit conversion rather than storing UI logicals accidentally.
+- [ ] Implement enum adapters using definition-provided choices.
+- [ ] Implement scalar-number adapters with definition-provided finite/range/
+  integer constraints and retained invalid editor text.
+- [ ] Add keyboard commit/cancel behavior consistently across scalar editors.
+
+**Gate:** text, logical, on/off, enum, and scalar-number tests exercise real
+controls and prove successful conversion, failed conversion, commit, reset,
+undo, redo, and read-only behavior.
+
+#### 6.6.6 Implement structured-value adapters
+
+- [ ] Implement fixed/variable numeric-vector editing, including `Position`,
+  limits, ticks, padding, and Grid row/column spans.
+- [ ] Implement RGB color editing with a native color action plus an exact
+  numeric representation that can round-trip.
+- [ ] Implement string/item-list editing through a compact row summary and a
+  dedicated native editor dialog; preserve row/column string-array shape where
+  the schema requires it.
+- [ ] Keep table data, mixed Grid size lists, datetime, file/image paths,
+  component references, callbacks, and other specialized values on explicit
+  read-only/fallback adapters until their later audited phases.
+
+**Gate:** vector, color, and string-list adapters round-trip supported values and
+show a typed read-only fallback for every deferred structured value.
+
+#### 6.6.7 Connect validation, model mutation, reset, and history
+
+- [ ] Store uncommitted editor text and inline diagnostics only in inspector view
+  state; the document, Preview, and generators continue using the last valid
+  committed value.
+- [ ] Validate through named validators before calling
+  `DocumentModel.setProperty`; failed edits change neither model nor history.
+- [ ] Route reset through model-owned reset/removal rules, display effective
+  defaults without materializing entries, and explain disabled parsed resets.
+- [ ] Coalesce a continuous editor gesture into one history record while keeping
+  discrete commits separate and clearing redo branches correctly.
+- [ ] Synchronize successful commit/reset/undo/redo back into existing rows
+  without rebuilding the current surface.
+
+**Gate:** model tests cover absent, literal, and source-backed states, while UI
+tests prove inline errors retain user input and valid history transitions do not
+replace editor controls.
+
+#### 6.6.8 Preserve per-component transient view state
+
+- [ ] Save collapsed category IDs, scroll position when exposed by the verified
+  R2024a public API, focused property, and pending invalid editor text before a
+  selected component's control tree is destroyed.
+- [ ] Restore compatible state when returning to that component; discard entries
+  whose definitions or adapter kinds no longer match the current surface.
+- [ ] Keep this cache editor-owned and clear it on document replacement or
+  component deletion; never serialize it as document or generated-source state.
+- [ ] Preserve state automatically during same-component value refresh by not
+  rebuilding the control tree.
+
+**Gate:** selection A -> B -> A restores compatible view state, repeated A -> A
+does not rebuild, and New/Open cannot inherit state from the prior document.
+
+#### 6.6.9 Remove the transitional table and complete integration
+
+- [ ] Remove `InspectorTable`, `InspectorPaths`, table cell-edit routing, and
+  obsolete formatter-only assumptions after native rows cover their behavior.
+- [ ] Keep unsupported literals and nonliteral expressions visible through the
+  new read-only adapter with typed `<unsupported: ...>` summaries where useful.
+- [ ] Run real editor construction/draw/deletion tests for every adapter,
+  selection lifecycle, categories, inline validation, reset, and history.
+- [ ] Run the licensed R2024a full suite and record actual counts, observed
+  selection responsiveness, known deferred adapters, and completion commits.
 
 **Required tests:** real editor construction/draw/deletion, every adapter,
-retained UI state, inline errors, read-only values, reset, and history.
+rebuild/no-rebuild triggers, retained UI state, inline errors, read-only values,
+reset, history, and deterministic cleanup.
 
 **Exit gate:** the inspector has no component-specific conditionals; definitions
-select every implemented editor.
+select every implemented editor. Different-component selection rebuilds a clean
+native control tree, while same-component edits synchronize values without
+rebuilding or losing transient editor state.
 
 ### 6.7 Complete the Button vertical slice
 
