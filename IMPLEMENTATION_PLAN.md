@@ -467,7 +467,126 @@ factory-style/programmatic-axes editing, and drag-based grid placement. These
 retain their existing parse/source-preservation behavior and are candidates for
 later phases rather than incomplete Phase 5 work.
 
-### Phase 6: Integration hardening
+### Phase 6: Typed property editing and component-specific inspector
+
+#### Objective
+
+Replace the current literal-table inspector with a registry-driven property
+editor that exposes supported common and component-specific properties even when
+the selected instance has no existing assignment. Editing an unassigned property
+creates a model-owned assignment; resetting it removes that assignment when
+source ownership makes removal safe.
+
+Use the MATLAB R2024a catalog from Phase 4.5 as the versioned scope. Audit the
+public properties of every declared component type and factory style, then
+explicitly classify relevant appearance, content, state, interaction, layout,
+and identification properties as editable, visible read-only, or intentionally
+omitted. Callback code and arbitrary expressions remain read-only and must never
+be evaluated or installed on Safe Preview handles.
+
+The attached App Designer Button inspector is the first acceptance slice. Its
+planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
+`Icon`, `IconAlignment`, font and color properties, `Visible`, `Enable`,
+`Tooltip`, `ContextMenu`, `Position`, `Interruptible`, `BusyAction`,
+`HandleVisibility`, and `Tag`, subject to the actual R2024a push/state type.
+
+#### Property capability and catalog contract
+
+1. Extend `PropertyDefinition` so the registry owns display name, category and
+   order, value schema, editor kind, allowed values or range, default behavior,
+   style applicability, preview applicability, validation, and reset policy.
+   Reusable common groups must allow component-specific exceptions.
+2. Keep `PropertyDefinition` as capability state and `PropertyEntry` as instance
+   state. Join definitions with entries in the inspector so unassigned,
+   explicitly assigned, and source-backed nonliteral values remain distinct.
+3. Audit every Phase 4.5 factory and supported style against MATLAB R2024a
+   property documentation. Record a reason for every read-only or omitted
+   candidate; runtime introspection alone must not silently expand the contract.
+4. Define separate property surfaces when styles have different declared types,
+   including push/state buttons, text/numeric edit fields, slider/range slider,
+   tree/check-box tree, gauges, knobs, and switches.
+5. Model document-owned handle references separately from literals. Initially
+   provide safe selectors for `ContextMenu` and comparable registry-approved
+   references; preserve unsupported handle expressions as read-only source.
+
+#### Inspector UI and typed editors
+
+1. Replace the editable three-column `uitable` with a scrollable categorized
+   inspector generated from the registry. Categories include component-specific
+   content, font and color, interactivity, position/layout, callback execution
+   control, and identifiers; read-only values and diagnostics remain visible.
+2. Provide adapters for text, logical values, enumerations, scalar numbers,
+   fixed and variable numeric vectors, colors, string/item lists, file-backed
+   icon/image paths, and model-owned references. Free-form MATLAB literal input
+   is only an explicit fallback for a supported schema without a richer adapter.
+3. Validate before model mutation and show errors beside the property without
+   losing the user's editor text. Type, size, range, dependency, and style rules
+   come from definitions or named validators, not scattered UI conditionals.
+4. Commit successful changes through `DocumentModel.setProperty` and existing
+   undo/redo. Coalesce a continuous widget gesture into one history edit; failed
+   edits change neither the model nor history.
+5. Add per-property reset. Remove a generated or unambiguously owned assignment
+   and restore the effective default; disable reset with an explanation for
+   ambiguous parsed source. Structural properties such as `Position` may retain
+   a seeded editor default instead of becoming absent.
+6. Preserve selection, collapsed categories, and scroll position across refreshes
+   when selection is unchanged. Inspector controls are never document state.
+
+#### Model, preview, validation, and generation
+
+1. Add model and history operations for property removal/reset. Undo and redo
+   restore absent, literal, and source-backed states, including prior source-span
+   and editability information where applicable.
+2. Seed only structural and intentionally canonical properties on insertion.
+   Show other effective defaults from the versioned catalog without creating
+   redundant `PropertyEntry` assignments merely by selecting a component.
+3. Apply committed preview-safe values through `PreviewRenderer`. On a preview
+   mismatch or MATLAB rejection, retain model/source state, report a targeted
+   diagnostic, and rebuild disposable preview state without executing callbacks.
+4. Use the same schema for inspector and model validation. Reject values or
+   properties incompatible with the selected factory/style before generation.
+5. Emit only explicit and structurally required assignments for new apps. For
+   parsed apps, insert, replace, or remove only unambiguously owned assignments
+   and preserve unrelated source byte-for-byte; ambiguous anchors still block
+   the affected edit/save.
+6. File-backed editors record a representable source path but do not copy,
+   relocate, or embed assets. Explain how relative paths resolve from app source.
+
+#### Delivery sequence
+
+1. Land the expanded schema, reusable property groups, audit format, and reset
+   history operation with tests.
+2. Land the categorized inspector and common adapters, completing Button end to
+   end and comparing it manually with the attached App Designer examples.
+3. Expand by family: common controls and containers; navigation/data controls;
+   axes; instrumentation; HTML and figure tools. Add style-specific surfaces
+   with each family.
+4. Add reference/path and remaining specialized adapters. A property without a
+   safe adapter remains visibly read-only until its adapter and tests land.
+5. Complete preview, validation, generation, localized round-trip removal, and
+   end-to-end verification before marking Phase 6 complete.
+
+#### Tests and completion criteria
+
+1. Registry tests require valid category/order, schema, adapter, style scope, and
+   explicit audit disposition for every candidate property.
+2. Model tests cover absent versus explicit values, typed validation, add/reset
+   undo/redo, redo-branch clearing, and parsed source-state restoration.
+3. Editor tests construct real figures, call `drawnow`, exercise every adapter,
+   categories, inline errors, read-only expressions, reset, and Button editing,
+   then assert validity/model state and delete every fixture.
+4. Safe Preview tests change representative visible properties for each family
+   and compare safe preview handles with runtime fixtures while separately
+   proving that callbacks and unsupported expressions are not executed.
+5. Generator tests cover insertion, replacement, and removal; byte-identical
+   no-edit output; small diffs; enum/string/color/vector/path/reference encoding;
+   ambiguous assignments; and CRLF UTF-8-without-BOM output.
+6. Phase 6 completes only when every Phase 4.5 component/style has an audited
+   disposition, every editable property has a typed tested adapter, the Button
+   acceptance surface works end to end, preview and source flow through shared
+   model/history, and the licensed MATLAB R2024a suite and visual checks pass.
+
+### Phase 7: Integration hardening
 
 - Run unit, round-trip, and generation tests.
 - Verify generated MATLAB syntax using available MATLAB tooling.
