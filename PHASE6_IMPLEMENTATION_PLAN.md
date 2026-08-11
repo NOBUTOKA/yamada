@@ -189,20 +189,20 @@ project-convention tests under licensed R2024a. Commit: `9914aaa`.
 
 ### 6.3 Introduce parent-dependent property rules
 
-- [ ] Extend schema version 1 with allowlisted direct-parent context kinds and
+- [x] Extend schema version 1 with allowlisted direct-parent context kinds and
   typed contributed/suppressed property rules.
-- [ ] Add one registry query such as `getEffectiveProperties(factory,
+- [x] Add one registry query such as `getEffectiveProperties(factory,
   parentFactory)` and prohibit duplicated consumer-side parent conditionals.
-- [ ] Define Grid context to add `Layout.Row`/`Layout.Column` and suppress
+- [x] Define Grid context to add `Layout.Row`/`Layout.Column` and suppress
   `Position`; define ordinary absolute context to add `Position` only.
-- [ ] Define structural contexts for tab groups, button groups, trees, menus,
+- [x] Define structural contexts for tab groups, button groups, trees, menus,
   and toolbars so broad property groups do not advertise invalid geometry.
-- [ ] Switch `DocumentModel.insertComponent`, `AppSourceParser` property
+- [x] Switch `DocumentModel.insertComponent`, `AppSourceParser` property
   recognition, and `ModelValidator` applicability checks to the shared query.
-- [ ] Preserve context-inapplicable opened-source assignments as read-only.
-- [ ] Split the 6.1 baseline into intrinsic definitions and representative
+- [x] Preserve context-inapplicable opened-source assignments as read-only.
+- [x] Split the 6.1 baseline into intrinsic definitions and representative
   direct-parent effective projections.
-- [ ] Eliminate the duplicate `uispinner` `Layout.Row`/`Layout.Column` entries
+- [x] Eliminate the duplicate `uispinner` `Layout.Row`/`Layout.Column` entries
   through contextual composition rather than a compatibility exception.
 
 **Required tests:** Grid/absolute insertion, nested Grid, deterministic effective
@@ -211,6 +211,12 @@ canonical intrinsic/effective projections.
 
 **Exit gate:** insertion, parsing, and validation resolve the same parent surface
 without losing supported Grid placement or advertising invalid geometry.
+
+**Completion record (2026-08-11):** Added `ParentContextRule`, the registry
+effective-property query, Grid/absolute/structural contexts, insertion/parser/
+validator integration, and strict JSON manifest loading of allowlisted rules.
+The licensed R2024a full suite passed 57 tests with zero failures. Commits:
+`db5433f`, `4798cd8`.
 
 ### 6.4 Migrate the Phase 4.5 component catalog
 
