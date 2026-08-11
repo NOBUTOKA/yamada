@@ -1537,13 +1537,13 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.refreshShell();
         end
 
-        function inspectorValueCommitted(app, componentId, path, text)
+        function inspectorValueCommitted(app, componentId, path, value)
             % inspectorValueCommitted Parse and commit one native property-row value.
             arguments (Input)
                 app (1, 1) MatlabAppClassDesigner
                 componentId (1, 1) string
                 path (1, 1) string
-                text (1, 1) string
+                value
             end
 
             component = app.Document.getComponent(componentId);
@@ -1556,11 +1556,13 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.setStatus("This source-backed property is read-only.");
                 return
             end
-            [value, isLiteral] = macd.source.MatlabLiteralParser.parse(text);
-            if ~isLiteral
-                app.refreshInspector();
-                app.setStatus("Enter a supported MATLAB literal.");
-                return
+            if ~islogical(value)
+                [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(value));
+                if ~isLiteral
+                    app.refreshInspector();
+                    app.setStatus("Enter a supported MATLAB literal.");
+                    return
+                end
             end
             try
                 app.Document.setProperty(component.Id, path, value);

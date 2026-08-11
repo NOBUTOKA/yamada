@@ -4,7 +4,7 @@ classdef InspectorPropertyRow < handle
     %   component and property without allowing adapters to mutate the model.
 
     properties (Access = private)
-        Editor matlab.ui.control.EditField
+        Editor
         CommitFcn function_handle
         ComponentId string
         Path string
@@ -35,8 +35,8 @@ classdef InspectorPropertyRow < handle
             obj.CommitFcn = commitFcn;
             uilabel(grid, "Text", definition.DisplayName, "Tooltip", definition.Path, ...
                 "Tag", "macd-inspector-property-label");
-            obj.Editor = uieditfield(grid, "text", "Tag", "macd-inspector-property-editor", ...
-                "ValueChangedFcn", @(~, ~) obj.commit());
+            obj.Editor = macd.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
+                @(value) obj.commit(value));
             obj.Editor.Layout.Column = 2;
         end
 
@@ -47,18 +47,28 @@ classdef InspectorPropertyRow < handle
                 value (1, 1) string
                 isEditable (1, 1) logical
             end
-            obj.Editor.Value = char(value);
-            obj.Editor.Editable = isEditable;
+            if isa(obj.Editor, "matlab.ui.control.CheckBox")
+                obj.Editor.Value = value == "on" || value == "true" || value == "1";
+                if isEditable
+                    obj.Editor.Enable = "on";
+                else
+                    obj.Editor.Enable = "off";
+                end
+            else
+                obj.Editor.Value = char(value);
+                obj.Editor.Editable = isEditable;
+            end
         end
     end
 
     methods (Access = private)
-        function commit(obj)
+        function commit(obj, value)
             % commit Forward edited text through the row-owned current binding.
             arguments (Input)
                 obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                value
             end
-            obj.CommitFcn(obj.ComponentId, obj.Path, string(obj.Editor.Value));
+            obj.CommitFcn(obj.ComponentId, obj.Path, value);
         end
     end
 end
