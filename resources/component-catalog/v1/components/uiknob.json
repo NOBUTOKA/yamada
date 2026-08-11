@@ -18,13 +18,16 @@
                            "group":  "common"
                        },
                        {
-                           "path":  "Value"
+                           "path":  "Value",
+                           "metadata": {"category": "Value", "order": 10, "editor": "literal"}
                        },
                        {
-                           "path":  "Items"
+                           "path":  "Items",
+                           "metadata": {"category": "Content", "order": 10, "editor": "stringList", "applicableStyles": ["discrete"]}
                        },
                        {
-                           "path":  "Limits"
+                           "path":  "Limits",
+                           "metadata": {"category": "Value", "order": 20, "editor": "numericVector", "valueSchema": {"length": 2}, "applicableStyles": ["continuous"]}
                        },
                        {
                            "path":  "MajorTicks"
@@ -33,7 +36,8 @@
                            "path":  "MinorTicks"
                        },
                        {
-                           "path":  "ValueChangedFcn"
+                           "path":  "ValueChangedFcn",
+                           "metadata": {"category": "Callbacks", "order": 10, "auditDisposition": "readOnly"}
                        }
                    ],
     "capabilities":  {
