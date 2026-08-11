@@ -19,6 +19,7 @@ classdef InspectorViewTest < matlab.unittest.TestCase
             view.setContentHeight(800);
             drawnow;
             testCase.verifyGreaterThan(view.contentPixelHeight(), 100);
+            testCase.verifyLessThan(view.contentPixelWidth(), view.viewportPixelWidth());
             clear cleanup
         end
 

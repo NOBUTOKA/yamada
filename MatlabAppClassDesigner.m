@@ -1562,7 +1562,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.setStatus(message);
                 return
             end
-            if ~islogical(value)
+            if ischar(value) || (isstring(value) && isscalar(value))
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(value));
                 if ~isLiteral
                     message = "Enter a supported MATLAB literal.";
@@ -1850,6 +1850,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                         rawValue = entry.LiteralValue;
                     end
                     editable = editable && entry.IsEditable;
+                elseif states(index).Definition.HasDefault
+                    defaultEntry = macd.model.PropertyEntry(states(index).Definition.Path, ...
+                        states(index).Definition.DefaultValue);
+                    value = macd.ui.InspectorValueFormatter.format(defaultEntry);
+                    rawValue = states(index).Definition.DefaultValue;
                 end
                 app.InspectorRows(index).synchronize(value, editable, rawValue);
             end

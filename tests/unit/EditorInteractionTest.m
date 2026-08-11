@@ -58,6 +58,28 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function inspectorDisplaysUnassignedCommonDefaults(testCase)
+            % inspectorDisplaysUnassignedCommonDefaults Show catalog defaults without entries.
+
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figures = findall(0, "Type", "figure", ...
+                "Name", "MATLAB App Class Designer");
+            tables = findall(figures, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == ...
+                "Component") && any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "List Box", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+            checks = findall(0, "Type", "uicheckbox", ...
+                "Tag", "macd-inspector-property-editor");
+            testCase.verifyGreaterThanOrEqual(numel(checks), 3);
+            testCase.verifyGreaterThanOrEqual(sum([checks.Value]), 2);
+            clear cleanup
+        end
+
         function editMenuExposesPhase5Commands(testCase)
             % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
 

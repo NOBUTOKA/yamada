@@ -98,6 +98,31 @@ classdef InspectorView < handle
             value = obj.ContentPanel.Position(4);
         end
 
+        function value = contentPixelWidth(obj)
+            % contentPixelWidth Return the current width reserved for inspector content.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorView
+            end
+            arguments (Output)
+                value (1, 1) double
+            end
+
+            value = obj.ContentPanel.Position(3);
+        end
+
+        function value = viewportPixelWidth(obj)
+            % viewportPixelWidth Return the scroll host width in its local coordinate system.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorView
+            end
+            arguments (Output)
+                value (1, 1) double
+            end
+
+            position = getpixelposition(obj.Panel, true);
+            value = position(3);
+        end
+
         function delete(obj)
             % delete Release the inspector grid when its editor host is disposed.
             arguments (Input)
@@ -112,13 +137,16 @@ classdef InspectorView < handle
 
     methods (Access = private)
         function layoutContent(obj)
-            % layoutContent Keep the content panel wider than the visible scroll host.
+            % layoutContent Reserve scrollbar width and force a visible vertical scroll track.
             if isempty(obj.Panel) || ~isvalid(obj.Panel) || ...
                     isempty(obj.ContentPanel) || ~isvalid(obj.ContentPanel)
                 return
             end
             position = getpixelposition(obj.Panel, true);
-            obj.ContentPanel.Position = [1 1 max(position(3), 1) obj.ContentHeight];
+            scrollbarWidth = 18;
+            contentWidth = max(position(3) - scrollbarWidth, 1);
+            contentHeight = max(obj.ContentHeight, position(4) + 1);
+            obj.ContentPanel.Position = [1 1 contentWidth contentHeight];
         end
     end
 end

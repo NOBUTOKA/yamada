@@ -95,7 +95,10 @@ classdef ComponentCatalogLoader
                     macd.catalog.ComponentCatalogLoader.fail(context + ".name", ...
                         "Duplicate property group """ + name + """.");
                 end
-                groups(char(name)) = struct("Entries", document.entries, "Context", context);
+                group = struct();
+                group.Entries = document.entries;
+                group.Context = context;
+                groups(char(name)) = group;
             end
         end
 
@@ -176,8 +179,11 @@ classdef ComponentCatalogLoader
                             "Unknown property group """ + groupName + """.");
                     end
                     group = groups(char(groupName));
+                    nextStack = strings(1, numel(stack) + 1);
+                    nextStack(1:numel(stack)) = stack;
+                    nextStack(end) = groupName;
                     expanded = macd.catalog.ComponentCatalogLoader.expandProperties(group.Entries, groups, ...
-                        [stack, groupName], group.Context + ".entries");
+                        nextStack, group.Context + ".entries");
                     properties = [properties; expanded(:)]; %#ok<AGROW>
                 else
                     properties = [properties; macd.catalog.ComponentCatalogLoader.propertyDefinition( ...

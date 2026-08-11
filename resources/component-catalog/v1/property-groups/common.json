@@ -3,10 +3,14 @@
     "entries":  [
                     {
                         "path":  "Visible",
+                        "defaultValue": "on",
+                        "hasDefault": true,
                         "metadata": {"category": "Interactivity", "order": 10, "editor": "onOff"}
                     },
                     {
                         "path":  "Enable",
+                        "defaultValue": "on",
+                        "hasDefault": true,
                         "metadata": {"category": "Interactivity", "order": 20, "editor": "onOff"}
                     },
                     {

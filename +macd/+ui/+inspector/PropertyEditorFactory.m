@@ -75,7 +75,11 @@ classdef PropertyEditorFactory
             end
 
             if isa(control, "matlab.ui.control.CheckBox")
-                control.Value = value == "on" || value == "true" || value == "1";
+                logicalValue = value;
+                if ~isempty(rawValue)
+                    logicalValue = string(rawValue);
+                end
+                control.Value = logicalValue == "on" || logicalValue == "true" || logicalValue == "1";
                 control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
             elseif isa(control, "matlab.ui.control.NumericEditField")
                 number = str2double(value);
