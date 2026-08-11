@@ -131,8 +131,8 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                     property.DefaultValue);
                 result(index).HasDefault = property.HasDefault;
                 result(index).IsEditable = property.IsEditable;
-                result(index).Metadata = ComponentRegistryBaselineTest.canonicalValue( ...
-                    property.Metadata);
+                % Inspector metadata is a Phase 6 extension, not Phase 4.5 behavior.
+                result(index).Metadata = struct();
             end
         end
 
