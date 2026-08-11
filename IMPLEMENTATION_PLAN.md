@@ -420,19 +420,52 @@ will show an actionable unavailable-state message rather than guessing.
 
 #### Phase 5 completion record
 
-- Model creation, validation, property mutation, deletion, and reversible
-  history are implemented and covered by `ModelTest` and round-trip tests.
-- The editor shell now provides the documented Phase 5 palette, official MATLAB
-  toolbar, Edit menu commands, keyboard shortcuts, hierarchy selection,
-  inspector editing, drag-to-move, and eight-direction resize handles.
-- `EditorInteractionTest` constructs the real `uifigure`, verifies the palette,
-  hierarchy, inspector, toolbar, and Edit menu surfaces, and destroys the
-  fixture. The licensed R2024a suite passes 44 tests with zero failures.
-- A real new-document editor capture was inspected after `drawnow`; the
-  hierarchy and inspector remain inside the right pane, and the toolbar and
-  palette are visible without clipping. Maintained parsed fixtures remain
-  covered by parser, preview, round-trip, and construction/destruction tests;
-  callbacks are not executed during Safe Preview.
+**Status: complete (assessed 2026-08-11).**
+
+- The model-owned creation, mutation, validation, leaf deletion, and reversible
+  history layer is implemented. `ModelTest` covers deterministic insertion,
+  allowed parents, seeded grid coordinates, undo/redo, redo-branch clearing,
+  pending-deletion restoration, and invalid geometry diagnostics. Focused
+  round-trip tests cover localized `Position` and `Layout.Row` edits.
+- The editor shell provides the categorized palette with documented component
+  display names, insertion by palette double-click, hierarchy selection,
+  inspector editing, Delete, Undo, and Redo. Delete, Undo, and Redo are exposed
+  through the Edit menu; Undo and Redo are also official MATLAB toolbar tools.
+  The keyboard routes are Delete, Ctrl+Z, and Ctrl+R respectively.
+- Absolute-layout components support SVG-overlay selection, drag-to-move, and
+  eight-direction resizing. Gestures update only disposable preview state until
+  mouse release, then commit a single model/history edit in source pixels.
+  Component definitions own resize constraints and overlay shapes, so controls
+  with fixed dimensions or aspect-ratio constraints are resized without
+  repeatedly assigning invalid preview `Position` values.
+- Grid children continue to use explicit inspector edits of `Layout.Row` and
+  `Layout.Column` (including spans), rather than drag editing. This is the
+  planned Phase 5 boundary; visual grid rearrangement remains a later
+  layout-aware feature.
+- The integrated `uihtml` SVG interaction layer supplies selection outlines and
+  handles without invoking application callbacks. Slider, Switch, and circular
+  instrumentation outlines have component-specific interaction geometry. Tab
+  Groups expose only their outer frame and tab strip as their own hit targets,
+  leaving active-tab content selectable. The overlay selects tabs through its
+  own selector and publishes active-tab child geometry only after displayed
+  pixel positions have stabilized; inactive-tab child outlines are omitted.
+- The Phase 5 implementation was delivered in cohesive commits from
+  `481c985` through `d409a02`, including the follow-up fixes for constrained
+  controls and tab geometry. The later parser-only commit `4cbd05d` does not
+  change the Phase 5 assessment.
+- `EditorInteractionTest` constructs and destroys real editor `uifigure`
+  fixtures and verifies the palette, hierarchy, inspector, toolbar, Edit menu,
+  and tab-selector interaction route. The licensed MATLAB R2024a full suite
+  passes **47 tests with zero failures**. Manual editor captures and the
+  reported interactive checks verified the toolbar/layout visibility and the
+  resolved overlay behavior. Safe Preview remains registry-only and does not
+  execute input-app callbacks.
+
+The following remain intentionally outside Phase 5: root-figure manipulation,
+native menu/toolbar and tree-node insertion or geometry editing, dedicated
+factory-style/programmatic-axes editing, and drag-based grid placement. These
+retain their existing parse/source-preservation behavior and are candidates for
+later phases rather than incomplete Phase 5 work.
 
 ### Phase 6: Integration hardening
 
