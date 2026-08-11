@@ -21,7 +21,7 @@ classdef ComponentCatalogLoader
                 "matlabRelease", "propertyGroupFiles", "componentFiles"], ...
                 catalogRoot + "/catalog.json");
             macd.catalog.ComponentCatalogLoader.rejectUnknownFields(manifest, ["schemaVersion", ...
-                "matlabRelease", "propertyGroupFiles", "componentFiles"], ...
+                "matlabRelease", "propertyGroupFiles", "componentFiles", "parentContextRules"], ...
                 catalogRoot + "/catalog.json");
             if manifest.schemaVersion ~= 1 || string(manifest.matlabRelease) ~= "R2024a"
                 macd.catalog.ComponentCatalogLoader.fail(catalogRoot + "/catalog.json", ...
@@ -49,6 +49,10 @@ classdef ComponentCatalogLoader
                 definitions(end + 1) = definition; %#ok<AGROW>
             end
             registry = macd.model.ComponentRegistry();
+            if isfield(manifest, "parentContextRules")
+                registry.setParentContextRules(macd.catalog.ComponentCatalogLoader.parentContextRules( ...
+                    manifest.parentContextRules, catalogRoot + "/catalog.json.parentContextRules"));
+            end
             for index = 1:numel(definitions)
                 registry.register(definitions(index));
             end
@@ -350,6 +354,25 @@ classdef ComponentCatalogLoader
                 macd.catalog.ComponentCatalogLoader.rejectUnknownFields(override, ...
                     ["addProperties", "excludeProperties", "overrides"], ...
                     context + "." + name);
+            end
+        end
+
+        function rules = parentContextRules(value, context)
+            % parentContextRules Validate allowlisted direct-parent context rules.
+            entries = macd.catalog.ComponentCatalogLoader.objectList(value, context);
+            rules = macd.model.ParentContextRule.empty;
+            for index = 1:numel(entries)
+                entry = entries{index};
+                entryContext = context + "[" + string(index) + "]";
+                macd.catalog.ComponentCatalogLoader.requireFields(entry, ["parentFactories", "kind"], entryContext);
+                macd.catalog.ComponentCatalogLoader.rejectUnknownFields(entry, ["parentFactories", "kind"], entryContext);
+                parents = macd.catalog.ComponentCatalogLoader.stringList(entry.parentFactories, entryContext + ".parentFactories");
+                kind = macd.catalog.ComponentCatalogLoader.scalarString(entry.kind, entryContext + ".kind");
+                try
+                    rules(end + 1) = macd.model.ParentContextRule.fromKind(parents, kind); %#ok<AGROW>
+                catch exception
+                    macd.catalog.ComponentCatalogLoader.fail(entryContext + ".kind", string(exception.message));
+                end
             end
         end
 

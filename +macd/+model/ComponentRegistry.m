@@ -100,6 +100,15 @@ classdef ComponentRegistry < handle
             name = definition.DisplayName;
         end
 
+        function setParentContextRules(obj, rules)
+            % setParentContextRules Replace the validated direct-parent rule set.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+                rules macd.model.ParentContextRule
+            end
+            obj.ParentContextRules = rules(:);
+        end
+
         function properties = getEffectiveProperties(obj, factory, parentFactory)
             % getEffectiveProperties Return supported properties for one direct parent context.
             arguments (Input)

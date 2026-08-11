@@ -52,6 +52,28 @@ classdef ParentContextRule
             result = macd.model.ParentContextRule("uigridlayout", added, "Position");
         end
 
+        function result = fromKind(parentFactories, kind)
+            % fromKind Construct an allowlisted rule from declarative catalog data.
+            arguments (Input)
+                parentFactories string
+                kind (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) macd.model.ParentContextRule
+            end
+            switch kind
+                case "grid"
+                    added = [macd.model.PropertyDefinition("Layout.Row"); macd.model.PropertyDefinition("Layout.Column")];
+                    result = macd.model.ParentContextRule(parentFactories, added, "Position");
+                case "absolute"
+                    result = macd.model.ParentContextRule(parentFactories, macd.model.PropertyDefinition("Position"), ["Layout.Row", "Layout.Column"]);
+                case "structural"
+                    result = macd.model.ParentContextRule(parentFactories, macd.model.PropertyDefinition.empty, ["Position", "Layout.Row", "Layout.Column"]);
+                otherwise
+                    error("macd:ParentContextRule:UnknownKind", "Unknown parent context kind.");
+            end
+        end
+
         function result = absolute()
             % absolute Create the standard absolute-positioning child rule.
             arguments (Output)
