@@ -1,0 +1,38 @@
+{
+    "factory":  "axes",
+    "declaredType":  "matlab.graphics.axis.Axes",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "path":  "Position"
+                       },
+                       {
+                           "path":  "Visible"
+                       },
+                       {
+                           "path":  "XLim"
+                       },
+                       {
+                           "path":  "YLim"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Axes",
+                         "category":  "Axes",
+                         "programmaticOnly":  true
+                     }
+}

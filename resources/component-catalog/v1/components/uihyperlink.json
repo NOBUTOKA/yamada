@@ -1,0 +1,37 @@
+{
+    "factory":  "uihyperlink",
+    "declaredType":  "matlab.ui.control.Hyperlink",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Text"
+                       },
+                       {
+                           "path":  "URL"
+                       },
+                       {
+                           "path":  "VisitedColor"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Hyperlink",
+                         "category":  "Common"
+                     }
+}

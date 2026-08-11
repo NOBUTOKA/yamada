@@ -1,0 +1,23 @@
+{
+    "factory":  "uitoolbar",
+    "declaredType":  "matlab.ui.container.Toolbar",
+    "allowedParentFactories":  [
+                                   "uifigure"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "path":  "Visible"
+                       },
+                       {
+                           "path":  "HandleVisibility"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Toolbar",
+                         "category":  "FigureTools"
+                     }
+}

@@ -1,0 +1,37 @@
+{
+    "factory":  "uicheckbox",
+    "declaredType":  "matlab.ui.control.CheckBox",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Text"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Check Box",
+                         "category":  "Common"
+                     }
+}

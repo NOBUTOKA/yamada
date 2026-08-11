@@ -1,0 +1,29 @@
+{
+    "factory":  "uitab",
+    "declaredType":  "matlab.ui.container.Tab",
+    "allowedParentFactories":  [
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Title"
+                       },
+                       {
+                           "path":  "Icon"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Tab",
+                         "category":  "Container"
+                     }
+}

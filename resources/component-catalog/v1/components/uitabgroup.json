@@ -1,0 +1,30 @@
+{
+    "factory":  "uitabgroup",
+    "declaredType":  "matlab.ui.container.TabGroup",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "SelectedTab"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Tab Group",
+                         "category":  "Container"
+                     }
+}

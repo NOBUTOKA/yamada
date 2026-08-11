@@ -1,0 +1,37 @@
+{
+    "factory":  "uicolorpicker",
+    "declaredType":  "matlab.ui.control.ColorPicker",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Color Picker",
+                         "category":  "Common",
+                         "metadata":  {
+                                          "introduced":  "R2024a"
+                                      }
+                     }
+}

@@ -152,7 +152,7 @@ classdef ComponentCatalogLoader
             end
 
             % Append definitions in source order while rejecting duplicate property paths.
-            properties = macd.model.PropertyDefinition.empty;
+            properties = macd.model.PropertyDefinition.empty(0, 1);
             entryList = macd.catalog.ComponentCatalogLoader.objectList(entries, context);
             for index = 1:numel(entryList)
                 entry = entryList{index};
@@ -180,8 +180,8 @@ classdef ComponentCatalogLoader
                         [stack, groupName], group.Context + ".entries");
                     properties = [properties; expanded(:)]; %#ok<AGROW>
                 else
-                    properties(end + 1) = macd.catalog.ComponentCatalogLoader.propertyDefinition( ...
-                        entry, entryContext); %#ok<AGROW>
+                    properties = [properties; macd.catalog.ComponentCatalogLoader.propertyDefinition( ...
+                        entry, entryContext)]; %#ok<AGROW>
                 end
             end
             paths = string({properties.Path});

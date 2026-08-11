@@ -1,0 +1,36 @@
+{
+    "factory":  "uipushtool",
+    "declaredType":  "matlab.ui.container.toolbar.PushTool",
+    "allowedParentFactories":  [
+                                   "uitoolbar"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "path":  "CData"
+                       },
+                       {
+                           "path":  "Tooltip"
+                       },
+                       {
+                           "path":  "Separator"
+                       },
+                       {
+                           "path":  "ClickedCallback"
+                       },
+                       {
+                           "path":  "Visible"
+                       },
+                       {
+                           "path":  "Enable"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Push Tool",
+                         "category":  "FigureTools",
+                         "requiresParentComponent":  true
+                     }
+}

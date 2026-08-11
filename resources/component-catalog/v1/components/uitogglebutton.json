@@ -1,0 +1,29 @@
+{
+    "factory":  "uitogglebutton",
+    "declaredType":  "matlab.ui.control.ToggleButton",
+    "allowedParentFactories":  [
+                                   "uibuttongroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Text"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Toggle Button",
+                         "category":  "Common"
+                     }
+}

@@ -1,0 +1,37 @@
+{
+    "factory":  "uidatepicker",
+    "declaredType":  "matlab.ui.control.DatePicker",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "DisplayFormat"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Date Picker",
+                         "category":  "Common"
+                     }
+}

@@ -1,0 +1,42 @@
+{
+    "factory":  "uigridlayout",
+    "declaredType":  "matlab.ui.container.GridLayout",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "path":  "Position"
+                       },
+                       {
+                           "path":  "Visible"
+                       },
+                       {
+                           "path":  "RowHeight"
+                       },
+                       {
+                           "path":  "ColumnWidth"
+                       },
+                       {
+                           "path":  "Padding"
+                       },
+                       {
+                           "path":  "RowSpacing"
+                       },
+                       {
+                           "path":  "ColumnSpacing"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Grid Layout",
+                         "category":  "Container"
+                     }
+}

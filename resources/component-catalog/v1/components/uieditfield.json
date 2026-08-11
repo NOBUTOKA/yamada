@@ -1,0 +1,46 @@
+{
+    "factory":  "uieditfield",
+    "declaredType":  "matlab.ui.control.EditField",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Edit Field",
+                         "category":  "Common",
+                         "supportedStyles":  [
+                                                 "text",
+                                                 "numeric"
+                                             ],
+                         "defaultStyle":  "text",
+                         "metadata":  {
+                                          "numericProperties":  [
+                                                                    "Limits",
+                                                                    "RoundFractionalValues",
+                                                                    "ValueDisplayFormat"
+                                                                ]
+                                      }
+                     }
+}

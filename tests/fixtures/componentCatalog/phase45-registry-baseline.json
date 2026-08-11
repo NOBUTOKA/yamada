@@ -2566,20 +2566,6 @@
           "HasDefault": false,
           "IsEditable": true,
           "Metadata": {}
-        },
-        {
-          "Path": "Layout.Row",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
-        },
-        {
-          "Path": "Layout.Column",
-          "DefaultValue": [],
-          "HasDefault": false,
-          "IsEditable": true,
-          "Metadata": {}
         }
       ],
       "DisplayName": "Spinner",

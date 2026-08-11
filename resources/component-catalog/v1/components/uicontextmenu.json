@@ -1,0 +1,26 @@
+{
+    "factory":  "uicontextmenu",
+    "declaredType":  "matlab.ui.container.ContextMenu",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uitab",
+                                   "uibuttongroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "path":  "Visible"
+                       },
+                       {
+                           "path":  "Position"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Context Menu",
+                         "category":  "FigureTools"
+                     }
+}

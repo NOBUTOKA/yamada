@@ -1,0 +1,43 @@
+{
+    "factory":  "uidropdown",
+    "declaredType":  "matlab.ui.control.DropDown",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "Items"
+                       },
+                       {
+                           "path":  "ItemsData"
+                       },
+                       {
+                           "path":  "Editable"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Drop-down",
+                         "category":  "Common"
+                     }
+}

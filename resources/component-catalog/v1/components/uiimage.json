@@ -1,0 +1,37 @@
+{
+    "factory":  "uiimage",
+    "declaredType":  "matlab.ui.control.Image",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "ImageSource"
+                       },
+                       {
+                           "path":  "ScaleMethod"
+                       },
+                       {
+                           "path":  "ImageClickedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Image",
+                         "category":  "Common"
+                     }
+}

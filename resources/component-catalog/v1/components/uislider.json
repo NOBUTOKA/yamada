@@ -1,0 +1,63 @@
+{
+    "factory":  "uislider",
+    "declaredType":  "matlab.ui.control.Slider",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "Limits"
+                       },
+                       {
+                           "group":  "layout"
+                       },
+                       {
+                           "path":  "Orientation"
+                       },
+                       {
+                           "path":  "MajorTicks"
+                       },
+                       {
+                           "path":  "MinorTicks"
+                       },
+                       {
+                           "path":  "Step"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       },
+                       {
+                           "path":  "ValueChangingFcn"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Slider",
+                         "category":  "Common",
+                         "supportedStyles":  [
+                                                 "slider",
+                                                 "range"
+                                             ],
+                         "defaultStyle":  "slider",
+                         "declaredTypesByStyle":  {
+                                                      "range":  "matlab.ui.control.RangeSlider",
+                                                      "slider":  "matlab.ui.control.Slider"
+                                                  },
+                         "overlayShape":  "slider",
+                         "resizeConstraint":  "fixedHeight"
+                     }
+}

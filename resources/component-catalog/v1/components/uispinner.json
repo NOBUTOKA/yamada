@@ -1,0 +1,40 @@
+{
+    "factory":  "uispinner",
+    "declaredType":  "matlab.ui.control.Spinner",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "Limits"
+                       },
+                       {
+                           "group":  "layout"
+                       },
+                       {
+                           "path":  "Step"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Spinner",
+                         "category":  "Common"
+                     }
+}

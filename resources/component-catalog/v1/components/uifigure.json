@@ -1,0 +1,26 @@
+{
+    "factory":  "uifigure",
+    "declaredType":  "matlab.ui.Figure",
+    "allowedParentFactories":  [
+
+                               ],
+    "isRoot":  true,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "path":  "Position"
+                       },
+                       {
+                           "path":  "Visible"
+                       },
+                       {
+                           "path":  "Name"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "UI Figure",
+                         "category":  "Figure"
+                     }
+}

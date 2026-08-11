@@ -1,0 +1,42 @@
+{
+    "factory":  "uitoggletool",
+    "declaredType":  "matlab.ui.container.toolbar.ToggleTool",
+    "allowedParentFactories":  [
+                                   "uitoolbar"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "path":  "CData"
+                       },
+                       {
+                           "path":  "Tooltip"
+                       },
+                       {
+                           "path":  "Separator"
+                       },
+                       {
+                           "path":  "OnCallback"
+                       },
+                       {
+                           "path":  "OffCallback"
+                       },
+                       {
+                           "path":  "State"
+                       },
+                       {
+                           "path":  "Visible"
+                       },
+                       {
+                           "path":  "Enable"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Toggle Tool",
+                         "category":  "FigureTools",
+                         "requiresParentComponent":  true
+                     }
+}

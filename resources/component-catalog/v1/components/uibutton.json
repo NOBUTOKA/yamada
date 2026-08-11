@@ -1,0 +1,47 @@
+{
+    "factory":  "uibutton",
+    "declaredType":  "matlab.ui.control.Button",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Text"
+                       },
+                       {
+                           "path":  "Icon"
+                       },
+                       {
+                           "path":  "ButtonPushedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Button",
+                         "category":  "Common",
+                         "supportedStyles":  [
+                                                 "push",
+                                                 "state"
+                                             ],
+                         "defaultStyle":  "push",
+                         "declaredTypesByStyle":  {
+                                                      "push":  "matlab.ui.control.Button",
+                                                      "state":  "matlab.ui.control.StateButton"
+                                                  },
+                         "overlayShape":  "roundedRectangle"
+                     }
+}

@@ -1,0 +1,37 @@
+{
+    "factory":  "uilabel",
+    "declaredType":  "matlab.ui.control.Label",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Text"
+                       },
+                       {
+                           "path":  "HorizontalAlignment"
+                       },
+                       {
+                           "path":  "VerticalAlignment"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Label",
+                         "category":  "Common"
+                     }
+}

@@ -1,0 +1,38 @@
+{
+    "factory":  "geoaxes",
+    "declaredType":  "matlab.graphics.axis.GeographicAxes",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "path":  "Position"
+                       },
+                       {
+                           "path":  "Visible"
+                       },
+                       {
+                           "path":  "LatitudeLimits"
+                       },
+                       {
+                           "path":  "LongitudeLimits"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Geographic Axes",
+                         "category":  "Axes",
+                         "programmaticOnly":  true
+                     }
+}

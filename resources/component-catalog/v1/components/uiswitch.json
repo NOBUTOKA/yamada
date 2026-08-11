@@ -1,0 +1,50 @@
+{
+    "factory":  "uiswitch",
+    "declaredType":  "matlab.ui.control.Switch",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "Items"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Switch",
+                         "category":  "Instrumentation",
+                         "supportedStyles":  [
+                                                 "slider",
+                                                 "rocker",
+                                                 "toggle"
+                                             ],
+                         "defaultStyle":  "slider",
+                         "declaredTypesByStyle":  {
+                                                      "rocker":  "matlab.ui.control.RockerSwitch",
+                                                      "slider":  "matlab.ui.control.Switch",
+                                                      "toggle":  "matlab.ui.control.ToggleSwitch"
+                                                  },
+                         "overlayShape":  "switch",
+                         "resizeConstraint":  "aspectRatio"
+                     }
+}

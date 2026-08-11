@@ -1,0 +1,32 @@
+{
+    "factory":  "uiradiobutton",
+    "declaredType":  "matlab.ui.control.RadioButton",
+    "allowedParentFactories":  [
+                                   "uibuttongroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Text"
+                       },
+                       {
+                           "path":  "Value"
+                       },
+                       {
+                           "path":  "ValueChangedFcn"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Radio Button",
+                         "category":  "Common"
+                     }
+}

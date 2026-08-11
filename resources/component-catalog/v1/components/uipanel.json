@@ -1,0 +1,36 @@
+{
+    "factory":  "uipanel",
+    "declaredType":  "matlab.ui.container.Panel",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Title"
+                       },
+                       {
+                           "path":  "TitlePosition"
+                       },
+                       {
+                           "path":  "BorderType"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Panel",
+                         "category":  "Container"
+                     }
+}

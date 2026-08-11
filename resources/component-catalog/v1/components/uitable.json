@@ -1,0 +1,46 @@
+{
+    "factory":  "uitable",
+    "declaredType":  "matlab.ui.control.Table",
+    "allowedParentFactories":  [
+                                   "uifigure",
+                                   "uipanel",
+                                   "uigridlayout",
+                                   "uitab",
+                                   "uibuttongroup",
+                                   "uitabgroup"
+                               ],
+    "isRoot":  false,
+    "creationArguments":  [
+
+                          ],
+    "properties":  [
+                       {
+                           "group":  "common"
+                       },
+                       {
+                           "path":  "Data"
+                       },
+                       {
+                           "path":  "ColumnName"
+                       },
+                       {
+                           "path":  "ColumnEditable"
+                       },
+                       {
+                           "path":  "ColumnFormat"
+                       },
+                       {
+                           "path":  "RowName"
+                       },
+                       {
+                           "path":  "CellEditCallback"
+                       },
+                       {
+                           "group":  "layout"
+                       }
+                   ],
+    "capabilities":  {
+                         "displayName":  "Table",
+                         "category":  "Common"
+                     }
+}
