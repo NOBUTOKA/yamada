@@ -1586,11 +1586,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
                 data{index, 1} = char(entry.Path);
-                if entry.ValueKind == "literal"
-                    data{index, 2} = char(macd.source.LiteralEncoder.encode(entry.LiteralValue));
-                else
-                    data{index, 2} = char(entry.SourceExpression);
-                end
+                data{index, 2} = char(macd.ui.InspectorValueFormatter.format(entry));
                 if entry.IsEditable
                     data{index, 3} = "Editable";
                 else
