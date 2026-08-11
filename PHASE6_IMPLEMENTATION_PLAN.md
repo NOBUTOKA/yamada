@@ -301,14 +301,14 @@ changes. No adapter callback retains a previously selected component ID.
 
 #### 6.6.2 Build the native scrollable inspector shell
 
-- [ ] Replace `InspectorTable` with one native scrollable container and an inner
+- [x] Replace `InspectorTable` with one native scrollable container and an inner
   single-column layout that owns category sections.
-- [ ] Add lightweight `InspectorView`, `InspectorCategorySection`, and
+- [x] Add lightweight `InspectorView`, `InspectorCategorySection`, and
   `InspectorPropertyRow` responsibilities under `+macd/+ui/+inspector` rather
   than expanding component-specific logic in `MatlabAppClassDesigner`.
-- [ ] Build a selected component's complete control tree off the active update
+- [x] Build a selected component's complete control tree off the active update
   path where practical, publish it once, and avoid `drawnow` inside row loops.
-- [ ] Verify the public R2024a scrolling API used by the chosen native container
+- [x] Verify the public R2024a scrolling API used by the chosen native container
   with real construction, `drawnow`, validity, and deletion tests. If no public
   scroll-position API exists, retain position by avoiding same-surface rebuilds,
   reset position on replacement, and do not use undocumented UI internals.
@@ -316,6 +316,15 @@ changes. No adapter callback retains a previously selected component ID.
 **Gate:** switching between representative small and large effective surfaces
 constructs one valid inspector tree with no leaked controls, callbacks, or
 timers; ordinary selection remains responsive under an observed smoke test.
+
+**Completion record (2026-08-11):** Replaced the transitional table with a
+scrollable `InspectorView` containing disposable category sections and native
+property rows. Rows bind their selected component ID and property path locally,
+then delegate commits to the application. Same-surface refresh synchronizes row
+values without replacing their controls. R2024a has no public scroll-position
+property for this container, so replacement resets the position and normal
+same-surface edits retain it. Licensed R2024a construction, hierarchy-selection,
+and destruction coverage passed 9 tests with zero failures. Commit: `4a43417`.
 
 #### 6.6.3 Render definition-driven categories and rows
 
