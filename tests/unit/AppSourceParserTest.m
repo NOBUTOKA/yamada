@@ -184,6 +184,48 @@ classdef AppSourceParserTest < matlab.unittest.TestCase
             end
         end
 
+        function retainsUnknownCreationPairsWithoutDroppingComponent(testCase)
+            % retainsUnknownCreationPairsWithoutDroppingComponent Preserve unknown callbacks.
+
+            % Unknown factory properties must not discard an otherwise supported control.
+            source = strjoin([ ...
+                "classdef UnknownCreationPairApp < matlab.apps.AppBase", ...
+                "    properties", ...
+                "        UIFigure matlab.ui.Figure", ...
+                "    end", ...
+                "    methods", ...
+                "        function createComponents(app)", ...
+                "            app.UIFigure = uifigure(""Name"", ""Example"", ...", ...
+                "                ""WindowKeyPressFcn"", @(~, event) disp(event.Key));", ...
+                "        end", ...
+                "    end", ...
+                "end"], newline);
+            registry = macd.model.ComponentRegistry.createDefault();
+            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+
+            % Keep supported literals while retaining the callback as opaque source.
+            root = document.getComponentByName("UIFigure");
+            testCase.verifyNotEmpty(root);
+            testCase.verifyEqual(root.CreationArguments, {"Name", "Example"});
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyTrue(any([diagnostics.Code] == "source-creation-property"));
+        end
+
+        function parsesEditorOwnAppBaseSource(testCase)
+            % parsesEditorOwnAppBaseSource Verify the editor source remains openable.
+
+            % Use the production source as a regression fixture without executing it.
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            sourcePath = string(fullfile(projectRoot, "MatlabAppClassDesigner.m"));
+            registry = macd.model.ComponentRegistry.createDefault();
+            [document, diagnostics] = macd.source.AppSourceParser.parseFile(sourcePath, registry);
+
+            % Recover an editable root despite source-only callback properties.
+            testCase.verifyEqual(document.ClassName, "MatlabAppClassDesigner");
+            testCase.verifyNotEmpty(document.getComponentByName("UIFigure"));
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+        end
+
         function parserNeverExecutesInputSource(testCase)
             % parserNeverExecutesInputSource Check parsing remains read-only.
 

@@ -459,6 +459,13 @@ classdef AppSourceParser
                     index = index + 2;
                     continue
                 end
+                % Retain unknown name/value pairs as source without losing the component.
+                if isstring(value) && isscalar(value) && index < numel(elements) && ...
+                        ~any(definition.SupportedStyles == value)
+                    skippedProperties(end + 1) = value;
+                    index = index + 2;
+                    continue
+                end
                 values{end + 1} = value;
                 index = index + 1;
             end
