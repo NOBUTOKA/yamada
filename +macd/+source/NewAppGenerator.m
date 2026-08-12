@@ -202,8 +202,7 @@ classdef NewAppGenerator
 end
 
 %{
-MatlabAppClassDesigner - Canonical source generator for new AppBase classes.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

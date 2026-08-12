@@ -271,8 +271,7 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
 end
 
 %{
-MatlabAppClassDesigner - Frozen Phase 4.5 component registry baseline tests.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

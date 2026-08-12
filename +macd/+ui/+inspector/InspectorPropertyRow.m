@@ -176,8 +176,7 @@ classdef InspectorPropertyRow < handle
 end
 
 %{
-MatlabAppClassDesigner - Native property row for the categorized inspector.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

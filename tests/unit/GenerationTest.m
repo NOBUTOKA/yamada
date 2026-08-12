@@ -142,8 +142,7 @@ end
 end
 
 %{
-MatlabAppClassDesigner - Tests for canonical new-app source generation.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

@@ -82,8 +82,7 @@ classdef PropertyEntry < handle
 end
 
 %{
-MatlabAppClassDesigner - Editable or source-backed component property value.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

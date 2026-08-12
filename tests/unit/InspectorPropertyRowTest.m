@@ -64,8 +64,7 @@ end
 end
 
 %{
-MatlabAppClassDesigner - Native inspector property row tests.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

@@ -81,8 +81,7 @@ classdef PropertyDefinition
 end
 
 %{
-MatlabAppClassDesigner - Typed registry definition for a component property.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

@@ -87,8 +87,7 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
 end
 
 %{
-MatlabAppClassDesigner - Tests for non-evaluating lexical source parsing.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

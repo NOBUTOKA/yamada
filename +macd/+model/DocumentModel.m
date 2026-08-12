@@ -488,8 +488,7 @@ classdef DocumentModel < handle
 end
 
 %{
-MatlabAppClassDesigner - Shared document model for new and parsed apps.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

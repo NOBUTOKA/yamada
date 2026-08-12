@@ -34,8 +34,7 @@ classdef SourceStatement
 end
 
 %{
-MatlabAppClassDesigner - Lexically complete MATLAB source statement record.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

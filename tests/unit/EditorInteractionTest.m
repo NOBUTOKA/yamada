@@ -210,8 +210,7 @@ end
 end
 
 %{
-MatlabAppClassDesigner - Editor interaction tests for the Phase 5 canvas shell.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

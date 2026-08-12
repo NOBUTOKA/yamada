@@ -361,8 +361,7 @@ end
 end
 
 %{
-MatlabAppClassDesigner - Tests for conservative read-only AppBase parsing.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

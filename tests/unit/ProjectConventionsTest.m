@@ -32,11 +32,12 @@ classdef ProjectConventionsTest < matlab.unittest.TestCase
                     startsWith(text, "function ");
                 testCase.verifyTrue(startsWithDeclaration, filePath);
                 testCase.verifySubstring(text, ...
-                    "Copyright (C) 2026 MatlabAppClassDesigner contributors", filePath);
+                    "Copyright (C) 2026 Nobuto Kaitoh", filePath);
                 testCase.verifySubstring(text, ...
                     "GNU General Public License for more details.", filePath);
                 licensePattern = ...
-                    "\r\n%\{\r\nMatlabAppClassDesigner - .+\r\n" + ...
+                    "\r\n%\{\r\nCopyright \(C\) 2026 Nobuto Kaitoh\r\n" + ...
+                    "\r\nThis file is part of MatlabAppClassDesigner\.\r\n" + ...
                     "[\s\S]*\r\n%\}\r\n$";
                 testCase.verifyNotEmpty( ...
                     regexp(text, licensePattern, "once"), filePath);
@@ -81,8 +82,7 @@ classdef ProjectConventionsTest < matlab.unittest.TestCase
 end
 
 %{
-MatlabAppClassDesigner - Tests for project-owned MATLAB file conventions.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

@@ -100,8 +100,7 @@ classdef ParentContextRule
 end
 
 %{
-MatlabAppClassDesigner - Declarative direct-parent property applicability rule.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

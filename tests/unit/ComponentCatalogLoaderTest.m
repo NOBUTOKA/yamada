@@ -209,8 +209,7 @@ classdef ComponentCatalogLoaderTest < matlab.unittest.TestCase
 end
 
 %{
-MatlabAppClassDesigner - Tests for strict JSON component catalog loading.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

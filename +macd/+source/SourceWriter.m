@@ -76,8 +76,7 @@ classdef SourceWriter
 end
 
 %{
-MatlabAppClassDesigner - UTF-8 without BOM source writer with controlled line endings.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

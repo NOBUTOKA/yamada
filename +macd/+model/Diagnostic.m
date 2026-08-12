@@ -65,8 +65,7 @@ classdef Diagnostic
 end
 
 %{
-MatlabAppClassDesigner - Structured model and generation diagnostic.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

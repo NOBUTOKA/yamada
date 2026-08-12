@@ -170,8 +170,7 @@ classdef MatlabLexicalScanner
 end
 
 %{
-MatlabAppClassDesigner - Non-evaluating lexical scanner for MATLAB source.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

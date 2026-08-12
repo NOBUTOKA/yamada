@@ -59,8 +59,7 @@ classdef InspectorValueFormatterTest < matlab.unittest.TestCase
 end
 
 %{
-MatlabAppClassDesigner - Inspector value formatter unit tests.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

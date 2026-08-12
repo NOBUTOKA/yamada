@@ -209,8 +209,7 @@ if ~isempty(value) && isvalid(value), delete(value); end
 end
 
 %{
-MatlabAppClassDesigner - Runtime inspector default resolver.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

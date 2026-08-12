@@ -255,8 +255,7 @@ classdef PreviewRenderer < handle
 end
 
 %{
-MatlabAppClassDesigner - Safe registry-only preview renderer.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

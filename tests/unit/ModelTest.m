@@ -369,8 +369,7 @@ classdef ModelTest < matlab.unittest.TestCase
 end
 
 %{
-MatlabAppClassDesigner - Tests for the extensible intermediate data model.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

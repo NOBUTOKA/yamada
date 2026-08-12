@@ -188,8 +188,7 @@ classdef ModelValidator
 end
 
 %{
-MatlabAppClassDesigner - Validation for shared document and component models.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

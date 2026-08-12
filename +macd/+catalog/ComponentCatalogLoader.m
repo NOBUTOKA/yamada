@@ -670,8 +670,7 @@ classdef ComponentCatalogLoader
 end
 
 %{
-MatlabAppClassDesigner - Strict JSON loader for the programmatic UI component catalog.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

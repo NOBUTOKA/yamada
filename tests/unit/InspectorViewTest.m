@@ -53,8 +53,7 @@ end
 end
 
 %{
-MatlabAppClassDesigner - Inspector view unit tests.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

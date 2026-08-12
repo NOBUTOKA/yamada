@@ -358,8 +358,7 @@ classdef MatlabLiteralParser
 end
 
 %{
-MatlabAppClassDesigner - Conservative non-evaluating MATLAB literal parser.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

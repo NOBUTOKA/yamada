@@ -38,8 +38,7 @@ classdef UnknownSourceRegion
 end
 
 %{
-MatlabAppClassDesigner - Retained unsupported source statement record.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

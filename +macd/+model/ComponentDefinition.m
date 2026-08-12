@@ -274,8 +274,7 @@ classdef ComponentDefinition
 end
 
 %{
-MatlabAppClassDesigner - Typed registry definition for a UI component type.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

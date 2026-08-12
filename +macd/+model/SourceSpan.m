@@ -53,8 +53,7 @@ classdef SourceSpan
 end
 
 %{
-MatlabAppClassDesigner - Source location retained by the editable model.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 

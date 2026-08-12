@@ -2062,8 +2062,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 end
 
 %{
-MatlabAppClassDesigner - Main editor shell for programmatic AppBase classes.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 
