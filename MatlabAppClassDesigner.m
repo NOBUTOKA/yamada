@@ -41,9 +41,9 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         InspectorRows macd.ui.inspector.InspectorPropertyRow = macd.ui.inspector.InspectorPropertyRow.empty
         InspectorComponentId string = ""
         InspectorSurfaceKey string = ""
-        InspectorViewState containers.Map = containers.Map("KeyType", "char", "ValueType", "any")
-        PreviewHandles containers.Map
-        PreviewTabSelections containers.Map = containers.Map("KeyType", "char", "ValueType", "double")
+        InspectorViewState containers.Map
+        PreviewHandles
+        PreviewTabSelections containers.Map
         TabLayoutTimer timer = timer.empty
         TabLayoutSignature string = ""
         TabLayoutStableCount double = 0
@@ -74,6 +74,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
 
             % Keep capability definitions shared by New, Open, preview, and validation.
+            app.InspectorViewState = containers.Map("KeyType", "char", "ValueType", "any");
+            app.PreviewTabSelections = containers.Map("KeyType", "char", "ValueType", "double");
             app.Registry = macd.model.ComponentRegistry.createDefault();
             app.DefaultValueProvider = macd.ui.inspector.DefaultValueProvider(app.Registry);
             app.PreviewRenderer = macd.ui.PreviewRenderer(app.Registry);
@@ -441,7 +443,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     continue
                 end
                 definition = app.Registry.get(factory);
-                category = "Other";
                 category = definition.Category;
                 displayName = app.Registry.displayName(factory);
                 rows(end + 1, :) = {char(displayName), char(category)}; %#ok<AGROW>
@@ -1262,10 +1263,10 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             position(1:2) = position(1:2) - parentPosition(1:2);
         end
 
-        function position = resizeHandlePosition(app, target, kind) %#ok<INUSD>
+        function position = resizeHandlePosition(~, target, kind)
             % resizeHandlePosition Place one 8-pixel handle at a rectangle corner.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner %#ok<INUSA>
+                ~
                 target (1, 4) double
                 kind (1, 1) string
             end
@@ -1273,8 +1274,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 position (1, 2) double
             end
 
-            x = target(1);
-            y = target(2);
             if contains(kind, "e")
                 x = target(1) + target(3) - 4;
             elseif ~contains(kind, "w")
@@ -1362,10 +1361,10 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             app.refreshShell();
         end
 
-        function position = resizedPosition(app, startPosition, delta, kind) %#ok<INUSD>
+        function position = resizedPosition(~, startPosition, delta, kind)
             % resizedPosition Apply one directional resize with a one-pixel minimum.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner %#ok<INUSA>
+                ~
                 startPosition (1, 4) double
                 delta (1, 2) double
                 kind (1, 1) string
@@ -1552,7 +1551,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 message (1, 1) string
             end
 
-            message = "";
             component = app.Document.getComponent(componentId);
             if isempty(component) || componentId ~= app.SelectedComponentId
                 message = "Selection changed before the edit could be applied.";
@@ -1710,10 +1708,10 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
         end
 
-        function [states, categories] = sortedInspectorStates(app, states)
+        function [states, categories] = sortedInspectorStates(~, states)
             % sortedInspectorStates Order effective definitions by declared category and order.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner %#ok<INUSD>
+                ~
                 states
             end
             arguments (Output)
@@ -1781,10 +1779,10 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
         end
 
-        function message = validateInspectorValue(app, definition, value)
+        function message = validateInspectorValue(~, definition, value)
             % validateInspectorValue Reject invalid editor values before model mutation.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner %#ok<INUSD>
+                ~
                 definition (1, 1) macd.model.PropertyDefinition
                 value
             end
@@ -1890,13 +1888,16 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             style = definition.styleFor(component.CreationArguments);
             states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
             paths = arrayfun(@(state) state.Definition.Path, states);
-            sourcePaths = strings(1, 0);
+            sourcePaths = strings(1, numel(component.Properties));
+            sourcePathCount = 0;
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
                 if ~any(paths == entry.Path)
-                    sourcePaths(end + 1) = entry.Path;
+                    sourcePathCount = sourcePathCount + 1;
+                    sourcePaths(sourcePathCount) = entry.Path;
                 end
             end
+            sourcePaths = sourcePaths(1:sourcePathCount);
             key = strjoin([component.Id, component.Factory, parentFactory, style, ...
                 paths, sourcePaths], "|");
         end

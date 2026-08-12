@@ -3,7 +3,7 @@ classdef DefaultValueProvider < handle
 
     properties (Access = private)
         Registry macd.model.ComponentRegistry
-        Cache containers.Map = containers.Map("KeyType", "char", "ValueType", "any")
+        Cache containers.Map
         ProbeCount double = 0
     end
 
@@ -14,6 +14,7 @@ classdef DefaultValueProvider < handle
                 registry (1, 1) macd.model.ComponentRegistry
             end
             obj.Registry = registry;
+            obj.Cache = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
         function [found, value] = resolve(obj, component, parentFactory, property)
@@ -194,7 +195,7 @@ end
 function value = readPath(target, path)
 % readPath Read one direct or one-level nested property without evaluation.
 parts = split(path, ".");
-if numel(parts) == 1
+if isscalar(parts)
     value = target.(parts);
 else
     nested = target.(parts(1));

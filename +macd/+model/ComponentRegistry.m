@@ -89,7 +89,7 @@ classdef ComponentRegistry < handle
         function name = displayName(obj, factory)
             % displayName Return the MATLAB documentation name for a factory.
             arguments (Input)
-                obj (1, 1) macd.model.ComponentRegistry %#ok<INUSA>
+                obj (1, 1) macd.model.ComponentRegistry
                 factory string
             end
             arguments (Output)
@@ -127,7 +127,7 @@ classdef ComponentRegistry < handle
                 rule = obj.ParentContextRules(index);
                 if ~rule.appliesTo(parentFactory), continue, end
                 properties = properties(~ismember(string({properties.Path}), rule.SuppressedPaths));
-                properties = [properties(:); rule.AddedProperties(:)]; %#ok<AGROW>
+                properties = vertcat(properties(:), rule.AddedProperties(:));
                 break
             end
         end

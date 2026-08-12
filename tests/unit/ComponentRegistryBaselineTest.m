@@ -264,8 +264,8 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             end
 
             % JSON encoding uses LF while fixtures retain project CRLF conventions.
-            text = replace(text, sprintf("\r\n"), sprintf("\n"));
-            text = replace(text, sprintf("\r"), sprintf("\n"));
+            text = replace(text, "\r\n", newline);
+            text = replace(text, "\r", newline);
         end
     end
 end

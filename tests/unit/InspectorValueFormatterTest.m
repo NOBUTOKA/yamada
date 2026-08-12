@@ -10,7 +10,7 @@ classdef InspectorValueFormatterTest < matlab.unittest.TestCase
             % Keep source-safe scalar display unchanged.
             entry = macd.model.PropertyEntry("Text", "Button");
             text = macd.ui.InspectorValueFormatter.format(entry);
-            testCase.verifyEqual(text, string('"Button"'));
+            testCase.verifyEqual(text, """Button""");
         end
 
         function preservesCharacterVectorSyntax(testCase)

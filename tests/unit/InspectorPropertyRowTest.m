@@ -39,7 +39,7 @@ classdef InspectorPropertyRowTest < matlab.unittest.TestCase
             firstEditor.ValueChangedFcn(firstEditor, struct());
             state = first.snapshotTransientState();
             second = macd.ui.inspector.InspectorPropertyRow(grid, 2, "component-1", ...
-                definition, @(~, ~, ~) ""); %#ok<NASGU>
+                definition, @(~, ~, ~) "");
             second.synchronize("[10 20 30 40]", true, [10 20 30 40]);
             second.restoreTransientState(state);
             drawnow;

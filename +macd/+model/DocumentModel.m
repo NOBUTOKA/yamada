@@ -478,7 +478,7 @@ classdef DocumentModel < handle
             name = string(upper(base(1)) + string(base(2:end)));
         end
 
-        function position = nextAbsolutePosition(obj, parent)
+        function position = nextAbsolutePosition(~, parent)
             % nextAbsolutePosition Choose a visible nonoverlapping default rectangle.
             position = [20 20 100 30];
             count = numel(parent.Children);

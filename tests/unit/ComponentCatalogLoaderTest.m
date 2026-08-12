@@ -174,10 +174,10 @@ classdef ComponentCatalogLoaderTest < matlab.unittest.TestCase
             end
         end
 
-        function value = readJson(testCase, root, relativePath)
+        function value = readJson(~, root, relativePath)
             % readJson Read one temporary test catalog document.
             arguments (Input)
-                testCase (1, 1) ComponentCatalogLoaderTest %#ok<INUSD>
+                ~
                 root (1, 1) string
                 relativePath (1, 1) string
             end
@@ -189,10 +189,10 @@ classdef ComponentCatalogLoaderTest < matlab.unittest.TestCase
             value = jsondecode(fileread(fullfile(root, relativePath)));
         end
 
-        function writeJson(testCase, root, relativePath, value)
+        function writeJson(~, root, relativePath, value)
             % writeJson Write one temporary catalog document as UTF-8 JSON.
             arguments (Input)
-                testCase (1, 1) ComponentCatalogLoaderTest %#ok<INUSD>
+                ~
                 root (1, 1) string
                 relativePath (1, 1) string
                 value
