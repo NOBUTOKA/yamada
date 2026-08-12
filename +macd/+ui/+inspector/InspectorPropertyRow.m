@@ -6,6 +6,7 @@ classdef InspectorPropertyRow < handle
     properties (Access = private)
         Editor
         ErrorMessage string = ""
+        NormalBackgroundColor double = [1 1 1]
         Definition macd.model.PropertyDefinition
         CommitFcn function_handle
         ComponentId string
@@ -42,6 +43,7 @@ classdef InspectorPropertyRow < handle
             obj.Editor = macd.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
                 @(value) obj.commit(value));
             obj.Editor.Layout.Column = 2;
+            obj.captureNormalBackgroundColor();
         end
 
         function synchronize(obj, value, isEditable, rawValue)
@@ -52,11 +54,14 @@ classdef InspectorPropertyRow < handle
                 isEditable (1, 1) logical
                 rawValue = []
             end
+            % Clear a stale error presentation before loading the current model value.
+            obj.restoreNormalBackgroundColor();
             macd.ui.inspector.PropertyEditorFactory.synchronize( ...
                 obj.Editor, value, isEditable && ...
                 macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue);
             obj.ErrorMessage = "";
             obj.Editor.Tooltip = "";
+            obj.captureNormalBackgroundColor();
         end
 
         function state = snapshotTransientState(obj)
@@ -88,8 +93,7 @@ classdef InspectorPropertyRow < handle
             end
             if state.HasDraft
                 macd.ui.inspector.PropertyEditorFactory.restoreDraft(obj.Editor, state.Value);
-                obj.ErrorMessage = state.Message;
-                obj.Editor.Tooltip = state.Message;
+                obj.showError(state.Message);
             end
             if state.HasFocus
                 try
@@ -110,8 +114,46 @@ classdef InspectorPropertyRow < handle
             end
             message = obj.CommitFcn(obj.ComponentId, obj.Path, value);
             if strlength(message) > 0
-                obj.ErrorMessage = message;
-                obj.Editor.Tooltip = message;
+                obj.showError(message);
+            end
+        end
+
+        function showError(obj, message)
+            % showError Mark an invalid editor draft and expose its explanation by hover.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                message (1, 1) string
+            end
+
+            if strlength(obj.ErrorMessage) == 0
+                obj.captureNormalBackgroundColor();
+            end
+            obj.ErrorMessage = message;
+            obj.Editor.Tooltip = message;
+            if isprop(obj.Editor, "BackgroundColor")
+                obj.Editor.BackgroundColor = [1 0.9 0.9];
+            end
+        end
+
+        function captureNormalBackgroundColor(obj)
+            % captureNormalBackgroundColor Save the editor background used outside errors.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+            end
+
+            if isprop(obj.Editor, "BackgroundColor")
+                obj.NormalBackgroundColor = obj.Editor.BackgroundColor;
+            end
+        end
+
+        function restoreNormalBackgroundColor(obj)
+            % restoreNormalBackgroundColor Restore the editor background after an error clears.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+            end
+
+            if isprop(obj.Editor, "BackgroundColor")
+                obj.Editor.BackgroundColor = obj.NormalBackgroundColor;
             end
         end
 

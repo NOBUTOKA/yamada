@@ -20,6 +20,7 @@ classdef InspectorPropertyRowTest < matlab.unittest.TestCase
             drawnow;
             testCase.verifyEqual(string(editor.Value), "not a vector");
             testCase.verifyEqual(string(editor.Tooltip), "Enter a finite numeric vector.");
+            testCase.verifyEqual(editor.BackgroundColor, [1 0.9 0.9], "AbsTol", 1e-12);
             clear cleanup
         end
 
