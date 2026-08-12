@@ -18,9 +18,8 @@ classdef InspectorPropertyRowTest < matlab.unittest.TestCase
             editor.Value = "not a vector";
             editor.ValueChangedFcn(editor, struct());
             drawnow;
-            errorLabel = findall(figure, "Tag", "macd-inspector-property-error");
             testCase.verifyEqual(string(editor.Value), "not a vector");
-            testCase.verifyEqual(string(errorLabel.Text), "Enter a finite numeric vector.");
+            testCase.verifyEqual(string(editor.Tooltip), "Enter a finite numeric vector.");
             clear cleanup
         end
 

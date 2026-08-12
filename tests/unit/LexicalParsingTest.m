@@ -49,11 +49,14 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             [logicalValues, isLogicalValues] = macd.source.MatlabLiteralParser.parse( ...
                 "[true false true]");
             [text, isText] = macd.source.MatlabLiteralParser.parse("'It''s ready'");
+            [emptyCharacters, isEmptyCharacters] = macd.source.MatlabLiteralParser.parse("''");
+            [emptyArray, isEmptyArray] = macd.source.MatlabLiteralParser.parse("[]");
+            [characters, isCharacters] = macd.source.MatlabLiteralParser.parse("['ab'; 'cd']");
 
             testCase.verifyTrue(isMatrix);
             testCase.verifyEqual(matrix, [1 2; 3 4]);
             testCase.verifyTrue(isItems);
-            testCase.verifyEqual(items, {"Add", "Subtract"});
+            testCase.verifyEqual(items, {'Add', 'Subtract'});
             testCase.verifyTrue(isStringItems);
             testCase.verifyEqual(stringItems, ["Add", "Subtract"]);
             testCase.verifyTrue(isStringLines);
@@ -61,7 +64,13 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             testCase.verifyTrue(isLogicalValues);
             testCase.verifyEqual(logicalValues, [true false true]);
             testCase.verifyTrue(isText);
-            testCase.verifyEqual(text, "It's ready");
+            testCase.verifyEqual(text, 'It''s ready');
+            testCase.verifyTrue(isEmptyCharacters);
+            testCase.verifyEqual(emptyCharacters, '');
+            testCase.verifyTrue(isEmptyArray);
+            testCase.verifyEmpty(emptyArray);
+            testCase.verifyTrue(isCharacters);
+            testCase.verifyEqual(characters, ['ab'; 'cd']);
         end
 
         function literalParserRejectsExpressions(testCase)

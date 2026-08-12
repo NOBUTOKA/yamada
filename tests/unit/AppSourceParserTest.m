@@ -47,10 +47,10 @@ classdef AppSourceParserTest < matlab.unittest.TestCase
             % Editable literals preserve their values and assignment source spans.
             text = label.getProperty("Text");
             items = dropDown.getProperty("Items");
-            testCase.verifyEqual(text.LiteralValue, "Left value");
+            testCase.verifyEqual(text.LiteralValue, 'Left value');
             testCase.verifyTrue(text.SourceSpan.isKnown());
             testCase.verifyEqual(items.LiteralValue, ...
-                {"Add", "Subtract", "Multiply", "Divide"});
+                {'Add', 'Subtract', 'Multiply', 'Divide'});
 
             % Callback code remains source-backed and cannot become editable.
             callback = button.getProperty("ButtonPushedFcn");

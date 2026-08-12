@@ -13,6 +13,22 @@ classdef InspectorValueFormatterTest < matlab.unittest.TestCase
             testCase.verifyEqual(text, string('"Button"'));
         end
 
+        function preservesCharacterVectorSyntax(testCase)
+            % preservesCharacterVectorSyntax Render a char row with single-quote syntax.
+
+            entry = macd.model.PropertyEntry("Text", 'Button');
+            text = macd.ui.InspectorValueFormatter.format(entry);
+            testCase.verifyEqual(text, "'Button'");
+        end
+
+        function preservesEmptyCharacterSyntax(testCase)
+            % preservesEmptyCharacterSyntax Render an empty char value without changing type.
+
+            entry = macd.model.PropertyEntry("Text", '');
+            text = macd.ui.InspectorValueFormatter.format(entry);
+            testCase.verifyEqual(text, "''");
+        end
+
         function describesUnsupportedStringArray(testCase)
             % describesUnsupportedStringArray Show string arrays without throwing.
 
@@ -30,6 +46,14 @@ classdef InspectorValueFormatterTest < matlab.unittest.TestCase
             entry.setSourceExpression("app.updateTheme");
             text = macd.ui.InspectorValueFormatter.format(entry);
             testCase.verifyEqual(text, "app.updateTheme");
+        end
+
+        function encodesCharacterMatrix(testCase)
+            % encodesCharacterMatrix Render a character matrix without an unsupported placeholder.
+
+            entry = macd.model.PropertyEntry("CharData", ['ab'; 'cd']);
+            text = macd.ui.InspectorValueFormatter.format(entry);
+            testCase.verifyEqual(text, "['ab'; 'cd']");
         end
     end
 end

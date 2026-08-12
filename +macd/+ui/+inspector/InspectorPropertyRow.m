@@ -5,7 +5,7 @@ classdef InspectorPropertyRow < handle
 
     properties (Access = private)
         Editor
-        ErrorLabel matlab.ui.control.Label
+        ErrorMessage string = ""
         Definition macd.model.PropertyDefinition
         CommitFcn function_handle
         ComponentId string
@@ -27,12 +27,12 @@ classdef InspectorPropertyRow < handle
             end
 
             % Keep layout and binding local to the inspector reconstruction.
-            grid = uigridlayout(parent, [2 2]);
+            grid = uigridlayout(parent, [1 2]);
             grid.Layout.Row = row;
             grid.Padding = [0 0 0 0];
             grid.ColumnSpacing = 4;
             grid.ColumnWidth = {105, "1x"};
-            grid.RowHeight = {28, 18};
+            grid.RowHeight = {28};
             obj.ComponentId = componentId;
             obj.Path = definition.Path;
             obj.Definition = definition;
@@ -42,10 +42,6 @@ classdef InspectorPropertyRow < handle
             obj.Editor = macd.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
                 @(value) obj.commit(value));
             obj.Editor.Layout.Column = 2;
-            obj.ErrorLabel = uilabel(grid, "Text", "", "FontColor", [0.75 0 0], ...
-                "Tag", "macd-inspector-property-error");
-            obj.ErrorLabel.Layout.Row = 2;
-            obj.ErrorLabel.Layout.Column = [1 2];
         end
 
         function synchronize(obj, value, isEditable, rawValue)
@@ -59,7 +55,8 @@ classdef InspectorPropertyRow < handle
             macd.ui.inspector.PropertyEditorFactory.synchronize( ...
                 obj.Editor, value, isEditable && ...
                 macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue);
-            obj.ErrorLabel.Text = "";
+            obj.ErrorMessage = "";
+            obj.Editor.Tooltip = "";
         end
 
         function state = snapshotTransientState(obj)
@@ -72,8 +69,8 @@ classdef InspectorPropertyRow < handle
             end
 
             % Only invalid drafts are transient state; committed values come from the model.
-            state = struct("Path", obj.Path, "HasDraft", strlength(obj.ErrorLabel.Text) > 0, ...
-                "Value", [], "Message", string(obj.ErrorLabel.Text), "HasFocus", obj.hasFocus());
+            state = struct("Path", obj.Path, "HasDraft", strlength(obj.ErrorMessage) > 0, ...
+                "Value", [], "Message", obj.ErrorMessage, "HasFocus", obj.hasFocus());
             if state.HasDraft
                 state.Value = macd.ui.inspector.PropertyEditorFactory.editorValue(obj.Editor);
             end
@@ -91,7 +88,8 @@ classdef InspectorPropertyRow < handle
             end
             if state.HasDraft
                 macd.ui.inspector.PropertyEditorFactory.restoreDraft(obj.Editor, state.Value);
-                obj.ErrorLabel.Text = state.Message;
+                obj.ErrorMessage = state.Message;
+                obj.Editor.Tooltip = state.Message;
             end
             if state.HasFocus
                 try
@@ -112,7 +110,8 @@ classdef InspectorPropertyRow < handle
             end
             message = obj.CommitFcn(obj.ComponentId, obj.Path, value);
             if strlength(message) > 0
-                obj.ErrorLabel.Text = message;
+                obj.ErrorMessage = message;
+                obj.Editor.Tooltip = message;
             end
         end
 

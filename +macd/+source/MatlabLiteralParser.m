@@ -1,7 +1,7 @@
 classdef MatlabLiteralParser
     % MatlabLiteralParser Parse a conservative non-evaluating literal subset.
-    %   This static utility accepts scalar text, logicals, real numeric and string
-    %   matrices, and row cell arrays of supported literals. All other expressions are
+    %   This static utility accepts character and string text, logicals, real numeric,
+    %   character, and string matrices, plus row cell arrays of supported literals. All other expressions are
     %   rejected so callers can retain them as source-backed text.
     %
     %   Example:
@@ -28,7 +28,12 @@ classdef MatlabLiteralParser
 
             % Parse quoted text before recognizing operators or delimiters.
             if source(1) == '''' && source(end) == '''' && numel(source) >= 2
-                value = string(strrep(source(2:end - 1), '''''', ''''));
+                contents = source(2:end - 1);
+                if isempty(contents)
+                    value = char.empty(0, 0);
+                else
+                    value = strrep(contents, '''''', '''');
+                end
                 isLiteral = true;
                 return
             end
@@ -57,8 +62,17 @@ classdef MatlabLiteralParser
                 return
             end
             if source(1) == '[' && source(end) == ']'
+                if isempty(strtrim(source(2:end - 1)))
+                    value = [];
+                    isLiteral = true;
+                    return
+                end
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parseMatrix( ...
                     source(2:end - 1));
+                if ~isLiteral
+                    [value, isLiteral] = macd.source.MatlabLiteralParser.parseCharMatrix( ...
+                        source(2:end - 1));
+                end
                 if ~isLiteral
                     [value, isLiteral] = macd.source.MatlabLiteralParser.parseStringMatrix( ...
                         source(2:end - 1));
@@ -209,6 +223,35 @@ classdef MatlabLiteralParser
 
             % Concatenate only after every row is composed entirely of text literals.
             value = vertcat(rowValues{:});
+            isLiteral = true;
+        end
+
+        function [value, isLiteral] = parseCharMatrix(text)
+            % parseCharMatrix Parse a rectangular single-quoted MATLAB character matrix.
+            arguments (Input)
+                text char
+            end
+            arguments (Output)
+                value char
+                isLiteral logical
+            end
+
+            value = char.empty(0, 0);
+            isLiteral = false;
+            rows = macd.source.MatlabLiteralParser.splitTopLevel(text, ';');
+            values = cell(1, numel(rows));
+            width = [];
+            for row = 1:numel(rows)
+                token = strtrim(rows{row});
+                if numel(token) < 2 || token(1) ~= '''' || token(end) ~= ''''
+                    return
+                end
+                values{row} = strrep(token(2:end - 1), '''''', '''');
+                if isempty(width), width = numel(values{row});
+                elseif numel(values{row}) ~= width, return
+                end
+            end
+            value = char(values);
             isLiteral = true;
         end
 

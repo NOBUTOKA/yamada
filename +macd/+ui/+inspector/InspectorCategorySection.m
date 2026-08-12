@@ -26,7 +26,7 @@ classdef InspectorCategorySection < handle
             obj.Grid.Padding = [6 3 6 3];
             obj.Grid.RowSpacing = 3;
             obj.Grid.ColumnWidth = {"1x"};
-            obj.Grid.RowHeight = repmat({49}, 1, max(rowCount, 1));
+            obj.Grid.RowHeight = repmat({28}, 1, max(rowCount, 1));
         end
 
         function grid = contentGrid(obj)

@@ -15,11 +15,21 @@ classdef LiteralEncoder
             end
 
             % Encode each supported family without evaluating expressions.
-            if (ischar(value) && isrow(value)) || ...
-                    (isstring(value) && isscalar(value))
+            if ischar(value) && isempty(value)
+                text = "''";
+            elseif ischar(value) && isrow(value)
+                escaped = strrep(value, '''', '''''');
+                text = "'" + string(escaped) + "'";
+            elseif isstring(value) && isscalar(value)
                 % Character conversion is confined to escaping generated syntax.
                 escaped = strrep(char(string(value)), '"', '""');
                 text = string(['"' escaped '"']);
+            elseif ischar(value) && ismatrix(value)
+                rows = strings(1, size(value, 1));
+                for row = 1:size(value, 1)
+                    rows(row) = "'" + string(strrep(value(row, :), '''', '''''')) + "'";
+                end
+                text = "[" + strjoin(rows, "; ") + "]";
             elseif isnumeric(value) && isreal(value) && ismatrix(value)
                 text = string(mat2str(value, 17));
             elseif islogical(value) && ismatrix(value)

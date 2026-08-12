@@ -1630,7 +1630,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             for categoryIndex = 1:numel(categories)
                 category = categories(categoryIndex);
                 indices = find(arrayfun(@(state) state.Definition.Category == category, states));
-                contentHeight = contentHeight + 40 + 52 * numel(indices);
+                contentHeight = contentHeight + 40 + 31 * numel(indices);
                 section = macd.ui.inspector.InspectorCategorySection(content, category, numel(indices));
                 section.setLayoutRow(categoryIndex);
                 for rowIndex = 1:numel(indices)
@@ -1817,11 +1817,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     return
                 end
             elseif definition.Editor == "numericVector"
-                if ~isnumeric(value) || ~isvector(value) || any(~isfinite(value))
+                if ~isnumeric(value) || (~isempty(value) && ~isvector(value)) || any(~isfinite(value))
                     message = "Enter a finite numeric vector.";
                     return
                 end
-                if isfield(schema, "length") && numel(value) ~= schema.length
+                if ~isempty(value) && isfield(schema, "length") && numel(value) ~= schema.length
                     message = "Enter a vector with the required number of values.";
                     return
                 end
