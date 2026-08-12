@@ -4,6 +4,7 @@ classdef DefaultValueProvider < handle
     properties (Access = private)
         Registry macd.model.ComponentRegistry
         Cache containers.Map = containers.Map("KeyType", "char", "ValueType", "any")
+        ProbeCount double = 0
     end
 
     methods
@@ -27,31 +28,34 @@ classdef DefaultValueProvider < handle
                 found (1, 1) logical
                 value
             end
-            if property.HasDefault
-                found = true;
-                value = property.DefaultValue;
-                return
+            results = obj.resolveAll(component, parentFactory, property);
+            found = results.Found;
+            value = results.Values{1};
+        end
+
+        function results = resolveAll(obj, component, parentFactory, properties)
+            % resolveAll Resolve every property for one fixture surface using at most one probe.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.DefaultValueProvider
+                component (1, 1) macd.model.ComponentRecord
+                parentFactory (1, 1) string
+                properties macd.model.PropertyDefinition
             end
-            componentDefinition = obj.Registry.get(component.Factory);
-            style = componentDefinition.styleFor(component.CreationArguments);
-            argumentsText = string(jsonencode(component.CreationArguments));
-            key = char(strjoin([string(version("-release")), component.Factory, parentFactory, ...
-                style, argumentsText, string(property.Path)], "|"));
+            arguments (Output)
+                results (1, 1) struct
+            end
+            key = obj.surfaceKey(component, parentFactory);
             if isKey(obj.Cache, key)
-                result = obj.Cache(key);
-                found = result.Found;
-                value = result.Value;
-                return
+                cached = obj.Cache(key);
+                results = obj.selectProperties(cached, properties);
+            else
+                results = obj.resolveSurface(component, parentFactory, properties);
+                obj.Cache(key) = results;
             end
-            [found, value] = obj.fromMetadata(component.Factory, property.Path);
-            if ~found
-                [found, value] = obj.fromFixture(component, parentFactory, property.Path);
-            end
-            obj.Cache(key) = struct("Found", found, "Value", value);
         end
 
         function count = cacheEntryCount(obj)
-            % cacheEntryCount Return the number of resolved release/context/property keys.
+            % cacheEntryCount Return the number of resolved fixture surfaces.
             arguments (Input)
                 obj (1, 1) macd.ui.inspector.DefaultValueProvider
             end
@@ -60,9 +64,62 @@ classdef DefaultValueProvider < handle
             end
             count = obj.Cache.Count;
         end
+
+        function count = fixtureProbeCount(obj)
+            % fixtureProbeCount Return the number of hidden fixture constructions.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.DefaultValueProvider
+            end
+            arguments (Output)
+                count (1, 1) double
+            end
+            count = obj.ProbeCount;
+        end
     end
 
     methods (Access = private)
+        function key = surfaceKey(obj, component, parentFactory)
+            % surfaceKey Identify one release-specific default fixture surface.
+            definition = obj.Registry.get(component.Factory);
+            style = definition.styleFor(component.CreationArguments);
+            argumentsText = string(jsonencode(component.CreationArguments));
+            key = char(strjoin([string(version("-release")), component.Factory, parentFactory, ...
+                style, argumentsText], "|"));
+        end
+
+        function results = resolveSurface(obj, component, parentFactory, properties)
+            % resolveSurface Read metadata first then all unresolved paths from one fixture.
+            results = struct("Paths", string({properties.Path}), "Found", false(1, numel(properties)), ...
+                "Values", {cell(1, numel(properties))});
+            unresolved = false(1, numel(properties));
+            for index = 1:numel(properties)
+                if properties(index).HasDefault
+                    results.Found(index) = true;
+                    results.Values{index} = properties(index).DefaultValue;
+                else
+                    [results.Found(index), results.Values{index}] = obj.fromMetadata( ...
+                        component.Factory, properties(index).Path);
+                    unresolved(index) = ~results.Found(index);
+                end
+            end
+            if any(unresolved)
+                results = obj.probeUnresolved(results, component, parentFactory, unresolved);
+            end
+        end
+
+        function results = selectProperties(~, cached, properties)
+            % selectProperties Project one cached surface result onto requested property order.
+            results = struct("Paths", string({properties.Path}), "Found", false(1, numel(properties)), ...
+                "Values", {cell(1, numel(properties))});
+            for index = 1:numel(properties)
+                cachedIndex = find(cached.Paths == properties(index).Path, 1);
+                if ~isempty(cachedIndex)
+                    results.Found(index) = cached.Found(cachedIndex);
+                    results.Values{index} = cached.Values{cachedIndex};
+                end
+            end
+        end
+
         function [found, value] = fromMetadata(obj, factory, path)
             % fromMetadata Read an explicit class property default when it is exposed.
             found = false; value = [];
@@ -81,10 +138,10 @@ classdef DefaultValueProvider < handle
             end
         end
 
-        function [found, value] = fromFixture(~, component, parentFactory, path)
-            % fromFixture Probe one registry-owned component inside a hidden fixture hierarchy.
-            found = false; value = [];
+        function results = probeUnresolved(obj, results, component, parentFactory, unresolved)
+            % probeUnresolved Construct one fixture and read every remaining property path.
             fixture = uifigure("Visible", "off");
+            obj.ProbeCount = obj.ProbeCount + 1;
             cleanup = onCleanup(@() deleteIfValid(fixture));
             try
                 parent = fixtureParent(fixture, parentFactory);
@@ -94,13 +151,20 @@ classdef DefaultValueProvider < handle
                     target = feval(char(component.Factory), parent, component.CreationArguments{:});
                 end
                 drawnow;
-                value = readPath(target, path);
-                if isa(value, "matlab.lang.OnOffSwitchState")
-                    value = string(value);
+                for index = find(unresolved)
+                    try
+                        value = readPath(target, results.Paths(index));
+                        if isa(value, "matlab.lang.OnOffSwitchState")
+                            value = string(value);
+                        end
+                        results.Found(index) = macd.ui.inspector.DefaultValueProvider.isDisplayValue(value);
+                        if results.Found(index), results.Values{index} = value; end
+                    catch
+                        results.Found(index) = false;
+                    end
                 end
-                found = macd.ui.inspector.DefaultValueProvider.isDisplayValue(value);
             catch
-                found = false; value = [];
+                results.Found(unresolved) = false;
             end
             clear cleanup
         end
@@ -130,7 +194,12 @@ end
 function value = readPath(target, path)
 % readPath Read one direct or one-level nested property without evaluation.
 parts = split(path, ".");
-if numel(parts) == 1, value = target.(parts); else, value = target.(parts(1)).(parts(2)); end
+if numel(parts) == 1
+    value = target.(parts);
+else
+    nested = target.(parts(1));
+    value = nested.(parts(2));
+end
 end
 
 function deleteIfValid(value)

@@ -1840,6 +1840,12 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 states
             end
 
+            parentFactory = "";
+            if strlength(component.ParentId) > 0
+                parentFactory = app.Document.getComponent(component.ParentId).Factory;
+            end
+            definitions = arrayfun(@(state) state.Definition, states);
+            defaults = app.DefaultValueProvider.resolveAll(component, parentFactory, definitions);
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
@@ -1853,13 +1859,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     end
                     editable = editable && entry.IsEditable;
                 else
-                    parentFactory = "";
-                    if strlength(component.ParentId) > 0
-                        parentFactory = app.Document.getComponent(component.ParentId).Factory;
-                    end
-                    [hasDefault, defaultValue] = app.DefaultValueProvider.resolve( ...
-                        component, parentFactory, states(index).Definition);
-                    if hasDefault
+                    if defaults.Found(index)
+                        defaultValue = defaults.Values{index};
                         defaultEntry = macd.model.PropertyEntry(states(index).Definition.Path, defaultValue);
                         value = macd.ui.InspectorValueFormatter.format(defaultEntry);
                         rawValue = defaultValue;

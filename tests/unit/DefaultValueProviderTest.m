@@ -20,6 +20,24 @@ classdef DefaultValueProviderTest < matlab.unittest.TestCase
             testCase.verifyEqual(provider.cacheEntryCount(), count);
             testCase.verifyEmpty(label.getProperty("Visible"));
         end
+
+        function probesOneFixtureForOneSurface(testCase)
+            % probesOneFixtureForOneSurface Read multiple defaults from one hidden component.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("DefaultsApp", registry);
+            listBox = document.insertComponent(registry, "uilistbox", document.RootComponentId);
+            provider = macd.ui.inspector.DefaultValueProvider(registry);
+            properties = registry.getEffectiveProperties("uilistbox", "uifigure");
+            selected = properties(ismember(string({properties.Path}), ["Visible", "Enable"]));
+            selected(end + 1) = macd.model.PropertyDefinition("NoSuchProperty", [], false, true, struct());
+            testCase.verifyNumElements(selected, 3);
+            results = provider.resolveAll(listBox, "uifigure", selected);
+            testCase.verifyEqual(results.Found, [true true false]);
+            testCase.verifyEqual(provider.fixtureProbeCount(), 1);
+            provider.resolveAll(listBox, "uifigure", selected);
+            testCase.verifyEqual(provider.fixtureProbeCount(), 1);
+        end
     end
 end
 
