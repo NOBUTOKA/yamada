@@ -86,14 +86,12 @@
   file. For a class, `classdef` must therefore be the first MATLAB construct and
   its class help must remain immediately after the `classdef` line so that
   `help` and `doc` display the class documentation instead of the license.
-- Use the following trailing block exactly. Replace the first description line
-  when a more specific description is useful, but keep the remaining notice
-  intact.
+- Use the following trailing block exactly. Keep the copyright holder and
+  project-association line unchanged in every project-owned file.
 
 ```matlab
 %{
-MatlabAppClassDesigner - Visual editor for programmatic MATLAB AppBase classes.
-Copyright (C) 2026 MatlabAppClassDesigner contributors
+Copyright (C) 2026 Nobuto Kaitoh
 
 This file is part of MatlabAppClassDesigner.
 
