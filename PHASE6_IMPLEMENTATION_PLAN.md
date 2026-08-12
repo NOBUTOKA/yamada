@@ -458,24 +458,35 @@ and `d8367ed`.
 
 #### 6.6.10 Resolve runtime defaults without catalog duplication
 
-- [ ] Add a `DefaultValueProvider` that reads declared defaults from metadata
+- [x] Add a `DefaultValueProvider` that reads declared defaults from metadata
   where available, then probes only allowlisted standard factories in a hidden,
   editor-owned fixture hierarchy when metadata has no value.
-- [ ] Key cached values by MATLAB release, factory, direct-parent context,
+- [x] Key cached values by MATLAB release, factory, direct-parent context,
   style, creation arguments, and property path. Never execute opened-source
   code, callbacks, or catalog-provided code.
-- [ ] Return display-only defaults without adding `PropertyEntry` objects,
+- [x] Return display-only defaults without adding `PropertyEntry` objects,
   history records, Preview assignments, or generated source. Preserve an
   explicit/source-backed entry over any resolved default.
-- [ ] Treat handles, callbacks, dependent values, unsupported literals, and
+- [x] Treat handles, callbacks, dependent values, unsupported literals, and
   failed probes as unavailable/read-only display values rather than coercing
   them into source literals.
-- [ ] Add fixture construction, cleanup, parent/style variance, cache, and
+- [x] Add fixture construction, cleanup, parent/style variance, cache, and
   no-materialization tests under licensed MATLAB R2024a.
 
 **Exit gate:** unassigned inspector rows show applicable runtime defaults from
 one controlled provider, while the standard JSON catalog remains capability and
 editor metadata rather than a duplicate table of MATLAB defaults.
+
+**Completion record (2026-08-12):** `DefaultValueProvider` first queries
+MATLAB class metadata and otherwise creates only registry-approved components
+inside an editor-owned hidden fixture hierarchy. Results are cached by MATLAB
+release, factory, direct parent, style, creation arguments, and property path. The inspector uses these
+values only when no explicit/source-backed entry exists; it does not materialize
+properties, history, Preview assignments, or generated source. Unsupported
+fixture contexts and handle/function values fail closed. Licensed R2024a tests
+covered root/control display, Grid `Layout.Row`, cache reuse, and document
+non-materialization; the full suite passed 79 tests with zero failures. Commits:
+`c954080`, `e062d8f`.
 
 ### 6.7 Complete the Button vertical slice
 

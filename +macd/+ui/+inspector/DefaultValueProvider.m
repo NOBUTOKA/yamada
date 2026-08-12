@@ -32,8 +32,11 @@ classdef DefaultValueProvider < handle
                 value = property.DefaultValue;
                 return
             end
+            componentDefinition = obj.Registry.get(component.Factory);
+            style = componentDefinition.styleFor(component.CreationArguments);
+            argumentsText = string(jsonencode(component.CreationArguments));
             key = char(strjoin([string(version("-release")), component.Factory, parentFactory, ...
-                string(property.Path)], "|"));
+                style, argumentsText, string(property.Path)], "|"));
             if isKey(obj.Cache, key)
                 result = obj.Cache(key);
                 found = result.Found;
