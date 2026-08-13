@@ -1,0 +1,516 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uihyperlink",
+    "documentedTypes":  {
+                            "default":  "matlab.ui.control.Hyperlink"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uihyperlink.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.hyperlink-properties.html",
+                        "scope":  "Public properties for default."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "Text",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Hyperlink display text",
+                                                                "documentedValues":  [
+                                                                                         "\u0027Hyperlink\u0027",
+                                                                                         "character vector",
+                                                                                         "cell array of character vectors",
+                                                                                         "string scalar",
+                                                                                         "string array",
+                                                                                         "1-D categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback queuing",
+                                                                "documentedValues":  [
+                                                                                         "\u0027queue\u0027",
+                                                                                         "\u0027cancel\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HorizontalAlignment",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Horizontal alignment of text",
+                                                                "documentedValues":  [
+                                                                                         "\u0027left\u0027",
+                                                                                         "\u0027right\u0027",
+                                                                                         "\u0027center\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font color",
+                                                                "documentedValues":  [
+                                                                                         "[0 0.3984 0.7969]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontName",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font name",
+                                                                "documentedValues":  [
+                                                                                         "system supported font name"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tooltip",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array",
+                                                                                         "1-D categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Parent container",
+                                                                "documentedValues":  [
+                                                                                         "Figure object",
+                                                                                         "Panel object",
+                                                                                         "Tab object",
+                                                                                         "ButtonGroup object",
+                                                                                         "GridLayout object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontSize",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font size",
+                                                                "documentedValues":  [
+                                                                                         "positive number"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "State of visibility",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Outer location and size of hyperlink",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 70 22]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "WordWrap",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Word wrapping to fit component width",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Visibility of object handle",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "\u0027callback\u0027",
+                                                                                         "\u0027off\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Type of graphics object",
+                                                                "documentedValues":  [
+                                                                                         "\u0027uihyperlink\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Context menu",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "ContextMenu object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion status",
+                                                                "documentedValues":  [
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Creation function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "VerticalAlignment",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Vertical alignment of text",
+                                                                "documentedValues":  [
+                                                                                         "\u0027center\u0027",
+                                                                                         "\u0027top\u0027",
+                                                                                         "\u0027bottom\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font weight",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027bold\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "URL",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Hyperlink URL",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "User data",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Layout options",
+                                                                "documentedValues":  [
+                                                                                         "empty LayoutOptions array",
+                                                                                         "GridLayoutOptions object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Hyperlink location and size",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 70 22]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font angle",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027italic\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HyperlinkClickedFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Hyperlink clicked callback",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "VisitedColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font color after click",
+                                                                "documentedValues":  [
+                                                                                         "[0.5 0 0.5]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Object identifier",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BackgroundColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Background color",
+                                                                "documentedValues":  [
+                                                                                         "\u0027none\u0027",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback interruption",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Inner location and size of hyperlink",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 70 22]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Enable",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Visual appearance of hyperlink",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       }
+                   ]
+}

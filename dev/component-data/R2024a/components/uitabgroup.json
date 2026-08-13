@@ -1,0 +1,415 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uitabgroup",
+    "documentedTypes":  {
+                            "default":  "matlab.ui.container.TabGroup"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uitabgroup.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.tabgroup-properties.html",
+                        "scope":  "Public properties for default."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Creation function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TabLocation",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tab label location",
+                                                                "documentedValues":  [
+                                                                                         "\u0027top\u0027",
+                                                                                         "\u0027bottom\u0027",
+                                                                                         "\u0027left\u0027",
+                                                                                         "\u0027right\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "AutoResizeChildren",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Automatically resize children",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "User data",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SelectedTab",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Currently selected tab",
+                                                                "documentedValues":  [
+                                                                                         "Tab object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location and size of tab group excluding borders and tab titles",
+                                                                "documentedValues":  [
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion status",
+                                                                "documentedValues":  [
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Visibility of object handle",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "\u0027callback\u0027",
+                                                                                         "\u0027off\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Units",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Units of measurement",
+                                                                "documentedValues":  [
+                                                                                         "\u0027pixels\u0027",
+                                                                                         "\u0027normalized\u0027",
+                                                                                         "\u0027inches\u0027",
+                                                                                         "\u0027centimeters\u0027",
+                                                                                         "\u0027points\u0027",
+                                                                                         "\u0027characters\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SelectionChangedFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection changed callback",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Parent container",
+                                                                "documentedValues":  [
+                                                                                         "Figure object",
+                                                                                         "Panel object",
+                                                                                         "Tab object",
+                                                                                         "ButtonGroup object",
+                                                                                         "GridLayout object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Object identifier",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tooltip",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array",
+                                                                                         "categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location and size of tab group",
+                                                                "documentedValues":  [
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback queuing",
+                                                                "documentedValues":  [
+                                                                                         "\u0027queue\u0027",
+                                                                                         "\u0027cancel\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "State of visibility",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Context menu",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "ContextMenu object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Children",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "TabGroup children",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "1-D array of Tab objects"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ButtonDownFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Button-press callback function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location and size of tab group",
+                                                                "documentedValues":  [
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SizeChangedFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Size change callback",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback interruption",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Layout options",
+                                                                "documentedValues":  [
+                                                                                         "empty LayoutOptions array",
+                                                                                         "GridLayoutOptions object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Type of graphics object",
+                                                                "documentedValues":  [
+                                                                                         "\u0027uitabgroup\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       }
+                   ]
+}

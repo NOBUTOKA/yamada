@@ -1,0 +1,403 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uitab",
+    "documentedTypes":  {
+                            "default":  "matlab.ui.container.Tab"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uitab.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.tab-properties.html",
+                        "scope":  "Public properties for default."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Creation function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Parent object",
+                                                                "documentedValues":  [
+                                                                                         "TabGroup object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "AutoResizeChildren",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Automatically resize children",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Title",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Title",
+                                                                "documentedValues":  [
+                                                                                         "character vector",
+                                                                                         "string scalar",
+                                                                                         "categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location and size of tab",
+                                                                "documentedValues":  [
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Scrollable",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Ability to scroll",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Visibility of object handle",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "\u0027callback\u0027",
+                                                                                         "\u0027off\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Units",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Units of measurement",
+                                                                "documentedValues":  [
+                                                                                         "\u0027pixels\u0027",
+                                                                                         "\u0027normalized\u0027",
+                                                                                         "\u0027inches\u0027",
+                                                                                         "\u0027centimeters\u0027",
+                                                                                         "\u0027points\u0027",
+                                                                                         "\u0027characters\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SizeChangedFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Size change callback",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion status",
+                                                                "documentedValues":  [
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Object identifier",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location and size of tab",
+                                                                "documentedValues":  [
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ForegroundColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Title color",
+                                                                "documentedValues":  [
+                                                                                         "[0 0 0]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback queuing",
+                                                                "documentedValues":  [
+                                                                                         "\u0027queue\u0027",
+                                                                                         "\u0027cancel\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Context menu",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "ContextMenu object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Children",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Children of tab",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "1-D array of component objects"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ButtonDownFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Button-press callback function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location and size of tab",
+                                                                "documentedValues":  [
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BackgroundColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Background color",
+                                                                "documentedValues":  [
+                                                                                         "[0.94 0.94 0.94]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tooltip",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array",
+                                                                                         "1-D categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "User data",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback interruption",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Type of graphics object",
+                                                                "documentedValues":  [
+                                                                                         "\u0027uitab\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       }
+                   ]
+}

@@ -1,0 +1,803 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uiknob",
+    "documentedTypes":  {
+                            "continuous":  "matlab.ui.control.Knob",
+                            "discrete":  "matlab.ui.control.DiscreteKnob"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uiknob.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
+                        "scope":  "Public properties for continuous."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.discreteknob-properties.html",
+                        "scope":  "Public properties for discrete."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "Value",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Value of knob",
+                                                                   "documentedValues":  [
+                                                                                            "0",
+                                                                                            "numeric value"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Value",
+                                                                 "documentedValues":  [
+                                                                                          "element of Items",
+                                                                                          "element of ItemsData"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "FontColor",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Font color",
+                                                                   "documentedValues":  [
+                                                                                            "[0 0 0]",
+                                                                                            "RGB triplet",
+                                                                                            "hexadecimal color code",
+                                                                                            "\u0027r\u0027",
+                                                                                            "\u0027g\u0027",
+                                                                                            "\u0027b\u0027"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Font color",
+                                                                 "documentedValues":  [
+                                                                                          "[0 0 0]",
+                                                                                          "RGB triplet",
+                                                                                          "hexadecimal color code",
+                                                                                          "\u0027r\u0027",
+                                                                                          "\u0027g\u0027",
+                                                                                          "\u0027b\u0027"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "FontSize",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Font size",
+                                                                   "documentedValues":  [
+                                                                                            "positive number"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Font size",
+                                                                 "documentedValues":  [
+                                                                                          "positive number"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Callback queuing",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027queue\u0027",
+                                                                                            "\u0027cancel\u0027"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Callback queuing",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027queue\u0027",
+                                                                                          "\u0027cancel\u0027"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "MinorTicks",
+                           "appliesTo":  [
+                                             "continuous"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Minor tick mark locations",
+                                                                   "documentedValues":  [
+                                                                                            "[0 2.5 5 7.5 ... 100]",
+                                                                                            "numeric array"
+                                                                                        ]
+                                                               }
+                                            }
+                       },
+                       {
+                           "path":  "Limits",
+                           "appliesTo":  [
+                                             "continuous"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Minimum and maximum knob values",
+                                                                   "documentedValues":  [
+                                                                                            "[0 100]",
+                                                                                            "two-element numeric array"
+                                                                                        ]
+                                                               }
+                                            }
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Tooltip",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027\u0027",
+                                                                                            "character vector",
+                                                                                            "cell array of character vectors",
+                                                                                            "string array",
+                                                                                            "1-D categorical array"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Tooltip",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027\u0027",
+                                                                                          "character vector",
+                                                                                          "cell array of character vectors",
+                                                                                          "string array",
+                                                                                          "1-D categorical array"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Parent container",
+                                                                   "documentedValues":  [
+                                                                                            "Figure object",
+                                                                                            "Panel object",
+                                                                                            "Tab object",
+                                                                                            "ButtonGroup object",
+                                                                                            "GridLayout object"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Parent container",
+                                                                 "documentedValues":  [
+                                                                                          "Figure object",
+                                                                                          "Panel object",
+                                                                                          "Tab object",
+                                                                                          "ButtonGroup object",
+                                                                                          "GridLayout object"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "MajorTickLabelsMode",
+                           "appliesTo":  [
+                                             "continuous"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Major tick labels mode",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027auto\u0027",
+                                                                                            "\u0027manual\u0027"
+                                                                                        ]
+                                                               }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "State of visibility",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027on\u0027",
+                                                                                            "on/off logical value"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "State of visibility",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027on\u0027",
+                                                                                          "on/off logical value"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "ValueChangingFcn",
+                           "appliesTo":  [
+                                             "continuous"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Value changing callback",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027\u0027",
+                                                                                            "function handle",
+                                                                                            "cell array",
+                                                                                            "character vector"
+                                                                                        ]
+                                                               }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Deletion function",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027\u0027",
+                                                                                            "function handle",
+                                                                                            "cell array",
+                                                                                            "character vector"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Deletion function",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027\u0027",
+                                                                                          "function handle",
+                                                                                          "cell array",
+                                                                                          "character vector"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Outer location and size of knob",
+                                                                   "documentedValues":  [
+                                                                                            "[73 80 115 105]",
+                                                                                            "[left bottom width height]"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Outer location and size of knob",
+                                                                 "documentedValues":  [
+                                                                                          "[73 100 127 76]",
+                                                                                          "[left bottom width height]"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "MajorTicksMode",
+                           "appliesTo":  [
+                                             "continuous"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Major tick creation mode",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027auto\u0027",
+                                                                                            "\u0027manual\u0027"
+                                                                                        ]
+                                                               }
+                                            }
+                       },
+                       {
+                           "path":  "MajorTicks",
+                           "appliesTo":  [
+                                             "continuous"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Major tick mark locations",
+                                                                   "documentedValues":  [
+                                                                                            "[0 10 20 ... 100]",
+                                                                                            "vector of numeric values",
+                                                                                            "[]"
+                                                                                        ]
+                                                               }
+                                            }
+                       },
+                       {
+                           "path":  "ValueIndex",
+                           "appliesTo":  [
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "discrete":  {
+                                                                 "summary":  "Index of value in items",
+                                                                 "documentedValues":  [
+                                                                                          "1",
+                                                                                          "positive integer"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "MajorTickLabels",
+                           "appliesTo":  [
+                                             "continuous"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Major tick labels",
+                                                                   "documentedValues":  [
+                                                                                            "{\u00270\u0027,\u002710\u0027,\u002720\u0027,...,\u0027100\u0027}",
+                                                                                            "cell array of character vectors",
+                                                                                            "string array",
+                                                                                            "{}"
+                                                                                        ]
+                                                               }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Type of graphics object",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027uiknob\u0027"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Type of graphics object",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027uidiscreteknob\u0027"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Font angle",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027normal\u0027",
+                                                                                            "\u0027italic\u0027"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Font angle",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027normal\u0027",
+                                                                                          "\u0027italic\u0027"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Context menu",
+                                                                   "documentedValues":  [
+                                                                                            "empty GraphicsPlaceholder array",
+                                                                                            "ContextMenu object"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Context menu",
+                                                                 "documentedValues":  [
+                                                                                          "empty GraphicsPlaceholder array",
+                                                                                          "ContextMenu object"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Visibility of object handle",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027on\u0027",
+                                                                                            "\u0027callback\u0027",
+                                                                                            "\u0027off\u0027"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Visibility of object handle",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027on\u0027",
+                                                                                          "\u0027callback\u0027",
+                                                                                          "\u0027off\u0027"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "ValueChangedFcn",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Value changed callback",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027\u0027",
+                                                                                            "function handle",
+                                                                                            "cell array",
+                                                                                            "character vector"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Value changed callback",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027\u0027",
+                                                                                          "function handle",
+                                                                                          "cell array",
+                                                                                          "character vector"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Font weight",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027normal\u0027",
+                                                                                            "\u0027bold\u0027"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Font weight",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027normal\u0027",
+                                                                                          "\u0027bold\u0027"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Layout options",
+                                                                   "documentedValues":  [
+                                                                                            "empty LayoutOptions array",
+                                                                                            "GridLayoutOptions object"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Layout options",
+                                                                 "documentedValues":  [
+                                                                                          "empty LayoutOptions array",
+                                                                                          "GridLayoutOptions object"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "User data",
+                                                                   "documentedValues":  [
+                                                                                            "[]",
+                                                                                            "array"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "User data",
+                                                                 "documentedValues":  [
+                                                                                          "[]",
+                                                                                          "array"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Creation function",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027\u0027",
+                                                                                            "function handle",
+                                                                                            "cell array",
+                                                                                            "character vector"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Creation function",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027\u0027",
+                                                                                          "function handle",
+                                                                                          "cell array",
+                                                                                          "character vector"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Location and size of knob",
+                                                                   "documentedValues":  [
+                                                                                            "[100 100 60 60]",
+                                                                                            "[left bottom width height]"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Location and size of knob",
+                                                                 "documentedValues":  [
+                                                                                          "[100 100 60 60]",
+                                                                                          "[left bottom width height]"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Object identifier",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027\u0027",
+                                                                                            "character vector",
+                                                                                            "string scalar"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Object identifier",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027\u0027",
+                                                                                          "character vector",
+                                                                                          "string scalar"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Deletion status",
+                                                                   "documentedValues":  [
+                                                                                            "on/off logical value"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Deletion status",
+                                                                 "documentedValues":  [
+                                                                                          "on/off logical value"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "FontName",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Font name",
+                                                                   "documentedValues":  [
+                                                                                            "system supported font name"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Font name",
+                                                                 "documentedValues":  [
+                                                                                          "system supported font name"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Callback interruption",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027on\u0027",
+                                                                                            "on/off logical value"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Callback interruption",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027on\u0027",
+                                                                                          "on/off logical value"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "MinorTicksMode",
+                           "appliesTo":  [
+                                             "continuous"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Minor tick creation mode",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027auto\u0027",
+                                                                                            "\u0027manual\u0027"
+                                                                                        ]
+                                                               }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Inner location and size of knob",
+                                                                   "documentedValues":  [
+                                                                                            "[100 100 60 60]",
+                                                                                            "[left bottom width height]"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Inner location and size of knob",
+                                                                 "documentedValues":  [
+                                                                                          "[100 100 60 60]",
+                                                                                          "[left bottom width height]"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "ItemsData",
+                           "appliesTo":  [
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "discrete":  {
+                                                                 "summary":  "Data associated with each element of Items",
+                                                                 "documentedValues":  [
+                                                                                          "empty array []",
+                                                                                          "1-by-n numeric array",
+                                                                                          "1-by-n cell array"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "Items",
+                           "appliesTo":  [
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "discrete":  {
+                                                                 "summary":  "Knob options",
+                                                                 "documentedValues":  [
+                                                                                          "{\u0027Off\u0027,\u0027Low\u0027,\u0027Medium\u0027,\u0027High\u0027}",
+                                                                                          "cell array of character vectors",
+                                                                                          "string array"
+                                                                                      ]
+                                                             }
+                                            }
+                       },
+                       {
+                           "path":  "Enable",
+                           "appliesTo":  [
+                                             "continuous",
+                                             "discrete"
+                                         ],
+                           "styleDetails":  {
+                                                "continuous":  {
+                                                                   "summary":  "Operational state",
+                                                                   "documentedValues":  [
+                                                                                            "\u0027on\u0027",
+                                                                                            "on/off logical value"
+                                                                                        ]
+                                                               },
+                                                "discrete":  {
+                                                                 "summary":  "Operational state",
+                                                                 "documentedValues":  [
+                                                                                          "\u0027on\u0027",
+                                                                                          "on/off logical value"
+                                                                                      ]
+                                                             }
+                                            }
+                       }
+                   ]
+}

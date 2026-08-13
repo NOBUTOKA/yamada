@@ -1,0 +1,352 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uihtml",
+    "documentedTypes":  {
+                            "default":  "matlab.ui.control.HTML"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uihtml.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.html-properties.html",
+                        "scope":  "Public properties for default."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Creation function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Parent container",
+                                                                "documentedValues":  [
+                                                                                         "Figure object",
+                                                                                         "Panel object",
+                                                                                         "Tab object",
+                                                                                         "ButtonGroup object",
+                                                                                         "GridLayout object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DataChangedFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback when data changes",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "User data",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Data",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "MATLAB data",
+                                                                "documentedValues":  [
+                                                                                         "any MATLAB data type"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Visibility of object handle",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "\u0027callback\u0027",
+                                                                                         "\u0027off\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Object identifier",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "State of visibility",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion status",
+                                                                "documentedValues":  [
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tooltip",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array",
+                                                                                         "1-D categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Outer location and size of HTML UI component",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 100 100]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback queuing",
+                                                                "documentedValues":  [
+                                                                                         "\u0027queue\u0027",
+                                                                                         "\u0027cancel\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Type of graphics object",
+                                                                "documentedValues":  [
+                                                                                         "\u0027uihtml\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Context menu",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "ContextMenu object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HTMLSource",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "HTML markup or file",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location and size of HTML UI component",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 100 100]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HTMLEventReceivedFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback when event is received from HTML source",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "string scalar",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Inner location and size of HTML UI component",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 100 100]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Layout options",
+                                                                "documentedValues":  [
+                                                                                         "empty LayoutOptions array",
+                                                                                         "GridLayoutOptions object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback interruption",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       }
+                   ]
+}

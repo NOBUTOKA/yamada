@@ -1,0 +1,823 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uibutton",
+    "documentedTypes":  {
+                            "push":  "matlab.ui.control.Button",
+                            "state":  "matlab.ui.control.StateButton"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uibutton.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.button-properties.html",
+                        "scope":  "Public properties for push."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.statebutton-properties.html",
+                        "scope":  "Public properties for state."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Callback queuing",
+                                                             "documentedValues":  [
+                                                                                      "\u0027queue\u0027",
+                                                                                      "\u0027cancel\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Callback queuing",
+                                                              "documentedValues":  [
+                                                                                       "\u0027queue\u0027",
+                                                                                       "\u0027cancel\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "BackgroundColor",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Background color",
+                                                             "documentedValues":  [
+                                                                                      "[0.96 0.96 0.96]",
+                                                                                      "RGB triplet",
+                                                                                      "hexadecimal color code",
+                                                                                      "\u0027r\u0027",
+                                                                                      "\u0027g\u0027",
+                                                                                      "\u0027b\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Background color",
+                                                              "documentedValues":  [
+                                                                                       "[0.96 0.96 0.96]",
+                                                                                       "RGB triplet",
+                                                                                       "hexadecimal color code",
+                                                                                       "\u0027r\u0027",
+                                                                                       "\u0027g\u0027",
+                                                                                       "\u0027b\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "FontSize",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Font size",
+                                                             "documentedValues":  [
+                                                                                      "positive number"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Font size",
+                                                              "documentedValues":  [
+                                                                                       "positive number"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "HorizontalAlignment",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Horizontal alignment of icon and text",
+                                                             "documentedValues":  [
+                                                                                      "\u0027center\u0027",
+                                                                                      "\u0027left\u0027",
+                                                                                      "\u0027right\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Horizontal alignment of icon and text",
+                                                              "documentedValues":  [
+                                                                                       "\u0027center\u0027",
+                                                                                       "\u0027left\u0027",
+                                                                                       "\u0027right\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Parent container",
+                                                             "documentedValues":  [
+                                                                                      "Figure object",
+                                                                                      "Panel object",
+                                                                                      "Tab object",
+                                                                                      "ButtonGroup object",
+                                                                                      "GridLayout object"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Parent container",
+                                                              "documentedValues":  [
+                                                                                       "Figure object",
+                                                                                       "Panel object",
+                                                                                       "Tab object",
+                                                                                       "ButtonGroup object",
+                                                                                       "GridLayout object"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Tooltip",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "character vector",
+                                                                                      "cell array of character vectors",
+                                                                                      "string array",
+                                                                                      "1-D categorical array"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Tooltip",
+                                                              "documentedValues":  [
+                                                                                       "\u0027\u0027",
+                                                                                       "character vector",
+                                                                                       "cell array of character vectors",
+                                                                                       "string array",
+                                                                                       "1-D categorical array"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Text",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Button label",
+                                                             "documentedValues":  [
+                                                                                      "\u0027Button\u0027",
+                                                                                      "character vector",
+                                                                                      "cell array of character vectors",
+                                                                                      "string scalar",
+                                                                                      "string array"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Button label",
+                                                              "documentedValues":  [
+                                                                                       "\u0027State Button\u0027",
+                                                                                       "character vector",
+                                                                                       "cell array of character vectors",
+                                                                                       "string scalar",
+                                                                                       "string array"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "FontColor",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Font color",
+                                                             "documentedValues":  [
+                                                                                      "[0 0 0]",
+                                                                                      "RGB triplet",
+                                                                                      "hexadecimal color code",
+                                                                                      "\u0027r\u0027",
+                                                                                      "\u0027g\u0027",
+                                                                                      "\u0027b\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Font color",
+                                                              "documentedValues":  [
+                                                                                       "[0 0 0]",
+                                                                                       "RGB triplet",
+                                                                                       "hexadecimal color code",
+                                                                                       "\u0027r\u0027",
+                                                                                       "\u0027g\u0027",
+                                                                                       "\u0027b\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "State of visibility",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "State of visibility",
+                                                              "documentedValues":  [
+                                                                                       "\u0027on\u0027",
+                                                                                       "on/off logical value"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "ButtonPushedFcn",
+                           "appliesTo":  [
+                                             "push"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Button pushed callback",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "function handle",
+                                                                                      "cell array",
+                                                                                      "character vector"
+                                                                                  ]
+                                                         }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Deletion function",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "function handle",
+                                                                                      "cell array",
+                                                                                      "character vector"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Deletion function",
+                                                              "documentedValues":  [
+                                                                                       "\u0027\u0027",
+                                                                                       "function handle",
+                                                                                       "cell array",
+                                                                                       "character vector"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Location and size of button",
+                                                             "documentedValues":  [
+                                                                                      "[100 100 100 22]]",
+                                                                                      "[left bottom width height]"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Location and size of button",
+                                                              "documentedValues":  [
+                                                                                       "[100 100 100 22]]",
+                                                                                       "[left bottom width height]"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Type of graphics object",
+                                                             "documentedValues":  [
+                                                                                      "\u0027uibutton\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Type of graphics object",
+                                                              "documentedValues":  [
+                                                                                       "\u0027uistatebutton\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Visibility of object handle",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "\u0027callback\u0027",
+                                                                                      "\u0027off\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Visibility of object handle",
+                                                              "documentedValues":  [
+                                                                                       "\u0027on\u0027",
+                                                                                       "\u0027callback\u0027",
+                                                                                       "\u0027off\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "WordWrap",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Word wrapping to fit component width",
+                                                             "documentedValues":  [
+                                                                                      "\u0027off\u0027",
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Word wrapping to fit component width",
+                                                              "documentedValues":  [
+                                                                                       "\u0027off\u0027",
+                                                                                       "on/off logical value"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Context menu",
+                                                             "documentedValues":  [
+                                                                                      "empty GraphicsPlaceholder array",
+                                                                                      "ContextMenu object"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Context menu",
+                                                              "documentedValues":  [
+                                                                                       "empty GraphicsPlaceholder array",
+                                                                                       "ContextMenu object"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "FontName",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Font name",
+                                                             "documentedValues":  [
+                                                                                      "system supported font name"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Font name",
+                                                              "documentedValues":  [
+                                                                                       "system supported font name"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Font weight",
+                                                             "documentedValues":  [
+                                                                                      "\u0027normal\u0027",
+                                                                                      "\u0027bold\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Font weight",
+                                                              "documentedValues":  [
+                                                                                       "\u0027normal\u0027",
+                                                                                       "\u0027bold\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "VerticalAlignment",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Vertical alignment of icon and text",
+                                                             "documentedValues":  [
+                                                                                      "\u0027center\u0027",
+                                                                                      "\u0027top\u0027",
+                                                                                      "\u0027bottom\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Vertical alignment of icon and text",
+                                                              "documentedValues":  [
+                                                                                       "\u0027center\u0027",
+                                                                                       "\u0027top\u0027",
+                                                                                       "\u0027bottom\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "ValueChangedFcn",
+                           "appliesTo":  [
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "state":  {
+                                                              "summary":  "Value changed callback",
+                                                              "documentedValues":  [
+                                                                                       "\u0027\u0027",
+                                                                                       "function handle",
+                                                                                       "cell array",
+                                                                                       "character vector"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Font angle",
+                                                             "documentedValues":  [
+                                                                                      "\u0027normal\u0027",
+                                                                                      "\u0027italic\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Font angle",
+                                                              "documentedValues":  [
+                                                                                       "\u0027normal\u0027",
+                                                                                       "\u0027italic\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Layout options",
+                                                             "documentedValues":  [
+                                                                                      "empty LayoutOptions array",
+                                                                                      "GridLayoutOptions object"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Layout options",
+                                                              "documentedValues":  [
+                                                                                       "empty LayoutOptions array",
+                                                                                       "GridLayoutOptions object"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "User data",
+                                                             "documentedValues":  [
+                                                                                      "[]",
+                                                                                      "array"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "User data",
+                                                              "documentedValues":  [
+                                                                                       "[]",
+                                                                                       "array"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Creation function",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "function handle",
+                                                                                      "cell array",
+                                                                                      "character vector"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Creation function",
+                                                              "documentedValues":  [
+                                                                                       "\u0027\u0027",
+                                                                                       "function handle",
+                                                                                       "cell array",
+                                                                                       "character vector"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Location and size of button",
+                                                             "documentedValues":  [
+                                                                                      "[100 100 100 22]",
+                                                                                      "[left bottom width height]"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Location and size of button",
+                                                              "documentedValues":  [
+                                                                                       "[100 100 100 22]",
+                                                                                       "[left bottom width height]"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Deletion status",
+                                                             "documentedValues":  [
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Deletion status",
+                                                              "documentedValues":  [
+                                                                                       "on/off logical value"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "IconAlignment",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Location of button icon",
+                                                             "documentedValues":  [
+                                                                                      "\u0027left\u0027",
+                                                                                      "\u0027right\u0027",
+                                                                                      "\u0027center\u0027",
+                                                                                      "\u0027leftmargin\u0027",
+                                                                                      "\u0027rightmargin\u0027",
+                                                                                      "\u0027top\u0027",
+                                                                                      "\u0027bottom\u0027"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Location of button icon",
+                                                              "documentedValues":  [
+                                                                                       "\u0027left\u0027",
+                                                                                       "\u0027right\u0027",
+                                                                                       "\u0027center\u0027",
+                                                                                       "\u0027leftmargin\u0027",
+                                                                                       "\u0027rightmargin\u0027",
+                                                                                       "\u0027top\u0027",
+                                                                                       "\u0027bottom\u0027"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Callback interruption",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Callback interruption",
+                                                              "documentedValues":  [
+                                                                                       "\u0027on\u0027",
+                                                                                       "on/off logical value"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Object identifier",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "character vector",
+                                                                                      "string scalar"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Object identifier",
+                                                              "documentedValues":  [
+                                                                                       "\u0027\u0027",
+                                                                                       "character vector",
+                                                                                       "string scalar"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Icon",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Predefined or custom icon",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "character vector",
+                                                                                      "string scalar",
+                                                                                      "m -by- n -by-3 truecolor image array"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Predefined or custom icon",
+                                                              "documentedValues":  [
+                                                                                       "\u0027\u0027",
+                                                                                       "character vector",
+                                                                                       "string scalar",
+                                                                                       "m -by- n -by-3 truecolor image array"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Value",
+                           "appliesTo":  [
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "state":  {
+                                                              "summary":  "Pressed state of button",
+                                                              "documentedValues":  [
+                                                                                       "0",
+                                                                                       "1"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "Enable",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Operational state",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Operational state",
+                                                              "documentedValues":  [
+                                                                                       "\u0027on\u0027",
+                                                                                       "on/off logical value"
+                                                                                   ]
+                                                          }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "push",
+                                             "state"
+                                         ],
+                           "styleDetails":  {
+                                                "push":  {
+                                                             "summary":  "Location and size of button",
+                                                             "documentedValues":  [
+                                                                                      "[100 100 100 22]",
+                                                                                      "[left bottom width height]"
+                                                                                  ]
+                                                         },
+                                                "state":  {
+                                                              "summary":  "Location and size of button",
+                                                              "documentedValues":  [
+                                                                                       "[100 100 100 22]",
+                                                                                       "[left bottom width height]"
+                                                                                   ]
+                                                          }
+                                            }
+                       }
+                   ]
+}

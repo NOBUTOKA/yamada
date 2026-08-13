@@ -1,0 +1,1327 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "geoaxes",
+    "documentedTypes":  {
+                            "default":  "matlab.graphics.axis.GeographicAxes"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/geoaxes.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+                        "scope":  "Public properties for default."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "LatitudeLabel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Latitude axis label",
+                                                                "documentedValues":  [
+                                                                                         "Text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Color",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Background color",
+                                                                "documentedValues":  [
+                                                                                         "[1 1 1]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Size and position of geographic axes, including labels and margins",
+                                                                "documentedValues":  [
+                                                                                         "[0 0 1 1]",
+                                                                                         "four-element vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback queuing",
+                                                                "documentedValues":  [
+                                                                                         "\u0027queue\u0027",
+                                                                                         "\u0027cancel\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MapCenterMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for map center",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontName",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font name",
+                                                                "documentedValues":  [
+                                                                                         "supported font name",
+                                                                                         "\"FixedWidth\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Subtitle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Text object for subtitle",
+                                                                "documentedValues":  [
+                                                                                         "text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Colormap",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color map",
+                                                                "documentedValues":  [
+                                                                                         "parula",
+                                                                                         "m -by- 3 array of RGB triplets"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TickDirMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick mark direction",
+                                                                "documentedValues":  [
+                                                                                         "\u0027manual\u0027",
+                                                                                         "\u0027auto\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZoomLevel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Magnification level of map",
+                                                                "documentedValues":  [
+                                                                                         "real, finite, numeric scalar between 0 and 25, inclusive"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Character thickness",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027bold\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Title",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Text object for title",
+                                                                "documentedValues":  [
+                                                                                         "text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Grid",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Visibility of latitude and longitude lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "NextPlot",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Properties to reset",
+                                                                "documentedValues":  [
+                                                                                         "\u0027replace\u0027",
+                                                                                         "\u0027add\u0027",
+                                                                                         "\u0027replacechildren\u0027",
+                                                                                         "\u0027replaceall\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback interruption",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CLim",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color limits for colormap",
+                                                                "documentedValues":  [
+                                                                                         "[0 1]",
+                                                                                         "two-element vector of the form [cmin cmax]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CLimMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for CLim",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LongitudeLimits",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Longitude limits of map",
+                                                                "documentedValues":  [
+                                                                                         "1-by-2 vector of real, finite values"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Box",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Outline around geographic axes",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HitTest",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Response to captured mouse clicks",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TickDir",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick mark direction",
+                                                                "documentedValues":  [
+                                                                                         "\u0027in\u0027",
+                                                                                         "\u0027out\u0027",
+                                                                                         "\u0027both\u0027",
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ColorOrderIndex",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color order index",
+                                                                "documentedValues":  [
+                                                                                         "1",
+                                                                                         "positive integer"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SelectionHighlight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Display of selection handles",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TitleFontSizeMultiplier",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale factor for title font size",
+                                                                "documentedValues":  [
+                                                                                         "1.1",
+                                                                                         "numeric value greater than 0"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "AlphaScale",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale for transparency mapping",
+                                                                "documentedValues":  [
+                                                                                         "\u0027linear\u0027",
+                                                                                         "\u0027log\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Toolbar",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Data exploration toolbar",
+                                                                "documentedValues":  [
+                                                                                         "AxesToolbar object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Alphamap",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Transparency map",
+                                                                "documentedValues":  [
+                                                                                         "array of 64 values from 0 to 1",
+                                                                                         "array of finite alpha values from 0 to 1"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Inner size and location",
+                                                                "documentedValues":  [
+                                                                                         "[0.1300 0.1100 0.7750 0.8150]",
+                                                                                         "four-element vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Units",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Position units",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normalized\u0027",
+                                                                                         "\u0027inches\u0027",
+                                                                                         "\u0027centimeters\u0027",
+                                                                                         "\u0027points\u0027",
+                                                                                         "\u0027pixels\u0027",
+                                                                                         "\u0027characters\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "User data",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Children",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Children",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "array of graphics objects"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LatitudeLimits",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Latitude limits of map",
+                                                                "documentedValues":  [
+                                                                                         "1-by-2 vector of real, finite values"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TitleFontWeight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Title character thickness",
+                                                                "documentedValues":  [
+                                                                                         "\u0027bold\u0027",
+                                                                                         "\u0027normal\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interactions",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Interactions",
+                                                                "documentedValues":  [
+                                                                                         "array of interaction objects",
+                                                                                         "[]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TickLabelFormat",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick label format",
+                                                                "documentedValues":  [
+                                                                                         "\"dms\"",
+                                                                                         "\"dd\"",
+                                                                                         "\"dm\"",
+                                                                                         "\"-dd\"",
+                                                                                         "\"-dm\"",
+                                                                                         "\"-dms\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SortMethod",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Order for rendering objects",
+                                                                "documentedValues":  [
+                                                                                         "\u0027depth\u0027",
+                                                                                         "\u0027childorder\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridLineStyle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Line style for grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027-\u0027",
+                                                                                         "\u0027--\u0027",
+                                                                                         "\u0027:\u0027",
+                                                                                         "\u0027-.\u0027",
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LineStyleCyclingMethod",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "How to cycle through line styles",
+                                                                "documentedValues":  [
+                                                                                         "\"aftercolor\"",
+                                                                                         "\"beforecolor\"",
+                                                                                         "\"withcolor\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ALimMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for ALim",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Legend",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Legend associated with geographic axes",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder",
+                                                                                         "Legend object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Selected",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection state",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "AxisColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of axis lines, tick values, and labels",
+                                                                "documentedValues":  [
+                                                                                         "[0.1500 0.1500 0.1500]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "color name",
+                                                                                         "short color name"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LineStyleOrder",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Line style order",
+                                                                "documentedValues":  [
+                                                                                         "\"-\" solid line",
+                                                                                         "character vector",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Basemap",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Map on which to plot data",
+                                                                "documentedValues":  [
+                                                                                         "\u0027streets-light\u0027",
+                                                                                         "\u0027streets-dark\u0027",
+                                                                                         "\u0027streets\u0027",
+                                                                                         "\u0027satellite\u0027",
+                                                                                         "\u0027topographic\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LineStyleOrderIndex",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Line style order index",
+                                                                "documentedValues":  [
+                                                                                         "1",
+                                                                                         "positive integer"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LabelFontSizeMultiplier",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale factor for label font size",
+                                                                "documentedValues":  [
+                                                                                         "1.1",
+                                                                                         "numeric value greater than 0"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "PositionConstraint",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Position to hold constant",
+                                                                "documentedValues":  [
+                                                                                         "\"outerposition\"",
+                                                                                         "\"innerposition\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontSize",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font size",
+                                                                "documentedValues":  [
+                                                                                         "numeric scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ColorScale",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale for color mapping",
+                                                                "documentedValues":  [
+                                                                                         "\u0027linear\u0027",
+                                                                                         "\u0027log\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Parent container",
+                                                                "documentedValues":  [
+                                                                                         "Figure object",
+                                                                                         "Panel object",
+                                                                                         "Tab object",
+                                                                                         "TiledChartLayout object",
+                                                                                         "GridLayout object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Creation function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Type of graphics object",
+                                                                "documentedValues":  [
+                                                                                         "\u0027geoaxes\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MapCenter",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Center point of map in latitude and longitude",
+                                                                "documentedValues":  [
+                                                                                         "two-element numeric vector of real, finite values"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontSizeMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for font size",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Scalebar",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale bar",
+                                                                "documentedValues":  [
+                                                                                         "GeographicScalebar object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Object identifier",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ColorOrder",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color order",
+                                                                "documentedValues":  [
+                                                                                         "seven predefined colors",
+                                                                                         "three-column matrix of RGB triplets"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TitleHorizontalAlignment",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Title and subtitle horizontal alignment",
+                                                                "documentedValues":  [
+                                                                                         "\u0027center\u0027",
+                                                                                         "\u0027left\u0027",
+                                                                                         "\u0027right\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "PickableParts",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Ability to capture mouse clicks",
+                                                                "documentedValues":  [
+                                                                                         "\u0027visible\u0027",
+                                                                                         "\u0027all\u0027",
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridAlpha",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Grid-line transparency",
+                                                                "documentedValues":  [
+                                                                                         "0.15",
+                                                                                         "value in the range [0,1]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ALim",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Alpha limits for alphamap",
+                                                                "documentedValues":  [
+                                                                                         "[0 1]",
+                                                                                         "two-element vector of the form [amin amax]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Character slant",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027italic\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZoomLevelMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for zoom level",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridColorMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Property for setting grid color",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontUnits",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font size units",
+                                                                "documentedValues":  [
+                                                                                         "\u0027points\u0027",
+                                                                                         "\u0027inches\u0027",
+                                                                                         "\u0027centimeters\u0027",
+                                                                                         "\u0027normalized\u0027",
+                                                                                         "\u0027pixels\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Size and position of geographic axes, not including labels or margins",
+                                                                "documentedValues":  [
+                                                                                         "[0.1300 0.1100 0.7750 0.8150]",
+                                                                                         "four-element vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LongitudeAxis",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Longitude ruler",
+                                                                "documentedValues":  [
+                                                                                         "GeographicRuler"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Visibility of object handle",
+                                                                "documentedValues":  [
+                                                                                         "\"on\"",
+                                                                                         "\"off\"",
+                                                                                         "\"callback\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TickLength",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick mark length",
+                                                                "documentedValues":  [
+                                                                                         "[0.01 0.025]",
+                                                                                         "two-element vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridAlphaMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for GridAlpha",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "State of visibility",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Layout options",
+                                                                "documentedValues":  [
+                                                                                         "empty LayoutOptions array",
+                                                                                         "TiledChartLayoutOptions object",
+                                                                                         "GridLayoutOptions object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InteractionOptions",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Options to customize interaction behavior",
+                                                                "documentedValues":  [
+                                                                                         "GeographicAxesInteractionOptions object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LongitudeLabel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Longitude axis label",
+                                                                "documentedValues":  [
+                                                                                         "Text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TightInset",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Margins for text labels",
+                                                                "documentedValues":  [
+                                                                                         "four-element vector of the form [left bottom right top]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CurrentPoint",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location of mouse pointer",
+                                                                "documentedValues":  [
+                                                                                         "2-by-3 array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "NextSeriesIndex",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "SeriesIndex value for next object",
+                                                                "documentedValues":  [
+                                                                                         "whole number"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LatitudeAxis",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Latitude ruler",
+                                                                "documentedValues":  [
+                                                                                         "GeographicRuler object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of grid lines",
+                                                                "documentedValues":  [
+                                                                                         "[0.15 0.15 0.15]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ButtonDownFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Mouse-click callback",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LineWidth",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Width of lines",
+                                                                "documentedValues":  [
+                                                                                         "0.5",
+                                                                                         "positive scalar value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Context menu",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "ContextMenu object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SubtitleFontWeight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Subtitle character thickness",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027bold\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion status",
+                                                                "documentedValues":  [
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       }
+                   ]
+}

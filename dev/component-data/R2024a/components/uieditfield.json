@@ -1,0 +1,876 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uieditfield",
+    "documentedTypes":  {
+                            "text":  null,
+                            "numeric":  null
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uieditfield.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.editfield-properties.html",
+                        "scope":  "Public properties for text."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+                        "scope":  "Public properties for numeric."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "InputType",
+                           "appliesTo":  [
+                                             "text"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Valid text content",
+                                                             "documentedValues":  [
+                                                                                      "\u0027text\u0027",
+                                                                                      "\u0027letters\u0027",
+                                                                                      "\u0027digits\u0027",
+                                                                                      "\u0027alphanumerics\u0027"
+                                                                                  ]
+                                                         }
+                                            }
+                       },
+                       {
+                           "path":  "Value",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Text in edit field",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "character vector",
+                                                                                      "string scalar"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Value in edit field",
+                                                                "documentedValues":  [
+                                                                                         "0",
+                                                                                         "numeric value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HorizontalAlignment",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Horizontal alignment of text within edit field",
+                                                             "documentedValues":  [
+                                                                                      "\u0027left\u0027",
+                                                                                      "\u0027right\u0027",
+                                                                                      "\u0027center\u0027"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Horizontal alignment of numbers",
+                                                                "documentedValues":  [
+                                                                                         "\u0027right\u0027",
+                                                                                         "\u0027left\u0027",
+                                                                                         "\u0027center\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Callback queuing",
+                                                             "documentedValues":  [
+                                                                                      "\u0027queue\u0027",
+                                                                                      "\u0027cancel\u0027"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Callback queuing",
+                                                                "documentedValues":  [
+                                                                                         "\u0027queue\u0027",
+                                                                                         "\u0027cancel\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontColor",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Font color",
+                                                             "documentedValues":  [
+                                                                                      "[0 0 0]",
+                                                                                      "RGB triplet",
+                                                                                      "hexadecimal color code",
+                                                                                      "\u0027r\u0027",
+                                                                                      "\u0027g\u0027",
+                                                                                      "\u0027b\u0027"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Font color",
+                                                                "documentedValues":  [
+                                                                                         "[0 0 0]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Tooltip",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "character vector",
+                                                                                      "cell array of character vectors",
+                                                                                      "string array",
+                                                                                      "1-D categorical array"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Tooltip",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array",
+                                                                                         "1-D categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontName",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Font name",
+                                                             "documentedValues":  [
+                                                                                      "system supported font name"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Font name",
+                                                                "documentedValues":  [
+                                                                                         "system supported font name"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Parent container",
+                                                             "documentedValues":  [
+                                                                                      "Figure object",
+                                                                                      "Panel object",
+                                                                                      "Tab object",
+                                                                                      "ButtonGroup object",
+                                                                                      "GridLayout object"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Parent container",
+                                                                "documentedValues":  [
+                                                                                         "Figure object",
+                                                                                         "Panel object",
+                                                                                         "Tab object",
+                                                                                         "ButtonGroup object",
+                                                                                         "GridLayout object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Limits",
+                           "appliesTo":  [
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "numeric":  {
+                                                                "summary":  "Minimum and maximum edit field values",
+                                                                "documentedValues":  [
+                                                                                         "[-Inf Inf]",
+                                                                                         "two-element numeric array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontSize",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Font size",
+                                                             "documentedValues":  [
+                                                                                      "positive number"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Font size",
+                                                                "documentedValues":  [
+                                                                                         "positive number"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Outer location and size of edit field",
+                                                             "documentedValues":  [
+                                                                                      "[100 100 100 22]]",
+                                                                                      "[left bottom width height]"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Outer location and size of edit field",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 100 22]]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "State of visibility",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "State of visibility",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Deletion function",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "function handle",
+                                                                                      "cell array",
+                                                                                      "character vector"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Deletion function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ValueDisplayFormat",
+                           "appliesTo":  [
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "numeric":  {
+                                                                "summary":  "Value display format",
+                                                                "documentedValues":  [
+                                                                                         "\u0027%11.4g\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LowerLimitInclusive",
+                           "appliesTo":  [
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "numeric":  {
+                                                                "summary":  "Lower limit inclusiveness",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ValueChangingFcn",
+                           "appliesTo":  [
+                                             "text"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Value changing callback",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "function handle",
+                                                                                      "cell array",
+                                                                                      "character vector"
+                                                                                  ]
+                                                         }
+                                            }
+                       },
+                       {
+                           "path":  "Editable",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Whether edit field is editable",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Editability of edit field",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Context menu",
+                                                             "documentedValues":  [
+                                                                                      "empty GraphicsPlaceholder array",
+                                                                                      "ContextMenu object"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Context menu",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "ContextMenu object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Type of graphics object",
+                                                             "documentedValues":  [
+                                                                                      "\u0027uieditfield\u0027"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Type of graphics object",
+                                                                "documentedValues":  [
+                                                                                         "\u0027uinumericeditfield\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Creation function",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "function handle",
+                                                                                      "cell array",
+                                                                                      "character vector"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Creation function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "RoundFractionalValues",
+                           "appliesTo":  [
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "numeric":  {
+                                                                "summary":  "Rounding of fractional values",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Font weight",
+                                                             "documentedValues":  [
+                                                                                      "\u0027normal\u0027",
+                                                                                      "\u0027bold\u0027"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Font weight",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027bold\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Enable",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Operational state of edit field",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Operational state of edit field",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CharacterLimits",
+                           "appliesTo":  [
+                                             "text"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Minimum and maximum number of characters",
+                                                             "documentedValues":  [
+                                                                                      "[0 Inf]",
+                                                                                      "two-element numeric array"
+                                                                                  ]
+                                                         }
+                                            }
+                       },
+                       {
+                           "path":  "Placeholder",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Placeholder text in edit field",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "character vector",
+                                                                                      "string scalar"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Placeholder text",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "string scalar",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "User data",
+                                                             "documentedValues":  [
+                                                                                      "[]",
+                                                                                      "array"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "User data",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Location and size of edit field",
+                                                             "documentedValues":  [
+                                                                                      "[100 100 100 22]",
+                                                                                      "[left bottom width height]"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Location and size of edit field",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 100 22]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "AllowEmpty",
+                           "appliesTo":  [
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "numeric":  {
+                                                                "summary":  "Ability to clear edit field",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Font angle",
+                                                             "documentedValues":  [
+                                                                                      "\u0027normal\u0027",
+                                                                                      "\u0027italic\u0027"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Font angle",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027italic\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Object identifier",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "character vector",
+                                                                                      "string scalar"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Object identifier",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Deletion status",
+                                                             "documentedValues":  [
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Deletion status",
+                                                                "documentedValues":  [
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Callback interruption",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "on/off logical value"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Callback interruption",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "UpperLimitInclusive",
+                           "appliesTo":  [
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "numeric":  {
+                                                                "summary":  "Upper limit inclusiveness",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BackgroundColor",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Background color",
+                                                             "documentedValues":  [
+                                                                                      "[1 1 1]",
+                                                                                      "RGB triplet",
+                                                                                      "hexadecimal color code",
+                                                                                      "\u0027r\u0027",
+                                                                                      "\u0027g\u0027",
+                                                                                      "\u0027b\u0027"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Background color",
+                                                                "documentedValues":  [
+                                                                                         "[1 1 1]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Visibility of object handle",
+                                                             "documentedValues":  [
+                                                                                      "\u0027on\u0027",
+                                                                                      "\u0027callback\u0027",
+                                                                                      "\u0027off\u0027"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Visibility of object handle",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "\u0027callback\u0027",
+                                                                                         "\u0027off\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ValueChangedFcn",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Value changed callback",
+                                                             "documentedValues":  [
+                                                                                      "\u0027\u0027",
+                                                                                      "function handle",
+                                                                                      "cell array",
+                                                                                      "character vector"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Value changed callback",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Layout options",
+                                                             "documentedValues":  [
+                                                                                      "empty LayoutOptions array",
+                                                                                      "GridLayoutOptions object"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Layout options",
+                                                                "documentedValues":  [
+                                                                                         "empty LayoutOptions array",
+                                                                                         "GridLayoutOptions object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "text",
+                                             "numeric"
+                                         ],
+                           "styleDetails":  {
+                                                "text":  {
+                                                             "summary":  "Inner location and size of edit field",
+                                                             "documentedValues":  [
+                                                                                      "[100 100 100 22]",
+                                                                                      "[left bottom width height]"
+                                                                                  ]
+                                                         },
+                                                "numeric":  {
+                                                                "summary":  "Inner location and size of edit field",
+                                                                "documentedValues":  [
+                                                                                         "[100 100 100 22]",
+                                                                                         "[left bottom width height]"
+                                                                                     ]
+                                                            }
+                                            }
+                       }
+                   ]
+}

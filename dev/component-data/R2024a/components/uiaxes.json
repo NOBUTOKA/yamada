@@ -1,0 +1,2429 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uiaxes",
+    "documentedTypes":  {
+                            "default":  "matlab.ui.control.UIAxes"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uiaxes.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+                        "scope":  "Public properties for default."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Object identifier",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "character vector",
+                                                                                         "string scalar"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridLineWidth",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Grid line width",
+                                                                "documentedValues":  [
+                                                                                         "0.5",
+                                                                                         "positive number"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Units",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Position units",
+                                                                "documentedValues":  [
+                                                                                         "\u0027pixels\u0027",
+                                                                                         "\u0027normalized\u0027",
+                                                                                         "\u0027inches\u0027",
+                                                                                         "\u0027centimeters\u0027",
+                                                                                         "\u0027points\u0027",
+                                                                                         "\u0027characters\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZTickLabel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick labels",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array",
+                                                                                         "categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of axis line, tick values, and labels",
+                                                                "documentedValues":  [
+                                                                                         "[0.15 0.15 0.15]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YScale",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale of values along axis",
+                                                                "documentedValues":  [
+                                                                                         "\u0027linear\u0027",
+                                                                                         "\u0027log\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MinorGridLineStyle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Line style for minor grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027:\u0027",
+                                                                                         "\u0027-\u0027",
+                                                                                         "\u0027--\u0027",
+                                                                                         "\u0027-.\u0027",
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BackgroundColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of margin around plot area",
+                                                                "documentedValues":  [
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LabelFontSizeMultiplier",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale factor for label font size",
+                                                                "documentedValues":  [
+                                                                                         "1.1",
+                                                                                         "numeric value greater than 0"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Color",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of plot area",
+                                                                "documentedValues":  [
+                                                                                         "[1 1 1]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YLimMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for axis limits",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DataAspectRatioMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Data aspect ratio mode",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SelectionHighlight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Display of selection handles",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Context menu",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "ContextMenu object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "AmbientLightColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Background light color",
+                                                                "documentedValues":  [
+                                                                                         "[1 1 1]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZLabel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Text object for axis label",
+                                                                "documentedValues":  [
+                                                                                         "text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Size and location of axes, including labels and margins",
+                                                                "documentedValues":  [
+                                                                                         "[10 10 400 300]",
+                                                                                         "four-element vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interactions",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Built-in interactions",
+                                                                "documentedValues":  [
+                                                                                         "array of interaction objects",
+                                                                                         "[]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Clipping",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Clipping of objects to axes limits",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XAxis",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Axis ruler",
+                                                                "documentedValues":  [
+                                                                                         "ruler object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XGrid",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback queuing",
+                                                                "documentedValues":  [
+                                                                                         "\u0027queue\u0027",
+                                                                                         "\u0027cancel\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CameraTarget",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Camera target point",
+                                                                "documentedValues":  [
+                                                                                         "three-element vector of the form [x y z]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LineStyleOrder",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Line style order",
+                                                                "documentedValues":  [
+                                                                                         "\"-\" solid line",
+                                                                                         "character vector",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YMinorTick",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minor tick marks",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ColorScale",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale for color mapping",
+                                                                "documentedValues":  [
+                                                                                         "\u0027linear\u0027",
+                                                                                         "\u0027log\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridLineStyle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Line style for grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027-\u0027",
+                                                                                         "\u0027--\u0027",
+                                                                                         "\u0027:\u0027",
+                                                                                         "\u0027-.\u0027",
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZMinorGrid",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minor grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XLim",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minimum and maximum axis limits",
+                                                                "documentedValues":  [
+                                                                                         "[0 1]",
+                                                                                         "two-element vector of the form [min max]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MinorGridColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of minor grid lines",
+                                                                "documentedValues":  [
+                                                                                         "[0.1 0.1 0.1]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BoxStyle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Box outline style",
+                                                                "documentedValues":  [
+                                                                                         "\u0027back\u0027",
+                                                                                         "\u0027full\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TitleHorizontalAlignment",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Title and subtitle horizontal alignment",
+                                                                "documentedValues":  [
+                                                                                         "\u0027center\u0027",
+                                                                                         "\u0027left\u0027",
+                                                                                         "\u0027right\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CameraTargetMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for CameraTarget",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YTickLabelMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick labels",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CameraPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Camera location",
+                                                                "documentedValues":  [
+                                                                                         "three-element vector of the form [x y z]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ButtonDownFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Mouse-click callback",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Size and location of inner axes, excluding labels and margins",
+                                                                "documentedValues":  [
+                                                                                         "[31.75 29.73 369.24 272.27]",
+                                                                                         "four-element vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZTickLabelMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick labels",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "View",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Azimuth and elevation of view",
+                                                                "documentedValues":  [
+                                                                                         "[0 90]",
+                                                                                         "two-element vector of the form [azimuth elevation]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of grid lines",
+                                                                "documentedValues":  [
+                                                                                         "[0.15 0.15 0.15]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of axis line, tick values, and labels",
+                                                                "documentedValues":  [
+                                                                                         "[0.15 0.15 0.15]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZMinorTick",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minor tick marks",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MinorGridLineWidthMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "How minor grid line width is set",
+                                                                "documentedValues":  [
+                                                                                         "\"auto\"",
+                                                                                         "\"manual\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TightInset",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Margin for text labels",
+                                                                "documentedValues":  [
+                                                                                         "four-element vector of the form [left bottom right top]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "NextSeriesIndex",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "SeriesIndex value for next object",
+                                                                "documentedValues":  [
+                                                                                         "whole number"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XTickLabelMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick labels",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CurrentPoint",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Location of mouse pointer",
+                                                                "documentedValues":  [
+                                                                                         "2-by-3 array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Size and location of axes, including labels and margins",
+                                                                "documentedValues":  [
+                                                                                         "[10 10 400 300]",
+                                                                                         "four-element vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XTickLabelRotation",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick label rotation",
+                                                                "documentedValues":  [
+                                                                                         "0",
+                                                                                         "numeric value in degrees"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZTickMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick values",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontSmoothing",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Character smoothing",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YMinorGrid",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minor grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "PositionConstraint",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Position to hold constant",
+                                                                "documentedValues":  [
+                                                                                         "\"outerposition\"",
+                                                                                         "\"innerposition\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZLimitMethod",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Axis limit selection method",
+                                                                "documentedValues":  [
+                                                                                         "\u0027tickaligned\u0027",
+                                                                                         "\u0027tight\u0027",
+                                                                                         "\u0027padded\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CLimMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for CLim",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YColor",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color of axis line, tick values, and labels",
+                                                                "documentedValues":  [
+                                                                                         "[0.15 0.15 0.15]",
+                                                                                         "RGB triplet",
+                                                                                         "hexadecimal color code",
+                                                                                         "\u0027r\u0027",
+                                                                                         "\u0027g\u0027",
+                                                                                         "\u0027b\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YDir",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "y -axis direction",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027reverse\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XTick",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick values",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "vector of increasing values"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZLimMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for axis limits",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Visibility of object handle",
+                                                                "documentedValues":  [
+                                                                                         "\"on\"",
+                                                                                         "\"off\"",
+                                                                                         "\"callback\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "PlotBoxAspectRatioMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for PlotBoxAspectRatio",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XTickLabel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick labels",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array",
+                                                                                         "categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TickLength",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick mark length",
+                                                                "documentedValues":  [
+                                                                                         "[0.01 0.025]",
+                                                                                         "two-element vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XScale",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale of values along axis",
+                                                                "documentedValues":  [
+                                                                                         "\u0027linear\u0027",
+                                                                                         "\u0027log\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ALim",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Alpha limits",
+                                                                "documentedValues":  [
+                                                                                         "[0 1]",
+                                                                                         "two-element vector of the form [amin amax]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ColorOrder",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color order",
+                                                                "documentedValues":  [
+                                                                                         "seven predefined colors",
+                                                                                         "three-column matrix of RGB triplets"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SortMethod",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Order for rendering objects",
+                                                                "documentedValues":  [
+                                                                                         "\u0027depth\u0027",
+                                                                                         "\u0027childorder\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CameraViewAngleMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for CameraViewAngle",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontSize",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font size",
+                                                                "documentedValues":  [
+                                                                                         "scalar numeric value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LineWidth",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Line width",
+                                                                "documentedValues":  [
+                                                                                         "0.5",
+                                                                                         "positive numeric value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Parent container",
+                                                                "documentedValues":  [
+                                                                                         "Figure object",
+                                                                                         "Panel object",
+                                                                                         "Tab object",
+                                                                                         "GridLayout object",
+                                                                                         "TiledChartLayout object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CameraUpVector",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Vector defining upwards direction",
+                                                                "documentedValues":  [
+                                                                                         "three-element direction vector of the form [x y z]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridAlphaMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for GridAlpha",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YColorMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Property for setting y -axis grid color",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZAxis",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Axis ruler",
+                                                                "documentedValues":  [
+                                                                                         "ruler object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YAxisLocation",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "y -axis location",
+                                                                "documentedValues":  [
+                                                                                         "\u0027left\u0027",
+                                                                                         "\u0027right\u0027",
+                                                                                         "\u0027origin\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XLimMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for axis limits",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Colormap",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color map",
+                                                                "documentedValues":  [
+                                                                                         "parula",
+                                                                                         "m -by- 3 array of RGB triplets"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Subtitle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Text object for subtitle",
+                                                                "documentedValues":  [
+                                                                                         "text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "DataAspectRatio",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Relative length of data units",
+                                                                "documentedValues":  [
+                                                                                         "[1 1 1]",
+                                                                                         "three-element vector of the form [dx dy dz]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "NextPlot",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Properties to reset",
+                                                                "documentedValues":  [
+                                                                                         "\u0027replacechildren\u0027",
+                                                                                         "\u0027add\u0027",
+                                                                                         "\u0027replaceall\u0027",
+                                                                                         "\u0027replace\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MinorGridColorMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Property for setting minor grid color",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TickDirMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for TickDir",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Title",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Text object for axes title",
+                                                                "documentedValues":  [
+                                                                                         "text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Type of graphics object",
+                                                                "documentedValues":  [
+                                                                                         "\u0027axes\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CameraUpVectorMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for CameraUpVector",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Alphamap",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Transparency map",
+                                                                "documentedValues":  [
+                                                                                         "array of 64 values from 0 to 1",
+                                                                                         "array of finite alpha values from 0 to 1"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZTick",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick values",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "vector of increasing values"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Selected",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection state",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontSizeMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for font size",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ClippingStyle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Clipping boundaries",
+                                                                "documentedValues":  [
+                                                                                         "\u00273dbox\u0027",
+                                                                                         "\u0027rectangle\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MinorGridLineWidth",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minor grid line width",
+                                                                "documentedValues":  [
+                                                                                         "0.5",
+                                                                                         "positive number"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZScale",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale of values along axis",
+                                                                "documentedValues":  [
+                                                                                         "\u0027linear\u0027",
+                                                                                         "\u0027log\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "InteractionOptions",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Options to customize interaction behavior",
+                                                                "documentedValues":  [
+                                                                                         "CartesianAxesInteractionOptions object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "PlotBoxAspectRatio",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Relative length of each axis",
+                                                                "documentedValues":  [
+                                                                                         "three-element vector of the form [px py pz]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Character slant",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027italic\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridColorMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Property for setting grid color",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YLabel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Text object for axis label",
+                                                                "documentedValues":  [
+                                                                                         "text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Projection",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Type of projection onto 2-D screen",
+                                                                "documentedValues":  [
+                                                                                         "\u0027orthographic\u0027",
+                                                                                         "\u0027perspective\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XLabel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Text object for axis label",
+                                                                "documentedValues":  [
+                                                                                         "text object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LineStyleOrderIndex",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Line style order index",
+                                                                "documentedValues":  [
+                                                                                         "1",
+                                                                                         "positive integer"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XTickMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick values",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CLim",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color limits",
+                                                                "documentedValues":  [
+                                                                                         "[0 1]",
+                                                                                         "two-element vector of the form [cmin cmax]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridAlpha",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Grid-line transparency",
+                                                                "documentedValues":  [
+                                                                                         "0.15",
+                                                                                         "value in the range [0,1]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "SubtitleFontWeight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Subtitle character thickness",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027bold\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "PickableParts",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Ability to capture mouse clicks",
+                                                                "documentedValues":  [
+                                                                                         "\u0027visible\u0027",
+                                                                                         "\u0027all\u0027",
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "GridLineWidthMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "How grid line width is set",
+                                                                "documentedValues":  [
+                                                                                         "\"auto\"",
+                                                                                         "\"manual\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Callback interruption",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Layout options",
+                                                                "documentedValues":  [
+                                                                                         "empty LayoutOptions array",
+                                                                                         "GridLayoutOptions object",
+                                                                                         "TiledChartLayoutOptions object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZTickLabelRotation",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick label rotation",
+                                                                "documentedValues":  [
+                                                                                         "0",
+                                                                                         "numeric value in degrees"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MinorGridAlphaMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for MinorGridAlpha",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CameraViewAngle",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Field of view",
+                                                                "documentedValues":  [
+                                                                                         "6.6086",
+                                                                                         "scalar angle in range [0,180)"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontUnits",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font size units",
+                                                                "documentedValues":  [
+                                                                                         "\u0027pixels\u0027",
+                                                                                         "\u0027inches\u0027",
+                                                                                         "\u0027centimeters\u0027",
+                                                                                         "\u0027normalized\u0027",
+                                                                                         "\u0027points\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Toolbar",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Toolbar with individual interaction buttons",
+                                                                "documentedValues":  [
+                                                                                         "AxesToolbar object",
+                                                                                         "[]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Deletion status",
+                                                                "documentedValues":  [
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZTickLabelRotationMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick label rotation",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CameraPositionMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for CameraPosition",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XDir",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "x -axis direction",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027reverse\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YAxis",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Axis ruler",
+                                                                "documentedValues":  [
+                                                                                         "ruler object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XMinorGrid",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minor grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YLimitMethod",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Axis limit selection method",
+                                                                "documentedValues":  [
+                                                                                         "\u0027tickaligned\u0027",
+                                                                                         "\u0027tight\u0027",
+                                                                                         "\u0027padded\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XMinorTick",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minor tick marks",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ColorOrderIndex",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Color order index",
+                                                                "documentedValues":  [
+                                                                                         "1",
+                                                                                         "positive integer"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Box",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Box outline",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZColorMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Property for setting z -axis grid color",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Character thickness",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027bold\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TitleFontWeight",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Title character thickness",
+                                                                "documentedValues":  [
+                                                                                         "\u0027bold\u0027",
+                                                                                         "\u0027normal\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZGrid",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Legend",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Legend associated with axes",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder",
+                                                                                         "Legend object"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YTickLabelRotation",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick label rotation",
+                                                                "documentedValues":  [
+                                                                                         "0",
+                                                                                         "numeric value in degrees"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "MinorGridAlpha",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minor grid line transparency",
+                                                                "documentedValues":  [
+                                                                                         "0.25",
+                                                                                         "value in the range [0,1]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZLim",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minimum and maximum axis limits",
+                                                                "documentedValues":  [
+                                                                                         "[0 1]",
+                                                                                         "two-element vector of the form [min max]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "LineStyleCyclingMethod",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "How to cycle through line styles",
+                                                                "documentedValues":  [
+                                                                                         "\"aftercolor\"",
+                                                                                         "\"beforecolor\"",
+                                                                                         "\"withcolor\""
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YTickLabel",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick labels",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "cell array of character vectors",
+                                                                                         "string array",
+                                                                                         "categorical array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "AlphaScale",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale for transparency mapping",
+                                                                "documentedValues":  [
+                                                                                         "\u0027linear\u0027",
+                                                                                         "\u0027log\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "HitTest",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Response to captured mouse clicks",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XLimitMethod",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Axis limit selection method",
+                                                                "documentedValues":  [
+                                                                                         "\u0027tickaligned\u0027",
+                                                                                         "\u0027tight\u0027",
+                                                                                         "\u0027padded\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TitleFontSizeMultiplier",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Scale factor for title font size",
+                                                                "documentedValues":  [
+                                                                                         "1.1",
+                                                                                         "numeric value greater than 0"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Layer",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Placement of grid lines and tick marks",
+                                                                "documentedValues":  [
+                                                                                         "\u0027bottom\u0027",
+                                                                                         "\u0027top\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ZDir",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "z -axis direction",
+                                                                "documentedValues":  [
+                                                                                         "\u0027normal\u0027",
+                                                                                         "\u0027reverse\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TickLabelInterpreter",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick label interpreter",
+                                                                "documentedValues":  [
+                                                                                         "\u0027tex\u0027",
+                                                                                         "\u0027latex\u0027",
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "User data",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "array"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YTickLabelRotationMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick label rotation",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YTick",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick values",
+                                                                "documentedValues":  [
+                                                                                         "[]",
+                                                                                         "vector of increasing values"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "TickDir",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Tick mark direction",
+                                                                "documentedValues":  [
+                                                                                         "\u0027in\u0027",
+                                                                                         "\u0027out\u0027",
+                                                                                         "\u0027both\u0027",
+                                                                                         "\u0027none\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YTickMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick values",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XTickLabelRotationMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for tick label rotation",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XAxisLocation",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "x -axis location",
+                                                                "documentedValues":  [
+                                                                                         "\u0027bottom\u0027",
+                                                                                         "\u0027top\u0027",
+                                                                                         "\u0027origin\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "State of visibility",
+                                                                "documentedValues":  [
+                                                                                         "\u0027on\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "XColorMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Property for setting x -axis grid color",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "Children",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Children",
+                                                                "documentedValues":  [
+                                                                                         "empty GraphicsPlaceholder array",
+                                                                                         "array of graphics objects"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YLim",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Minimum and maximum axis limits",
+                                                                "documentedValues":  [
+                                                                                         "[0 1]",
+                                                                                         "two-element vector of the form [min max]"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "YGrid",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Grid lines",
+                                                                "documentedValues":  [
+                                                                                         "\u0027off\u0027",
+                                                                                         "on/off logical value"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Creation function",
+                                                                "documentedValues":  [
+                                                                                         "\u0027\u0027",
+                                                                                         "function handle",
+                                                                                         "cell array",
+                                                                                         "character vector"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "ALimMode",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Selection mode for ALim",
+                                                                "documentedValues":  [
+                                                                                         "\u0027auto\u0027",
+                                                                                         "\u0027manual\u0027"
+                                                                                     ]
+                                                            }
+                                            }
+                       },
+                       {
+                           "path":  "FontName",
+                           "appliesTo":  [
+                                             "default"
+                                         ],
+                           "styleDetails":  {
+                                                "default":  {
+                                                                "summary":  "Font name",
+                                                                "documentedValues":  [
+                                                                                         "system supported font name"
+                                                                                     ]
+                                                            }
+                                            }
+                       }
+                   ]
+}

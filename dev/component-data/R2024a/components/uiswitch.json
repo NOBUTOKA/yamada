@@ -1,0 +1,984 @@
+{
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "factory":  "uiswitch",
+    "documentedTypes":  {
+                            "slider":  "matlab.ui.control.Switch",
+                            "rocker":  "matlab.ui.control.RockerSwitch",
+                            "toggle":  "matlab.ui.control.ToggleSwitch"
+                        },
+    "sources":  [
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uiswitch.html",
+                        "scope":  "Factory syntax, supported styles, and parent types."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.switch-properties.html",
+                        "scope":  "Public properties for slider."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rockerswitch-properties.html",
+                        "scope":  "Public properties for rocker."
+                    },
+                    {
+                        "type":  "mathworksDocumentation",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.toggleswitch-properties.html",
+                        "scope":  "Public properties for toggle."
+                    }
+                ],
+    "properties":  [
+                       {
+                           "path":  "BusyAction",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Callback queuing",
+                                                               "documentedValues":  [
+                                                                                        "\u0027queue\u0027",
+                                                                                        "\u0027cancel\u0027"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Callback queuing",
+                                                               "documentedValues":  [
+                                                                                        "\u0027queue\u0027",
+                                                                                        "\u0027cancel\u0027"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Callback queuing",
+                                                               "documentedValues":  [
+                                                                                        "\u0027queue\u0027",
+                                                                                        "\u0027cancel\u0027"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "FontSize",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Font size",
+                                                               "documentedValues":  [
+                                                                                        "positive number"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Font size",
+                                                               "documentedValues":  [
+                                                                                        "positive number"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Font size",
+                                                               "documentedValues":  [
+                                                                                        "positive number"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "ValueIndex",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Index of value in items",
+                                                               "documentedValues":  [
+                                                                                        "1",
+                                                                                        "positive integer"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Index of value in items",
+                                                               "documentedValues":  [
+                                                                                        "1",
+                                                                                        "positive integer"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Index of value in items",
+                                                               "documentedValues":  [
+                                                                                        "1",
+                                                                                        "positive integer"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "ValueChangedFcn",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Value changed callback",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Value changed callback",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Value changed callback",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Parent",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Parent container",
+                                                               "documentedValues":  [
+                                                                                        "Figure object",
+                                                                                        "Panel object",
+                                                                                        "Tab object",
+                                                                                        "ButtonGroup object",
+                                                                                        "GridLayout object"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Parent container",
+                                                               "documentedValues":  [
+                                                                                        "Figure object",
+                                                                                        "Panel object",
+                                                                                        "Tab object",
+                                                                                        "ButtonGroup object",
+                                                                                        "GridLayout object"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Parent container",
+                                                               "documentedValues":  [
+                                                                                        "Figure object",
+                                                                                        "Panel object",
+                                                                                        "Tab object",
+                                                                                        "ButtonGroup object",
+                                                                                        "GridLayout object"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "FontColor",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Font color",
+                                                               "documentedValues":  [
+                                                                                        "[0 0 0]",
+                                                                                        "RGB triplet",
+                                                                                        "hexadecimal color code",
+                                                                                        "\u0027r\u0027",
+                                                                                        "\u0027g\u0027",
+                                                                                        "\u0027b\u0027"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Font color",
+                                                               "documentedValues":  [
+                                                                                        "[0 0 0]",
+                                                                                        "RGB triplet",
+                                                                                        "hexadecimal color code",
+                                                                                        "\u0027r\u0027",
+                                                                                        "\u0027g\u0027",
+                                                                                        "\u0027b\u0027"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Font color",
+                                                               "documentedValues":  [
+                                                                                        "[0 0 0]",
+                                                                                        "RGB triplet",
+                                                                                        "hexadecimal color code",
+                                                                                        "\u0027r\u0027",
+                                                                                        "\u0027g\u0027",
+                                                                                        "\u0027b\u0027"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Value",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Value",
+                                                               "documentedValues":  [
+                                                                                        "element of Items",
+                                                                                        "element of ItemsData"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Value",
+                                                               "documentedValues":  [
+                                                                                        "element of Items",
+                                                                                        "element of ItemsData"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Value",
+                                                               "documentedValues":  [
+                                                                                        "element of Items",
+                                                                                        "element of ItemsData"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Visible",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "State of visibility",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "State of visibility",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "State of visibility",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Outer location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[79 100 88 20]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Outer location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[100 80 20 85]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Outer location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[100 80 20 85]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Deletion function",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Deletion function",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Deletion function",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Orientation",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Orientation",
+                                                               "documentedValues":  [
+                                                                                        "\u0027horizontal\u0027",
+                                                                                        "\u0027vertical\u0027"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Orientation",
+                                                               "documentedValues":  [
+                                                                                        "\u0027vertical\u0027",
+                                                                                        "\u0027horizontal\u0027"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Orientation",
+                                                               "documentedValues":  [
+                                                                                        "\u0027vertical\u0027",
+                                                                                        "\u0027horizontal\u0027"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Visibility of object handle",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "\u0027callback\u0027",
+                                                                                        "\u0027off\u0027"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Visibility of object handle",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "\u0027callback\u0027",
+                                                                                        "\u0027off\u0027"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Visibility of object handle",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "\u0027callback\u0027",
+                                                                                        "\u0027off\u0027"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Type",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Type of graphics object",
+                                                               "documentedValues":  [
+                                                                                        "\u0027uiswitch\u0027"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Type of graphics object",
+                                                               "documentedValues":  [
+                                                                                        "\u0027uirockerswitch\u0027"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Type of graphics object",
+                                                               "documentedValues":  [
+                                                                                        "\u0027uitoggleswitch\u0027"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Context menu",
+                                                               "documentedValues":  [
+                                                                                        "empty GraphicsPlaceholder array",
+                                                                                        "ContextMenu object"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Context menu",
+                                                               "documentedValues":  [
+                                                                                        "empty GraphicsPlaceholder array",
+                                                                                        "ContextMenu object"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Context menu",
+                                                               "documentedValues":  [
+                                                                                        "empty GraphicsPlaceholder array",
+                                                                                        "ContextMenu object"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Tooltip",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "character vector",
+                                                                                        "cell array of character vectors",
+                                                                                        "string array",
+                                                                                        "1-D categorical array"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Tooltip",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "character vector",
+                                                                                        "cell array of character vectors",
+                                                                                        "string array",
+                                                                                        "1-D categorical array"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Tooltip",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "character vector",
+                                                                                        "cell array of character vectors",
+                                                                                        "string array",
+                                                                                        "1-D categorical array"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Font weight",
+                                                               "documentedValues":  [
+                                                                                        "\u0027normal\u0027",
+                                                                                        "\u0027bold\u0027"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Font weight",
+                                                               "documentedValues":  [
+                                                                                        "\u0027normal\u0027",
+                                                                                        "\u0027bold\u0027"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Font weight",
+                                                               "documentedValues":  [
+                                                                                        "\u0027normal\u0027",
+                                                                                        "\u0027bold\u0027"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Font angle",
+                                                               "documentedValues":  [
+                                                                                        "\u0027normal\u0027",
+                                                                                        "\u0027italic\u0027"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Font angle",
+                                                               "documentedValues":  [
+                                                                                        "\u0027normal\u0027",
+                                                                                        "\u0027italic\u0027"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Font angle",
+                                                               "documentedValues":  [
+                                                                                        "\u0027normal\u0027",
+                                                                                        "\u0027italic\u0027"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Items",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Switch options",
+                                                               "documentedValues":  [
+                                                                                        "{\u0027Off\u0027,\u0027On\u0027}",
+                                                                                        "cell array of character vectors",
+                                                                                        "string array",
+                                                                                        "1 -by- 2 categorical array"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Switch options",
+                                                               "documentedValues":  [
+                                                                                        "{\u0027Off\u0027,\u0027On\u0027}",
+                                                                                        "cell array of character vectors",
+                                                                                        "string array",
+                                                                                        "1 -by- 2 categorical array"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Switch options",
+                                                               "documentedValues":  [
+                                                                                        "{\u0027Off\u0027,\u0027On\u0027}",
+                                                                                        "cell array of character vectors",
+                                                                                        "string array",
+                                                                                        "1 -by- 2 categorical array"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Creation function",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Creation function",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Creation function",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "function handle",
+                                                                                        "cell array",
+                                                                                        "character vector"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "UserData",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "User data",
+                                                               "documentedValues":  [
+                                                                                        "[]",
+                                                                                        "array"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "User data",
+                                                               "documentedValues":  [
+                                                                                        "[]",
+                                                                                        "array"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "User data",
+                                                               "documentedValues":  [
+                                                                                        "[]",
+                                                                                        "array"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Layout",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Layout options",
+                                                               "documentedValues":  [
+                                                                                        "empty LayoutOptions array",
+                                                                                        "GridLayoutOptions object"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Layout options",
+                                                               "documentedValues":  [
+                                                                                        "empty LayoutOptions array",
+                                                                                        "GridLayoutOptions object"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Layout options",
+                                                               "documentedValues":  [
+                                                                                        "empty LayoutOptions array",
+                                                                                        "GridLayoutOptions object"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Position",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[100 100 45 20]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[100 100 20 45]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[100 100 20 45]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Tag",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Object identifier",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "character vector",
+                                                                                        "string scalar"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Object identifier",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "character vector",
+                                                                                        "string scalar"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Object identifier",
+                                                               "documentedValues":  [
+                                                                                        "\u0027\u0027",
+                                                                                        "character vector",
+                                                                                        "string scalar"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Callback interruption",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Callback interruption",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Callback interruption",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "FontName",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Font name",
+                                                               "documentedValues":  [
+                                                                                        "system supported font name"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Font name",
+                                                               "documentedValues":  [
+                                                                                        "system supported font name"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Font name",
+                                                               "documentedValues":  [
+                                                                                        "system supported font name"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Deletion status",
+                                                               "documentedValues":  [
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Deletion status",
+                                                               "documentedValues":  [
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Deletion status",
+                                                               "documentedValues":  [
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "ItemsData",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Data associated with each element of Items",
+                                                               "documentedValues":  [
+                                                                                        "empty array ( [] )",
+                                                                                        "1-by-2 numeric array",
+                                                                                        "1-by-2 cell array"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Data associated with each element of Items",
+                                                               "documentedValues":  [
+                                                                                        "empty array ( [] )",
+                                                                                        "1-by-2 numeric array",
+                                                                                        "1-by-2 cell array"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Data associated with each element of Items",
+                                                               "documentedValues":  [
+                                                                                        "empty array ( [] )",
+                                                                                        "1-by-2 numeric array",
+                                                                                        "1-by-2 cell array"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Inner location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[100 100 45 20]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Inner location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[100 100 20 45]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Inner location and size of switch",
+                                                               "documentedValues":  [
+                                                                                        "[100 100 20 45]",
+                                                                                        "[left bottom width height]"
+                                                                                    ]
+                                                           }
+                                            }
+                       },
+                       {
+                           "path":  "Enable",
+                           "appliesTo":  [
+                                             "slider",
+                                             "rocker",
+                                             "toggle"
+                                         ],
+                           "styleDetails":  {
+                                                "slider":  {
+                                                               "summary":  "Operational state",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           },
+                                                "rocker":  {
+                                                               "summary":  "Operational state",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           },
+                                                "toggle":  {
+                                                               "summary":  "Operational state",
+                                                               "documentedValues":  [
+                                                                                        "\u0027on\u0027",
+                                                                                        "on/off logical value"
+                                                                                    ]
+                                                           }
+                                            }
+                       }
+                   ]
+}
