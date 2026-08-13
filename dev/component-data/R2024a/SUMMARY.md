@@ -9,6 +9,27 @@ The transcript is not a runtime dependency and must not be loaded by
 `ComponentCatalogLoader`. A listed property is not implicitly editable, safe for
 Preview, serializable, or supported by source generation.
 
+## Schema v2 design
+
+`schema.json` version 2 defines one concrete component variant per file. A
+variant has its own stable `id`, documented factory arguments, declared type,
+categories, and complete property surface. For example, `uibutton-push` and
+`uibutton-state` will be separate records even though both use `uibutton` as
+their factory. The runtime catalog does not yet support duplicate factories;
+that later implementation work is intentionally outside this documentation-data
+change.
+
+Properties remain a flat list. Each property carries `categoryId` and an order
+within that category, while `documentationCategories` records the source-page
+category heading and order. This avoids nesting that would make future shared
+property groups and parent-dependent surface composition awkward, without
+discarding the original documentation grouping. The source-page default is kept
+in `documentedDefault`, separately from the remaining accepted-value text in
+`documentedAcceptedValues`.
+
+The existing version 1 transcript files are retained temporarily as source data
+and will be migrated to the version 2 variant-file format in the next step.
+
 ## Source and verification rules
 
 - Transcribe public properties only from the linked, release-fixed MathWorks

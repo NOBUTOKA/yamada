@@ -2,117 +2,162 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://matlabappclassdesigner.dev/schemas/component-data/R2024a/component.schema.json",
   "title": "MatlabAppClassDesigner R2024a component documentation transcript",
-  "description": "Development-only transcript of public component properties from MathWorks documentation. It is not the runtime component catalog and it does not authorize editing or Safe Preview application.",
+  "description": "Development-only transcript of public MATLAB component documentation. Schema version 2 represents one concrete component variant per file. It is not the runtime component catalog and does not authorize editing or Safe Preview application.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schemaVersion",
     "matlabRelease",
+    "id",
     "factory",
-    "documentedTypes",
+    "creationArguments",
+    "declaredType",
     "sources",
+    "documentationCategories",
     "properties"
   ],
   "properties": {
     "schemaVersion": {
-      "const": 1
+      "const": 2
     },
     "matlabRelease": {
       "const": "R2024a"
     },
+    "id": {
+      "description": "Stable identifier for this concrete component variant, independent of its MATLAB factory name.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
     "factory": {
+      "description": "MATLAB factory function used to construct this variant.",
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*$"
     },
-    "documentedTypes": {
-      "type": "object",
-      "minProperties": 1,
-      "additionalProperties": {
-        "type": "string"
+    "creationArguments": {
+      "description": "Documented positional factory arguments that distinguish this variant. An empty array denotes the factory default.",
+      "type": "array",
+      "items": {
+        "type": ["string", "number", "boolean", "null"]
       }
     },
+    "declaredType": {
+      "description": "Concrete public MATLAB class documented for this variant.",
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9.]*$"
+    },
     "sources": {
+      "description": "Release-fixed MathWorks documentation pages used for this one variant.",
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "documentationCategories": {
+      "description": "Official property categories in source-page order. Categories are defined separately so properties remain flat and composable.",
       "type": "array",
       "minItems": 1,
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["type", "url", "scope"],
-        "properties": {
-          "type": {
-            "const": "mathworksDocumentation"
-          },
-          "url": {
-            "type": "string",
-            "format": "uri"
-          },
-          "scope": {
-            "type": "string"
-          },
-          "notes": {
-            "type": "string"
-          }
-        }
+        "$ref": "#/$defs/category"
       }
     },
     "properties": {
+      "description": "Public properties in source-page order. Each property references exactly one documented category.",
       "type": "array",
+      "minItems": 1,
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["path", "appliesTo"],
-        "properties": {
-          "path": {
-            "type": "string",
-            "pattern": "^[A-Za-z][A-Za-z0-9]*(\\.[A-Za-z][A-Za-z0-9]*)?$"
-          },
-          "appliesTo": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "string"
-            },
-            "uniqueItems": true
-          },
-          "documentationSection": {
-            "type": "string"
-          },
-          "summary": {
-            "type": "string"
-          },
-          "documentedValues": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "styleDetails": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "summary": {
-                  "type": "string"
-                },
-                "documentedValues": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "documentedReadOnly": {
-                  "type": "boolean"
-                }
-              }
-            }
-          },
-          "documentedReadOnly": {
-            "type": "boolean"
-          },
-          "notes": {
+        "$ref": "#/$defs/property"
+      }
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "url", "scope"],
+      "properties": {
+        "type": {
+          "const": "mathworksDocumentation"
+        },
+        "url": {
+          "description": "Must be a release-fixed R2024a MathWorks documentation URL.",
+          "type": "string",
+          "pattern": "^https://www\\.mathworks\\.com/help/releases/r2024a/"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "order"],
+      "properties": {
+        "id": {
+          "description": "Stable local identifier used by properties in this file.",
+          "type": "string",
+          "pattern": "^[a-z][A-Za-z0-9]*$"
+        },
+        "displayName": {
+          "description": "Category heading transcribed from the official property page.",
+          "type": "string",
+          "minLength": 1
+        },
+        "order": {
+          "description": "One-based appearance order on the official property page.",
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "categoryId",
+        "order",
+        "summary"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*(\\.[A-Za-z][A-Za-z0-9]*)?$"
+        },
+        "categoryId": {
+          "description": "Identifier of this property's official documentation category.",
+          "type": "string",
+          "pattern": "^[a-z][A-Za-z0-9]*$"
+        },
+        "order": {
+          "description": "One-based appearance order within its documentation category.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "summary": {
+          "description": "Official property heading summary.",
+          "type": "string",
+          "minLength": 1
+        },
+        "documentedDefault": {
+          "description": "Default-value text transcribed from the official heading, when supplied.",
+          "type": "string",
+          "minLength": 1
+        },
+        "documentedAcceptedValues": {
+          "description": "Accepted-value text transcribed from the official heading, excluding documentedDefault.",
+          "type": "array",
+          "items": {
             "type": "string"
           }
+        },
+        "documentedReadOnly": {
+          "description": "Present only when the official page explicitly marks the property read-only.",
+          "type": "boolean"
         }
       }
     }
