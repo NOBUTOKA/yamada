@@ -223,6 +223,8 @@ classdef ComponentCatalogLoader
             end
             properties = macd.model.PropertyDefinition.empty(0, 1);
             categories = macd.catalog.ComponentCatalogLoader.objectList(document.categories, context + ".categories");
+            macd.catalog.ComponentCatalogLoader.validateProfileDelta( ...
+                profiles(char(profileId)), document.profileDelta, categories, context + ".profileDelta");
             for categoryIndex = 1:numel(categories)
                 category = categories{categoryIndex};
                 categoryContext = context + ".categories[" + string(categoryIndex) + "]";
@@ -262,6 +264,60 @@ classdef ComponentCatalogLoader
             definition = macd.model.ComponentDefinition.fromPaths(factory, declaredType, parents, ...
                 document.isRoot, macd.catalog.ComponentCatalogLoader.creationArguments( ...
                 document.creationArguments, context + ".creationArguments"), properties, capabilities);
+        end
+
+        function validateProfileDelta(profileOrder, delta, categories, context)
+            % validateProfileDelta Ensure profile omissions and insertions explain category order.
+            arguments (Input)
+                profileOrder (1, :) string
+                delta (1, 1) struct
+                categories cell
+                context (1, 1) string
+            end
+
+            macd.catalog.ComponentCatalogLoader.requireFields(delta, ...
+                ["omittedCategoryIds", "insertions"], context);
+            macd.catalog.ComponentCatalogLoader.rejectUnknownFields(delta, ...
+                ["omittedCategoryIds", "insertions"], context);
+            omitted = macd.catalog.ComponentCatalogLoader.stringList(delta.omittedCategoryIds, ...
+                context + ".omittedCategoryIds");
+            if numel(unique(omitted)) ~= numel(omitted) || any(~ismember(omitted, profileOrder))
+                macd.catalog.ComponentCatalogLoader.fail(context + ".omittedCategoryIds", ...
+                    "Profile omissions must be unique profile category IDs.");
+            end
+            expectedCore = profileOrder(~ismember(profileOrder, omitted));
+            actual = strings(1, numel(categories));
+            for index = 1:numel(categories)
+                actual(index) = macd.catalog.ComponentCatalogLoader.scalarString( ...
+                    categories{index}.id, context + ".categories.id");
+            end
+            if numel(unique(actual)) ~= numel(actual)
+                macd.catalog.ComponentCatalogLoader.fail(context, "Category IDs must be unique.");
+            end
+            if ~isequal(actual(ismember(actual, expectedCore)), expectedCore)
+                macd.catalog.ComponentCatalogLoader.fail(context, ...
+                    "Profile categories must retain their declared relative order.");
+            end
+            if isempty(delta.insertions)
+                insertions = cell(1, 0);
+            else
+                insertions = macd.catalog.ComponentCatalogLoader.objectList(delta.insertions, context + ".insertions");
+            end
+            insertedIds = strings(1, numel(insertions));
+            for index = 1:numel(insertions)
+                insertion = insertions{index};
+                macd.catalog.ComponentCatalogLoader.requireFields(insertion, ...
+                    ["categoryId", "documentedOrder", "afterCategoryId", "beforeCategoryId"], ...
+                    context + ".insertions[" + string(index) + "]");
+                insertedIds(index) = macd.catalog.ComponentCatalogLoader.scalarString( ...
+                    insertion.categoryId, context + ".insertions[" + string(index) + "].categoryId");
+            end
+            if numel(unique(insertedIds)) ~= numel(insertedIds) || ...
+                    any(ismember(insertedIds, profileOrder)) || ...
+                    ~isequal(sort(insertedIds), sort(actual(~ismember(actual, expectedCore))))
+                macd.catalog.ComponentCatalogLoader.fail(context + ".insertions", ...
+                    "Profile insertions must own every and only non-profile category.");
+            end
         end
 
         function validateVersion2GroupEntry(group, entry, context)

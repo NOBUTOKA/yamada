@@ -205,3 +205,22 @@ owned by exactly one expanded category surface, every concrete variant has a
 deterministic inspector category order, every exception is explicit, and the
 grouped representation reconstructs the audited intrinsic and parent-effective
 surfaces without capability drift.
+
+## Step 13 completion record (2026-08-15)
+
+The reviewed R2024a grouping design was promoted to
+`resources/component-catalog/v2` by
+`PromoteGroupingToRuntimeCatalog.ps1`. The generated runtime catalog contains
+48 concrete variants, 310 reusable property groups, and the five reviewed
+category-order profiles. The v2 loader validates group ownership, concrete
+variant selection, profile references and deltas, and direct-parent context
+composition. `ComponentRegistryBaselineTest` compares every runtime variant's
+ordered properties and capability metadata with the audited development ledger;
+the generated grouping artifact separately records 48/48 intrinsic and 144/144
+parent-effective expansion parity. Inspector, model/history, Safe Preview,
+source parsing, and generation use the same variant-aware registry. The
+licensed MATLAB R2024a full unit suite passed 83 tests with zero failures after
+promotion.
+
+This record completes Step 13 only. Phase 6.7 and 6.8 completion status remains
+subject to the separate Phase 6 plan review.

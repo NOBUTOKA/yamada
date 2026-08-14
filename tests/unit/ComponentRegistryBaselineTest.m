@@ -45,10 +45,14 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             root = macd.catalog.ComponentCatalogLoader.defaultCatalogRoot();
             manifest = jsondecode(fileread(fullfile(root, "catalog.json")));
             groups = jsondecode(fileread(fullfile(root, "property-groups", "groups.json")));
+            profiles = jsondecode(fileread(fullfile(root, "order-profiles.json")));
             testCase.verifyEqual(manifest.schemaVersion, 2);
             testCase.verifyEqual(string(manifest.matlabRelease), "R2024a");
             testCase.verifyEqual(string(manifest.sourceGroupingSha256), string(groups.inputSha256));
             testCase.verifyEqual(numel(groups.groups), 310);
+            testCase.verifyEqual(sort(string(manifest.orderProfileFiles)), "order-profiles.json");
+            testCase.verifyEqual(sort(string({profiles.profiles.id})), ...
+                ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
         end
 
         function effectivePropertiesRemainUniqueForEveryConcreteVariant(testCase)
