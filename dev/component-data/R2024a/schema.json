@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://matlabappclassdesigner.dev/schemas/component-data/R2024a/component.schema.json",
   "title": "MatlabAppClassDesigner R2024a component documentation transcript",
-  "description": "Development-only transcript of public MATLAB component documentation. Schema version 2 represents one concrete component variant per file. It is not the runtime component catalog and does not authorize editing or Safe Preview application.",
+  "description": "Development-only transcript of public MATLAB component documentation and release audit decisions. Schema version 3 represents one concrete component variant per file. It is not the runtime component catalog and does not authorize editing or Safe Preview application.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -18,7 +18,7 @@
   ],
   "properties": {
     "schemaVersion": {
-      "const": 2
+      "const": 3
     },
     "matlabRelease": {
       "const": "R2024a"
@@ -121,7 +121,13 @@
         "path",
         "categoryId",
         "order",
-        "summary"
+        "summary",
+        "runtimeSetAccess",
+        "valueContract",
+        "affectsDisplay",
+        "previewPolicy",
+        "requiredEditor",
+        "disposition"
       ],
       "properties": {
         "path": {
@@ -158,6 +164,92 @@
         "documentedReadOnly": {
           "description": "Present only when the official page explicitly marks the property read-only.",
           "type": "boolean"
+        },
+        "runtimeSetAccess": {
+          "description": "Target-release meta.property SetAccess observation. This supporting evidence does not override documentedReadOnly.",
+          "enum": ["public", "restricted", "unresolved"]
+        },
+        "valueContract": {
+          "description": "Normalized semantic value contract. Original documentation text remains in documentedAcceptedValues.",
+          "$ref": "#/$defs/valueContract"
+        },
+        "affectsDisplay": {
+          "description": "Whether changing this property can affect the visual or interactive result Safe Preview is intended to represent.",
+          "type": "boolean"
+        },
+        "previewPolicy": {
+          "description": "Safe Preview assignment policy, independent of editability.",
+          "enum": ["apply", "adapt", "skip", "notRendered"]
+        },
+        "requiredEditor": {
+          "description": "Semantic editor requirement for an editable property; this does not assert adapter implementation status.",
+          "enum": ["none", "text", "logical", "onOff", "enum", "number", "numericVector", "numericMatrix", "color", "stringList", "asset", "url", "dateTime", "tableData", "componentReference", "structuredData"]
+        },
+        "disposition": {
+          "description": "Initial product disposition, independent of current adapter availability.",
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "valueContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "matlabClasses", "shape", "allowsEmpty", "constraints"],
+      "properties": {
+        "kind": {
+          "enum": ["text", "logical", "onOff", "enum", "number", "numericArray", "color", "stringList", "filePath", "url", "dateTime", "tabularData", "callback", "componentReference", "graphicsObject", "arbitraryData", "opaque"]
+        },
+        "matlabClasses": {
+          "description": "Normalized accepted MATLAB value classes. any and unknown are audit markers rather than MATLAB class names.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": ["char", "string", "cell", "categorical", "logical", "double", "datetime", "duration", "calendarDuration", "table", "timetable", "function_handle", "handle", "any", "unknown"]
+          },
+          "uniqueItems": true
+        },
+        "shape": {
+          "enum": ["scalar", "vector", "matrix", "fixedLengthVector", "propertyDependent", "any"]
+        },
+        "allowsEmpty": {
+          "type": "boolean"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/valueConstraint"
+          }
+        }
+      }
+    },
+    "valueConstraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "property"],
+      "properties": {
+        "kind": {
+          "enum": ["sameLengthAs", "memberOf", "withinLimitsOf", "sameShapeAs", "pairedWith"]
+        },
+        "property": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*(\\.[A-Za-z][A-Za-z0-9]*)?$"
+        }
+      }
+    },
+    "disposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reasonCodes"],
+      "properties": {
+        "kind": {
+          "enum": ["editable", "readOnly", "omitted"]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "enum": ["documentedReadOnly", "runtimeSetRestricted", "hierarchyManaged", "callbackManaged", "callbackExecutable", "handleReference", "arbitraryData", "externalResource", "lifecycleInternal", "lowDesignTimeValue", "unsafeToEvaluate", "sourceOnly"]
+          },
+          "uniqueItems": true
         }
       }
     }

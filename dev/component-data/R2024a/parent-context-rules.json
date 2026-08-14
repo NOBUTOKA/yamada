@@ -1,0 +1,104 @@
+{
+    "$schema":  "parent-context-rules.schema.json",
+    "schemaVersion":  1,
+    "matlabRelease":  "R2024a",
+    "contexts":  [
+                     {
+                         "id":  "absolute",
+                         "parentFactories":  [
+                                                 "uifigure",
+                                                 "uipanel",
+                                                 "uitab",
+                                                 "uibuttongroup"
+                                             ]
+                     },
+                     {
+                         "id":  "grid",
+                         "parentFactories":  [
+                                                 "uigridlayout"
+                                             ]
+                     },
+                     {
+                         "id":  "structural",
+                         "parentFactories":  [
+                                                 "uitabgroup",
+                                                 "uitree",
+                                                 "uitreenode",
+                                                 "uimenu",
+                                                 "uitoolbar"
+                                             ]
+                     }
+                 ],
+    "rules":  [
+                  {
+                      "contextId":  "grid",
+                      "scope":  "eligibleDirectChild",
+                      "effect":  "contributed",
+                      "path":  "Layout.Row",
+                      "valueContract":  {
+                                            "kind":  "numericArray",
+                                            "matlabClasses":  [
+                                                                  "double"
+                                                              ],
+                                            "shape":  "propertyDependent",
+                                            "allowsEmpty":  false,
+                                            "constraints":  [
+
+                                                            ]
+                                        },
+                      "affectsDisplay":  true,
+                      "previewPolicy":  "apply",
+                      "requiredEditor":  "numericVector",
+                      "disposition":  {
+                                          "kind":  "editable",
+                                          "reasonCodes":  [
+
+                                                          ]
+                                      }
+                  },
+                  {
+                      "contextId":  "grid",
+                      "scope":  "eligibleDirectChild",
+                      "effect":  "contributed",
+                      "path":  "Layout.Column",
+                      "valueContract":  {
+                                            "kind":  "numericArray",
+                                            "matlabClasses":  [
+                                                                  "double"
+                                                              ],
+                                            "shape":  "propertyDependent",
+                                            "allowsEmpty":  false,
+                                            "constraints":  [
+
+                                                            ]
+                                        },
+                      "affectsDisplay":  true,
+                      "previewPolicy":  "apply",
+                      "requiredEditor":  "numericVector",
+                      "disposition":  {
+                                          "kind":  "editable",
+                                          "reasonCodes":  [
+
+                                                          ]
+                                      }
+                  },
+                  {
+                      "contextId":  "absolute",
+                      "scope":  "eligibleDirectChild",
+                      "effect":  "constrained",
+                      "path":  "Position"
+                  },
+                  {
+                      "contextId":  "grid",
+                      "scope":  "eligibleDirectChild",
+                      "effect":  "suppressed",
+                      "path":  "Position"
+                  },
+                  {
+                      "contextId":  "structural",
+                      "scope":  "eligibleDirectChild",
+                      "effect":  "suppressed",
+                      "path":  "Position"
+                  }
+              ]
+}

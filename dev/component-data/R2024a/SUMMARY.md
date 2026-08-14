@@ -9,9 +9,9 @@ The transcript is not a runtime dependency and must not be loaded by
 `ComponentCatalogLoader`. A listed property is not implicitly editable, safe for
 Preview, serializable, or supported by source generation.
 
-## Schema v2 design
+## Schema v3 design
 
-`schema.json` version 2 defines one concrete component variant per file. A
+`schema.json` version 3 defines one concrete component variant per file. A
 variant has its own stable `id`, documented factory arguments, declared type,
 categories, and complete property surface. For example, `uibutton-push` and
 `uibutton-state` are separate records even though both use `uibutton` as
@@ -27,8 +27,14 @@ discarding the original documentation grouping. The source-page default is kept
 in `documentedDefault`, separately from the remaining accepted-value text in
 `documentedAcceptedValues`.
 
-The 48 component files in [`components`](components) are the complete version 2
-transcript. They were regenerated from their linked R2024a reference pages.
+The 48 component files in [`components`](components) are the complete version 3
+transcript. They were regenerated from their linked R2024a reference pages and
+carry an initial product audit for every property: normalized value contract,
+display effect, Safe Preview policy, required editor kind, and disposition.
+Variant applicability is implicit in the containing file. Parent-dependent
+geometry is recorded separately in
+[`parent-context-rules.json`](parent-context-rules.json), so `Layout.Row` and
+`Layout.Column` are not duplicated into each child variant.
 
 ## Source and verification rules
 
@@ -94,5 +100,12 @@ archive pages. Each property records its source-page category and, where the
 reference supplies them, its default and accepted-value text separately.
 The property sections were also re-read for the R2024a prose `This property is
 read-only.`; 162 entries explicitly record `documentedReadOnly: true`.
+The read-only documentation remains authoritative; R2024a `meta.property`
+observations are recorded separately as 1,565 `public`, 157 `restricted`, and
+103 `unresolved` `runtimeSetAccess` values.
 
 The component-file contract is defined in [`schema.json`](schema.json).
+Parent-dependent effective-surface rules are defined in
+[`parent-context-rules.json`](parent-context-rules.json). The release-independent
+audit procedure is
+[`../PROPERTY_AUDIT_GUIDELINES.md`](../PROPERTY_AUDIT_GUIDELINES.md).
