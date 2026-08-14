@@ -539,17 +539,33 @@ editable property names implemented allowlisted behavior. Button and the other
 families work end to end through JSON, loader, registry, inspector,
 model/history, Preview, validation, and source generation.
 
-### 6.9 Add specialized reference and file-backed editors
+### 6.9 Add audited specialized value editors
 
-- [ ] Add model-owned selectors for `ContextMenu` and approved references.
-- [ ] Preserve unsupported handle expressions as read-only source.
-- [ ] Add `Icon`, `ImageSource`, and similar path editors without file copying,
-  movement, or embedding.
-- [ ] Explain and test relative paths from the app source location.
-- [ ] Finish specialized list, color, range, and style adapters required by audit.
+- [ ] Add an `asset` editor for `Icon`, `ImageSource`, `HTMLSource`, and similar
+  resource-valued properties without file copying, movement, or embedding.
+  Define and test source-relative path handling and the supported predefined
+  asset forms.
+- [ ] Add a `url` editor, reusing the text-control presentation where suitable
+  while validating and round-tripping supported URL values safely.
+- [ ] Add `dateTime` editors for scalar dates, date limits, and date lists;
+  retain values outside the implemented date contract as typed read-only source.
+- [ ] Add a `structuredData` editor with an explicitly allowlisted literal
+  contract for `ItemsData`, `NodeData`, and equivalent arbitrary-data values.
+  Preserve values outside that contract as read-only rather than evaluating or
+  coercing them.
+- [ ] Add `tableData` editors for `uitable` data and its audited column and
+  selection configuration properties. Define each supported table shape and
+  column-oriented representation before permitting model mutation.
+- [ ] Preserve unsupported handle expressions, component references, and other
+  deferred structured values as typed read-only source.
+- [ ] Defer the model-owned `ContextMenu`/component-reference selector and the
+  `numericMatrix` editor to a later phase; their catalog entries remain visible
+  through the read-only fallback until separately scoped.
 
-**Exit gate:** specialized values round-trip without evaluation, asset mutation,
-or conversion of unsupported expressions to strings.
+**Exit gate:** asset, URL, date/time, structured-data, and table-data values
+round-trip only through their audited contracts, without evaluation, asset
+mutation, or conversion of unsupported expressions to strings. Deferred
+component-reference and numeric-matrix values remain readable and non-editable.
 
 ### 6.10 Complete Preview, validation, generation, and packaging
 
