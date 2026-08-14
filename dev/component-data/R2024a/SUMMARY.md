@@ -132,3 +132,12 @@ it separates same-name category conflicts requiring Step 4 classification from
 ordered strict core/extension candidates requiring Step 6 judgment. These
 derived artifacts do not change the transcript or promote any property group to
 the runtime catalog.
+
+Steps 7 through 11 use the human-reviewed
+[`grouping-design-input.json`](grouping-design-input.json) and its
+[`schema`](grouping-design-input.schema.json). Run
+[`../GenerateGroupingDesign.ps1`](../GenerateGroupingDesign.ps1) after the
+baseline generator. It writes the proposed reusable category-order profiles,
+every variant's group ownership and order delta, and intrinsic plus
+parent-context expansion-parity reports to [`grouping`](grouping). These remain
+development design artifacts until a later family-by-family runtime promotion.

@@ -1,0 +1,1657 @@
+{
+    "artifactVersion":  1,
+    "matlabRelease":  "R2024a",
+    "inputSha256":  "6117c154a96b37555eb9be5b97f2fa37b6fcaa605dc9a87226c80ce004a24f78",
+    "profiles":  [
+                     {
+                         "id":  "axes",
+                         "categoryOrder":  [
+                                               "font",
+                                               "ticks",
+                                               "rulers",
+                                               "grids",
+                                               "labels",
+                                               "multipleplots",
+                                               "colorandtransparencymaps",
+                                               "boxstyling",
+                                               "position",
+                                               "view",
+                                               "interactivity",
+                                               "callbacks",
+                                               "callbackexecutioncontrol",
+                                               "parentchild",
+                                               "identifiers"
+                                           ],
+                         "assignedVariantIds":  [
+                                                    "axes",
+                                                    "geoaxes",
+                                                    "polaraxes",
+                                                    "uiaxes"
+                                                ]
+                     },
+                     {
+                         "id":  "contextMenu",
+                         "categoryOrder":  [
+                                               "callbacks",
+                                               "callbackexecutioncontrol",
+                                               "parentchild",
+                                               "identifiers"
+                                           ],
+                         "assignedVariantIds":  [
+                                                    "uicontextmenu"
+                                                ]
+                     },
+                     {
+                         "id":  "menuToolbar",
+                         "categoryOrder":  [
+                                               "interactivity",
+                                               "callbacks",
+                                               "callbackexecutioncontrol",
+                                               "parentchild",
+                                               "identifiers"
+                                           ],
+                         "assignedVariantIds":  [
+                                                    "uimenu",
+                                                    "uipushtool",
+                                                    "uitoggletool",
+                                                    "uitoolbar",
+                                                    "uitreenode"
+                                                ]
+                     },
+                     {
+                         "id":  "standardControl",
+                         "categoryOrder":  [
+                                               "interactivity",
+                                               "position",
+                                               "callbacks",
+                                               "callbackexecutioncontrol",
+                                               "parentchild",
+                                               "identifiers"
+                                           ],
+                         "assignedVariantIds":  [
+                                                    "uibuttongroup",
+                                                    "uibutton-push",
+                                                    "uibutton-state",
+                                                    "uicheckbox",
+                                                    "uicolorpicker",
+                                                    "uidatepicker",
+                                                    "uidropdown",
+                                                    "uieditfield-numeric",
+                                                    "uieditfield-text",
+                                                    "uigauge-circular",
+                                                    "uigauge-linear",
+                                                    "uigauge-ninetydegree",
+                                                    "uigauge-semicircular",
+                                                    "uigridlayout",
+                                                    "uihtml",
+                                                    "uihyperlink",
+                                                    "uiimage",
+                                                    "uiknob-continuous",
+                                                    "uiknob-discrete",
+                                                    "uilabel",
+                                                    "uilamp",
+                                                    "uilistbox",
+                                                    "uipanel",
+                                                    "uiradiobutton",
+                                                    "uislider-range",
+                                                    "uislider-slider",
+                                                    "uispinner",
+                                                    "uiswitch-rocker",
+                                                    "uiswitch-slider",
+                                                    "uiswitch-toggle",
+                                                    "uitab",
+                                                    "uitabgroup",
+                                                    "uitable",
+                                                    "uitextarea",
+                                                    "uitogglebutton",
+                                                    "uitree",
+                                                    "uitree-checkbox"
+                                                ]
+                     },
+                     {
+                         "id":  "uifigure",
+                         "categoryOrder":  [
+                                               "windowappearance",
+                                               "positionandsize",
+                                               "plotting",
+                                               "mousepointer",
+                                               "interactivity",
+                                               "commoncallbacks",
+                                               "keyboardcallbacks",
+                                               "windowcallbacks",
+                                               "callbackexecutioncontrol",
+                                               "parentchildren",
+                                               "identifiers"
+                                           ],
+                         "assignedVariantIds":  [
+                                                    "uifigure"
+                                                ]
+                     }
+                 ],
+    "assignments":  [
+                        {
+                            "componentId":  "axes",
+                            "profileId":  "axes",
+                            "effectiveCategoryOrder":  [
+                                                           "font",
+                                                           "ticks",
+                                                           "rulers",
+                                                           "grids",
+                                                           "labels",
+                                                           "multipleplots",
+                                                           "colorandtransparencymaps",
+                                                           "boxstyling",
+                                                           "position",
+                                                           "view",
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+
+                                           ]
+                        },
+                        {
+                            "componentId":  "geoaxes",
+                            "profileId":  "axes",
+                            "effectiveCategoryOrder":  [
+                                                           "maps",
+                                                           "font",
+                                                           "ticks",
+                                                           "rulers",
+                                                           "grids",
+                                                           "labels",
+                                                           "multipleplots",
+                                                           "colorandtransparencymaps",
+                                                           "boxstyling",
+                                                           "position",
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+                                                       "view"
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "maps",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "font"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "polaraxes",
+                            "profileId":  "axes",
+                            "effectiveCategoryOrder":  [
+                                                           "font",
+                                                           "ticks",
+                                                           "rulers",
+                                                           "gridlines",
+                                                           "labels",
+                                                           "multipleplots",
+                                                           "colorandtransparencymaps",
+                                                           "boxstyling",
+                                                           "position",
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+                                                       "grids",
+                                                       "view"
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "gridlines",
+                                                   "documentedOrder":  4,
+                                                   "afterCategoryId":  "rulers",
+                                                   "beforeCategoryId":  "labels"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uiaxes",
+                            "profileId":  "axes",
+                            "effectiveCategoryOrder":  [
+                                                           "font",
+                                                           "ticks",
+                                                           "rulers",
+                                                           "grids",
+                                                           "labels",
+                                                           "multipleplots",
+                                                           "colorandtransparencymaps",
+                                                           "boxstyling",
+                                                           "position",
+                                                           "view",
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+
+                                           ]
+                        },
+                        {
+                            "componentId":  "uibuttongroup",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "title",
+                                                           "colorandstyling",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers",
+                                                           "uifigurebasedappsonly",
+                                                           "figurebasedappsonly"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "title",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "colorandstyling",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "uifigurebasedappsonly",
+                                                   "documentedOrder":  10,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               },
+                                               {
+                                                   "categoryId":  "figurebasedappsonly",
+                                                   "documentedOrder":  11,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uibutton-push",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "button",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "button",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uibutton-state",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "button",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "button",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uicheckbox",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "checkbox",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "checkbox",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uicolorpicker",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "colorpicker",
+                                                           "color",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "colorpicker",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "color",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uicontextmenu",
+                            "profileId":  "contextMenu",
+                            "effectiveCategoryOrder":  [
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+
+                                           ]
+                        },
+                        {
+                            "componentId":  "uidatepicker",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "datepicker",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "datepicker",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uidropdown",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "dropdown",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "dropdown",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uieditfield-numeric",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "value",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "value",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uieditfield-text",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "text",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "text",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uifigure",
+                            "profileId":  "uifigure",
+                            "effectiveCategoryOrder":  [
+                                                           "windowappearance",
+                                                           "positionandsize",
+                                                           "plotting",
+                                                           "mousepointer",
+                                                           "interactivity",
+                                                           "commoncallbacks",
+                                                           "keyboardcallbacks",
+                                                           "windowcallbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchildren",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+
+                                           ]
+                        },
+                        {
+                            "componentId":  "uigauge-circular",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "gauge",
+                                                           "ticks",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "gauge",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "ticks",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uigauge-linear",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "gauge",
+                                                           "ticks",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "gauge",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "ticks",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uigauge-ninetydegree",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "gauge",
+                                                           "ticks",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "gauge",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "ticks",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uigauge-semicircular",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "gauge",
+                                                           "ticks",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "gauge",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "ticks",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uigridlayout",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "grid",
+                                                           "color",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "grid",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "color",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uihtml",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "html",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "html",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uihyperlink",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "hyperlink",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "hyperlink",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uiimage",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "image",
+                                                           "color",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "image",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "color",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uiknob-continuous",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "knob",
+                                                           "ticks",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "knob",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "ticks",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uiknob-discrete",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "knob",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "knob",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uilabel",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "text",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "text",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uilamp",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "color",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "color",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uilistbox",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "listbox",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "listbox",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uimenu",
+                            "profileId":  "menuToolbar",
+                            "effectiveCategoryOrder":  [
+                                                           "menu",
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers",
+                                                           "uifigurebasedappsonly"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "menu",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "uifigurebasedappsonly",
+                                                   "documentedOrder":  7,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uipanel",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "title",
+                                                           "colorandstyling",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers",
+                                                           "uifigurebasedappsonly",
+                                                           "figurebasedappsonly"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "title",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "colorandstyling",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "uifigurebasedappsonly",
+                                                   "documentedOrder":  10,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               },
+                                               {
+                                                   "categoryId":  "figurebasedappsonly",
+                                                   "documentedOrder":  11,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uipushtool",
+                            "profileId":  "menuToolbar",
+                            "effectiveCategoryOrder":  [
+                                                           "pushtool",
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "pushtool",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uiradiobutton",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "button",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "button",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uislider-range",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "slider",
+                                                           "ticks",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "slider",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "ticks",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uislider-slider",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "slider",
+                                                           "ticks",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "slider",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "ticks",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  3,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uispinner",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "value",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "value",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uiswitch-rocker",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "switch",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "switch",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uiswitch-slider",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "switch",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "switch",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uiswitch-toggle",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "switch",
+                                                           "font",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "switch",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitab",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "titleandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers",
+                                                           "uifigurebasedappsonly"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "titleandcolor",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "uifigurebasedappsonly",
+                                                   "documentedOrder":  8,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitabgroup",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "tabs",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers",
+                                                           "uifigurebasedappsonly"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "tabs",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "uifigurebasedappsonly",
+                                                   "documentedOrder":  8,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitable",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "table",
+                                                           "font",
+                                                           "interactivity",
+                                                           "colorandstyling",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers",
+                                                           "uifigurebasedappsonly",
+                                                           "figurebasedappsonly"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "table",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "font",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "colorandstyling",
+                                                   "documentedOrder":  4,
+                                                   "afterCategoryId":  "interactivity",
+                                                   "beforeCategoryId":  "position"
+                                               },
+                                               {
+                                                   "categoryId":  "uifigurebasedappsonly",
+                                                   "documentedOrder":  10,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               },
+                                               {
+                                                   "categoryId":  "figurebasedappsonly",
+                                                   "documentedOrder":  11,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitextarea",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "text",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "text",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitogglebutton",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "button",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "button",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitoggletool",
+                            "profileId":  "menuToolbar",
+                            "effectiveCategoryOrder":  [
+                                                           "toggletool",
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "toggletool",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitoolbar",
+                            "profileId":  "menuToolbar",
+                            "effectiveCategoryOrder":  [
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers",
+                                                           "uifigurebasedappsonly"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "uifigurebasedappsonly",
+                                                   "documentedOrder":  6,
+                                                   "afterCategoryId":  "identifiers",
+                                                   "beforeCategoryId":  null
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitree",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "nodes",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "nodes",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitree-checkbox",
+                            "profileId":  "standardControl",
+                            "effectiveCategoryOrder":  [
+                                                           "nodes",
+                                                           "fontandcolor",
+                                                           "interactivity",
+                                                           "position",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "nodes",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               },
+                                               {
+                                                   "categoryId":  "fontandcolor",
+                                                   "documentedOrder":  2,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        },
+                        {
+                            "componentId":  "uitreenode",
+                            "profileId":  "menuToolbar",
+                            "effectiveCategoryOrder":  [
+                                                           "node",
+                                                           "interactivity",
+                                                           "callbacks",
+                                                           "callbackexecutioncontrol",
+                                                           "parentchild",
+                                                           "identifiers"
+                                                       ],
+                            "omittedCategoryIds":  [
+
+                                                   ],
+                            "insertions":  [
+                                               {
+                                                   "categoryId":  "node",
+                                                   "documentedOrder":  1,
+                                                   "afterCategoryId":  null,
+                                                   "beforeCategoryId":  "interactivity"
+                                               }
+                                           ]
+                        }
+                    ]
+}

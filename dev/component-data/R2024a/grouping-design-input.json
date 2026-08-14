@@ -1,0 +1,50 @@
+{
+  "$schema": "grouping-design-input.schema.json",
+  "schemaVersion": 1,
+  "matlabRelease": "R2024a",
+  "profileDefinitions": [
+    {
+      "id": "axes",
+      "categoryOrder": ["font", "ticks", "rulers", "grids", "labels", "multipleplots", "colorandtransparencymaps", "boxstyling", "position", "view", "interactivity", "callbacks", "callbackexecutioncontrol", "parentchild", "identifiers"]
+    },
+    {
+      "id": "standardControl",
+      "categoryOrder": ["interactivity", "position", "callbacks", "callbackexecutioncontrol", "parentchild", "identifiers"]
+    },
+    {
+      "id": "menuToolbar",
+      "categoryOrder": ["interactivity", "callbacks", "callbackexecutioncontrol", "parentchild", "identifiers"]
+    },
+    {
+      "id": "contextMenu",
+      "categoryOrder": ["callbacks", "callbackexecutioncontrol", "parentchild", "identifiers"]
+    },
+    {
+      "id": "uifigure",
+      "categoryOrder": ["windowappearance", "positionandsize", "plotting", "mousepointer", "interactivity", "commoncallbacks", "keyboardcallbacks", "windowcallbacks", "callbackexecutioncontrol", "parentchildren", "identifiers"]
+    }
+  ],
+  "sharedSubsetDefinitions": [
+    {
+      "id": "buttonAlignment",
+      "categoryId": "position",
+      "sourceVariantId": "uibutton-push",
+      "propertyPaths": ["HorizontalAlignment", "VerticalAlignment", "IconAlignment"],
+      "memberVariantIds": ["uibutton-push", "uibutton-state", "uitogglebutton"]
+    },
+    {
+      "id": "callbackExecutionCore",
+      "categoryId": "callbackexecutioncontrol",
+      "sourceVariantId": "uibutton-push",
+      "propertyPaths": ["Interruptible", "BusyAction", "BeingDeleted"],
+      "memberVariantIds": ["axes", "geoaxes", "polaraxes", "uiaxes", "uibuttongroup", "uibutton-push", "uibutton-state", "uicheckbox", "uicolorpicker", "uidatepicker", "uidropdown", "uieditfield-numeric", "uieditfield-text", "uifigure", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular", "uigridlayout", "uihtml", "uihyperlink", "uiimage", "uiknob-continuous", "uiknob-discrete", "uilabel", "uilamp", "uilistbox", "uipanel", "uiradiobutton", "uislider-range", "uislider-slider", "uispinner", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uitab", "uitabgroup", "uitable", "uitextarea", "uitogglebutton", "uitree", "uitree-checkbox", "uitreenode"]
+    },
+    {
+      "id": "standardInteractivity",
+      "categoryId": "interactivity",
+      "sourceVariantId": "uibutton-push",
+      "propertyPaths": ["Visible", "Enable", "Tooltip", "ContextMenu"],
+      "memberVariantIds": ["uibutton-push", "uibutton-state", "uicheckbox", "uicolorpicker", "uidatepicker", "uidropdown", "uieditfield-numeric", "uieditfield-text", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular", "uiknob-continuous", "uiknob-discrete", "uilabel", "uiradiobutton", "uislider-range", "uislider-slider", "uispinner", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uitextarea", "uitogglebutton", "uitree-checkbox"]
+    }
+  ]
+}

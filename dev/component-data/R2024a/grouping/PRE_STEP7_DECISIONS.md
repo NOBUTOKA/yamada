@@ -51,3 +51,22 @@ and `Interactivity`. The concrete membership and stable identifiers remain
 deferred until the order-profile analysis and variant assignment data exist;
 the derivation must preserve every audited property capability and category
 order.
+
+## Deferred decisions after Steps 7–11
+
+The following decisions do not affect the generated parity result and are
+intentionally deferred until runtime promotion:
+
+- Whether the five proposed profile orders should become the end-user
+  inspector's visual order without product-specific rearrangement. The current
+  profiles reconstruct documentation order through explicit per-variant deltas;
+  they do not change the runtime inspector yet.
+- Which concrete variants are eligible children of each parent context. The
+  current parent-context ledger intentionally defines effects for an
+  `eligibleDirectChild` but not a complete parent-child eligibility matrix.
+  Parity therefore validates each context as a hypothetical eligible direct
+  child surface. Runtime catalog promotion must supply and validate the actual
+  eligibility matrix.
+- Whether generated hash-suffixed exact-group IDs need curated product-facing
+  aliases. The IDs are stable and sufficient for the development design layer;
+  aliases can be added when a group becomes a runtime catalog API.
