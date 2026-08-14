@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "bb27b5a88ddb6dcc923d61c949777e56466c9995028a1e76dabb495402d0ad8d",
+  "inputSha256": "1ab43934cf46e9adfa005767ce48af68e0d398302b39497a80e5a1f4ea910198",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -2647,12 +2647,12 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.cfc3702c50fd",
+      "candidateId": "candidate.interactivity.bbcac8576117",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "cfc3702c50fd8ff3bbe39b335e75e4dc627540798eff07d527357de497256bb9",
+      "capabilitySha256": "bbcac8576117c546d54e727487bcca159665fcb3b4ba1ba1964ea243b7ce1df4",
       "propertyPaths": [
         "Visible",
         "CurrentAxes",
@@ -2667,9 +2667,9 @@
         "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
         "62e163fa8344a37436d87a1939dc20e102289e3872bf37cc4cb6631253888e34",
         "abd62793faf92ed6c3caeedf74d12bec07f2ca5583462527155bab9a8ff54a98",
-        "11eff9cd5ad9cd8f6c5da2020e4fc0e15521872141f600030b8e7a7f00749934",
-        "b370b077fb72fdbc13993270e4b1efe0f14b0eaaa541788e15178862fc87fde3",
-        "cda75646470e250bc2d05a3dd7ef37c201b8ec6091e516e0a7172ffd42cc6748",
+        "78450c860c1d685b23b04aea44f0db02af31b4c059021ecb64654c76c15c9cae",
+        "88c22162bd2105e277353c986b92872974009643251c2ea8af43d9c579f193d0",
+        "9d8d5aec804b2ca46c40dacb5e9f5e644f9a56d23d07cba9d5534a7632a8b046",
         "389f11d5152bf41c84d2e3f8978c7c1ab7db95b4d3f2b93d89d8e3fe66509b39",
         "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
       ],

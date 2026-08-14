@@ -76,6 +76,18 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(hotSpot.AuditDisposition, "omitted");
         end
 
+        function figureRuntimeInteractionStateRemainsOmitted(testCase)
+            % figureRuntimeInteractionStateRemainsOmitted Exclude mouse and keyboard event state from design editing.
+
+            % These properties report the most recent user interaction rather than design intent.
+            definition = macd.model.ComponentRegistry.createDefault().getById("uifigure");
+            for path = ["CurrentCharacter", "CurrentPoint", "SelectionType"]
+                property = definition.Properties([definition.Properties.Path] == path);
+                testCase.verifyEqual(property.AuditDisposition, "omitted");
+                testCase.verifyEqual(property.PreviewPolicy, "skip");
+            end
+        end
+
         function innerPositionRemainsOmittedAcrossTheCatalog(testCase)
             % innerPositionRemainsOmittedAcrossTheCatalog Keep derived geometry out of the inspector.
 

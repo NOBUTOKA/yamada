@@ -573,12 +573,14 @@
         "constraints": [],
         "matlabClasses": "double"
       },
-      "affectsDisplay": true,
-      "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
       "disposition": {
-        "kind": "editable",
-        "reasonCodes": []
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
       },
       "runtimeSetAccess": "public"
     },
@@ -601,12 +603,14 @@
           "string"
         ]
       },
-      "affectsDisplay": true,
-      "previewPolicy": "apply",
-      "requiredEditor": "enum",
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
       "disposition": {
-        "kind": "editable",
-        "reasonCodes": []
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
       },
       "runtimeSetAccess": "public"
     },
@@ -637,12 +641,14 @@
           "open"
         ]
       },
-      "affectsDisplay": true,
-      "previewPolicy": "apply",
-      "requiredEditor": "enum",
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
       "disposition": {
-        "kind": "editable",
-        "reasonCodes": []
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
       },
       "runtimeSetAccess": "public"
     },
