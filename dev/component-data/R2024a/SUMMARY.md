@@ -109,3 +109,19 @@ Parent-dependent effective-surface rules are defined in
 [`parent-context-rules.json`](parent-context-rules.json). The release-independent
 audit procedure is
 [`../PROPERTY_AUDIT_GUIDELINES.md`](../PROPERTY_AUDIT_GUIDELINES.md).
+
+## Grouping derivation artifacts
+
+The category-oriented grouping procedure is defined in
+[`../PROPERTY_GROUPING_GUIDELINES.md`](../PROPERTY_GROUPING_GUIDELINES.md). Run
+[`../GenerateGroupingArtifacts.ps1`](../GenerateGroupingArtifacts.ps1) with this
+directory as `-ReleaseDirectory` to validate the grouping-relevant ledger and
+regenerate [`grouping`](grouping).
+
+The frozen baseline, category-surface matrix, exact clusters, and initial
+complete shared-group candidates are JSON artifacts in that directory. The
+human review queue is [`grouping/JUDGMENT_CANDIDATES.md`](grouping/JUDGMENT_CANDIDATES.md):
+it separates same-name category conflicts requiring Step 4 classification from
+ordered strict core/extension candidates requiring Step 6 judgment. These
+derived artifacts do not change the transcript or promote any property group to
+the runtime catalog.
