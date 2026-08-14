@@ -57,10 +57,9 @@ order.
 The following decisions do not affect the generated parity result and are
 intentionally deferred until runtime promotion:
 
-- Whether the five proposed profile orders should become the end-user
-  inspector's visual order without product-specific rearrangement. The current
-  profiles reconstruct documentation order through explicit per-variant deltas;
-  they do not change the runtime inspector yet.
+- The five generated profile orders are documentation-order compression data,
+  not a proposal for the end-user inspector order. Inspector presentation order
+  will be designed independently when the runtime catalog is promoted.
 - Which concrete variants are eligible children of each parent context. The
   current parent-context ledger intentionally defines effects for an
   `eligibleDirectChild` but not a complete parent-child eligibility matrix.
