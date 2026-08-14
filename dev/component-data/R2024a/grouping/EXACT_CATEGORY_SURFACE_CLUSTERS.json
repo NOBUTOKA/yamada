@@ -1,7 +1,7 @@
 {
     "artifactVersion":  1,
     "matlabRelease":  "R2024a",
-    "inputSha256":  "8c882f8846485833c84d0b44d283060ec5285898606982cf5924458f1247b49c",
+    "inputSha256":  "9ae47504c076e610193e813794dff7a5b8ff0e033ad50206399c95823f60bfeb",
     "clusters":  [
                      {
                          "candidateId":  "candidate.boxstyling.0b877a731bbf",
@@ -390,8 +390,8 @@
                          "candidateId":  "candidate.callbacks.03280e772a0f",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "03280e772a0f8e0a3b6c7cb92c3a9c11cf00787580d1bbbc81961f92e61788ed",
                          "propertyPaths":  [
                                                "ClickedCallback",
@@ -419,8 +419,8 @@
                          "candidateId":  "candidate.callbacks.0d48e44e8b1d",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "0d48e44e8b1d7913d4aff185dbf6c5a59c4f47047d18b42271b742750f57f5ee",
                          "propertyPaths":  [
                                                "SizeChangedFcn",
@@ -448,8 +448,8 @@
                          "candidateId":  "candidate.callbacks.5650fea640d9",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "5650fea640d9f4a7c8d55e42e35db918ff36ab778b055f6050bfb5d2906b142d",
                          "propertyPaths":  [
                                                "MenuSelectedFcn",
@@ -473,8 +473,8 @@
                          "candidateId":  "candidate.callbacks.7076bea35fba",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "7076bea35fbac99a865caa317eadf2c2c6173c69725b8cfdae22ee6c8d64bab6",
                          "propertyPaths":  [
                                                "SelectionChangedFcn",
@@ -504,8 +504,8 @@
                          "candidateId":  "candidate.callbacks.7e2b263b6cab",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "7e2b263b6cabbfe4bfe38c9f05d04e34c57246205f3d1a8f460059588a716cec",
                          "propertyPaths":  [
                                                "ClickedCallback",
@@ -529,8 +529,8 @@
                          "candidateId":  "candidate.callbacks.87707f141057",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "87707f1410576c1411900e0e78ca065a7220f54b01536491214927e45d8b195b",
                          "propertyPaths":  [
                                                "SelectionChangedFcn",
@@ -564,8 +564,8 @@
                          "candidateId":  "candidate.callbacks.8d6ea32f3c2f",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "8d6ea32f3c2f72e92c6398138e8a4be2b0fed0dae60d3461d336032d834ad03f",
                          "propertyPaths":  [
                                                "CheckedNodesChangedFcn",
@@ -601,8 +601,8 @@
                          "candidateId":  "candidate.callbacks.8db5c63a12f4",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "8db5c63a12f40de8681f8b4d10b9799e4873df0521e2091d638f9c6fd164f88f",
                          "propertyPaths":  [
                                                "ValueChangedFcn",
@@ -630,8 +630,8 @@
                          "candidateId":  "candidate.callbacks.901397ca1707",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "901397ca1707cad406989edd1e9d89572b102ba76b9eb2f0bb6742fe48d29688",
                          "propertyPaths":  [
                                                "HyperlinkClickedFcn",
@@ -655,8 +655,8 @@
                          "candidateId":  "candidate.callbacks.b4dff8d98206",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "b4dff8d98206728242f38cf2aa49aedca6b4d3f78aafb518afd4f6949731fc54",
                          "propertyPaths":  [
                                                "ContextMenuOpeningFcn",
@@ -680,8 +680,8 @@
                          "candidateId":  "candidate.callbacks.bf0fb0d93b49",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "bf0fb0d93b491918107051fa801ffb8c67a49d8392204d38cf16cf836cc5c54c",
                          "propertyPaths":  [
                                                "ValueChangedFcn",
@@ -713,8 +713,8 @@
                          "candidateId":  "candidate.callbacks.bf83ec9f5cad",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "bf83ec9f5cad336a05d07de69fcca52fffa76baac8aedda0f11756e8aee5b861",
                          "propertyPaths":  [
                                                "DataChangedFcn",
@@ -740,8 +740,8 @@
                          "candidateId":  "candidate.callbacks.d0526013e398",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "d0526013e398abf5d81707fa3b9becf3baff6927394c1e6ab53c15969167ffb4",
                          "propertyPaths":  [
                                                "CreateFcn",
@@ -763,8 +763,8 @@
                          "candidateId":  "candidate.callbacks.dc03139f9cd2",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "dc03139f9cd2ac731105a02304ac6048128660c2a78d6a0bfdaff2426fa45251",
                          "propertyPaths":  [
                                                "ValueChangedFcn",
@@ -792,8 +792,8 @@
                          "candidateId":  "candidate.callbacks.e80eb7e9b42c",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "e80eb7e9b42c2b64d6b351e3d3617884348837a6c61c697008043d280e6597dc",
                          "propertyPaths":  [
                                                "ImageClickedFcn",
@@ -817,8 +817,8 @@
                          "candidateId":  "candidate.callbacks.e9858937ea19",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "e9858937ea198e9a4da5a455cd27d076c039e11b5412f930e3fde7c4c25b72e2",
                          "propertyPaths":  [
                                                "ValueChangedFcn",
@@ -850,8 +850,8 @@
                          "candidateId":  "candidate.callbacks.f386f43cec2a",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "f386f43cec2a627f190eeae95bc7e4e63eb2e9df63d8424fde60b78a6557c8f5",
                          "propertyPaths":  [
                                                "CreateFcn",
@@ -885,8 +885,8 @@
                          "candidateId":  "candidate.callbacks.fce3af49dba1",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "fce3af49dba1537d4b392453b705b28948a42800d0c7d08c4818cec2adb9f320",
                          "propertyPaths":  [
                                                "CellEditCallback",
@@ -918,8 +918,8 @@
                          "candidateId":  "candidate.callbacks.ff25f3d0864c",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "ff25f3d0864c744298368092fd50801374c369d515d4affce3a75f499a401a6d",
                          "propertyPaths":  [
                                                "ButtonPushedFcn",
@@ -943,8 +943,8 @@
                          "candidateId":  "candidate.callbacks.ff87b987b579",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
                          "capabilitySha256":  "ff87b987b57927e205487881e1b429a6eaf0b7072d1d4341b7ddc9e55fbc05f0",
                          "propertyPaths":  [
                                                "ButtonDownFcn",
@@ -1286,8 +1286,8 @@
                          "candidateId":  "candidate.fontandcolor.042dbfc13de8",
                          "categoryId":  "fontandcolor",
                          "categoryDisplayName":  "Font and Color",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font and color capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Combined font and color capabilities vary substantially by component family.",
                          "capabilitySha256":  "042dbfc13de874dee105f38256a5f6e478f74b463669d8e62f61c9ff07d6e158",
                          "propertyPaths":  [
                                                "FontName",
@@ -1319,8 +1319,8 @@
                          "candidateId":  "candidate.fontandcolor.1c9b39207ba1",
                          "categoryId":  "fontandcolor",
                          "categoryDisplayName":  "Font and Color",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font and color capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Combined font and color capabilities vary substantially by component family.",
                          "capabilitySha256":  "1c9b39207ba1a41ab14c24aca6ce805c2b4a4bcddc3ea6a69aebc7bdb3dbf978",
                          "propertyPaths":  [
                                                "FontName",
@@ -1355,8 +1355,8 @@
                          "candidateId":  "candidate.fontandcolor.26568df5fb66",
                          "categoryId":  "fontandcolor",
                          "categoryDisplayName":  "Font and Color",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font and color capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Combined font and color capabilities vary substantially by component family.",
                          "capabilitySha256":  "26568df5fb661ea10e4c781ab52fcc0f2279a0fb6b3c43fa46ad66214f558fc5",
                          "propertyPaths":  [
                                                "FontName",
@@ -1399,8 +1399,8 @@
                          "candidateId":  "candidate.fontandcolor.ec9da849d336",
                          "categoryId":  "fontandcolor",
                          "categoryDisplayName":  "Font and Color",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font and color capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Combined font and color capabilities vary substantially by component family.",
                          "capabilitySha256":  "ec9da849d336f0ca28747344a12eceab21f9278aee5cd762b68997c167cb8ed9",
                          "propertyPaths":  [
                                                "FontName",
@@ -1428,8 +1428,8 @@
                          "candidateId":  "candidate.font.571c323d68a0",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Font capabilities vary substantially by component family.",
                          "capabilitySha256":  "571c323d68a03a1c1bd797f0e4de9347d668a9b17aeef7b16885596b2266f597",
                          "propertyPaths":  [
                                                "FontName",
@@ -1460,8 +1460,8 @@
                          "candidateId":  "candidate.font.9005c7baf356",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Font capabilities vary substantially by component family.",
                          "capabilitySha256":  "9005c7baf356e7f25bc8d79dd67aef077ab499f3adb98f1b3639fadc0b7658bb",
                          "propertyPaths":  [
                                                "FontName",
@@ -1501,8 +1501,8 @@
                          "candidateId":  "candidate.font.b1143fc0354f",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Font capabilities vary substantially by component family.",
                          "capabilitySha256":  "b1143fc0354fbf070475c1009cff0c64770ce09e4705be13e10be71b2caf84e0",
                          "propertyPaths":  [
                                                "FontName",
@@ -1540,8 +1540,8 @@
                          "candidateId":  "candidate.font.c4f859eab8e7",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Font capabilities vary substantially by component family.",
                          "capabilitySha256":  "c4f859eab8e73728c89876fea43e084ad45a376892cd7f704ee2d9a265d377b5",
                          "propertyPaths":  [
                                                "FontName",
@@ -1579,8 +1579,8 @@
                          "candidateId":  "candidate.font.eb9db0ef0080",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Font capabilities vary substantially by component family.",
                          "capabilitySha256":  "eb9db0ef008068969478360f54254dc44ea19e3cef09373a28285b440c95a308",
                          "propertyPaths":  [
                                                "FontName",
@@ -1620,8 +1620,8 @@
                          "candidateId":  "candidate.font.ec9da849d336",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Font capabilities vary substantially by component family.",
                          "capabilitySha256":  "ec9da849d336f0ca28747344a12eceab21f9278aee5cd762b68997c167cb8ed9",
                          "propertyPaths":  [
                                                "FontName",
@@ -1965,12 +1965,12 @@
                                                       ]
                      },
                      {
-                         "candidateId":  "candidate.identifiers.492d0f275c68",
+                         "candidateId":  "candidate.identifiers.3a0b59868b65",
                          "categoryId":  "identifiers",
                          "categoryDisplayName":  "Identifiers",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Identity and design-time metadata recur across unrelated UI families.",
-                         "capabilitySha256":  "492d0f275c687437f2881c0eb78c875e67d84b01a4f23c48df71b58248a36935",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Identifier metadata remains variant-local at runtime; the only broadly shared editable path, Tag, is intentionally omitted.",
+                         "capabilitySha256":  "3a0b59868b655f1fb13f59d0524d763a21f2132557e56ff7df6ea428f7165dbc",
                          "propertyPaths":  [
                                                "Name",
                                                "Icon",
@@ -1982,13 +1982,13 @@
                                                "UserData"
                                            ],
                          "propertyCapabilitySha256":  [
-                                                          "3870fb8765ad736b95e4381a589561f3f0b223ce100af7f82bba944c8a6bee1b",
+                                                          "1d4403499b95ffeebf37abcf2d7a208a090561a53e2bc16d9a1da0f6af479f85",
                                                           "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1",
                                                           "65c04eee571ce277a648fe97d987a6bd80a5f8fd91bd83db32c3edd9f8a26d3f",
                                                           "7242119c00a60073bdcc1cd3c4abbfd07d4ffaee4fba316a2e95e67b3aae512b",
-                                                          "eee6938bf2991b1bbe7b4dceb1af756db812f002ab2eab330c6ce7df7c933a02",
+                                                          "30e3f058461c18c2942185ced716e489f77193828210c4bbfc4f954ff4d5b2ce",
                                                           "45eed239d9e67011b6c99b1ea799197b5e337a4a9f284670fe8698d53dea280d",
-                                                          "5e98810edfa920a4a12a638e2317e29adcfe8f78b0c2bb133888c001766d6d39",
+                                                          "bedc7f077e5aad8df38ab350db17a8949bd7a80582636dffff8942210354886e",
                                                           "9bb9afd888d9f568e1e6069a6e70fd598f24be8ee9df7dd5c6c5fc0b41fe22e4"
                                                       ],
                          "memberVariantIds":  [
@@ -2000,12 +2000,12 @@
                                                       ]
                      },
                      {
-                         "candidateId":  "candidate.identifiers.52581edd2872",
+                         "candidateId":  "candidate.identifiers.6408bd856504",
                          "categoryId":  "identifiers",
                          "categoryDisplayName":  "Identifiers",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Identity and design-time metadata recur across unrelated UI families.",
-                         "capabilitySha256":  "52581edd2872136316c2b30217a53c3fb65c7561a77e0f90b811e3c7fb8dbb0e",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Identifier metadata remains variant-local at runtime; the only broadly shared editable path, Tag, is intentionally omitted.",
+                         "capabilitySha256":  "6408bd856504fe154fa1977112b50db24134b595c4433d33456c3763a0b95b5b",
                          "propertyPaths":  [
                                                "Type",
                                                "Tag",
@@ -2013,7 +2013,7 @@
                                            ],
                          "propertyCapabilitySha256":  [
                                                           "45eed239d9e67011b6c99b1ea799197b5e337a4a9f284670fe8698d53dea280d",
-                                                          "5e98810edfa920a4a12a638e2317e29adcfe8f78b0c2bb133888c001766d6d39",
+                                                          "bedc7f077e5aad8df38ab350db17a8949bd7a80582636dffff8942210354886e",
                                                           "9bb9afd888d9f568e1e6069a6e70fd598f24be8ee9df7dd5c6c5fc0b41fe22e4"
                                                       ],
                          "memberVariantIds":  [
@@ -2071,12 +2071,12 @@
                                                       ]
                      },
                      {
-                         "candidateId":  "candidate.identifiers.c2b61000fe53",
+                         "candidateId":  "candidate.identifiers.d234496dc540",
                          "categoryId":  "identifiers",
                          "categoryDisplayName":  "Identifiers",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Identity and design-time metadata recur across unrelated UI families.",
-                         "capabilitySha256":  "c2b61000fe53c44f6f2deb4d498ba89a3d7bf2a50058f730c2c3d9e4a10c2d6c",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Identifier metadata remains variant-local at runtime; the only broadly shared editable path, Tag, is intentionally omitted.",
+                         "capabilitySha256":  "d234496dc540e13982f5cdfceb5e528c97e28405794e9074b63cf40f3a19e944",
                          "propertyPaths":  [
                                                "Type",
                                                "Tag",
@@ -2084,7 +2084,7 @@
                                            ],
                          "propertyCapabilitySha256":  [
                                                           "60a0ec6a20cef650bf9531f1289346960ddc500cc5de6c4354b54cada877577e",
-                                                          "5e98810edfa920a4a12a638e2317e29adcfe8f78b0c2bb133888c001766d6d39",
+                                                          "bedc7f077e5aad8df38ab350db17a8949bd7a80582636dffff8942210354886e",
                                                           "7402e8b8370b19ee9631176971be11025fe3c547553f5789951f38c294549bd2"
                                                       ],
                          "memberVariantIds":  [
@@ -3204,8 +3204,8 @@
                          "candidateId":  "candidate.parentchild.3c4bfb19e050",
                          "categoryId":  "parentchild",
                          "categoryDisplayName":  "Parent/Child",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Hierarchy metadata recurs across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
                          "capabilitySha256":  "3c4bfb19e050cabeed798f92c5d9b57d9b8651f635f3fac247e9a66a10a2a2cd",
                          "propertyPaths":  [
                                                "Parent",
@@ -3233,8 +3233,8 @@
                          "candidateId":  "candidate.parentchild.81d1391e9656",
                          "categoryId":  "parentchild",
                          "categoryDisplayName":  "Parent/Child",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Hierarchy metadata recurs across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
                          "capabilitySha256":  "81d1391e965680a99cd55fd0f4412dd14a3c58a75c5c48b92408e6086f08a962",
                          "propertyPaths":  [
                                                "Parent",
@@ -3257,8 +3257,8 @@
                          "candidateId":  "candidate.parentchild.8f2d4fc6440c",
                          "categoryId":  "parentchild",
                          "categoryDisplayName":  "Parent/Child",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Hierarchy metadata recurs across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
                          "capabilitySha256":  "8f2d4fc6440c42aefca64523e8ac9020fb2e2263f35bda3f42bfde9e40eb2d05",
                          "propertyPaths":  [
                                                "Parent",
@@ -3299,8 +3299,8 @@
                          "candidateId":  "candidate.parentchild.f2a7e6713fe3",
                          "categoryId":  "parentchild",
                          "categoryDisplayName":  "Parent/Child",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Hierarchy metadata recurs across unrelated UI families.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
                          "capabilitySha256":  "f2a7e6713fe3f4dddbb4c6ccd33ab6eba6fd774ef5eaa8d23efcf2013ad5d9c3",
                          "propertyPaths":  [
                                                "Parent",
@@ -3404,8 +3404,8 @@
                          "candidateId":  "candidate.position.50394c643f07",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "50394c643f071240f18ff9373d50637a0461963320fe3fb09897e0b582574b5c",
                          "propertyPaths":  [
                                                "Position",
@@ -3429,8 +3429,8 @@
                          "candidateId":  "candidate.position.51099936f0b1",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "51099936f0b1f6f156d0d2ddecb4e9693e2e25fbe56bfa6eebe7e0e45cffdc89",
                          "propertyPaths":  [
                                                "Position",
@@ -3456,8 +3456,8 @@
                          "candidateId":  "candidate.position.55d3c79ba8f3",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "55d3c79ba8f3f4e3395c2d25965147ba9c93cc2026e80f6a46ff7b0a6d071603",
                          "propertyPaths":  [
                                                "Position",
@@ -3497,8 +3497,8 @@
                          "candidateId":  "candidate.position.6718209ad357",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "6718209ad357764171a0f977e19e877b4d4110622687ae03c0f7c87a655ef9dd",
                          "propertyPaths":  [
                                                "Position",
@@ -3525,8 +3525,8 @@
                          "candidateId":  "candidate.position.6dd9e2671d0c",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "6dd9e2671d0c62b8371880f7a88b3497d964d049546900f8be8c1a11dcf5810a",
                          "propertyPaths":  [
                                                "Position",
@@ -3553,8 +3553,8 @@
                          "candidateId":  "candidate.position.74f277d03ace",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "74f277d03ace8932320eef7336cff5373f268f05d88b25e4ae13679ea2a59ef9",
                          "propertyPaths":  [
                                                "OuterPosition",
@@ -3586,8 +3586,8 @@
                          "candidateId":  "candidate.position.8aa97c25d273",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "8aa97c25d273099e687393cdeba2cd3c15cfd7b913d3f6a314cfbeb51cd88e86",
                          "propertyPaths":  [
                                                "Position",
@@ -3620,8 +3620,8 @@
                          "candidateId":  "candidate.position.96e88f5068ff",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "96e88f5068ffd3e52c79acb30df3c847117a48d1eca06a89524f41a199287f5f",
                          "propertyPaths":  [
                                                "Position",
@@ -3647,8 +3647,8 @@
                          "candidateId":  "candidate.position.b5f88bcd0ed6",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "b5f88bcd0ed67457874b294e6d3949775df85ac752efc6faf6c34b2854f42db1",
                          "propertyPaths":  [
                                                "OuterPosition",
@@ -3680,8 +3680,8 @@
                          "candidateId":  "candidate.position.b84f961e5040",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "b84f961e5040baf240cb2c07835cb990dff467b37d2d17696c453c5b05880e27",
                          "propertyPaths":  [
                                                "Position",
@@ -3733,8 +3733,8 @@
                          "candidateId":  "candidate.position.c8b0564957d2",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "c8b0564957d2d1a0fffd3cf92214327cad7abed356d2777daf6d1e918c1f47e3",
                          "propertyPaths":  [
                                                "Position",
@@ -3762,8 +3762,8 @@
                          "candidateId":  "candidate.position.e7b056719061",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "e7b056719061fe86ae5ee595a9778797cb2af6b1097ab8938bcc52d93abafd1e",
                          "propertyPaths":  [
                                                "OuterPosition",
@@ -3803,8 +3803,8 @@
                          "candidateId":  "candidate.position.e8f7896b233f",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
-                         "sharingScope":  "crossCutting",
-                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
                          "capabilitySha256":  "e8f7896b233f728748f3fb3120de11d19fe9b71fe857c12773dcacb0cd9a2350",
                          "propertyPaths":  [
                                                "Position",
