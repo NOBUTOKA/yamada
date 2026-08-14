@@ -1184,12 +1184,10 @@
                                              },
                            "affectsDisplay":  false,
                            "previewPolicy":  "skip",
-                           "requiredEditor":  "text",
+                           "requiredEditor":  "none",
                            "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
+                                               "kind":  "omitted",
+                                               "reasonCodes":  ["lowDesignTimeValue"]
                                            },
                            "runtimeSetAccess":  "public"
                        },

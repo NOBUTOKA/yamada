@@ -1407,17 +1407,20 @@
                                                             "string scalar"
                                                         ],
                            "valueContract":  {
-                                                 "kind":  "numericArray",
-                                                 "shape":  "vector",
+                                                 "kind":  "text",
+                                                 "shape":  "scalar",
                                                  "allowsEmpty":  true,
                                                  "constraints":  [
 
                                                                  ],
-                                                 "matlabClasses":  "double"
+                                                 "matlabClasses":  [
+                                                                       "char",
+                                                                       "string"
+                                                                   ]
                                              },
                            "affectsDisplay":  true,
                            "previewPolicy":  "apply",
-                           "requiredEditor":  "numericVector",
+                           "requiredEditor":  "text",
                            "disposition":  {
                                                "kind":  "editable",
                                                "reasonCodes":  [
@@ -1534,7 +1537,7 @@
                                                             "on/off logical value"
                                                         ],
                            "valueContract":  {
-                                                 "kind":  "enum",
+                                                 "kind":  "onOff",
                                                  "shape":  "scalar",
                                                  "allowsEmpty":  false,
                                                  "constraints":  [
@@ -1542,16 +1545,16 @@
                                                                  ],
                                                  "matlabClasses":  [
                                                                        "char",
-                                                                       "string"
+                                                                       "string",
+                                                                       "logical"
                                                                    ]
                                              },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
+                           "affectsDisplay":  true,
+                           "previewPolicy":  "apply",
+                           "requiredEditor":  "onOff",
                            "disposition":  {
-                                               "kind":  "omitted",
+                                               "kind":  "editable",
                                                "reasonCodes":  [
-                                                                   "lowDesignTimeValue"
                                                                ]
                                            },
                            "runtimeSetAccess":  "public"
@@ -1609,12 +1612,10 @@
                                              },
                            "affectsDisplay":  false,
                            "previewPolicy":  "skip",
-                           "requiredEditor":  "text",
+                           "requiredEditor":  "none",
                            "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
+                                               "kind":  "omitted",
+                                               "reasonCodes":  ["lowDesignTimeValue"]
                                            },
                            "runtimeSetAccess":  "public"
                        },

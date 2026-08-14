@@ -103,9 +103,9 @@ deduplication.
 Classify every documented category in release-specific design data before
 interpreting a same-name surface difference:
 
-- `crossCutting` identifies categories such as Font, Interactivity, Position,
-  Callbacks, Parent/Child, and Identifiers that may be shared across unrelated
-  component families;
+- `crossCutting` identifies only categories with a stable semantic role across
+  unrelated component families, such as callback execution control and
+  interactivity;
 - `familyScoped` identifies a coherent component-family surface, such as
   Button, Gauge, Slider, Knob, axes-specific styling, or tree nodes. Exact
   matching definitions may be shared within that family, but a difference is
