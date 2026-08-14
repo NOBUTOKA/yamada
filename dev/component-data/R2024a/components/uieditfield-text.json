@@ -6,7 +6,7 @@
     "creationArguments":  [
 
                           ],
-    "declaredType":  null,
+    "declaredType":  "matlab.ui.control.EditField",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",

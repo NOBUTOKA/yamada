@@ -814,7 +814,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 if componentId == app.InteractionComponentId
                     rectangle = app.interactionDisplayPosition(componentId, rectangle);
                 end
-                definition = app.Registry.get(component.Factory);
+                definition = app.Registry.get(component.Factory, component.CreationArguments);
                 tabTitles = strings(1, 0);
                 tabSelected = 0;
                 if component.Factory == "uitabgroup"
@@ -1178,7 +1178,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 (app.InteractionPosition(1:2) - app.InteractionStartPosition(1:2)) .* app.PreviewScale;
             rectangle(3:4) = app.InteractionPosition(3:4) .* app.PreviewScale;
             component = app.Document.getComponent(componentId);
-            definition = app.Registry.get(component.Factory);
+            definition = app.Registry.get(component.Factory, component.CreationArguments);
             constraint = definition.resizeConstraintFor(component.CreationArguments);
             if constraint == "fixedHeight"
                 % MATLAB keeps the slider-like control height independent of Position.
@@ -1414,7 +1414,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             if isempty(component)
                 return
             end
-            definition = app.Registry.get(component.Factory);
+            definition = app.Registry.get(component.Factory, component.CreationArguments);
             policy = definition.resizeConstraintFor(component.CreationArguments);
             if policy == "fixedHeight"
                 position(2) = startPosition(2);
@@ -1738,10 +1738,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             % Preserve unsupported source assignments without making them editable.
             states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
-            definition = app.Registry.get(component.Factory);
+            definition = app.Registry.get(component.Factory, component.CreationArguments);
             style = definition.styleFor(component.CreationArguments);
             applicable = arrayfun(@(state) isempty(state.Definition.ApplicableStyles) || ...
-                any(state.Definition.ApplicableStyles == style), states);
+                any(state.Definition.ApplicableStyles == style), states) & ...
+                arrayfun(@(state) state.Definition.AuditDisposition ~= "omitted", states);
             states = states(applicable);
             effectivePaths = arrayfun(@(state) state.Definition.Path, states);
             for index = 1:numel(component.Properties)
@@ -1884,7 +1885,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 parent = app.Document.getComponent(component.ParentId);
                 parentFactory = parent.Factory;
             end
-            definition = app.Registry.get(component.Factory);
+            definition = app.Registry.get(component.Factory, component.CreationArguments);
             style = definition.styleFor(component.CreationArguments);
             states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
             paths = arrayfun(@(state) state.Definition.Path, states);

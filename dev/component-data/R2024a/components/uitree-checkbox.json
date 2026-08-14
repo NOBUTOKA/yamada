@@ -6,7 +6,7 @@
     "creationArguments":  [
                               "checkbox"
                           ],
-    "declaredType":  null,
+    "declaredType":  "matlab.ui.container.CheckBoxTree",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",

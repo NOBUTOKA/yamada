@@ -1,0 +1,698 @@
+{
+  "id": "uitab",
+  "factory": "uitab",
+  "declaredType": "matlab.ui.container.Tab",
+  "allowedParentFactories": [
+    "uitabgroup"
+  ],
+  "isRoot": false,
+  "creationArguments": [],
+  "profileId": "standardControl",
+  "categories": [
+    {
+      "id": "titleandcolor",
+      "displayName": "Title and Color",
+      "order": 1,
+      "entries": [
+        {
+          "path": "Title",
+          "groupId": "local.uitab.titleandcolor",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Title",
+            "description": "Title",
+            "categoryId": "titleandcolor",
+            "category": "Title and Color",
+            "order": 1,
+            "groupId": "local.uitab.titleandcolor",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ForegroundColor",
+          "groupId": "local.uitab.titleandcolor",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ForegroundColor",
+            "description": "Title color",
+            "categoryId": "titleandcolor",
+            "category": "Title and Color",
+            "order": 2,
+            "groupId": "local.uitab.titleandcolor",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BackgroundColor",
+          "groupId": "local.uitab.titleandcolor",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BackgroundColor",
+            "description": "Background color",
+            "categoryId": "titleandcolor",
+            "category": "Title and Color",
+            "order": 3,
+            "groupId": "local.uitab.titleandcolor",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "interactivity",
+      "displayName": "Interactivity",
+      "order": 2,
+      "entries": [
+        {
+          "path": "Tooltip",
+          "groupId": "local.uitab.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tooltip",
+            "description": "Tooltip",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 1,
+            "groupId": "local.uitab.interactivity",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "groupId": "local.uitab.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ContextMenu",
+            "description": "Context menu",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 2,
+            "groupId": "local.uitab.interactivity",
+            "editor": "componentReference",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "position",
+      "displayName": "Position",
+      "order": 3,
+      "entries": [
+        {
+          "path": "Position",
+          "groupId": "local.uitab.position",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Position",
+            "description": "Location and size of tab",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 1,
+            "groupId": "local.uitab.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "groupId": "local.uitab.position",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "InnerPosition",
+            "description": "Location and size of tab",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 2,
+            "groupId": "local.uitab.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "OuterPosition",
+          "groupId": "local.uitab.position",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "OuterPosition",
+            "description": "Location and size of tab",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 3,
+            "groupId": "local.uitab.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Units",
+          "groupId": "local.uitab.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Units",
+            "description": "Units of measurement",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 4,
+            "groupId": "local.uitab.position",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbacks",
+      "displayName": "Callbacks",
+      "order": 4,
+      "entries": [
+        {
+          "path": "SizeChangedFcn",
+          "groupId": "local.uitab.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SizeChangedFcn",
+            "description": "Size change callback",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 1,
+            "groupId": "local.uitab.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ButtonDownFcn",
+          "groupId": "local.uitab.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ButtonDownFcn",
+            "description": "Button-press callback function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 2,
+            "groupId": "local.uitab.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CreateFcn",
+          "groupId": "local.uitab.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CreateFcn",
+            "description": "Creation function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 3,
+            "groupId": "local.uitab.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "DeleteFcn",
+          "groupId": "local.uitab.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DeleteFcn",
+            "description": "Deletion function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 4,
+            "groupId": "local.uitab.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 5,
+      "entries": [
+        {
+          "path": "Interruptible",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interruptible",
+            "description": "Callback interruption",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 1,
+            "groupId": "callbackExecutionCore",
+            "editor": "onOff",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BusyAction",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BusyAction",
+            "description": "Callback queuing",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 2,
+            "groupId": "callbackExecutionCore",
+            "editor": "enum",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BeingDeleted",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "BeingDeleted",
+            "description": "Deletion status",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 3,
+            "groupId": "callbackExecutionCore",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "parentchild",
+      "displayName": "Parent/Child",
+      "order": 6,
+      "entries": [
+        {
+          "path": "Parent",
+          "groupId": "local.uitab.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Parent",
+            "description": "Parent object",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 1,
+            "groupId": "local.uitab.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Children",
+          "groupId": "local.uitab.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Children",
+            "description": "Children of tab",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 2,
+            "groupId": "local.uitab.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "HandleVisibility",
+          "groupId": "local.uitab.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HandleVisibility",
+            "description": "Visibility of object handle",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 3,
+            "groupId": "local.uitab.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 7,
+      "entries": [
+        {
+          "path": "Type",
+          "groupId": "local.uitab.identifiers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Type",
+            "description": "Type of graphics object",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 1,
+            "groupId": "local.uitab.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Tag",
+          "groupId": "local.uitab.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tag",
+            "description": "Object identifier",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 2,
+            "groupId": "local.uitab.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "UserData",
+          "groupId": "local.uitab.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "UserData",
+            "description": "User data",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 3,
+            "groupId": "local.uitab.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "arbitraryData",
+              "matlabClasses": [
+                "any"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "uifigurebasedappsonly",
+      "displayName": "uifigure -Based Apps Only",
+      "order": 8,
+      "entries": [
+        {
+          "path": "AutoResizeChildren",
+          "groupId": "local.uitab.uifigurebasedappsonly",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "AutoResizeChildren",
+            "description": "Automatically resize children",
+            "categoryId": "uifigurebasedappsonly",
+            "category": "uifigure -Based Apps Only",
+            "order": 1,
+            "groupId": "local.uitab.uifigurebasedappsonly",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Scrollable",
+          "groupId": "local.uitab.uifigurebasedappsonly",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Scrollable",
+            "description": "Ability to scroll",
+            "categoryId": "uifigurebasedappsonly",
+            "category": "uifigure -Based Apps Only",
+            "order": 2,
+            "groupId": "local.uitab.uifigurebasedappsonly",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "displayName": "Tab",
+    "category": "Container"
+  }
+}

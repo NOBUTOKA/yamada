@@ -1,293 +1,293 @@
 {
-    "artifactVersion":  1,
-    "matlabRelease":  "R2024a",
-    "ledgerBaselineGitCommit":  "98678de94360466206f6fce3b9683d6f42e25fa4",
-    "inputSha256":  "9ae47504c076e610193e813794dff7a5b8ff0e033ad50206399c95823f60bfeb",
-    "componentDocumentCount":  48,
-    "componentVariantIds":  [
-                                "axes",
-                                "geoaxes",
-                                "polaraxes",
-                                "uiaxes",
-                                "uibuttongroup",
-                                "uibutton-push",
-                                "uibutton-state",
-                                "uicheckbox",
-                                "uicolorpicker",
-                                "uicontextmenu",
-                                "uidatepicker",
-                                "uidropdown",
-                                "uieditfield-numeric",
-                                "uieditfield-text",
-                                "uifigure",
-                                "uigauge-circular",
-                                "uigauge-linear",
-                                "uigauge-ninetydegree",
-                                "uigauge-semicircular",
-                                "uigridlayout",
-                                "uihtml",
-                                "uihyperlink",
-                                "uiimage",
-                                "uiknob-continuous",
-                                "uiknob-discrete",
-                                "uilabel",
-                                "uilamp",
-                                "uilistbox",
-                                "uimenu",
-                                "uipanel",
-                                "uipushtool",
-                                "uiradiobutton",
-                                "uislider-range",
-                                "uislider-slider",
-                                "uispinner",
-                                "uiswitch-rocker",
-                                "uiswitch-slider",
-                                "uiswitch-toggle",
-                                "uitab",
-                                "uitabgroup",
-                                "uitable",
-                                "uitextarea",
-                                "uitogglebutton",
-                                "uitoggletool",
-                                "uitoolbar",
-                                "uitree",
-                                "uitree-checkbox",
-                                "uitreenode"
-                            ],
-    "propertyEntryCount":  1825,
-    "categoryOccurrenceCount":  415,
-    "categoryScopeCounts":  [
-                                {
-                                    "scope":  "crossCutting",
-                                    "categoryCount":  2
-                                },
-                                {
-                                    "scope":  "familyScoped",
-                                    "categoryCount":  27
-                                },
-                                {
-                                    "scope":  "variantLocal",
-                                    "categoryCount":  26
-                                }
-                            ],
-    "inputFiles":  [
-                       {
-                           "path":  "category-scope-classification.json",
-                           "sha256":  "572271fa7c2cebc383327eb5fb4142cb853363a0ea987141e84cdd7961fef8a9"
-                       },
-                       {
-                           "path":  "components/axes.json",
-                           "sha256":  "504203e90239dc20a10f8174f76de7dedaf9369f29b4428c2aaa6c49f2a3b975"
-                       },
-                       {
-                           "path":  "components/geoaxes.json",
-                           "sha256":  "39b0089f5cef4e44153c5c761d2a58ecb392abb883fe285aa1f1a7ab9bf130d2"
-                       },
-                       {
-                           "path":  "components/polaraxes.json",
-                           "sha256":  "703495105776f7ee3299de3bd5c456649318f74142ebbb33f6139d55cae93286"
-                       },
-                       {
-                           "path":  "components/uiaxes.json",
-                           "sha256":  "a6bb2f6f450664d764dd17a03eec541dd2822f8003dbaedc583cc2fc0e2fa841"
-                       },
-                       {
-                           "path":  "components/uibuttongroup.json",
-                           "sha256":  "586d870d901a921241a35d240f40b515c966e4c1ed5940c09aa471e6000cc4f0"
-                       },
-                       {
-                           "path":  "components/uibutton-push.json",
-                           "sha256":  "22628875ceb7234b48cd5ff19326684c161b689de32de20f91926931f3260887"
-                       },
-                       {
-                           "path":  "components/uibutton-state.json",
-                           "sha256":  "72e6b4c73e33af66aa487c1ac9a515bbf8a240e5b362a92617e764ac14a375f7"
-                       },
-                       {
-                           "path":  "components/uicheckbox.json",
-                           "sha256":  "ee6063d536d68c3497b149ea0cce09288369bd8a97e7db0928546ca66a178632"
-                       },
-                       {
-                           "path":  "components/uicolorpicker.json",
-                           "sha256":  "e168598dd54a31a49d7e7e169abcf1ecc939648acbaa242f54a257dedb5d7db4"
-                       },
-                       {
-                           "path":  "components/uicontextmenu.json",
-                           "sha256":  "8305a72c8bb6488376a7bc06aee3de5a64e12c3e4edaa95880f4a3d10fcc05c4"
-                       },
-                       {
-                           "path":  "components/uidatepicker.json",
-                           "sha256":  "f2d2929068d25bbf5a728ff6e52a9fde0c1b0acbf9f159739b1c08b28c3abd48"
-                       },
-                       {
-                           "path":  "components/uidropdown.json",
-                           "sha256":  "781d13d47141147c7546d0d2755eb7a3da0e3460eea6c866c67ecad12d053131"
-                       },
-                       {
-                           "path":  "components/uieditfield-numeric.json",
-                           "sha256":  "cdc7d4f2a87898496bd5ab738e48542339ce2cb8e7bcdb6f005e27ff513e9eaf"
-                       },
-                       {
-                           "path":  "components/uieditfield-text.json",
-                           "sha256":  "41dc8899dd0bfa379b53058c1601c0cb31fb360699d664499da871d3df10409f"
-                       },
-                       {
-                           "path":  "components/uifigure.json",
-                           "sha256":  "75f4793ef6608d1842b340979e891793fe5a59c4b5d05ee8412804be399f5d3e"
-                       },
-                       {
-                           "path":  "components/uigauge-circular.json",
-                           "sha256":  "9a6793b9a7be4ad8f42a559058fbad30a161cb95aae1f8727de62ac4d23bac54"
-                       },
-                       {
-                           "path":  "components/uigauge-linear.json",
-                           "sha256":  "053859c89aeb392667d8829bf2e800fe2686056fa40e968669c62b4b54dd96f3"
-                       },
-                       {
-                           "path":  "components/uigauge-ninetydegree.json",
-                           "sha256":  "ec7b57113409554bc6c06d97f1a9314805065a3d1a2ecaa0dfcc0dac2dcf3557"
-                       },
-                       {
-                           "path":  "components/uigauge-semicircular.json",
-                           "sha256":  "e2088d9af5b37c7283008e43c3197caf343c3ef849344786ea76bc5d0017ce20"
-                       },
-                       {
-                           "path":  "components/uigridlayout.json",
-                           "sha256":  "dd6b864d7169562af0f9c685866096030f43e84c0159f79c405982f3264d9ffa"
-                       },
-                       {
-                           "path":  "components/uihtml.json",
-                           "sha256":  "6c38d28073e0145ddce85b350b95a2722802e5f8afaab3fb9ffc26380fe0b94f"
-                       },
-                       {
-                           "path":  "components/uihyperlink.json",
-                           "sha256":  "07617ea095bd1f79ba36ec3d68043dd57f59e615f53c431bcbdca5d0f9ad6fd6"
-                       },
-                       {
-                           "path":  "components/uiimage.json",
-                           "sha256":  "42a3af62e2e1c46d8b1e3a4e89cd36f0de316a68ad01194f36e7512513cb058e"
-                       },
-                       {
-                           "path":  "components/uiknob-continuous.json",
-                           "sha256":  "cb7bf19b7be6dc0176a3b373a6f5397519aa9e55d47053109937b33758a12720"
-                       },
-                       {
-                           "path":  "components/uiknob-discrete.json",
-                           "sha256":  "52bd10be0b88ab0a7a6b0fa93b8593f5bc0d84dcbe1f09ea4181928f3d9ee47a"
-                       },
-                       {
-                           "path":  "components/uilabel.json",
-                           "sha256":  "c566c2bd70c463671e344fb9a060d7df839390ebf21f44f320014e912dd3b4ce"
-                       },
-                       {
-                           "path":  "components/uilamp.json",
-                           "sha256":  "02a932e0bfb647de067367c2686d2c3b67ac02b1251117f107d5b2b9c56a1511"
-                       },
-                       {
-                           "path":  "components/uilistbox.json",
-                           "sha256":  "d8cc1555d8cc5efbd8c3233faf4e8fd847c36704227e3882cd96931b1020ced0"
-                       },
-                       {
-                           "path":  "components/uimenu.json",
-                           "sha256":  "a207745d7f255342b3b11258d505f1a5e36e73c6cf4dafa8573e53673d459bf2"
-                       },
-                       {
-                           "path":  "components/uipanel.json",
-                           "sha256":  "130e0bf0b625667ad1be56f66fa6abb5a65cfe626634217f06ac744017fd08a6"
-                       },
-                       {
-                           "path":  "components/uipushtool.json",
-                           "sha256":  "3a3f5fc5ea793b6eaffd216ed84ba29e1affb2b26343cdb37a338a40f33885a3"
-                       },
-                       {
-                           "path":  "components/uiradiobutton.json",
-                           "sha256":  "92c9fdf86ec0e21a8dffbf7857e93116382b4a43245a402cfe9da7ee4530d041"
-                       },
-                       {
-                           "path":  "components/uislider-range.json",
-                           "sha256":  "3cf90b0c7871caa562196ad3ea6322d291fbbf58e7cd08e865aeb95b00d1266d"
-                       },
-                       {
-                           "path":  "components/uislider-slider.json",
-                           "sha256":  "5dce097d0e1206a6f76c526404cd764ebe04e164a71a49f6076ab8fdbd7815da"
-                       },
-                       {
-                           "path":  "components/uispinner.json",
-                           "sha256":  "437014c176827e89b97376605e48be94c006c1ab78be1d60ffe673a4cdbbcf67"
-                       },
-                       {
-                           "path":  "components/uiswitch-rocker.json",
-                           "sha256":  "0896a623537ff19eae816e36b4b4fe40fe601751af233c56a73e814a060ba7eb"
-                       },
-                       {
-                           "path":  "components/uiswitch-slider.json",
-                           "sha256":  "e87422d7630f8dd60ba9ff697fe0c0dd3ee8ebc4ab00eda9ad2f9985cd59bd5d"
-                       },
-                       {
-                           "path":  "components/uiswitch-toggle.json",
-                           "sha256":  "913598304524088c79c122aed0f38735a0c684826ab54520791e626b6d394ac3"
-                       },
-                       {
-                           "path":  "components/uitab.json",
-                           "sha256":  "34dd92e255ed802b9cbbcf8c658adc9086f4682b7d3c553a4ae69ea5ad968948"
-                       },
-                       {
-                           "path":  "components/uitabgroup.json",
-                           "sha256":  "4b26e3e578747c86fd73097c68c44fb589c22281bba207b7450f50ad4ec53d2d"
-                       },
-                       {
-                           "path":  "components/uitable.json",
-                           "sha256":  "2a03bd662e152bd078986f764fc81ec9b20c1cf24aea9d711e3da26d08aeacdf"
-                       },
-                       {
-                           "path":  "components/uitextarea.json",
-                           "sha256":  "f56043c3e2628d49aa30a3df37e54ba6073ad956aa7b478fa61eac3f3f41561a"
-                       },
-                       {
-                           "path":  "components/uitogglebutton.json",
-                           "sha256":  "dc9437e466fb125daedd537ed8b961494910ed50c09ef64955870c3fc8090e69"
-                       },
-                       {
-                           "path":  "components/uitoggletool.json",
-                           "sha256":  "c5f3367a93eff439bbd3287361f9d67c1da7e7d0f59ec042ff8da5644d5963eb"
-                       },
-                       {
-                           "path":  "components/uitoolbar.json",
-                           "sha256":  "be113694cba4369dfc85479572667751e1423cd6778b33c82ba0652170a7253a"
-                       },
-                       {
-                           "path":  "components/uitree.json",
-                           "sha256":  "ea1e3d0dd9c75a19ddb03fd7b36af316802215719a4da7993a4b8b80cca3df55"
-                       },
-                       {
-                           "path":  "components/uitree-checkbox.json",
-                           "sha256":  "ae99888be971ba619b67e8b417cadb097b53d73021b1f666549cc6aecf655bef"
-                       },
-                       {
-                           "path":  "components/uitreenode.json",
-                           "sha256":  "3decf82b6729901afc3791d591bfdb6ac63d9d2b9c11190857ae819883994d3c"
-                       },
-                       {
-                           "path":  "parent-context-rules.json",
-                           "sha256":  "8ce29af976eb29ca6951be6d265a72ae81b0255c064c59cf479aed1d17a3ccc3"
-                       },
-                       {
-                           "path":  "schema.json",
-                           "sha256":  "4d09a1f2645dd371fdc9570d4be2051c9aa90c674753548f546aea1760b8d89c"
-                       }
-                   ],
-    "validation":  {
-                       "status":  "passed",
-                       "checks":  [
-                                      "component document JSON parsing",
-                                      "required grouping fields",
-                                      "release and schema versions",
-                                      "unique component IDs, category IDs, and property paths",
-                                      "category and property source-page order",
-                                      "category references and property constraint targets",
-                                      "acyclic property constraints",
-                                      "parent-context rule context references",
-                                      "complete category sharing-scope classification"
-                                  ]
-                   }
+  "artifactVersion": 1,
+  "matlabRelease": "R2024a",
+  "ledgerBaselineGitCommit": "98678de94360466206f6fce3b9683d6f42e25fa4",
+  "inputSha256": "22a4b78df99cd98262fcc1ffd25a6117267068c3b98d20008d93a21bdcd64293",
+  "componentDocumentCount": 48,
+  "componentVariantIds": [
+    "axes",
+    "geoaxes",
+    "polaraxes",
+    "uiaxes",
+    "uibutton-push",
+    "uibutton-state",
+    "uibuttongroup",
+    "uicheckbox",
+    "uicolorpicker",
+    "uicontextmenu",
+    "uidatepicker",
+    "uidropdown",
+    "uieditfield-numeric",
+    "uieditfield-text",
+    "uifigure",
+    "uigauge-circular",
+    "uigauge-linear",
+    "uigauge-ninetydegree",
+    "uigauge-semicircular",
+    "uigridlayout",
+    "uihtml",
+    "uihyperlink",
+    "uiimage",
+    "uiknob-continuous",
+    "uiknob-discrete",
+    "uilabel",
+    "uilamp",
+    "uilistbox",
+    "uimenu",
+    "uipanel",
+    "uipushtool",
+    "uiradiobutton",
+    "uislider-range",
+    "uislider-slider",
+    "uispinner",
+    "uiswitch-rocker",
+    "uiswitch-slider",
+    "uiswitch-toggle",
+    "uitab",
+    "uitabgroup",
+    "uitable",
+    "uitextarea",
+    "uitogglebutton",
+    "uitoggletool",
+    "uitoolbar",
+    "uitree",
+    "uitree-checkbox",
+    "uitreenode"
+  ],
+  "propertyEntryCount": 1825.0,
+  "categoryOccurrenceCount": 415,
+  "categoryScopeCounts": [
+    {
+      "scope": "crossCutting",
+      "categoryCount": 2
+    },
+    {
+      "scope": "familyScoped",
+      "categoryCount": 27
+    },
+    {
+      "scope": "variantLocal",
+      "categoryCount": 26
+    }
+  ],
+  "inputFiles": [
+    {
+      "path": "category-scope-classification.json",
+      "sha256": "572271fa7c2cebc383327eb5fb4142cb853363a0ea987141e84cdd7961fef8a9"
+    },
+    {
+      "path": "components/axes.json",
+      "sha256": "504203e90239dc20a10f8174f76de7dedaf9369f29b4428c2aaa6c49f2a3b975"
+    },
+    {
+      "path": "components/geoaxes.json",
+      "sha256": "39b0089f5cef4e44153c5c761d2a58ecb392abb883fe285aa1f1a7ab9bf130d2"
+    },
+    {
+      "path": "components/polaraxes.json",
+      "sha256": "703495105776f7ee3299de3bd5c456649318f74142ebbb33f6139d55cae93286"
+    },
+    {
+      "path": "components/uiaxes.json",
+      "sha256": "a6bb2f6f450664d764dd17a03eec541dd2822f8003dbaedc583cc2fc0e2fa841"
+    },
+    {
+      "path": "components/uibutton-push.json",
+      "sha256": "22628875ceb7234b48cd5ff19326684c161b689de32de20f91926931f3260887"
+    },
+    {
+      "path": "components/uibutton-state.json",
+      "sha256": "72e6b4c73e33af66aa487c1ac9a515bbf8a240e5b362a92617e764ac14a375f7"
+    },
+    {
+      "path": "components/uibuttongroup.json",
+      "sha256": "586d870d901a921241a35d240f40b515c966e4c1ed5940c09aa471e6000cc4f0"
+    },
+    {
+      "path": "components/uicheckbox.json",
+      "sha256": "ee6063d536d68c3497b149ea0cce09288369bd8a97e7db0928546ca66a178632"
+    },
+    {
+      "path": "components/uicolorpicker.json",
+      "sha256": "e168598dd54a31a49d7e7e169abcf1ecc939648acbaa242f54a257dedb5d7db4"
+    },
+    {
+      "path": "components/uicontextmenu.json",
+      "sha256": "8305a72c8bb6488376a7bc06aee3de5a64e12c3e4edaa95880f4a3d10fcc05c4"
+    },
+    {
+      "path": "components/uidatepicker.json",
+      "sha256": "f2d2929068d25bbf5a728ff6e52a9fde0c1b0acbf9f159739b1c08b28c3abd48"
+    },
+    {
+      "path": "components/uidropdown.json",
+      "sha256": "781d13d47141147c7546d0d2755eb7a3da0e3460eea6c866c67ecad12d053131"
+    },
+    {
+      "path": "components/uieditfield-numeric.json",
+      "sha256": "351f2979c37bf16e2cd235950b6e3c7a04263823974c2f9a573d1fbb8b6e6a72"
+    },
+    {
+      "path": "components/uieditfield-text.json",
+      "sha256": "ab2905328139393b8ee158ae52cc564d9fd5588c39b89b73fb96adaeba2e207b"
+    },
+    {
+      "path": "components/uifigure.json",
+      "sha256": "75f4793ef6608d1842b340979e891793fe5a59c4b5d05ee8412804be399f5d3e"
+    },
+    {
+      "path": "components/uigauge-circular.json",
+      "sha256": "9a6793b9a7be4ad8f42a559058fbad30a161cb95aae1f8727de62ac4d23bac54"
+    },
+    {
+      "path": "components/uigauge-linear.json",
+      "sha256": "053859c89aeb392667d8829bf2e800fe2686056fa40e968669c62b4b54dd96f3"
+    },
+    {
+      "path": "components/uigauge-ninetydegree.json",
+      "sha256": "ec7b57113409554bc6c06d97f1a9314805065a3d1a2ecaa0dfcc0dac2dcf3557"
+    },
+    {
+      "path": "components/uigauge-semicircular.json",
+      "sha256": "e2088d9af5b37c7283008e43c3197caf343c3ef849344786ea76bc5d0017ce20"
+    },
+    {
+      "path": "components/uigridlayout.json",
+      "sha256": "dd6b864d7169562af0f9c685866096030f43e84c0159f79c405982f3264d9ffa"
+    },
+    {
+      "path": "components/uihtml.json",
+      "sha256": "6c38d28073e0145ddce85b350b95a2722802e5f8afaab3fb9ffc26380fe0b94f"
+    },
+    {
+      "path": "components/uihyperlink.json",
+      "sha256": "07617ea095bd1f79ba36ec3d68043dd57f59e615f53c431bcbdca5d0f9ad6fd6"
+    },
+    {
+      "path": "components/uiimage.json",
+      "sha256": "42a3af62e2e1c46d8b1e3a4e89cd36f0de316a68ad01194f36e7512513cb058e"
+    },
+    {
+      "path": "components/uiknob-continuous.json",
+      "sha256": "cb7bf19b7be6dc0176a3b373a6f5397519aa9e55d47053109937b33758a12720"
+    },
+    {
+      "path": "components/uiknob-discrete.json",
+      "sha256": "52bd10be0b88ab0a7a6b0fa93b8593f5bc0d84dcbe1f09ea4181928f3d9ee47a"
+    },
+    {
+      "path": "components/uilabel.json",
+      "sha256": "c566c2bd70c463671e344fb9a060d7df839390ebf21f44f320014e912dd3b4ce"
+    },
+    {
+      "path": "components/uilamp.json",
+      "sha256": "02a932e0bfb647de067367c2686d2c3b67ac02b1251117f107d5b2b9c56a1511"
+    },
+    {
+      "path": "components/uilistbox.json",
+      "sha256": "d8cc1555d8cc5efbd8c3233faf4e8fd847c36704227e3882cd96931b1020ced0"
+    },
+    {
+      "path": "components/uimenu.json",
+      "sha256": "a207745d7f255342b3b11258d505f1a5e36e73c6cf4dafa8573e53673d459bf2"
+    },
+    {
+      "path": "components/uipanel.json",
+      "sha256": "130e0bf0b625667ad1be56f66fa6abb5a65cfe626634217f06ac744017fd08a6"
+    },
+    {
+      "path": "components/uipushtool.json",
+      "sha256": "3a3f5fc5ea793b6eaffd216ed84ba29e1affb2b26343cdb37a338a40f33885a3"
+    },
+    {
+      "path": "components/uiradiobutton.json",
+      "sha256": "92c9fdf86ec0e21a8dffbf7857e93116382b4a43245a402cfe9da7ee4530d041"
+    },
+    {
+      "path": "components/uislider-range.json",
+      "sha256": "3cf90b0c7871caa562196ad3ea6322d291fbbf58e7cd08e865aeb95b00d1266d"
+    },
+    {
+      "path": "components/uislider-slider.json",
+      "sha256": "5dce097d0e1206a6f76c526404cd764ebe04e164a71a49f6076ab8fdbd7815da"
+    },
+    {
+      "path": "components/uispinner.json",
+      "sha256": "437014c176827e89b97376605e48be94c006c1ab78be1d60ffe673a4cdbbcf67"
+    },
+    {
+      "path": "components/uiswitch-rocker.json",
+      "sha256": "0896a623537ff19eae816e36b4b4fe40fe601751af233c56a73e814a060ba7eb"
+    },
+    {
+      "path": "components/uiswitch-slider.json",
+      "sha256": "e87422d7630f8dd60ba9ff697fe0c0dd3ee8ebc4ab00eda9ad2f9985cd59bd5d"
+    },
+    {
+      "path": "components/uiswitch-toggle.json",
+      "sha256": "913598304524088c79c122aed0f38735a0c684826ab54520791e626b6d394ac3"
+    },
+    {
+      "path": "components/uitab.json",
+      "sha256": "34dd92e255ed802b9cbbcf8c658adc9086f4682b7d3c553a4ae69ea5ad968948"
+    },
+    {
+      "path": "components/uitabgroup.json",
+      "sha256": "4b26e3e578747c86fd73097c68c44fb589c22281bba207b7450f50ad4ec53d2d"
+    },
+    {
+      "path": "components/uitable.json",
+      "sha256": "2a03bd662e152bd078986f764fc81ec9b20c1cf24aea9d711e3da26d08aeacdf"
+    },
+    {
+      "path": "components/uitextarea.json",
+      "sha256": "f56043c3e2628d49aa30a3df37e54ba6073ad956aa7b478fa61eac3f3f41561a"
+    },
+    {
+      "path": "components/uitogglebutton.json",
+      "sha256": "dc9437e466fb125daedd537ed8b961494910ed50c09ef64955870c3fc8090e69"
+    },
+    {
+      "path": "components/uitoggletool.json",
+      "sha256": "c5f3367a93eff439bbd3287361f9d67c1da7e7d0f59ec042ff8da5644d5963eb"
+    },
+    {
+      "path": "components/uitoolbar.json",
+      "sha256": "be113694cba4369dfc85479572667751e1423cd6778b33c82ba0652170a7253a"
+    },
+    {
+      "path": "components/uitree-checkbox.json",
+      "sha256": "cd00975e219c3b8403236e78475464c49db8cfe563659efab6180e997bcbddd6"
+    },
+    {
+      "path": "components/uitree.json",
+      "sha256": "ea1e3d0dd9c75a19ddb03fd7b36af316802215719a4da7993a4b8b80cca3df55"
+    },
+    {
+      "path": "components/uitreenode.json",
+      "sha256": "3decf82b6729901afc3791d591bfdb6ac63d9d2b9c11190857ae819883994d3c"
+    },
+    {
+      "path": "parent-context-rules.json",
+      "sha256": "8ce29af976eb29ca6951be6d265a72ae81b0255c064c59cf479aed1d17a3ccc3"
+    },
+    {
+      "path": "schema.json",
+      "sha256": "4d09a1f2645dd371fdc9570d4be2051c9aa90c674753548f546aea1760b8d89c"
+    }
+  ],
+  "validation": {
+    "status": "passed",
+    "checks": [
+      "component document JSON parsing",
+      "required grouping fields",
+      "release and schema versions",
+      "unique component IDs, category IDs, and property paths",
+      "category and property source-page order",
+      "category references and property constraint targets",
+      "acyclic property constraints",
+      "parent-context rule context references",
+      "complete category sharing-scope classification"
+    ]
+  }
 }

@@ -134,6 +134,7 @@ classdef AppSourceParser
                         statement.Text, statement.Span, "nonliteral-creation-argument");
                     continue
                 end
+                definition = registry.get(creation.Factory, creationArguments);
 
                 % Resolve declaration metadata and parent identity before mutation.
                 declaredType = definition.DeclaredType;
@@ -227,7 +228,8 @@ classdef AppSourceParser
                     parent = document.getComponent(component.ParentId);
                     if ~isempty(parent), parentFactory = parent.Factory; end
                 end
-                effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory);
+                effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
+                    component.CreationArguments);
                 if ~any(string({effectiveProperties.Path}) == assignment.Path)
                     existingEntry = component.getProperty(assignment.Path);
                     if ~isempty(existingEntry) && ~existingEntry.IsEditable
@@ -236,10 +238,12 @@ classdef AppSourceParser
                     entry = component.setProperty(assignment.Path, []);
                     entry.setSourceExpression(assignment.ValueText);
                     entry.SourceSpan = statement.Span;
-                    diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
-                        "context-inapplicable-property", "warning", ...
-                        "Property assignment is preserved read-only outside its direct-parent context.", ...
-                        component.Id, statement.Span);
+                    if ~macd.source.AppSourceParser.isNotRenderedFigureTool(component.Factory)
+                        diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
+                            "context-inapplicable-property", "warning", ...
+                            "Property assignment is preserved read-only outside its direct-parent context.", ...
+                            component.Id, statement.Span);
+                    end
                     continue
                 end
                 % Keep unsupported expressions opaque instead of evaluating them.
@@ -279,6 +283,19 @@ classdef AppSourceParser
     end
 
     methods (Static, Access = private)
+        function result = isNotRenderedFigureTool(factory)
+            % isNotRenderedFigureTool Identify retained Figure Tools outside Safe Preview scope.
+            arguments (Input)
+                factory (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = any(factory == ["uicontextmenu", "uimenu", "uitoolbar", ...
+                "uipushtool", "uitoggletool"]);
+        end
+
         function [bytes, diagnostic] = readBytes(filePath)
             % readBytes Read a file in binary mode without source execution.
             arguments (Input)

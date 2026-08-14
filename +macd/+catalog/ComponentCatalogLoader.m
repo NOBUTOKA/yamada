@@ -21,8 +21,13 @@ classdef ComponentCatalogLoader
                 "matlabRelease", "propertyGroupFiles", "componentFiles"], ...
                 catalogRoot + "/catalog.json");
             macd.catalog.ComponentCatalogLoader.rejectUnknownFields(manifest, ["schemaVersion", ...
-                "matlabRelease", "propertyGroupFiles", "componentFiles", "parentContextRules"], ...
+                "matlabRelease", "propertyGroupFiles", "componentFiles", "parentContextRules", ...
+                "sourceGroupingSha256"], ...
                 catalogRoot + "/catalog.json");
+            if manifest.schemaVersion == 2
+                registry = macd.catalog.ComponentCatalogLoader.loadVersion2(catalogRoot, manifest);
+                return
+            end
             if manifest.schemaVersion ~= 1 || string(manifest.matlabRelease) ~= "R2024a"
                 macd.catalog.ComponentCatalogLoader.fail(catalogRoot + "/catalog.json", ...
                     "schemaVersion must be 1 and matlabRelease must be R2024a.");
@@ -67,11 +72,181 @@ classdef ComponentCatalogLoader
             % Resolve from this package file so the current folder is irrelevant.
             sourcePath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(sourcePath)));
-            root = string(fullfile(projectRoot, "resources", "component-catalog", "v1"));
+            root = string(fullfile(projectRoot, "resources", "component-catalog", "v2"));
         end
     end
 
     methods (Static, Access = private)
+        function registry = loadVersion2(root, manifest)
+            % loadVersion2 Load concrete variants composed from audited group data.
+            arguments (Input)
+                root (1, 1) string
+                manifest (1, 1) struct
+            end
+            arguments (Output)
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+
+            if string(manifest.matlabRelease) ~= "R2024a"
+                macd.catalog.ComponentCatalogLoader.fail(root + "/catalog.json", ...
+                    "schemaVersion 2 requires matlabRelease R2024a.");
+            end
+            groups = macd.catalog.ComponentCatalogLoader.readVersion2Groups(root, ...
+                macd.catalog.ComponentCatalogLoader.stringList(manifest.propertyGroupFiles, ...
+                root + "/catalog.json.propertyGroupFiles"));
+            files = macd.catalog.ComponentCatalogLoader.stringList(manifest.componentFiles, ...
+                root + "/catalog.json.componentFiles");
+            registry = macd.model.ComponentRegistry();
+            if isfield(manifest, "parentContextRules")
+                registry.setParentContextRules(macd.catalog.ComponentCatalogLoader.parentContextRules( ...
+                    manifest.parentContextRules, root + "/catalog.json.parentContextRules"));
+            end
+            variantIds = strings(1, 0);
+            for index = 1:numel(files)
+                relativePath = files(index);
+                document = macd.catalog.ComponentCatalogLoader.readDocument(root, relativePath);
+                context = root + "/" + relativePath;
+                definition = macd.catalog.ComponentCatalogLoader.componentDefinitionVersion2( ...
+                    document, groups, context);
+                if any(variantIds == definition.Id)
+                    macd.catalog.ComponentCatalogLoader.fail(context + ".id", ...
+                        "Duplicate concrete component variant ID \"" + definition.Id + "\".");
+                end
+                variantIds(end + 1) = definition.Id; %#ok<AGROW>
+                registry.register(definition);
+            end
+        end
+
+        function groups = readVersion2Groups(root, files)
+            % readVersion2Groups Load the stable reusable property-group map.
+            arguments (Input)
+                root (1, 1) string
+                files (1, :) string
+            end
+            arguments (Output)
+                groups containers.Map
+            end
+
+            groups = containers.Map("KeyType", "char", "ValueType", "any");
+            for fileIndex = 1:numel(files)
+                relativePath = files(fileIndex);
+                document = macd.catalog.ComponentCatalogLoader.readDocument(root, relativePath);
+                context = root + "/" + relativePath;
+                macd.catalog.ComponentCatalogLoader.requireFields(document, ...
+                    ["artifactVersion", "matlabRelease", "groups"], context);
+                macd.catalog.ComponentCatalogLoader.rejectUnknownFields(document, ...
+                    ["artifactVersion", "matlabRelease", "inputSha256", "groups"], context);
+                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= "R2024a"
+                    macd.catalog.ComponentCatalogLoader.fail(context, ...
+                        "Expected R2024a property-group artifactVersion 1.");
+                end
+                groupList = macd.catalog.ComponentCatalogLoader.objectList(document.groups, context + ".groups");
+                for groupIndex = 1:numel(groupList)
+                    value = groupList{groupIndex};
+                    macd.catalog.ComponentCatalogLoader.requireFields(value, ...
+                        ["id", "kind", "categoryId", "entries"], context + ".groups");
+                    macd.catalog.ComponentCatalogLoader.rejectUnknownFields(value, ...
+                        ["id", "kind", "categoryId", "entries"], context + ".groups");
+                    id = macd.catalog.ComponentCatalogLoader.scalarString(value.id, context + ".groups.id");
+                    if isKey(groups, char(id))
+                        macd.catalog.ComponentCatalogLoader.fail(context + ".groups.id", ...
+                            "Duplicate property group \"" + id + "\".");
+                    end
+                    groups(char(id)) = value;
+                end
+            end
+        end
+
+        function definition = componentDefinitionVersion2(document, groups, context)
+            % componentDefinitionVersion2 Compose one concrete variant in category order.
+            arguments (Input)
+                document (1, 1) struct
+                groups containers.Map
+                context (1, 1) string
+            end
+            arguments (Output)
+                definition (1, 1) macd.model.ComponentDefinition
+            end
+
+            required = ["id", "factory", "declaredType", "allowedParentFactories", ...
+                "isRoot", "creationArguments", "profileId", "categories", "capabilities"];
+            macd.catalog.ComponentCatalogLoader.requireFields(document, required, context);
+            macd.catalog.ComponentCatalogLoader.rejectUnknownFields(document, required, context);
+            id = macd.catalog.ComponentCatalogLoader.scalarString(document.id, context + ".id");
+            factory = macd.catalog.ComponentCatalogLoader.scalarString(document.factory, context + ".factory");
+            declaredType = macd.catalog.ComponentCatalogLoader.scalarString(document.declaredType, context + ".declaredType");
+            parents = macd.catalog.ComponentCatalogLoader.stringList(document.allowedParentFactories, context + ".allowedParentFactories");
+            if ~islogical(document.isRoot) || ~isscalar(document.isRoot)
+                macd.catalog.ComponentCatalogLoader.fail(context + ".isRoot", "Expected one logical value.");
+            end
+            properties = macd.model.PropertyDefinition.empty(0, 1);
+            categories = macd.catalog.ComponentCatalogLoader.objectList(document.categories, context + ".categories");
+            for categoryIndex = 1:numel(categories)
+                category = categories{categoryIndex};
+                categoryContext = context + ".categories[" + string(categoryIndex) + "]";
+                macd.catalog.ComponentCatalogLoader.requireFields(category, ...
+                    ["id", "displayName", "order", "entries"], categoryContext);
+                macd.catalog.ComponentCatalogLoader.rejectUnknownFields(category, ...
+                    ["id", "displayName", "order", "entries"], categoryContext);
+                entries = macd.catalog.ComponentCatalogLoader.objectList(category.entries, categoryContext + ".entries");
+                for entryIndex = 1:numel(entries)
+                    entry = entries{entryIndex};
+                    entryContext = categoryContext + ".entries[" + string(entryIndex) + "]";
+                    macd.catalog.ComponentCatalogLoader.requireFields(entry, ...
+                        ["path", "groupId", "runtimeSetAccess", "metadata"], entryContext);
+                    macd.catalog.ComponentCatalogLoader.rejectUnknownFields(entry, ...
+                        ["path", "groupId", "runtimeSetAccess", "metadata"], entryContext);
+                    groupId = macd.catalog.ComponentCatalogLoader.scalarString(entry.groupId, entryContext + ".groupId");
+                    if ~isKey(groups, char(groupId))
+                        macd.catalog.ComponentCatalogLoader.fail(entryContext + ".groupId", ...
+                            "Unknown property group \"" + groupId + "\".");
+                    end
+                    macd.catalog.ComponentCatalogLoader.validateVersion2GroupEntry( ...
+                        groups(char(groupId)), entry, entryContext);
+                    isEditable = string(entry.runtimeSetAccess) == "public";
+                    properties(end + 1) = macd.catalog.ComponentCatalogLoader.propertyDefinition( ...
+                        struct("path", entry.path, "isEditable", isEditable, "metadata", entry.metadata), ...
+                        entryContext); %#ok<AGROW>
+                end
+            end
+            paths = string({properties.Path});
+            if numel(paths) ~= numel(unique(paths))
+                macd.catalog.ComponentCatalogLoader.fail(context + ".categories", ...
+                    "Expanded category entries must have unique property paths.");
+            end
+            capabilities = macd.catalog.ComponentCatalogLoader.capabilities(document.capabilities, context + ".capabilities");
+            capabilities.id = id;
+            capabilities.profileId = macd.catalog.ComponentCatalogLoader.scalarString( ...
+                document.profileId, context + ".profileId");
+            definition = macd.model.ComponentDefinition.fromPaths(factory, declaredType, parents, ...
+                document.isRoot, macd.catalog.ComponentCatalogLoader.creationArguments( ...
+                document.creationArguments, context + ".creationArguments"), properties, capabilities);
+        end
+
+        function validateVersion2GroupEntry(group, entry, context)
+            % validateVersion2GroupEntry Reject category entries that drift from group ownership.
+            arguments (Input)
+                group (1, 1) struct
+                entry (1, 1) struct
+                context (1, 1) string
+            end
+
+            matches = macd.catalog.ComponentCatalogLoader.objectList(group.entries, context + ".group.entries");
+            count = 0;
+            for index = 1:numel(matches)
+                if string(matches{index}.path) == string(entry.path)
+                    count = count + 1;
+                end
+            end
+            if count ~= 1
+                macd.catalog.ComponentCatalogLoader.fail(context + ".path", ...
+                    "Property path is not owned exactly once by its declared group.");
+            end
+            if ~isstruct(entry.metadata) || ~isscalar(entry.metadata)
+                macd.catalog.ComponentCatalogLoader.fail(context + ".metadata", "Expected one object.");
+            end
+        end
+
         function groups = readGroups(root, files)
             % readGroups Read all manifest-listed property groups by their unique names.
             arguments (Input)
@@ -239,7 +414,8 @@ classdef ComponentCatalogLoader
                 macd.catalog.ComponentCatalogLoader.rejectUnknownFields(metadata, ...
                     ["editor", "validator", "previewPolicy", "resetPolicy", ...
                     "displayName", "category", "order", "valueSchema", ...
-                    "applicableStyles", "auditDisposition"], ...
+                    "applicableStyles", "auditDisposition", "description", ...
+                    "categoryId", "groupId"], ...
                     context + ".metadata");
                 macd.catalog.PropertyBehaviorRegistry.validateMetadata(metadata, context);
                 macd.catalog.ComponentCatalogLoader.validatePropertyPresentationMetadata( ...
@@ -432,7 +608,7 @@ classdef ComponentCatalogLoader
                 result cell
             end
 
-            % Current R2024a catalog entries have no creation arguments; reject ambiguity.
+            % Retain JSON literal constructor arguments without evaluating them.
             if isempty(value)
                 result = {};
             elseif iscell(value)

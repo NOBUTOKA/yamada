@@ -1,0 +1,359 @@
+{
+  "id": "uicontextmenu",
+  "factory": "uicontextmenu",
+  "declaredType": "matlab.ui.container.ContextMenu",
+  "allowedParentFactories": [
+    "uifigure",
+    "uipanel",
+    "uitab",
+    "uibuttongroup"
+  ],
+  "isRoot": false,
+  "creationArguments": [],
+  "profileId": "contextMenu",
+  "categories": [
+    {
+      "id": "callbacks",
+      "displayName": "Callbacks",
+      "order": 1,
+      "entries": [
+        {
+          "path": "ContextMenuOpeningFcn",
+          "groupId": "local.uicontextmenu.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ContextMenuOpeningFcn",
+            "description": "Context menu opening callback function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 1,
+            "groupId": "local.uicontextmenu.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CreateFcn",
+          "groupId": "local.uicontextmenu.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CreateFcn",
+            "description": "Creation function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 2,
+            "groupId": "local.uicontextmenu.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "DeleteFcn",
+          "groupId": "local.uicontextmenu.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DeleteFcn",
+            "description": "Deletion function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 3,
+            "groupId": "local.uicontextmenu.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 2,
+      "entries": [
+        {
+          "path": "Interruptible",
+          "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interruptible",
+            "description": "Callback interruption",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 1,
+            "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+            "editor": "onOff",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BusyAction",
+          "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BusyAction",
+            "description": "Callback queuing",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 2,
+            "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+            "editor": "enum",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BeingDeleted",
+          "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "BeingDeleted",
+            "description": "Deletion status",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 3,
+            "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "parentchild",
+      "displayName": "Parent/Child",
+      "order": 3,
+      "entries": [
+        {
+          "path": "Parent",
+          "groupId": "local.uicontextmenu.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Parent",
+            "description": "Parent object",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 1,
+            "groupId": "local.uicontextmenu.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Children",
+          "groupId": "local.uicontextmenu.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Children",
+            "description": "Context menu children",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 2,
+            "groupId": "local.uicontextmenu.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "HandleVisibility",
+          "groupId": "local.uicontextmenu.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HandleVisibility",
+            "description": "Visibility of object handle",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 3,
+            "groupId": "local.uicontextmenu.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 4,
+      "entries": [
+        {
+          "path": "Type",
+          "groupId": "local.uicontextmenu.identifiers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Type",
+            "description": "Type of graphics object",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 1,
+            "groupId": "local.uicontextmenu.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Tag",
+          "groupId": "local.uicontextmenu.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tag",
+            "description": "Object identifier",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 2,
+            "groupId": "local.uicontextmenu.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "UserData",
+          "groupId": "local.uicontextmenu.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "UserData",
+            "description": "User data",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 3,
+            "groupId": "local.uicontextmenu.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "notRendered",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "arbitraryData",
+              "matlabClasses": [
+                "any"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "displayName": "Context Menu",
+    "category": "FigureTools"
+  }
+}

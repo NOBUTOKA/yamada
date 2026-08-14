@@ -81,6 +81,14 @@ classdef PropertyEditorFactory
                 end
                 control.Value = logicalValue == "on" || logicalValue == "true" || logicalValue == "1";
                 control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
+            elseif isa(control, "matlab.ui.control.DropDown")
+                % Retain documented or runtime defaults absent from an incomplete enum contract.
+                items = string(control.Items);
+                if ~any(items == value)
+                    control.Items = cellstr([items(:); value]);
+                end
+                control.Value = char(value);
+                control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
             elseif isa(control, "matlab.ui.control.NumericEditField")
                 number = str2double(value);
                 if ~isnan(number)

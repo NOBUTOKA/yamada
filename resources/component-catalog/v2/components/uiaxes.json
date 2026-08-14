@@ -1,0 +1,4191 @@
+{
+  "id": "uiaxes",
+  "factory": "uiaxes",
+  "declaredType": "matlab.ui.control.UIAxes",
+  "allowedParentFactories": [
+    "uifigure",
+    "uipanel",
+    "uigridlayout",
+    "uitab",
+    "uibuttongroup",
+    "uitabgroup"
+  ],
+  "isRoot": false,
+  "creationArguments": [],
+  "profileId": "axes",
+  "categories": [
+    {
+      "id": "font",
+      "displayName": "Font",
+      "order": 1,
+      "entries": [
+        {
+          "path": "FontName",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontName",
+            "description": "Font name",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 1,
+            "groupId": "local.uiaxes.font",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontSize",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontSize",
+            "description": "Font size",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 2,
+            "groupId": "local.uiaxes.font",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontSizeMode",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontSizeMode",
+            "description": "Selection mode for font size",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 3,
+            "groupId": "local.uiaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontWeight",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontWeight",
+            "description": "Character thickness",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 4,
+            "groupId": "local.uiaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontAngle",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontAngle",
+            "description": "Character slant",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 5,
+            "groupId": "local.uiaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "LabelFontSizeMultiplier",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LabelFontSizeMultiplier",
+            "description": "Scale factor for label font size",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 6,
+            "groupId": "local.uiaxes.font",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TitleFontSizeMultiplier",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleFontSizeMultiplier",
+            "description": "Scale factor for title font size",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 7,
+            "groupId": "local.uiaxes.font",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TitleFontWeight",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleFontWeight",
+            "description": "Title character thickness",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 8,
+            "groupId": "local.uiaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "SubtitleFontWeight",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SubtitleFontWeight",
+            "description": "Subtitle character thickness",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 9,
+            "groupId": "local.uiaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontUnits",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontUnits",
+            "description": "Font size units",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 10,
+            "groupId": "local.uiaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontSmoothing",
+          "groupId": "local.uiaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontSmoothing",
+            "description": "Character smoothing",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 11,
+            "groupId": "local.uiaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ticks",
+      "displayName": "Ticks",
+      "order": 2,
+      "entries": [
+        {
+          "path": "XTick",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XTick",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 1,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YTick",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YTick",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 2,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZTick",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZTick",
+            "description": "Tick values",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 3,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XTickMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XTickMode",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 4,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YTickMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YTickMode",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 5,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZTickMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZTickMode",
+            "description": "Selection mode for tick values",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 6,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XTickLabel",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XTickLabel",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 7,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YTickLabel",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YTickLabel",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 8,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZTickLabel",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZTickLabel",
+            "description": "Tick labels",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 9,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XTickLabelMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XTickLabelMode",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 10,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YTickLabelMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YTickLabelMode",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 11,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZTickLabelMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZTickLabelMode",
+            "description": "Selection mode for tick labels",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 12,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TickLabelInterpreter",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickLabelInterpreter",
+            "description": "Tick label interpreter",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 13,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XTickLabelRotation",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XTickLabelRotation",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 14,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YTickLabelRotation",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YTickLabelRotation",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 15,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZTickLabelRotation",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZTickLabelRotation",
+            "description": "Tick label rotation",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 16,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XTickLabelRotationMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XTickLabelRotationMode",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 17,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YTickLabelRotationMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YTickLabelRotationMode",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 18,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZTickLabelRotationMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZTickLabelRotationMode",
+            "description": "Selection mode for tick label rotation",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 19,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XMinorTick",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XMinorTick",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 20,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YMinorTick",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YMinorTick",
+            "description": "",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 21,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZMinorTick",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZMinorTick",
+            "description": "Minor tick marks",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 22,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TickDir",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickDir",
+            "description": "Tick mark direction",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 23,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TickDirMode",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickDirMode",
+            "description": "Selection mode for TickDir",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 24,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TickLength",
+          "groupId": "exact.ticks.fd34964b3e8f",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickLength",
+            "description": "Tick mark length",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 25,
+            "groupId": "exact.ticks.fd34964b3e8f",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "rulers",
+      "displayName": "Rulers",
+      "order": 3,
+      "entries": [
+        {
+          "path": "XLim",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XLim",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 1,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YLim",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YLim",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 2,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZLim",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZLim",
+            "description": "Minimum and maximum axis limits",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 3,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XLimMode",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XLimMode",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 4,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YLimMode",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YLimMode",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 5,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZLimMode",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZLimMode",
+            "description": "Selection mode for axis limits",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 6,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XLimitMethod",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XLimitMethod",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 7,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YLimitMethod",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YLimitMethod",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 8,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZLimitMethod",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZLimitMethod",
+            "description": "Axis limit selection method",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 9,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XAxis",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XAxis",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 10,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YAxis",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "YAxis",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 11,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZAxis",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZAxis",
+            "description": "Axis ruler",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 12,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XAxisLocation",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XAxisLocation",
+            "description": "x -axis location",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 13,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YAxisLocation",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YAxisLocation",
+            "description": "y -axis location",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 14,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XColor",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XColor",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 15,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YColor",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YColor",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 16,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZColor",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZColor",
+            "description": "Color of axis line, tick values, and labels",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 17,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XColorMode",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XColorMode",
+            "description": "Property for setting x -axis grid color",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 18,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YColorMode",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YColorMode",
+            "description": "Property for setting y -axis grid color",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 19,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZColorMode",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZColorMode",
+            "description": "Property for setting z -axis grid color",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 20,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XDir",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XDir",
+            "description": "x -axis direction",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 21,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YDir",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YDir",
+            "description": "y -axis direction",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 22,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZDir",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZDir",
+            "description": "z -axis direction",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 23,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XScale",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XScale",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 24,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YScale",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YScale",
+            "description": "",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 25,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZScale",
+          "groupId": "exact.rulers.fe7aaa03f121",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZScale",
+            "description": "Scale of values along axis",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 26,
+            "groupId": "exact.rulers.fe7aaa03f121",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "grids",
+      "displayName": "Grids",
+      "order": 4,
+      "entries": [
+        {
+          "path": "XGrid",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XGrid",
+            "description": "",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 1,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YGrid",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YGrid",
+            "description": "",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 2,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZGrid",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZGrid",
+            "description": "Grid lines",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 3,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Layer",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Layer",
+            "description": "Placement of grid lines and tick marks",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 4,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "GridLineStyle",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridLineStyle",
+            "description": "Line style for grid lines",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 5,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "GridLineWidth",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridLineWidth",
+            "description": "Grid line width",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 6,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "GridLineWidthMode",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridLineWidthMode",
+            "description": "How grid line width is set",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 7,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "GridColor",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridColor",
+            "description": "Color of grid lines",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 8,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "GridColorMode",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridColorMode",
+            "description": "Property for setting grid color",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 9,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "GridAlpha",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridAlpha",
+            "description": "Grid-line transparency",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 10,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "GridAlphaMode",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridAlphaMode",
+            "description": "Selection mode for GridAlpha",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 11,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XMinorGrid",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XMinorGrid",
+            "description": "",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 12,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YMinorGrid",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YMinorGrid",
+            "description": "",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 13,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZMinorGrid",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZMinorGrid",
+            "description": "Minor grid lines",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 14,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "MinorGridLineStyle",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridLineStyle",
+            "description": "Line style for minor grid lines",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 15,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "MinorGridLineWidth",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridLineWidth",
+            "description": "Minor grid line width",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 16,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "MinorGridLineWidthMode",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridLineWidthMode",
+            "description": "How minor grid line width is set",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 17,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "MinorGridColor",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridColor",
+            "description": "Color of minor grid lines",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 18,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "MinorGridColorMode",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridColorMode",
+            "description": "Property for setting minor grid color",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 19,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "MinorGridAlpha",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridAlpha",
+            "description": "Minor grid line transparency",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 20,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "MinorGridAlphaMode",
+          "groupId": "exact.grids.356da5448044",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridAlphaMode",
+            "description": "Selection mode for MinorGridAlpha",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 21,
+            "groupId": "exact.grids.356da5448044",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "labels",
+      "displayName": "Labels",
+      "order": 5,
+      "entries": [
+        {
+          "path": "Title",
+          "groupId": "exact.labels.3ddefe6d1a29",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Title",
+            "description": "Text object for axes title",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 1,
+            "groupId": "exact.labels.3ddefe6d1a29",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Subtitle",
+          "groupId": "exact.labels.3ddefe6d1a29",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Subtitle",
+            "description": "Text object for subtitle",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 2,
+            "groupId": "exact.labels.3ddefe6d1a29",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TitleHorizontalAlignment",
+          "groupId": "exact.labels.3ddefe6d1a29",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleHorizontalAlignment",
+            "description": "Title and subtitle horizontal alignment",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 3,
+            "groupId": "exact.labels.3ddefe6d1a29",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "XLabel",
+          "groupId": "exact.labels.3ddefe6d1a29",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "XLabel",
+            "description": "",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 4,
+            "groupId": "exact.labels.3ddefe6d1a29",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "YLabel",
+          "groupId": "exact.labels.3ddefe6d1a29",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "YLabel",
+            "description": "",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 5,
+            "groupId": "exact.labels.3ddefe6d1a29",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ZLabel",
+          "groupId": "exact.labels.3ddefe6d1a29",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZLabel",
+            "description": "Text object for axis label",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 6,
+            "groupId": "exact.labels.3ddefe6d1a29",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Legend",
+          "groupId": "exact.labels.3ddefe6d1a29",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Legend",
+            "description": "Legend associated with axes",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 7,
+            "groupId": "exact.labels.3ddefe6d1a29",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "multipleplots",
+      "displayName": "Multiple Plots",
+      "order": 6,
+      "entries": [
+        {
+          "path": "ColorOrder",
+          "groupId": "exact.multipleplots.11711c9a4046",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorOrder",
+            "description": "Color order",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 1,
+            "groupId": "exact.multipleplots.11711c9a4046",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ColorOrderIndex",
+          "groupId": "exact.multipleplots.11711c9a4046",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorOrderIndex",
+            "description": "Color order index",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 2,
+            "groupId": "exact.multipleplots.11711c9a4046",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "LineStyleOrder",
+          "groupId": "exact.multipleplots.11711c9a4046",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleOrder",
+            "description": "Line style order",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 3,
+            "groupId": "exact.multipleplots.11711c9a4046",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "LineStyleCyclingMethod",
+          "groupId": "exact.multipleplots.11711c9a4046",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleCyclingMethod",
+            "description": "How to cycle through line styles",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 4,
+            "groupId": "exact.multipleplots.11711c9a4046",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "NextSeriesIndex",
+          "groupId": "exact.multipleplots.11711c9a4046",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "NextSeriesIndex",
+            "description": "SeriesIndex value for next object",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 5,
+            "groupId": "exact.multipleplots.11711c9a4046",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "NextPlot",
+          "groupId": "exact.multipleplots.11711c9a4046",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "NextPlot",
+            "description": "Properties to reset",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 6,
+            "groupId": "exact.multipleplots.11711c9a4046",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "SortMethod",
+          "groupId": "exact.multipleplots.11711c9a4046",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SortMethod",
+            "description": "Order for rendering objects",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 7,
+            "groupId": "exact.multipleplots.11711c9a4046",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "LineStyleOrderIndex",
+          "groupId": "exact.multipleplots.11711c9a4046",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleOrderIndex",
+            "description": "Line style order index",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 8,
+            "groupId": "exact.multipleplots.11711c9a4046",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "colorandtransparencymaps",
+      "displayName": "Color and Transparency Maps",
+      "order": 7,
+      "entries": [
+        {
+          "path": "Colormap",
+          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Colormap",
+            "description": "Color map",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 1,
+            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ColorScale",
+          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorScale",
+            "description": "Scale for color mapping",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 2,
+            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CLim",
+          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CLim",
+            "description": "Color limits",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 3,
+            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CLimMode",
+          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CLimMode",
+            "description": "Selection mode for CLim",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 4,
+            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Alphamap",
+          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Alphamap",
+            "description": "Transparency map",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 5,
+            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "AlphaScale",
+          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "AlphaScale",
+            "description": "Scale for transparency mapping",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 6,
+            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ALim",
+          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ALim",
+            "description": "Alpha limits",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 7,
+            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ALimMode",
+          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ALimMode",
+            "description": "Selection mode for ALim",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 8,
+            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "boxstyling",
+      "displayName": "Box Styling",
+      "order": 8,
+      "entries": [
+        {
+          "path": "Color",
+          "groupId": "local.uiaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Color",
+            "description": "Color of plot area",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 1,
+            "groupId": "local.uiaxes.boxstyling",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BackgroundColor",
+          "groupId": "local.uiaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BackgroundColor",
+            "description": "Color of margin around plot area",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 2,
+            "groupId": "local.uiaxes.boxstyling",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "LineWidth",
+          "groupId": "local.uiaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineWidth",
+            "description": "Line width",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 3,
+            "groupId": "local.uiaxes.boxstyling",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Box",
+          "groupId": "local.uiaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Box",
+            "description": "Box outline",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 4,
+            "groupId": "local.uiaxes.boxstyling",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BoxStyle",
+          "groupId": "local.uiaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BoxStyle",
+            "description": "Box outline style",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 5,
+            "groupId": "local.uiaxes.boxstyling",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Clipping",
+          "groupId": "local.uiaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Clipping",
+            "description": "Clipping of objects to axes limits",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 6,
+            "groupId": "local.uiaxes.boxstyling",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ClippingStyle",
+          "groupId": "local.uiaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ClippingStyle",
+            "description": "Clipping boundaries",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 7,
+            "groupId": "local.uiaxes.boxstyling",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "AmbientLightColor",
+          "groupId": "local.uiaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "AmbientLightColor",
+            "description": "Background light color",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 8,
+            "groupId": "local.uiaxes.boxstyling",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "position",
+      "displayName": "Position",
+      "order": 9,
+      "entries": [
+        {
+          "path": "Position",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Position",
+            "description": "Size and location of axes, including labels and margins",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 1,
+            "groupId": "local.uiaxes.position",
+            "editor": "numericVector",
+            "previewPolicy": "adapt",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "InnerPosition",
+            "description": "Size and location of inner axes, excluding labels and margins",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 2,
+            "groupId": "local.uiaxes.position",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "OuterPosition",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "OuterPosition",
+            "description": "Size and location of axes, including labels and margins",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 3,
+            "groupId": "local.uiaxes.position",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TightInset",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "TightInset",
+            "description": "Margin for text labels",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 4,
+            "groupId": "local.uiaxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "PositionConstraint",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PositionConstraint",
+            "description": "Position to hold constant",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 5,
+            "groupId": "local.uiaxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Units",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Units",
+            "description": "Position units",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 6,
+            "groupId": "local.uiaxes.position",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "DataAspectRatio",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DataAspectRatio",
+            "description": "Relative length of data units",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 7,
+            "groupId": "local.uiaxes.position",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "DataAspectRatioMode",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DataAspectRatioMode",
+            "description": "Data aspect ratio mode",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 8,
+            "groupId": "local.uiaxes.position",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "PlotBoxAspectRatio",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PlotBoxAspectRatio",
+            "description": "Relative length of each axis",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 9,
+            "groupId": "local.uiaxes.position",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "PlotBoxAspectRatioMode",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PlotBoxAspectRatioMode",
+            "description": "Selection mode for PlotBoxAspectRatio",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 10,
+            "groupId": "local.uiaxes.position",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Layout",
+          "groupId": "local.uiaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Layout",
+            "description": "Layout options",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 11,
+            "groupId": "local.uiaxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "view",
+      "displayName": "View",
+      "order": 10,
+      "entries": [
+        {
+          "path": "View",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "View",
+            "description": "Azimuth and elevation of view",
+            "categoryId": "view",
+            "category": "View",
+            "order": 1,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Projection",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Projection",
+            "description": "Type of projection onto 2-D screen",
+            "categoryId": "view",
+            "category": "View",
+            "order": 2,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CameraPosition",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CameraPosition",
+            "description": "Camera location",
+            "categoryId": "view",
+            "category": "View",
+            "order": 3,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CameraPositionMode",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CameraPositionMode",
+            "description": "Selection mode for CameraPosition",
+            "categoryId": "view",
+            "category": "View",
+            "order": 4,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CameraTarget",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CameraTarget",
+            "description": "Camera target point",
+            "categoryId": "view",
+            "category": "View",
+            "order": 5,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CameraTargetMode",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CameraTargetMode",
+            "description": "Selection mode for CameraTarget",
+            "categoryId": "view",
+            "category": "View",
+            "order": 6,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CameraUpVector",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CameraUpVector",
+            "description": "Vector defining upwards direction",
+            "categoryId": "view",
+            "category": "View",
+            "order": 7,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CameraUpVectorMode",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CameraUpVectorMode",
+            "description": "Selection mode for CameraUpVector",
+            "categoryId": "view",
+            "category": "View",
+            "order": 8,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CameraViewAngle",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CameraViewAngle",
+            "description": "Field of view",
+            "categoryId": "view",
+            "category": "View",
+            "order": 9,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CameraViewAngleMode",
+          "groupId": "exact.view.8c5a8dffbd56",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CameraViewAngleMode",
+            "description": "Selection mode for CameraViewAngle",
+            "categoryId": "view",
+            "category": "View",
+            "order": 10,
+            "groupId": "exact.view.8c5a8dffbd56",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "interactivity",
+      "displayName": "Interactivity",
+      "order": 11,
+      "entries": [
+        {
+          "path": "InteractionOptions",
+          "groupId": "local.uiaxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "InteractionOptions",
+            "description": "Options to customize interaction behavior",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 1,
+            "groupId": "local.uiaxes.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Toolbar",
+          "groupId": "local.uiaxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Toolbar",
+            "description": "Toolbar with individual interaction buttons",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 2,
+            "groupId": "local.uiaxes.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Interactions",
+          "groupId": "local.uiaxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interactions",
+            "description": "Built-in interactions",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 3,
+            "groupId": "local.uiaxes.interactivity",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Visible",
+          "groupId": "local.uiaxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Visible",
+            "description": "State of visibility",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 4,
+            "groupId": "local.uiaxes.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CurrentPoint",
+          "groupId": "local.uiaxes.interactivity",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "CurrentPoint",
+            "description": "Location of mouse pointer",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 5,
+            "groupId": "local.uiaxes.interactivity",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "groupId": "local.uiaxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ContextMenu",
+            "description": "Context menu",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 6,
+            "groupId": "local.uiaxes.interactivity",
+            "editor": "componentReference",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Selected",
+          "groupId": "local.uiaxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Selected",
+            "description": "Selection state",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 7,
+            "groupId": "local.uiaxes.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "SelectionHighlight",
+          "groupId": "local.uiaxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SelectionHighlight",
+            "description": "Display of selection handles",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 8,
+            "groupId": "local.uiaxes.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbacks",
+      "displayName": "Callbacks",
+      "order": 12,
+      "entries": [
+        {
+          "path": "ButtonDownFcn",
+          "groupId": "local.uiaxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ButtonDownFcn",
+            "description": "Mouse-click callback",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 1,
+            "groupId": "local.uiaxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CreateFcn",
+          "groupId": "local.uiaxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CreateFcn",
+            "description": "Creation function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 2,
+            "groupId": "local.uiaxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "DeleteFcn",
+          "groupId": "local.uiaxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DeleteFcn",
+            "description": "Deletion function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 3,
+            "groupId": "local.uiaxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 13,
+      "entries": [
+        {
+          "path": "Interruptible",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interruptible",
+            "description": "Callback interruption",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 1,
+            "groupId": "callbackExecutionCore",
+            "editor": "onOff",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BusyAction",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BusyAction",
+            "description": "Callback queuing",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 2,
+            "groupId": "callbackExecutionCore",
+            "editor": "enum",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "PickableParts",
+          "groupId": "local.uiaxes.callbackexecutioncontrol",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PickableParts",
+            "description": "Ability to capture mouse clicks",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 3,
+            "groupId": "local.uiaxes.callbackexecutioncontrol",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "HitTest",
+          "groupId": "local.uiaxes.callbackexecutioncontrol",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HitTest",
+            "description": "Response to captured mouse clicks",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 4,
+            "groupId": "local.uiaxes.callbackexecutioncontrol",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BeingDeleted",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "BeingDeleted",
+            "description": "Deletion status",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 5,
+            "groupId": "callbackExecutionCore",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "parentchild",
+      "displayName": "Parent/Child",
+      "order": 14,
+      "entries": [
+        {
+          "path": "Parent",
+          "groupId": "local.uiaxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Parent",
+            "description": "Parent container",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 1,
+            "groupId": "local.uiaxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Children",
+          "groupId": "local.uiaxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Children",
+            "description": "Children",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 2,
+            "groupId": "local.uiaxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "HandleVisibility",
+          "groupId": "local.uiaxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HandleVisibility",
+            "description": "Visibility of object handle",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 3,
+            "groupId": "local.uiaxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 15,
+      "entries": [
+        {
+          "path": "Type",
+          "groupId": "local.uiaxes.identifiers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Type",
+            "description": "Type of graphics object",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 1,
+            "groupId": "local.uiaxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Tag",
+          "groupId": "local.uiaxes.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tag",
+            "description": "Object identifier",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 2,
+            "groupId": "local.uiaxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "UserData",
+          "groupId": "local.uiaxes.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "UserData",
+            "description": "User data",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 3,
+            "groupId": "local.uiaxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "arbitraryData",
+              "matlabClasses": [
+                "any"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "displayName": "UI Axes",
+    "category": "Axes",
+    "overlayShape": "axes"
+  }
+}

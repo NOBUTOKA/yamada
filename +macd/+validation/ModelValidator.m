@@ -57,7 +57,7 @@ classdef ModelValidator
                         component.Id); %#ok<AGROW>
                     continue
                 end
-                definition = registry.get(component.Factory);
+                definition = registry.get(component.Factory, component.CreationArguments);
                 % Resolve and validate the component's hierarchy location.
                 if strlength(component.ParentId) == 0
                     roots = roots + 1;
@@ -83,11 +83,15 @@ classdef ModelValidator
                 if strlength(component.ParentId) > 0 && ~isempty(parent)
                     parentFactory = parent.Factory;
                 end
-                effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory);
+                effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
+                    component.CreationArguments);
                 supportedPaths = [effectiveProperties.Path];
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
                     if ~any(supportedPaths == entry.Path)
+                        if macd.validation.ModelValidator.isNotRenderedFigureTool(component.Factory)
+                            continue
+                        end
                         diagnostics(end + 1) = macd.model.Diagnostic( ...
                             "unsupported-property", "warning", ...
                             sprintf("Property ""%s"" is not editable for factory ""%s"".", ...
@@ -138,6 +142,19 @@ classdef ModelValidator
     end
 
     methods (Static, Access = private)
+        function result = isNotRenderedFigureTool(factory)
+            % isNotRenderedFigureTool Identify Figure Tools intentionally outside preview scope.
+            arguments (Input)
+                factory (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = any(factory == ["uicontextmenu", "uimenu", "uitoolbar", ...
+                "uipushtool", "uitoggletool"]);
+        end
+
         function diagnostic = validateGeometry(entry, componentId)
             % validateGeometry Check literal Position and grid coordinates.
             arguments (Input)

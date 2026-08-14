@@ -77,6 +77,10 @@ classdef ParentContextRule
                     result = macd.model.ParentContextRule(parentFactories, ...
                         macd.model.PropertyDefinition("Position", [], false, true, metadata), ...
                         ["Layout.Row", "Layout.Column"]);
+                case "absoluteIntrinsic"
+                    % Version 2 catalogs own Position intrinsically and only suppress grid fields.
+                    result = macd.model.ParentContextRule(parentFactories, ...
+                        macd.model.PropertyDefinition.empty, ["Layout.Row", "Layout.Column"]);
                 case "structural"
                     result = macd.model.ParentContextRule(parentFactories, macd.model.PropertyDefinition.empty, ["Position", "Layout.Row", "Layout.Column"]);
                 otherwise

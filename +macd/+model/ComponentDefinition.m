@@ -11,6 +11,8 @@ classdef ComponentDefinition
     %           ["uifigure", "uipanel"], false, {}, properties, struct());
 
     properties (SetAccess = private)
+        % Id - Stable catalog identifier for one concrete factory variant.
+        Id string = ""
         % Factory - MATLAB factory function used to create this component type.
         Factory string = ""
         % DeclaredType - MATLAB class used in AppBase property declarations.
@@ -102,6 +104,11 @@ classdef ComponentDefinition
             obj.ResizeConstraint = resizeConstraint;
             obj.ResizeConstraintsByStyle = resizeConstraintsByStyle;
             obj.Metadata = metadata;
+            if isfield(metadata, "id")
+                obj.Id = string(metadata.id);
+            else
+                obj.Id = factory;
+            end
             if strlength(obj.DisplayName) == 0
                 typeParts = split(obj.DeclaredType, ".");
                 obj.DisplayName = typeParts(end);

@@ -1,0 +1,1166 @@
+{
+  "id": "uibuttongroup",
+  "factory": "uibuttongroup",
+  "declaredType": "matlab.ui.container.ButtonGroup",
+  "allowedParentFactories": [
+    "uifigure",
+    "uipanel",
+    "uigridlayout",
+    "uitab",
+    "uibuttongroup"
+  ],
+  "isRoot": false,
+  "creationArguments": [],
+  "profileId": "standardControl",
+  "categories": [
+    {
+      "id": "title",
+      "displayName": "Title",
+      "order": 1,
+      "entries": [
+        {
+          "path": "Title",
+          "groupId": "exact.title.d4dd3ebbc800",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Title",
+            "description": "Title",
+            "categoryId": "title",
+            "category": "Title",
+            "order": 1,
+            "groupId": "exact.title.d4dd3ebbc800",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "TitlePosition",
+          "groupId": "exact.title.d4dd3ebbc800",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitlePosition",
+            "description": "Location of title",
+            "categoryId": "title",
+            "category": "Title",
+            "order": 2,
+            "groupId": "exact.title.d4dd3ebbc800",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "colorandstyling",
+      "displayName": "Color and Styling",
+      "order": 2,
+      "entries": [
+        {
+          "path": "ForegroundColor",
+          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ForegroundColor",
+            "description": "Title color",
+            "categoryId": "colorandstyling",
+            "category": "Color and Styling",
+            "order": 1,
+            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BackgroundColor",
+          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BackgroundColor",
+            "description": "Background color",
+            "categoryId": "colorandstyling",
+            "category": "Color and Styling",
+            "order": 2,
+            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BorderType",
+          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BorderType",
+            "description": "Button group border",
+            "categoryId": "colorandstyling",
+            "category": "Color and Styling",
+            "order": 3,
+            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BorderWidth",
+          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BorderWidth",
+            "description": "Border width",
+            "categoryId": "colorandstyling",
+            "category": "Color and Styling",
+            "order": 4,
+            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BorderColor",
+          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BorderColor",
+            "description": "Border color",
+            "categoryId": "colorandstyling",
+            "category": "Color and Styling",
+            "order": 5,
+            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "font",
+      "displayName": "Font",
+      "order": 3,
+      "entries": [
+        {
+          "path": "FontName",
+          "groupId": "exact.font.571c323d68a0",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontName",
+            "description": "Font name",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 1,
+            "groupId": "exact.font.571c323d68a0",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontSize",
+          "groupId": "exact.font.571c323d68a0",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontSize",
+            "description": "Font size",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 2,
+            "groupId": "exact.font.571c323d68a0",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontWeight",
+          "groupId": "exact.font.571c323d68a0",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontWeight",
+            "description": "Font weight",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 3,
+            "groupId": "exact.font.571c323d68a0",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontAngle",
+          "groupId": "exact.font.571c323d68a0",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontAngle",
+            "description": "Font angle",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 4,
+            "groupId": "exact.font.571c323d68a0",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "FontUnits",
+          "groupId": "exact.font.571c323d68a0",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontUnits",
+            "description": "Font unit of measurement",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 5,
+            "groupId": "exact.font.571c323d68a0",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "interactivity",
+      "displayName": "Interactivity",
+      "order": 4,
+      "entries": [
+        {
+          "path": "Visible",
+          "groupId": "local.uibuttongroup.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Visible",
+            "description": "State of visibility",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 1,
+            "groupId": "local.uibuttongroup.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "SelectedObject",
+          "groupId": "local.uibuttongroup.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SelectedObject",
+            "description": "Currently selected radio button or toggle button",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 2,
+            "groupId": "local.uibuttongroup.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "groupId": "local.uibuttongroup.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ContextMenu",
+            "description": "Context menu",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 3,
+            "groupId": "local.uibuttongroup.interactivity",
+            "editor": "componentReference",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "position",
+      "displayName": "Position",
+      "order": 5,
+      "entries": [
+        {
+          "path": "Position",
+          "groupId": "exact.position.6dd9e2671d0c",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Position",
+            "description": "Location and size of button group, including borders and title",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 1,
+            "groupId": "exact.position.6dd9e2671d0c",
+            "editor": "numericVector",
+            "previewPolicy": "adapt",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "groupId": "exact.position.6dd9e2671d0c",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "InnerPosition",
+            "description": "Location and size of button group, excluding borders and title",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 2,
+            "groupId": "exact.position.6dd9e2671d0c",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "OuterPosition",
+          "groupId": "exact.position.6dd9e2671d0c",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "OuterPosition",
+            "description": "Location and size of button group, including borders and title",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 3,
+            "groupId": "exact.position.6dd9e2671d0c",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Units",
+          "groupId": "exact.position.6dd9e2671d0c",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Units",
+            "description": "Units of measurement",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 4,
+            "groupId": "exact.position.6dd9e2671d0c",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbacks",
+      "displayName": "Callbacks",
+      "order": 6,
+      "entries": [
+        {
+          "path": "SelectionChangedFcn",
+          "groupId": "local.uibuttongroup.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SelectionChangedFcn",
+            "description": "Selection changed callback",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 1,
+            "groupId": "local.uibuttongroup.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "SizeChangedFcn",
+          "groupId": "local.uibuttongroup.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SizeChangedFcn",
+            "description": "Size change callback",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 2,
+            "groupId": "local.uibuttongroup.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "ButtonDownFcn",
+          "groupId": "local.uibuttongroup.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ButtonDownFcn",
+            "description": "Button-press callback function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 3,
+            "groupId": "local.uibuttongroup.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "CreateFcn",
+          "groupId": "local.uibuttongroup.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CreateFcn",
+            "description": "Creation function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 4,
+            "groupId": "local.uibuttongroup.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "DeleteFcn",
+          "groupId": "local.uibuttongroup.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DeleteFcn",
+            "description": "Deletion function",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 5,
+            "groupId": "local.uibuttongroup.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 7,
+      "entries": [
+        {
+          "path": "Interruptible",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interruptible",
+            "description": "Callback interruption",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 1,
+            "groupId": "callbackExecutionCore",
+            "editor": "onOff",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BusyAction",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BusyAction",
+            "description": "Callback queuing",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 2,
+            "groupId": "callbackExecutionCore",
+            "editor": "enum",
+            "previewPolicy": "skip",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "BeingDeleted",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "BeingDeleted",
+            "description": "Deletion status",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 3,
+            "groupId": "callbackExecutionCore",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "HitTest",
+          "groupId": "local.uibuttongroup.callbackexecutioncontrol",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HitTest",
+            "description": "Ability to become current object",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 4,
+            "groupId": "local.uibuttongroup.callbackexecutioncontrol",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "parentchild",
+      "displayName": "Parent/Child",
+      "order": 8,
+      "entries": [
+        {
+          "path": "Parent",
+          "groupId": "local.uibuttongroup.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Parent",
+            "description": "Parent container",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 1,
+            "groupId": "local.uibuttongroup.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Children",
+          "groupId": "local.uibuttongroup.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Children",
+            "description": "ButtonGroup children",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 2,
+            "groupId": "local.uibuttongroup.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "HandleVisibility",
+          "groupId": "local.uibuttongroup.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HandleVisibility",
+            "description": "Visibility of object handle",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 3,
+            "groupId": "local.uibuttongroup.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 9,
+      "entries": [
+        {
+          "path": "Type",
+          "groupId": "local.uibuttongroup.identifiers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Type",
+            "description": "Type of graphics object",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 1,
+            "groupId": "local.uibuttongroup.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Tag",
+          "groupId": "local.uibuttongroup.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tag",
+            "description": "Object identifier",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 2,
+            "groupId": "local.uibuttongroup.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "UserData",
+          "groupId": "local.uibuttongroup.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "UserData",
+            "description": "User data",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 3,
+            "groupId": "local.uibuttongroup.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "arbitraryData",
+              "matlabClasses": [
+                "any"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "uifigurebasedappsonly",
+      "displayName": "uifigure -Based Apps Only",
+      "order": 10,
+      "entries": [
+        {
+          "path": "Buttons",
+          "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Buttons",
+            "description": "Buttons managed by button group",
+            "categoryId": "uifigurebasedappsonly",
+            "category": "uifigure -Based Apps Only",
+            "order": 1,
+            "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Enable",
+          "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Enable",
+            "description": "Operational state",
+            "categoryId": "uifigurebasedappsonly",
+            "category": "uifigure -Based Apps Only",
+            "order": 2,
+            "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Tooltip",
+          "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tooltip",
+            "description": "Tooltip",
+            "categoryId": "uifigurebasedappsonly",
+            "category": "uifigure -Based Apps Only",
+            "order": 3,
+            "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Scrollable",
+          "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Scrollable",
+            "description": "Ability to scroll",
+            "categoryId": "uifigurebasedappsonly",
+            "category": "uifigure -Based Apps Only",
+            "order": 4,
+            "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "AutoResizeChildren",
+          "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "AutoResizeChildren",
+            "description": "Automatically resize children",
+            "categoryId": "uifigurebasedappsonly",
+            "category": "uifigure -Based Apps Only",
+            "order": 5,
+            "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        },
+        {
+          "path": "Layout",
+          "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Layout",
+            "description": "Layout options",
+            "categoryId": "uifigurebasedappsonly",
+            "category": "uifigure -Based Apps Only",
+            "order": 6,
+            "groupId": "local.uibuttongroup.uifigurebasedappsonly",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "figurebasedappsonly",
+      "displayName": "figure -Based Apps Only",
+      "order": 11,
+      "entries": [
+        {
+          "path": "ShadowColor",
+          "groupId": "local.uibuttongroup.figurebasedappsonly",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ShadowColor",
+            "description": "Border shadow color",
+            "categoryId": "figurebasedappsonly",
+            "category": "figure -Based Apps Only",
+            "order": 1,
+            "groupId": "local.uibuttongroup.figurebasedappsonly",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "displayName": "Button Group",
+    "category": "Container"
+  }
+}

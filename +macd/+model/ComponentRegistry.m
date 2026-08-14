@@ -10,6 +10,7 @@ classdef ComponentRegistry < handle
 
     properties (Access = private)
         Definitions containers.Map
+        FactoryVariantIds containers.Map
         ParentContextRules macd.model.ParentContextRule = macd.model.ParentContextRule.empty
     end
 
@@ -22,6 +23,7 @@ classdef ComponentRegistry < handle
 
             % Store definitions by factory without coupling the model to types.
             obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.FactoryVariantIds = containers.Map("KeyType", "char", "ValueType", "any");
             obj.ParentContextRules = [macd.model.ParentContextRule.grid(); macd.model.ParentContextRule.absolute()];
         end
 
@@ -32,13 +34,33 @@ classdef ComponentRegistry < handle
                 definition (1, 1) macd.model.ComponentDefinition
             end
 
-            % Validate the lookup key before updating the registry atomically.
-            key = char(definition.Factory);
-            if isempty(key) || ~isvarname(key)
+            % Index variants by their stable identifier and factory name.
+            factoryKey = char(definition.Factory);
+            variantKey = char(definition.Id);
+            if isempty(factoryKey) || ~isvarname(factoryKey)
                 error("macd:ComponentRegistry:InvalidFactory", ...
                     "Factory must be a valid MATLAB function name.");
             end
-            obj.Definitions(key) = definition;
+            if isempty(variantKey)
+                error("macd:ComponentRegistry:InvalidVariantId", ...
+                    "Component variant ID must not be empty.");
+            end
+            if isKey(obj.Definitions, variantKey)
+                old = obj.Definitions(variantKey);
+                if old.Factory ~= definition.Factory
+                    error("macd:ComponentRegistry:DuplicateVariantId", ...
+                        "Variant ID ""%s"" belongs to another factory.", variantKey);
+                end
+            end
+            obj.Definitions(variantKey) = definition;
+            if ~isKey(obj.FactoryVariantIds, factoryKey)
+                obj.FactoryVariantIds(factoryKey) = string(definition.Id);
+            else
+                variants = string(obj.FactoryVariantIds(factoryKey));
+                if ~any(variants == definition.Id)
+                    obj.FactoryVariantIds(factoryKey) = [variants, definition.Id];
+                end
+            end
         end
 
         function result = contains(obj, factory)
@@ -51,14 +73,15 @@ classdef ComponentRegistry < handle
                 result (1, 1) logical
             end
 
-            result = isKey(obj.Definitions, char(factory));
+            result = isKey(obj.FactoryVariantIds, char(factory));
         end
 
-        function definition = get(obj, factory)
-            % get Return a registered component definition by factory name.
+        function definition = get(obj, factory, creationArguments)
+            % get Return the concrete definition selected by factory arguments.
             arguments (Input)
                 obj (1, 1) macd.model.ComponentRegistry
                 factory string
+                creationArguments cell = {}
             end
             arguments (Output)
                 definition (1, 1) macd.model.ComponentDefinition
@@ -66,11 +89,16 @@ classdef ComponentRegistry < handle
 
             % Fail explicitly so callers cannot infer unsafe defaults.
             key = char(factory);
-            if ~isKey(obj.Definitions, key)
+            if ~isKey(obj.FactoryVariantIds, key)
                 error("macd:ComponentRegistry:UnknownFactory", ...
                     "Component factory ""%s"" is not registered.", key);
             end
-            definition = obj.Definitions(key);
+            variantIds = string(obj.FactoryVariantIds(key));
+            candidates = macd.model.ComponentDefinition.empty;
+            for index = 1:numel(variantIds)
+                candidates(end + 1) = obj.Definitions(char(variantIds(index))); %#ok<AGROW>
+            end
+            definition = obj.selectVariant(candidates, creationArguments, factory);
         end
 
         function factories = listFactories(obj)
@@ -83,7 +111,37 @@ classdef ComponentRegistry < handle
             end
 
             % Sorting makes palettes, tests, and generated output deterministic.
-            factories = sort(string(keys(obj.Definitions)));
+            factories = sort(string(keys(obj.FactoryVariantIds)));
+        end
+
+        function ids = listVariantIds(obj)
+            % listVariantIds Return every concrete component variant in stable order.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                ids string
+            end
+
+            ids = sort(string(keys(obj.Definitions)));
+        end
+
+        function definition = getById(obj, id)
+            % getById Return one concrete definition by its stable catalog identifier.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+                id (1, 1) string
+            end
+            arguments (Output)
+                definition (1, 1) macd.model.ComponentDefinition
+            end
+
+            key = char(id);
+            if ~isKey(obj.Definitions, key)
+                error("macd:ComponentRegistry:UnknownVariantId", ...
+                    "Component variant ID ""%s"" is not registered.", key);
+            end
+            definition = obj.Definitions(key);
         end
 
         function name = displayName(obj, factory)
@@ -109,19 +167,20 @@ classdef ComponentRegistry < handle
             obj.ParentContextRules = rules(:);
         end
 
-        function properties = getEffectiveProperties(obj, factory, parentFactory)
+        function properties = getEffectiveProperties(obj, factory, parentFactory, creationArguments)
             % getEffectiveProperties Return supported properties for one direct parent context.
             arguments (Input)
                 obj (1, 1) macd.model.ComponentRegistry
                 factory (1, 1) string
                 parentFactory (1, 1) string = ""
+                creationArguments cell = {}
             end
             arguments (Output)
                 properties macd.model.PropertyDefinition
             end
 
             % Compose only the parent rule selected by the direct parent factory.
-            definition = obj.get(factory);
+            definition = obj.get(factory, creationArguments);
             properties = definition.Properties;
             for index = 1:numel(obj.ParentContextRules)
                 rule = obj.ParentContextRules(index);
@@ -130,6 +189,52 @@ classdef ComponentRegistry < handle
                 properties = vertcat(properties(:), rule.AddedProperties(:));
                 break
             end
+        end
+    end
+
+    methods (Access = private)
+        function definition = selectVariant(obj, candidates, creationArguments, factory)
+            % selectVariant Resolve the most specific creation-argument variant.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry %#ok<INUSA>
+                candidates macd.model.ComponentDefinition
+                creationArguments cell
+                factory string
+            end
+            arguments (Output)
+                definition (1, 1) macd.model.ComponentDefinition
+            end
+
+            exact = candidates(arrayfun(@(candidate) isequal( ...
+                candidate.CreationArguments, creationArguments), candidates));
+            if numel(exact) == 1
+                definition = exact;
+                return
+            end
+            prefixMatches = macd.model.ComponentDefinition.empty;
+            for index = 1:numel(candidates)
+                variantArguments = candidates(index).CreationArguments;
+                if numel(variantArguments) <= numel(creationArguments) && ...
+                        isequal(variantArguments, creationArguments(1:numel(variantArguments)))
+                    prefixMatches(end + 1) = candidates(index); %#ok<AGROW>
+                end
+            end
+            if ~isempty(prefixMatches)
+                lengths = arrayfun(@(candidate) numel(candidate.CreationArguments), prefixMatches);
+                best = prefixMatches(lengths == max(lengths));
+                if numel(best) == 1
+                    definition = best;
+                    return
+                end
+            end
+            emptyArguments = candidates(arrayfun(@(candidate) isempty( ...
+                candidate.CreationArguments), candidates));
+            if numel(emptyArguments) == 1
+                definition = emptyArguments;
+                return
+            end
+            error("macd:ComponentRegistry:AmbiguousVariant", ...
+                "Factory ""%s"" has no unique variant for the supplied creation arguments.", factory);
         end
     end
 

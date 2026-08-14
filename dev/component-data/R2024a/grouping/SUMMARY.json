@@ -1,30 +1,30 @@
 {
-    "artifactVersion":  1,
-    "matlabRelease":  "R2024a",
-    "inputSha256":  "9ae47504c076e610193e813794dff7a5b8ff0e033ad50206399c95823f60bfeb",
-    "componentDocumentCount":  48,
-    "propertyEntryCount":  1825,
-    "categoryOccurrenceCount":  415,
-    "categoryScopeCounts":  [
-                                {
-                                    "scope":  "crossCutting",
-                                    "categoryCount":  2
-                                },
-                                {
-                                    "scope":  "familyScoped",
-                                    "categoryCount":  27
-                                },
-                                {
-                                    "scope":  "variantLocal",
-                                    "categoryCount":  26
-                                }
-                            ],
-    "exactClusterCount":  154,
-    "initialGroupCandidateCount":  47,
-    "allSameNameConflictCount":  25,
-    "step4CrossCuttingConflictCount":  2,
-    "familyScopedDifferenceCount":  23,
-    "allCoreExtensionCandidateCount":  123,
-    "step6CrossCuttingCandidateCount":  63,
-    "familyScopedCoreExtensionCandidateCount":  60
+  "artifactVersion": 1,
+  "matlabRelease": "R2024a",
+  "inputSha256": "22a4b78df99cd98262fcc1ffd25a6117267068c3b98d20008d93a21bdcd64293",
+  "componentDocumentCount": 48,
+  "propertyEntryCount": 1825.0,
+  "categoryOccurrenceCount": 415,
+  "categoryScopeCounts": [
+    {
+      "scope": "crossCutting",
+      "categoryCount": 2
+    },
+    {
+      "scope": "familyScoped",
+      "categoryCount": 27
+    },
+    {
+      "scope": "variantLocal",
+      "categoryCount": 26
+    }
+  ],
+  "exactClusterCount": 154,
+  "initialGroupCandidateCount": 47,
+  "allSameNameConflictCount": 25,
+  "step4CrossCuttingConflictCount": 2,
+  "familyScopedDifferenceCount": 23,
+  "allCoreExtensionCandidateCount": 123,
+  "step6CrossCuttingCandidateCount": 63,
+  "familyScopedCoreExtensionCandidateCount": 60
 }

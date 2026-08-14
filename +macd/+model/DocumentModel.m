@@ -124,7 +124,8 @@ classdef DocumentModel < handle
             component = macd.model.ComponentRecord(obj.newComponentId(), name, ...
                 definition.Factory, definition.DeclaredType, "generated");
             component.CreationArguments = definition.CreationArguments;
-            effectiveProperties = registry.getEffectiveProperties(definition.Factory, parent.Factory);
+            effectiveProperties = registry.getEffectiveProperties(definition.Factory, parent.Factory, ...
+                definition.CreationArguments);
             effectivePaths = string({effectiveProperties.Path});
             if any(effectivePaths == "Layout.Row")
                 component.setProperty("Layout.Row", 1);
@@ -196,7 +197,8 @@ classdef DocumentModel < handle
                 parent = obj.getComponent(component.ParentId);
                 parentFactory = parent.Factory;
             end
-            definitions = registry.getEffectiveProperties(component.Factory, parentFactory);
+            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, ...
+                component.CreationArguments);
             states = repmat(struct("Definition", macd.model.PropertyDefinition(), ...
                 "Entry", macd.model.PropertyEntry.empty, "IsExplicit", false), ...
                 1, numel(definitions));

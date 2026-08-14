@@ -6,7 +6,7 @@
     "creationArguments":  [
                               "numeric"
                           ],
-    "declaredType":  null,
+    "declaredType":  "matlab.ui.control.NumericEditField",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",

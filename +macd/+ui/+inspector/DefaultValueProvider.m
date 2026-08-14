@@ -81,7 +81,7 @@ classdef DefaultValueProvider < handle
     methods (Access = private)
         function key = surfaceKey(obj, component, parentFactory)
             % surfaceKey Identify one release-specific default fixture surface.
-            definition = obj.Registry.get(component.Factory);
+            definition = obj.Registry.get(component.Factory, component.CreationArguments);
             style = definition.styleFor(component.CreationArguments);
             argumentsText = string(jsonencode(component.CreationArguments));
             key = char(strjoin([string(version("-release")), component.Factory, parentFactory, ...
@@ -99,7 +99,7 @@ classdef DefaultValueProvider < handle
                     results.Values{index} = properties(index).DefaultValue;
                 else
                     [results.Found(index), results.Values{index}] = obj.fromMetadata( ...
-                        component.Factory, properties(index).Path);
+                        component, properties(index).Path);
                     unresolved(index) = ~results.Found(index);
                 end
             end
@@ -121,12 +121,12 @@ classdef DefaultValueProvider < handle
             end
         end
 
-        function [found, value] = fromMetadata(obj, factory, path)
+        function [found, value] = fromMetadata(obj, component, path)
             % fromMetadata Read an explicit class property default when it is exposed.
             found = false; value = [];
             if contains(path, "."), return, end
             try
-                definition = obj.Registry.get(factory);
+                definition = obj.Registry.get(component.Factory, component.CreationArguments);
                 classInfo = meta.class.fromName(char(definition.DeclaredType));
                 properties = classInfo.PropertyList;
                 match = properties(strcmp(string({properties.Name}), path));

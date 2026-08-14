@@ -110,9 +110,14 @@ classdef PreviewRenderer < handle
             end
 
             % Isolate unsupported preview assignments as nonblocking diagnostics.
+            definition = obj.Registry.get(component.Factory, component.CreationArguments);
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
                 if entry.ValueKind ~= "literal" || ~entry.IsEditable
+                    continue
+                end
+                property = definition.getProperty(entry.Path);
+                if ~isempty(property) && any(property.PreviewPolicy == ["skip", "notRendered"])
                     continue
                 end
                 if entry.Path == "Position" && ...
@@ -193,7 +198,7 @@ classdef PreviewRenderer < handle
             if path == "Position" && isnumeric(value) && numel(value) == 4 && ...
                 obj.usesPixelPosition(target)
                 value = value .* obj.RenderScale;
-                definition = obj.Registry.get(component.Factory);
+                definition = obj.Registry.get(component.Factory, component.CreationArguments);
                 constraint = definition.resizeConstraintFor(component.CreationArguments);
                 if constraint == "fixedHeight"
                     % Slider-like controls reject height writes entirely.

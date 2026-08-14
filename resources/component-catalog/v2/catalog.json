@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 2,
+  "matlabRelease": "R2024a",
+  "sourceGroupingSha256": "3012b79081e2ff4c374a2cdbabe8eb7b6a97113dbf953332d4d1a2a6b255a84e",
+  "propertyGroupFiles": [
+    "property-groups/groups.json"
+  ],
+  "parentContextRules": [
+    {
+      "parentFactories": [
+        "uigridlayout"
+      ],
+      "kind": "grid"
+    },
+    {
+      "parentFactories": [
+        "uifigure",
+        "uipanel",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "kind": "absoluteIntrinsic"
+    },
+    {
+      "parentFactories": [
+        "uitabgroup",
+        "uitree",
+        "uitreenode",
+        "uimenu",
+        "uitoolbar"
+      ],
+      "kind": "structural"
+    }
+  ],
+  "componentFiles": [
+    "components/axes.json",
+    "components/geoaxes.json",
+    "components/polaraxes.json",
+    "components/uiaxes.json",
+    "components/uibutton-push.json",
+    "components/uibutton-state.json",
+    "components/uibuttongroup.json",
+    "components/uicheckbox.json",
+    "components/uicolorpicker.json",
+    "components/uicontextmenu.json",
+    "components/uidatepicker.json",
+    "components/uidropdown.json",
+    "components/uieditfield-numeric.json",
+    "components/uieditfield-text.json",
+    "components/uifigure.json",
+    "components/uigauge-circular.json",
+    "components/uigauge-linear.json",
+    "components/uigauge-ninetydegree.json",
+    "components/uigauge-semicircular.json",
+    "components/uigridlayout.json",
+    "components/uihtml.json",
+    "components/uihyperlink.json",
+    "components/uiimage.json",
+    "components/uiknob-continuous.json",
+    "components/uiknob-discrete.json",
+    "components/uilabel.json",
+    "components/uilamp.json",
+    "components/uilistbox.json",
+    "components/uimenu.json",
+    "components/uipanel.json",
+    "components/uipushtool.json",
+    "components/uiradiobutton.json",
+    "components/uislider-range.json",
+    "components/uislider-slider.json",
+    "components/uispinner.json",
+    "components/uiswitch-rocker.json",
+    "components/uiswitch-slider.json",
+    "components/uiswitch-toggle.json",
+    "components/uitab.json",
+    "components/uitabgroup.json",
+    "components/uitable.json",
+    "components/uitextarea.json",
+    "components/uitogglebutton.json",
+    "components/uitoggletool.json",
+    "components/uitoolbar.json",
+    "components/uitree.json",
+    "components/uitree-checkbox.json",
+    "components/uitreenode.json"
+  ]
+}
