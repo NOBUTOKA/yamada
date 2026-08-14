@@ -488,38 +488,56 @@ covered root/control display, Grid `Layout.Row`, cache reuse, and document
 non-materialization; the full suite passed 79 tests with zero failures. Commits:
 `c954080`, `e062d8f`.
 
-### 6.7 Complete the Button vertical slice
+### 6.7 Design shared category surfaces and order profiles
 
-- [ ] Audit R2024a push and state Button properties.
-- [ ] Define Button content, alignment, icon, font, color, interactivity,
-  callback-control, reference, and identity properties in JSON; obtain geometry
-  properties from the parent context.
-- [ ] Add missing Button adapters and validators.
-- [ ] Apply supported visual changes to Safe Preview.
-- [ ] Generate new assignments and localized replacement/insertion/removal.
-- [ ] Compare manually with the supplied App Designer Button examples.
+Follow `dev/component-data/PROPERTY_GROUPING_GUIDELINES.md` against the complete
+R2024a concrete-variant ledger before promoting another family into the runtime
+catalog.
 
-**Required tests:** all Button editors, style scope, defaults/reset, undo/redo,
-Preview/runtime comparison, callback non-execution, both generators, and
-byte-identical no-edit output.
+- [ ] Generate exact category-surface clusters from ordered property paths and
+  audited capability signatures.
+- [ ] Explain same-name category conflicts and distinguish exact shared groups,
+  family groups, justified core/extension splits, and variant-local categories.
+- [ ] Design stable group IDs without copying parent-contributed layout
+  properties into intrinsic component groups.
+- [ ] Derive reusable family category-order profiles from the documented
+  sequences. Keep the documented order in the audit ledger, but make runtime
+  variants record only justified profile deltas wherever practical.
+- [ ] Map every concrete variant to groups, an order profile, and local deltas.
+- [ ] Expand the proposed representation for intrinsic and supported parent
+  contexts and compare it mechanically with the audited ledger.
 
-**Exit gate:** Button works end to end through JSON, loader, registry, inspector,
-model/history, Preview, validation, and source generation.
+**Required evidence:** exact-cluster/conflict report, reviewed group and profile
+mapping, explicit exceptions, and automated expansion parity covering every
+R2024a concrete variant.
 
-### 6.8 Expand audited component families
+**Exit gate:** every audited property is owned exactly once after expansion,
+every variant has deterministic category and property order, dependencies and
+parent-context rules remain valid, and no capability metadata drifts from the
+expanded ledger.
 
-- [ ] Common controls and containers.
-- [ ] Navigation and data controls.
-- [ ] Axes and safely supported programmatic axes.
-- [ ] Instrumentation components and supported styles.
-- [ ] HTML and Figure Tools.
+### 6.8 Promote audited component families systematically
+
+- [ ] Promote broadly shared structural categories and order profiles before
+  family-specific properties.
+- [ ] Promote common controls and containers, including push and state Button as
+  representative variants rather than a one-off catalog design.
+- [ ] Promote navigation and data controls.
+- [ ] Promote axes and safely supported programmatic axes.
+- [ ] Promote instrumentation components and supported styles.
+- [ ] Promote HTML and Figure Tools.
 - [ ] Mark every candidate editable, visible read-only, or omitted with a reason.
 
 Each family lands with JSON, shared-group changes, adapters/validators, registry
-tests, representative Preview comparisons, and generator tests.
+tests, representative Preview comparisons, generator tests, and grouped-surface
+parity against the R2024a ledger. Shared category/order definitions must be
+reused when their audited signatures match; family or variant differences must
+remain explicit.
 
 **Exit gate:** every Phase 4.5 factory/style has a complete audit and every
-editable property names implemented allowlisted behavior.
+editable property names implemented allowlisted behavior. Button and the other
+families work end to end through JSON, loader, registry, inspector,
+model/history, Preview, validation, and source generation.
 
 ### 6.9 Add specialized reference and file-backed editors
 
