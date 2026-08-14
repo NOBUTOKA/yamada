@@ -335,9 +335,9 @@
             "category": "Mouse Pointer",
             "order": 2,
             "groupId": "local.uifigure.mousepointer",
-            "editor": "numericVector",
-            "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "numericArray",
               "matlabClasses": [
@@ -360,9 +360,9 @@
             "category": "Mouse Pointer",
             "order": 3,
             "groupId": "local.uifigure.mousepointer",
-            "editor": "numericVector",
-            "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "numericArray",
               "matlabClasses": [

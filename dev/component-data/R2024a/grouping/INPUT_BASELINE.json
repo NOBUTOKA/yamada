@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "98678de94360466206f6fce3b9683d6f42e25fa4",
-  "inputSha256": "22a4b78df99cd98262fcc1ffd25a6117267068c3b98d20008d93a21bdcd64293",
+  "ledgerBaselineGitCommit": "f9d3b3ce786c10573b6c95de08658e9514ce49a4",
+  "inputSha256": "e7618377f9940c23743937e7613f715c4042ae1db5fa44e5068d435a8a3f5284",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -133,7 +133,7 @@
     },
     {
       "path": "components/uifigure.json",
-      "sha256": "75f4793ef6608d1842b340979e891793fe5a59c4b5d05ee8412804be399f5d3e"
+      "sha256": "d1886c858883f46f699eea0e894eff587c6f88dc8a0f4fc6dd1ccc6ffa43aa54"
     },
     {
       "path": "components/uigauge-circular.json",

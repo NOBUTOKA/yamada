@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "22a4b78df99cd98262fcc1ffd25a6117267068c3b98d20008d93a21bdcd64293",
+  "inputSha256": "e7618377f9940c23743937e7613f715c4042ae1db5fa44e5068d435a8a3f5284",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.0b877a731bbf",
@@ -3009,12 +3009,12 @@
       ]
     },
     {
-      "candidateId": "candidate.mousepointer.857d6096b275",
+      "candidateId": "candidate.mousepointer.e0a92824b124",
       "categoryId": "mousepointer",
       "categoryDisplayName": "Mouse Pointer",
       "sharingScope": "variantLocal",
       "scopeRationale": "uifigure-specific pointer settings.",
-      "capabilitySha256": "857d6096b2751d0ecad1ab3b3c7780df491f17ceb2c125aafa58e4e7286c7801",
+      "capabilitySha256": "e0a92824b124dc40cdff8b0214338638d770151b01cd310b3595b781589aed12",
       "propertyPaths": [
         "Pointer",
         "PointerShapeCData",
@@ -3022,8 +3022,8 @@
       ],
       "propertyCapabilitySha256": [
         "34a99a2bb7adc2ccefa4820d846ba2e3f1a4a40b47e5cbfe902593572a412500",
-        "4a973f15c35ad86c793762d097f6669313004aabe3d688f86b667dd58246007f",
-        "129ddf705ab652421ec0009427fb2889004e65229092e2205d37140b1d98889d"
+        "751fda75c76bb159d744aafe88559972efc41c90b18b69ad73d1eb3027ea9ab0",
+        "599483551d4b3f4d93061c3f245cc51df5c4a30d77813793b3cf651e34a666ee"
       ],
       "memberVariantIds": [
         "uifigure"

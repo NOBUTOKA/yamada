@@ -55,6 +55,20 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
         end
 
+        function figureCustomPointerShapesRemainOmitted(testCase)
+            % figureCustomPointerShapesRemainOmitted Keep bitmap-pointer data outside the inspector catalog.
+
+            % Retain the standard pointer choice while omitting its custom bitmap and hotspot.
+            definition = macd.model.ComponentRegistry.createDefault().getById("uifigure");
+            pointer = definition.Properties([definition.Properties.Path] == "Pointer");
+            customShape = definition.Properties([definition.Properties.Path] == "PointerShapeCData");
+            hotSpot = definition.Properties([definition.Properties.Path] == "PointerShapeHotSpot");
+            testCase.verifyEqual(pointer.AuditDisposition, "editable");
+            testCase.verifyEqual(pointer.Editor, "enum");
+            testCase.verifyEqual(customShape.AuditDisposition, "omitted");
+            testCase.verifyEqual(hotSpot.AuditDisposition, "omitted");
+        end
+
         function effectivePropertiesRemainUniqueForEveryConcreteVariant(testCase)
             % effectivePropertiesRemainUniqueForEveryConcreteVariant Check all direct-parent projections.
 

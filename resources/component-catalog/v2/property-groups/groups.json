@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "3012b79081e2ff4c374a2cdbabe8eb7b6a97113dbf953332d4d1a2a6b255a84e",
+  "inputSha256": "2b968bf9176e64ca29f055a59d26f10f5a02745821f7cda11003c017e656b233",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -14280,12 +14280,14 @@
             "allowsEmpty": true,
             "constraints": []
           },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         },
         {
@@ -14299,12 +14301,14 @@
             "allowsEmpty": false,
             "constraints": []
           },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         }
       ]

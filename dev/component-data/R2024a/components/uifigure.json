@@ -454,14 +454,15 @@
                                                                  ],
                                                  "matlabClasses":  "double"
                                              },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "numericVector",
+                           "affectsDisplay":  false,
+                           "previewPolicy":  "skip",
+                           "requiredEditor":  "none",
                            "disposition":  {
-                                               "kind":  "editable",
+                                               "kind":  "omitted",
                                                "reasonCodes":  [
 
-                                                               ]
+                                                               "lowDesignTimeValue"
+                                                           ]
                                            },
                            "runtimeSetAccess":  "public"
                        },
@@ -483,14 +484,15 @@
                                                                  ],
                                                  "matlabClasses":  "double"
                                              },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "numericVector",
+                           "affectsDisplay":  false,
+                           "previewPolicy":  "skip",
+                           "requiredEditor":  "none",
                            "disposition":  {
-                                               "kind":  "editable",
+                                               "kind":  "omitted",
                                                "reasonCodes":  [
 
-                                                               ]
+                                                               "lowDesignTimeValue"
+                                                           ]
                                            },
                            "runtimeSetAccess":  "public"
                        },
