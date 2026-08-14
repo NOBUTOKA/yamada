@@ -1047,11 +1047,11 @@
             "category": "uifigure -Based Apps Only",
             "order": 3,
             "groupId": "local.uipanel.uifigurebasedappsonly",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

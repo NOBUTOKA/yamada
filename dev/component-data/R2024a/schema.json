@@ -183,7 +183,7 @@
         },
         "requiredEditor": {
           "description": "Semantic editor requirement for an editable property; this does not assert adapter implementation status.",
-          "enum": ["none", "text", "logical", "onOff", "enum", "number", "numericVector", "numericMatrix", "color", "stringList", "asset", "url", "dateTime", "tableData", "componentReference", "structuredData"]
+          "enum": ["none", "text", "multilineText", "logical", "onOff", "enum", "number", "numericVector", "numericMatrix", "color", "stringList", "asset", "url", "dateTime", "tableData", "componentReference", "structuredData"]
         },
         "disposition": {
           "description": "Initial product disposition, independent of current adapter availability.",
@@ -197,7 +197,7 @@
       "required": ["kind", "matlabClasses", "shape", "allowsEmpty", "constraints"],
       "properties": {
         "kind": {
-          "enum": ["text", "logical", "onOff", "enum", "number", "numericArray", "color", "stringList", "filePath", "url", "dateTime", "tabularData", "callback", "componentReference", "graphicsObject", "arbitraryData", "opaque"]
+          "enum": ["text", "multilineText", "logical", "onOff", "enum", "number", "numericArray", "color", "stringList", "filePath", "url", "dateTime", "tabularData", "callback", "componentReference", "graphicsObject", "arbitraryData", "opaque"]
         },
         "matlabClasses": {
           "description": "Normalized accepted MATLAB value classes. any and unknown are audit markers rather than MATLAB class names.",

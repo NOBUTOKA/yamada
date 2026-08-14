@@ -682,11 +682,11 @@
             "category": "uifigure -Based Apps Only",
             "order": 1,
             "groupId": "local.uitabgroup.uifigurebasedappsonly",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

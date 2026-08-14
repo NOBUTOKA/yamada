@@ -69,6 +69,22 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function defersMultilineTextUntilItsSpecializedEditorExists(testCase)
+            % defersMultilineTextUntilItsSpecializedEditorExists Keep planned prose editing safe before Phase 6.9.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.PropertyDefinition("Tooltip", [], false, true, ...
+                struct("editor", "multilineText"));
+            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+                figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'Line one'", true);
+            drawnow;
+            testCase.verifyFalse(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyFalse(control.Editable);
+            clear cleanup
+        end
+
         function defersItemsDataAsReadOnly(testCase)
             % defersItemsDataAsReadOnly Keep arbitrary list-associated data out of the string editor.
 

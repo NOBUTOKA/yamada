@@ -47,11 +47,11 @@
             "category": "Text",
             "order": 1,
             "groupId": "local.uitextarea.text",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",
@@ -418,11 +418,11 @@
             "category": "Interactivity",
             "order": 4,
             "groupId": "standardInteractivity",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

@@ -108,6 +108,34 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(smoothing.AuditDisposition, "omitted");
         end
 
+        function multilineTextSurfacesRemainDistinguishedFromStringLists(testCase)
+            % multilineTextSurfacesRemainDistinguishedFromStringLists Preserve the audited text-editor scope.
+
+            % Count only the prose surfaces that map arrays to display lines.
+            registry = macd.model.ComponentRegistry.createDefault();
+            textCount = 0;
+            tooltipCount = 0;
+            valueCount = 0;
+            for id = registry.listVariantIds()
+                definition = registry.getById(id);
+                for property = definition.Properties
+                    if property.Editor ~= "multilineText"
+                        continue
+                    end
+                    if property.Path == "Text"
+                        textCount = textCount + 1;
+                    elseif property.Path == "Tooltip"
+                        tooltipCount = tooltipCount + 1;
+                    elseif id == "uitextarea" && property.Path == "Value"
+                        valueCount = valueCount + 1;
+                    else
+                        testCase.assertFail("Unexpected multilineText surface: " + id + "." + property.Path);
+                    end
+                end
+            end
+            testCase.verifyEqual([textCount, tooltipCount, valueCount], [7, 37, 1]);
+        end
+
         function innerPositionRemainsOmittedAcrossTheCatalog(testCase)
             % innerPositionRemainsOmittedAcrossTheCatalog Keep derived geometry out of the inspector.
 

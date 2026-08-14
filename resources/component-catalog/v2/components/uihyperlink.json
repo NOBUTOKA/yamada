@@ -47,11 +47,11 @@
             "category": "Hyperlink",
             "order": 1,
             "groupId": "local.uihyperlink.hyperlink",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",
@@ -450,11 +450,11 @@
             "category": "Interactivity",
             "order": 4,
             "groupId": "local.uihyperlink.interactivity",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

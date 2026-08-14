@@ -391,11 +391,11 @@
             "category": "Interactivity",
             "order": 3,
             "groupId": "standardInteractivity",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

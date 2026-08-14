@@ -384,11 +384,11 @@
             "category": "Interactivity",
             "order": 5,
             "groupId": "local.uitree.interactivity",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

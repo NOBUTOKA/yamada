@@ -541,6 +541,10 @@ model/history, Preview, validation, and source generation.
 
 ### 6.9 Add audited specialized value editors
 
+- [ ] Add a `multilineText` editor for the audited `Text`, `Tooltip`, and
+  `uitextarea.Value` surfaces. Map each edited line explicitly to the supported
+  character/string scalar or line-array representation; do not reuse it for
+  `Items`, tick labels, table labels, or other `stringList` data.
 - [ ] Add an `asset` editor for `Icon`, `ImageSource`, `HTMLSource`, and similar
   resource-valued properties without file copying, movement, or embedding.
   Define and test source-relative path handling and the supported predefined

@@ -735,7 +735,7 @@
         "categorical array"
       ],
       "valueContract": {
-        "kind": "stringList",
+        "kind": "multilineText",
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
@@ -748,7 +748,7 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "stringList",
+      "requiredEditor": "multilineText",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []

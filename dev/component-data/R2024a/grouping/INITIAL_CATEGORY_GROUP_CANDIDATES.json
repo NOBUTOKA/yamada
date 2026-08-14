@@ -1,16 +1,16 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "afbb59f681c606125c0158bbfa7f075c3f53d59bcd72c7d1748203fd3e2c99fd",
+  "inputSha256": "7b8f26abcc1f846321f0e54dafa9dbf043d5055351efadfa2f0637e3116be424",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
-      "candidateId": "candidate.button.6b13ca228077",
+      "candidateId": "candidate.button.e5f3fed69ac2",
       "categoryId": "button",
       "categoryDisplayName": "Button",
       "sharingScope": "familyScoped",
       "scopeRationale": "Button-like control content and state.",
-      "capabilitySha256": "6b13ca228077371e23502790ae4a2f1e3f9f9c00b955b34dfab8e802a09f9e8f",
+      "capabilitySha256": "e5f3fed69ac2e183b8e73176187e1cb9f2c5a19739a37f310f2a3252b4656d82",
       "propertyPaths": [
         "Value",
         "Text",
@@ -19,7 +19,7 @@
       ],
       "propertyCapabilitySha256": [
         "b01172adf1d12228ea2bb43dc2650f961dbeec6eba4142619c3e29e031e5a87a",
-        "8f053fac57cb539e0ccca19d049d1074b8908cb3318a976a1aedd4d7eea11a77",
+        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
         "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c",
         "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
       ],
@@ -833,12 +833,12 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.24edaa43c7ab",
+      "candidateId": "candidate.interactivity.687dfb229ee2",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "24edaa43c7abc5ba7e9cdc25c8db89ee4154dfec855495df119705e8fabe942e",
+      "capabilitySha256": "687dfb229ee25742291afcd3cb3e258a580e5cb066751e835a76dc63932740bc",
       "propertyPaths": [
         "Visible",
         "Editable",
@@ -850,7 +850,7 @@
         "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
         "e492628c06a7d3eac681c0305f0f42af2204e018d3e974a5cc7e490589cc5e95",
         "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
         "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
       ],
       "memberVariantIds": [
@@ -865,6 +865,51 @@
       "reuseCount": 7,
       "documentedCategoryOrders": [
         3
+      ]
+    },
+    {
+      "candidateId": "candidate.interactivity.70304e8a7cc7",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "70304e8a7cc7d4c14bf12ec6bbdfe451d4a36d14d8a45a2ef4608f5dd843b83b",
+      "propertyPaths": [
+        "Visible",
+        "Enable",
+        "Tooltip",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+      ],
+      "memberVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "reuseCount": 18,
+      "documentedCategoryOrders": [
+        3,
+        4
       ]
     },
     {
@@ -920,51 +965,6 @@
       "reuseCount": 2,
       "documentedCategoryOrders": [
         2
-      ]
-    },
-    {
-      "candidateId": "candidate.interactivity.fa83eb584b01",
-      "categoryId": "interactivity",
-      "categoryDisplayName": "Interactivity",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "fa83eb584b01fb1215a8c27052c4875a2511c9bf74eea9fe6151815884a84d44",
-      "propertyPaths": [
-        "Visible",
-        "Enable",
-        "Tooltip",
-        "ContextMenu"
-      ],
-      "propertyCapabilitySha256": [
-        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-      ],
-      "memberVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "reuseCount": 18,
-      "documentedCategoryOrders": [
-        3,
-        4
       ]
     },
     {

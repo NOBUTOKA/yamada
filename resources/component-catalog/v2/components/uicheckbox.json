@@ -72,11 +72,11 @@
             "category": "Check Box",
             "order": 2,
             "groupId": "local.uicheckbox.checkbox",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",
@@ -333,11 +333,11 @@
             "category": "Interactivity",
             "order": 3,
             "groupId": "standardInteractivity",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

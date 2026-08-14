@@ -133,11 +133,11 @@
             "category": "Interactivity",
             "order": 2,
             "groupId": "local.uihtml.interactivity",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

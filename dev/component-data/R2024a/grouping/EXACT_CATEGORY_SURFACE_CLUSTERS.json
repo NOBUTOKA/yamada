@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "afbb59f681c606125c0158bbfa7f075c3f53d59bcd72c7d1748203fd3e2c99fd",
+  "inputSha256": "7b8f26abcc1f846321f0e54dafa9dbf043d5055351efadfa2f0637e3116be424",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -124,37 +124,12 @@
       ]
     },
     {
-      "candidateId": "candidate.button.1d395e06950c",
+      "candidateId": "candidate.button.3e1509a94792",
       "categoryId": "button",
       "categoryDisplayName": "Button",
       "sharingScope": "familyScoped",
       "scopeRationale": "Button-like control content and state.",
-      "capabilitySha256": "1d395e06950c316b3ce74f42badb36620e960a70f49074ee74c76288034e60f9",
-      "propertyPaths": [
-        "Text",
-        "WordWrap",
-        "Icon"
-      ],
-      "propertyCapabilitySha256": [
-        "8f053fac57cb539e0ccca19d049d1074b8908cb3318a976a1aedd4d7eea11a77",
-        "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c",
-        "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
-      ],
-      "memberVariantIds": [
-        "uibutton-push"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
-      "candidateId": "candidate.button.34ec2eb644e6",
-      "categoryId": "button",
-      "categoryDisplayName": "Button",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Button-like control content and state.",
-      "capabilitySha256": "34ec2eb644e6d2e6768c289496e6102b797a375c61aefc88ceb9b3e6c02a1995",
+      "capabilitySha256": "3e1509a94792cd3ad5a8406c8fe811bb2623e5f1ded120505bf56202d5032668",
       "propertyPaths": [
         "Value",
         "Text",
@@ -163,7 +138,7 @@
       ],
       "propertyCapabilitySha256": [
         "b01172adf1d12228ea2bb43dc2650f961dbeec6eba4142619c3e29e031e5a87a",
-        "8f053fac57cb539e0ccca19d049d1074b8908cb3318a976a1aedd4d7eea11a77",
+        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
         "d261706f4cf4603790414ad8f93c5ac9f900853bd8059fd1543d928f12d6838f",
         "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c"
       ],
@@ -176,12 +151,37 @@
       ]
     },
     {
-      "candidateId": "candidate.button.6b13ca228077",
+      "candidateId": "candidate.button.68d3a39843e6",
       "categoryId": "button",
       "categoryDisplayName": "Button",
       "sharingScope": "familyScoped",
       "scopeRationale": "Button-like control content and state.",
-      "capabilitySha256": "6b13ca228077371e23502790ae4a2f1e3f9f9c00b955b34dfab8e802a09f9e8f",
+      "capabilitySha256": "68d3a39843e62b0c8fe1cbcbba2ad81964735422bec1c25f6b0827887c6e09c5",
+      "propertyPaths": [
+        "Text",
+        "WordWrap",
+        "Icon"
+      ],
+      "propertyCapabilitySha256": [
+        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
+        "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c",
+        "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
+      ],
+      "memberVariantIds": [
+        "uibutton-push"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
+      "candidateId": "candidate.button.e5f3fed69ac2",
+      "categoryId": "button",
+      "categoryDisplayName": "Button",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Button-like control content and state.",
+      "capabilitySha256": "e5f3fed69ac2e183b8e73176187e1cb9f2c5a19739a37f310f2a3252b4656d82",
       "propertyPaths": [
         "Value",
         "Text",
@@ -190,7 +190,7 @@
       ],
       "propertyCapabilitySha256": [
         "b01172adf1d12228ea2bb43dc2650f961dbeec6eba4142619c3e29e031e5a87a",
-        "8f053fac57cb539e0ccca19d049d1074b8908cb3318a976a1aedd4d7eea11a77",
+        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
         "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c",
         "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
       ],
@@ -969,12 +969,12 @@
       ]
     },
     {
-      "candidateId": "candidate.checkbox.17be168eead7",
+      "candidateId": "candidate.checkbox.865af91a9d32",
       "categoryId": "checkbox",
       "categoryDisplayName": "Check Box",
       "sharingScope": "variantLocal",
       "scopeRationale": "Check Box-specific settings.",
-      "capabilitySha256": "17be168eead744fd58643cb75b654eee6b9bbb1389adf96b564002ead26b7ca1",
+      "capabilitySha256": "865af91a9d32d7ce22724d28d31425832eb2d7d14f07fd308a690b0effb45282",
       "propertyPaths": [
         "Value",
         "Text",
@@ -982,7 +982,7 @@
       ],
       "propertyCapabilitySha256": [
         "b01172adf1d12228ea2bb43dc2650f961dbeec6eba4142619c3e29e031e5a87a",
-        "8f053fac57cb539e0ccca19d049d1074b8908cb3318a976a1aedd4d7eea11a77",
+        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
         "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c"
       ],
       "memberVariantIds": [
@@ -1968,12 +1968,12 @@
       ]
     },
     {
-      "candidateId": "candidate.hyperlink.36e767cb6ce0",
+      "candidateId": "candidate.hyperlink.81ccf2200b9f",
       "categoryId": "hyperlink",
       "categoryDisplayName": "Hyperlink",
       "sharingScope": "variantLocal",
       "scopeRationale": "Hyperlink-specific settings.",
-      "capabilitySha256": "36e767cb6ce0870609c32fc8e4c389d2f2de22b453e47d71659964fecbf2b818",
+      "capabilitySha256": "81ccf2200b9fdb387ae5750804a97a1e808e97a84dca2bd7094ebc37643e3dc9",
       "propertyPaths": [
         "Text",
         "HorizontalAlignment",
@@ -1981,7 +1981,7 @@
         "WordWrap"
       ],
       "propertyCapabilitySha256": [
-        "8f053fac57cb539e0ccca19d049d1074b8908cb3318a976a1aedd4d7eea11a77",
+        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
         "c094a4731e4c050a514990d1c7b7fef6b24921d3076ef96adba566beab1514e9",
         "74143635cc12df7e6f6dac1acbb4cb842bf9cf414124509bc8eb7e63d40c1fdf",
         "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c"
@@ -2205,6 +2205,35 @@
       ]
     },
     {
+      "candidateId": "candidate.interactivity.0b5cfef7b4db",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "0b5cfef7b4db6a5a4f3550558d3d95ff9d4f7c1fa527a08070a074871b7a952a",
+      "propertyPaths": [
+        "URL",
+        "Visible",
+        "Enable",
+        "Tooltip",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "836caed1da5adfde4c320c61801dd340c35c0f10af0531e7f916f3a436a42019",
+        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+      ],
+      "memberVariantIds": [
+        "uihyperlink"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
       "candidateId": "candidate.interactivity.0cea7bcd84a2",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
@@ -2275,63 +2304,88 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.15f41245b477",
+      "candidateId": "candidate.interactivity.230433023cb0",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "15f41245b477b63c8a0b4f97decd3beea9a8ce1eb0ae376b58343f092d79b2fe",
+      "capabilitySha256": "230433023cb0f8388100468d466d13e8605ad741fdfb042ec4fae197d09b012b",
       "propertyPaths": [
+        "URL",
+        "AltText",
         "Visible",
         "Enable",
         "Tooltip",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
+        "836caed1da5adfde4c320c61801dd340c35c0f10af0531e7f916f3a436a42019",
+        "4518a3d73f0e1eb509c01cfb2ebfd6341445ab264a520dbfceb6a70e596d8d94",
         "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "7d4cd611d89703faf656b177d27348bf5c0fc9995ea482eefe3cfca98fa4b101",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
+        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
         "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
       ],
       "memberVariantIds": [
-        "uilamp"
+        "uiimage"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
-        2
+        3
       ]
     },
     {
-      "candidateId": "candidate.interactivity.24edaa43c7ab",
+      "candidateId": "candidate.interactivity.2827bee60a93",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "24edaa43c7abc5ba7e9cdc25c8db89ee4154dfec855495df119705e8fabe942e",
+      "capabilitySha256": "2827bee60a93e31b370bd99b70740680169f90e02fc0e46eb2e0190a28ab1116",
       "propertyPaths": [
         "Visible",
-        "Editable",
+        "Multiselect",
         "Enable",
         "Tooltip",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
         "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "e492628c06a7d3eac681c0305f0f42af2204e018d3e974a5cc7e490589cc5e95",
+        "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
         "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
         "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
       ],
       "memberVariantIds": [
-        "uidatepicker",
-        "uidropdown",
-        "uieditfield-numeric",
-        "uieditfield-text",
-        "uispinner",
-        "uitextarea",
-        "uitree-checkbox"
+        "uilistbox"
       ],
-      "reuseCount": 7,
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
+      "candidateId": "candidate.interactivity.36af81c0f23c",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "36af81c0f23c856bd6376a9caa4c1a99a121f5a3923125067e4ff1d95c59f29c",
+      "propertyPaths": [
+        "Visible",
+        "Enable",
+        "Tooltip",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+        "5e1796215e4d611e974b798cda186287d8e1d4af710afa351bba15f433b63a9a",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+      ],
+      "memberVariantIds": [
+        "uitable"
+      ],
+      "reuseCount": 1,
       "documentedCategoryOrders": [
         3
       ]
@@ -2428,6 +2482,41 @@
       ]
     },
     {
+      "candidateId": "candidate.interactivity.687dfb229ee2",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "687dfb229ee25742291afcd3cb3e258a580e5cb066751e835a76dc63932740bc",
+      "propertyPaths": [
+        "Visible",
+        "Editable",
+        "Enable",
+        "Tooltip",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+        "e492628c06a7d3eac681c0305f0f42af2204e018d3e974a5cc7e490589cc5e95",
+        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+      ],
+      "memberVariantIds": [
+        "uidatepicker",
+        "uidropdown",
+        "uieditfield-numeric",
+        "uieditfield-text",
+        "uispinner",
+        "uitextarea",
+        "uitree-checkbox"
+      ],
+      "reuseCount": 7,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
       "candidateId": "candidate.interactivity.697316998a10",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
@@ -2453,6 +2542,51 @@
       ]
     },
     {
+      "candidateId": "candidate.interactivity.70304e8a7cc7",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "70304e8a7cc7d4c14bf12ec6bbdfe451d4a36d14d8a45a2ef4608f5dd843b83b",
+      "propertyPaths": [
+        "Visible",
+        "Enable",
+        "Tooltip",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+      ],
+      "memberVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "reuseCount": 18,
+      "documentedCategoryOrders": [
+        3,
+        4
+      ]
+    },
+    {
       "candidateId": "candidate.interactivity.75ceaf80f79f",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
@@ -2475,29 +2609,6 @@
       "documentedCategoryOrders": [
         2,
         4
-      ]
-    },
-    {
-      "candidateId": "candidate.interactivity.7af7bc739b97",
-      "categoryId": "interactivity",
-      "categoryDisplayName": "Interactivity",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "7af7bc739b97f878899f2552f335349229141172770c72069fb8ebe97f925faa",
-      "propertyPaths": [
-        "Tooltip",
-        "ContextMenu"
-      ],
-      "propertyCapabilitySha256": [
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-      ],
-      "memberVariantIds": [
-        "uitab"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        2
       ]
     },
     {
@@ -2531,66 +2642,12 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.96cee3cc0efa",
+      "candidateId": "candidate.interactivity.9c1fd4935e81",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "96cee3cc0efa1b2b2e01f45d43a092e87d9ab08b94311739fca6ed6d6d33f816",
-      "propertyPaths": [
-        "Visible",
-        "Tooltip",
-        "ContextMenu"
-      ],
-      "propertyCapabilitySha256": [
-        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-      ],
-      "memberVariantIds": [
-        "uihtml"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        2
-      ]
-    },
-    {
-      "candidateId": "candidate.interactivity.98eb6f40689f",
-      "categoryId": "interactivity",
-      "categoryDisplayName": "Interactivity",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "98eb6f40689f928e3c97e4f0fa132a62a802c713627f7f11a483904f1ecef09a",
-      "propertyPaths": [
-        "URL",
-        "Visible",
-        "Enable",
-        "Tooltip",
-        "ContextMenu"
-      ],
-      "propertyCapabilitySha256": [
-        "836caed1da5adfde4c320c61801dd340c35c0f10af0531e7f916f3a436a42019",
-        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-      ],
-      "memberVariantIds": [
-        "uihyperlink"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        3
-      ]
-    },
-    {
-      "candidateId": "candidate.interactivity.9bc6189ff1ec",
-      "categoryId": "interactivity",
-      "categoryDisplayName": "Interactivity",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "9bc6189ff1ec61f80b5926a863bc41c7c64f011bf0b1d9458042caab1f0ee889",
+      "capabilitySha256": "9c1fd4935e815df5d7d9589046f4bddbe985389113fe98d41c1e26df03af0e8c",
       "propertyPaths": [
         "Visible",
         "Multiselect",
@@ -2604,7 +2661,7 @@
         "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
         "e492628c06a7d3eac681c0305f0f42af2204e018d3e974a5cc7e490589cc5e95",
         "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
         "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
       ],
       "memberVariantIds": [
@@ -2616,34 +2673,28 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.a5a6645eb72b",
+      "candidateId": "candidate.interactivity.a9b7f8afd50b",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "a5a6645eb72b768b58dcb9d4c6750de776ca1d9b5cc047418740eb6a89d9504d",
+      "capabilitySha256": "a9b7f8afd50ba13f79799238303a0782103272ef69afdd82614d8b4583f179e5",
       "propertyPaths": [
-        "URL",
-        "AltText",
         "Visible",
-        "Enable",
         "Tooltip",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
-        "836caed1da5adfde4c320c61801dd340c35c0f10af0531e7f916f3a436a42019",
-        "4518a3d73f0e1eb509c01cfb2ebfd6341445ab264a520dbfceb6a70e596d8d94",
         "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
         "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
       ],
       "memberVariantIds": [
-        "uiimage"
+        "uihtml"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
-        3
+        2
       ]
     },
     {
@@ -2682,6 +2733,29 @@
       ]
     },
     {
+      "candidateId": "candidate.interactivity.bcdf2a1c3b7e",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "bcdf2a1c3b7ec9f1934fcb7508ce19192c5041b4b7f5a73d1d9d02d8e1de7aba",
+      "propertyPaths": [
+        "Tooltip",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+      ],
+      "memberVariantIds": [
+        "uitab"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        2
+      ]
+    },
+    {
       "candidateId": "candidate.interactivity.dc6bf65574cf",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
@@ -2707,12 +2781,12 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.dca26c954fc4",
+      "candidateId": "candidate.interactivity.e9103e2a3715",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "dca26c954fc4a84f2e7e94d7e93b671f32be3c8a0f8d18edae977d213f91cbbd",
+      "capabilitySha256": "e9103e2a371574b4d1e82c8b8db2c937823075bc46921f0c348b49c0238457db",
       "propertyPaths": [
         "Visible",
         "Enable",
@@ -2721,90 +2795,16 @@
       ],
       "propertyCapabilitySha256": [
         "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "5e1796215e4d611e974b798cda186287d8e1d4af710afa351bba15f433b63a9a",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
+        "7d4cd611d89703faf656b177d27348bf5c0fc9995ea482eefe3cfca98fa4b101",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
         "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
       ],
       "memberVariantIds": [
-        "uitable"
+        "uilamp"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
-        3
-      ]
-    },
-    {
-      "candidateId": "candidate.interactivity.ec074e2fb153",
-      "categoryId": "interactivity",
-      "categoryDisplayName": "Interactivity",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "ec074e2fb15392504b2dade53521f888a1d5aef2f38c397206930be0661d0afb",
-      "propertyPaths": [
-        "Visible",
-        "Multiselect",
-        "Enable",
-        "Tooltip",
-        "ContextMenu"
-      ],
-      "propertyCapabilitySha256": [
-        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-      ],
-      "memberVariantIds": [
-        "uilistbox"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        3
-      ]
-    },
-    {
-      "candidateId": "candidate.interactivity.fa83eb584b01",
-      "categoryId": "interactivity",
-      "categoryDisplayName": "Interactivity",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "fa83eb584b01fb1215a8c27052c4875a2511c9bf74eea9fe6151815884a84d44",
-      "propertyPaths": [
-        "Visible",
-        "Enable",
-        "Tooltip",
-        "ContextMenu"
-      ],
-      "propertyCapabilitySha256": [
-        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-      ],
-      "memberVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "reuseCount": 18,
-      "documentedCategoryOrders": [
-        3,
-        4
+        2
       ]
     },
     {
@@ -4234,26 +4234,28 @@
       ]
     },
     {
-      "candidateId": "candidate.text.38d64885ee15",
+      "candidateId": "candidate.text.1db78488ad46",
       "categoryId": "text",
       "categoryDisplayName": "Text",
       "sharingScope": "familyScoped",
       "scopeRationale": "Text display and editing control settings.",
-      "capabilitySha256": "38d64885ee15f502641ec58f24cf37c15c1fc411bdbf6bf35ad1cc7968097c50",
+      "capabilitySha256": "1db78488ad46be9aeef08451f4a727627fced8d92b74dd07e8e35369dcfe395c",
       "propertyPaths": [
-        "Value",
-        "Placeholder",
+        "Text",
+        "Interpreter",
         "HorizontalAlignment",
+        "VerticalAlignment",
         "WordWrap"
       ],
       "propertyCapabilitySha256": [
-        "08ba1219cb1bfa213e438189e618e0a1d02274c43b0cfec6efa4d3b66c32c39f",
-        "2f28cc7074499cfb36e035bdee7a36296c0339f92141569fcf412806a159dc01",
+        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
+        "d261706f4cf4603790414ad8f93c5ac9f900853bd8059fd1543d928f12d6838f",
         "c094a4731e4c050a514990d1c7b7fef6b24921d3076ef96adba566beab1514e9",
+        "74143635cc12df7e6f6dac1acbb4cb842bf9cf414124509bc8eb7e63d40c1fdf",
         "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c"
       ],
       "memberVariantIds": [
-        "uitextarea"
+        "uilabel"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
@@ -4290,28 +4292,26 @@
       ]
     },
     {
-      "candidateId": "candidate.text.f971e77e3f2d",
+      "candidateId": "candidate.text.aa41ebe33485",
       "categoryId": "text",
       "categoryDisplayName": "Text",
       "sharingScope": "familyScoped",
       "scopeRationale": "Text display and editing control settings.",
-      "capabilitySha256": "f971e77e3f2d8a4d7282a256184847213235e80334f4c56030679f6335eba3db",
+      "capabilitySha256": "aa41ebe334852500ca7a2debc8c4cf675b7b76061acc8f1f98fa7633ad5cc8b5",
       "propertyPaths": [
-        "Text",
-        "Interpreter",
+        "Value",
+        "Placeholder",
         "HorizontalAlignment",
-        "VerticalAlignment",
         "WordWrap"
       ],
       "propertyCapabilitySha256": [
-        "8f053fac57cb539e0ccca19d049d1074b8908cb3318a976a1aedd4d7eea11a77",
-        "d261706f4cf4603790414ad8f93c5ac9f900853bd8059fd1543d928f12d6838f",
+        "909e0e3d51ed8be6c85c2d00dbbb3d47d5b69b5e58c93c0faa8488cb5c73f94d",
+        "2f28cc7074499cfb36e035bdee7a36296c0339f92141569fcf412806a159dc01",
         "c094a4731e4c050a514990d1c7b7fef6b24921d3076ef96adba566beab1514e9",
-        "74143635cc12df7e6f6dac1acbb4cb842bf9cf414124509bc8eb7e63d40c1fdf",
         "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c"
       ],
       "memberVariantIds": [
-        "uilabel"
+        "uitextarea"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
@@ -4648,6 +4648,112 @@
       ]
     },
     {
+      "candidateId": "candidate.uifigurebasedappsonly.4d5dc115fa26",
+      "categoryId": "uifigurebasedappsonly",
+      "categoryDisplayName": "uifigure -Based Apps Only",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Figure-app structural surface, not a generic control capability.",
+      "capabilitySha256": "4d5dc115fa265eb223b07c453c115ed5c90774629da8ad306b3cce3c0895d296",
+      "propertyPaths": [
+        "Buttons",
+        "Enable",
+        "Tooltip",
+        "Scrollable",
+        "AutoResizeChildren",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "37e35699bb9c356aab119ab5c0f69433a6c4bb8bbfc97d8079677a513df7c3a6",
+        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "389f11d5152bf41c84d2e3f8978c7c1ab7db95b4d3f2b93d89d8e3fe66509b39",
+        "f638d8a699781c07d5bbc20deaa225f2c793a1cf564f561758105e499a47cde0",
+        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+      ],
+      "memberVariantIds": [
+        "uibuttongroup"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        10
+      ]
+    },
+    {
+      "candidateId": "candidate.uifigurebasedappsonly.5790e2f489ab",
+      "categoryId": "uifigurebasedappsonly",
+      "categoryDisplayName": "uifigure -Based Apps Only",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Figure-app structural surface, not a generic control capability.",
+      "capabilitySha256": "5790e2f489abac203c70ce8c29667e1fde534307a1c931e5238308b231e84017",
+      "propertyPaths": [
+        "Tooltip"
+      ],
+      "propertyCapabilitySha256": [
+        "5790e2f489abac203c70ce8c29667e1fde534307a1c931e5238308b231e84017"
+      ],
+      "memberVariantIds": [
+        "uimenu"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        7
+      ]
+    },
+    {
+      "candidateId": "candidate.uifigurebasedappsonly.86eb0f2bda58",
+      "categoryId": "uifigurebasedappsonly",
+      "categoryDisplayName": "uifigure -Based Apps Only",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Figure-app structural surface, not a generic control capability.",
+      "capabilitySha256": "86eb0f2bda5878c37455d50cc9186bcf94d3877269a3fdbc5de7d7b7863aff4e",
+      "propertyPaths": [
+        "Scrollable",
+        "Enable",
+        "Tooltip",
+        "AutoResizeChildren",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "389f11d5152bf41c84d2e3f8978c7c1ab7db95b4d3f2b93d89d8e3fe66509b39",
+        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "f638d8a699781c07d5bbc20deaa225f2c793a1cf564f561758105e499a47cde0",
+        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+      ],
+      "memberVariantIds": [
+        "uipanel"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        10
+      ]
+    },
+    {
+      "candidateId": "candidate.uifigurebasedappsonly.a3829483d817",
+      "categoryId": "uifigurebasedappsonly",
+      "categoryDisplayName": "uifigure -Based Apps Only",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Figure-app structural surface, not a generic control capability.",
+      "capabilitySha256": "a3829483d8178c9993c5286c37471507cc24915768c31587a77be4c2aad26d2a",
+      "propertyPaths": [
+        "Tooltip",
+        "AutoResizeChildren",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+        "f638d8a699781c07d5bbc20deaa225f2c793a1cf564f561758105e499a47cde0",
+        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+      ],
+      "memberVariantIds": [
+        "uitabgroup"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        8
+      ]
+    },
+    {
       "candidateId": "candidate.uifigurebasedappsonly.a5bb6e6e5f8d",
       "categoryId": "uifigurebasedappsonly",
       "categoryDisplayName": "uifigure -Based Apps Only",
@@ -4666,112 +4772,6 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         6
-      ]
-    },
-    {
-      "candidateId": "candidate.uifigurebasedappsonly.e75f6758acc1",
-      "categoryId": "uifigurebasedappsonly",
-      "categoryDisplayName": "uifigure -Based Apps Only",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Figure-app structural surface, not a generic control capability.",
-      "capabilitySha256": "e75f6758acc139b196f2e006bef714bf207769855ef79a923c336ae6733bcd3b",
-      "propertyPaths": [
-        "Tooltip",
-        "AutoResizeChildren",
-        "Layout"
-      ],
-      "propertyCapabilitySha256": [
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "f638d8a699781c07d5bbc20deaa225f2c793a1cf564f561758105e499a47cde0",
-        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
-      ],
-      "memberVariantIds": [
-        "uitabgroup"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        8
-      ]
-    },
-    {
-      "candidateId": "candidate.uifigurebasedappsonly.f1508da1ace8",
-      "categoryId": "uifigurebasedappsonly",
-      "categoryDisplayName": "uifigure -Based Apps Only",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Figure-app structural surface, not a generic control capability.",
-      "capabilitySha256": "f1508da1ace8f5cb949e66c3a8f998d8ffbfc356f16a36428b4f62f0df52ddd2",
-      "propertyPaths": [
-        "Tooltip"
-      ],
-      "propertyCapabilitySha256": [
-        "f1508da1ace8f5cb949e66c3a8f998d8ffbfc356f16a36428b4f62f0df52ddd2"
-      ],
-      "memberVariantIds": [
-        "uimenu"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        7
-      ]
-    },
-    {
-      "candidateId": "candidate.uifigurebasedappsonly.f8e6ec80c39d",
-      "categoryId": "uifigurebasedappsonly",
-      "categoryDisplayName": "uifigure -Based Apps Only",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Figure-app structural surface, not a generic control capability.",
-      "capabilitySha256": "f8e6ec80c39d40c302dee42905602764e97a5764caee32468c46033e611b29e2",
-      "propertyPaths": [
-        "Buttons",
-        "Enable",
-        "Tooltip",
-        "Scrollable",
-        "AutoResizeChildren",
-        "Layout"
-      ],
-      "propertyCapabilitySha256": [
-        "37e35699bb9c356aab119ab5c0f69433a6c4bb8bbfc97d8079677a513df7c3a6",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "389f11d5152bf41c84d2e3f8978c7c1ab7db95b4d3f2b93d89d8e3fe66509b39",
-        "f638d8a699781c07d5bbc20deaa225f2c793a1cf564f561758105e499a47cde0",
-        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
-      ],
-      "memberVariantIds": [
-        "uibuttongroup"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        10
-      ]
-    },
-    {
-      "candidateId": "candidate.uifigurebasedappsonly.fc1885b42aa2",
-      "categoryId": "uifigurebasedappsonly",
-      "categoryDisplayName": "uifigure -Based Apps Only",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Figure-app structural surface, not a generic control capability.",
-      "capabilitySha256": "fc1885b42aa215f7c36a5739cac35efeabe02dbd34dedd68a7dc4399770884fb",
-      "propertyPaths": [
-        "Scrollable",
-        "Enable",
-        "Tooltip",
-        "AutoResizeChildren",
-        "Layout"
-      ],
-      "propertyCapabilitySha256": [
-        "389f11d5152bf41c84d2e3f8978c7c1ab7db95b4d3f2b93d89d8e3fe66509b39",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "3cf9cabc9598f5fd501a41dbe87b660dffbc79414ce2ad6e6a7ab65cdf1b8d9b",
-        "f638d8a699781c07d5bbc20deaa225f2c793a1cf564f561758105e499a47cde0",
-        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
-      ],
-      "memberVariantIds": [
-        "uipanel"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        10
       ]
     },
     {

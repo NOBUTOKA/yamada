@@ -128,11 +128,11 @@
             "category": "Interactivity",
             "order": 1,
             "groupId": "local.uitab.interactivity",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",

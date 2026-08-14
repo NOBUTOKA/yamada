@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "3cb4b2769d3a1d5531103e9b83afcf3c004a05ef36c3abdd692ed88de47dbba2",
+  "inputSha256": "3830850ca8fa9b469531b151ceaa30a3ffaef38750c096f177bae35bd93f83a2",
   "intrinsic": [
     {
       "componentId": "axes",

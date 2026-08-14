@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "3cb4b2769d3a1d5531103e9b83afcf3c004a05ef36c3abdd692ed88de47dbba2",
+  "inputSha256": "3830850ca8fa9b469531b151ceaa30a3ffaef38750c096f177bae35bd93f83a2",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -163,7 +163,7 @@
       ]
     },
     {
-      "id": "exact.button.6b13ca228077",
+      "id": "exact.button.e5f3fed69ac2",
       "kind": "exactCategory",
       "categoryId": "button",
       "entries": [
@@ -189,7 +189,7 @@
         {
           "path": "Text",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -202,7 +202,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -10189,7 +10189,7 @@
         {
           "path": "Text",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -10202,7 +10202,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -11278,7 +11278,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -11291,7 +11291,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -11469,7 +11469,7 @@
         {
           "path": "Text",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -11482,7 +11482,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -17742,7 +17742,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -17755,7 +17755,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -18166,7 +18166,7 @@
         {
           "path": "Text",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -18179,7 +18179,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -18400,7 +18400,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -18413,7 +18413,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -18954,7 +18954,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -18967,7 +18967,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -20158,7 +20158,7 @@
         {
           "path": "Text",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -20171,7 +20171,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -20484,7 +20484,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -20497,7 +20497,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -20934,7 +20934,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -20947,7 +20947,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -21615,7 +21615,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -21628,7 +21628,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -21988,7 +21988,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -22001,7 +22001,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -22348,7 +22348,7 @@
         {
           "path": "Text",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -22361,7 +22361,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -25209,7 +25209,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -25222,7 +25222,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -25865,7 +25865,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -25878,7 +25878,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26356,7 +26356,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -26369,7 +26369,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -27272,7 +27272,7 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -27285,7 +27285,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -29110,7 +29110,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -29123,7 +29123,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -29680,7 +29680,7 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "multilineText",
             "matlabClasses": [
               "categorical",
               "cell",
@@ -29693,7 +29693,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "multilineText",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []

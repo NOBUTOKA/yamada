@@ -40,7 +40,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.button.6b13ca228077",
+          "groupId": "exact.button.e5f3fed69ac2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -48,7 +48,7 @@
             "categoryId": "button",
             "category": "Button",
             "order": 1,
-            "groupId": "exact.button.6b13ca228077",
+            "groupId": "exact.button.e5f3fed69ac2",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -65,7 +65,7 @@
         },
         {
           "path": "Text",
-          "groupId": "exact.button.6b13ca228077",
+          "groupId": "exact.button.e5f3fed69ac2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Text",
@@ -73,12 +73,12 @@
             "categoryId": "button",
             "category": "Button",
             "order": 2,
-            "groupId": "exact.button.6b13ca228077",
-            "editor": "stringList",
+            "groupId": "exact.button.e5f3fed69ac2",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",
@@ -93,7 +93,7 @@
         },
         {
           "path": "WordWrap",
-          "groupId": "exact.button.6b13ca228077",
+          "groupId": "exact.button.e5f3fed69ac2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WordWrap",
@@ -101,7 +101,7 @@
             "categoryId": "button",
             "category": "Button",
             "order": 3,
-            "groupId": "exact.button.6b13ca228077",
+            "groupId": "exact.button.e5f3fed69ac2",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -120,7 +120,7 @@
         },
         {
           "path": "Icon",
-          "groupId": "exact.button.6b13ca228077",
+          "groupId": "exact.button.e5f3fed69ac2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Icon",
@@ -128,7 +128,7 @@
             "categoryId": "button",
             "category": "Button",
             "order": 4,
-            "groupId": "exact.button.6b13ca228077",
+            "groupId": "exact.button.e5f3fed69ac2",
             "editor": "asset",
             "previewPolicy": "skip",
             "auditDisposition": "editable",
@@ -389,11 +389,11 @@
             "category": "Interactivity",
             "order": 3,
             "groupId": "standardInteractivity",
-            "editor": "stringList",
+            "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "multilineText",
               "matlabClasses": [
                 "categorical",
                 "cell",
