@@ -1,785 +1,604 @@
 {
-    "schemaVersion":  1,
+    "schemaVersion":  2,
     "matlabRelease":  "R2024a",
+    "id":  "uifigure",
     "factory":  "uifigure",
-    "documentedTypes":  {
-                            "default":  "matlab.ui.Figure"
-                        },
+    "creationArguments":  [
+
+                          ],
+    "declaredType":  "matlab.ui.Figure",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uifigure.html",
-                        "scope":  "Factory syntax, supported styles, and parent types."
+                        "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.figureappd-properties.html",
-                        "scope":  "Public properties for default."
+                        "scope":  "Public properties."
                     }
                 ],
+    "documentationCategories":  [
+                                    {
+                                        "id":  "windowappearance",
+                                        "displayName":  "Window Appearance",
+                                        "order":  1
+                                    },
+                                    {
+                                        "id":  "positionandsize",
+                                        "displayName":  "Position and Size",
+                                        "order":  2
+                                    },
+                                    {
+                                        "id":  "plotting",
+                                        "displayName":  "Plotting",
+                                        "order":  3
+                                    },
+                                    {
+                                        "id":  "mousepointer",
+                                        "displayName":  "Mouse Pointer",
+                                        "order":  4
+                                    },
+                                    {
+                                        "id":  "interactivity",
+                                        "displayName":  "Interactivity",
+                                        "order":  5
+                                    },
+                                    {
+                                        "id":  "commoncallbacks",
+                                        "displayName":  "Common Callbacks",
+                                        "order":  6
+                                    },
+                                    {
+                                        "id":  "keyboardcallbacks",
+                                        "displayName":  "Keyboard Callbacks",
+                                        "order":  7
+                                    },
+                                    {
+                                        "id":  "windowcallbacks",
+                                        "displayName":  "Window Callbacks",
+                                        "order":  8
+                                    },
+                                    {
+                                        "id":  "callbackexecutioncontrol",
+                                        "displayName":  "Callback Execution Control",
+                                        "order":  9
+                                    },
+                                    {
+                                        "id":  "parentchildren",
+                                        "displayName":  "Parent/Children",
+                                        "order":  10
+                                    },
+                                    {
+                                        "id":  "identifiers",
+                                        "displayName":  "Identifiers",
+                                        "order":  11
+                                    }
+                                ],
     "properties":  [
                        {
-                           "path":  "Parent",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Parent object",
-                                                                "documentedValues":  [
-                                                                                         "root object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "UserData",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "User data",
-                                                                "documentedValues":  [
-                                                                                         "[]",
-                                                                                         "array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "WindowKeyReleaseFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Window key-release callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "WindowScrollWheelFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Window scroll wheel callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CurrentPoint",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Current point",
-                                                                "documentedValues":  [
-                                                                                         "two-element vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Pointer",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Pointer symbol",
-                                                                "documentedValues":  [
-                                                                                         "\u0027arrow\u0027",
-                                                                                         "\u0027ibeam\u0027",
-                                                                                         "\u0027crosshair\u0027",
-                                                                                         "\u0027watch\u0027",
-                                                                                         "\u0027topl\u0027",
-                                                                                         "\u0027custom\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Tag",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Object identifier",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BeingDeleted",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion status",
-                                                                "documentedValues":  [
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Alphamap",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Transparency map for axes content",
-                                                                "documentedValues":  [
-                                                                                         "vector of 64 values between 0 and 1",
-                                                                                         "vector of values between 0 and 1"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Interruptible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback interruption",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Resize",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Resizable",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "WindowButtonMotionFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Window button motion callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
                            "path":  "Color",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Background color",
-                                                                "documentedValues":  [
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CurrentAxes",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Target axes in current UI figure",
-                                                                "documentedValues":  [
-                                                                                         "UIAxes object",
-                                                                                         "Axes object",
-                                                                                         "PolarAxes object",
-                                                                                         "graphics object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Visible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "State of visibility",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "AutoResizeChildren",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Automatically resize children",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "PointerShapeHotSpot",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Active pixel of pointer",
-                                                                "documentedValues":  [
-                                                                                         "[1 1]",
-                                                                                         "two-element vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "DeleteFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Name",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Name",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "WindowButtonUpFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Window button up callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BusyAction",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback queuing",
-                                                                "documentedValues":  [
-                                                                                         "\u0027queue\u0027",
-                                                                                         "\u0027cancel\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Type",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Type of graphics object",
-                                                                "documentedValues":  [
-                                                                                         "\u0027figure\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "SelectionType",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Mouse selection type",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027extend\u0027",
-                                                                                         "\u0027alt\u0027",
-                                                                                         "\u0027open\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "windowappearance",
+                           "order":  1,
+                           "summary":  "Background color",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
                            "path":  "WindowStyle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Window style",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027modal\u0027",
-                                                                                         "\u0027alwaysontop\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Colormap",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color map for UIAxes content",
-                                                                "documentedValues":  [
-                                                                                         "parula",
-                                                                                         "m -by- 3 array of RGB triplets"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CreateFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Creation function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Units",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Units of measurement",
-                                                                "documentedValues":  [
-                                                                                         "\u0027pixels\u0027",
-                                                                                         "\u0027normalized\u0027",
-                                                                                         "\u0027inches\u0027",
-                                                                                         "\u0027centimeters\u0027",
-                                                                                         "\u0027points\u0027",
-                                                                                         "\u0027characters\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "PointerShapeCData",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Custom pointer symbol",
-                                                                "documentedValues":  [
-                                                                                         "16-by-16 matrix",
-                                                                                         "32-by-32 matrix"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "KeyReleaseFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Key-release callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Scrollable",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Ability to scroll",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Position",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size of UI figure, excluding borders and title bar",
-                                                                "documentedValues":  [
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CloseRequestFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Close request callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027closereq\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "KeyPressFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Key-press callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Number",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Number",
-                                                                "documentedValues":  [
-                                                                                         "integer",
-                                                                                         "[]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "IntegerHandle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Use integer handle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "HandleVisibility",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Visibility of object handle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "\u0027callback\u0027",
-                                                                                         "\u0027on\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CurrentCharacter",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Current character",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ContextMenu",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Context menu",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "ContextMenu object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "InnerPosition",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size of UI figure, excluding borders and title bar",
-                                                                "documentedValues":  [
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "windowappearance",
+                           "order":  2,
+                           "summary":  "Window style",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027modal\u0027",
+                                                            "\u0027alwaysontop\u0027"
+                                                        ]
                        },
                        {
                            "path":  "WindowState",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Window state",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027minimized\u0027",
-                                                                                         "\u0027maximized\u0027",
-                                                                                         "\u0027fullscreen\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "windowappearance",
+                           "order":  3,
+                           "summary":  "Window state",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027minimized\u0027",
+                                                            "\u0027maximized\u0027",
+                                                            "\u0027fullscreen\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "SizeChangedFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Size change callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "Position",
+                           "categoryId":  "positionandsize",
+                           "order":  1,
+                           "summary":  "Location and size of UI figure, excluding borders and title bar",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
                        },
                        {
-                           "path":  "WindowKeyPressFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Window key-press callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "Units",
+                           "categoryId":  "positionandsize",
+                           "order":  2,
+                           "summary":  "Units of measurement",
+                           "documentedDefault":  "\u0027pixels\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027normalized\u0027",
+                                                            "\u0027inches\u0027",
+                                                            "\u0027centimeters\u0027",
+                                                            "\u0027points\u0027",
+                                                            "\u0027characters\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "NumberTitle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Use number title",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "InnerPosition",
+                           "categoryId":  "positionandsize",
+                           "order":  3,
+                           "summary":  "Location and size of UI figure, excluding borders and title bar",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
                        },
                        {
-                           "path":  "Children",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Children of Figure object",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "1-D array of component objects"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "Resize",
+                           "categoryId":  "positionandsize",
+                           "order":  4,
+                           "summary":  "Resizable",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "AutoResizeChildren",
+                           "categoryId":  "positionandsize",
+                           "order":  5,
+                           "summary":  "Automatically resize children",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Colormap",
+                           "categoryId":  "plotting",
+                           "order":  1,
+                           "summary":  "Color map for UIAxes content",
+                           "documentedDefault":  "parula",
+                           "documentedAcceptedValues":  [
+                                                            "m -by- 3 array of RGB triplets"
+                                                        ]
+                       },
+                       {
+                           "path":  "Alphamap",
+                           "categoryId":  "plotting",
+                           "order":  2,
+                           "summary":  "Transparency map for axes content",
+                           "documentedDefault":  "vector of 64 values between 0 and 1",
+                           "documentedAcceptedValues":  [
+                                                            "vector of values between 0 and 1"
+                                                        ]
+                       },
+                       {
+                           "path":  "Pointer",
+                           "categoryId":  "mousepointer",
+                           "order":  1,
+                           "summary":  "Pointer symbol",
+                           "documentedDefault":  "\u0027arrow\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027ibeam\u0027",
+                                                            "\u0027crosshair\u0027",
+                                                            "\u0027watch\u0027",
+                                                            "\u0027topl\u0027",
+                                                            "\u0027custom\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "PointerShapeCData",
+                           "categoryId":  "mousepointer",
+                           "order":  2,
+                           "summary":  "Custom pointer symbol",
+                           "documentedDefault":  "16-by-16 matrix",
+                           "documentedAcceptedValues":  [
+                                                            "32-by-32 matrix"
+                                                        ]
+                       },
+                       {
+                           "path":  "PointerShapeHotSpot",
+                           "categoryId":  "mousepointer",
+                           "order":  3,
+                           "summary":  "Active pixel of pointer",
+                           "documentedDefault":  "[1 1]",
+                           "documentedAcceptedValues":  [
+                                                            "two-element vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "Visible",
+                           "categoryId":  "interactivity",
+                           "order":  1,
+                           "summary":  "State of visibility",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "CurrentAxes",
+                           "categoryId":  "interactivity",
+                           "order":  2,
+                           "summary":  "Target axes in current UI figure",
+                           "documentedAcceptedValues":  [
+                                                            "UIAxes object",
+                                                            "Axes object",
+                                                            "PolarAxes object",
+                                                            "graphics object"
+                                                        ]
                        },
                        {
                            "path":  "CurrentObject",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Current object",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "child object of UI figure"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "interactivity",
+                           "order":  3,
+                           "summary":  "Current object",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "child object of UI figure"
+                                                        ]
                        },
                        {
-                           "path":  "WindowButtonDownFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Window button down callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "CurrentPoint",
+                           "categoryId":  "interactivity",
+                           "order":  4,
+                           "summary":  "Current point",
+                           "documentedAcceptedValues":  [
+                                                            "two-element vector"
+                                                        ]
                        },
                        {
-                           "path":  "Icon",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Icon source or file",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar",
-                                                                                         "m -by- n -by-3 truecolor image array"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "CurrentCharacter",
+                           "categoryId":  "interactivity",
+                           "order":  5,
+                           "summary":  "Current character",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character"
+                                                        ]
+                       },
+                       {
+                           "path":  "SelectionType",
+                           "categoryId":  "interactivity",
+                           "order":  6,
+                           "summary":  "Mouse selection type",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027extend\u0027",
+                                                            "\u0027alt\u0027",
+                                                            "\u0027open\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Scrollable",
+                           "categoryId":  "interactivity",
+                           "order":  7,
+                           "summary":  "Ability to scroll",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "categoryId":  "interactivity",
+                           "order":  8,
+                           "summary":  "Context menu",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "ContextMenu object"
+                                                        ]
                        },
                        {
                            "path":  "ButtonDownFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Button down callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "commoncallbacks",
+                           "order":  1,
+                           "summary":  "Button down callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "categoryId":  "commoncallbacks",
+                           "order":  2,
+                           "summary":  "Creation function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "categoryId":  "commoncallbacks",
+                           "order":  3,
+                           "summary":  "Deletion function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "KeyPressFcn",
+                           "categoryId":  "keyboardcallbacks",
+                           "order":  1,
+                           "summary":  "Key-press callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "KeyReleaseFcn",
+                           "categoryId":  "keyboardcallbacks",
+                           "order":  2,
+                           "summary":  "Key-release callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "CloseRequestFcn",
+                           "categoryId":  "windowcallbacks",
+                           "order":  1,
+                           "summary":  "Close request callback",
+                           "documentedDefault":  "\u0027closereq\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "SizeChangedFcn",
+                           "categoryId":  "windowcallbacks",
+                           "order":  2,
+                           "summary":  "Size change callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "WindowButtonDownFcn",
+                           "categoryId":  "windowcallbacks",
+                           "order":  3,
+                           "summary":  "Window button down callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "WindowButtonMotionFcn",
+                           "categoryId":  "windowcallbacks",
+                           "order":  4,
+                           "summary":  "Window button motion callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "WindowButtonUpFcn",
+                           "categoryId":  "windowcallbacks",
+                           "order":  5,
+                           "summary":  "Window button up callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "WindowKeyPressFcn",
+                           "categoryId":  "windowcallbacks",
+                           "order":  6,
+                           "summary":  "Window key-press callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "WindowKeyReleaseFcn",
+                           "categoryId":  "windowcallbacks",
+                           "order":  7,
+                           "summary":  "Window key-release callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "WindowScrollWheelFcn",
+                           "categoryId":  "windowcallbacks",
+                           "order":  8,
+                           "summary":  "Window scroll wheel callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  1,
+                           "summary":  "Callback interruption",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  2,
+                           "summary":  "Callback queuing",
+                           "documentedDefault":  "\u0027queue\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027cancel\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  3,
+                           "summary":  "Deletion status",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Parent",
+                           "categoryId":  "parentchildren",
+                           "order":  1,
+                           "summary":  "Parent object",
+                           "documentedAcceptedValues":  [
+                                                            "root object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Children",
+                           "categoryId":  "parentchildren",
+                           "order":  2,
+                           "summary":  "Children of Figure object",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "1-D array of component objects"
+                                                        ]
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "categoryId":  "parentchildren",
+                           "order":  3,
+                           "summary":  "Visibility of object handle",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027callback\u0027",
+                                                            "\u0027on\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Name",
+                           "categoryId":  "identifiers",
+                           "order":  1,
+                           "summary":  "Name",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
+                       },
+                       {
+                           "path":  "Icon",
+                           "categoryId":  "identifiers",
+                           "order":  2,
+                           "summary":  "Icon source or file",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar",
+                                                            "m -by- n -by-3 truecolor image array"
+                                                        ]
+                       },
+                       {
+                           "path":  "Number",
+                           "categoryId":  "identifiers",
+                           "order":  3,
+                           "summary":  "Number",
+                           "documentedAcceptedValues":  [
+                                                            "integer",
+                                                            "[]"
+                                                        ]
+                       },
+                       {
+                           "path":  "NumberTitle",
+                           "categoryId":  "identifiers",
+                           "order":  4,
+                           "summary":  "Use number title",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "IntegerHandle",
+                           "categoryId":  "identifiers",
+                           "order":  5,
+                           "summary":  "Use integer handle",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Type",
+                           "categoryId":  "identifiers",
+                           "order":  6,
+                           "summary":  "Type of graphics object",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027figure\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tag",
+                           "categoryId":  "identifiers",
+                           "order":  7,
+                           "summary":  "Object identifier",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
+                       },
+                       {
+                           "path":  "UserData",
+                           "categoryId":  "identifiers",
+                           "order":  8,
+                           "summary":  "User data",
+                           "documentedDefault":  "[]",
+                           "documentedAcceptedValues":  [
+                                                            "array"
+                                                        ]
                        }
                    ]
 }

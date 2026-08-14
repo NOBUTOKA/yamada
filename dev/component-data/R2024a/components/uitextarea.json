@@ -1,513 +1,402 @@
 {
-    "schemaVersion":  1,
+    "schemaVersion":  2,
     "matlabRelease":  "R2024a",
+    "id":  "uitextarea",
     "factory":  "uitextarea",
-    "documentedTypes":  {
-                            "default":  "matlab.ui.control.TextArea"
-                        },
+    "creationArguments":  [
+
+                          ],
+    "declaredType":  "matlab.ui.control.TextArea",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uitextarea.html",
-                        "scope":  "Factory syntax, supported styles, and parent types."
+                        "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.textarea-properties.html",
-                        "scope":  "Public properties for default."
+                        "scope":  "Public properties."
                     }
                 ],
+    "documentationCategories":  [
+                                    {
+                                        "id":  "text",
+                                        "displayName":  "Text",
+                                        "order":  1
+                                    },
+                                    {
+                                        "id":  "fontandcolor",
+                                        "displayName":  "Font and Color",
+                                        "order":  2
+                                    },
+                                    {
+                                        "id":  "interactivity",
+                                        "displayName":  "Interactivity",
+                                        "order":  3
+                                    },
+                                    {
+                                        "id":  "position",
+                                        "displayName":  "Position",
+                                        "order":  4
+                                    },
+                                    {
+                                        "id":  "callbacks",
+                                        "displayName":  "Callbacks",
+                                        "order":  5
+                                    },
+                                    {
+                                        "id":  "callbackexecutioncontrol",
+                                        "displayName":  "Callback Execution Control",
+                                        "order":  6
+                                    },
+                                    {
+                                        "id":  "parentchild",
+                                        "displayName":  "Parent/Child",
+                                        "order":  7
+                                    },
+                                    {
+                                        "id":  "identifiers",
+                                        "displayName":  "Identifiers",
+                                        "order":  8
+                                    }
+                                ],
     "properties":  [
                        {
-                           "path":  "BusyAction",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback queuing",
-                                                                "documentedValues":  [
-                                                                                         "\u0027queue\u0027",
-                                                                                         "\u0027cancel\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "HorizontalAlignment",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Horizontal alignment of text within text area",
-                                                                "documentedValues":  [
-                                                                                         "\u0027left\u0027",
-                                                                                         "\u0027right\u0027",
-                                                                                         "\u0027center\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontSize",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font size",
-                                                                "documentedValues":  [
-                                                                                         "positive number"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
                            "path":  "Value",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Value",
-                                                                "documentedValues":  [
-                                                                                         "{\u0027\u0027}",
-                                                                                         "character vector",
-                                                                                         "string scalar",
-                                                                                         "cell array of character vectors",
-                                                                                         "string array",
-                                                                                         "1-D categorical array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Tooltip",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Tooltip",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "cell array of character vectors",
-                                                                                         "string array",
-                                                                                         "1-D categorical array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Parent",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Parent container",
-                                                                "documentedValues":  [
-                                                                                         "Figure object",
-                                                                                         "Panel object",
-                                                                                         "Tab object",
-                                                                                         "ButtonGroup object",
-                                                                                         "GridLayout object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font color",
-                                                                "documentedValues":  [
-                                                                                         "[0 0 0]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Editable",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Editability of text area",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Visible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "State of visibility",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "OuterPosition",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Outer location and size of text area",
-                                                                "documentedValues":  [
-                                                                                         "[100 100 150 60]",
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "DeleteFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "WordWrap",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Word wrapping to fit component width",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ValueChangingFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Value changing callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Type",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Type of graphics object",
-                                                                "documentedValues":  [
-                                                                                         "\u0027uitextarea\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ContextMenu",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Context menu",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "ContextMenu object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontName",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font name",
-                                                                "documentedValues":  [
-                                                                                         "system supported font name"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Enable",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Operational state of text area",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontWeight",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font weight",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027bold\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontAngle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font angle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027italic\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CreateFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Creation function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "UserData",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "User data",
-                                                                "documentedValues":  [
-                                                                                         "[]",
-                                                                                         "array"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "text",
+                           "order":  1,
+                           "summary":  "Value",
+                           "documentedDefault":  "{\u0027\u0027}",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar",
+                                                            "cell array of character vectors",
+                                                            "string array",
+                                                            "1-D categorical array"
+                                                        ]
                        },
                        {
                            "path":  "Placeholder",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Placeholder text in text area",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "text",
+                           "order":  2,
+                           "summary":  "Placeholder text in text area",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
                        },
                        {
-                           "path":  "Position",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size of text area",
-                                                                "documentedValues":  [
-                                                                                         "[100 100 150 60]",
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "HorizontalAlignment",
+                           "categoryId":  "text",
+                           "order":  3,
+                           "summary":  "Horizontal alignment of text within text area",
+                           "documentedDefault":  "\u0027left\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027right\u0027",
+                                                            "\u0027center\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "ValueChangedFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Value changed callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "WordWrap",
+                           "categoryId":  "text",
+                           "order":  4,
+                           "summary":  "Word wrapping to fit component width",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
                        },
                        {
-                           "path":  "BeingDeleted",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion status",
-                                                                "documentedValues":  [
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "FontName",
+                           "categoryId":  "fontandcolor",
+                           "order":  1,
+                           "summary":  "Font name",
+                           "documentedAcceptedValues":  [
+                                                            "system supported font name"
+                                                        ]
                        },
                        {
-                           "path":  "Tag",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Object identifier",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "FontSize",
+                           "categoryId":  "fontandcolor",
+                           "order":  2,
+                           "summary":  "Font size",
+                           "documentedAcceptedValues":  [
+                                                            "positive number"
+                                                        ]
                        },
                        {
-                           "path":  "Interruptible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback interruption",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "FontWeight",
+                           "categoryId":  "fontandcolor",
+                           "order":  3,
+                           "summary":  "Font weight",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027bold\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "categoryId":  "fontandcolor",
+                           "order":  4,
+                           "summary":  "Font angle",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027italic\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontColor",
+                           "categoryId":  "fontandcolor",
+                           "order":  5,
+                           "summary":  "Font color",
+                           "documentedDefault":  "[0 0 0]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
                            "path":  "BackgroundColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Background color",
-                                                                "documentedValues":  [
-                                                                                         "[1 1 1]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "fontandcolor",
+                           "order":  6,
+                           "summary":  "Background color",
+                           "documentedDefault":  "[1 1 1]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "HandleVisibility",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Visibility of object handle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "\u0027callback\u0027",
-                                                                                         "\u0027off\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "Visible",
+                           "categoryId":  "interactivity",
+                           "order":  1,
+                           "summary":  "State of visibility",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Editable",
+                           "categoryId":  "interactivity",
+                           "order":  2,
+                           "summary":  "Editability of text area",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Enable",
+                           "categoryId":  "interactivity",
+                           "order":  3,
+                           "summary":  "Operational state of text area",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "categoryId":  "interactivity",
+                           "order":  4,
+                           "summary":  "Tooltip",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "cell array of character vectors",
+                                                            "string array",
+                                                            "1-D categorical array"
+                                                        ]
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "categoryId":  "interactivity",
+                           "order":  5,
+                           "summary":  "Context menu",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "ContextMenu object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Position",
+                           "categoryId":  "position",
+                           "order":  1,
+                           "summary":  "Location and size of text area",
+                           "documentedDefault":  "[100 100 150 60]",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
                        },
                        {
                            "path":  "InnerPosition",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Inner location and size of text area",
-                                                                "documentedValues":  [
-                                                                                         "[100 100 150 60]",
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "position",
+                           "order":  2,
+                           "summary":  "Inner location and size of text area",
+                           "documentedDefault":  "[100 100 150 60]",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "categoryId":  "position",
+                           "order":  3,
+                           "summary":  "Outer location and size of text area",
+                           "documentedDefault":  "[100 100 150 60]",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
                        },
                        {
                            "path":  "Layout",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Layout options",
-                                                                "documentedValues":  [
-                                                                                         "empty LayoutOptions array",
-                                                                                         "GridLayoutOptions object"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "position",
+                           "order":  4,
+                           "summary":  "Layout options",
+                           "documentedDefault":  "empty LayoutOptions array",
+                           "documentedAcceptedValues":  [
+                                                            "GridLayoutOptions object"
+                                                        ]
+                       },
+                       {
+                           "path":  "ValueChangedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  1,
+                           "summary":  "Value changed callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "ValueChangingFcn",
+                           "categoryId":  "callbacks",
+                           "order":  2,
+                           "summary":  "Value changing callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "categoryId":  "callbacks",
+                           "order":  3,
+                           "summary":  "Creation function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "categoryId":  "callbacks",
+                           "order":  4,
+                           "summary":  "Deletion function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  1,
+                           "summary":  "Callback interruption",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  2,
+                           "summary":  "Callback queuing",
+                           "documentedDefault":  "\u0027queue\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027cancel\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  3,
+                           "summary":  "Deletion status",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Parent",
+                           "categoryId":  "parentchild",
+                           "order":  1,
+                           "summary":  "Parent container",
+                           "documentedDefault":  "Figure object",
+                           "documentedAcceptedValues":  [
+                                                            "Panel object",
+                                                            "Tab object",
+                                                            "ButtonGroup object",
+                                                            "GridLayout object"
+                                                        ]
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "categoryId":  "parentchild",
+                           "order":  2,
+                           "summary":  "Visibility of object handle",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027callback\u0027",
+                                                            "\u0027off\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Type",
+                           "categoryId":  "identifiers",
+                           "order":  1,
+                           "summary":  "Type of graphics object",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027uitextarea\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tag",
+                           "categoryId":  "identifiers",
+                           "order":  2,
+                           "summary":  "Object identifier",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
+                       },
+                       {
+                           "path":  "UserData",
+                           "categoryId":  "identifiers",
+                           "order":  3,
+                           "summary":  "User data",
+                           "documentedDefault":  "[]",
+                           "documentedAcceptedValues":  [
+                                                            "array"
+                                                        ]
                        }
                    ]
 }

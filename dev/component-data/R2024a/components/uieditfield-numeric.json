@@ -1,28 +1,28 @@
 {
     "schemaVersion":  2,
     "matlabRelease":  "R2024a",
-    "id":  "uidatepicker",
-    "factory":  "uidatepicker",
+    "id":  "uieditfield-numeric",
+    "factory":  "uieditfield",
     "creationArguments":  [
-
+                              "numeric"
                           ],
-    "declaredType":  "matlab.ui.control.DatePicker",
+    "declaredType":  null,
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uidatepicker.html",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uieditfield.html",
                         "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.datepicker-properties.html",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
                         "scope":  "Public properties."
                     }
                 ],
     "documentationCategories":  [
                                     {
-                                        "id":  "datepicker",
-                                        "displayName":  "Date Picker",
+                                        "id":  "value",
+                                        "displayName":  "Value",
                                         "order":  1
                                     },
                                     {
@@ -64,64 +64,95 @@
     "properties":  [
                        {
                            "path":  "Value",
-                           "categoryId":  "datepicker",
+                           "categoryId":  "value",
                            "order":  1,
-                           "summary":  "Selected date",
-                           "documentedDefault":  "NaT",
+                           "summary":  "Value in edit field",
+                           "documentedDefault":  "0",
                            "documentedAcceptedValues":  [
-                                                            "datetime object"
-                                                        ]
-                       },
-                       {
-                           "path":  "Placeholder",
-                           "categoryId":  "datepicker",
-                           "order":  2,
-                           "summary":  "Placeholder text",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "character vector",
-                                                            "string scalar"
+                                                            "numeric value"
                                                         ]
                        },
                        {
                            "path":  "Limits",
-                           "categoryId":  "datepicker",
-                           "order":  3,
-                           "summary":  "Selection limits",
+                           "categoryId":  "value",
+                           "order":  2,
+                           "summary":  "Minimum and maximum edit field values",
+                           "documentedDefault":  "[-Inf Inf]",
                            "documentedAcceptedValues":  [
-                                                            "1-by-2 datetime array"
+                                                            "two-element numeric array"
                                                         ]
                        },
                        {
-                           "path":  "DisplayFormat",
-                           "categoryId":  "datepicker",
+                           "path":  "RoundFractionalValues",
+                           "categoryId":  "value",
+                           "order":  3,
+                           "summary":  "Rounding of fractional values",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "ValueDisplayFormat",
+                           "categoryId":  "value",
                            "order":  4,
-                           "summary":  "Display format",
+                           "summary":  "Value display format",
+                           "documentedDefault":  "\u0027%11.4g\u0027",
                            "documentedAcceptedValues":  [
                                                             "character vector",
                                                             "string scalar"
                                                         ]
                        },
                        {
-                           "path":  "DisabledDates",
-                           "categoryId":  "datepicker",
+                           "path":  "AllowEmpty",
+                           "categoryId":  "value",
                            "order":  5,
-                           "summary":  "Disabled dates",
-                           "documentedDefault":  "empty datetime array",
+                           "summary":  "Ability to clear edit field",
+                           "documentedDefault":  "\u0027off\u0027",
                            "documentedAcceptedValues":  [
-                                                            "m-by-1 datetime array"
+                                                            "on/off logical value"
                                                         ]
                        },
                        {
-                           "path":  "DisabledDaysOfWeek",
-                           "categoryId":  "datepicker",
+                           "path":  "Placeholder",
+                           "categoryId":  "value",
                            "order":  6,
-                           "summary":  "Disabled days of week",
-                           "documentedDefault":  "[]",
+                           "summary":  "Placeholder text",
+                           "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
-                                                            "vector of integers in the range [1, 7]",
-                                                            "cell array of character vectors",
-                                                            "string vector"
+                                                            "string scalar",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "HorizontalAlignment",
+                           "categoryId":  "value",
+                           "order":  7,
+                           "summary":  "Horizontal alignment of numbers",
+                           "documentedDefault":  "\u0027right\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027left\u0027",
+                                                            "\u0027center\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "LowerLimitInclusive",
+                           "categoryId":  "value",
+                           "order":  8,
+                           "summary":  "Lower limit inclusiveness",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "UpperLimitInclusive",
+                           "categoryId":  "value",
+                           "order":  9,
+                           "summary":  "Upper limit inclusiveness",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
                                                         ]
                        },
                        {
@@ -181,7 +212,7 @@
                            "categoryId":  "fontandcolor",
                            "order":  6,
                            "summary":  "Background color",
-                           "documentedDefault":  "[0.96 0.96 0.96]",
+                           "documentedDefault":  "[1 1 1]",
                            "documentedAcceptedValues":  [
                                                             "RGB triplet",
                                                             "hexadecimal color code",
@@ -204,7 +235,7 @@
                            "path":  "Editable",
                            "categoryId":  "interactivity",
                            "order":  2,
-                           "summary":  "Allow edit field changes",
+                           "summary":  "Editability of edit field",
                            "documentedDefault":  "\u0027on\u0027",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
@@ -214,7 +245,7 @@
                            "path":  "Enable",
                            "categoryId":  "interactivity",
                            "order":  3,
-                           "summary":  "Operational state",
+                           "summary":  "Operational state of edit field",
                            "documentedDefault":  "\u0027on\u0027",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
@@ -247,8 +278,8 @@
                            "path":  "Position",
                            "categoryId":  "position",
                            "order":  1,
-                           "summary":  "Location and size",
-                           "documentedDefault":  "[100 100 150 22]",
+                           "summary":  "Location and size of edit field",
+                           "documentedDefault":  "[100 100 100 22]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -257,8 +288,8 @@
                            "path":  "InnerPosition",
                            "categoryId":  "position",
                            "order":  2,
-                           "summary":  "Location and size",
-                           "documentedDefault":  "[100 100 150 22]",
+                           "summary":  "Inner location and size of edit field",
+                           "documentedDefault":  "[100 100 100 22]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -267,8 +298,8 @@
                            "path":  "OuterPosition",
                            "categoryId":  "position",
                            "order":  3,
-                           "summary":  "Location and size",
-                           "documentedDefault":  "[100 100 150 22]",
+                           "summary":  "Outer location and size of edit field",
+                           "documentedDefault":  "[100 100 100 22]]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -287,7 +318,7 @@
                            "path":  "ValueChangedFcn",
                            "categoryId":  "callbacks",
                            "order":  1,
-                           "summary":  "Value changed function",
+                           "summary":  "Value changed callback",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
                                                             "function handle",
@@ -378,7 +409,7 @@
                            "order":  1,
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
-                                                            "\u0027uidatepicker\u0027"
+                                                            "\u0027uinumericeditfield\u0027"
                                                         ]
                        },
                        {

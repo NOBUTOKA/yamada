@@ -1,127 +1,200 @@
 {
     "schemaVersion":  2,
     "matlabRelease":  "R2024a",
-    "id":  "uidatepicker",
-    "factory":  "uidatepicker",
+    "id":  "uigauge-ninetydegree",
+    "factory":  "uigauge",
     "creationArguments":  [
-
+                              "ninetydegree"
                           ],
-    "declaredType":  "matlab.ui.control.DatePicker",
+    "declaredType":  "matlab.ui.control.NinetyDegreeGauge",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uidatepicker.html",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uigauge.html",
                         "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.datepicker-properties.html",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.ninetydegreegauge-properties.html",
                         "scope":  "Public properties."
                     }
                 ],
     "documentationCategories":  [
                                     {
-                                        "id":  "datepicker",
-                                        "displayName":  "Date Picker",
+                                        "id":  "gauge",
+                                        "displayName":  "Gauge",
                                         "order":  1
+                                    },
+                                    {
+                                        "id":  "ticks",
+                                        "displayName":  "Ticks",
+                                        "order":  2
                                     },
                                     {
                                         "id":  "fontandcolor",
                                         "displayName":  "Font and Color",
-                                        "order":  2
+                                        "order":  3
                                     },
                                     {
                                         "id":  "interactivity",
                                         "displayName":  "Interactivity",
-                                        "order":  3
+                                        "order":  4
                                     },
                                     {
                                         "id":  "position",
                                         "displayName":  "Position",
-                                        "order":  4
+                                        "order":  5
                                     },
                                     {
                                         "id":  "callbacks",
                                         "displayName":  "Callbacks",
-                                        "order":  5
+                                        "order":  6
                                     },
                                     {
                                         "id":  "callbackexecutioncontrol",
                                         "displayName":  "Callback Execution Control",
-                                        "order":  6
+                                        "order":  7
                                     },
                                     {
                                         "id":  "parentchild",
                                         "displayName":  "Parent/Child",
-                                        "order":  7
+                                        "order":  8
                                     },
                                     {
                                         "id":  "identifiers",
                                         "displayName":  "Identifiers",
-                                        "order":  8
+                                        "order":  9
                                     }
                                 ],
     "properties":  [
                        {
                            "path":  "Value",
-                           "categoryId":  "datepicker",
+                           "categoryId":  "gauge",
                            "order":  1,
-                           "summary":  "Selected date",
-                           "documentedDefault":  "NaT",
+                           "summary":  "Location of gauge needle",
+                           "documentedDefault":  "0",
                            "documentedAcceptedValues":  [
-                                                            "datetime object"
-                                                        ]
-                       },
-                       {
-                           "path":  "Placeholder",
-                           "categoryId":  "datepicker",
-                           "order":  2,
-                           "summary":  "Placeholder text",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "character vector",
-                                                            "string scalar"
+                                                            "numeric"
                                                         ]
                        },
                        {
                            "path":  "Limits",
-                           "categoryId":  "datepicker",
+                           "categoryId":  "gauge",
+                           "order":  2,
+                           "summary":  "Minimum and maximum gauge scale values",
+                           "documentedDefault":  "[0 100]",
+                           "documentedAcceptedValues":  [
+                                                            "two-element numeric array"
+                                                        ]
+                       },
+                       {
+                           "path":  "Orientation",
+                           "categoryId":  "gauge",
                            "order":  3,
-                           "summary":  "Selection limits",
+                           "summary":  "Orientation",
+                           "documentedDefault":  "\u0027northwest\u0027",
                            "documentedAcceptedValues":  [
-                                                            "1-by-2 datetime array"
+                                                            "\u0027northeast\u0027",
+                                                            "\u0027southwest\u0027",
+                                                            "\u0027southeast\u0027"
                                                         ]
                        },
                        {
-                           "path":  "DisplayFormat",
-                           "categoryId":  "datepicker",
+                           "path":  "ScaleDirection",
+                           "categoryId":  "gauge",
                            "order":  4,
-                           "summary":  "Display format",
+                           "summary":  "Direction of gauge scale",
+                           "documentedDefault":  "\u0027clockwise\u0027",
                            "documentedAcceptedValues":  [
-                                                            "character vector",
-                                                            "string scalar"
+                                                            "\u0027counterclockwise\u0027"
                                                         ]
                        },
                        {
-                           "path":  "DisabledDates",
-                           "categoryId":  "datepicker",
+                           "path":  "ScaleColors",
+                           "categoryId":  "gauge",
                            "order":  5,
-                           "summary":  "Disabled dates",
-                           "documentedDefault":  "empty datetime array",
+                           "summary":  "Scale colors",
+                           "documentedDefault":  "[ ]",
                            "documentedAcceptedValues":  [
-                                                            "m-by-1 datetime array"
+                                                            "1-by- n string array",
+                                                            "1-by- n cell array",
+                                                            "n -by-3 array of RGB triplets",
+                                                            "hexadecimal color code"
                                                         ]
                        },
                        {
-                           "path":  "DisabledDaysOfWeek",
-                           "categoryId":  "datepicker",
+                           "path":  "ScaleColorLimits",
+                           "categoryId":  "gauge",
                            "order":  6,
-                           "summary":  "Disabled days of week",
-                           "documentedDefault":  "[]",
+                           "summary":  "Scale color limits",
+                           "documentedDefault":  "[ ]",
                            "documentedAcceptedValues":  [
-                                                            "vector of integers in the range [1, 7]",
+                                                            "n-by-2 array"
+                                                        ]
+                       },
+                       {
+                           "path":  "MajorTicks",
+                           "categoryId":  "ticks",
+                           "order":  1,
+                           "summary":  "Major tick mark locations",
+                           "documentedDefault":  "[0 25 50 75 100]",
+                           "documentedAcceptedValues":  [
+                                                            "vector of numeric values",
+                                                            "[]"
+                                                        ]
+                       },
+                       {
+                           "path":  "MajorTicksMode",
+                           "categoryId":  "ticks",
+                           "order":  2,
+                           "summary":  "Major tick creation mode",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "MajorTickLabels",
+                           "categoryId":  "ticks",
+                           "order":  3,
+                           "summary":  "Major tick labels",
+                           "documentedDefault":  "{\u00270\u0027,\u002725\u0027,\u002750\u0027,\u002775\u0027,\u0027100\u0027}",
+                           "documentedAcceptedValues":  [
                                                             "cell array of character vectors",
-                                                            "string vector"
+                                                            "string array",
+                                                            "1-D categorical array",
+                                                            "{}"
+                                                        ]
+                       },
+                       {
+                           "path":  "MajorTickLabelsMode",
+                           "categoryId":  "ticks",
+                           "order":  4,
+                           "summary":  "Major tick labels mode",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "MinorTicks",
+                           "categoryId":  "ticks",
+                           "order":  5,
+                           "summary":  "Minor tick locations",
+                           "documentedDefault":  "[0 5 10 15 … 100]",
+                           "documentedAcceptedValues":  [
+                                                            "vector of numeric values",
+                                                            "[]"
+                                                        ]
+                       },
+                       {
+                           "path":  "MinorTicksMode",
+                           "categoryId":  "ticks",
+                           "order":  6,
+                           "summary":  "Minor tick creation mode",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
                                                         ]
                        },
                        {
@@ -181,7 +254,7 @@
                            "categoryId":  "fontandcolor",
                            "order":  6,
                            "summary":  "Background color",
-                           "documentedDefault":  "[0.96 0.96 0.96]",
+                           "documentedDefault":  "[1 1 1]",
                            "documentedAcceptedValues":  [
                                                             "RGB triplet",
                                                             "hexadecimal color code",
@@ -201,20 +274,10 @@
                                                         ]
                        },
                        {
-                           "path":  "Editable",
-                           "categoryId":  "interactivity",
-                           "order":  2,
-                           "summary":  "Allow edit field changes",
-                           "documentedDefault":  "\u0027on\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "on/off logical value"
-                                                        ]
-                       },
-                       {
                            "path":  "Enable",
                            "categoryId":  "interactivity",
-                           "order":  3,
-                           "summary":  "Operational state",
+                           "order":  2,
+                           "summary":  "Operational state of gauge",
                            "documentedDefault":  "\u0027on\u0027",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
@@ -223,7 +286,7 @@
                        {
                            "path":  "Tooltip",
                            "categoryId":  "interactivity",
-                           "order":  4,
+                           "order":  3,
                            "summary":  "Tooltip",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
@@ -236,7 +299,7 @@
                        {
                            "path":  "ContextMenu",
                            "categoryId":  "interactivity",
-                           "order":  5,
+                           "order":  4,
                            "summary":  "Context menu",
                            "documentedDefault":  "empty GraphicsPlaceholder array",
                            "documentedAcceptedValues":  [
@@ -247,8 +310,8 @@
                            "path":  "Position",
                            "categoryId":  "position",
                            "order":  1,
-                           "summary":  "Location and size",
-                           "documentedDefault":  "[100 100 150 22]",
+                           "summary":  "Location and size of gauge",
+                           "documentedDefault":  "[100 100 90 90]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -257,8 +320,8 @@
                            "path":  "InnerPosition",
                            "categoryId":  "position",
                            "order":  2,
-                           "summary":  "Location and size",
-                           "documentedDefault":  "[100 100 150 22]",
+                           "summary":  "Inner location and size of gauge",
+                           "documentedDefault":  "[100 100 90 90]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -267,8 +330,8 @@
                            "path":  "OuterPosition",
                            "categoryId":  "position",
                            "order":  3,
-                           "summary":  "Location and size",
-                           "documentedDefault":  "[100 100 150 22]",
+                           "summary":  "Outer location and size of gauge",
+                           "documentedDefault":  "[100 100 90 90]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -284,21 +347,9 @@
                                                         ]
                        },
                        {
-                           "path":  "ValueChangedFcn",
-                           "categoryId":  "callbacks",
-                           "order":  1,
-                           "summary":  "Value changed function",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "function handle",
-                                                            "cell array",
-                                                            "character vector"
-                                                        ]
-                       },
-                       {
                            "path":  "CreateFcn",
                            "categoryId":  "callbacks",
-                           "order":  2,
+                           "order":  1,
                            "summary":  "Creation function",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
@@ -310,7 +361,7 @@
                        {
                            "path":  "DeleteFcn",
                            "categoryId":  "callbacks",
-                           "order":  3,
+                           "order":  2,
                            "summary":  "Deletion function",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
@@ -378,7 +429,7 @@
                            "order":  1,
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
-                                                            "\u0027uidatepicker\u0027"
+                                                            "\u0027uininetydegreegauge\u0027"
                                                         ]
                        },
                        {

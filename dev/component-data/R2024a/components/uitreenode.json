@@ -1,254 +1,213 @@
 {
-    "schemaVersion":  1,
+    "schemaVersion":  2,
     "matlabRelease":  "R2024a",
+    "id":  "uitreenode",
     "factory":  "uitreenode",
-    "documentedTypes":  {
-                            "default":  "matlab.ui.container.TreeNode"
-                        },
+    "creationArguments":  [
+
+                          ],
+    "declaredType":  "matlab.ui.container.TreeNode",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uitreenode.html",
-                        "scope":  "Factory syntax, supported styles, and parent types."
+                        "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.treenode-properties.html",
-                        "scope":  "Public properties for default."
+                        "scope":  "Public properties."
                     }
                 ],
+    "documentationCategories":  [
+                                    {
+                                        "id":  "node",
+                                        "displayName":  "Node",
+                                        "order":  1
+                                    },
+                                    {
+                                        "id":  "interactivity",
+                                        "displayName":  "Interactivity",
+                                        "order":  2
+                                    },
+                                    {
+                                        "id":  "callbacks",
+                                        "displayName":  "Callbacks",
+                                        "order":  3
+                                    },
+                                    {
+                                        "id":  "callbackexecutioncontrol",
+                                        "displayName":  "Callback Execution Control",
+                                        "order":  4
+                                    },
+                                    {
+                                        "id":  "parentchild",
+                                        "displayName":  "Parent/Child",
+                                        "order":  5
+                                    },
+                                    {
+                                        "id":  "identifiers",
+                                        "displayName":  "Identifiers",
+                                        "order":  6
+                                    }
+                                ],
     "properties":  [
                        {
-                           "path":  "CreateFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Creation function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "DeleteFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "UserData",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "User data",
-                                                                "documentedValues":  [
-                                                                                         "[]",
-                                                                                         "array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Parent",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Parent object",
-                                                                "documentedValues":  [
-                                                                                         "Tree object",
-                                                                                         "TreeNode object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BeingDeleted",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion status",
-                                                                "documentedValues":  [
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Tag",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Object identifier",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "HandleVisibility",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Visibility of object handle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "\u0027callback\u0027",
-                                                                                         "\u0027off\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
                            "path":  "Text",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Node text",
-                                                                "documentedValues":  [
-                                                                                         "\u0027Tree Node\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Type",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Type of graphics object",
-                                                                "documentedValues":  [
-                                                                                         "\u0027uitreenode\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Children",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Children",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "array of TreeNode objects"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ContextMenu",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Context menu",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "ContextMenu object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Icon",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Icon source or file",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar",
-                                                                                         "m -by- n -by-3 truecolor image array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BusyAction",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback queuing",
-                                                                "documentedValues":  [
-                                                                                         "\u0027queue\u0027",
-                                                                                         "\u0027cancel\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Interruptible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback interruption",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "node",
+                           "order":  1,
+                           "summary":  "Node text",
+                           "documentedDefault":  "\u0027Tree Node\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
                        },
                        {
                            "path":  "NodeData",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Node data",
-                                                                "documentedValues":  [
-                                                                                         "[]",
-                                                                                         "array"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "node",
+                           "order":  2,
+                           "summary":  "Node data",
+                           "documentedDefault":  "[]",
+                           "documentedAcceptedValues":  [
+                                                            "array"
+                                                        ]
+                       },
+                       {
+                           "path":  "Icon",
+                           "categoryId":  "node",
+                           "order":  3,
+                           "summary":  "Icon source or file",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar",
+                                                            "m -by- n -by-3 truecolor image array"
+                                                        ]
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "categoryId":  "interactivity",
+                           "order":  1,
+                           "summary":  "Context menu",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "ContextMenu object"
+                                                        ]
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "categoryId":  "callbacks",
+                           "order":  1,
+                           "summary":  "Creation function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "categoryId":  "callbacks",
+                           "order":  2,
+                           "summary":  "Deletion function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  1,
+                           "summary":  "Callback interruption",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  2,
+                           "summary":  "Callback queuing",
+                           "documentedDefault":  "\u0027queue\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027cancel\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  3,
+                           "summary":  "Deletion status",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Parent",
+                           "categoryId":  "parentchild",
+                           "order":  1,
+                           "summary":  "Parent object",
+                           "documentedAcceptedValues":  [
+                                                            "Tree object",
+                                                            "TreeNode object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Children",
+                           "categoryId":  "parentchild",
+                           "order":  2,
+                           "summary":  "Children",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "array of TreeNode objects"
+                                                        ]
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "categoryId":  "parentchild",
+                           "order":  3,
+                           "summary":  "Visibility of object handle",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027callback\u0027",
+                                                            "\u0027off\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Type",
+                           "categoryId":  "identifiers",
+                           "order":  1,
+                           "summary":  "Type of graphics object",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027uitreenode\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tag",
+                           "categoryId":  "identifiers",
+                           "order":  2,
+                           "summary":  "Object identifier",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
+                       },
+                       {
+                           "path":  "UserData",
+                           "categoryId":  "identifiers",
+                           "order":  3,
+                           "summary":  "User data",
+                           "documentedDefault":  "[]",
+                           "documentedAcceptedValues":  [
+                                                            "array"
+                                                        ]
                        }
                    ]
 }

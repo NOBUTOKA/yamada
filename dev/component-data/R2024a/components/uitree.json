@@ -1,915 +1,445 @@
 {
-    "schemaVersion":  1,
+    "schemaVersion":  2,
     "matlabRelease":  "R2024a",
+    "id":  "uitree",
     "factory":  "uitree",
-    "documentedTypes":  {
-                            "default":  "matlab.ui.container.Tree",
-                            "checkbox":  null
-                        },
+    "creationArguments":  [
+
+                          ],
+    "declaredType":  "matlab.ui.container.Tree",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uitree.html",
-                        "scope":  "Factory syntax, supported styles, and parent types."
+                        "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.tree-properties.html",
-                        "scope":  "Public properties for default."
-                    },
-                    {
-                        "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
-                        "scope":  "Public properties for checkbox."
+                        "scope":  "Public properties."
                     }
                 ],
+    "documentationCategories":  [
+                                    {
+                                        "id":  "nodes",
+                                        "displayName":  "Nodes",
+                                        "order":  1
+                                    },
+                                    {
+                                        "id":  "fontandcolor",
+                                        "displayName":  "Font and Color",
+                                        "order":  2
+                                    },
+                                    {
+                                        "id":  "interactivity",
+                                        "displayName":  "Interactivity",
+                                        "order":  3
+                                    },
+                                    {
+                                        "id":  "position",
+                                        "displayName":  "Position",
+                                        "order":  4
+                                    },
+                                    {
+                                        "id":  "callbacks",
+                                        "displayName":  "Callbacks",
+                                        "order":  5
+                                    },
+                                    {
+                                        "id":  "callbackexecutioncontrol",
+                                        "displayName":  "Callback Execution Control",
+                                        "order":  6
+                                    },
+                                    {
+                                        "id":  "parentchild",
+                                        "displayName":  "Parent/Child",
+                                        "order":  7
+                                    },
+                                    {
+                                        "id":  "identifiers",
+                                        "displayName":  "Identifiers",
+                                        "order":  8
+                                    }
+                                ],
     "properties":  [
                        {
-                           "path":  "Editable",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Node text editability",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Node text editability",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027off\u0027",
-                                                                                          "on/off logical value"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Children",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Children",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "array of TreeNode objects"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Children",
-                                                                 "documentedValues":  [
-                                                                                          "empty GraphicsPlaceholder array",
-                                                                                          "array of TreeNode objects"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Type",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Type of graphics object",
-                                                                "documentedValues":  [
-                                                                                         "\u0027uitree\u0027"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Type of graphics object",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027uicheckboxtree\u0027"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "HandleVisibility",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Visibility of object handle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "\u0027callback\u0027",
-                                                                                         "\u0027off\u0027"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Visibility of object handle",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027on\u0027",
-                                                                                          "\u0027callback\u0027",
-                                                                                          "\u0027off\u0027"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "FontSize",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font size",
-                                                                "documentedValues":  [
-                                                                                         "positive number"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Font size",
-                                                                 "documentedValues":  [
-                                                                                          "positive number"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "FontColor",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font color",
-                                                                "documentedValues":  [
-                                                                                         "[0 0 0]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Font color",
-                                                                 "documentedValues":  [
-                                                                                          "[0 0 0]",
-                                                                                          "RGB triplet",
-                                                                                          "hexadecimal color code",
-                                                                                          "\u0027r\u0027",
-                                                                                          "\u0027g\u0027",
-                                                                                          "\u0027b\u0027"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Parent",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Parent container",
-                                                                "documentedValues":  [
-                                                                                         "Figure object",
-                                                                                         "Panel object",
-                                                                                         "Tab object",
-                                                                                         "ButtonGroup object",
-                                                                                         "GridLayout object"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Parent container",
-                                                                 "documentedValues":  [
-                                                                                          "Figure object",
-                                                                                          "Panel object",
-                                                                                          "Tab object",
-                                                                                          "ButtonGroup object",
-                                                                                          "GridLayout object"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "BusyAction",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback queuing",
-                                                                "documentedValues":  [
-                                                                                         "\u0027queue\u0027",
-                                                                                         "\u0027cancel\u0027"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Callback queuing",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027queue\u0027",
-                                                                                          "\u0027cancel\u0027"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "NodeExpandedFcn",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Node expanded callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Node expanded callback",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "StyleConfigurations",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Configurations of added styles",
-                                                                "documentedValues":  [
-                                                                                         "empty n -by-3 table array",
-                                                                                         "n -by-3 table array"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Configurations of added styles",
-                                                                 "documentedValues":  [
-                                                                                          "empty n -by-3 table array",
-                                                                                          "n -by-3 table array"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Visible",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "State of visibility",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "State of visibility",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027on\u0027",
-                                                                                          "on/off logical value"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "DeleteFcn",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Deletion function",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "CheckedNodes",
-                           "appliesTo":  [
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "checkbox":  {
-                                                                 "summary":  "Checked nodes",
-                                                                 "documentedValues":  [
-                                                                                          "[]",
-                                                                                          "TreeNode object",
-                                                                                          "array of TreeNode objects"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
                            "path":  "SelectedNodes",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selected nodes",
-                                                                "documentedValues":  [
-                                                                                         "[]",
-                                                                                         "TreeNode object",
-                                                                                         "array of TreeNode objects"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Selected node",
-                                                                 "documentedValues":  [
-                                                                                          "[]",
-                                                                                          "TreeNode object"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "ContextMenu",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Context menu",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "ContextMenu object"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Context menu",
-                                                                 "documentedValues":  [
-                                                                                          "empty GraphicsPlaceholder array",
-                                                                                          "ContextMenu object"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "OuterPosition",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size",
-                                                                "documentedValues":  [
-                                                                                         "[20 20 100 300]",
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Location and size",
-                                                                 "documentedValues":  [
-                                                                                          "[20 20 150 300]",
-                                                                                          "[left bottom width height]"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "UserData",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "User data",
-                                                                "documentedValues":  [
-                                                                                         "[]",
-                                                                                         "array"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "User data",
-                                                                 "documentedValues":  [
-                                                                                          "[]",
-                                                                                          "array"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "NodeCollapsedFcn",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Node collapsed callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Node collapsed callback",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Tooltip",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Tooltip",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "cell array of character vectors",
-                                                                                         "string array",
-                                                                                         "1-D categorical array"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Tooltip",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "character vector",
-                                                                                          "cell array of character vectors",
-                                                                                          "string array",
-                                                                                          "1-D categorical array"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "FontWeight",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font weight",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027bold\u0027"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Font weight",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027normal\u0027",
-                                                                                          "\u0027bold\u0027"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Multiselect",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Multiple node selection",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ClickedFcn",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Clicked callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Clicked function",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "FontAngle",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font angle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027italic\u0027"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Font angle",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027normal\u0027",
-                                                                                          "\u0027italic\u0027"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "CreateFcn",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Creation function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Creation function",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Layout",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Layout options",
-                                                                "documentedValues":  [
-                                                                                         "empty LayoutOptions array",
-                                                                                         "GridLayoutOptions object"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Layout options",
-                                                                 "documentedValues":  [
-                                                                                          "empty LayoutOptions array",
-                                                                                          "GridLayoutOptions object"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "DoubleClickedFcn",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Double-clicked callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Double-clicked function",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "CheckedNodesChangedFcn",
-                           "appliesTo":  [
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "checkbox":  {
-                                                                 "summary":  "Checked nodes changed callback",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Position",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size",
-                                                                "documentedValues":  [
-                                                                                         "[20 20 100 300]",
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Location and size",
-                                                                 "documentedValues":  [
-                                                                                          "[20 20 150 300]",
-                                                                                          "[left bottom width height]"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "Tag",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Object identifier",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Object identifier",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "character vector",
-                                                                                          "string scalar"
-                                                                                      ]
-                                                             }
-                                            }
-                       },
-                       {
-                           "path":  "BeingDeleted",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion status",
-                                                                "documentedValues":  [
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Deletion status",
-                                                                 "documentedValues":  [
-                                                                                          "on/off logical value"
-                                                                                      ]
-                                                             }
-                                            }
+                           "categoryId":  "nodes",
+                           "order":  1,
+                           "summary":  "Selected nodes",
+                           "documentedDefault":  "[]",
+                           "documentedAcceptedValues":  [
+                                                            "TreeNode object",
+                                                            "array of TreeNode objects"
+                                                        ]
                        },
                        {
                            "path":  "FontName",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font name",
-                                                                "documentedValues":  [
-                                                                                         "system supported font name"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Font name",
-                                                                 "documentedValues":  [
-                                                                                          "system supported font name"
-                                                                                      ]
-                                                             }
-                                            }
+                           "categoryId":  "fontandcolor",
+                           "order":  1,
+                           "summary":  "Font name",
+                           "documentedAcceptedValues":  [
+                                                            "system supported font name"
+                                                        ]
                        },
                        {
-                           "path":  "Interruptible",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback interruption",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Callback interruption",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027on\u0027",
-                                                                                          "on/off logical value"
-                                                                                      ]
-                                                             }
-                                            }
+                           "path":  "FontSize",
+                           "categoryId":  "fontandcolor",
+                           "order":  2,
+                           "summary":  "Font size",
+                           "documentedAcceptedValues":  [
+                                                            "positive number"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "categoryId":  "fontandcolor",
+                           "order":  3,
+                           "summary":  "Font weight",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027bold\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "categoryId":  "fontandcolor",
+                           "order":  4,
+                           "summary":  "Font angle",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027italic\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontColor",
+                           "categoryId":  "fontandcolor",
+                           "order":  5,
+                           "summary":  "Font color",
+                           "documentedDefault":  "[0 0 0]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
                            "path":  "BackgroundColor",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Background color",
-                                                                "documentedValues":  [
-                                                                                         "[1 1 1]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Background color",
-                                                                 "documentedValues":  [
-                                                                                          "[1 1 1]",
-                                                                                          "RGB triplet",
-                                                                                          "hexadecimal color code",
-                                                                                          "\u0027r\u0027",
-                                                                                          "\u0027g\u0027",
-                                                                                          "\u0027b\u0027"
-                                                                                      ]
-                                                             }
-                                            }
+                           "categoryId":  "fontandcolor",
+                           "order":  6,
+                           "summary":  "Background color",
+                           "documentedDefault":  "[1 1 1]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "SelectionChangedFcn",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection changed callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Selection changed callback",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
+                           "path":  "StyleConfigurations",
+                           "categoryId":  "fontandcolor",
+                           "order":  7,
+                           "summary":  "Configurations of added styles",
+                           "documentedDefault":  "empty n -by-3 table array",
+                           "documentedAcceptedValues":  [
+                                                            "n -by-3 table array"
+                                                        ]
                        },
                        {
-                           "path":  "NodeTextChangedFcn",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Node text changed callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Node text changed callback",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027\u0027",
-                                                                                          "function handle",
-                                                                                          "cell array",
-                                                                                          "character vector"
-                                                                                      ]
-                                                             }
-                                            }
+                           "path":  "Visible",
+                           "categoryId":  "interactivity",
+                           "order":  1,
+                           "summary":  "State of visibility",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Multiselect",
+                           "categoryId":  "interactivity",
+                           "order":  2,
+                           "summary":  "Multiple node selection",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Editable",
+                           "categoryId":  "interactivity",
+                           "order":  3,
+                           "summary":  "Node text editability",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
                        },
                        {
                            "path":  "Enable",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Operational state of tree",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Operational state of tree",
-                                                                 "documentedValues":  [
-                                                                                          "\u0027on\u0027",
-                                                                                          "on/off logical value"
-                                                                                      ]
-                                                             }
-                                            }
+                           "categoryId":  "interactivity",
+                           "order":  4,
+                           "summary":  "Operational state of tree",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "categoryId":  "interactivity",
+                           "order":  5,
+                           "summary":  "Tooltip",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "cell array of character vectors",
+                                                            "string array",
+                                                            "1-D categorical array"
+                                                        ]
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "categoryId":  "interactivity",
+                           "order":  6,
+                           "summary":  "Context menu",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "ContextMenu object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Position",
+                           "categoryId":  "position",
+                           "order":  1,
+                           "summary":  "Location and size",
+                           "documentedDefault":  "[20 20 100 300]",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
                        },
                        {
                            "path":  "InnerPosition",
-                           "appliesTo":  [
-                                             "default",
-                                             "checkbox"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size",
-                                                                "documentedValues":  [
-                                                                                         "[20 20 100 300]",
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            },
-                                                "checkbox":  {
-                                                                 "summary":  "Location and size",
-                                                                 "documentedValues":  [
-                                                                                          "[20 20 150 300]",
-                                                                                          "[left bottom width height]"
-                                                                                      ]
-                                                             }
-                                            }
+                           "categoryId":  "position",
+                           "order":  2,
+                           "summary":  "Location and size",
+                           "documentedDefault":  "[20 20 100 300]",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "categoryId":  "position",
+                           "order":  3,
+                           "summary":  "Location and size",
+                           "documentedDefault":  "[20 20 100 300]",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
+                       },
+                       {
+                           "path":  "Layout",
+                           "categoryId":  "position",
+                           "order":  4,
+                           "summary":  "Layout options",
+                           "documentedDefault":  "empty LayoutOptions array",
+                           "documentedAcceptedValues":  [
+                                                            "GridLayoutOptions object"
+                                                        ]
+                       },
+                       {
+                           "path":  "SelectionChangedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  1,
+                           "summary":  "Selection changed callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "NodeExpandedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  2,
+                           "summary":  "Node expanded callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "NodeCollapsedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  3,
+                           "summary":  "Node collapsed callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "NodeTextChangedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  4,
+                           "summary":  "Node text changed callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "ClickedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  5,
+                           "summary":  "Clicked callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "DoubleClickedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  6,
+                           "summary":  "Double-clicked callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "categoryId":  "callbacks",
+                           "order":  7,
+                           "summary":  "Creation function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "categoryId":  "callbacks",
+                           "order":  8,
+                           "summary":  "Deletion function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  1,
+                           "summary":  "Callback interruption",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  2,
+                           "summary":  "Callback queuing",
+                           "documentedDefault":  "\u0027queue\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027cancel\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  3,
+                           "summary":  "Deletion status",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Parent",
+                           "categoryId":  "parentchild",
+                           "order":  1,
+                           "summary":  "Parent container",
+                           "documentedDefault":  "Figure object",
+                           "documentedAcceptedValues":  [
+                                                            "Panel object",
+                                                            "Tab object",
+                                                            "ButtonGroup object",
+                                                            "GridLayout object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Children",
+                           "categoryId":  "parentchild",
+                           "order":  2,
+                           "summary":  "Children",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "array of TreeNode objects"
+                                                        ]
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "categoryId":  "parentchild",
+                           "order":  3,
+                           "summary":  "Visibility of object handle",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027callback\u0027",
+                                                            "\u0027off\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Type",
+                           "categoryId":  "identifiers",
+                           "order":  1,
+                           "summary":  "Type of graphics object",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027uitree\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tag",
+                           "categoryId":  "identifiers",
+                           "order":  2,
+                           "summary":  "Object identifier",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
+                       },
+                       {
+                           "path":  "UserData",
+                           "categoryId":  "identifiers",
+                           "order":  3,
+                           "summary":  "User data",
+                           "documentedDefault":  "[]",
+                           "documentedAcceptedValues":  [
+                                                            "array"
+                                                        ]
                        }
                    ]
 }

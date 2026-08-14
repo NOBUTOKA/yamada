@@ -1,86 +1,162 @@
 {
     "schemaVersion":  2,
     "matlabRelease":  "R2024a",
-    "id":  "uitabgroup",
-    "factory":  "uitabgroup",
+    "id":  "uitree-checkbox",
+    "factory":  "uitree",
     "creationArguments":  [
-
+                              "checkbox"
                           ],
-    "declaredType":  "matlab.ui.container.TabGroup",
+    "declaredType":  null,
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uitabgroup.html",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uitree.html",
                         "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.tabgroup-properties.html",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
                         "scope":  "Public properties."
                     }
                 ],
     "documentationCategories":  [
                                     {
-                                        "id":  "tabs",
-                                        "displayName":  "Tabs",
+                                        "id":  "nodes",
+                                        "displayName":  "Nodes",
                                         "order":  1
+                                    },
+                                    {
+                                        "id":  "fontandcolor",
+                                        "displayName":  "Font and Color",
+                                        "order":  2
                                     },
                                     {
                                         "id":  "interactivity",
                                         "displayName":  "Interactivity",
-                                        "order":  2
+                                        "order":  3
                                     },
                                     {
                                         "id":  "position",
                                         "displayName":  "Position",
-                                        "order":  3
+                                        "order":  4
                                     },
                                     {
                                         "id":  "callbacks",
                                         "displayName":  "Callbacks",
-                                        "order":  4
+                                        "order":  5
                                     },
                                     {
                                         "id":  "callbackexecutioncontrol",
                                         "displayName":  "Callback Execution Control",
-                                        "order":  5
+                                        "order":  6
                                     },
                                     {
                                         "id":  "parentchild",
                                         "displayName":  "Parent/Child",
-                                        "order":  6
+                                        "order":  7
                                     },
                                     {
                                         "id":  "identifiers",
                                         "displayName":  "Identifiers",
-                                        "order":  7
-                                    },
-                                    {
-                                        "id":  "uifigurebasedappsonly",
-                                        "displayName":  "uifigure -Based Apps Only",
                                         "order":  8
                                     }
                                 ],
     "properties":  [
                        {
-                           "path":  "TabLocation",
-                           "categoryId":  "tabs",
+                           "path":  "CheckedNodes",
+                           "categoryId":  "nodes",
                            "order":  1,
-                           "summary":  "Tab label location",
-                           "documentedDefault":  "\u0027top\u0027",
+                           "summary":  "Checked nodes",
+                           "documentedDefault":  "[]",
                            "documentedAcceptedValues":  [
-                                                            "\u0027bottom\u0027",
-                                                            "\u0027left\u0027",
-                                                            "\u0027right\u0027"
+                                                            "TreeNode object",
+                                                            "array of TreeNode objects"
                                                         ]
                        },
                        {
-                           "path":  "SelectedTab",
-                           "categoryId":  "tabs",
+                           "path":  "SelectedNodes",
+                           "categoryId":  "nodes",
                            "order":  2,
-                           "summary":  "Currently selected tab",
+                           "summary":  "Selected node",
+                           "documentedDefault":  "[]",
                            "documentedAcceptedValues":  [
-                                                            "Tab object"
+                                                            "TreeNode object"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontName",
+                           "categoryId":  "fontandcolor",
+                           "order":  1,
+                           "summary":  "Font name",
+                           "documentedAcceptedValues":  [
+                                                            "system supported font name"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontSize",
+                           "categoryId":  "fontandcolor",
+                           "order":  2,
+                           "summary":  "Font size",
+                           "documentedAcceptedValues":  [
+                                                            "positive number"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "categoryId":  "fontandcolor",
+                           "order":  3,
+                           "summary":  "Font weight",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027bold\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "categoryId":  "fontandcolor",
+                           "order":  4,
+                           "summary":  "Font angle",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027italic\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontColor",
+                           "categoryId":  "fontandcolor",
+                           "order":  5,
+                           "summary":  "Font color",
+                           "documentedDefault":  "[0 0 0]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "BackgroundColor",
+                           "categoryId":  "fontandcolor",
+                           "order":  6,
+                           "summary":  "Background color",
+                           "documentedDefault":  "[1 1 1]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "StyleConfigurations",
+                           "categoryId":  "fontandcolor",
+                           "order":  7,
+                           "summary":  "Configurations of added styles",
+                           "documentedDefault":  "empty n -by-3 table array",
+                           "documentedAcceptedValues":  [
+                                                            "n -by-3 table array"
                                                         ]
                        },
                        {
@@ -94,9 +170,42 @@
                                                         ]
                        },
                        {
-                           "path":  "ContextMenu",
+                           "path":  "Editable",
                            "categoryId":  "interactivity",
                            "order":  2,
+                           "summary":  "Node text editability",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Enable",
+                           "categoryId":  "interactivity",
+                           "order":  3,
+                           "summary":  "Operational state of tree",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "categoryId":  "interactivity",
+                           "order":  4,
+                           "summary":  "Tooltip",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "cell array of character vectors",
+                                                            "string array",
+                                                            "1-D categorical array"
+                                                        ]
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "categoryId":  "interactivity",
+                           "order":  5,
                            "summary":  "Context menu",
                            "documentedDefault":  "empty GraphicsPlaceholder array",
                            "documentedAcceptedValues":  [
@@ -107,7 +216,8 @@
                            "path":  "Position",
                            "categoryId":  "position",
                            "order":  1,
-                           "summary":  "Location and size of tab group",
+                           "summary":  "Location and size",
+                           "documentedDefault":  "[20 20 150 300]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -116,7 +226,8 @@
                            "path":  "InnerPosition",
                            "categoryId":  "position",
                            "order":  2,
-                           "summary":  "Location and size of tab group excluding borders and tab titles",
+                           "summary":  "Location and size",
+                           "documentedDefault":  "[20 20 150 300]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -125,29 +236,38 @@
                            "path":  "OuterPosition",
                            "categoryId":  "position",
                            "order":  3,
-                           "summary":  "Location and size of tab group",
+                           "summary":  "Location and size",
+                           "documentedDefault":  "[20 20 150 300]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
                        },
                        {
-                           "path":  "Units",
+                           "path":  "Layout",
                            "categoryId":  "position",
                            "order":  4,
-                           "summary":  "Units of measurement",
+                           "summary":  "Layout options",
+                           "documentedDefault":  "empty LayoutOptions array",
                            "documentedAcceptedValues":  [
-                                                            "\u0027pixels\u0027",
-                                                            "\u0027normalized\u0027",
-                                                            "\u0027inches\u0027",
-                                                            "\u0027centimeters\u0027",
-                                                            "\u0027points\u0027",
-                                                            "\u0027characters\u0027"
+                                                            "GridLayoutOptions object"
+                                                        ]
+                       },
+                       {
+                           "path":  "CheckedNodesChangedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  1,
+                           "summary":  "Checked nodes changed callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
                                                         ]
                        },
                        {
                            "path":  "SelectionChangedFcn",
                            "categoryId":  "callbacks",
-                           "order":  1,
+                           "order":  2,
                            "summary":  "Selection changed callback",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
@@ -157,10 +277,10 @@
                                                         ]
                        },
                        {
-                           "path":  "SizeChangedFcn",
+                           "path":  "NodeExpandedFcn",
                            "categoryId":  "callbacks",
-                           "order":  2,
-                           "summary":  "Size change callback",
+                           "order":  3,
+                           "summary":  "Node expanded callback",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
                                                             "function handle",
@@ -169,10 +289,46 @@
                                                         ]
                        },
                        {
-                           "path":  "ButtonDownFcn",
+                           "path":  "NodeCollapsedFcn",
                            "categoryId":  "callbacks",
-                           "order":  3,
-                           "summary":  "Button-press callback function",
+                           "order":  4,
+                           "summary":  "Node collapsed callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "NodeTextChangedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  5,
+                           "summary":  "Node text changed callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "ClickedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  6,
+                           "summary":  "Clicked function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "DoubleClickedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  7,
+                           "summary":  "Double-clicked function",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
                                                             "function handle",
@@ -183,7 +339,7 @@
                        {
                            "path":  "CreateFcn",
                            "categoryId":  "callbacks",
-                           "order":  4,
+                           "order":  8,
                            "summary":  "Creation function",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
@@ -195,7 +351,7 @@
                        {
                            "path":  "DeleteFcn",
                            "categoryId":  "callbacks",
-                           "order":  5,
+                           "order":  9,
                            "summary":  "Deletion function",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
@@ -250,10 +406,10 @@
                            "path":  "Children",
                            "categoryId":  "parentchild",
                            "order":  2,
-                           "summary":  "TabGroup children",
+                           "summary":  "Children",
                            "documentedDefault":  "empty GraphicsPlaceholder array",
                            "documentedAcceptedValues":  [
-                                                            "1-D array of Tab objects"
+                                                            "array of TreeNode objects"
                                                         ]
                        },
                        {
@@ -273,7 +429,7 @@
                            "order":  1,
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
-                                                            "\u0027uitabgroup\u0027"
+                                                            "\u0027uicheckboxtree\u0027"
                                                         ]
                        },
                        {
@@ -295,39 +451,6 @@
                            "documentedDefault":  "[]",
                            "documentedAcceptedValues":  [
                                                             "array"
-                                                        ]
-                       },
-                       {
-                           "path":  "Tooltip",
-                           "categoryId":  "uifigurebasedappsonly",
-                           "order":  1,
-                           "summary":  "Tooltip",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "character vector",
-                                                            "cell array of character vectors",
-                                                            "string array",
-                                                            "categorical array"
-                                                        ]
-                       },
-                       {
-                           "path":  "AutoResizeChildren",
-                           "categoryId":  "uifigurebasedappsonly",
-                           "order":  2,
-                           "summary":  "Automatically resize children",
-                           "documentedDefault":  "\u0027on\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "on/off logical value"
-                                                        ]
-                       },
-                       {
-                           "path":  "Layout",
-                           "categoryId":  "uifigurebasedappsonly",
-                           "order":  3,
-                           "summary":  "Layout options",
-                           "documentedDefault":  "empty LayoutOptions array",
-                           "documentedAcceptedValues":  [
-                                                            "GridLayoutOptions object"
                                                         ]
                        }
                    ]

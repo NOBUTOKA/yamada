@@ -1,1721 +1,1237 @@
 {
-    "schemaVersion":  1,
+    "schemaVersion":  2,
     "matlabRelease":  "R2024a",
+    "id":  "polaraxes",
     "factory":  "polaraxes",
-    "documentedTypes":  {
-                            "default":  "matlab.graphics.axis.PolarAxes"
-                        },
+    "creationArguments":  [
+
+                          ],
+    "declaredType":  "matlab.graphics.axis.PolarAxes",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/polaraxes.html",
-                        "scope":  "Factory syntax, supported styles, and parent types."
+                        "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
-                        "scope":  "Public properties for default."
+                        "scope":  "Public properties."
                     }
                 ],
+    "documentationCategories":  [
+                                    {
+                                        "id":  "font",
+                                        "displayName":  "Font",
+                                        "order":  1
+                                    },
+                                    {
+                                        "id":  "ticks",
+                                        "displayName":  "Ticks",
+                                        "order":  2
+                                    },
+                                    {
+                                        "id":  "rulers",
+                                        "displayName":  "Rulers",
+                                        "order":  3
+                                    },
+                                    {
+                                        "id":  "gridlines",
+                                        "displayName":  "Grid Lines",
+                                        "order":  4
+                                    },
+                                    {
+                                        "id":  "labels",
+                                        "displayName":  "Labels",
+                                        "order":  5
+                                    },
+                                    {
+                                        "id":  "multipleplots",
+                                        "displayName":  "Multiple Plots",
+                                        "order":  6
+                                    },
+                                    {
+                                        "id":  "colorandtransparencymaps",
+                                        "displayName":  "Color and Transparency Maps",
+                                        "order":  7
+                                    },
+                                    {
+                                        "id":  "boxstyling",
+                                        "displayName":  "Box Styling",
+                                        "order":  8
+                                    },
+                                    {
+                                        "id":  "position",
+                                        "displayName":  "Position",
+                                        "order":  9
+                                    },
+                                    {
+                                        "id":  "interactivity",
+                                        "displayName":  "Interactivity",
+                                        "order":  10
+                                    },
+                                    {
+                                        "id":  "callbacks",
+                                        "displayName":  "Callbacks",
+                                        "order":  11
+                                    },
+                                    {
+                                        "id":  "callbackexecutioncontrol",
+                                        "displayName":  "Callback Execution Control",
+                                        "order":  12
+                                    },
+                                    {
+                                        "id":  "parentchild",
+                                        "displayName":  "Parent/Child",
+                                        "order":  13
+                                    },
+                                    {
+                                        "id":  "identifiers",
+                                        "displayName":  "Identifiers",
+                                        "order":  14
+                                    }
+                                ],
     "properties":  [
                        {
-                           "path":  "Children",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Children",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "array of graphics objects"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontSmoothing",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font smoothing",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaTickMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for ThetaTick",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Box",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Outline around polar axes",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CLimMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for CLim",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Interactions",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Interactions",
-                                                                "documentedValues":  [
-                                                                                         "DataTipInteraction object",
-                                                                                         "[]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BusyAction",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback queuing",
-                                                                "documentedValues":  [
-                                                                                         "\u0027queue\u0027",
-                                                                                         "\u0027cancel\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "TickDirMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for TickDir",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Colormap",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color map",
-                                                                "documentedValues":  [
-                                                                                         "parula",
-                                                                                         "m -by- 3 array of RGB triplets"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
                            "path":  "FontName",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font name",
-                                                                "documentedValues":  [
-                                                                                         "supported font name",
-                                                                                         "\"FixedWidth\""
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaMinorTick",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Minor tick marks between angle lines",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color of r -axis",
-                                                                "documentedValues":  [
-                                                                                         "[0.15 0.15 0.15]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RTickLabel",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Radius tick labels",
-                                                                "documentedValues":  [
-                                                                                         "{\u00270\u0027; \u00270.2\u0027; \u00270.4\u0027; \u00270.6\u0027; \u00270.8\u0027; \u00271\u0027}",
-                                                                                         "cell array of character vectors",
-                                                                                         "string array",
-                                                                                         "categorical array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RTickLabelMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for RTickLabel",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "GridAlphaMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for GridAlpha",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Visible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "State of visibility",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "LineStyleOrder",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Line style order",
-                                                                "documentedValues":  [
-                                                                                         "\"-\" solid line",
-                                                                                         "character vector",
-                                                                                         "cell array of character vectors",
-                                                                                         "string array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "TickLabelInterpreter",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Tick label interpreter",
-                                                                "documentedValues":  [
-                                                                                         "\u0027tex\u0027",
-                                                                                         "\u0027latex\u0027",
-                                                                                         "\u0027none\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Layout",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Layout options",
-                                                                "documentedValues":  [
-                                                                                         "empty LayoutOptions array",
-                                                                                         "TiledChartLayoutOptions object",
-                                                                                         "GridLayoutOptions object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RAxisLocationMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for RAxisLocation",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RAxisLocation",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location of r-axis",
-                                                                "documentedValues":  [
-                                                                                         "80",
-                                                                                         "scalar angle value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Title",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Text object for title",
-                                                                "documentedValues":  [
-                                                                                         "text object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "MinorGridColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color of minor grid lines",
-                                                                "documentedValues":  [
-                                                                                         "[0.1 0.1 0.1]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "SubtitleFontWeight",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Subtitle character thickness",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027bold\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RMinorTick",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Minor tick marks along r -axis",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CLim",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color limits for colormap",
-                                                                "documentedValues":  [
-                                                                                         "[0 1]",
-                                                                                         "two-element vector of the form [cmin cmax]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaMinorGrid",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Display of theta -axis minor grid lines",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Subtitle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Text object for subtitle",
-                                                                "documentedValues":  [
-                                                                                         "text object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "AlphaScale",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Scale for transparency mapping",
-                                                                "documentedValues":  [
-                                                                                         "\u0027linear\u0027",
-                                                                                         "\u0027log\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "TitleFontSizeMultiplier",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Scale factor for title font size",
-                                                                "documentedValues":  [
-                                                                                         "1.1",
-                                                                                         "numeric value greater than 0"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ColorOrderIndex",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color order index",
-                                                                "documentedValues":  [
-                                                                                         "1",
-                                                                                         "positive integer"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "MinorGridAlphaMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for MinorGridAlpha",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RMinorGrid",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Display of r -axis minor grid lines",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Toolbar",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Data exploration toolbar",
-                                                                "documentedValues":  [
-                                                                                         "AxesToolbar object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "MinorGridAlpha",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Minor grid line transparency",
-                                                                "documentedValues":  [
-                                                                                         "0.25",
-                                                                                         "value in the range [0,1]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Alphamap",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Transparency map",
-                                                                "documentedValues":  [
-                                                                                         "array of 64 values from 0 to 1",
-                                                                                         "array of finite alpha values from 0 to 1"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaLimMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for ThetaLim",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "InnerPosition",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Inner size and location",
-                                                                "documentedValues":  [
-                                                                                         "[0.1300 0.1100 0.7750 0.8150]",
-                                                                                         "four-element vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "SelectionHighlight",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Display of selection handles",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "UserData",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "User data",
-                                                                "documentedValues":  [
-                                                                                         "[]",
-                                                                                         "array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaAxisUnits",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Units for angle values",
-                                                                "documentedValues":  [
-                                                                                         "\u0027degrees\u0027",
-                                                                                         "\u0027radians\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CurrentPoint",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location of mouse pointer",
-                                                                "documentedValues":  [
-                                                                                         "two-element vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "TitleFontWeight",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Title character thickness",
-                                                                "documentedValues":  [
-                                                                                         "\u0027bold\u0027",
-                                                                                         "\u0027normal\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RColorMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Property for setting r -axis grid color",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BeingDeleted",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion status",
-                                                                "documentedValues":  [
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaGrid",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Display of theta -axis grid lines",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "GridLineStyle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Line style for grid lines",
-                                                                "documentedValues":  [
-                                                                                         "\u0027-\u0027",
-                                                                                         "\u0027--\u0027",
-                                                                                         "\u0027:\u0027",
-                                                                                         "\u0027-.\u0027",
-                                                                                         "\u0027none\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "HitTest",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Response to captured mouse clicks",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "GridColorMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Property for setting grid color",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "LineStyleCyclingMethod",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "How to cycle through line styles",
-                                                                "documentedValues":  [
-                                                                                         "\"aftercolor\"",
-                                                                                         "\"beforecolor\"",
-                                                                                         "\"withcolor\""
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RAxis",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Component that controls appearance and behavior of r-axis",
-                                                                "documentedValues":  [
-                                                                                         "ruler object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ALimMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for ALim",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "NextSeriesIndex",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "SeriesIndex value for next object",
-                                                                "documentedValues":  [
-                                                                                         "whole number"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Position",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Size and location of polar axes, not including labels or margins",
-                                                                "documentedValues":  [
-                                                                                         "[0.1300 0.1100 0.7750 0.8150]",
-                                                                                         "four-element vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Legend",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Legend associated with the axes",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder",
-                                                                                         "legend object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Color",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Background color",
-                                                                "documentedValues":  [
-                                                                                         "[1 1 1]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Interruptible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback interruption",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaZeroLocation",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location of the zero reference axis",
-                                                                "documentedValues":  [
-                                                                                         "\u0027right\u0027",
-                                                                                         "\u0027top\u0027",
-                                                                                         "\u0027left\u0027",
-                                                                                         "\u0027bottom\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "font",
+                           "order":  1,
+                           "summary":  "Font name",
+                           "documentedAcceptedValues":  [
+                                                            "supported font name",
+                                                            "\"FixedWidth\""
+                                                        ]
                        },
                        {
                            "path":  "FontSize",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font size",
-                                                                "documentedValues":  [
-                                                                                         "scalar numeric value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RLim",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Minimum and maximum radius limits",
-                                                                "documentedValues":  [
-                                                                                         "[0 1]",
-                                                                                         "two-element vector of the form [rmin rmax]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaAxis",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Component that controls appearance and behavior of theta-axis",
-                                                                "documentedValues":  [
-                                                                                         "ruler object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaTickLabel",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Labels for angle lines",
-                                                                "documentedValues":  [
-                                                                                         "{\u00270\u0027; \u002730\u0027; \u002760\u0027; ... \u0027300\u0027; \u0027330\u0027; \u0027360\u0027}",
-                                                                                         "cell array of character vectors",
-                                                                                         "string array",
-                                                                                         "categorical array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RGrid",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Display of r -axis grid lines",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Type",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Type of graphics object",
-                                                                "documentedValues":  [
-                                                                                         "\u0027polaraxes\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaDir",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Direction of increasing angles",
-                                                                "documentedValues":  [
-                                                                                         "\u0027counterclockwise\u0027",
-                                                                                         "\u0027clockwise\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "TickDir",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Tick mark direction",
-                                                                "documentedValues":  [
-                                                                                         "\u0027in\u0027",
-                                                                                         "\u0027out\u0027",
-                                                                                         "\u0027both\u0027",
-                                                                                         "\u0027none\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaColorMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Property for setting theta -axis grid color",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontWeight",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Character thickness",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027bold\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "PositionConstraint",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Position to hold constant",
-                                                                "documentedValues":  [
-                                                                                         "\"outerposition\"",
-                                                                                         "\"innerposition\""
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Layer",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Placement of grid lines and tick marks",
-                                                                "documentedValues":  [
-                                                                                         "\u0027bottom\u0027",
-                                                                                         "\u0027top\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RDir",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Direction of increasing values along r-axis",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027reverse\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ColorOrder",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color order",
-                                                                "documentedValues":  [
-                                                                                         "seven predefined colors",
-                                                                                         "three-column matrix of RGB triplets"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "TitleHorizontalAlignment",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Title and subtitle horizontal alignment",
-                                                                "documentedValues":  [
-                                                                                         "\u0027center\u0027",
-                                                                                         "\u0027left\u0027",
-                                                                                         "\u0027right\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Selected",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection state",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "PickableParts",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Ability to capture mouse clicks",
-                                                                "documentedValues":  [
-                                                                                         "\u0027visible\u0027",
-                                                                                         "\u0027all\u0027",
-                                                                                         "\u0027none\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Tag",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Object identifier",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "GridAlpha",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Grid-line transparency",
-                                                                "documentedValues":  [
-                                                                                         "0.15",
-                                                                                         "value in the range [0,1]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ALim",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Alpha limits for alphamap",
-                                                                "documentedValues":  [
-                                                                                         "[0 1]",
-                                                                                         "two-element vector of the form [amin amax]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RTickLabelRotation",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Rotation of r -axis tick labels",
-                                                                "documentedValues":  [
-                                                                                         "0",
-                                                                                         "scalar value in degrees"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "font",
+                           "order":  2,
+                           "summary":  "Font size",
+                           "documentedAcceptedValues":  [
+                                                            "scalar numeric value"
+                                                        ]
                        },
                        {
                            "path":  "FontSizeMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for font size",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "font",
+                           "order":  3,
+                           "summary":  "Selection mode for font size",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "ThetaTickLabelMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for ThetaTickLabel",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "FontWeight",
+                           "categoryId":  "font",
+                           "order":  4,
+                           "summary":  "Character thickness",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027bold\u0027"
+                                                        ]
                        },
                        {
                            "path":  "FontAngle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Character slant",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027italic\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "font",
+                           "order":  5,
+                           "summary":  "Character slant",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027italic\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "Clipping",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Clipping of objects to polar axes boundary",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "TitleFontSizeMultiplier",
+                           "categoryId":  "font",
+                           "order":  6,
+                           "summary":  "Scale factor for title font size",
+                           "documentedDefault":  "1.1",
+                           "documentedAcceptedValues":  [
+                                                            "numeric value greater than 0"
+                                                        ]
                        },
                        {
-                           "path":  "HandleVisibility",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Visibility of object handle",
-                                                                "documentedValues":  [
-                                                                                         "\"on\"",
-                                                                                         "\"off\"",
-                                                                                         "\"callback\""
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "TitleFontWeight",
+                           "categoryId":  "font",
+                           "order":  7,
+                           "summary":  "Title character thickness",
+                           "documentedDefault":  "\u0027bold\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027normal\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "TickLength",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Tick mark length",
-                                                                "documentedValues":  [
-                                                                                         "[0 0]",
-                                                                                         "two-element vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Units",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Position units",
-                                                                "documentedValues":  [
-                                                                                         "\"normalized\"",
-                                                                                         "\"inches\"",
-                                                                                         "\"centimeters\"",
-                                                                                         "\"points\"",
-                                                                                         "\"pixels\"",
-                                                                                         "\"characters\""
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ButtonDownFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Mouse-click callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "LineWidth",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Width of circular and angle lines",
-                                                                "documentedValues":  [
-                                                                                         "0.5",
-                                                                                         "scalar value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "TightInset",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Margins for text labels",
-                                                                "documentedValues":  [
-                                                                                         "four-element vector of the form [left bottom right top]"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "SubtitleFontWeight",
+                           "categoryId":  "font",
+                           "order":  8,
+                           "summary":  "Subtitle character thickness",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027bold\u0027"
+                                                        ]
                        },
                        {
                            "path":  "FontUnits",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font size units",
-                                                                "documentedValues":  [
-                                                                                         "\u0027points\u0027",
-                                                                                         "\u0027inches\u0027",
-                                                                                         "\u0027centimeters\u0027",
-                                                                                         "\u0027normalized\u0027",
-                                                                                         "\u0027pixels\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "font",
+                           "order":  9,
+                           "summary":  "Font size units",
+                           "documentedDefault":  "\u0027points\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027inches\u0027",
+                                                            "\u0027centimeters\u0027",
+                                                            "\u0027normalized\u0027",
+                                                            "\u0027pixels\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "ThetaColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color of theta -axis",
-                                                                "documentedValues":  [
-                                                                                         "[0.15 0.15 0.15]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "InteractionOptions",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Options to customize interaction behavior",
-                                                                "documentedValues":  [
-                                                                                         "PolarAxesInteractionOptions object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "MinorGridColorMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Property for setting minor grid color",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "NextPlot",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Properties to reset",
-                                                                "documentedValues":  [
-                                                                                         "\u0027replace\u0027",
-                                                                                         "\u0027add\u0027",
-                                                                                         "\u0027replacechildren\u0027",
-                                                                                         "\u0027replaceall\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "LineStyleOrderIndex",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Line style order index",
-                                                                "documentedValues":  [
-                                                                                         "1",
-                                                                                         "positive integer"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "SortMethod",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Order for rendering objects",
-                                                                "documentedValues":  [
-                                                                                         "\u0027depth\u0027",
-                                                                                         "\u0027childorder\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "DeleteFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "GridColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Color of grid lines",
-                                                                "documentedValues":  [
-                                                                                         "[0.15 0.15 0.15]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RTickLabelRotationMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for tick label rotation",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaLim",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Minimum and maximum angle values",
-                                                                "documentedValues":  [
-                                                                                         "[0 360]",
-                                                                                         "two-element vector of the form [thmin thmax]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Parent",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Parent container",
-                                                                "documentedValues":  [
-                                                                                         "Figure object",
-                                                                                         "Panel object",
-                                                                                         "Tab object",
-                                                                                         "TiledChartLayout object",
-                                                                                         "GridLayout object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RTickMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for radius tick values",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "RLimMode",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection mode for RLim",
-                                                                "documentedValues":  [
-                                                                                         "\u0027auto\u0027",
-                                                                                         "\u0027manual"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ThetaTick",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Angles at which to display lines",
-                                                                "documentedValues":  [
-                                                                                         "[0 30 60 ... 300 330 360]",
-                                                                                         "vector of increasing values"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "FontSmoothing",
+                           "categoryId":  "font",
+                           "order":  10,
+                           "summary":  "Font smoothing",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
                        },
                        {
                            "path":  "RTick",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Radius tick values",
-                                                                "documentedValues":  [
-                                                                                         "[0 0.2 0.4 0.6 0.8 1]",
-                                                                                         "vector of increasing values"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "ticks",
+                           "order":  1,
+                           "summary":  "Radius tick values",
+                           "documentedDefault":  "[0 0.2 0.4 0.6 0.8 1]",
+                           "documentedAcceptedValues":  [
+                                                            "vector of increasing values"
+                                                        ]
+                       },
+                       {
+                           "path":  "RTickMode",
+                           "categoryId":  "ticks",
+                           "order":  2,
+                           "summary":  "Selection mode for radius tick values",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "RTickLabel",
+                           "categoryId":  "ticks",
+                           "order":  3,
+                           "summary":  "Radius tick labels",
+                           "documentedDefault":  "{\u00270\u0027; \u00270.2\u0027; \u00270.4\u0027; \u00270.6\u0027; \u00270.8\u0027; \u00271\u0027}",
+                           "documentedAcceptedValues":  [
+                                                            "cell array of character vectors",
+                                                            "string array",
+                                                            "categorical array"
+                                                        ]
+                       },
+                       {
+                           "path":  "RTickLabelMode",
+                           "categoryId":  "ticks",
+                           "order":  4,
+                           "summary":  "Selection mode for RTickLabel",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaTick",
+                           "categoryId":  "ticks",
+                           "order":  5,
+                           "summary":  "Angles at which to display lines",
+                           "documentedDefault":  "[0 30 60 ... 300 330 360]",
+                           "documentedAcceptedValues":  [
+                                                            "vector of increasing values"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaTickMode",
+                           "categoryId":  "ticks",
+                           "order":  6,
+                           "summary":  "Selection mode for ThetaTick",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaTickLabel",
+                           "categoryId":  "ticks",
+                           "order":  7,
+                           "summary":  "Labels for angle lines",
+                           "documentedDefault":  "{\u00270\u0027; \u002730\u0027; \u002760\u0027; ... \u0027300\u0027; \u0027330\u0027; \u0027360\u0027}",
+                           "documentedAcceptedValues":  [
+                                                            "cell array of character vectors",
+                                                            "string array",
+                                                            "categorical array"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaTickLabelMode",
+                           "categoryId":  "ticks",
+                           "order":  8,
+                           "summary":  "Selection mode for ThetaTickLabel",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "RTickLabelRotation",
+                           "categoryId":  "ticks",
+                           "order":  9,
+                           "summary":  "Rotation of r -axis tick labels",
+                           "documentedDefault":  "0",
+                           "documentedAcceptedValues":  [
+                                                            "scalar value in degrees"
+                                                        ]
+                       },
+                       {
+                           "path":  "RTickLabelRotationMode",
+                           "categoryId":  "ticks",
+                           "order":  10,
+                           "summary":  "Selection mode for tick label rotation",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "RMinorTick",
+                           "categoryId":  "ticks",
+                           "order":  11,
+                           "summary":  "Minor tick marks along r -axis",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027off\u0027",
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaMinorTick",
+                           "categoryId":  "ticks",
+                           "order":  12,
+                           "summary":  "Minor tick marks between angle lines",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaZeroLocation",
+                           "categoryId":  "ticks",
+                           "order":  13,
+                           "summary":  "Location of the zero reference axis",
+                           "documentedDefault":  "\u0027right\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027top\u0027",
+                                                            "\u0027left\u0027",
+                                                            "\u0027bottom\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "TickDir",
+                           "categoryId":  "ticks",
+                           "order":  14,
+                           "summary":  "Tick mark direction",
+                           "documentedDefault":  "\u0027in\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027out\u0027",
+                                                            "\u0027both\u0027",
+                                                            "\u0027none\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "TickDirMode",
+                           "categoryId":  "ticks",
+                           "order":  15,
+                           "summary":  "Selection mode for TickDir",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "TickLabelInterpreter",
+                           "categoryId":  "ticks",
+                           "order":  16,
+                           "summary":  "Tick label interpreter",
+                           "documentedDefault":  "\u0027tex\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027latex\u0027",
+                                                            "\u0027none\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "TickLength",
+                           "categoryId":  "ticks",
+                           "order":  17,
+                           "summary":  "Tick mark length",
+                           "documentedDefault":  "[0 0]",
+                           "documentedAcceptedValues":  [
+                                                            "two-element vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "RLim",
+                           "categoryId":  "rulers",
+                           "order":  1,
+                           "summary":  "Minimum and maximum radius limits",
+                           "documentedDefault":  "[0 1]",
+                           "documentedAcceptedValues":  [
+                                                            "two-element vector of the form [rmin rmax]"
+                                                        ]
+                       },
+                       {
+                           "path":  "RLimMode",
+                           "categoryId":  "rulers",
+                           "order":  2,
+                           "summary":  "Selection mode for RLim",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaLim",
+                           "categoryId":  "rulers",
+                           "order":  3,
+                           "summary":  "Minimum and maximum angle values",
+                           "documentedDefault":  "[0 360]",
+                           "documentedAcceptedValues":  [
+                                                            "two-element vector of the form [thmin thmax]"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaLimMode",
+                           "categoryId":  "rulers",
+                           "order":  4,
+                           "summary":  "Selection mode for ThetaLim",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual"
+                                                        ]
+                       },
+                       {
+                           "path":  "RAxis",
+                           "categoryId":  "rulers",
+                           "order":  5,
+                           "summary":  "Component that controls appearance and behavior of r-axis",
+                           "documentedDefault":  "ruler object"
+                       },
+                       {
+                           "path":  "ThetaAxis",
+                           "categoryId":  "rulers",
+                           "order":  6,
+                           "summary":  "Component that controls appearance and behavior of theta-axis",
+                           "documentedDefault":  "ruler object"
+                       },
+                       {
+                           "path":  "RAxisLocation",
+                           "categoryId":  "rulers",
+                           "order":  7,
+                           "summary":  "Location of r-axis",
+                           "documentedDefault":  "80",
+                           "documentedAcceptedValues":  [
+                                                            "scalar angle value"
+                                                        ]
+                       },
+                       {
+                           "path":  "RAxisLocationMode",
+                           "categoryId":  "rulers",
+                           "order":  8,
+                           "summary":  "Selection mode for RAxisLocation",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "RColor",
+                           "categoryId":  "rulers",
+                           "order":  9,
+                           "summary":  "Color of r -axis",
+                           "documentedDefault":  "[0.15 0.15 0.15]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "RColorMode",
+                           "categoryId":  "rulers",
+                           "order":  10,
+                           "summary":  "Property for setting r -axis grid color",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaColor",
+                           "categoryId":  "rulers",
+                           "order":  11,
+                           "summary":  "Color of theta -axis",
+                           "documentedDefault":  "[0.15 0.15 0.15]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaColorMode",
+                           "categoryId":  "rulers",
+                           "order":  12,
+                           "summary":  "Property for setting theta -axis grid color",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "RDir",
+                           "categoryId":  "rulers",
+                           "order":  13,
+                           "summary":  "Direction of increasing values along r-axis",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027reverse\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaDir",
+                           "categoryId":  "rulers",
+                           "order":  14,
+                           "summary":  "Direction of increasing angles",
+                           "documentedDefault":  "\u0027counterclockwise\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027clockwise\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaAxisUnits",
+                           "categoryId":  "rulers",
+                           "order":  15,
+                           "summary":  "Units for angle values",
+                           "documentedDefault":  "\u0027degrees\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027radians\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "RGrid",
+                           "categoryId":  "gridlines",
+                           "order":  1,
+                           "summary":  "Display of r -axis grid lines",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaGrid",
+                           "categoryId":  "gridlines",
+                           "order":  2,
+                           "summary":  "Display of theta -axis grid lines",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Layer",
+                           "categoryId":  "gridlines",
+                           "order":  3,
+                           "summary":  "Placement of grid lines and tick marks",
+                           "documentedDefault":  "\u0027bottom\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027top\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "GridLineStyle",
+                           "categoryId":  "gridlines",
+                           "order":  4,
+                           "summary":  "Line style for grid lines",
+                           "documentedDefault":  "\u0027-\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027--\u0027",
+                                                            "\u0027:\u0027",
+                                                            "\u0027-.\u0027",
+                                                            "\u0027none\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "GridColor",
+                           "categoryId":  "gridlines",
+                           "order":  5,
+                           "summary":  "Color of grid lines",
+                           "documentedDefault":  "[0.15 0.15 0.15]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "GridColorMode",
+                           "categoryId":  "gridlines",
+                           "order":  6,
+                           "summary":  "Property for setting grid color",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "GridAlpha",
+                           "categoryId":  "gridlines",
+                           "order":  7,
+                           "summary":  "Grid-line transparency",
+                           "documentedDefault":  "0.15",
+                           "documentedAcceptedValues":  [
+                                                            "value in the range [0,1]"
+                                                        ]
+                       },
+                       {
+                           "path":  "GridAlphaMode",
+                           "categoryId":  "gridlines",
+                           "order":  8,
+                           "summary":  "Selection mode for GridAlpha",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "RMinorGrid",
+                           "categoryId":  "gridlines",
+                           "order":  9,
+                           "summary":  "Display of r -axis minor grid lines",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "ThetaMinorGrid",
+                           "categoryId":  "gridlines",
+                           "order":  10,
+                           "summary":  "Display of theta -axis minor grid lines",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
                        },
                        {
                            "path":  "MinorGridLineStyle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Line style for minor grid lines",
-                                                                "documentedValues":  [
-                                                                                         "\u0027:\u0027",
-                                                                                         "\u0027-\u0027",
-                                                                                         "\u0027--\u0027",
-                                                                                         "\u0027-.\u0027",
-                                                                                         "\u0027none\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "gridlines",
+                           "order":  11,
+                           "summary":  "Line style for minor grid lines",
+                           "documentedDefault":  "\u0027:\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027-\u0027",
+                                                            "\u0027--\u0027",
+                                                            "\u0027-.\u0027",
+                                                            "\u0027none\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "ContextMenu",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Context menu",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "ContextMenu object"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "MinorGridColor",
+                           "categoryId":  "gridlines",
+                           "order":  12,
+                           "summary":  "Color of minor grid lines",
+                           "documentedDefault":  "[0.1 0.1 0.1]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "CreateFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Creation function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "MinorGridColorMode",
+                           "categoryId":  "gridlines",
+                           "order":  13,
+                           "summary":  "Property for setting minor grid color",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "MinorGridAlpha",
+                           "categoryId":  "gridlines",
+                           "order":  14,
+                           "summary":  "Minor grid line transparency",
+                           "documentedDefault":  "0.25",
+                           "documentedAcceptedValues":  [
+                                                            "value in the range [0,1]"
+                                                        ]
+                       },
+                       {
+                           "path":  "MinorGridAlphaMode",
+                           "categoryId":  "gridlines",
+                           "order":  15,
+                           "summary":  "Selection mode for MinorGridAlpha",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Title",
+                           "categoryId":  "labels",
+                           "order":  1,
+                           "summary":  "Text object for title",
+                           "documentedAcceptedValues":  [
+                                                            "text object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Subtitle",
+                           "categoryId":  "labels",
+                           "order":  2,
+                           "summary":  "Text object for subtitle",
+                           "documentedAcceptedValues":  [
+                                                            "text object"
+                                                        ]
+                       },
+                       {
+                           "path":  "TitleHorizontalAlignment",
+                           "categoryId":  "labels",
+                           "order":  3,
+                           "summary":  "Title and subtitle horizontal alignment",
+                           "documentedDefault":  "\u0027center\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027left\u0027",
+                                                            "\u0027right\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Legend",
+                           "categoryId":  "labels",
+                           "order":  4,
+                           "summary":  "Legend associated with the axes",
+                           "documentedDefault":  "empty GraphicsPlaceholder",
+                           "documentedAcceptedValues":  [
+                                                            "legend object"
+                                                        ]
+                       },
+                       {
+                           "path":  "ColorOrder",
+                           "categoryId":  "multipleplots",
+                           "order":  1,
+                           "summary":  "Color order",
+                           "documentedDefault":  "seven predefined colors",
+                           "documentedAcceptedValues":  [
+                                                            "three-column matrix of RGB triplets"
+                                                        ]
+                       },
+                       {
+                           "path":  "ColorOrderIndex",
+                           "categoryId":  "multipleplots",
+                           "order":  2,
+                           "summary":  "Color order index",
+                           "documentedDefault":  "1",
+                           "documentedAcceptedValues":  [
+                                                            "positive integer"
+                                                        ]
+                       },
+                       {
+                           "path":  "LineStyleOrder",
+                           "categoryId":  "multipleplots",
+                           "order":  3,
+                           "summary":  "Line style order",
+                           "documentedDefault":  "\"-\" solid line",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "cell array of character vectors",
+                                                            "string array"
+                                                        ]
+                       },
+                       {
+                           "path":  "LineStyleCyclingMethod",
+                           "categoryId":  "multipleplots",
+                           "order":  4,
+                           "summary":  "How to cycle through line styles",
+                           "documentedDefault":  "\"aftercolor\"",
+                           "documentedAcceptedValues":  [
+                                                            "\"beforecolor\"",
+                                                            "\"withcolor\""
+                                                        ]
+                       },
+                       {
+                           "path":  "NextSeriesIndex",
+                           "categoryId":  "multipleplots",
+                           "order":  5,
+                           "summary":  "SeriesIndex value for next object",
+                           "documentedAcceptedValues":  [
+                                                            "whole number"
+                                                        ]
+                       },
+                       {
+                           "path":  "NextPlot",
+                           "categoryId":  "multipleplots",
+                           "order":  6,
+                           "summary":  "Properties to reset",
+                           "documentedDefault":  "\u0027replace\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027add\u0027",
+                                                            "\u0027replacechildren\u0027",
+                                                            "\u0027replaceall\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "SortMethod",
+                           "categoryId":  "multipleplots",
+                           "order":  7,
+                           "summary":  "Order for rendering objects",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027depth\u0027",
+                                                            "\u0027childorder\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "LineStyleOrderIndex",
+                           "categoryId":  "multipleplots",
+                           "order":  8,
+                           "summary":  "Line style order index",
+                           "documentedDefault":  "1",
+                           "documentedAcceptedValues":  [
+                                                            "positive integer"
+                                                        ]
+                       },
+                       {
+                           "path":  "Colormap",
+                           "categoryId":  "colorandtransparencymaps",
+                           "order":  1,
+                           "summary":  "Color map",
+                           "documentedDefault":  "parula",
+                           "documentedAcceptedValues":  [
+                                                            "m -by- 3 array of RGB triplets"
+                                                        ]
                        },
                        {
                            "path":  "ColorScale",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Scale for color mapping",
-                                                                "documentedValues":  [
-                                                                                         "\u0027linear\u0027",
-                                                                                         "\u0027log\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "colorandtransparencymaps",
+                           "order":  2,
+                           "summary":  "Scale for color mapping",
+                           "documentedDefault":  "\u0027linear\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027log\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "CLim",
+                           "categoryId":  "colorandtransparencymaps",
+                           "order":  3,
+                           "summary":  "Color limits for colormap",
+                           "documentedDefault":  "[0 1]",
+                           "documentedAcceptedValues":  [
+                                                            "two-element vector of the form [cmin cmax]"
+                                                        ]
+                       },
+                       {
+                           "path":  "CLimMode",
+                           "categoryId":  "colorandtransparencymaps",
+                           "order":  4,
+                           "summary":  "Selection mode for CLim",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Alphamap",
+                           "categoryId":  "colorandtransparencymaps",
+                           "order":  5,
+                           "summary":  "Transparency map",
+                           "documentedDefault":  "array of 64 values from 0 to 1",
+                           "documentedAcceptedValues":  [
+                                                            "array of finite alpha values from 0 to 1"
+                                                        ]
+                       },
+                       {
+                           "path":  "AlphaScale",
+                           "categoryId":  "colorandtransparencymaps",
+                           "order":  6,
+                           "summary":  "Scale for transparency mapping",
+                           "documentedDefault":  "\u0027linear\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027log\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "ALim",
+                           "categoryId":  "colorandtransparencymaps",
+                           "order":  7,
+                           "summary":  "Alpha limits for alphamap",
+                           "documentedDefault":  "[0 1]",
+                           "documentedAcceptedValues":  [
+                                                            "two-element vector of the form [amin amax]"
+                                                        ]
+                       },
+                       {
+                           "path":  "ALimMode",
+                           "categoryId":  "colorandtransparencymaps",
+                           "order":  8,
+                           "summary":  "Selection mode for ALim",
+                           "documentedDefault":  "\u0027auto\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027manual\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Color",
+                           "categoryId":  "boxstyling",
+                           "order":  1,
+                           "summary":  "Background color",
+                           "documentedDefault":  "[1 1 1]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "LineWidth",
+                           "categoryId":  "boxstyling",
+                           "order":  2,
+                           "summary":  "Width of circular and angle lines",
+                           "documentedDefault":  "0.5",
+                           "documentedAcceptedValues":  [
+                                                            "scalar value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Box",
+                           "categoryId":  "boxstyling",
+                           "order":  3,
+                           "summary":  "Outline around polar axes",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Clipping",
+                           "categoryId":  "boxstyling",
+                           "order":  4,
+                           "summary":  "Clipping of objects to polar axes boundary",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
                        },
                        {
                            "path":  "OuterPosition",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Size and position of polar axes, including labels and margins",
-                                                                "documentedValues":  [
-                                                                                         "[0 0 1 1]",
-                                                                                         "four-element vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "position",
+                           "order":  1,
+                           "summary":  "Size and position of polar axes, including labels and margins",
+                           "documentedDefault":  "[0 0 1 1]",
+                           "documentedAcceptedValues":  [
+                                                            "four-element vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "InnerPosition",
+                           "categoryId":  "position",
+                           "order":  2,
+                           "summary":  "Inner size and location",
+                           "documentedDefault":  "[0.1300 0.1100 0.7750 0.8150]",
+                           "documentedAcceptedValues":  [
+                                                            "four-element vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "Position",
+                           "categoryId":  "position",
+                           "order":  3,
+                           "summary":  "Size and location of polar axes, not including labels or margins",
+                           "documentedDefault":  "[0.1300 0.1100 0.7750 0.8150]",
+                           "documentedAcceptedValues":  [
+                                                            "four-element vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "TightInset",
+                           "categoryId":  "position",
+                           "order":  4,
+                           "summary":  "Margins for text labels",
+                           "documentedAcceptedValues":  [
+                                                            "four-element vector of the form [left bottom right top]"
+                                                        ]
+                       },
+                       {
+                           "path":  "PositionConstraint",
+                           "categoryId":  "position",
+                           "order":  5,
+                           "summary":  "Position to hold constant",
+                           "documentedAcceptedValues":  [
+                                                            "\"outerposition\"",
+                                                            "\"innerposition\""
+                                                        ]
+                       },
+                       {
+                           "path":  "Units",
+                           "categoryId":  "position",
+                           "order":  6,
+                           "summary":  "Position units",
+                           "documentedDefault":  "\"normalized\"",
+                           "documentedAcceptedValues":  [
+                                                            "\"inches\"",
+                                                            "\"centimeters\"",
+                                                            "\"points\"",
+                                                            "\"pixels\"",
+                                                            "\"characters\""
+                                                        ]
+                       },
+                       {
+                           "path":  "Layout",
+                           "categoryId":  "position",
+                           "order":  7,
+                           "summary":  "Layout options",
+                           "documentedDefault":  "empty LayoutOptions array",
+                           "documentedAcceptedValues":  [
+                                                            "TiledChartLayoutOptions object",
+                                                            "GridLayoutOptions object"
+                                                        ]
+                       },
+                       {
+                           "path":  "InteractionOptions",
+                           "categoryId":  "interactivity",
+                           "order":  1,
+                           "summary":  "Options to customize interaction behavior",
+                           "documentedAcceptedValues":  [
+                                                            "PolarAxesInteractionOptions object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Toolbar",
+                           "categoryId":  "interactivity",
+                           "order":  2,
+                           "summary":  "Data exploration toolbar",
+                           "documentedDefault":  "AxesToolbar object"
+                       },
+                       {
+                           "path":  "Interactions",
+                           "categoryId":  "interactivity",
+                           "order":  3,
+                           "summary":  "Interactions",
+                           "documentedDefault":  "DataTipInteraction object",
+                           "documentedAcceptedValues":  [
+                                                            "[]"
+                                                        ]
+                       },
+                       {
+                           "path":  "Visible",
+                           "categoryId":  "interactivity",
+                           "order":  4,
+                           "summary":  "State of visibility",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "CurrentPoint",
+                           "categoryId":  "interactivity",
+                           "order":  5,
+                           "summary":  "Location of mouse pointer",
+                           "documentedAcceptedValues":  [
+                                                            "two-element vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "categoryId":  "interactivity",
+                           "order":  6,
+                           "summary":  "Context menu",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "ContextMenu object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Selected",
+                           "categoryId":  "interactivity",
+                           "order":  7,
+                           "summary":  "Selection state",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "SelectionHighlight",
+                           "categoryId":  "interactivity",
+                           "order":  8,
+                           "summary":  "Display of selection handles",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "ButtonDownFcn",
+                           "categoryId":  "callbacks",
+                           "order":  1,
+                           "summary":  "Mouse-click callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "categoryId":  "callbacks",
+                           "order":  2,
+                           "summary":  "Creation function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "categoryId":  "callbacks",
+                           "order":  3,
+                           "summary":  "Deletion function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  1,
+                           "summary":  "Callback interruption",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  2,
+                           "summary":  "Callback queuing",
+                           "documentedDefault":  "\u0027queue\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027cancel\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "PickableParts",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  3,
+                           "summary":  "Ability to capture mouse clicks",
+                           "documentedDefault":  "\u0027visible\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027all\u0027",
+                                                            "\u0027none\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "HitTest",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  4,
+                           "summary":  "Response to captured mouse clicks",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  5,
+                           "summary":  "Deletion status",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Parent",
+                           "categoryId":  "parentchild",
+                           "order":  1,
+                           "summary":  "Parent container",
+                           "documentedAcceptedValues":  [
+                                                            "Figure object",
+                                                            "Panel object",
+                                                            "Tab object",
+                                                            "TiledChartLayout object",
+                                                            "GridLayout object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Children",
+                           "categoryId":  "parentchild",
+                           "order":  2,
+                           "summary":  "Children",
+                           "documentedAcceptedValues":  [
+                                                            "empty GraphicsPlaceholder array",
+                                                            "array of graphics objects"
+                                                        ]
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "categoryId":  "parentchild",
+                           "order":  3,
+                           "summary":  "Visibility of object handle",
+                           "documentedDefault":  "\"on\"",
+                           "documentedAcceptedValues":  [
+                                                            "\"off\"",
+                                                            "\"callback\""
+                                                        ]
+                       },
+                       {
+                           "path":  "Type",
+                           "categoryId":  "identifiers",
+                           "order":  1,
+                           "summary":  "Type of graphics object",
+                           "documentedDefault":  "\u0027polaraxes\u0027"
+                       },
+                       {
+                           "path":  "Tag",
+                           "categoryId":  "identifiers",
+                           "order":  2,
+                           "summary":  "Object identifier",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
+                       },
+                       {
+                           "path":  "UserData",
+                           "categoryId":  "identifiers",
+                           "order":  3,
+                           "summary":  "User data",
+                           "documentedDefault":  "[]",
+                           "documentedAcceptedValues":  [
+                                                            "array"
+                                                        ]
                        }
                    ]
 }

@@ -1,670 +1,522 @@
 {
-    "schemaVersion":  1,
+    "schemaVersion":  2,
     "matlabRelease":  "R2024a",
+    "id":  "uibuttongroup",
     "factory":  "uibuttongroup",
-    "documentedTypes":  {
-                            "default":  "matlab.ui.container.ButtonGroup"
-                        },
+    "creationArguments":  [
+
+                          ],
+    "declaredType":  "matlab.ui.container.ButtonGroup",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uibuttongroup.html",
-                        "scope":  "Factory syntax, supported styles, and parent types."
+                        "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
                         "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.buttongroup-properties.html",
-                        "scope":  "Public properties for default."
+                        "scope":  "Public properties."
                     }
                 ],
+    "documentationCategories":  [
+                                    {
+                                        "id":  "title",
+                                        "displayName":  "Title",
+                                        "order":  1
+                                    },
+                                    {
+                                        "id":  "colorandstyling",
+                                        "displayName":  "Color and Styling",
+                                        "order":  2
+                                    },
+                                    {
+                                        "id":  "font",
+                                        "displayName":  "Font",
+                                        "order":  3
+                                    },
+                                    {
+                                        "id":  "interactivity",
+                                        "displayName":  "Interactivity",
+                                        "order":  4
+                                    },
+                                    {
+                                        "id":  "position",
+                                        "displayName":  "Position",
+                                        "order":  5
+                                    },
+                                    {
+                                        "id":  "callbacks",
+                                        "displayName":  "Callbacks",
+                                        "order":  6
+                                    },
+                                    {
+                                        "id":  "callbackexecutioncontrol",
+                                        "displayName":  "Callback Execution Control",
+                                        "order":  7
+                                    },
+                                    {
+                                        "id":  "parentchild",
+                                        "displayName":  "Parent/Child",
+                                        "order":  8
+                                    },
+                                    {
+                                        "id":  "identifiers",
+                                        "displayName":  "Identifiers",
+                                        "order":  9
+                                    },
+                                    {
+                                        "id":  "uifigurebasedappsonly",
+                                        "displayName":  "uifigure -Based Apps Only",
+                                        "order":  10
+                                    },
+                                    {
+                                        "id":  "figurebasedappsonly",
+                                        "displayName":  "figure -Based Apps Only",
+                                        "order":  11
+                                    }
+                                ],
     "properties":  [
                        {
-                           "path":  "BusyAction",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback queuing",
-                                                                "documentedValues":  [
-                                                                                         "\u0027queue\u0027",
-                                                                                         "\u0027cancel\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BackgroundColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Background color",
-                                                                "documentedValues":  [
-                                                                                         "[0.94 0.94 0.94]",
-                                                                                         "RGB Triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontSize",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font size",
-                                                                "documentedValues":  [
-                                                                                         "positive number"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontUnits",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font unit of measurement",
-                                                                "documentedValues":  [
-                                                                                         "\u0027pixels\u0027",
-                                                                                         "\u0027points\u0027",
-                                                                                         "\u0027normalized\u0027",
-                                                                                         "\u0027inches\u0027",
-                                                                                         "\u0027centimeters\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BorderColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Border color",
-                                                                "documentedValues":  [
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Tooltip",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Tooltip",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "cell array of character vectors",
-                                                                                         "string array",
-                                                                                         "1-D categorical array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontName",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font name",
-                                                                "documentedValues":  [
-                                                                                         "system supported font name"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Parent",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Parent container",
-                                                                "documentedValues":  [
-                                                                                         "Figure object",
-                                                                                         "Panel object",
-                                                                                         "Tab object",
-                                                                                         "ButtonGroup object",
-                                                                                         "GridLayout object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BorderWidth",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Border width",
-                                                                "documentedValues":  [
-                                                                                         "1",
-                                                                                         "positive integer value"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "Title",
+                           "categoryId":  "title",
+                           "order":  1,
+                           "summary":  "Title",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar",
+                                                            "categorical array"
+                                                        ]
                        },
                        {
                            "path":  "TitlePosition",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location of title",
-                                                                "documentedValues":  [
-                                                                                         "\u0027lefttop\u0027",
-                                                                                         "\u0027centertop\u0027",
-                                                                                         "\u0027righttop\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "OuterPosition",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size of button group, including borders and title",
-                                                                "documentedValues":  [
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Visible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "State of visibility",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "DeleteFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "AutoResizeChildren",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Automatically resize children",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "HitTest",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Ability to become current object",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Type",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Type of graphics object",
-                                                                "documentedValues":  [
-                                                                                         "\u0027uibuttongroup\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "HandleVisibility",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Visibility of object handle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "\u0027callback\u0027",
-                                                                                         "\u0027off\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Buttons",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Buttons managed by button group",
-                                                                "documentedValues":  [
-                                                                                         "array of RadioButton objects",
-                                                                                         "array of ToggleButton objects"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "title",
+                           "order":  2,
+                           "summary":  "Location of title",
+                           "documentedDefault":  "\u0027lefttop\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027centertop\u0027",
+                                                            "\u0027righttop\u0027"
+                                                        ]
                        },
                        {
                            "path":  "ForegroundColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Title color",
-                                                                "documentedValues":  [
-                                                                                         "[0 0 0]",
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "colorandstyling",
+                           "order":  1,
+                           "summary":  "Title color",
+                           "documentedDefault":  "[0 0 0]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "UserData",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "User data",
-                                                                "documentedValues":  [
-                                                                                         "[]",
-                                                                                         "array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Interruptible",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Callback interruption",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Scrollable",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Ability to scroll",
-                                                                "documentedValues":  [
-                                                                                         "\u0027off\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "CreateFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Creation function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Enable",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Operational state",
-                                                                "documentedValues":  [
-                                                                                         "\u0027on\u0027",
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontAngle",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font angle",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027italic\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "FontWeight",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Font weight",
-                                                                "documentedValues":  [
-                                                                                         "\u0027normal\u0027",
-                                                                                         "\u0027bold\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Layout",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Layout options",
-                                                                "documentedValues":  [
-                                                                                         "empty LayoutOptions array",
-                                                                                         "GridLayoutOptions object"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "SelectedObject",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Currently selected radio button or toggle button",
-                                                                "documentedValues":  [
-                                                                                         "first radio button or toggle button in button group"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Position",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size of button group, including borders and title",
-                                                                "documentedValues":  [
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Units",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Units of measurement",
-                                                                "documentedValues":  [
-                                                                                         "\u0027pixels\u0027",
-                                                                                         "\u0027normalized\u0027",
-                                                                                         "\u0027inches\u0027",
-                                                                                         "\u0027centimeters\u0027",
-                                                                                         "\u0027points\u0027",
-                                                                                         "\u0027characters\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "ShadowColor",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Border shadow color",
-                                                                "documentedValues":  [
-                                                                                         "RGB triplet",
-                                                                                         "hexadecimal color code",
-                                                                                         "\u0027r\u0027",
-                                                                                         "\u0027g\u0027",
-                                                                                         "\u0027b\u0027"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "Title",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Title",
-                                                                "documentedValues":  [
-                                                                                         "character vector",
-                                                                                         "string scalar",
-                                                                                         "categorical array"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "SizeChangedFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Size change callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
-                       },
-                       {
-                           "path":  "BeingDeleted",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Deletion status",
-                                                                "documentedValues":  [
-                                                                                         "on/off logical value"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "BackgroundColor",
+                           "categoryId":  "colorandstyling",
+                           "order":  2,
+                           "summary":  "Background color",
+                           "documentedDefault":  "[0.94 0.94 0.94]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB Triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
                            "path":  "BorderType",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Button group border",
-                                                                "documentedValues":  [
-                                                                                         "\u0027line\u0027",
-                                                                                         "\u0027none\u0027"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "colorandstyling",
+                           "order":  3,
+                           "summary":  "Button group border",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027line\u0027",
+                                                            "\u0027none\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "Tag",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Object identifier",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "character vector",
-                                                                                         "string scalar"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "BorderWidth",
+                           "categoryId":  "colorandstyling",
+                           "order":  4,
+                           "summary":  "Border width",
+                           "documentedDefault":  "1",
+                           "documentedAcceptedValues":  [
+                                                            "positive integer value"
+                                                        ]
                        },
                        {
-                           "path":  "ButtonDownFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Button-press callback function",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "BorderColor",
+                           "categoryId":  "colorandstyling",
+                           "order":  5,
+                           "summary":  "Border color",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        },
                        {
-                           "path":  "Children",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "ButtonGroup children",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "1-D array of component objects"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "FontName",
+                           "categoryId":  "font",
+                           "order":  1,
+                           "summary":  "Font name",
+                           "documentedAcceptedValues":  [
+                                                            "system supported font name"
+                                                        ]
                        },
                        {
-                           "path":  "SelectionChangedFcn",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Selection changed callback",
-                                                                "documentedValues":  [
-                                                                                         "\u0027\u0027",
-                                                                                         "function handle",
-                                                                                         "cell array",
-                                                                                         "character vector"
-                                                                                     ]
-                                                            }
-                                            }
+                           "path":  "FontSize",
+                           "categoryId":  "font",
+                           "order":  2,
+                           "summary":  "Font size",
+                           "documentedAcceptedValues":  [
+                                                            "positive number"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "categoryId":  "font",
+                           "order":  3,
+                           "summary":  "Font weight",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027bold\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "categoryId":  "font",
+                           "order":  4,
+                           "summary":  "Font angle",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027italic\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontUnits",
+                           "categoryId":  "font",
+                           "order":  5,
+                           "summary":  "Font unit of measurement",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027pixels\u0027",
+                                                            "\u0027points\u0027",
+                                                            "\u0027normalized\u0027",
+                                                            "\u0027inches\u0027",
+                                                            "\u0027centimeters\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Visible",
+                           "categoryId":  "interactivity",
+                           "order":  1,
+                           "summary":  "State of visibility",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "SelectedObject",
+                           "categoryId":  "interactivity",
+                           "order":  2,
+                           "summary":  "Currently selected radio button or toggle button",
+                           "documentedDefault":  "first radio button or toggle button in button group"
                        },
                        {
                            "path":  "ContextMenu",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Context menu",
-                                                                "documentedValues":  [
-                                                                                         "empty GraphicsPlaceholder array",
-                                                                                         "ContextMenu object"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "interactivity",
+                           "order":  3,
+                           "summary":  "Context menu",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "ContextMenu object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Position",
+                           "categoryId":  "position",
+                           "order":  1,
+                           "summary":  "Location and size of button group, including borders and title",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
                        },
                        {
                            "path":  "InnerPosition",
-                           "appliesTo":  [
-                                             "default"
-                                         ],
-                           "styleDetails":  {
-                                                "default":  {
-                                                                "summary":  "Location and size of button group, excluding borders and title",
-                                                                "documentedValues":  [
-                                                                                         "[left bottom width height]"
-                                                                                     ]
-                                                            }
-                                            }
+                           "categoryId":  "position",
+                           "order":  2,
+                           "summary":  "Location and size of button group, excluding borders and title",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
+                       },
+                       {
+                           "path":  "OuterPosition",
+                           "categoryId":  "position",
+                           "order":  3,
+                           "summary":  "Location and size of button group, including borders and title",
+                           "documentedAcceptedValues":  [
+                                                            "[left bottom width height]"
+                                                        ]
+                       },
+                       {
+                           "path":  "Units",
+                           "categoryId":  "position",
+                           "order":  4,
+                           "summary":  "Units of measurement",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027pixels\u0027",
+                                                            "\u0027normalized\u0027",
+                                                            "\u0027inches\u0027",
+                                                            "\u0027centimeters\u0027",
+                                                            "\u0027points\u0027",
+                                                            "\u0027characters\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "SelectionChangedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  1,
+                           "summary":  "Selection changed callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "SizeChangedFcn",
+                           "categoryId":  "callbacks",
+                           "order":  2,
+                           "summary":  "Size change callback",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "ButtonDownFcn",
+                           "categoryId":  "callbacks",
+                           "order":  3,
+                           "summary":  "Button-press callback function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "CreateFcn",
+                           "categoryId":  "callbacks",
+                           "order":  4,
+                           "summary":  "Creation function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "DeleteFcn",
+                           "categoryId":  "callbacks",
+                           "order":  5,
+                           "summary":  "Deletion function",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "function handle",
+                                                            "cell array",
+                                                            "character vector"
+                                                        ]
+                       },
+                       {
+                           "path":  "Interruptible",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  1,
+                           "summary":  "Callback interruption",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "BusyAction",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  2,
+                           "summary":  "Callback queuing",
+                           "documentedDefault":  "\u0027queue\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027cancel\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "BeingDeleted",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  3,
+                           "summary":  "Deletion status",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "HitTest",
+                           "categoryId":  "callbackexecutioncontrol",
+                           "order":  4,
+                           "summary":  "Ability to become current object",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Parent",
+                           "categoryId":  "parentchild",
+                           "order":  1,
+                           "summary":  "Parent container",
+                           "documentedDefault":  "Figure object",
+                           "documentedAcceptedValues":  [
+                                                            "Panel object",
+                                                            "Tab object",
+                                                            "ButtonGroup object",
+                                                            "GridLayout object"
+                                                        ]
+                       },
+                       {
+                           "path":  "Children",
+                           "categoryId":  "parentchild",
+                           "order":  2,
+                           "summary":  "ButtonGroup children",
+                           "documentedDefault":  "empty GraphicsPlaceholder array",
+                           "documentedAcceptedValues":  [
+                                                            "1-D array of component objects"
+                                                        ]
+                       },
+                       {
+                           "path":  "HandleVisibility",
+                           "categoryId":  "parentchild",
+                           "order":  3,
+                           "summary":  "Visibility of object handle",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027callback\u0027",
+                                                            "\u0027off\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Type",
+                           "categoryId":  "identifiers",
+                           "order":  1,
+                           "summary":  "Type of graphics object",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027uibuttongroup\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tag",
+                           "categoryId":  "identifiers",
+                           "order":  2,
+                           "summary":  "Object identifier",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar"
+                                                        ]
+                       },
+                       {
+                           "path":  "UserData",
+                           "categoryId":  "identifiers",
+                           "order":  3,
+                           "summary":  "User data",
+                           "documentedDefault":  "[]",
+                           "documentedAcceptedValues":  [
+                                                            "array"
+                                                        ]
+                       },
+                       {
+                           "path":  "Buttons",
+                           "categoryId":  "uifigurebasedappsonly",
+                           "order":  1,
+                           "summary":  "Buttons managed by button group",
+                           "documentedAcceptedValues":  [
+                                                            "array of RadioButton objects",
+                                                            "array of ToggleButton objects"
+                                                        ]
+                       },
+                       {
+                           "path":  "Enable",
+                           "categoryId":  "uifigurebasedappsonly",
+                           "order":  2,
+                           "summary":  "Operational state",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "categoryId":  "uifigurebasedappsonly",
+                           "order":  3,
+                           "summary":  "Tooltip",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "cell array of character vectors",
+                                                            "string array",
+                                                            "1-D categorical array"
+                                                        ]
+                       },
+                       {
+                           "path":  "Scrollable",
+                           "categoryId":  "uifigurebasedappsonly",
+                           "order":  4,
+                           "summary":  "Ability to scroll",
+                           "documentedDefault":  "\u0027off\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "AutoResizeChildren",
+                           "categoryId":  "uifigurebasedappsonly",
+                           "order":  5,
+                           "summary":  "Automatically resize children",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Layout",
+                           "categoryId":  "uifigurebasedappsonly",
+                           "order":  6,
+                           "summary":  "Layout options",
+                           "documentedDefault":  "empty LayoutOptions array",
+                           "documentedAcceptedValues":  [
+                                                            "GridLayoutOptions object"
+                                                        ]
+                       },
+                       {
+                           "path":  "ShadowColor",
+                           "categoryId":  "figurebasedappsonly",
+                           "order":  1,
+                           "summary":  "Border shadow color",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
                        }
                    ]
 }

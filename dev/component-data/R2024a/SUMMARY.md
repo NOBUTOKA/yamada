@@ -14,7 +14,7 @@ Preview, serializable, or supported by source generation.
 `schema.json` version 2 defines one concrete component variant per file. A
 variant has its own stable `id`, documented factory arguments, declared type,
 categories, and complete property surface. For example, `uibutton-push` and
-`uibutton-state` will be separate records even though both use `uibutton` as
+`uibutton-state` are separate records even though both use `uibutton` as
 their factory. The runtime catalog does not yet support duplicate factories;
 that later implementation work is intentionally outside this documentation-data
 change.
@@ -27,8 +27,8 @@ discarding the original documentation grouping. The source-page default is kept
 in `documentedDefault`, separately from the remaining accepted-value text in
 `documentedAcceptedValues`.
 
-The existing version 1 transcript files are retained temporarily as source data
-and will be migrated to the version 2 variant-file format in the next step.
+The 48 component files in [`components`](components) are the complete version 2
+transcript. They were regenerated from their linked R2024a reference pages.
 
 ## Source and verification rules
 
@@ -88,7 +88,9 @@ and will be migrated to the version 2 variant-file format in the next step.
 | `uitree` | `default`, `checkbox` | complete | 37 |
 | `uitreenode` | `default` | complete | 15 |
 
-All 38 catalog factories are transcribed. The transcript contains 1,825
-style-specific public-property entries across 86 verified R2024a archive pages.
+All 38 catalog factories are transcribed as 48 concrete variants. The transcript
+contains 1,825 style-specific public-property entries across 86 verified R2024a
+archive pages. Each property records its source-page category and, where the
+reference supplies them, its default and accepted-value text separately.
 
 The component-file contract is defined in [`schema.json`](schema.json).

@@ -1,86 +1,166 @@
 {
     "schemaVersion":  2,
     "matlabRelease":  "R2024a",
-    "id":  "uitabgroup",
-    "factory":  "uitabgroup",
+    "id":  "uibutton-push",
+    "factory":  "uibutton",
     "creationArguments":  [
 
                           ],
-    "declaredType":  "matlab.ui.container.TabGroup",
+    "declaredType":  "matlab.ui.control.Button",
     "sources":  [
                     {
                         "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uitabgroup.html",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uibutton.html",
                         "scope":  "Factory syntax and parent types."
                     },
                     {
                         "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.tabgroup-properties.html",
+                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.button-properties.html",
                         "scope":  "Public properties."
                     }
                 ],
     "documentationCategories":  [
                                     {
-                                        "id":  "tabs",
-                                        "displayName":  "Tabs",
+                                        "id":  "button",
+                                        "displayName":  "Button",
                                         "order":  1
+                                    },
+                                    {
+                                        "id":  "fontandcolor",
+                                        "displayName":  "Font and Color",
+                                        "order":  2
                                     },
                                     {
                                         "id":  "interactivity",
                                         "displayName":  "Interactivity",
-                                        "order":  2
+                                        "order":  3
                                     },
                                     {
                                         "id":  "position",
                                         "displayName":  "Position",
-                                        "order":  3
+                                        "order":  4
                                     },
                                     {
                                         "id":  "callbacks",
                                         "displayName":  "Callbacks",
-                                        "order":  4
+                                        "order":  5
                                     },
                                     {
                                         "id":  "callbackexecutioncontrol",
                                         "displayName":  "Callback Execution Control",
-                                        "order":  5
+                                        "order":  6
                                     },
                                     {
                                         "id":  "parentchild",
                                         "displayName":  "Parent/Child",
-                                        "order":  6
+                                        "order":  7
                                     },
                                     {
                                         "id":  "identifiers",
                                         "displayName":  "Identifiers",
-                                        "order":  7
-                                    },
-                                    {
-                                        "id":  "uifigurebasedappsonly",
-                                        "displayName":  "uifigure -Based Apps Only",
                                         "order":  8
                                     }
                                 ],
     "properties":  [
                        {
-                           "path":  "TabLocation",
-                           "categoryId":  "tabs",
+                           "path":  "Text",
+                           "categoryId":  "button",
                            "order":  1,
-                           "summary":  "Tab label location",
-                           "documentedDefault":  "\u0027top\u0027",
+                           "summary":  "Button label",
+                           "documentedDefault":  "\u0027Button\u0027",
                            "documentedAcceptedValues":  [
-                                                            "\u0027bottom\u0027",
-                                                            "\u0027left\u0027",
-                                                            "\u0027right\u0027"
+                                                            "character vector",
+                                                            "cell array of character vectors",
+                                                            "string scalar",
+                                                            "string array"
                                                         ]
                        },
                        {
-                           "path":  "SelectedTab",
-                           "categoryId":  "tabs",
+                           "path":  "WordWrap",
+                           "categoryId":  "button",
                            "order":  2,
-                           "summary":  "Currently selected tab",
+                           "summary":  "Word wrapping to fit component width",
+                           "documentedDefault":  "\u0027off\u0027",
                            "documentedAcceptedValues":  [
-                                                            "Tab object"
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Icon",
+                           "categoryId":  "button",
+                           "order":  3,
+                           "summary":  "Predefined or custom icon",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "string scalar",
+                                                            "m -by- n -by-3 truecolor image array"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontName",
+                           "categoryId":  "fontandcolor",
+                           "order":  1,
+                           "summary":  "Font name",
+                           "documentedAcceptedValues":  [
+                                                            "system supported font name"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontSize",
+                           "categoryId":  "fontandcolor",
+                           "order":  2,
+                           "summary":  "Font size",
+                           "documentedAcceptedValues":  [
+                                                            "positive number"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontWeight",
+                           "categoryId":  "fontandcolor",
+                           "order":  3,
+                           "summary":  "Font weight",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027bold\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontAngle",
+                           "categoryId":  "fontandcolor",
+                           "order":  4,
+                           "summary":  "Font angle",
+                           "documentedDefault":  "\u0027normal\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027italic\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "FontColor",
+                           "categoryId":  "fontandcolor",
+                           "order":  5,
+                           "summary":  "Font color",
+                           "documentedDefault":  "[0 0 0]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "BackgroundColor",
+                           "categoryId":  "fontandcolor",
+                           "order":  6,
+                           "summary":  "Background color",
+                           "documentedDefault":  "[0.96 0.96 0.96]",
+                           "documentedAcceptedValues":  [
+                                                            "RGB triplet",
+                                                            "hexadecimal color code",
+                                                            "\u0027r\u0027",
+                                                            "\u0027g\u0027",
+                                                            "\u0027b\u0027"
                                                         ]
                        },
                        {
@@ -94,9 +174,32 @@
                                                         ]
                        },
                        {
-                           "path":  "ContextMenu",
+                           "path":  "Enable",
                            "categoryId":  "interactivity",
                            "order":  2,
+                           "summary":  "Operational state",
+                           "documentedDefault":  "\u0027on\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "on/off logical value"
+                                                        ]
+                       },
+                       {
+                           "path":  "Tooltip",
+                           "categoryId":  "interactivity",
+                           "order":  3,
+                           "summary":  "Tooltip",
+                           "documentedDefault":  "\u0027\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "character vector",
+                                                            "cell array of character vectors",
+                                                            "string array",
+                                                            "1-D categorical array"
+                                                        ]
+                       },
+                       {
+                           "path":  "ContextMenu",
+                           "categoryId":  "interactivity",
+                           "order":  4,
                            "summary":  "Context menu",
                            "documentedDefault":  "empty GraphicsPlaceholder array",
                            "documentedAcceptedValues":  [
@@ -107,7 +210,8 @@
                            "path":  "Position",
                            "categoryId":  "position",
                            "order":  1,
-                           "summary":  "Location and size of tab group",
+                           "summary":  "Location and size of button",
+                           "documentedDefault":  "[100 100 100 22]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -116,7 +220,8 @@
                            "path":  "InnerPosition",
                            "categoryId":  "position",
                            "order":  2,
-                           "summary":  "Location and size of tab group excluding borders and tab titles",
+                           "summary":  "Location and size of button",
+                           "documentedDefault":  "[100 100 100 22]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
@@ -125,54 +230,64 @@
                            "path":  "OuterPosition",
                            "categoryId":  "position",
                            "order":  3,
-                           "summary":  "Location and size of tab group",
+                           "summary":  "Location and size of button",
+                           "documentedDefault":  "[100 100 100 22]]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
                                                         ]
                        },
                        {
-                           "path":  "Units",
+                           "path":  "HorizontalAlignment",
                            "categoryId":  "position",
                            "order":  4,
-                           "summary":  "Units of measurement",
+                           "summary":  "Horizontal alignment of icon and text",
+                           "documentedDefault":  "\u0027center\u0027",
                            "documentedAcceptedValues":  [
-                                                            "\u0027pixels\u0027",
-                                                            "\u0027normalized\u0027",
-                                                            "\u0027inches\u0027",
-                                                            "\u0027centimeters\u0027",
-                                                            "\u0027points\u0027",
-                                                            "\u0027characters\u0027"
+                                                            "\u0027left\u0027",
+                                                            "\u0027right\u0027"
                                                         ]
                        },
                        {
-                           "path":  "SelectionChangedFcn",
+                           "path":  "VerticalAlignment",
+                           "categoryId":  "position",
+                           "order":  5,
+                           "summary":  "Vertical alignment of icon and text",
+                           "documentedDefault":  "\u0027center\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027top\u0027",
+                                                            "\u0027bottom\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "IconAlignment",
+                           "categoryId":  "position",
+                           "order":  6,
+                           "summary":  "Location of button icon",
+                           "documentedDefault":  "\u0027left\u0027",
+                           "documentedAcceptedValues":  [
+                                                            "\u0027right\u0027",
+                                                            "\u0027center\u0027",
+                                                            "\u0027leftmargin\u0027",
+                                                            "\u0027rightmargin\u0027",
+                                                            "\u0027top\u0027",
+                                                            "\u0027bottom\u0027"
+                                                        ]
+                       },
+                       {
+                           "path":  "Layout",
+                           "categoryId":  "position",
+                           "order":  7,
+                           "summary":  "Layout options",
+                           "documentedDefault":  "empty LayoutOptions array",
+                           "documentedAcceptedValues":  [
+                                                            "GridLayoutOptions object"
+                                                        ]
+                       },
+                       {
+                           "path":  "ButtonPushedFcn",
                            "categoryId":  "callbacks",
                            "order":  1,
-                           "summary":  "Selection changed callback",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "function handle",
-                                                            "cell array",
-                                                            "character vector"
-                                                        ]
-                       },
-                       {
-                           "path":  "SizeChangedFcn",
-                           "categoryId":  "callbacks",
-                           "order":  2,
-                           "summary":  "Size change callback",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "function handle",
-                                                            "cell array",
-                                                            "character vector"
-                                                        ]
-                       },
-                       {
-                           "path":  "ButtonDownFcn",
-                           "categoryId":  "callbacks",
-                           "order":  3,
-                           "summary":  "Button-press callback function",
+                           "summary":  "Button pushed callback",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
                                                             "function handle",
@@ -183,7 +298,7 @@
                        {
                            "path":  "CreateFcn",
                            "categoryId":  "callbacks",
-                           "order":  4,
+                           "order":  2,
                            "summary":  "Creation function",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
@@ -195,7 +310,7 @@
                        {
                            "path":  "DeleteFcn",
                            "categoryId":  "callbacks",
-                           "order":  5,
+                           "order":  3,
                            "summary":  "Deletion function",
                            "documentedDefault":  "\u0027\u0027",
                            "documentedAcceptedValues":  [
@@ -247,19 +362,9 @@
                                                         ]
                        },
                        {
-                           "path":  "Children",
-                           "categoryId":  "parentchild",
-                           "order":  2,
-                           "summary":  "TabGroup children",
-                           "documentedDefault":  "empty GraphicsPlaceholder array",
-                           "documentedAcceptedValues":  [
-                                                            "1-D array of Tab objects"
-                                                        ]
-                       },
-                       {
                            "path":  "HandleVisibility",
                            "categoryId":  "parentchild",
-                           "order":  3,
+                           "order":  2,
                            "summary":  "Visibility of object handle",
                            "documentedDefault":  "\u0027on\u0027",
                            "documentedAcceptedValues":  [
@@ -273,7 +378,7 @@
                            "order":  1,
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
-                                                            "\u0027uitabgroup\u0027"
+                                                            "\u0027uibutton\u0027"
                                                         ]
                        },
                        {
@@ -295,39 +400,6 @@
                            "documentedDefault":  "[]",
                            "documentedAcceptedValues":  [
                                                             "array"
-                                                        ]
-                       },
-                       {
-                           "path":  "Tooltip",
-                           "categoryId":  "uifigurebasedappsonly",
-                           "order":  1,
-                           "summary":  "Tooltip",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "character vector",
-                                                            "cell array of character vectors",
-                                                            "string array",
-                                                            "categorical array"
-                                                        ]
-                       },
-                       {
-                           "path":  "AutoResizeChildren",
-                           "categoryId":  "uifigurebasedappsonly",
-                           "order":  2,
-                           "summary":  "Automatically resize children",
-                           "documentedDefault":  "\u0027on\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "on/off logical value"
-                                                        ]
-                       },
-                       {
-                           "path":  "Layout",
-                           "categoryId":  "uifigurebasedappsonly",
-                           "order":  3,
-                           "summary":  "Layout options",
-                           "documentedDefault":  "empty LayoutOptions array",
-                           "documentedAcceptedValues":  [
-                                                            "GridLayoutOptions object"
                                                         ]
                        }
                    ]
