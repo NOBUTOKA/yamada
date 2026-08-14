@@ -726,7 +726,8 @@
                            "documentedDefault":  "empty GraphicsPlaceholder",
                            "documentedAcceptedValues":  [
                                                             "legend object"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "ColorOrder",
@@ -778,7 +779,8 @@
                            "summary":  "SeriesIndex value for next object",
                            "documentedAcceptedValues":  [
                                                             "whole number"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "NextPlot",
@@ -973,7 +975,8 @@
                            "summary":  "Margins for text labels",
                            "documentedAcceptedValues":  [
                                                             "four-element vector of the form [left bottom right top]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "PositionConstraint",
@@ -1053,7 +1056,8 @@
                            "summary":  "Location of mouse pointer",
                            "documentedAcceptedValues":  [
                                                             "two-element vector"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "ContextMenu",
@@ -1169,7 +1173,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Parent",
@@ -1210,7 +1215,8 @@
                            "categoryId":  "identifiers",
                            "order":  1,
                            "summary":  "Type of graphics object",
-                           "documentedDefault":  "\u0027polaraxes\u0027"
+                           "documentedDefault":  "\u0027polaraxes\u0027",
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",

@@ -441,7 +441,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "HitTest",
@@ -493,7 +494,8 @@
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
                                                             "\u0027uitable\u0027"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",
@@ -528,7 +530,8 @@
                                                             "cell array",
                                                             "string array",
                                                             "cell array of character vectors"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "ColumnSortable",
@@ -549,7 +552,8 @@
                            "documentedDefault":  "empty n -by-3 table array",
                            "documentedAcceptedValues":  [
                                                             "n -by-3 table array"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Selection",
@@ -573,7 +577,8 @@
                                                             "positive integer",
                                                             "vector of positive integers",
                                                             "n -by-2 array of positive integers"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "SelectionType",
@@ -661,7 +666,8 @@
                            "summary":  "Size of enclosing rectangle",
                            "documentedAcceptedValues":  [
                                                             "four-element row vector"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        }
                    ]
 }

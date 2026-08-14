@@ -132,7 +132,8 @@
                            "summary":  "Location and size of tab",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "InnerPosition",
@@ -141,7 +142,8 @@
                            "summary":  "Location and size of tab",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "OuterPosition",
@@ -150,7 +152,8 @@
                            "summary":  "Location and size of tab",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Units",
@@ -241,7 +244,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Parent",
@@ -280,7 +284,8 @@
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
                                                             "\u0027uitab\u0027"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",

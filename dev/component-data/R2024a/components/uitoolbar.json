@@ -123,7 +123,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "HitTest",
@@ -172,7 +173,8 @@
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
                                                             "\u0027uitoolbar\u0027"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",

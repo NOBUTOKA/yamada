@@ -92,5 +92,7 @@ All 38 catalog factories are transcribed as 48 concrete variants. The transcript
 contains 1,825 style-specific public-property entries across 86 verified R2024a
 archive pages. Each property records its source-page category and, where the
 reference supplies them, its default and accepted-value text separately.
+The property sections were also re-read for the R2024a prose `This property is
+read-only.`; 162 entries explicitly record `documentedReadOnly: true`.
 
 The component-file contract is defined in [`schema.json`](schema.json).

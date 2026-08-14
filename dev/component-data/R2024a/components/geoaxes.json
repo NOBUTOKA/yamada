@@ -117,7 +117,8 @@
                            "summary":  "Latitude limits of map",
                            "documentedAcceptedValues":  [
                                                             "1-by-2 vector of real, finite values"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "LongitudeLimits",
@@ -126,7 +127,8 @@
                            "summary":  "Longitude limits of map",
                            "documentedAcceptedValues":  [
                                                             "1-by-2 vector of real, finite values"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "MapCenter",
@@ -173,7 +175,8 @@
                            "summary":  "Scale bar",
                            "documentedAcceptedValues":  [
                                                             "GeographicScalebar object"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "FontName",
@@ -476,7 +479,8 @@
                            "documentedDefault":  "empty GraphicsPlaceholder",
                            "documentedAcceptedValues":  [
                                                             "Legend object"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "ColorOrder",
@@ -518,7 +522,8 @@
                            "summary":  "SeriesIndex value for next object",
                            "documentedAcceptedValues":  [
                                                             "whole number"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "NextPlot",
@@ -713,7 +718,8 @@
                            "summary":  "Margins for text labels",
                            "documentedAcceptedValues":  [
                                                             "four-element vector of the form [left bottom right top]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "PositionConstraint",
@@ -795,7 +801,8 @@
                            "summary":  "Location of mouse pointer",
                            "documentedAcceptedValues":  [
                                                             "2-by-3 array"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "ContextMenu",
@@ -911,7 +918,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Parent",
@@ -952,7 +960,8 @@
                            "categoryId":  "identifiers",
                            "order":  1,
                            "summary":  "Type of graphics object",
-                           "documentedDefault":  "\u0027geoaxes\u0027"
+                           "documentedDefault":  "\u0027geoaxes\u0027",
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",

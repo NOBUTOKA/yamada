@@ -890,7 +890,8 @@
                            "documentedDefault":  "empty GraphicsPlaceholder",
                            "documentedAcceptedValues":  [
                                                             "Legend object"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "ColorOrder",
@@ -942,7 +943,8 @@
                            "summary":  "SeriesIndex value for next object",
                            "documentedAcceptedValues":  [
                                                             "whole number"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "NextPlot",
@@ -1180,7 +1182,8 @@
                            "summary":  "Margin for text labels",
                            "documentedAcceptedValues":  [
                                                             "four-element vector of the form [left bottom right top]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "PositionConstraint",
@@ -1515,7 +1518,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Parent",
@@ -1558,7 +1562,8 @@
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
                                                             "\u0027axes\u0027"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",

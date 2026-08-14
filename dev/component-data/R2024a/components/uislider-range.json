@@ -304,7 +304,8 @@
                            "documentedDefault":  "[93 70 166 39]",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Layout",
@@ -391,7 +392,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Parent",
@@ -424,7 +426,8 @@
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
                                                             "\u0027uirangeslider\u0027"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",

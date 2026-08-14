@@ -167,7 +167,8 @@
                            "summary":  "Location and size of grid layout manager",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "InnerPosition",
@@ -176,7 +177,8 @@
                            "summary":  "Location and size of grid layout manager, excluding padding",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "OuterPosition",
@@ -185,7 +187,8 @@
                            "summary":  "Location and size of grid layout manager",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Layout",
@@ -248,7 +251,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Parent",
@@ -291,7 +295,8 @@
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
                                                             "\u0027uigridlayout\u0027"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",

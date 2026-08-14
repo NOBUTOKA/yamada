@@ -254,7 +254,8 @@
                            "summary":  "Location and size of button group, excluding borders and title",
                            "documentedAcceptedValues":  [
                                                             "[left bottom width height]"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "OuterPosition",
@@ -366,7 +367,8 @@
                            "summary":  "Deletion status",
                            "documentedAcceptedValues":  [
                                                             "on/off logical value"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "HitTest",
@@ -419,7 +421,8 @@
                            "summary":  "Type of graphics object",
                            "documentedAcceptedValues":  [
                                                             "\u0027uibuttongroup\u0027"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Tag",
@@ -450,7 +453,8 @@
                            "documentedAcceptedValues":  [
                                                             "array of RadioButton objects",
                                                             "array of ToggleButton objects"
-                                                        ]
+                                                        ],
+                           "documentedReadOnly":  true
                        },
                        {
                            "path":  "Enable",
