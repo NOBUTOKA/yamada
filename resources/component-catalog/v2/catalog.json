@@ -5,6 +5,9 @@
   "propertyGroupFiles": [
     "property-groups/groups.json"
   ],
+  "orderProfileFiles": [
+    "order-profiles.json"
+  ],
   "parentContextRules": [
     {
       "parentFactories": [

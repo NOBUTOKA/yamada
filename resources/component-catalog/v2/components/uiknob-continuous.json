@@ -13,6 +13,29 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "standardControl",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": [
+      {
+        "categoryId": "knob",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      },
+      {
+        "categoryId": "ticks",
+        "documentedOrder": 2,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      },
+      {
+        "categoryId": "font",
+        "documentedOrder": 3,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      }
+    ]
+  },
   "categories": [
     {
       "id": "knob",

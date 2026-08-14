@@ -8,6 +8,17 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "menuToolbar",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": [
+      {
+        "categoryId": "pushtool",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      }
+    ]
+  },
   "categories": [
     {
       "id": "pushtool",

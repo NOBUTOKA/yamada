@@ -9,6 +9,23 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "menuToolbar",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": [
+      {
+        "categoryId": "menu",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      },
+      {
+        "categoryId": "uifigurebasedappsonly",
+        "documentedOrder": 7,
+        "afterCategoryId": "identifiers",
+        "beforeCategoryId": ""
+      }
+    ]
+  },
   "categories": [
     {
       "id": "menu",

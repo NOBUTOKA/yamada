@@ -13,6 +13,19 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "axes",
+  "profileDelta": {
+    "omittedCategoryIds": [
+      "view"
+    ],
+    "insertions": [
+      {
+        "categoryId": "maps",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "font"
+      }
+    ]
+  },
   "categories": [
     {
       "id": "maps",

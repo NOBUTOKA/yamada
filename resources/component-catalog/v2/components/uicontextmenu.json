@@ -11,6 +11,10 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "contextMenu",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": []
+  },
   "categories": [
     {
       "id": "callbacks",

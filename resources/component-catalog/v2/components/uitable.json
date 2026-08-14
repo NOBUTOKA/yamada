@@ -13,6 +13,41 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "standardControl",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": [
+      {
+        "categoryId": "table",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      },
+      {
+        "categoryId": "font",
+        "documentedOrder": 2,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      },
+      {
+        "categoryId": "colorandstyling",
+        "documentedOrder": 4,
+        "afterCategoryId": "interactivity",
+        "beforeCategoryId": "position"
+      },
+      {
+        "categoryId": "uifigurebasedappsonly",
+        "documentedOrder": 10,
+        "afterCategoryId": "identifiers",
+        "beforeCategoryId": ""
+      },
+      {
+        "categoryId": "figurebasedappsonly",
+        "documentedOrder": 11,
+        "afterCategoryId": "identifiers",
+        "beforeCategoryId": ""
+      }
+    ]
+  },
   "categories": [
     {
       "id": "table",

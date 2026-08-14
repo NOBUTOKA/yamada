@@ -13,6 +13,10 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "axes",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": []
+  },
   "categories": [
     {
       "id": "font",

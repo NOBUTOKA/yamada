@@ -12,6 +12,23 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "standardControl",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": [
+      {
+        "categoryId": "tabs",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      },
+      {
+        "categoryId": "uifigurebasedappsonly",
+        "documentedOrder": 8,
+        "afterCategoryId": "identifiers",
+        "beforeCategoryId": ""
+      }
+    ]
+  },
   "categories": [
     {
       "id": "tabs",

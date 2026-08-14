@@ -1,0 +1,72 @@
+{
+  "artifactVersion": 1,
+  "matlabRelease": "R2024a",
+  "profiles": [
+    {
+      "id": "axes",
+      "categoryOrder": [
+        "font",
+        "ticks",
+        "rulers",
+        "grids",
+        "labels",
+        "multipleplots",
+        "colorandtransparencymaps",
+        "boxstyling",
+        "position",
+        "view",
+        "interactivity",
+        "callbacks",
+        "callbackexecutioncontrol",
+        "parentchild",
+        "identifiers"
+      ]
+    },
+    {
+      "id": "standardControl",
+      "categoryOrder": [
+        "interactivity",
+        "position",
+        "callbacks",
+        "callbackexecutioncontrol",
+        "parentchild",
+        "identifiers"
+      ]
+    },
+    {
+      "id": "menuToolbar",
+      "categoryOrder": [
+        "interactivity",
+        "callbacks",
+        "callbackexecutioncontrol",
+        "parentchild",
+        "identifiers"
+      ]
+    },
+    {
+      "id": "contextMenu",
+      "categoryOrder": [
+        "callbacks",
+        "callbackexecutioncontrol",
+        "parentchild",
+        "identifiers"
+      ]
+    },
+    {
+      "id": "uifigure",
+      "categoryOrder": [
+        "windowappearance",
+        "positionandsize",
+        "plotting",
+        "mousepointer",
+        "interactivity",
+        "commoncallbacks",
+        "keyboardcallbacks",
+        "windowcallbacks",
+        "callbackexecutioncontrol",
+        "parentchildren",
+        "identifiers"
+      ]
+    }
+  ]
+}

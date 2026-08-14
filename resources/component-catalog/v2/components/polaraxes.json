@@ -13,6 +13,20 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "axes",
+  "profileDelta": {
+    "omittedCategoryIds": [
+      "grids",
+      "view"
+    ],
+    "insertions": [
+      {
+        "categoryId": "gridlines",
+        "documentedOrder": 4,
+        "afterCategoryId": "rulers",
+        "beforeCategoryId": "labels"
+      }
+    ]
+  },
   "categories": [
     {
       "id": "font",

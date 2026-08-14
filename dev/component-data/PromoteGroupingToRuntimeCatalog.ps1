@@ -71,13 +71,15 @@ $releasePath = (Resolve-Path -LiteralPath $ReleaseDirectory).Path
 $catalogPath = [IO.Path]::GetFullPath($CatalogRoot)
 $legacyPath = (Resolve-Path -LiteralPath $LegacyCatalogRoot).Path
 $designPath = Join-Path $releasePath "grouping/GROUPING_DESIGN.json"
+$groupingInputPath = Join-Path $releasePath "grouping-design-input.json"
 $componentPath = Join-Path $releasePath "components"
 
-foreach ($path in @($designPath, $componentPath)) {
+foreach ($path in @($designPath, $groupingInputPath, $componentPath)) {
     if (-not (Test-Path -LiteralPath $path)) { throw "Required promotion input '$path' does not exist." }
 }
 
 $design = Get-Content -Raw -LiteralPath $designPath | ConvertFrom-Json
+$groupingInput = Get-Content -Raw -LiteralPath $groupingInputPath | ConvertFrom-Json
 $documents = @{}
 foreach ($file in @(Get-ChildItem -LiteralPath $componentPath -Filter '*.json' -File)) {
     $document = Get-Content -Raw -LiteralPath $file.FullName | ConvertFrom-Json
@@ -120,6 +122,13 @@ Write-Utf8JsonFile (Join-Path $catalogPath "property-groups/groups.json") ([orde
     matlabRelease = [string]$design.matlabRelease
     inputSha256 = [string]$design.inputSha256
     groups = $runtimeGroups
+})
+Write-Utf8JsonFile (Join-Path $catalogPath "order-profiles.json") ([ordered]@{
+    artifactVersion = 1
+    matlabRelease = [string]$design.matlabRelease
+    profiles = @($groupingInput.profileDefinitions | ForEach-Object {
+        [ordered]@{ id = [string]$_.id; categoryOrder = @($_.categoryOrder | ForEach-Object { [string]$_ }) }
+    })
 })
 
 $componentFiles = @()
@@ -183,6 +192,12 @@ foreach ($componentId in @($documents.Keys | Sort-Object)) {
         isRoot = [bool]$legacy.isRoot
         creationArguments = @($source.creationArguments)
         profileId = [string]$profile[0].profileId
+        profileDelta = [ordered]@{
+            omittedCategoryIds = @($profile[0].omittedCategoryIds | ForEach-Object { [string]$_ })
+            insertions = @($profile[0].insertions | ForEach-Object {
+                [ordered]@{ categoryId = [string]$_.categoryId; documentedOrder = [int]$_.documentedOrder; afterCategoryId = [string]$_.afterCategoryId; beforeCategoryId = [string]$_.beforeCategoryId }
+            })
+        }
         categories = $categories
         capabilities = $legacy.capabilities
     })
@@ -199,6 +214,7 @@ Write-Utf8JsonFile (Join-Path $catalogPath "catalog.json") ([ordered]@{
     matlabRelease = [string]$design.matlabRelease
     sourceGroupingSha256 = [string]$design.inputSha256
     propertyGroupFiles = @("property-groups/groups.json")
+    orderProfileFiles = @("order-profiles.json")
     parentContextRules = $parentContextRules
     componentFiles = $componentFiles
 })

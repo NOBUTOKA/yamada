@@ -15,6 +15,23 @@
     "state"
   ],
   "profileId": "standardControl",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": [
+      {
+        "categoryId": "button",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      },
+      {
+        "categoryId": "fontandcolor",
+        "documentedOrder": 2,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      }
+    ]
+  },
   "categories": [
     {
       "id": "button",

@@ -22,7 +22,7 @@ classdef ComponentCatalogLoader
                 catalogRoot + "/catalog.json");
             macd.catalog.ComponentCatalogLoader.rejectUnknownFields(manifest, ["schemaVersion", ...
                 "matlabRelease", "propertyGroupFiles", "componentFiles", "parentContextRules", ...
-                "sourceGroupingSha256"], ...
+                "sourceGroupingSha256", "orderProfileFiles"], ...
                 catalogRoot + "/catalog.json");
             if manifest.schemaVersion == 2
                 registry = macd.catalog.ComponentCatalogLoader.loadVersion2(catalogRoot, manifest);
@@ -94,6 +94,13 @@ classdef ComponentCatalogLoader
             groups = macd.catalog.ComponentCatalogLoader.readVersion2Groups(root, ...
                 macd.catalog.ComponentCatalogLoader.stringList(manifest.propertyGroupFiles, ...
                 root + "/catalog.json.propertyGroupFiles"));
+            if ~isfield(manifest, "orderProfileFiles")
+                macd.catalog.ComponentCatalogLoader.fail(root + "/catalog.json", ...
+                    "schemaVersion 2 requires orderProfileFiles.");
+            end
+            profiles = macd.catalog.ComponentCatalogLoader.readOrderProfiles(root, ...
+                macd.catalog.ComponentCatalogLoader.stringList(manifest.orderProfileFiles, ...
+                root + "/catalog.json.orderProfileFiles"));
             files = macd.catalog.ComponentCatalogLoader.stringList(manifest.componentFiles, ...
                 root + "/catalog.json.componentFiles");
             registry = macd.model.ComponentRegistry();
@@ -107,7 +114,7 @@ classdef ComponentCatalogLoader
                 document = macd.catalog.ComponentCatalogLoader.readDocument(root, relativePath);
                 context = root + "/" + relativePath;
                 definition = macd.catalog.ComponentCatalogLoader.componentDefinitionVersion2( ...
-                    document, groups, context);
+                    document, groups, profiles, context);
                 if any(variantIds == definition.Id)
                     macd.catalog.ComponentCatalogLoader.fail(context + ".id", ...
                         "Duplicate concrete component variant ID \"" + definition.Id + "\".");
@@ -157,11 +164,42 @@ classdef ComponentCatalogLoader
             end
         end
 
-        function definition = componentDefinitionVersion2(document, groups, context)
+        function profiles = readOrderProfiles(root, files)
+            % readOrderProfiles Load the reviewed reusable category-order profiles.
+            arguments (Input)
+                root (1, 1) string
+                files (1, :) string
+            end
+            arguments (Output)
+                profiles containers.Map
+            end
+
+            profiles = containers.Map("KeyType", "char", "ValueType", "any");
+            for fileIndex = 1:numel(files)
+                document = macd.catalog.ComponentCatalogLoader.readDocument(root, files(fileIndex));
+                context = root + "/" + files(fileIndex);
+                macd.catalog.ComponentCatalogLoader.requireFields(document, ...
+                    ["artifactVersion", "matlabRelease", "profiles"], context);
+                profileList = macd.catalog.ComponentCatalogLoader.objectList(document.profiles, context + ".profiles");
+                for profileIndex = 1:numel(profileList)
+                    value = profileList{profileIndex};
+                    id = macd.catalog.ComponentCatalogLoader.scalarString(value.id, context + ".profiles.id");
+                    if isKey(profiles, char(id))
+                        macd.catalog.ComponentCatalogLoader.fail(context + ".profiles.id", ...
+                            "Duplicate order profile \"" + id + "\".");
+                    end
+                    profiles(char(id)) = macd.catalog.ComponentCatalogLoader.stringList( ...
+                        value.categoryOrder, context + ".profiles.categoryOrder");
+                end
+            end
+        end
+
+        function definition = componentDefinitionVersion2(document, groups, profiles, context)
             % componentDefinitionVersion2 Compose one concrete variant in category order.
             arguments (Input)
                 document (1, 1) struct
                 groups containers.Map
+                profiles containers.Map
                 context (1, 1) string
             end
             arguments (Output)
@@ -169,10 +207,14 @@ classdef ComponentCatalogLoader
             end
 
             required = ["id", "factory", "declaredType", "allowedParentFactories", ...
-                "isRoot", "creationArguments", "profileId", "categories", "capabilities"];
+                "isRoot", "creationArguments", "profileId", "profileDelta", "categories", "capabilities"];
             macd.catalog.ComponentCatalogLoader.requireFields(document, required, context);
             macd.catalog.ComponentCatalogLoader.rejectUnknownFields(document, required, context);
             id = macd.catalog.ComponentCatalogLoader.scalarString(document.id, context + ".id");
+            profileId = macd.catalog.ComponentCatalogLoader.scalarString(document.profileId, context + ".profileId");
+            if ~isKey(profiles, char(profileId))
+                macd.catalog.ComponentCatalogLoader.fail(context + ".profileId", "Unknown order profile.");
+            end
             factory = macd.catalog.ComponentCatalogLoader.scalarString(document.factory, context + ".factory");
             declaredType = macd.catalog.ComponentCatalogLoader.scalarString(document.declaredType, context + ".declaredType");
             parents = macd.catalog.ComponentCatalogLoader.stringList(document.allowedParentFactories, context + ".allowedParentFactories");
@@ -216,8 +258,7 @@ classdef ComponentCatalogLoader
             end
             capabilities = macd.catalog.ComponentCatalogLoader.capabilities(document.capabilities, context + ".capabilities");
             capabilities.id = id;
-            capabilities.profileId = macd.catalog.ComponentCatalogLoader.scalarString( ...
-                document.profileId, context + ".profileId");
+            capabilities.profileId = profileId;
             definition = macd.model.ComponentDefinition.fromPaths(factory, declaredType, parents, ...
                 document.isRoot, macd.catalog.ComponentCatalogLoader.creationArguments( ...
                 document.creationArguments, context + ".creationArguments"), properties, capabilities);

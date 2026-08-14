@@ -13,6 +13,23 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "standardControl",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": [
+      {
+        "categoryId": "nodes",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      },
+      {
+        "categoryId": "fontandcolor",
+        "documentedOrder": 2,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      }
+    ]
+  },
   "categories": [
     {
       "id": "nodes",

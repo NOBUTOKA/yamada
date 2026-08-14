@@ -13,6 +13,17 @@
   "isRoot": false,
   "creationArguments": [],
   "profileId": "standardControl",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": [
+      {
+        "categoryId": "html",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "interactivity"
+      }
+    ]
+  },
   "categories": [
     {
       "id": "html",

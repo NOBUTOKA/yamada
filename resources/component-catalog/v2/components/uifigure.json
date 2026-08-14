@@ -6,6 +6,10 @@
   "isRoot": true,
   "creationArguments": [],
   "profileId": "uifigure",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": []
+  },
   "categories": [
     {
       "id": "windowappearance",
