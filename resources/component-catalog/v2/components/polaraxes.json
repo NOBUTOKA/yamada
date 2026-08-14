@@ -865,7 +865,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -916,7 +920,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },

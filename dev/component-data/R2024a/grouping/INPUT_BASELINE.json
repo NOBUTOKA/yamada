@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "436cd9156f800cfe1ed1f1cadd5000b81a53e08c",
-  "inputSha256": "1ab43934cf46e9adfa005767ce48af68e0d398302b39497a80e5a1f4ea910198",
+  "ledgerBaselineGitCommit": "5d9d58c9d37d484294f9199a3c7acf8733cd1413",
+  "inputSha256": "afbb59f681c606125c0158bbfa7f075c3f53d59bcd72c7d1748203fd3e2c99fd",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -77,7 +77,7 @@
     },
     {
       "path": "components/axes.json",
-      "sha256": "111b1eb86aaff1d1d312956be67245e24a10df9aa6ccea5c4dfd07a917896e30"
+      "sha256": "932f9adac6bd55fbdef2295caa31cf1656af354f6365cf0a6c49e93a330db4f2"
     },
     {
       "path": "components/geoaxes.json",
@@ -85,11 +85,11 @@
     },
     {
       "path": "components/polaraxes.json",
-      "sha256": "2cfb152e4b8a7dd8919995141151034b1496c3b3bced397b388dd796dfedbebc"
+      "sha256": "92b933a0e686f40d9f7869ee374cd704d704166440dda25c81c3541740078900"
     },
     {
       "path": "components/uiaxes.json",
-      "sha256": "e2dcd170cba36633964cf8ceca2376543c67869a4de94c15b87b71c334f47b1c"
+      "sha256": "29a29f09319f93fc7531a7c94fd5d0519d72871a77d9afee4237d9b84fccd12d"
     },
     {
       "path": "components/uibutton-push.json",

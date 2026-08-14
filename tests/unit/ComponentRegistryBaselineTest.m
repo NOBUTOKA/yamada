@@ -88,6 +88,26 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             end
         end
 
+        function editableEnumContractsRetainCompleteFiniteChoices(testCase)
+            % editableEnumContractsRetainCompleteFiniteChoices Require dropdown choices for every editable enum.
+
+            % Prevent incomplete documentation from silently producing disabled enum editors.
+            registry = macd.model.ComponentRegistry.createDefault();
+            for id = registry.listVariantIds()
+                definition = registry.getById(id);
+                for property = definition.Properties
+                    if property.Editor ~= "enum" || property.AuditDisposition ~= "editable"
+                        continue
+                    end
+                    testCase.verifyTrue(isfield(property.ValueSchema, "values"));
+                    testCase.verifyGreaterThanOrEqual(numel(property.ValueSchema.values), 2);
+                end
+            end
+            definition = registry.getById("uiaxes");
+            smoothing = definition.Properties([definition.Properties.Path] == "FontSmoothing");
+            testCase.verifyEqual(smoothing.AuditDisposition, "omitted");
+        end
+
         function innerPositionRemainsOmittedAcrossTheCatalog(testCase)
             % innerPositionRemainsOmittedAcrossTheCatalog Keep derived geometry out of the inspector.
 

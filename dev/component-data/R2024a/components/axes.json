@@ -508,6 +508,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
         ]
       },
       "affectsDisplay": true,
@@ -517,7 +521,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ]
     },
     {
       "path": "YTickMode",
@@ -532,6 +540,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
         ]
       },
       "affectsDisplay": true,
@@ -541,7 +553,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ]
     },
     {
       "path": "ZTickMode",
@@ -672,6 +688,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
         ]
       },
       "affectsDisplay": true,
@@ -681,7 +701,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ]
     },
     {
       "path": "YTickLabelMode",
@@ -696,6 +720,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
         ]
       },
       "affectsDisplay": true,
@@ -705,7 +733,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ]
     },
     {
       "path": "ZTickLabelMode",
@@ -853,6 +885,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
         ]
       },
       "affectsDisplay": true,
@@ -862,7 +898,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ]
     },
     {
       "path": "YTickLabelRotationMode",
@@ -877,6 +917,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
         ]
       },
       "affectsDisplay": true,
@@ -886,7 +930,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ]
     },
     {
       "path": "ZTickLabelRotationMode",
@@ -1171,6 +1219,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
         ]
       },
       "affectsDisplay": true,
@@ -1180,7 +1232,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ]
     },
     {
       "path": "YLimMode",
@@ -1195,6 +1251,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
         ]
       },
       "affectsDisplay": true,
@@ -1204,7 +1264,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ]
     },
     {
       "path": "ZLimMode",
@@ -1251,6 +1315,11 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "tickaligned",
+          "tight",
+          "padded"
         ]
       },
       "affectsDisplay": true,
@@ -1260,7 +1329,12 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'tickaligned'",
+      "documentedAcceptedValues": [
+        "'tight'",
+        "'padded'"
+      ]
     },
     {
       "path": "YLimitMethod",
@@ -1275,6 +1349,11 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "tickaligned",
+          "tight",
+          "padded"
         ]
       },
       "affectsDisplay": true,
@@ -1284,7 +1363,12 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'tickaligned'",
+      "documentedAcceptedValues": [
+        "'tight'",
+        "'padded'"
+      ]
     },
     {
       "path": "ZLimitMethod",
@@ -1748,6 +1832,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "linear",
+          "log"
         ]
       },
       "affectsDisplay": true,
@@ -1757,7 +1845,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'linear'",
+      "documentedAcceptedValues": [
+        "'log'"
+      ]
     },
     {
       "path": "YScale",
@@ -1772,6 +1864,10 @@
         "matlabClasses": [
           "char",
           "string"
+        ],
+        "values": [
+          "linear",
+          "log"
         ]
       },
       "affectsDisplay": true,
@@ -1781,7 +1877,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "'linear'",
+      "documentedAcceptedValues": [
+        "'log'"
+      ]
     },
     {
       "path": "ZScale",

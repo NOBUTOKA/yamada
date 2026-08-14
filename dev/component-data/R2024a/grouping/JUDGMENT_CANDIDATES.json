@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "1ab43934cf46e9adfa005767ce48af68e0d398302b39497a80e5a1f4ea910198",
+  "inputSha256": "afbb59f681c606125c0158bbfa7f075c3f53d59bcd72c7d1748203fd3e2c99fd",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -2788,6 +2788,47 @@
       ],
       "surfaces": [
         {
+          "candidateId": "candidate.font.254942b028e0",
+          "categoryId": "font",
+          "categoryDisplayName": "Font",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Font capabilities vary substantially by component family.",
+          "capabilitySha256": "254942b028e08c8f18ff59241945d6b1f9aa9e099f1da24536d693499e6878f5",
+          "propertyPaths": [
+            "FontName",
+            "FontSize",
+            "FontSizeMode",
+            "FontWeight",
+            "FontAngle",
+            "LabelFontSizeMultiplier",
+            "TitleFontSizeMultiplier",
+            "TitleFontWeight",
+            "SubtitleFontWeight",
+            "FontUnits",
+            "FontSmoothing"
+          ],
+          "propertyCapabilitySha256": [
+            "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
+            "2afd90bc055a7128e5b1edcafa79ce80cc43ebbc1f374a71274ecbebe152da16",
+            "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
+            "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
+            "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
+            "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
+            "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
+            "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
+            "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
+            "9bf879f07c0dd1d9e6cee72f749d160f8434b1dd16e4780c18b3bc8cbd920043",
+            "788f1eb3a9e3c0321ed0eace5f1930e9f3335c348f2fbc9b37aee5343493029a"
+          ],
+          "memberVariantIds": [
+            "uiaxes"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            1
+          ]
+        },
+        {
           "candidateId": "candidate.font.5d69f9f1822c",
           "categoryId": "font",
           "categoryDisplayName": "Font",
@@ -2898,47 +2939,6 @@
           ]
         },
         {
-          "candidateId": "candidate.font.be70f226c5ef",
-          "categoryId": "font",
-          "categoryDisplayName": "Font",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Font capabilities vary substantially by component family.",
-          "capabilitySha256": "be70f226c5ef7ddaa397ce279ddad9c2d148bb55fc0abafa855072ed5994d0db",
-          "propertyPaths": [
-            "FontName",
-            "FontSize",
-            "FontSizeMode",
-            "FontWeight",
-            "FontAngle",
-            "LabelFontSizeMultiplier",
-            "TitleFontSizeMultiplier",
-            "TitleFontWeight",
-            "SubtitleFontWeight",
-            "FontUnits",
-            "FontSmoothing"
-          ],
-          "propertyCapabilitySha256": [
-            "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-            "2afd90bc055a7128e5b1edcafa79ce80cc43ebbc1f374a71274ecbebe152da16",
-            "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
-            "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-            "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-            "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
-            "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
-            "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
-            "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
-            "9bf879f07c0dd1d9e6cee72f749d160f8434b1dd16e4780c18b3bc8cbd920043",
-            "4312bf58290eba301bfc86c8855d18bb0ce996754b2b1428609af0d33eb27795"
-          ],
-          "memberVariantIds": [
-            "uiaxes"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            1
-          ]
-        },
-        {
           "candidateId": "candidate.font.defa4abda44c",
           "categoryId": "font",
           "categoryDisplayName": "Font",
@@ -3022,10 +3022,10 @@
           "path": "FontAngle",
           "presentInSurfaceCount": 6,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.5d69f9f1822c",
             "candidate.font.8efcd1a89888",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -3041,10 +3041,10 @@
           "path": "FontName",
           "presentInSurfaceCount": 6,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.5d69f9f1822c",
             "candidate.font.8efcd1a89888",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -3053,10 +3053,10 @@
           "path": "FontSize",
           "presentInSurfaceCount": 6,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.5d69f9f1822c",
             "candidate.font.8efcd1a89888",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -3065,8 +3065,8 @@
           "path": "FontSizeMode",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -3075,8 +3075,8 @@
           "path": "FontSmoothing",
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c"
           ]
         },
@@ -3084,9 +3084,9 @@
           "path": "FontUnits",
           "presentInSurfaceCount": 5,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.5d69f9f1822c",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -3095,10 +3095,10 @@
           "path": "FontWeight",
           "presentInSurfaceCount": 6,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.5d69f9f1822c",
             "candidate.font.8efcd1a89888",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -3107,8 +3107,8 @@
           "path": "LabelFontSizeMultiplier",
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.e6f5c39c0791"
           ]
         },
@@ -3116,8 +3116,8 @@
           "path": "SubtitleFontWeight",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -3126,8 +3126,8 @@
           "path": "TitleFontSizeMultiplier",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -3136,8 +3136,8 @@
           "path": "TitleFontWeight",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
+            "candidate.font.254942b028e0",
             "candidate.font.bb38f17d7c33",
-            "candidate.font.be70f226c5ef",
             "candidate.font.defa4abda44c",
             "candidate.font.e6f5c39c0791"
           ]
@@ -5562,12 +5562,12 @@
       ],
       "surfaces": [
         {
-          "candidateId": "candidate.rulers.2736c3a51c49",
+          "candidateId": "candidate.rulers.85007f59651c",
           "categoryId": "rulers",
           "categoryDisplayName": "Rulers",
           "sharingScope": "familyScoped",
           "scopeRationale": "Axes-family ruler settings.",
-          "capabilitySha256": "2736c3a51c49d3a3da1433781f9818f898b4bb62b4133eee319576d30aee11fa",
+          "capabilitySha256": "85007f59651ca6d0c5b63535e0eeebe90dfbc7fad7568c2bab6a45631c085c44",
           "propertyPaths": [
             "RLim",
             "RLimMode",
@@ -5587,9 +5587,9 @@
           ],
           "propertyCapabilitySha256": [
             "12a781985d72e46710654b44165a5c45664fd426d4c9ac1883cb8021dd1316e2",
-            "fe89f02a586df54999eadb4eec50c7bb69ea86f6d4f6f08fac86459777d11fb0",
+            "90c8511f30c59f530d8987ef5824f474e74b4327b37b608baa7ce565a3983d05",
             "fb472ff34e8934c6df37826b48a5a32a9d9bc563df7b825f3a653e679d75f263",
-            "b3c0e142357f0b42cb7103db262011ac248a478f1d74824c56bbbeca311420d6",
+            "af1f931ae848ecfdc67fde25e754871daf2525586e400c3baad9bae680f9a0a1",
             "00c66dcd940abc111b016074777a4be21080fb4a3ec4613da820965539db7c4a",
             "6fc41d05ecb4f063953e2016a89a3e8af9aee0c76e12fc6082287a82dc5e9707",
             "46c8ec00315459bb1106774dfaa6073a1f949dc4d50d9ce2de146b4bbd2c8570",
@@ -5636,12 +5636,12 @@
           ]
         },
         {
-          "candidateId": "candidate.rulers.cb5e5fef594a",
+          "candidateId": "candidate.rulers.f5456dc24f40",
           "categoryId": "rulers",
           "categoryDisplayName": "Rulers",
           "sharingScope": "familyScoped",
           "scopeRationale": "Axes-family ruler settings.",
-          "capabilitySha256": "cb5e5fef594a9839c060137e32508aafc0aba4f7a67a45f4cefbc90550e475ff",
+          "capabilitySha256": "f5456dc24f40ebfc0da2af0bce297656725fe77771eb176665f1d9b130463c8c",
           "propertyPaths": [
             "XLim",
             "YLim",
@@ -5674,11 +5674,11 @@
             "67f72737246e23ff0080f40bb1451cee01e054bc137166ce9dc1472818c336e5",
             "86d63a39c47ed3c550580562496cb0a66677d81c0625af945aa6845ddeb1572e",
             "4e01f4690734add52dac9e583c2d1ffb557210840feb2a0905a2388d3f6b1b9e",
-            "f00820955720dfb79a9c1242418483b1159763a85628b59431bb53569dd468e9",
-            "8d2cf40f1d1a47450c56217a5a12e13316605bf7f71aed9e97e3501461507164",
+            "3fba56c54fc57425a0f69c9f9572b6bee60bab87b8b3f62a2f393b4ec21f6661",
+            "fdfcf1ab78e7ac3a405a0140dc767dee258618256d35b14bf045ffbaa43c0967",
             "2d85c75dc20bd44050f0100e0122d7d4b06a7e63b5b94b0f43fa06815d566f8a",
-            "23a1447327a517bd8cc04f96937a28302bf443a9da7fa4b4d0fe85344fd24d44",
-            "9a84ac5c625be9960a56fcd1e8704d72e89c4e5e3a065b6565f1a83dd60957a0",
+            "43157c3ec541972334325d79aace1b1d1511791483ee32a6e536b83dc3e8d993",
+            "db6fbb079a444fa57d1bbc8651c8ad5f6c5d3e408c2359f2df4bce7ead5a998b",
             "d7e1ac42c61adad8ea3730501f93ca10671e91ad52a9ebfbcc6d7c5fed21fb29",
             "a33fb770e5d5d154989e2e2016b7245790480eadea4d1355e8b71131da65d156",
             "ce4ab4054571e80dc101b245590fd28568cc2ce2977b687784f2a5b8ea4c7e58",
@@ -5694,8 +5694,8 @@
             "7f23b23101dff383f7292831ab4f49e65a9a5f1ab3c7835aa26d20c3851849ab",
             "3797eb9ef3649a21f61483d06a4db551e94281a1237bb54a9c5c5945d7b80f88",
             "ae5af49df5f80ad171ce46d3c9c9ae44871765c3b3f73ddd90b552594b413834",
-            "153c58e9eabdbfd8dc0693aac99a5648db39b3853f5cc6576cf84c08eef48f50",
-            "12b03ac5673c7a4cf3e81af13a089ab14d6654ad5adba710633b43a8edc80dc4",
+            "ec0e9ade10b6d7d73c322582349cd29c391538444e2e126bdf30dfa62dfae2fd",
+            "8b15fd2c3e73231df520766ba623bb8d049e6e4d7eee02aec69e693f00721eae",
             "890e5a3691127f1b9379bee9d55a6aa2d490161bc125839b0b6329d1e2ed138c"
           ],
           "memberVariantIds": [
@@ -5734,287 +5734,287 @@
           "path": "RAxis",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "RAxisLocation",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "RAxisLocationMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "RColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "RColorMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "RDir",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "RLim",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "RLimMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "ThetaAxis",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "ThetaAxisUnits",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "ThetaColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "ThetaColorMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "ThetaDir",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "ThetaLim",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "ThetaLimMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.2736c3a51c49"
+            "candidate.rulers.85007f59651c"
           ]
         },
         {
           "path": "XAxis",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "XAxisLocation",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "XColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "XColorMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "XDir",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "XLim",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "XLimitMethod",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "XLimMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "XScale",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YAxis",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YAxisLocation",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YColorMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YDir",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YLim",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YLimitMethod",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YLimMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "YScale",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "ZAxis",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "ZColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "ZColorMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "ZDir",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "ZLim",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "ZLimitMethod",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "ZLimMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         },
         {
           "path": "ZScale",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb5e5fef594a"
+            "candidate.rulers.f5456dc24f40"
           ]
         }
       ],
@@ -6443,76 +6443,6 @@
       ],
       "surfaces": [
         {
-          "candidateId": "candidate.ticks.1bd57d1dbfe2",
-          "categoryId": "ticks",
-          "categoryDisplayName": "Ticks",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
-          "capabilitySha256": "1bd57d1dbfe2b1dcb740ea3bcf44e556f6e99d70a3ed1eaf2b8566d7f62847e3",
-          "propertyPaths": [
-            "XTick",
-            "YTick",
-            "ZTick",
-            "XTickMode",
-            "YTickMode",
-            "ZTickMode",
-            "XTickLabel",
-            "YTickLabel",
-            "ZTickLabel",
-            "XTickLabelMode",
-            "YTickLabelMode",
-            "ZTickLabelMode",
-            "TickLabelInterpreter",
-            "XTickLabelRotation",
-            "YTickLabelRotation",
-            "ZTickLabelRotation",
-            "XTickLabelRotationMode",
-            "YTickLabelRotationMode",
-            "ZTickLabelRotationMode",
-            "XMinorTick",
-            "YMinorTick",
-            "ZMinorTick",
-            "TickDir",
-            "TickDirMode",
-            "TickLength"
-          ],
-          "propertyCapabilitySha256": [
-            "8fd304bcf39ad0ff2e8162401f07eb4acaf809dab4d031096f13b4af77df7002",
-            "d33c7e48424e418ea82c32ffeabe8e763c8aa7bbc261b830e0615a32eeaa6912",
-            "71645e01859dc24fbbef6e66d49f5908500f1f86ebd479c54dcd63c78934bfac",
-            "f85fe1593cb663f841f1e2190b41f98810a79cfa31604b7c8f09c9cd02b0db74",
-            "0b03fc8b98f429c36c64c1535c23e3e8b2f13a08ff5849c8c6f771ce622098f3",
-            "d68f85bd78149dbef54dfdcb9e3ab90a8cad9e421530b1b76f0e9ed38bb024d2",
-            "3ed8762904f9badbfd5fb1c193307b29f33c84bdd39bbb7f7a456c6b0e4e49ab",
-            "d6e6326a5b93442ef1da7ff805309d11af90e2ac35e9372b34449ebccb1eaee0",
-            "5d61be0666fe06a68b53e1462e7519699db89ef74e876b8af681d179da36bd8e",
-            "688ffe374b26e5b32c32d9402f4a4f2f79262ff2f7879bb9112303a8a93ec015",
-            "6046e418e04329bcd7fca531c7bd654e4f98962c362d4b60e7c16b61fd3c27f3",
-            "e5d1c718b95057e91b5debf625001c266b8a6e0a2dbca72fe518d14d3fc33be0",
-            "120e7716c7c207291479e7f39ec2ca8fde954e10dab7dd65afa7310af81f758d",
-            "06c8ce1c487db5dc104f384e89fcb5a4c7b292a48d75e84ebe665fa6c32624ad",
-            "ec2b3353cda2791f13925f8cc2383779fa660d5e72d2a48e5b65dc4a1891a4d2",
-            "12fbad58d4bd6d7cb4784b4dd51ff717120f3a1af7046775a554a037404b0d2f",
-            "1212aff507ca182144d4c0e5bc66304d472d90bd0e824b3b96effcf8f6cf3526",
-            "c61e864e38e28fb79b465e12b3b90b36786bdfa4ce9e548f5de63090bab17cd6",
-            "53381c581d8689fcd4e2415cf3e17a0f850633155bce12805cae50f31aa15301",
-            "18f61e2a682b922d841d57293f1cf19135269e19450f888cf8195a63f8ea8822",
-            "316c36612cda941aeeafa79f1183ef62421f2086df5d6f60de57876f2623a2e3",
-            "427158dbcdbc9c285d2b5ff8207c06effd984a4415c33e4444b34f988017b10c",
-            "d63b7a96ffbec06393f27b1ef8a2f957740970caf93c5aab42345dd7b863b9ae",
-            "7f77727d072a003937fbe310978f43a02b4f91e35e34b7b6ef2630c6c491609e",
-            "3e24e130a0a0a92e1c1655fc18cbe20d4336e97f1b206ad99e4ced71cb07f54d"
-          ],
-          "memberVariantIds": [
-            "axes",
-            "uiaxes"
-          ],
-          "reuseCount": 2,
-          "documentedCategoryOrders": [
-            2
-          ]
-        },
-        {
           "candidateId": "candidate.ticks.54cad1cfbd30",
           "categoryId": "ticks",
           "categoryDisplayName": "Ticks",
@@ -6545,6 +6475,76 @@
             "uislider-slider"
           ],
           "reuseCount": 7,
+          "documentedCategoryOrders": [
+            2
+          ]
+        },
+        {
+          "candidateId": "candidate.ticks.70f2e84890c5",
+          "categoryId": "ticks",
+          "categoryDisplayName": "Ticks",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
+          "capabilitySha256": "70f2e84890c51a1eee07088c9c7f016be11a0ad2a67e8dd3a1435b462fa6b864",
+          "propertyPaths": [
+            "XTick",
+            "YTick",
+            "ZTick",
+            "XTickMode",
+            "YTickMode",
+            "ZTickMode",
+            "XTickLabel",
+            "YTickLabel",
+            "ZTickLabel",
+            "XTickLabelMode",
+            "YTickLabelMode",
+            "ZTickLabelMode",
+            "TickLabelInterpreter",
+            "XTickLabelRotation",
+            "YTickLabelRotation",
+            "ZTickLabelRotation",
+            "XTickLabelRotationMode",
+            "YTickLabelRotationMode",
+            "ZTickLabelRotationMode",
+            "XMinorTick",
+            "YMinorTick",
+            "ZMinorTick",
+            "TickDir",
+            "TickDirMode",
+            "TickLength"
+          ],
+          "propertyCapabilitySha256": [
+            "8fd304bcf39ad0ff2e8162401f07eb4acaf809dab4d031096f13b4af77df7002",
+            "d33c7e48424e418ea82c32ffeabe8e763c8aa7bbc261b830e0615a32eeaa6912",
+            "71645e01859dc24fbbef6e66d49f5908500f1f86ebd479c54dcd63c78934bfac",
+            "c7cc89643111723a14d9cdaa307aaa892013c5cea64314719c6acff8e47616b5",
+            "bb9f5c6022fd87407c4d5868555154fc112919ea4d1b744e927e2911c3feb5fc",
+            "d68f85bd78149dbef54dfdcb9e3ab90a8cad9e421530b1b76f0e9ed38bb024d2",
+            "3ed8762904f9badbfd5fb1c193307b29f33c84bdd39bbb7f7a456c6b0e4e49ab",
+            "d6e6326a5b93442ef1da7ff805309d11af90e2ac35e9372b34449ebccb1eaee0",
+            "5d61be0666fe06a68b53e1462e7519699db89ef74e876b8af681d179da36bd8e",
+            "821bb992ddd253e720c1788a0ecf65aa0725de7bd01e1df9078152c32b72616d",
+            "5706e0c2bf39044c70b15391e73512f974219411d8b795209bc7d577e83ab186",
+            "e5d1c718b95057e91b5debf625001c266b8a6e0a2dbca72fe518d14d3fc33be0",
+            "120e7716c7c207291479e7f39ec2ca8fde954e10dab7dd65afa7310af81f758d",
+            "06c8ce1c487db5dc104f384e89fcb5a4c7b292a48d75e84ebe665fa6c32624ad",
+            "ec2b3353cda2791f13925f8cc2383779fa660d5e72d2a48e5b65dc4a1891a4d2",
+            "12fbad58d4bd6d7cb4784b4dd51ff717120f3a1af7046775a554a037404b0d2f",
+            "2521e20103894b0a77954e30e2dff2084a06407537092a5802d4c830636e838d",
+            "7155c0273ee2e0f844f295f6e6cda85446858b62287989253b39e4741383f5b9",
+            "53381c581d8689fcd4e2415cf3e17a0f850633155bce12805cae50f31aa15301",
+            "18f61e2a682b922d841d57293f1cf19135269e19450f888cf8195a63f8ea8822",
+            "316c36612cda941aeeafa79f1183ef62421f2086df5d6f60de57876f2623a2e3",
+            "427158dbcdbc9c285d2b5ff8207c06effd984a4415c33e4444b34f988017b10c",
+            "d63b7a96ffbec06393f27b1ef8a2f957740970caf93c5aab42345dd7b863b9ae",
+            "7f77727d072a003937fbe310978f43a02b4f91e35e34b7b6ef2630c6c491609e",
+            "3e24e130a0a0a92e1c1655fc18cbe20d4336e97f1b206ad99e4ced71cb07f54d"
+          ],
+          "memberVariantIds": [
+            "axes",
+            "uiaxes"
+          ],
+          "reuseCount": 2,
           "documentedCategoryOrders": [
             2
           ]
@@ -6768,7 +6768,7 @@
           "path": "TickDir",
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2",
+            "candidate.ticks.70f2e84890c5",
             "candidate.ticks.a33c10e08649",
             "candidate.ticks.b7aaf51eaaec"
           ]
@@ -6777,7 +6777,7 @@
           "path": "TickDirMode",
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2",
+            "candidate.ticks.70f2e84890c5",
             "candidate.ticks.a33c10e08649",
             "candidate.ticks.b7aaf51eaaec"
           ]
@@ -6793,7 +6793,7 @@
           "path": "TickLabelInterpreter",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2",
+            "candidate.ticks.70f2e84890c5",
             "candidate.ticks.b7aaf51eaaec"
           ]
         },
@@ -6801,7 +6801,7 @@
           "path": "TickLength",
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2",
+            "candidate.ticks.70f2e84890c5",
             "candidate.ticks.a33c10e08649",
             "candidate.ticks.b7aaf51eaaec"
           ]
@@ -6810,147 +6810,147 @@
           "path": "XMinorTick",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "XTick",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "XTickLabel",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "XTickLabelMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "XTickLabelRotation",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "XTickLabelRotationMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "XTickMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "YMinorTick",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "YTick",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "YTickLabel",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "YTickLabelMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "YTickLabelRotation",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "YTickLabelRotationMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "YTickMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "ZMinorTick",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "ZTick",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "ZTickLabel",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "ZTickLabelMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "ZTickLabelRotation",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "ZTickLabelRotationMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         },
         {
           "path": "ZTickMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.ticks.1bd57d1dbfe2"
+            "candidate.ticks.70f2e84890c5"
           ]
         }
       ],

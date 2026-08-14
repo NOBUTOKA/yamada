@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "d138e74152e8eccc86ceed5854b61deaf289dd8a3f5872ab1198be9f4cb23aeb",
+  "inputSha256": "3cb4b2769d3a1d5531103e9b83afcf3c004a05ef36c3abdd692ed88de47dbba2",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -2298,7 +2298,7 @@
       ]
     },
     {
-      "id": "exact.rulers.cb5e5fef594a",
+      "id": "exact.rulers.f5456dc24f40",
       "kind": "exactCategory",
       "categoryId": "rulers",
       "entries": [
@@ -2369,7 +2369,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2389,7 +2393,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2433,7 +2441,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "tickaligned",
+              "tight",
+              "padded"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2453,7 +2466,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "tickaligned",
+              "tight",
+              "padded"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2818,7 +2836,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "linear",
+              "log"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2838,7 +2860,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "linear",
+              "log"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2992,7 +3018,146 @@
       ]
     },
     {
-      "id": "exact.ticks.1bd57d1dbfe2",
+      "id": "exact.ticks.54cad1cfbd30",
+      "kind": "exactCategory",
+      "categoryId": "ticks",
+      "entries": [
+        {
+          "path": "MajorTicks",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MajorTicksMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MajorTickLabels",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MajorTickLabelsMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MinorTicks",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MinorTicksMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "exact.ticks.70f2e84890c5",
       "kind": "exactCategory",
       "categoryId": "ticks",
       "entries": [
@@ -3063,7 +3228,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3083,7 +3252,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3193,7 +3366,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3213,7 +3390,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3339,7 +3520,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3359,7 +3544,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3520,145 +3709,6 @@
           "affectsDisplay": true,
           "previewPolicy": "apply",
           "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.ticks.54cad1cfbd30",
-      "kind": "exactCategory",
-      "categoryId": "ticks",
-      "entries": [
-        {
-          "path": "MajorTicks",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MajorTicksMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "auto",
-              "manual"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MajorTickLabels",
-          "valueContract": {
-            "kind": "stringList",
-            "matlabClasses": [
-              "categorical",
-              "cell",
-              "char",
-              "string"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "stringList",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MajorTickLabelsMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "auto",
-              "manual"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MinorTicks",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MinorTicksMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "auto",
-              "manual"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -8127,7 +8177,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8166,7 +8220,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9371,12 +9429,14 @@
             "allowsEmpty": false,
             "constraints": []
           },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         }
       ]
