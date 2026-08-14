@@ -1,8 +1,8 @@
 {
     "artifactVersion":  1,
     "matlabRelease":  "R2024a",
-    "baselineGitCommit":  "24017b2d966ebe5019dd5edb9beeb7b20df0b883",
-    "inputSha256":  "7a58dfd5870ead6c836394117b117f2e319f188437dad0fee21bac45809088f2",
+    "ledgerBaselineGitCommit":  "24017b2d966ebe5019dd5edb9beeb7b20df0b883",
+    "inputSha256":  "8c882f8846485833c84d0b44d283060ec5285898606982cf5924458f1247b49c",
     "componentDocumentCount":  48,
     "componentVariantIds":  [
                                 "axes",
@@ -56,7 +56,25 @@
                             ],
     "propertyEntryCount":  1825,
     "categoryOccurrenceCount":  415,
+    "categoryScopeCounts":  [
+                                {
+                                    "scope":  "crossCutting",
+                                    "categoryCount":  8
+                                },
+                                {
+                                    "scope":  "familyScoped",
+                                    "categoryCount":  21
+                                },
+                                {
+                                    "scope":  "variantLocal",
+                                    "categoryCount":  26
+                                }
+                            ],
     "inputFiles":  [
+                       {
+                           "path":  "category-scope-classification.json",
+                           "sha256":  "703cc4b49c12e1a2715e3572602c741b35c2bb24b79f8c93b68bd84d03bdcb04"
+                       },
                        {
                            "path":  "components/axes.json",
                            "sha256":  "4f41c04f0e63f628dbd44cacd404040803d6e100cc1f9534b2b1d94a69b68d8c"
@@ -268,7 +286,8 @@
                                       "category and property source-page order",
                                       "category references and property constraint targets",
                                       "acyclic property constraints",
-                                      "parent-context rule context references"
+                                      "parent-context rule context references",
+                                      "complete category sharing-scope classification"
                                   ]
                    }
 }

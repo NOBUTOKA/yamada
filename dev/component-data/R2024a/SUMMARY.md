@@ -118,6 +118,13 @@ The category-oriented grouping procedure is defined in
 directory as `-ReleaseDirectory` to validate the grouping-relevant ledger and
 regenerate [`grouping`](grouping).
 
+[`category-scope-classification.json`](category-scope-classification.json)
+records the product decision that separates cross-cutting categories from
+family-scoped and variant-local categories. It does not alter official
+documentation categories. The generator limits the Step 4 and Step 6 review
+queues to the cross-cutting scope while retaining family-local differences as
+reference evidence.
+
 The frozen baseline, category-surface matrix, exact clusters, and initial
 complete shared-group candidates are JSON artifacts in that directory. The
 human review queue is [`grouping/JUDGMENT_CANDIDATES.md`](grouping/JUDGMENT_CANDIDATES.md):

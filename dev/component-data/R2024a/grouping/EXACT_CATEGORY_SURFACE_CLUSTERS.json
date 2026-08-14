@@ -1,12 +1,14 @@
 {
     "artifactVersion":  1,
     "matlabRelease":  "R2024a",
-    "inputSha256":  "7a58dfd5870ead6c836394117b117f2e319f188437dad0fee21bac45809088f2",
+    "inputSha256":  "8c882f8846485833c84d0b44d283060ec5285898606982cf5924458f1247b49c",
     "clusters":  [
                      {
                          "candidateId":  "candidate.boxstyling.0b877a731bbf",
                          "categoryId":  "boxstyling",
                          "categoryDisplayName":  "Box Styling",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family visual styling.",
                          "capabilitySha256":  "0b877a731bbfc9fc41988a7342fa390eaf391f98a5a5c3c330a57d015dd1c7ca",
                          "propertyPaths":  [
                                                "Color",
@@ -40,6 +42,8 @@
                          "candidateId":  "candidate.boxstyling.3f421b047bdc",
                          "categoryId":  "boxstyling",
                          "categoryDisplayName":  "Box Styling",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family visual styling.",
                          "capabilitySha256":  "3f421b047bdca9c71841950f40415a9132cab306f68cb11763bd8d7e0936dd62",
                          "propertyPaths":  [
                                                "Color",
@@ -71,6 +75,8 @@
                          "candidateId":  "candidate.boxstyling.5ac43387dcba",
                          "categoryId":  "boxstyling",
                          "categoryDisplayName":  "Box Styling",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family visual styling.",
                          "capabilitySha256":  "5ac43387dcba32f9c8e6bb3572846208adc7e0e2c1cfc843c62c8962f783e09c",
                          "propertyPaths":  [
                                                "Color",
@@ -96,6 +102,8 @@
                          "candidateId":  "candidate.boxstyling.da7a61ab0fde",
                          "categoryId":  "boxstyling",
                          "categoryDisplayName":  "Box Styling",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family visual styling.",
                          "capabilitySha256":  "da7a61ab0fde77dac0c602bf06b2d7e220253fc69d33059e22aa84bf6172c994",
                          "propertyPaths":  [
                                                "Color",
@@ -119,6 +127,8 @@
                          "candidateId":  "candidate.button.1d395e06950c",
                          "categoryId":  "button",
                          "categoryDisplayName":  "Button",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Button-like control content and state.",
                          "capabilitySha256":  "1d395e06950c316b3ce74f42badb36620e960a70f49074ee74c76288034e60f9",
                          "propertyPaths":  [
                                                "Text",
@@ -142,6 +152,8 @@
                          "candidateId":  "candidate.button.5ca9d423e99e",
                          "categoryId":  "button",
                          "categoryDisplayName":  "Button",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Button-like control content and state.",
                          "capabilitySha256":  "5ca9d423e99e6dfa60ad4b4dc5089fda256d4795fa481ee467e331c435d14582",
                          "propertyPaths":  [
                                                "Value",
@@ -167,6 +179,8 @@
                          "candidateId":  "candidate.button.6b13ca228077",
                          "categoryId":  "button",
                          "categoryDisplayName":  "Button",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Button-like control content and state.",
                          "capabilitySha256":  "6b13ca228077371e23502790ae4a2f1e3f9f9c00b955b34dfab8e802a09f9e8f",
                          "propertyPaths":  [
                                                "Value",
@@ -193,6 +207,8 @@
                          "candidateId":  "candidate.callbackexecutioncontrol.24ca74ea269b",
                          "categoryId":  "callbackexecutioncontrol",
                          "categoryDisplayName":  "Callback Execution Control",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Execution behavior is shared across unrelated UI families.",
                          "capabilitySha256":  "24ca74ea269bde0e6c3650516e074170a3514ff90cc49869bbd0d2df3058814e",
                          "propertyPaths":  [
                                                "Interruptible",
@@ -221,6 +237,8 @@
                          "candidateId":  "candidate.callbackexecutioncontrol.57ccb15b8d86",
                          "categoryId":  "callbackexecutioncontrol",
                          "categoryDisplayName":  "Callback Execution Control",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Execution behavior is shared across unrelated UI families.",
                          "capabilitySha256":  "57ccb15b8d864dd9373fe212b59d282494920f3a62f06ef363a23b6bbe55e01e",
                          "propertyPaths":  [
                                                "Interruptible",
@@ -248,6 +266,8 @@
                          "candidateId":  "candidate.callbackexecutioncontrol.ab6e8410be1a",
                          "categoryId":  "callbackexecutioncontrol",
                          "categoryDisplayName":  "Callback Execution Control",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Execution behavior is shared across unrelated UI families.",
                          "capabilitySha256":  "ab6e8410be1a458ba31e43fb7e524c927e630033ea0795a89caff85efa990d16",
                          "propertyPaths":  [
                                                "Interruptible",
@@ -273,6 +293,8 @@
                          "candidateId":  "candidate.callbackexecutioncontrol.af0672314d5d",
                          "categoryId":  "callbackexecutioncontrol",
                          "categoryDisplayName":  "Callback Execution Control",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Execution behavior is shared across unrelated UI families.",
                          "capabilitySha256":  "af0672314d5d5fed90ef07876a2cc482c104c31acf390e6f2c8e7711845fb1e1",
                          "propertyPaths":  [
                                                "Interruptible",
@@ -335,6 +357,8 @@
                          "candidateId":  "candidate.callbackexecutioncontrol.e71d354664a7",
                          "categoryId":  "callbackexecutioncontrol",
                          "categoryDisplayName":  "Callback Execution Control",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Execution behavior is shared across unrelated UI families.",
                          "capabilitySha256":  "e71d354664a787b60a19ce7b9ea9d5a1a9dc2267734553277af8d0f9ef20a6c7",
                          "propertyPaths":  [
                                                "Interruptible",
@@ -366,6 +390,8 @@
                          "candidateId":  "candidate.callbacks.03280e772a0f",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "03280e772a0f8e0a3b6c7cb92c3a9c11cf00787580d1bbbc81961f92e61788ed",
                          "propertyPaths":  [
                                                "ClickedCallback",
@@ -393,6 +419,8 @@
                          "candidateId":  "candidate.callbacks.0d48e44e8b1d",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "0d48e44e8b1d7913d4aff185dbf6c5a59c4f47047d18b42271b742750f57f5ee",
                          "propertyPaths":  [
                                                "SizeChangedFcn",
@@ -420,6 +448,8 @@
                          "candidateId":  "candidate.callbacks.5650fea640d9",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "5650fea640d9f4a7c8d55e42e35db918ff36ab778b055f6050bfb5d2906b142d",
                          "propertyPaths":  [
                                                "MenuSelectedFcn",
@@ -443,6 +473,8 @@
                          "candidateId":  "candidate.callbacks.7076bea35fba",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "7076bea35fbac99a865caa317eadf2c2c6173c69725b8cfdae22ee6c8d64bab6",
                          "propertyPaths":  [
                                                "SelectionChangedFcn",
@@ -472,6 +504,8 @@
                          "candidateId":  "candidate.callbacks.7e2b263b6cab",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "7e2b263b6cabbfe4bfe38c9f05d04e34c57246205f3d1a8f460059588a716cec",
                          "propertyPaths":  [
                                                "ClickedCallback",
@@ -495,6 +529,8 @@
                          "candidateId":  "candidate.callbacks.87707f141057",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "87707f1410576c1411900e0e78ca065a7220f54b01536491214927e45d8b195b",
                          "propertyPaths":  [
                                                "SelectionChangedFcn",
@@ -528,6 +564,8 @@
                          "candidateId":  "candidate.callbacks.8d6ea32f3c2f",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "8d6ea32f3c2f72e92c6398138e8a4be2b0fed0dae60d3461d336032d834ad03f",
                          "propertyPaths":  [
                                                "CheckedNodesChangedFcn",
@@ -563,6 +601,8 @@
                          "candidateId":  "candidate.callbacks.8db5c63a12f4",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "8db5c63a12f40de8681f8b4d10b9799e4873df0521e2091d638f9c6fd164f88f",
                          "propertyPaths":  [
                                                "ValueChangedFcn",
@@ -590,6 +630,8 @@
                          "candidateId":  "candidate.callbacks.901397ca1707",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "901397ca1707cad406989edd1e9d89572b102ba76b9eb2f0bb6742fe48d29688",
                          "propertyPaths":  [
                                                "HyperlinkClickedFcn",
@@ -613,6 +655,8 @@
                          "candidateId":  "candidate.callbacks.b4dff8d98206",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "b4dff8d98206728242f38cf2aa49aedca6b4d3f78aafb518afd4f6949731fc54",
                          "propertyPaths":  [
                                                "ContextMenuOpeningFcn",
@@ -636,6 +680,8 @@
                          "candidateId":  "candidate.callbacks.bf0fb0d93b49",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "bf0fb0d93b491918107051fa801ffb8c67a49d8392204d38cf16cf836cc5c54c",
                          "propertyPaths":  [
                                                "ValueChangedFcn",
@@ -667,6 +713,8 @@
                          "candidateId":  "candidate.callbacks.bf83ec9f5cad",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "bf83ec9f5cad336a05d07de69fcca52fffa76baac8aedda0f11756e8aee5b861",
                          "propertyPaths":  [
                                                "DataChangedFcn",
@@ -692,6 +740,8 @@
                          "candidateId":  "candidate.callbacks.d0526013e398",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "d0526013e398abf5d81707fa3b9becf3baff6927394c1e6ab53c15969167ffb4",
                          "propertyPaths":  [
                                                "CreateFcn",
@@ -713,6 +763,8 @@
                          "candidateId":  "candidate.callbacks.dc03139f9cd2",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "dc03139f9cd2ac731105a02304ac6048128660c2a78d6a0bfdaff2426fa45251",
                          "propertyPaths":  [
                                                "ValueChangedFcn",
@@ -740,6 +792,8 @@
                          "candidateId":  "candidate.callbacks.e80eb7e9b42c",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "e80eb7e9b42c2b64d6b351e3d3617884348837a6c61c697008043d280e6597dc",
                          "propertyPaths":  [
                                                "ImageClickedFcn",
@@ -763,6 +817,8 @@
                          "candidateId":  "candidate.callbacks.e9858937ea19",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "e9858937ea198e9a4da5a455cd27d076c039e11b5412f930e3fde7c4c25b72e2",
                          "propertyPaths":  [
                                                "ValueChangedFcn",
@@ -794,6 +850,8 @@
                          "candidateId":  "candidate.callbacks.f386f43cec2a",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "f386f43cec2a627f190eeae95bc7e4e63eb2e9df63d8424fde60b78a6557c8f5",
                          "propertyPaths":  [
                                                "CreateFcn",
@@ -827,6 +885,8 @@
                          "candidateId":  "candidate.callbacks.fce3af49dba1",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "fce3af49dba1537d4b392453b705b28948a42800d0c7d08c4818cec2adb9f320",
                          "propertyPaths":  [
                                                "CellEditCallback",
@@ -858,6 +918,8 @@
                          "candidateId":  "candidate.callbacks.ff25f3d0864c",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "ff25f3d0864c744298368092fd50801374c369d515d4affce3a75f499a401a6d",
                          "propertyPaths":  [
                                                "ButtonPushedFcn",
@@ -881,6 +943,8 @@
                          "candidateId":  "candidate.callbacks.ff87b987b579",
                          "categoryId":  "callbacks",
                          "categoryDisplayName":  "Callbacks",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Lifecycle and interaction callbacks recur across unrelated UI families.",
                          "capabilitySha256":  "ff87b987b57927e205487881e1b429a6eaf0b7072d1d4341b7ddc9e55fbc05f0",
                          "propertyPaths":  [
                                                "ButtonDownFcn",
@@ -908,6 +972,8 @@
                          "candidateId":  "candidate.checkbox.17be168eead7",
                          "categoryId":  "checkbox",
                          "categoryDisplayName":  "Check Box",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Check Box-specific settings.",
                          "capabilitySha256":  "17be168eead744fd58643cb75b654eee6b9bbb1389adf96b564002ead26b7ca1",
                          "propertyPaths":  [
                                                "Value",
@@ -931,6 +997,8 @@
                          "candidateId":  "candidate.colorandstyling.0b611eb4e625",
                          "categoryId":  "colorandstyling",
                          "categoryDisplayName":  "Color and Styling",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Container-family styling.",
                          "capabilitySha256":  "0b611eb4e625979c7f9e47c6c9567b10718766ba6a4fddd217eec4b2a93f4a29",
                          "propertyPaths":  [
                                                "ForegroundColor",
@@ -954,6 +1022,8 @@
                          "candidateId":  "candidate.colorandstyling.9004d2e673d3",
                          "categoryId":  "colorandstyling",
                          "categoryDisplayName":  "Color and Styling",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Container-family styling.",
                          "capabilitySha256":  "9004d2e673d369544e571c3c57bac53e35b92663bd651c2861bf88d4e30815e2",
                          "propertyPaths":  [
                                                "ForegroundColor",
@@ -982,6 +1052,8 @@
                          "candidateId":  "candidate.colorandtransparencymaps.bafbbb8bf769",
                          "categoryId":  "colorandtransparencymaps",
                          "categoryDisplayName":  "Color and Transparency Maps",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family map configuration.",
                          "capabilitySha256":  "bafbbb8bf769f075353842e7433cffeda5fa1a5d64e18498d974a55aee7d0527",
                          "propertyPaths":  [
                                                "Colormap",
@@ -1019,6 +1091,8 @@
                          "candidateId":  "candidate.colorpicker.b49fd8fdcedd",
                          "categoryId":  "colorpicker",
                          "categoryDisplayName":  "Color Picker",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Color Picker-specific settings.",
                          "capabilitySha256":  "b49fd8fdcedd2a3b320f64f06fb8fef5e8098a1446d511e5722b6b67f7741860",
                          "propertyPaths":  [
                                                "Value",
@@ -1040,6 +1114,8 @@
                          "candidateId":  "candidate.color.5136e7ef41e7",
                          "categoryId":  "color",
                          "categoryDisplayName":  "Color",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "The same heading names unrelated Color Picker, lamp, image, and layout surfaces.",
                          "capabilitySha256":  "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3",
                          "propertyPaths":  [
                                                "BackgroundColor"
@@ -1061,6 +1137,8 @@
                          "candidateId":  "candidate.color.6fd52dc1c107",
                          "categoryId":  "color",
                          "categoryDisplayName":  "Color",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "The same heading names unrelated Color Picker, lamp, image, and layout surfaces.",
                          "capabilitySha256":  "6fd52dc1c107ca7b3b1a363298874ac9f935e106aa4d194db9f86addc52158ef",
                          "propertyPaths":  [
                                                "Color"
@@ -1080,6 +1158,8 @@
                          "candidateId":  "candidate.commoncallbacks.ff87b987b579",
                          "categoryId":  "commoncallbacks",
                          "categoryDisplayName":  "Common Callbacks",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "uifigure-specific callback surface.",
                          "capabilitySha256":  "ff87b987b57927e205487881e1b429a6eaf0b7072d1d4341b7ddc9e55fbc05f0",
                          "propertyPaths":  [
                                                "ButtonDownFcn",
@@ -1103,6 +1183,8 @@
                          "candidateId":  "candidate.datepicker.aebf225dd07b",
                          "categoryId":  "datepicker",
                          "categoryDisplayName":  "Date Picker",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Date Picker-specific settings.",
                          "capabilitySha256":  "aebf225dd07bea9230f7a8c983184b08bc7f70c3a66e7e02f53558bb80711f36",
                          "propertyPaths":  [
                                                "Value",
@@ -1132,6 +1214,8 @@
                          "candidateId":  "candidate.dropdown.f7e935c3d330",
                          "categoryId":  "dropdown",
                          "categoryDisplayName":  "Drop-Down",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Drop-Down-specific settings.",
                          "capabilitySha256":  "f7e935c3d33090ae191712af76c7edd3f37fa5cf23e20975ec2ea13b9b2f93b1",
                          "propertyPaths":  [
                                                "Value",
@@ -1159,6 +1243,8 @@
                          "candidateId":  "candidate.figurebasedappsonly.3dcae9e56e9e",
                          "categoryId":  "figurebasedappsonly",
                          "categoryDisplayName":  "figure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app container surface, not a generic control capability.",
                          "capabilitySha256":  "3dcae9e56e9ec7e36d425c33c56692621f493d905e69417dae5edfa3b69a5d74",
                          "propertyPaths":  [
                                                "ShadowColor"
@@ -1179,6 +1265,8 @@
                          "candidateId":  "candidate.figurebasedappsonly.a3f692c0c1eb",
                          "categoryId":  "figurebasedappsonly",
                          "categoryDisplayName":  "figure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app container surface, not a generic control capability.",
                          "capabilitySha256":  "a3f692c0c1eb4a850551329d7411c89ff4cbec7955074010e44e03ac24a2e713",
                          "propertyPaths":  [
                                                "Extent"
@@ -1198,6 +1286,8 @@
                          "candidateId":  "candidate.fontandcolor.042dbfc13de8",
                          "categoryId":  "fontandcolor",
                          "categoryDisplayName":  "Font and Color",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font and color capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "042dbfc13de874dee105f38256a5f6e478f74b463669d8e62f61c9ff07d6e158",
                          "propertyPaths":  [
                                                "FontName",
@@ -1229,6 +1319,8 @@
                          "candidateId":  "candidate.fontandcolor.1c9b39207ba1",
                          "categoryId":  "fontandcolor",
                          "categoryDisplayName":  "Font and Color",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font and color capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "1c9b39207ba1a41ab14c24aca6ce805c2b4a4bcddc3ea6a69aebc7bdb3dbf978",
                          "propertyPaths":  [
                                                "FontName",
@@ -1263,6 +1355,8 @@
                          "candidateId":  "candidate.fontandcolor.26568df5fb66",
                          "categoryId":  "fontandcolor",
                          "categoryDisplayName":  "Font and Color",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font and color capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "26568df5fb661ea10e4c781ab52fcc0f2279a0fb6b3c43fa46ad66214f558fc5",
                          "propertyPaths":  [
                                                "FontName",
@@ -1305,6 +1399,8 @@
                          "candidateId":  "candidate.fontandcolor.ec9da849d336",
                          "categoryId":  "fontandcolor",
                          "categoryDisplayName":  "Font and Color",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font and color capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "ec9da849d336f0ca28747344a12eceab21f9278aee5cd762b68997c167cb8ed9",
                          "propertyPaths":  [
                                                "FontName",
@@ -1332,6 +1428,8 @@
                          "candidateId":  "candidate.font.571c323d68a0",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "571c323d68a03a1c1bd797f0e4de9347d668a9b17aeef7b16885596b2266f597",
                          "propertyPaths":  [
                                                "FontName",
@@ -1362,6 +1460,8 @@
                          "candidateId":  "candidate.font.9005c7baf356",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "9005c7baf356e7f25bc8d79dd67aef077ab499f3adb98f1b3639fadc0b7658bb",
                          "propertyPaths":  [
                                                "FontName",
@@ -1401,6 +1501,8 @@
                          "candidateId":  "candidate.font.b1143fc0354f",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "b1143fc0354fbf070475c1009cff0c64770ce09e4705be13e10be71b2caf84e0",
                          "propertyPaths":  [
                                                "FontName",
@@ -1438,6 +1540,8 @@
                          "candidateId":  "candidate.font.c4f859eab8e7",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "c4f859eab8e73728c89876fea43e084ad45a376892cd7f704ee2d9a265d377b5",
                          "propertyPaths":  [
                                                "FontName",
@@ -1475,6 +1579,8 @@
                          "candidateId":  "candidate.font.eb9db0ef0080",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "eb9db0ef008068969478360f54254dc44ea19e3cef09373a28285b440c95a308",
                          "propertyPaths":  [
                                                "FontName",
@@ -1514,6 +1620,8 @@
                          "candidateId":  "candidate.font.ec9da849d336",
                          "categoryId":  "font",
                          "categoryDisplayName":  "Font",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Font capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "ec9da849d336f0ca28747344a12eceab21f9278aee5cd762b68997c167cb8ed9",
                          "propertyPaths":  [
                                                "FontName",
@@ -1549,6 +1657,8 @@
                          "candidateId":  "candidate.gauge.7e0539ef684b",
                          "categoryId":  "gauge",
                          "categoryDisplayName":  "Gauge",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Gauge-style and shape settings.",
                          "capabilitySha256":  "7e0539ef684b4808b60c3064ca5348a9028a48524b523c9b4b7f9f5a63be4712",
                          "propertyPaths":  [
                                                "Value",
@@ -1576,6 +1686,8 @@
                          "candidateId":  "candidate.gauge.ed24eb68478d",
                          "categoryId":  "gauge",
                          "categoryDisplayName":  "Gauge",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Gauge-style and shape settings.",
                          "capabilitySha256":  "ed24eb68478d0120595747e88e5cc266b0486d5d2205dc440fd19c1c6fb45ae7",
                          "propertyPaths":  [
                                                "Value",
@@ -1603,6 +1715,8 @@
                          "candidateId":  "candidate.gauge.ff6a72209bfa",
                          "categoryId":  "gauge",
                          "categoryDisplayName":  "Gauge",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Gauge-style and shape settings.",
                          "capabilitySha256":  "ff6a72209bfa82073817e80fd0c37c355e8a8e5caf214c30581f532e61a7ffd3",
                          "propertyPaths":  [
                                                "Value",
@@ -1633,6 +1747,8 @@
                          "candidateId":  "candidate.gridlines.28ef01fbfd98",
                          "categoryId":  "gridlines",
                          "categoryDisplayName":  "Grid Lines",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Polar axes-specific grid-line settings.",
                          "capabilitySha256":  "28ef01fbfd980c3087118d411f9f1c9fb644f2d5b253c3e88c6a459cc9841601",
                          "propertyPaths":  [
                                                "RGrid",
@@ -1680,6 +1796,8 @@
                          "candidateId":  "candidate.grids.356da5448044",
                          "categoryId":  "grids",
                          "categoryDisplayName":  "Grids",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family grid settings.",
                          "capabilitySha256":  "356da544804407cc2e6e1424a2419f7201151f58c7a1ec12ce22768c34a082e2",
                          "propertyPaths":  [
                                                "XGrid",
@@ -1740,6 +1858,8 @@
                          "candidateId":  "candidate.grids.9e6325e30c22",
                          "categoryId":  "grids",
                          "categoryDisplayName":  "Grids",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family grid settings.",
                          "capabilitySha256":  "9e6325e30c22f804f91eb7f9715c93e8367d03d65b8ccb50c377695e92171448",
                          "propertyPaths":  [
                                                "Grid",
@@ -1769,6 +1889,8 @@
                          "candidateId":  "candidate.grid.b88171d74ea4",
                          "categoryId":  "grid",
                          "categoryDisplayName":  "Grid",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Grid Layout-specific settings.",
                          "capabilitySha256":  "b88171d74ea445f83bc9b84dda72edd66afa66d6cac2e50c377f612733533c3d",
                          "propertyPaths":  [
                                                "ColumnWidth",
@@ -1796,6 +1918,8 @@
                          "candidateId":  "candidate.html.0566f216220a",
                          "categoryId":  "html",
                          "categoryDisplayName":  "HTML",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "HTML component-specific settings.",
                          "capabilitySha256":  "0566f216220a08bc6cef52fda9a75fd261c27f5b4aa0c74b5ec7a03c43215c25",
                          "propertyPaths":  [
                                                "HTMLSource",
@@ -1817,6 +1941,8 @@
                          "candidateId":  "candidate.hyperlink.d9374483e300",
                          "categoryId":  "hyperlink",
                          "categoryDisplayName":  "Hyperlink",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Hyperlink-specific settings.",
                          "capabilitySha256":  "d9374483e3002bf301c62829e3a8645072b24745debd446c2603242920688728",
                          "propertyPaths":  [
                                                "Text",
@@ -1842,6 +1968,8 @@
                          "candidateId":  "candidate.identifiers.492d0f275c68",
                          "categoryId":  "identifiers",
                          "categoryDisplayName":  "Identifiers",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Identity and design-time metadata recur across unrelated UI families.",
                          "capabilitySha256":  "492d0f275c687437f2881c0eb78c875e67d84b01a4f23c48df71b58248a36935",
                          "propertyPaths":  [
                                                "Name",
@@ -1875,6 +2003,8 @@
                          "candidateId":  "candidate.identifiers.52581edd2872",
                          "categoryId":  "identifiers",
                          "categoryDisplayName":  "Identifiers",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Identity and design-time metadata recur across unrelated UI families.",
                          "capabilitySha256":  "52581edd2872136316c2b30217a53c3fb65c7561a77e0f90b811e3c7fb8dbb0e",
                          "propertyPaths":  [
                                                "Type",
@@ -1944,6 +2074,8 @@
                          "candidateId":  "candidate.identifiers.c2b61000fe53",
                          "categoryId":  "identifiers",
                          "categoryDisplayName":  "Identifiers",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Identity and design-time metadata recur across unrelated UI families.",
                          "capabilitySha256":  "c2b61000fe53c44f6f2deb4d498ba89a3d7bf2a50058f730c2c3d9e4a10c2d6c",
                          "propertyPaths":  [
                                                "Type",
@@ -1973,6 +2105,8 @@
                          "candidateId":  "candidate.image.fa64506a0dae",
                          "categoryId":  "image",
                          "categoryDisplayName":  "Image",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Image-specific settings.",
                          "capabilitySha256":  "fa64506a0dae7cdc1167e89d017076a081789441b7168d71cfa9452cdebab78c",
                          "propertyPaths":  [
                                                "ImageSource",
@@ -1998,6 +2132,8 @@
                          "candidateId":  "candidate.interactivity.01e42b0a874b",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc",
                          "propertyPaths":  [
                                                "ContextMenu"
@@ -2017,6 +2153,8 @@
                          "candidateId":  "candidate.interactivity.044758088fdd",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "044758088fdd7b1d5f8e57f7979cbd66ef5e31a2790b5453be33c245c7bc9860",
                          "propertyPaths":  [
                                                "Visible",
@@ -2040,6 +2178,8 @@
                          "candidateId":  "candidate.interactivity.0a221e884499",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "0a221e8844991c23d7afc06da6817ce90176cb897025f056d0cdd38a32986544",
                          "propertyPaths":  [
                                                "Visible",
@@ -2073,6 +2213,8 @@
                          "candidateId":  "candidate.interactivity.0cea7bcd84a2",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "0cea7bcd84a245930eb16691e61f4e67ef9eb15bfad000ecab370ff438e7139d",
                          "propertyPaths":  [
                                                "InteractionOptions",
@@ -2106,6 +2248,8 @@
                          "candidateId":  "candidate.interactivity.132025c2649b",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "132025c2649b0eb8fd31f419f4f65ffc8b2d8b39d1b00ba8feba1d00655f55ff",
                          "propertyPaths":  [
                                                "InteractionOptions",
@@ -2139,6 +2283,8 @@
                          "candidateId":  "candidate.interactivity.24edaa43c7ab",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "24edaa43c7abc5ba7e9cdc25c8db89ee4154dfec855495df119705e8fabe942e",
                          "propertyPaths":  [
                                                "Visible",
@@ -2172,6 +2318,8 @@
                          "candidateId":  "candidate.interactivity.2868c87f98d0",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "2868c87f98d0dcd3417611bf70183b5548f23e762aaf428559ca1ee683d13a0e",
                          "propertyPaths":  [
                                                "Visible",
@@ -2199,6 +2347,8 @@
                          "candidateId":  "candidate.interactivity.3dfc65bf61ec",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "3dfc65bf61ec066703690bdc08f65b7534021b59a4d174449473c1c3e0926244",
                          "propertyPaths":  [
                                                "Visible",
@@ -2220,6 +2370,8 @@
                          "candidateId":  "candidate.interactivity.4cda3394469e",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "4cda3394469e7f0fce258c07f606765f5362b3d9a3df196abf369b340ca8d1b8",
                          "propertyPaths":  [
                                                "InteractionOptions",
@@ -2253,6 +2405,8 @@
                          "candidateId":  "candidate.interactivity.56e02904d7dd",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "56e02904d7dd305a643405774e1917e806c683e17811b933907eb28fc03e747a",
                          "propertyPaths":  [
                                                "Toolbar",
@@ -2284,6 +2438,8 @@
                          "candidateId":  "candidate.interactivity.697316998a10",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "697316998a1070b29e02aa2031bb4b98d2b950a798aa6bf3ac21b069cc0ec3b7",
                          "propertyPaths":  [
                                                "Visible",
@@ -2307,6 +2463,8 @@
                          "candidateId":  "candidate.interactivity.75ceaf80f79f",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "75ceaf80f79f6b0b7ec7fa6a7ce1c8de6b4dbc40ab13e526b948643a27d6c6e4",
                          "propertyPaths":  [
                                                "Visible",
@@ -2330,6 +2488,8 @@
                          "candidateId":  "candidate.interactivity.7af7bc739b97",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "7af7bc739b97f878899f2552f335349229141172770c72069fb8ebe97f925faa",
                          "propertyPaths":  [
                                                "Tooltip",
@@ -2351,6 +2511,8 @@
                          "candidateId":  "candidate.interactivity.8af34219bf03",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "8af34219bf036724d3ad40652972a181062f5db0444b1be0515a27559dc3aed5",
                          "propertyPaths":  [
                                                "Visible",
@@ -2379,6 +2541,8 @@
                          "candidateId":  "candidate.interactivity.96cee3cc0efa",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "96cee3cc0efa1b2b2e01f45d43a092e87d9ab08b94311739fca6ed6d6d33f816",
                          "propertyPaths":  [
                                                "Visible",
@@ -2402,6 +2566,8 @@
                          "candidateId":  "candidate.interactivity.98eb6f40689f",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "98eb6f40689f928e3c97e4f0fa132a62a802c713627f7f11a483904f1ecef09a",
                          "propertyPaths":  [
                                                "URL",
@@ -2429,6 +2595,8 @@
                          "candidateId":  "candidate.interactivity.9bc6189ff1ec",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "9bc6189ff1ec61f80b5926a863bc41c7c64f011bf0b1d9458042caab1f0ee889",
                          "propertyPaths":  [
                                                "Visible",
@@ -2458,6 +2626,8 @@
                          "candidateId":  "candidate.interactivity.a5a6645eb72b",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "a5a6645eb72b768b58dcb9d4c6750de776ca1d9b5cc047418740eb6a89d9504d",
                          "propertyPaths":  [
                                                "URL",
@@ -2487,6 +2657,8 @@
                          "candidateId":  "candidate.interactivity.dc6bf65574cf",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "dc6bf65574cf69eef1799051d5c5cb1b6c2162a6353547c509a2046da592b399",
                          "propertyPaths":  [
                                                "Visible",
@@ -2510,6 +2682,8 @@
                          "candidateId":  "candidate.interactivity.ec074e2fb153",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "ec074e2fb15392504b2dade53521f888a1d5aef2f38c397206930be0661d0afb",
                          "propertyPaths":  [
                                                "Visible",
@@ -2537,6 +2711,8 @@
                          "candidateId":  "candidate.interactivity.fa83eb584b01",
                          "categoryId":  "interactivity",
                          "categoryDisplayName":  "Interactivity",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
                          "capabilitySha256":  "fa83eb584b01fb1215a8c27052c4875a2511c9bf74eea9fe6151815884a84d44",
                          "propertyPaths":  [
                                                "Visible",
@@ -2580,6 +2756,8 @@
                          "candidateId":  "candidate.keyboardcallbacks.7be8701bb534",
                          "categoryId":  "keyboardcallbacks",
                          "categoryDisplayName":  "Keyboard Callbacks",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "uifigure-specific keyboard callback surface.",
                          "capabilitySha256":  "7be8701bb534f26f50aee775727b15719de0587e6ca9502b2906f5e2d26088cf",
                          "propertyPaths":  [
                                                "KeyPressFcn",
@@ -2601,6 +2779,8 @@
                          "candidateId":  "candidate.knob.9233b34e572a",
                          "categoryId":  "knob",
                          "categoryDisplayName":  "Knob",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Knob-style and scale settings.",
                          "capabilitySha256":  "9233b34e572ae77afc0fd0d3deddea4c418c173450dc8ac199e752da369fe5a7",
                          "propertyPaths":  [
                                                "Value",
@@ -2626,6 +2806,8 @@
                          "candidateId":  "candidate.knob.e8d2d8c14bfc",
                          "categoryId":  "knob",
                          "categoryDisplayName":  "Knob",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Knob-style and scale settings.",
                          "capabilitySha256":  "e8d2d8c14bfc7a7152edcffdbcc0d38d0e10101d065d6738a5489c88d7349d58",
                          "propertyPaths":  [
                                                "Value",
@@ -2647,6 +2829,8 @@
                          "candidateId":  "candidate.labels.1c19d010518b",
                          "categoryId":  "labels",
                          "categoryDisplayName":  "Labels",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family labels.",
                          "capabilitySha256":  "1c19d010518b728aba00cf40c67a3cb11c68cd4bd776e44acb0fb9c8f38d38cd",
                          "propertyPaths":  [
                                                "Title",
@@ -2676,6 +2860,8 @@
                          "candidateId":  "candidate.labels.3d4cc24e5cfe",
                          "categoryId":  "labels",
                          "categoryDisplayName":  "Labels",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family labels.",
                          "capabilitySha256":  "3d4cc24e5cfef9bbaba8fdc9e5ac713afc862c221256985deff2dd6534366d2e",
                          "propertyPaths":  [
                                                "Title",
@@ -2701,6 +2887,8 @@
                          "candidateId":  "candidate.labels.3ddefe6d1a29",
                          "categoryId":  "labels",
                          "categoryDisplayName":  "Labels",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family labels.",
                          "capabilitySha256":  "3ddefe6d1a29293f741e8c811046d2caed981f7a027d6c52abf79922fa7eeaf1",
                          "propertyPaths":  [
                                                "Title",
@@ -2733,6 +2921,8 @@
                          "candidateId":  "candidate.listbox.9233b34e572a",
                          "categoryId":  "listbox",
                          "categoryDisplayName":  "List Box",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "List Box-specific settings.",
                          "capabilitySha256":  "9233b34e572ae77afc0fd0d3deddea4c418c173450dc8ac199e752da369fe5a7",
                          "propertyPaths":  [
                                                "Value",
@@ -2758,6 +2948,8 @@
                          "candidateId":  "candidate.maps.e94b75c1c982",
                          "categoryId":  "maps",
                          "categoryDisplayName":  "Maps",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Geographic axes-specific map settings.",
                          "capabilitySha256":  "e94b75c1c9821875fedd8406e654d9bf1380d8b37a1b866e26c8b8be41f80bd5",
                          "propertyPaths":  [
                                                "Basemap",
@@ -2791,6 +2983,8 @@
                          "candidateId":  "candidate.menu.0b65a562de3c",
                          "categoryId":  "menu",
                          "categoryDisplayName":  "Menu",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Menu-specific settings.",
                          "capabilitySha256":  "0b65a562de3ce5e98c640609025f3ed3f2739386a321d543f7679db3108229de",
                          "propertyPaths":  [
                                                "Text",
@@ -2818,6 +3012,8 @@
                          "candidateId":  "candidate.mousepointer.857d6096b275",
                          "categoryId":  "mousepointer",
                          "categoryDisplayName":  "Mouse Pointer",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "uifigure-specific pointer settings.",
                          "capabilitySha256":  "857d6096b2751d0ecad1ab3b3c7780df491f17ceb2c125aafa58e4e7286c7801",
                          "propertyPaths":  [
                                                "Pointer",
@@ -2841,6 +3037,8 @@
                          "candidateId":  "candidate.multipleplots.11711c9a4046",
                          "categoryId":  "multipleplots",
                          "categoryDisplayName":  "Multiple Plots",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family plotting-cycle settings.",
                          "capabilitySha256":  "11711c9a4046b434dd3e21d85069473ea3c1506ed3dd02f0280154ba176a01cb",
                          "propertyPaths":  [
                                                "ColorOrder",
@@ -2875,6 +3073,8 @@
                          "candidateId":  "candidate.multipleplots.dfec4596a19a",
                          "categoryId":  "multipleplots",
                          "categoryDisplayName":  "Multiple Plots",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family plotting-cycle settings.",
                          "capabilitySha256":  "dfec4596a19a9c86895134d6cbaa5222dc8db0813ec1fec2b1d033b3d60c4d1d",
                          "propertyPaths":  [
                                                "ColorOrder",
@@ -2910,6 +3110,8 @@
                          "candidateId":  "candidate.nodes.28b1f2417229",
                          "categoryId":  "nodes",
                          "categoryDisplayName":  "Nodes",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Tree-family node settings.",
                          "capabilitySha256":  "28b1f2417229913e58485fa1b7c6836b302729fe0e23ec57744dce210d2de9a5",
                          "propertyPaths":  [
                                                "CheckedNodes",
@@ -2931,6 +3133,8 @@
                          "candidateId":  "candidate.nodes.a03a46928477",
                          "categoryId":  "nodes",
                          "categoryDisplayName":  "Nodes",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Tree-family node settings.",
                          "capabilitySha256":  "a03a46928477a875fb9ebd58b99320e8cf074cbc1706098220288d95d048b884",
                          "propertyPaths":  [
                                                "SelectedNodes"
@@ -2950,6 +3154,8 @@
                          "candidateId":  "candidate.node.a61700460b99",
                          "categoryId":  "node",
                          "categoryDisplayName":  "Node",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Tree-node-specific settings.",
                          "capabilitySha256":  "a61700460b991ede7b9b9c7e0198c8b960227ce5f52500123f5c984939c3443c",
                          "propertyPaths":  [
                                                "Text",
@@ -2973,6 +3179,8 @@
                          "candidateId":  "candidate.parentchildren.0289ba9bb3d9",
                          "categoryId":  "parentchildren",
                          "categoryDisplayName":  "Parent/Children",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "uifigure-specific hierarchy surface.",
                          "capabilitySha256":  "0289ba9bb3d932b65e429bb2675bb9b1eac2e7a8e58aeb04b026c3949b6ea470",
                          "propertyPaths":  [
                                                "Parent",
@@ -2996,6 +3204,8 @@
                          "candidateId":  "candidate.parentchild.3c4bfb19e050",
                          "categoryId":  "parentchild",
                          "categoryDisplayName":  "Parent/Child",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Hierarchy metadata recurs across unrelated UI families.",
                          "capabilitySha256":  "3c4bfb19e050cabeed798f92c5d9b57d9b8651f635f3fac247e9a66a10a2a2cd",
                          "propertyPaths":  [
                                                "Parent",
@@ -3023,6 +3233,8 @@
                          "candidateId":  "candidate.parentchild.81d1391e9656",
                          "categoryId":  "parentchild",
                          "categoryDisplayName":  "Parent/Child",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Hierarchy metadata recurs across unrelated UI families.",
                          "capabilitySha256":  "81d1391e965680a99cd55fd0f4412dd14a3c58a75c5c48b92408e6086f08a962",
                          "propertyPaths":  [
                                                "Parent",
@@ -3045,6 +3257,8 @@
                          "candidateId":  "candidate.parentchild.8f2d4fc6440c",
                          "categoryId":  "parentchild",
                          "categoryDisplayName":  "Parent/Child",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Hierarchy metadata recurs across unrelated UI families.",
                          "capabilitySha256":  "8f2d4fc6440c42aefca64523e8ac9020fb2e2263f35bda3f42bfde9e40eb2d05",
                          "propertyPaths":  [
                                                "Parent",
@@ -3085,6 +3299,8 @@
                          "candidateId":  "candidate.parentchild.f2a7e6713fe3",
                          "categoryId":  "parentchild",
                          "categoryDisplayName":  "Parent/Child",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Hierarchy metadata recurs across unrelated UI families.",
                          "capabilitySha256":  "f2a7e6713fe3f4dddbb4c6ccd33ab6eba6fd774ef5eaa8d23efcf2013ad5d9c3",
                          "propertyPaths":  [
                                                "Parent",
@@ -3136,6 +3352,8 @@
                          "candidateId":  "candidate.plotting.83dc46462967",
                          "categoryId":  "plotting",
                          "categoryDisplayName":  "Plotting",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "uifigure-specific plotting surface.",
                          "capabilitySha256":  "83dc464629676122be60e8221d77f52649c03c5efe56895e5ccbacca9319cd5e",
                          "propertyPaths":  [
                                                "Colormap",
@@ -3157,6 +3375,8 @@
                          "candidateId":  "candidate.positionandsize.ac8742d7f2b3",
                          "categoryId":  "positionandsize",
                          "categoryDisplayName":  "Position and Size",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "uifigure-specific window geometry.",
                          "capabilitySha256":  "ac8742d7f2b347260aa1c8ed091da04a73c0334357220445bd91b5fd36b88699",
                          "propertyPaths":  [
                                                "Position",
@@ -3184,6 +3404,8 @@
                          "candidateId":  "candidate.position.50394c643f07",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "50394c643f071240f18ff9373d50637a0461963320fe3fb09897e0b582574b5c",
                          "propertyPaths":  [
                                                "Position",
@@ -3207,6 +3429,8 @@
                          "candidateId":  "candidate.position.51099936f0b1",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "51099936f0b1f6f156d0d2ddecb4e9693e2e25fbe56bfa6eebe7e0e45cffdc89",
                          "propertyPaths":  [
                                                "Position",
@@ -3232,6 +3456,8 @@
                          "candidateId":  "candidate.position.55d3c79ba8f3",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "55d3c79ba8f3f4e3395c2d25965147ba9c93cc2026e80f6a46ff7b0a6d071603",
                          "propertyPaths":  [
                                                "Position",
@@ -3271,6 +3497,8 @@
                          "candidateId":  "candidate.position.6718209ad357",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "6718209ad357764171a0f977e19e877b4d4110622687ae03c0f7c87a655ef9dd",
                          "propertyPaths":  [
                                                "Position",
@@ -3297,6 +3525,8 @@
                          "candidateId":  "candidate.position.6dd9e2671d0c",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "6dd9e2671d0c62b8371880f7a88b3497d964d049546900f8be8c1a11dcf5810a",
                          "propertyPaths":  [
                                                "Position",
@@ -3323,6 +3553,8 @@
                          "candidateId":  "candidate.position.74f277d03ace",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "74f277d03ace8932320eef7336cff5373f268f05d88b25e4ae13679ea2a59ef9",
                          "propertyPaths":  [
                                                "OuterPosition",
@@ -3354,6 +3586,8 @@
                          "candidateId":  "candidate.position.8aa97c25d273",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "8aa97c25d273099e687393cdeba2cd3c15cfd7b913d3f6a314cfbeb51cd88e86",
                          "propertyPaths":  [
                                                "Position",
@@ -3386,6 +3620,8 @@
                          "candidateId":  "candidate.position.96e88f5068ff",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "96e88f5068ffd3e52c79acb30df3c847117a48d1eca06a89524f41a199287f5f",
                          "propertyPaths":  [
                                                "Position",
@@ -3411,6 +3647,8 @@
                          "candidateId":  "candidate.position.b5f88bcd0ed6",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "b5f88bcd0ed67457874b294e6d3949775df85ac752efc6faf6c34b2854f42db1",
                          "propertyPaths":  [
                                                "OuterPosition",
@@ -3442,6 +3680,8 @@
                          "candidateId":  "candidate.position.b84f961e5040",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "b84f961e5040baf240cb2c07835cb990dff467b37d2d17696c453c5b05880e27",
                          "propertyPaths":  [
                                                "Position",
@@ -3493,6 +3733,8 @@
                          "candidateId":  "candidate.position.c8b0564957d2",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "c8b0564957d2d1a0fffd3cf92214327cad7abed356d2777daf6d1e918c1f47e3",
                          "propertyPaths":  [
                                                "Position",
@@ -3520,6 +3762,8 @@
                          "candidateId":  "candidate.position.e7b056719061",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "e7b056719061fe86ae5ee595a9778797cb2af6b1097ab8938bcc52d93abafd1e",
                          "propertyPaths":  [
                                                "OuterPosition",
@@ -3559,6 +3803,8 @@
                          "candidateId":  "candidate.position.e8f7896b233f",
                          "categoryId":  "position",
                          "categoryDisplayName":  "Position",
+                         "sharingScope":  "crossCutting",
+                         "scopeRationale":  "Absolute geometry recurs across unrelated UI families and is refined by parent-context rules.",
                          "capabilitySha256":  "e8f7896b233f728748f3fb3120de11d19fe9b71fe857c12773dcacb0cd9a2350",
                          "propertyPaths":  [
                                                "Position",
@@ -3588,6 +3834,8 @@
                          "candidateId":  "candidate.pushtool.4a31a9c5061b",
                          "categoryId":  "pushtool",
                          "categoryDisplayName":  "Push Tool",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Push Tool-specific settings.",
                          "capabilitySha256":  "4a31a9c5061b45c4ea450bce2a0062f08b3fe0ee3b464a7d9e0afbc9abea85a7",
                          "propertyPaths":  [
                                                "Icon",
@@ -3611,6 +3859,8 @@
                          "candidateId":  "candidate.rulers.8d816c2aeb14",
                          "categoryId":  "rulers",
                          "categoryDisplayName":  "Rulers",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family ruler settings.",
                          "capabilitySha256":  "8d816c2aeb143c81b0747f4a6f54ebb063289f495625f6b7eb9763ed2727280a",
                          "propertyPaths":  [
                                                "RLim",
@@ -3658,6 +3908,8 @@
                          "candidateId":  "candidate.rulers.9b812e737206",
                          "categoryId":  "rulers",
                          "categoryDisplayName":  "Rulers",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family ruler settings.",
                          "capabilitySha256":  "9b812e737206ce255e14b11a36743b3a3b0a9fe7dc4bdd28eca983a55c2b137b",
                          "propertyPaths":  [
                                                "LatitudeAxis",
@@ -3681,6 +3933,8 @@
                          "candidateId":  "candidate.rulers.fe7aaa03f121",
                          "categoryId":  "rulers",
                          "categoryDisplayName":  "Rulers",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family ruler settings.",
                          "capabilitySha256":  "fe7aaa03f12197d3bec7a27b13525c4a73ad5a4eff8025c5dece4929a75c55d0",
                          "propertyPaths":  [
                                                "XLim",
@@ -3751,6 +4005,8 @@
                          "candidateId":  "candidate.slider.46817a995606",
                          "categoryId":  "slider",
                          "categoryDisplayName":  "Slider",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Slider-style and range settings.",
                          "capabilitySha256":  "46817a9956062b21210be872f976500393ac14dab1db22b386834aa83b74c5ea",
                          "propertyPaths":  [
                                                "Value",
@@ -3774,6 +4030,8 @@
                          "candidateId":  "candidate.slider.69c87b83bbf0",
                          "categoryId":  "slider",
                          "categoryDisplayName":  "Slider",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Slider-style and range settings.",
                          "capabilitySha256":  "69c87b83bbf0f3dcf2ca04c0c890ea0e57ea2f561b3773548d4a75e13171caab",
                          "propertyPaths":  [
                                                "Value",
@@ -3801,6 +4059,8 @@
                          "candidateId":  "candidate.switch.cc737bc3f384",
                          "categoryId":  "switch",
                          "categoryDisplayName":  "Switch",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Switch-style settings.",
                          "capabilitySha256":  "cc737bc3f384086bd96e1be295f6d8706231449aeaff27e69790980947137df0",
                          "propertyPaths":  [
                                                "Value",
@@ -3830,6 +4090,8 @@
                          "candidateId":  "candidate.table.8da6727b05e1",
                          "categoryId":  "table",
                          "categoryDisplayName":  "Table",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Table-specific settings.",
                          "capabilitySha256":  "8da6727b05e1a0ba67fbca7ad8829ba1a07e011ebd7ee36a761a64e30ec334cf",
                          "propertyPaths":  [
                                                "Data",
@@ -3861,6 +4123,8 @@
                          "candidateId":  "candidate.tabs.7b5ff4010e79",
                          "categoryId":  "tabs",
                          "categoryDisplayName":  "Tabs",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Tab Group-specific settings.",
                          "capabilitySha256":  "7b5ff4010e79e5f1d45b15dbe0ac09f5a9553653b1d9891fb69dc9f324a490ff",
                          "propertyPaths":  [
                                                "TabLocation",
@@ -3882,6 +4146,8 @@
                          "candidateId":  "candidate.text.1ad3cb0f8884",
                          "categoryId":  "text",
                          "categoryDisplayName":  "Text",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Text display and editing control settings.",
                          "capabilitySha256":  "1ad3cb0f8884bb1faa43e6a3439b9cb7e0e0da5f7400b9843a72662e2716009d",
                          "propertyPaths":  [
                                                "Value",
@@ -3909,6 +4175,8 @@
                          "candidateId":  "candidate.text.b3b6b86fb501",
                          "categoryId":  "text",
                          "categoryDisplayName":  "Text",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Text display and editing control settings.",
                          "capabilitySha256":  "b3b6b86fb50110619ae81bb939290064b9ed84495132c6471ff0e0ac0153eae2",
                          "propertyPaths":  [
                                                "Text",
@@ -3936,6 +4204,8 @@
                          "candidateId":  "candidate.text.f1a4917f0032",
                          "categoryId":  "text",
                          "categoryDisplayName":  "Text",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Text display and editing control settings.",
                          "capabilitySha256":  "f1a4917f0032b02c6ea3743a6d4921cdcdfff5783c187bbee2b0f9c84c40cbcd",
                          "propertyPaths":  [
                                                "Value",
@@ -3961,6 +4231,8 @@
                          "candidateId":  "candidate.ticks.319039ef90b9",
                          "categoryId":  "ticks",
                          "categoryDisplayName":  "Ticks",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes and instrumentation tick surfaces differ by family.",
                          "capabilitySha256":  "319039ef90b9af8072e036513c25a7d97eee938fc0889838a4712d949d6629fa",
                          "propertyPaths":  [
                                                "TickDir",
@@ -3986,6 +4258,8 @@
                          "candidateId":  "candidate.ticks.458d77dd4986",
                          "categoryId":  "ticks",
                          "categoryDisplayName":  "Ticks",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes and instrumentation tick surfaces differ by family.",
                          "capabilitySha256":  "458d77dd4986e295f6ae26bda3184a488e6ca567bd96a281453b92f1953cca39",
                          "propertyPaths":  [
                                                "MajorTicks",
@@ -4021,6 +4295,8 @@
                          "candidateId":  "candidate.ticks.ea1a3654e56a",
                          "categoryId":  "ticks",
                          "categoryDisplayName":  "Ticks",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes and instrumentation tick surfaces differ by family.",
                          "capabilitySha256":  "ea1a3654e56acc2555573657d7aa23bfc94f92cb935d94afb245f48263e592e0",
                          "propertyPaths":  [
                                                "RTick",
@@ -4072,6 +4348,8 @@
                          "candidateId":  "candidate.ticks.fd34964b3e8f",
                          "categoryId":  "ticks",
                          "categoryDisplayName":  "Ticks",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes and instrumentation tick surfaces differ by family.",
                          "capabilitySha256":  "fd34964b3e8f294764dbee46446786c51e4a15a5a65f4935c8b507e8c395db70",
                          "propertyPaths":  [
                                                "XTick",
@@ -4140,6 +4418,8 @@
                          "candidateId":  "candidate.titleandcolor.28b75a9e8c02",
                          "categoryId":  "titleandcolor",
                          "categoryDisplayName":  "Title and Color",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Tab-specific title settings.",
                          "capabilitySha256":  "28b75a9e8c028f696d7e88c0f957b50d1117e26d7c0d10d630be789e95cfeeac",
                          "propertyPaths":  [
                                                "Title",
@@ -4163,6 +4443,8 @@
                          "candidateId":  "candidate.title.d4dd3ebbc800",
                          "categoryId":  "title",
                          "categoryDisplayName":  "Title",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Container-family title settings.",
                          "capabilitySha256":  "d4dd3ebbc800faf256da217b8e2065673a8c6d4ade107793bbd60aef64c6220c",
                          "propertyPaths":  [
                                                "Title",
@@ -4185,6 +4467,8 @@
                          "candidateId":  "candidate.toggletool.04214827670b",
                          "categoryId":  "toggletool",
                          "categoryDisplayName":  "Toggle Tool",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "Toggle Tool-specific settings.",
                          "capabilitySha256":  "04214827670bd27716d7d5e1500e323643a9a16185bad8f54d76e5b50a577c8a",
                          "propertyPaths":  [
                                                "State",
@@ -4210,6 +4494,8 @@
                          "candidateId":  "candidate.uifigurebasedappsonly.248afdb3d556",
                          "categoryId":  "uifigurebasedappsonly",
                          "categoryDisplayName":  "uifigure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app structural surface, not a generic control capability.",
                          "capabilitySha256":  "248afdb3d556c3cf8175b304e36b0fac99d9004cd8b46149c5823dc1685b0bf6",
                          "propertyPaths":  [
                                                "AutoResizeChildren",
@@ -4231,6 +4517,8 @@
                          "candidateId":  "candidate.uifigurebasedappsonly.9f602c7fdcd1",
                          "categoryId":  "uifigurebasedappsonly",
                          "categoryDisplayName":  "uifigure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app structural surface, not a generic control capability.",
                          "capabilitySha256":  "9f602c7fdcd11942144e9cd4fc95b45915004a74df40f99b411873becad2bbff",
                          "propertyPaths":  [
                                                "DisplayData",
@@ -4272,6 +4560,8 @@
                          "candidateId":  "candidate.uifigurebasedappsonly.a5bb6e6e5f8d",
                          "categoryId":  "uifigurebasedappsonly",
                          "categoryDisplayName":  "uifigure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app structural surface, not a generic control capability.",
                          "capabilitySha256":  "a5bb6e6e5f8d16365922aa3f020264ae14d0a0bded4ef04d3b6e66847b20bdc9",
                          "propertyPaths":  [
                                                "BackgroundColor"
@@ -4291,6 +4581,8 @@
                          "candidateId":  "candidate.uifigurebasedappsonly.e75f6758acc1",
                          "categoryId":  "uifigurebasedappsonly",
                          "categoryDisplayName":  "uifigure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app structural surface, not a generic control capability.",
                          "capabilitySha256":  "e75f6758acc139b196f2e006bef714bf207769855ef79a923c336ae6733bcd3b",
                          "propertyPaths":  [
                                                "Tooltip",
@@ -4314,6 +4606,8 @@
                          "candidateId":  "candidate.uifigurebasedappsonly.f1508da1ace8",
                          "categoryId":  "uifigurebasedappsonly",
                          "categoryDisplayName":  "uifigure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app structural surface, not a generic control capability.",
                          "capabilitySha256":  "f1508da1ace8f5cb949e66c3a8f998d8ffbfc356f16a36428b4f62f0df52ddd2",
                          "propertyPaths":  [
                                                "Tooltip"
@@ -4333,6 +4627,8 @@
                          "candidateId":  "candidate.uifigurebasedappsonly.f8e6ec80c39d",
                          "categoryId":  "uifigurebasedappsonly",
                          "categoryDisplayName":  "uifigure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app structural surface, not a generic control capability.",
                          "capabilitySha256":  "f8e6ec80c39d40c302dee42905602764e97a5764caee32468c46033e611b29e2",
                          "propertyPaths":  [
                                                "Buttons",
@@ -4362,6 +4658,8 @@
                          "candidateId":  "candidate.uifigurebasedappsonly.fc1885b42aa2",
                          "categoryId":  "uifigurebasedappsonly",
                          "categoryDisplayName":  "uifigure -Based Apps Only",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Figure-app structural surface, not a generic control capability.",
                          "capabilitySha256":  "fc1885b42aa215f7c36a5739cac35efeabe02dbd34dedd68a7dc4399770884fb",
                          "propertyPaths":  [
                                                "Scrollable",
@@ -4389,6 +4687,8 @@
                          "candidateId":  "candidate.value.44e3d6219b2a",
                          "categoryId":  "value",
                          "categoryDisplayName":  "Value",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Numeric-control value surface.",
                          "capabilitySha256":  "44e3d6219b2a5f2c50140ceda211d5cb7f977265738da65c90f052251c64bcee",
                          "propertyPaths":  [
                                                "Value",
@@ -4426,6 +4726,8 @@
                          "candidateId":  "candidate.value.6d55244d5430",
                          "categoryId":  "value",
                          "categoryDisplayName":  "Value",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Numeric-control value surface.",
                          "capabilitySha256":  "6d55244d5430701dfa0fd515924b153fa86e22e7d5d8776641e0d9cd372a90f5",
                          "propertyPaths":  [
                                                "Value",
@@ -4461,6 +4763,8 @@
                          "candidateId":  "candidate.view.8c5a8dffbd56",
                          "categoryId":  "view",
                          "categoryDisplayName":  "View",
+                         "sharingScope":  "familyScoped",
+                         "scopeRationale":  "Axes-family view settings.",
                          "capabilitySha256":  "8c5a8dffbd565657b3667af97e63d066ce26e07fef7dd6229024668d7f11a315",
                          "propertyPaths":  [
                                                "View",
@@ -4499,6 +4803,8 @@
                          "candidateId":  "candidate.windowappearance.3593938fca5b",
                          "categoryId":  "windowappearance",
                          "categoryDisplayName":  "Window Appearance",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "uifigure-specific window appearance.",
                          "capabilitySha256":  "3593938fca5b4cf123d76048cc7fe6c7592ef04102ce1d0f4009222d23edeaa6",
                          "propertyPaths":  [
                                                "Color",
@@ -4522,6 +4828,8 @@
                          "candidateId":  "candidate.windowcallbacks.51077a619324",
                          "categoryId":  "windowcallbacks",
                          "categoryDisplayName":  "Window Callbacks",
+                         "sharingScope":  "variantLocal",
+                         "scopeRationale":  "uifigure-specific window callbacks.",
                          "capabilitySha256":  "51077a6193246d60bc8d3586ed0a9cfd58f0b8e91ef501b221d0627198c3fde0",
                          "propertyPaths":  [
                                                "CloseRequestFcn",

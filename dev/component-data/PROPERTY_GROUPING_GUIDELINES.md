@@ -25,7 +25,10 @@ match the product inspector.
 6. Prefer shallow composition. A component should compose non-overlapping
    category groups rather than inherit through a deep or diamond-shaped group
    graph.
-7. Prove that group expansion reconstructs every concrete variant without
+7. Treat component- or family-named documentation categories as family-scoped
+   by default. Do not use their surface differences as candidates for broad
+   cross-family sharing.
+8. Prove that group expansion reconstructs every concrete variant without
    missing, duplicate, or altered property capabilities before promoting the
    design into the runtime catalog.
 
@@ -95,6 +98,27 @@ contains one property or when the definition is broadly reused and semantically
 stable. Do not fragment categories into one-property mixins merely to maximize
 deduplication.
 
+## Category sharing scope
+
+Classify every documented category in release-specific design data before
+interpreting a same-name surface difference:
+
+- `crossCutting` identifies categories such as Font, Interactivity, Position,
+  Callbacks, Parent/Child, and Identifiers that may be shared across unrelated
+  component families;
+- `familyScoped` identifies a coherent component-family surface, such as
+  Button, Gauge, Slider, Knob, axes-specific styling, or tree nodes. Exact
+  matching definitions may be shared within that family, but a difference is
+  normally a legitimate family or variant distinction rather than a Step 4
+  cross-family conflict; and
+- `variantLocal` identifies a category that currently belongs to one concrete
+  variant and is not a sharing candidate.
+
+The scope classification is a product design decision, not documentation fact.
+It must be complete, version-controlled, and validated against the release
+ledger. A generic-sounding heading is not automatically `crossCutting`: its
+documented surface must have a stable semantic role across unrelated families.
+
 ## Acceptance criteria for a shared group
 
 A proposed group must satisfy all of the following:
@@ -131,14 +155,16 @@ Perform the work in the following order:
 
 1. Validate the expanded release ledger and freeze its input revision.
 2. Generate a matrix of concrete variants, documented categories, ordered
-   property paths, and normalized capability signatures.
+   property paths, and normalized capability signatures. Validate a complete
+   release-specific category sharing-scope classification alongside the matrix.
 3. Cluster exact category-surface matches and report reuse counts, member
    variants, and observed documented positions.
-4. Identify same-name categories with different surfaces. Explain each split as
-   a family distinction, variant distinction, parent-context issue, or unresolved
-   audit discrepancy.
+4. Identify same-name `crossCutting` categories with different surfaces. Explain
+   each split as a family distinction, variant distinction, parent-context issue,
+   or unresolved audit discrepancy. Record `familyScoped` differences as
+   family-local evidence, not as a broad-sharing review queue.
 5. Accept complete exact clusters as the initial category groups.
-6. Review near-matching clusters. Extract a category core and extension only
+6. Review near-matching `crossCutting` clusters. Extract a category core and extension only
    when the split is semantic, repeated, non-overlapping, and simpler than
    keeping complete family groups.
 7. Analyze documented category sequences and propose a small set of reusable

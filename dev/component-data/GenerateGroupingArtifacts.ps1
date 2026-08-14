@@ -227,6 +227,45 @@ function Test-ParentContextRules {
     }
 }
 
+function Test-CategoryScopeClassification {
+    param(
+        [object]$Classification,
+        [string]$FilePath,
+        [string]$Release,
+        [string[]]$LedgerCategoryIds
+    )
+
+    $context = "Category scope classification '$FilePath'"
+    foreach ($name in @("schemaVersion", "matlabRelease", "categories")) {
+        $null = Get-RequiredProperty $Classification $name $context
+    }
+    if ($Classification.schemaVersion -ne 1 -or [string]$Classification.matlabRelease -ne $Release) {
+        throw "$context has an unexpected schema or MATLAB release."
+    }
+
+    $entries = @($Classification.categories)
+    $categoryIds = @(ConvertTo-StringArray ($entries | ForEach-Object { $_.id }))
+    if ($categoryIds.Count -ne @($categoryIds | Sort-Object -Unique).Count) {
+        throw "$context contains duplicate category IDs."
+    }
+    if (Compare-Object (@($LedgerCategoryIds | Sort-Object -Unique)) (@($categoryIds | Sort-Object -Unique))) {
+        throw "$context must classify every and only the category IDs in the release ledger."
+    }
+
+    $allowedScopes = @("crossCutting", "familyScoped", "variantLocal")
+    foreach ($entry in $entries) {
+        foreach ($name in @("id", "scope", "reason")) {
+            $null = Get-RequiredProperty $entry $name "$context category '$($entry.id)'"
+        }
+        if ($allowedScopes -notcontains [string]$entry.scope) {
+            throw "$context category '$($entry.id)' has unsupported scope '$($entry.scope)'."
+        }
+        if ([string]::IsNullOrWhiteSpace([string]$entry.reason)) {
+            throw "$context category '$($entry.id)' has an empty rationale."
+        }
+    }
+}
+
 function Write-Utf8File {
     param(
         [string]$Path,
@@ -256,6 +295,7 @@ $release = Split-Path -Leaf $releasePath
 $componentsPath = Join-Path $releasePath "components"
 $rulesPath = Join-Path $releasePath "parent-context-rules.json"
 $schemaPath = Join-Path $releasePath "schema.json"
+$scopeClassificationPath = Join-Path $releasePath "category-scope-classification.json"
 $outputPath = Join-Path $releasePath "grouping"
 
 if (-not (Test-Path -LiteralPath $componentsPath -PathType Container)) {
@@ -266,6 +306,9 @@ if (-not (Test-Path -LiteralPath $rulesPath -PathType Leaf)) {
 }
 if (-not (Test-Path -LiteralPath $schemaPath -PathType Leaf)) {
     throw "Release directory '$releasePath' has no schema.json file."
+}
+if (-not (Test-Path -LiteralPath $scopeClassificationPath -PathType Leaf)) {
+    throw "Release directory '$releasePath' has no category-scope-classification.json file."
 }
 
 $componentFiles = @(Get-ChildItem -LiteralPath $componentsPath -Filter "*.json" -File | Sort-Object Name)
@@ -299,7 +342,21 @@ catch {
 }
 Test-ParentContextRules $parentRules $rulesPath $release
 
-$inputFiles = @($componentFiles.FullName + $rulesPath + $schemaPath | Sort-Object)
+try {
+    $scopeClassification = Get-Content -Raw -LiteralPath $scopeClassificationPath | ConvertFrom-Json
+}
+catch {
+    throw "Unable to parse category scope classification '$scopeClassificationPath': $($_.Exception.Message)"
+}
+$ledgerCategoryIds = @($documents.Document.documentationCategories | ForEach-Object { $_.id } | Sort-Object -Unique)
+Test-CategoryScopeClassification $scopeClassification $scopeClassificationPath $release $ledgerCategoryIds
+$categoryScopeById = @{}
+foreach ($entry in @($scopeClassification.categories)) {
+    $categoryScopeById[[string]$entry.id] = $entry
+}
+
+$ledgerInputFiles = @($componentFiles.FullName + $rulesPath + $schemaPath | Sort-Object)
+$inputFiles = @($ledgerInputFiles + $scopeClassificationPath | Sort-Object)
 $inputFileDigests = @(
     foreach ($filePath in $inputFiles) {
         $relativePath = $filePath.Substring($releasePath.Length + 1).Replace("\", "/")
@@ -312,7 +369,8 @@ $inputFileDigests = @(
 $inputDigestText = ($inputFileDigests | ForEach-Object { "$($_.path):$($_.sha256)" }) -join "`n"
 $repositoryPath = (Resolve-Path -LiteralPath (Join-Path $releasePath "..\..\..")).Path
 $releaseRelativePath = $releasePath.Substring($repositoryPath.Length + 1).Replace("\", "/")
-$inputRelativePaths = @($inputFileDigests | ForEach-Object { "$releaseRelativePath/$($_.path)" })
+$ledgerRelativePaths = @($ledgerInputFiles | ForEach-Object { "$releaseRelativePath/$($_.Substring($releasePath.Length + 1).Replace("\", "/"))" })
+$inputRelativePaths = $ledgerRelativePaths
 $gitCommitOutput = @(& git -C $repositoryPath log -1 --format=%H -- $inputRelativePaths 2>$null)
 if ($LASTEXITCODE -ne 0 -or $gitCommitOutput.Count -eq 0) {
     $gitCommit = "unavailable"
@@ -330,10 +388,13 @@ foreach ($entry in $documents) {
         $signature = $capabilities | ConvertTo-Json -Compress -Depth 100
         $hash = Get-Sha256 $signature
         $propertyCapabilityHashes = @($capabilities | ForEach-Object { Get-Sha256 ($_ | ConvertTo-Json -Compress -Depth 100) })
+        $scopeEntry = $categoryScopeById[[string]$category.id]
         $matrix += [pscustomobject]([ordered]@{
             componentId          = [string]$document.id
             categoryId           = [string]$category.id
             categoryDisplayName  = [string]$category.displayName
+            sharingScope         = [string]$scopeEntry.scope
+            scopeRationale       = [string]$scopeEntry.reason
             documentedOrder      = [int]$category.order
             propertyPaths        = @($capabilities | ForEach-Object { [string]$_.path })
             propertyCapabilitySha256 = $propertyCapabilityHashes
@@ -351,6 +412,8 @@ foreach ($group in @($matrix | Group-Object { "$($_.categoryId)`u{001F}$($_.cate
         candidateId              = "candidate.$($first.categoryId).$($first.capabilitySha256.Substring(0, 12))"
         categoryId               = $first.categoryId
         categoryDisplayName      = $first.categoryDisplayName
+        sharingScope             = $first.sharingScope
+        scopeRationale           = $first.scopeRationale
         capabilitySha256         = $first.capabilitySha256
         propertyPaths            = $first.propertyPaths
         propertyCapabilitySha256 = $first.propertyCapabilitySha256
@@ -383,11 +446,13 @@ foreach ($group in @($clusters | Group-Object categoryId | Sort-Object Name)) {
     $conflicts += [pscustomobject]([ordered]@{
         categoryId              = $group.Name
         categoryDisplayNames    = @($surfaces.categoryDisplayName | Sort-Object -Unique)
+        sharingScope            = $surfaces[0].sharingScope
+        scopeRationale          = $surfaces[0].scopeRationale
         surfaceCount            = $surfaces.Count
         affectedVariantIds      = @($surfaces.memberVariantIds | ForEach-Object { $_ } | Sort-Object -Unique)
         surfaces                = $surfaces
         pathCoverage            = $pathVariants
-        requiredDecision        = "Classify each surface difference as a family distinction, variant distinction, parent-context issue, or audit discrepancy."
+        requiredDecision        = if ($surfaces[0].sharingScope -eq "crossCutting") { "Classify each surface difference as a family distinction, variant distinction, parent-context issue, or audit discrepancy." } else { "Retain as family-local evidence unless a later family-specific sharing design selects it." }
     })
 }
 
@@ -466,6 +531,7 @@ foreach ($conflict in $conflicts) {
             }
             $coreExtensionCandidates += [pscustomobject]([ordered]@{
                 categoryId                  = $conflict.categoryId
+                sharingScope                = $conflict.sharingScope
                 baseCandidateId             = $base.candidateId
                 baseVariantIds              = $base.memberVariantIds
                 baseReuseCount              = $base.reuseCount
@@ -484,16 +550,30 @@ foreach ($conflict in $conflicts) {
 $coreExtensionCandidates = @($coreExtensionCandidates | Sort-Object categoryId, extensionPropertyCount, baseCandidateId, extendedCandidateId)
 Write-Verbose "Found $($conflicts.Count) category conflicts and $($coreExtensionCandidates.Count) ordered strict core/extension candidates."
 
+$step4CrossCuttingConflicts = @($conflicts | Where-Object { $_.sharingScope -eq "crossCutting" })
+$familyScopedDifferences = @($conflicts | Where-Object { $_.sharingScope -eq "familyScoped" })
+$step6CrossCuttingCandidates = @($coreExtensionCandidates | Where-Object { $_.sharingScope -eq "crossCutting" })
+$familyScopedCoreExtensionCandidates = @($coreExtensionCandidates | Where-Object { $_.sharingScope -eq "familyScoped" })
+$scopeCounts = @(
+    $scopeClassification.categories | Group-Object scope | Sort-Object Name | ForEach-Object {
+        [ordered]@{
+            scope = $_.Name
+            categoryCount = $_.Count
+        }
+    }
+)
+
 New-Item -ItemType Directory -Path $outputPath -Force | Out-Null
 $baseline = [ordered]@{
     artifactVersion       = 1
     matlabRelease         = $release
-    baselineGitCommit     = $gitCommit
+    ledgerBaselineGitCommit = $gitCommit
     inputSha256           = Get-Sha256 $inputDigestText
     componentDocumentCount = $documents.Count
     componentVariantIds   = @($documents.Document.id | Sort-Object)
     propertyEntryCount    = @($documents.Document.properties | ForEach-Object { @($_).Count } | Measure-Object -Sum).Sum
     categoryOccurrenceCount = $matrix.Count
+    categoryScopeCounts   = $scopeCounts
     inputFiles            = $inputFileDigests
     validation            = [ordered]@{
         status = "passed"
@@ -505,7 +585,8 @@ $baseline = [ordered]@{
             "category and property source-page order",
             "category references and property constraint targets",
             "acyclic property constraints",
-            "parent-context rule context references"
+            "parent-context rule context references",
+            "complete category sharing-scope classification"
         )
     }
 }
@@ -531,11 +612,13 @@ Write-JsonArtifact (Join-Path $outputPath "INITIAL_CATEGORY_GROUP_CANDIDATES.jso
     candidates      = $initialCandidates
 })
 Write-JsonArtifact (Join-Path $outputPath "JUDGMENT_CANDIDATES.json") ([ordered]@{
-    artifactVersion          = 1
-    matlabRelease            = $release
-    inputSha256              = $baseline.inputSha256
-    step4CategoryConflicts   = $conflicts
-    step6CoreExtensionPairs  = $coreExtensionCandidates
+    artifactVersion                     = 1
+    matlabRelease                       = $release
+    inputSha256                         = $baseline.inputSha256
+    step4CrossCuttingConflicts          = $step4CrossCuttingConflicts
+    familyScopedDifferences             = $familyScopedDifferences
+    step6CrossCuttingCoreExtensionPairs = $step6CrossCuttingCandidates
+    familyScopedCoreExtensionPairs      = $familyScopedCoreExtensionCandidates
 })
 Write-Verbose "Wrote JSON grouping artifacts."
 
@@ -546,22 +629,25 @@ $null = $markdown.AppendLine("Generated by GenerateGroupingArtifacts.ps1 from fr
 $null = $markdown.AppendLine()
 $null = $markdown.AppendLine("## Baseline")
 $null = $markdown.AppendLine()
-$null = $markdown.AppendLine("- Git commit: $($baseline.baselineGitCommit)")
+$null = $markdown.AppendLine("- Ledger Git commit: $($baseline.ledgerBaselineGitCommit)")
 $null = $markdown.AppendLine("- Concrete variants: $($baseline.componentDocumentCount)")
 $null = $markdown.AppendLine("- Property entries: $($baseline.propertyEntryCount)")
 $null = $markdown.AppendLine("- Category occurrences: $($baseline.categoryOccurrenceCount)")
 $null = $markdown.AppendLine("- Exact category-surface clusters: $($clusters.Count)")
 $null = $markdown.AppendLine("- Initial complete shared-group candidates: $($initialCandidates.Count)")
-$null = $markdown.AppendLine("- Step 4 category conflicts requiring classification: $($conflicts.Count)")
-$null = $markdown.AppendLine("- Step 6 strict core/extension candidates: $($coreExtensionCandidates.Count)")
+$null = $markdown.AppendLine("- Category scope classification: $((@($scopeCounts | ForEach-Object { "$($_.scope)=$($_.categoryCount)" }) -join ", "))")
+$null = $markdown.AppendLine("- Step 4 cross-cutting conflicts requiring classification: $($step4CrossCuttingConflicts.Count)")
+$null = $markdown.AppendLine("- Family-scoped differences retained as reference: $($familyScopedDifferences.Count)")
+$null = $markdown.AppendLine("- Step 6 cross-cutting strict core/extension candidates: $($step6CrossCuttingCandidates.Count)")
+$null = $markdown.AppendLine("- Family-scoped core/extension pairs retained as reference: $($familyScopedCoreExtensionCandidates.Count)")
 $null = $markdown.AppendLine()
-$null = $markdown.AppendLine("## Step 4: same-name category conflicts")
+$null = $markdown.AppendLine("## Step 4: cross-cutting same-name category conflicts")
 $null = $markdown.AppendLine()
-if ($conflicts.Count -eq 0) {
-    $null = $markdown.AppendLine("No same-name category conflicts were found.")
+if ($step4CrossCuttingConflicts.Count -eq 0) {
+    $null = $markdown.AppendLine("No cross-cutting same-name category conflicts were found.")
 }
 else {
-    foreach ($conflict in $conflicts) {
+    foreach ($conflict in $step4CrossCuttingConflicts) {
         $null = $markdown.AppendLine("### $($conflict.categoryId)")
         $null = $markdown.AppendLine()
         $null = $markdown.AppendLine("$($conflict.surfaceCount) distinct exact surfaces across: $(Format-VariantList $conflict.affectedVariantIds)")
@@ -579,14 +665,24 @@ else {
     }
 }
 
-$null = $markdown.AppendLine("## Step 6: strict core/extension candidates")
+$null = $markdown.AppendLine("## Family-scoped differences")
 $null = $markdown.AppendLine()
-if ($coreExtensionCandidates.Count -eq 0) {
-    $null = $markdown.AppendLine("No strict core/extension pairs were found.")
+if ($familyScopedDifferences.Count -eq 0) {
+    $null = $markdown.AppendLine("No family-scoped category differences were found.")
+}
+else {
+    $null = $markdown.AppendLine("These are retained as evidence, not Step 4 cross-family review items: $((@($familyScopedDifferences.categoryId) -join ", ")).")
+}
+$null = $markdown.AppendLine()
+
+$null = $markdown.AppendLine("## Step 6: cross-cutting strict core/extension candidates")
+$null = $markdown.AppendLine()
+if ($step6CrossCuttingCandidates.Count -eq 0) {
+    $null = $markdown.AppendLine("No cross-cutting strict core/extension pairs were found.")
 }
 else {
     foreach ($priority in @("high", "medium", "informational")) {
-        $priorityCandidates = @($coreExtensionCandidates | Where-Object { $_.reviewPriority -eq $priority })
+        $priorityCandidates = @($step6CrossCuttingCandidates | Where-Object { $_.reviewPriority -eq $priority })
         if ($priorityCandidates.Count -eq 0) {
             continue
         }
@@ -617,10 +713,15 @@ $summary = [ordered]@{
     componentDocumentCount          = $documents.Count
     propertyEntryCount              = $baseline.propertyEntryCount
     categoryOccurrenceCount         = $matrix.Count
+    categoryScopeCounts             = $scopeCounts
     exactClusterCount               = $clusters.Count
     initialGroupCandidateCount      = $initialCandidates.Count
-    step4ConflictCount              = $conflicts.Count
-    step6CoreExtensionCandidateCount = $coreExtensionCandidates.Count
+    allSameNameConflictCount        = $conflicts.Count
+    step4CrossCuttingConflictCount  = $step4CrossCuttingConflicts.Count
+    familyScopedDifferenceCount     = $familyScopedDifferences.Count
+    allCoreExtensionCandidateCount  = $coreExtensionCandidates.Count
+    step6CrossCuttingCandidateCount = $step6CrossCuttingCandidates.Count
+    familyScopedCoreExtensionCandidateCount = $familyScopedCoreExtensionCandidates.Count
 }
 Write-JsonArtifact (Join-Path $outputPath "SUMMARY.json") $summary
 
