@@ -79,6 +79,38 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function enumDropDownCommitsCatalogChoice(testCase)
+            % enumDropDownCommitsCatalogChoice Commit a finite catalog enum through the live inspector.
+
+            % Insert a button through the palette so its FontWeight row is reconstructed.
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Button", 1);
+            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            % Select and commit one documented dropdown item using the real callback binding.
+            labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
+            label = labels(string({labels.Text}) == "FontWeight");
+            testCase.verifyEqual(numel(label), 1);
+            control = findall(label.Parent, "Type", "uidropdown", ...
+                "Tag", "macd-inspector-property-editor");
+            testCase.verifyEqual(string(control.Enable), "on");
+            testCase.verifyEqual(string(control.Items), ["normal", "bold"]);
+            control.Value = "bold";
+            control.ValueChangedFcn(control, struct());
+            drawnow;
+            component = app.Document.getComponent(app.SelectedComponentId);
+            entry = component.getProperty("FontWeight");
+            testCase.verifyEqual(string(entry.LiteralValue), "bold");
+            clear cleanup
+        end
+
         function editMenuExposesPhase5Commands(testCase)
             % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
 

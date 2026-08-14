@@ -274,7 +274,15 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "pixels",
+                "normalized",
+                "inches",
+                "centimeters",
+                "points",
+                "characters"
+              ]
             }
           }
         }
@@ -449,7 +457,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

@@ -196,7 +196,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
@@ -222,7 +226,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
             }
           }
         },
@@ -412,7 +420,7 @@
             "groupId": "local.uicheckbox.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
               "matlabClasses": [
@@ -618,7 +626,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

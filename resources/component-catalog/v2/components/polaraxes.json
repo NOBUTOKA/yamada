@@ -106,7 +106,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -132,7 +136,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
@@ -158,7 +166,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
             }
           }
         },
@@ -209,7 +221,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "bold",
+                "normal"
+              ]
             }
           }
         },
@@ -235,7 +251,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
@@ -261,7 +281,14 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "points",
+                "inches",
+                "centimeters",
+                "normalized",
+                "pixels"
+              ]
             }
           }
         },
@@ -346,7 +373,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -400,7 +431,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -451,7 +486,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -505,7 +544,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -556,7 +599,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -636,7 +683,13 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "right",
+                "top",
+                "left",
+                "bottom"
+              ]
             }
           }
         },
@@ -662,7 +715,13 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "in",
+                "out",
+                "both",
+                "none"
+              ]
             }
           }
         },
@@ -688,7 +747,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -714,7 +777,12 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "tex",
+                "latex",
+                "none"
+              ]
             }
           }
         },
@@ -949,7 +1017,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -1002,7 +1074,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -1055,7 +1131,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -1081,7 +1161,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "reverse"
+              ]
             }
           }
         },
@@ -1107,7 +1191,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "counterclockwise",
+                "clockwise"
+              ]
             }
           }
         },
@@ -1133,7 +1221,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "degrees",
+                "radians"
+              ]
             }
           }
         }
@@ -1220,7 +1312,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "bottom",
+                "top"
+              ]
             }
           }
         },
@@ -1246,7 +1342,14 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "-",
+                "--",
+                ":",
+                "-.",
+                "none"
+              ]
             }
           }
         },
@@ -1299,7 +1402,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -1350,7 +1457,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -1430,7 +1541,14 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                ":",
+                "-",
+                "--",
+                "-.",
+                "none"
+              ]
             }
           }
         },
@@ -1483,7 +1601,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
@@ -1534,7 +1656,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         }
@@ -1619,7 +1745,12 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "center",
+                "left",
+                "right"
+              ]
             }
           }
         },
@@ -1657,7 +1788,7 @@
       "entries": [
         {
           "path": "ColorOrder",
-          "groupId": "exact.multipleplots.11711c9a4046",
+          "groupId": "local.polaraxes.multipleplots",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorOrder",
@@ -1665,7 +1796,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 1,
-            "groupId": "exact.multipleplots.11711c9a4046",
+            "groupId": "local.polaraxes.multipleplots",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1684,7 +1815,7 @@
         },
         {
           "path": "ColorOrderIndex",
-          "groupId": "exact.multipleplots.11711c9a4046",
+          "groupId": "local.polaraxes.multipleplots",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorOrderIndex",
@@ -1692,7 +1823,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 2,
-            "groupId": "exact.multipleplots.11711c9a4046",
+            "groupId": "local.polaraxes.multipleplots",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -1709,7 +1840,7 @@
         },
         {
           "path": "LineStyleOrder",
-          "groupId": "exact.multipleplots.11711c9a4046",
+          "groupId": "local.polaraxes.multipleplots",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleOrder",
@@ -1717,7 +1848,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 3,
-            "groupId": "exact.multipleplots.11711c9a4046",
+            "groupId": "local.polaraxes.multipleplots",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1737,7 +1868,7 @@
         },
         {
           "path": "LineStyleCyclingMethod",
-          "groupId": "exact.multipleplots.11711c9a4046",
+          "groupId": "local.polaraxes.multipleplots",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleCyclingMethod",
@@ -1745,7 +1876,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 4,
-            "groupId": "exact.multipleplots.11711c9a4046",
+            "groupId": "local.polaraxes.multipleplots",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -1762,7 +1893,7 @@
         },
         {
           "path": "NextSeriesIndex",
-          "groupId": "exact.multipleplots.11711c9a4046",
+          "groupId": "local.polaraxes.multipleplots",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "NextSeriesIndex",
@@ -1770,7 +1901,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 5,
-            "groupId": "exact.multipleplots.11711c9a4046",
+            "groupId": "local.polaraxes.multipleplots",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -1787,7 +1918,7 @@
         },
         {
           "path": "NextPlot",
-          "groupId": "exact.multipleplots.11711c9a4046",
+          "groupId": "local.polaraxes.multipleplots",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "NextPlot",
@@ -1795,7 +1926,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 6,
-            "groupId": "exact.multipleplots.11711c9a4046",
+            "groupId": "local.polaraxes.multipleplots",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1807,13 +1938,19 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "replace",
+                "add",
+                "replacechildren",
+                "replaceall"
+              ]
             }
           }
         },
         {
           "path": "SortMethod",
-          "groupId": "exact.multipleplots.11711c9a4046",
+          "groupId": "local.polaraxes.multipleplots",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SortMethod",
@@ -1821,7 +1958,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 7,
-            "groupId": "exact.multipleplots.11711c9a4046",
+            "groupId": "local.polaraxes.multipleplots",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1833,13 +1970,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "depth",
+                "childorder"
+              ]
             }
           }
         },
         {
           "path": "LineStyleOrderIndex",
-          "groupId": "exact.multipleplots.11711c9a4046",
+          "groupId": "local.polaraxes.multipleplots",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleOrderIndex",
@@ -1847,7 +1988,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 8,
-            "groupId": "exact.multipleplots.11711c9a4046",
+            "groupId": "local.polaraxes.multipleplots",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -1871,7 +2012,7 @@
       "entries": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
@@ -1879,7 +2020,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 1,
-            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1898,7 +2039,7 @@
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorScale",
@@ -1906,7 +2047,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 2,
-            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1918,13 +2059,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "linear",
+                "log"
+              ]
             }
           }
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLim",
@@ -1932,7 +2077,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 3,
-            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1949,7 +2094,7 @@
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLimMode",
@@ -1957,7 +2102,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 4,
-            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1969,13 +2114,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
@@ -1983,7 +2132,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 5,
-            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2000,7 +2149,7 @@
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AlphaScale",
@@ -2008,7 +2157,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 6,
-            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2020,13 +2169,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "linear",
+                "log"
+              ]
             }
           }
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALim",
@@ -2034,7 +2187,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 7,
-            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2051,7 +2204,7 @@
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALimMode",
@@ -2059,7 +2212,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 8,
-            "groupId": "exact.colorandtransparencymaps.bafbbb8bf769",
+            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2071,7 +2224,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         }
@@ -2231,9 +2388,9 @@
             "category": "Position",
             "order": 2,
             "groupId": "local.polaraxes.position",
-            "editor": "numericVector",
-            "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "numericArray",
               "matlabClasses": [
@@ -2727,7 +2884,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },
@@ -2753,7 +2914,12 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "visible",
+                "all",
+                "none"
+              ]
             }
           }
         },

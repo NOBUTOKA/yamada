@@ -1,824 +1,758 @@
 {
-    "schemaVersion":  3,
-    "matlabRelease":  "R2024a",
-    "id":  "uigridlayout",
-    "factory":  "uigridlayout",
-    "creationArguments":  [
-
-                          ],
-    "declaredType":  "matlab.ui.container.GridLayout",
-    "sources":  [
-                    {
-                        "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uigridlayout.html",
-                        "scope":  "Factory syntax and parent types."
-                    },
-                    {
-                        "type":  "mathworksDocumentation",
-                        "url":  "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html",
-                        "scope":  "Public properties."
-                    }
-                ],
-    "documentationCategories":  [
-                                    {
-                                        "id":  "grid",
-                                        "displayName":  "Grid",
-                                        "order":  1
-                                    },
-                                    {
-                                        "id":  "color",
-                                        "displayName":  "Color",
-                                        "order":  2
-                                    },
-                                    {
-                                        "id":  "interactivity",
-                                        "displayName":  "Interactivity",
-                                        "order":  3
-                                    },
-                                    {
-                                        "id":  "position",
-                                        "displayName":  "Position",
-                                        "order":  4
-                                    },
-                                    {
-                                        "id":  "callbacks",
-                                        "displayName":  "Callbacks",
-                                        "order":  5
-                                    },
-                                    {
-                                        "id":  "callbackexecutioncontrol",
-                                        "displayName":  "Callback Execution Control",
-                                        "order":  6
-                                    },
-                                    {
-                                        "id":  "parentchild",
-                                        "displayName":  "Parent/Child",
-                                        "order":  7
-                                    },
-                                    {
-                                        "id":  "identifiers",
-                                        "displayName":  "Identifiers",
-                                        "order":  8
-                                    }
-                                ],
-    "properties":  [
-                       {
-                           "path":  "ColumnWidth",
-                           "categoryId":  "grid",
-                           "order":  1,
-                           "summary":  "Column width",
-                           "documentedDefault":  "{\u00271x\u0027,\u00271x\u0027}",
-                           "documentedAcceptedValues":  [
-                                                            "cell array",
-                                                            "string array",
-                                                            "numeric array"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "stringList",
-                                                 "shape":  "vector",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "char",
-                                                                       "string",
-                                                                       "cell",
-                                                                       "categorical"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "stringList",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "RowHeight",
-                           "categoryId":  "grid",
-                           "order":  2,
-                           "summary":  "Row height",
-                           "documentedDefault":  "{\u00271x\u0027,\u00271x\u0027}",
-                           "documentedAcceptedValues":  [
-                                                            "cell array",
-                                                            "string array",
-                                                            "numeric array"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "stringList",
-                                                 "shape":  "vector",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "char",
-                                                                       "string",
-                                                                       "cell",
-                                                                       "categorical"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "stringList",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "ColumnSpacing",
-                           "categoryId":  "grid",
-                           "order":  3,
-                           "summary":  "Column spacing",
-                           "documentedDefault":  "10",
-                           "documentedAcceptedValues":  [
-                                                            "number"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "number",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "double"
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "number",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "RowSpacing",
-                           "categoryId":  "grid",
-                           "order":  4,
-                           "summary":  "Row spacing",
-                           "documentedDefault":  "10",
-                           "documentedAcceptedValues":  [
-                                                            "number"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "number",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "double"
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "number",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "Padding",
-                           "categoryId":  "grid",
-                           "order":  5,
-                           "summary":  "Padding",
-                           "documentedDefault":  "[10 10 10 10]",
-                           "documentedAcceptedValues":  [
-                                                            "[left bottom right top]"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "numericArray",
-                                                 "shape":  "vector",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "double"
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "numericVector",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "BackgroundColor",
-                           "categoryId":  "color",
-                           "order":  1,
-                           "summary":  "Background color",
-                           "documentedDefault":  "[0.94 0.94 0.94]",
-                           "documentedAcceptedValues":  [
-                                                            "RGB triplet",
-                                                            "hexadecimal color code",
-                                                            "\u0027r\u0027",
-                                                            "\u0027g\u0027",
-                                                            "\u0027b\u0027"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "color",
-                                                 "shape":  "fixedLengthVector",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "double",
-                                                                       "char",
-                                                                       "string"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "color",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "Visible",
-                           "categoryId":  "interactivity",
-                           "order":  1,
-                           "summary":  "Visibility of children",
-                           "documentedDefault":  "\u0027on\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "on/off logical value"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "onOff",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "char",
-                                                                       "string",
-                                                                       "logical"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "onOff",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "Scrollable",
-                           "categoryId":  "interactivity",
-                           "order":  2,
-                           "summary":  "Ability to scroll",
-                           "documentedDefault":  "\u0027off\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "on/off logical value"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "onOff",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "char",
-                                                                       "string",
-                                                                       "logical"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "apply",
-                           "requiredEditor":  "onOff",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "ContextMenu",
-                           "categoryId":  "interactivity",
-                           "order":  3,
-                           "summary":  "Context menu",
-                           "documentedDefault":  "empty GraphicsPlaceholder array",
-                           "documentedAcceptedValues":  [
-                                                            "ContextMenu object"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "componentReference",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "handle"
-                                             },
-                           "affectsDisplay":  true,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "componentReference",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "Position",
-                           "categoryId":  "position",
-                           "order":  1,
-                           "summary":  "Location and size of grid layout manager",
-                           "documentedAcceptedValues":  [
-                                                            "[left bottom width height]"
-                                                        ],
-                           "documentedReadOnly":  true,
-                           "valueContract":  {
-                                                 "kind":  "opaque",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "unknown"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "documentedReadOnly"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "restricted"
-                       },
-                       {
-                           "path":  "InnerPosition",
-                           "categoryId":  "position",
-                           "order":  2,
-                           "summary":  "Location and size of grid layout manager, excluding padding",
-                           "documentedAcceptedValues":  [
-                                                            "[left bottom width height]"
-                                                        ],
-                           "documentedReadOnly":  true,
-                           "valueContract":  {
-                                                 "kind":  "opaque",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "unknown"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "documentedReadOnly"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "restricted"
-                       },
-                       {
-                           "path":  "OuterPosition",
-                           "categoryId":  "position",
-                           "order":  3,
-                           "summary":  "Location and size of grid layout manager",
-                           "documentedAcceptedValues":  [
-                                                            "[left bottom width height]"
-                                                        ],
-                           "documentedReadOnly":  true,
-                           "valueContract":  {
-                                                 "kind":  "opaque",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "unknown"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "documentedReadOnly"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "restricted"
-                       },
-                       {
-                           "path":  "Layout",
-                           "categoryId":  "position",
-                           "order":  4,
-                           "summary":  "Layout options",
-                           "documentedDefault":  "empty LayoutOptions array",
-                           "documentedAcceptedValues":  [
-                                                            "GridLayoutOptions object"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "graphicsObject",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "handle"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "hierarchyManaged",
-                                                                   "handleReference"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "CreateFcn",
-                           "categoryId":  "callbacks",
-                           "order":  1,
-                           "summary":  "Creation function",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "function handle",
-                                                            "cell array",
-                                                            "character vector"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "callback",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "function_handle",
-                                                                       "cell",
-                                                                       "char"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "callbackManaged",
-                                                                   "callbackExecutable"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "DeleteFcn",
-                           "categoryId":  "callbacks",
-                           "order":  2,
-                           "summary":  "Deletion function",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "function handle",
-                                                            "cell array",
-                                                            "character vector"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "callback",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "function_handle",
-                                                                       "cell",
-                                                                       "char"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "callbackManaged",
-                                                                   "callbackExecutable"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "Interruptible",
-                           "categoryId":  "callbackexecutioncontrol",
-                           "order":  1,
-                           "summary":  "Callback interruption",
-                           "documentedDefault":  "\u0027on\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "on/off logical value"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "onOff",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "char",
-                                                                       "string",
-                                                                       "logical"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "onOff",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "BusyAction",
-                           "categoryId":  "callbackexecutioncontrol",
-                           "order":  2,
-                           "summary":  "Callback queuing",
-                           "documentedDefault":  "\u0027queue\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "\u0027cancel\u0027"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "enum",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "char",
-                                                                       "string"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "enum",
-                           "disposition":  {
-                                               "kind":  "editable",
-                                               "reasonCodes":  [
-
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "BeingDeleted",
-                           "categoryId":  "callbackexecutioncontrol",
-                           "order":  3,
-                           "summary":  "Deletion status",
-                           "documentedAcceptedValues":  [
-                                                            "on/off logical value"
-                                                        ],
-                           "documentedReadOnly":  true,
-                           "valueContract":  {
-                                                 "kind":  "opaque",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "unknown"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "documentedReadOnly"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "restricted"
-                       },
-                       {
-                           "path":  "Parent",
-                           "categoryId":  "parentchild",
-                           "order":  1,
-                           "summary":  "Parent container",
-                           "documentedDefault":  "Figure object",
-                           "documentedAcceptedValues":  [
-                                                            "Panel object",
-                                                            "Tab object",
-                                                            "ButtonGroup object",
-                                                            "GridLayout object"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "componentReference",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "handle"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "hierarchyManaged"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "Children",
-                           "categoryId":  "parentchild",
-                           "order":  2,
-                           "summary":  "Children",
-                           "documentedAcceptedValues":  [
-                                                            "empty GraphicsPlaceholderArray",
-                                                            "array of UI component objects"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "graphicsObject",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "handle"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "handleReference"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "HandleVisibility",
-                           "categoryId":  "parentchild",
-                           "order":  3,
-                           "summary":  "Visibility of object handle",
-                           "documentedDefault":  "\u0027on\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "\u0027callback\u0027",
-                                                            "\u0027off\u0027"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "enum",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "char",
-                                                                       "string"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "lowDesignTimeValue"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "Type",
-                           "categoryId":  "identifiers",
-                           "order":  1,
-                           "summary":  "Type of graphics object",
-                           "documentedAcceptedValues":  [
-                                                            "\u0027uigridlayout\u0027"
-                                                        ],
-                           "documentedReadOnly":  true,
-                           "valueContract":  {
-                                                 "kind":  "opaque",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  false,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "unknown"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "documentedReadOnly"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "restricted"
-                       },
-                       {
-                           "path":  "Tag",
-                           "categoryId":  "identifiers",
-                           "order":  2,
-                           "summary":  "Object identifier",
-                           "documentedDefault":  "\u0027\u0027",
-                           "documentedAcceptedValues":  [
-                                                            "character vector",
-                                                            "string scalar"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "text",
-                                                 "shape":  "scalar",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  [
-                                                                       "char",
-                                                                       "string"
-                                                                   ]
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  ["lowDesignTimeValue"]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       },
-                       {
-                           "path":  "UserData",
-                           "categoryId":  "identifiers",
-                           "order":  3,
-                           "summary":  "User data",
-                           "documentedDefault":  "[]",
-                           "documentedAcceptedValues":  [
-                                                            "array"
-                                                        ],
-                           "valueContract":  {
-                                                 "kind":  "arbitraryData",
-                                                 "shape":  "any",
-                                                 "allowsEmpty":  true,
-                                                 "constraints":  [
-
-                                                                 ],
-                                                 "matlabClasses":  "any"
-                                             },
-                           "affectsDisplay":  false,
-                           "previewPolicy":  "skip",
-                           "requiredEditor":  "none",
-                           "disposition":  {
-                                               "kind":  "omitted",
-                                               "reasonCodes":  [
-                                                                   "arbitraryData",
-                                                                   "sourceOnly"
-                                                               ]
-                                           },
-                           "runtimeSetAccess":  "public"
-                       }
-                   ]
+  "schemaVersion": 3,
+  "matlabRelease": "R2024a",
+  "id": "uigridlayout",
+  "factory": "uigridlayout",
+  "creationArguments": [],
+  "declaredType": "matlab.ui.container.GridLayout",
+  "sources": [
+    {
+      "type": "mathworksDocumentation",
+      "url": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uigridlayout.html",
+      "scope": "Factory syntax and parent types."
+    },
+    {
+      "type": "mathworksDocumentation",
+      "url": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html",
+      "scope": "Public properties."
+    }
+  ],
+  "documentationCategories": [
+    {
+      "id": "grid",
+      "displayName": "Grid",
+      "order": 1
+    },
+    {
+      "id": "color",
+      "displayName": "Color",
+      "order": 2
+    },
+    {
+      "id": "interactivity",
+      "displayName": "Interactivity",
+      "order": 3
+    },
+    {
+      "id": "position",
+      "displayName": "Position",
+      "order": 4
+    },
+    {
+      "id": "callbacks",
+      "displayName": "Callbacks",
+      "order": 5
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 6
+    },
+    {
+      "id": "parentchild",
+      "displayName": "Parent/Child",
+      "order": 7
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 8
+    }
+  ],
+  "properties": [
+    {
+      "path": "ColumnWidth",
+      "categoryId": "grid",
+      "order": 1,
+      "summary": "Column width",
+      "documentedDefault": "{'1x','1x'}",
+      "documentedAcceptedValues": [
+        "cell array",
+        "string array",
+        "numeric array"
+      ],
+      "valueContract": {
+        "kind": "stringList",
+        "shape": "vector",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string",
+          "cell",
+          "categorical"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "stringList",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "RowHeight",
+      "categoryId": "grid",
+      "order": 2,
+      "summary": "Row height",
+      "documentedDefault": "{'1x','1x'}",
+      "documentedAcceptedValues": [
+        "cell array",
+        "string array",
+        "numeric array"
+      ],
+      "valueContract": {
+        "kind": "stringList",
+        "shape": "vector",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string",
+          "cell",
+          "categorical"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "stringList",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "ColumnSpacing",
+      "categoryId": "grid",
+      "order": 3,
+      "summary": "Column spacing",
+      "documentedDefault": "10",
+      "documentedAcceptedValues": [
+        "number"
+      ],
+      "valueContract": {
+        "kind": "number",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "double"
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "number",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "RowSpacing",
+      "categoryId": "grid",
+      "order": 4,
+      "summary": "Row spacing",
+      "documentedDefault": "10",
+      "documentedAcceptedValues": [
+        "number"
+      ],
+      "valueContract": {
+        "kind": "number",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "double"
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "number",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "Padding",
+      "categoryId": "grid",
+      "order": 5,
+      "summary": "Padding",
+      "documentedDefault": "[10 10 10 10]",
+      "documentedAcceptedValues": [
+        "[left bottom right top]"
+      ],
+      "valueContract": {
+        "kind": "numericArray",
+        "shape": "vector",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "double"
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "numericVector",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "BackgroundColor",
+      "categoryId": "color",
+      "order": 1,
+      "summary": "Background color",
+      "documentedDefault": "[0.94 0.94 0.94]",
+      "documentedAcceptedValues": [
+        "RGB triplet",
+        "hexadecimal color code",
+        "'r'",
+        "'g'",
+        "'b'"
+      ],
+      "valueContract": {
+        "kind": "color",
+        "shape": "fixedLengthVector",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "double",
+          "char",
+          "string"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "color",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "Visible",
+      "categoryId": "interactivity",
+      "order": 1,
+      "summary": "Visibility of children",
+      "documentedDefault": "'on'",
+      "documentedAcceptedValues": [
+        "on/off logical value"
+      ],
+      "valueContract": {
+        "kind": "onOff",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string",
+          "logical"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "onOff",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "Scrollable",
+      "categoryId": "interactivity",
+      "order": 2,
+      "summary": "Ability to scroll",
+      "documentedDefault": "'off'",
+      "documentedAcceptedValues": [
+        "on/off logical value"
+      ],
+      "valueContract": {
+        "kind": "onOff",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string",
+          "logical"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "onOff",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "ContextMenu",
+      "categoryId": "interactivity",
+      "order": 3,
+      "summary": "Context menu",
+      "documentedDefault": "empty GraphicsPlaceholder array",
+      "documentedAcceptedValues": [
+        "ContextMenu object"
+      ],
+      "valueContract": {
+        "kind": "componentReference",
+        "shape": "scalar",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": "handle"
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "skip",
+      "requiredEditor": "componentReference",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "Position",
+      "categoryId": "position",
+      "order": 1,
+      "summary": "Location and size of grid layout manager",
+      "documentedAcceptedValues": [
+        "[left bottom width height]"
+      ],
+      "documentedReadOnly": true,
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "unknown"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "documentedReadOnly"
+        ]
+      },
+      "runtimeSetAccess": "restricted"
+    },
+    {
+      "path": "InnerPosition",
+      "categoryId": "position",
+      "order": 2,
+      "summary": "Location and size of grid layout manager, excluding padding",
+      "documentedAcceptedValues": [
+        "[left bottom width height]"
+      ],
+      "documentedReadOnly": true,
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "unknown"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
+      },
+      "runtimeSetAccess": "restricted"
+    },
+    {
+      "path": "OuterPosition",
+      "categoryId": "position",
+      "order": 3,
+      "summary": "Location and size of grid layout manager",
+      "documentedAcceptedValues": [
+        "[left bottom width height]"
+      ],
+      "documentedReadOnly": true,
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "unknown"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "documentedReadOnly"
+        ]
+      },
+      "runtimeSetAccess": "restricted"
+    },
+    {
+      "path": "Layout",
+      "categoryId": "position",
+      "order": 4,
+      "summary": "Layout options",
+      "documentedDefault": "empty LayoutOptions array",
+      "documentedAcceptedValues": [
+        "GridLayoutOptions object"
+      ],
+      "valueContract": {
+        "kind": "graphicsObject",
+        "shape": "scalar",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": "handle"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "hierarchyManaged",
+          "handleReference"
+        ]
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "CreateFcn",
+      "categoryId": "callbacks",
+      "order": 1,
+      "summary": "Creation function",
+      "documentedDefault": "''",
+      "documentedAcceptedValues": [
+        "function handle",
+        "cell array",
+        "character vector"
+      ],
+      "valueContract": {
+        "kind": "callback",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "function_handle",
+          "cell",
+          "char"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "callbackManaged",
+          "callbackExecutable"
+        ]
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "DeleteFcn",
+      "categoryId": "callbacks",
+      "order": 2,
+      "summary": "Deletion function",
+      "documentedDefault": "''",
+      "documentedAcceptedValues": [
+        "function handle",
+        "cell array",
+        "character vector"
+      ],
+      "valueContract": {
+        "kind": "callback",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "function_handle",
+          "cell",
+          "char"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "callbackManaged",
+          "callbackExecutable"
+        ]
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "Interruptible",
+      "categoryId": "callbackexecutioncontrol",
+      "order": 1,
+      "summary": "Callback interruption",
+      "documentedDefault": "'on'",
+      "documentedAcceptedValues": [
+        "on/off logical value"
+      ],
+      "valueContract": {
+        "kind": "onOff",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string",
+          "logical"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "onOff",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "BusyAction",
+      "categoryId": "callbackexecutioncontrol",
+      "order": 2,
+      "summary": "Callback queuing",
+      "documentedDefault": "'queue'",
+      "documentedAcceptedValues": [
+        "'cancel'"
+      ],
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ],
+        "values": [
+          "queue",
+          "cancel"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "enum",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "BeingDeleted",
+      "categoryId": "callbackexecutioncontrol",
+      "order": 3,
+      "summary": "Deletion status",
+      "documentedAcceptedValues": [
+        "on/off logical value"
+      ],
+      "documentedReadOnly": true,
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "unknown"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "documentedReadOnly"
+        ]
+      },
+      "runtimeSetAccess": "restricted"
+    },
+    {
+      "path": "Parent",
+      "categoryId": "parentchild",
+      "order": 1,
+      "summary": "Parent container",
+      "documentedDefault": "Figure object",
+      "documentedAcceptedValues": [
+        "Panel object",
+        "Tab object",
+        "ButtonGroup object",
+        "GridLayout object"
+      ],
+      "valueContract": {
+        "kind": "componentReference",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "handle"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "hierarchyManaged"
+        ]
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "Children",
+      "categoryId": "parentchild",
+      "order": 2,
+      "summary": "Children",
+      "documentedAcceptedValues": [
+        "empty GraphicsPlaceholderArray",
+        "array of UI component objects"
+      ],
+      "valueContract": {
+        "kind": "graphicsObject",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": "handle"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "handleReference"
+        ]
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "HandleVisibility",
+      "categoryId": "parentchild",
+      "order": 3,
+      "summary": "Visibility of object handle",
+      "documentedDefault": "'on'",
+      "documentedAcceptedValues": [
+        "'callback'",
+        "'off'"
+      ],
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "Type",
+      "categoryId": "identifiers",
+      "order": 1,
+      "summary": "Type of graphics object",
+      "documentedAcceptedValues": [
+        "'uigridlayout'"
+      ],
+      "documentedReadOnly": true,
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": "unknown"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "documentedReadOnly"
+        ]
+      },
+      "runtimeSetAccess": "restricted"
+    },
+    {
+      "path": "Tag",
+      "categoryId": "identifiers",
+      "order": 2,
+      "summary": "Object identifier",
+      "documentedDefault": "''",
+      "documentedAcceptedValues": [
+        "character vector",
+        "string scalar"
+      ],
+      "valueContract": {
+        "kind": "text",
+        "shape": "scalar",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
+      },
+      "runtimeSetAccess": "public"
+    },
+    {
+      "path": "UserData",
+      "categoryId": "identifiers",
+      "order": 3,
+      "summary": "User data",
+      "documentedDefault": "[]",
+      "documentedAcceptedValues": [
+        "array"
+      ],
+      "valueContract": {
+        "kind": "arbitraryData",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": "any"
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "arbitraryData",
+          "sourceOnly"
+        ]
+      },
+      "runtimeSetAccess": "public"
+    }
+  ]
 }

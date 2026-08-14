@@ -55,7 +55,7 @@
       "entries": [
         {
           "path": "Title",
-          "groupId": "exact.title.d4dd3ebbc800",
+          "groupId": "exact.title.7db3f195c57f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Title",
@@ -63,7 +63,7 @@
             "categoryId": "title",
             "category": "Title",
             "order": 1,
-            "groupId": "exact.title.d4dd3ebbc800",
+            "groupId": "exact.title.7db3f195c57f",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -80,7 +80,7 @@
         },
         {
           "path": "TitlePosition",
-          "groupId": "exact.title.d4dd3ebbc800",
+          "groupId": "exact.title.7db3f195c57f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitlePosition",
@@ -88,7 +88,7 @@
             "categoryId": "title",
             "category": "Title",
             "order": 2,
-            "groupId": "exact.title.d4dd3ebbc800",
+            "groupId": "exact.title.7db3f195c57f",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -100,7 +100,12 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "lefttop",
+                "centertop",
+                "righttop"
+              ]
             }
           }
         }
@@ -113,7 +118,7 @@
       "entries": [
         {
           "path": "ForegroundColor",
-          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "groupId": "exact.colorandstyling.672318d04de2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ForegroundColor",
@@ -121,7 +126,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 1,
-            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "groupId": "exact.colorandstyling.672318d04de2",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -140,7 +145,7 @@
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "groupId": "exact.colorandstyling.672318d04de2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
@@ -148,7 +153,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 2,
-            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "groupId": "exact.colorandstyling.672318d04de2",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -167,7 +172,7 @@
         },
         {
           "path": "BorderType",
-          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "groupId": "exact.colorandstyling.672318d04de2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderType",
@@ -175,7 +180,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 3,
-            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "groupId": "exact.colorandstyling.672318d04de2",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -187,13 +192,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "line",
+                "none"
+              ]
             }
           }
         },
         {
           "path": "BorderWidth",
-          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "groupId": "exact.colorandstyling.672318d04de2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderWidth",
@@ -201,7 +210,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 4,
-            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "groupId": "exact.colorandstyling.672318d04de2",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -218,7 +227,7 @@
         },
         {
           "path": "BorderColor",
-          "groupId": "exact.colorandstyling.9004d2e673d3",
+          "groupId": "exact.colorandstyling.672318d04de2",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderColor",
@@ -226,7 +235,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 5,
-            "groupId": "exact.colorandstyling.9004d2e673d3",
+            "groupId": "exact.colorandstyling.672318d04de2",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -252,7 +261,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -260,7 +269,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -278,7 +287,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -286,7 +295,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -303,7 +312,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -311,7 +320,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -323,13 +332,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -337,7 +350,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -349,13 +362,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
             }
           }
         },
         {
           "path": "FontUnits",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontUnits",
@@ -363,7 +380,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -375,7 +392,14 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "pixels",
+                "points",
+                "normalized",
+                "inches",
+                "centimeters"
+              ]
             }
           }
         }
@@ -472,7 +496,7 @@
       "entries": [
         {
           "path": "Position",
-          "groupId": "exact.position.6dd9e2671d0c",
+          "groupId": "exact.position.d7f947c6c3d8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
@@ -480,7 +504,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 1,
-            "groupId": "exact.position.6dd9e2671d0c",
+            "groupId": "exact.position.d7f947c6c3d8",
             "editor": "numericVector",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
@@ -497,7 +521,7 @@
         },
         {
           "path": "InnerPosition",
-          "groupId": "exact.position.6dd9e2671d0c",
+          "groupId": "exact.position.d7f947c6c3d8",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "InnerPosition",
@@ -505,7 +529,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 2,
-            "groupId": "exact.position.6dd9e2671d0c",
+            "groupId": "exact.position.d7f947c6c3d8",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -522,7 +546,7 @@
         },
         {
           "path": "OuterPosition",
-          "groupId": "exact.position.6dd9e2671d0c",
+          "groupId": "exact.position.d7f947c6c3d8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "OuterPosition",
@@ -530,7 +554,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 3,
-            "groupId": "exact.position.6dd9e2671d0c",
+            "groupId": "exact.position.d7f947c6c3d8",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -547,7 +571,7 @@
         },
         {
           "path": "Units",
-          "groupId": "exact.position.6dd9e2671d0c",
+          "groupId": "exact.position.d7f947c6c3d8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
@@ -555,7 +579,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 4,
-            "groupId": "exact.position.6dd9e2671d0c",
+            "groupId": "exact.position.d7f947c6c3d8",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -567,7 +591,15 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "pixels",
+                "normalized",
+                "inches",
+                "centimeters",
+                "points",
+                "characters"
+              ]
             }
           }
         }
@@ -769,7 +801,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

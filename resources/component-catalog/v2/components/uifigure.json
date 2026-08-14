@@ -65,7 +65,12 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "modal",
+                "alwaysontop"
+              ]
             }
           }
         },
@@ -91,7 +96,13 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "minimized",
+                "maximized",
+                "fullscreen"
+              ]
             }
           }
         }
@@ -149,7 +160,15 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "pixels",
+                "normalized",
+                "inches",
+                "centimeters",
+                "points",
+                "characters"
+              ]
             }
           }
         },
@@ -166,7 +185,7 @@
             "groupId": "local.uifigure.positionandsize",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
               "matlabClasses": [
@@ -320,7 +339,15 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "arrow",
+                "ibeam",
+                "crosshair",
+                "watch",
+                "topl",
+                "custom"
+              ]
             }
           }
         },
@@ -531,7 +558,13 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "extend",
+                "alt",
+                "open"
+              ]
             }
           }
         },
@@ -1015,7 +1048,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

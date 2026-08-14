@@ -178,7 +178,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1c9b39207ba1",
+          "groupId": "exact.fontandcolor.35f0875cd68d",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -186,7 +186,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 1,
-            "groupId": "exact.fontandcolor.1c9b39207ba1",
+            "groupId": "exact.fontandcolor.35f0875cd68d",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -204,7 +204,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1c9b39207ba1",
+          "groupId": "exact.fontandcolor.35f0875cd68d",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -212,7 +212,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 2,
-            "groupId": "exact.fontandcolor.1c9b39207ba1",
+            "groupId": "exact.fontandcolor.35f0875cd68d",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -229,7 +229,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1c9b39207ba1",
+          "groupId": "exact.fontandcolor.35f0875cd68d",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -237,7 +237,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 3,
-            "groupId": "exact.fontandcolor.1c9b39207ba1",
+            "groupId": "exact.fontandcolor.35f0875cd68d",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -249,13 +249,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1c9b39207ba1",
+          "groupId": "exact.fontandcolor.35f0875cd68d",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -263,7 +267,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 4,
-            "groupId": "exact.fontandcolor.1c9b39207ba1",
+            "groupId": "exact.fontandcolor.35f0875cd68d",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -275,13 +279,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
             }
           }
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1c9b39207ba1",
+          "groupId": "exact.fontandcolor.35f0875cd68d",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -289,7 +297,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 5,
-            "groupId": "exact.fontandcolor.1c9b39207ba1",
+            "groupId": "exact.fontandcolor.35f0875cd68d",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -308,7 +316,7 @@
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1c9b39207ba1",
+          "groupId": "exact.fontandcolor.35f0875cd68d",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
@@ -316,7 +324,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 6,
-            "groupId": "exact.fontandcolor.1c9b39207ba1",
+            "groupId": "exact.fontandcolor.35f0875cd68d",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -335,7 +343,7 @@
         },
         {
           "path": "StyleConfigurations",
-          "groupId": "exact.fontandcolor.1c9b39207ba1",
+          "groupId": "exact.fontandcolor.35f0875cd68d",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "StyleConfigurations",
@@ -343,7 +351,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 7,
-            "groupId": "exact.fontandcolor.1c9b39207ba1",
+            "groupId": "exact.fontandcolor.35f0875cd68d",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -544,7 +552,7 @@
             "groupId": "local.uidropdown.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
               "matlabClasses": [
@@ -804,7 +812,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

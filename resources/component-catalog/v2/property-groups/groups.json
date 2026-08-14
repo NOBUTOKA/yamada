@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "2b968bf9176e64ca29f055a59d26f10f5a02745821f7cda11003c017e656b233",
+  "inputSha256": "261f41446fe37c99c49f339eb49ea1bf94929878dbc42459ed0dc1b5ad36d388",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -18,7 +18,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "left",
+              "right"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -38,7 +43,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "top",
+              "bottom"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -58,7 +68,16 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "left",
+              "right",
+              "center",
+              "leftmargin",
+              "rightmargin",
+              "top",
+              "bottom"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -106,7 +125,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "queue",
+              "cancel"
+            ]
           },
           "affectsDisplay": false,
           "previewPolicy": "skip",
@@ -230,7 +253,7 @@
       ]
     },
     {
-      "id": "exact.callbackexecutioncontrol.24ca74ea269b",
+      "id": "exact.callbackexecutioncontrol.9727da922b1e",
       "kind": "exactCategory",
       "categoryId": "callbackexecutioncontrol",
       "entries": [
@@ -265,7 +288,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "queue",
+              "cancel"
+            ]
           },
           "affectsDisplay": false,
           "previewPolicy": "notRendered",
@@ -320,7 +347,7 @@
       ]
     },
     {
-      "id": "exact.callbackexecutioncontrol.ab6e8410be1a",
+      "id": "exact.callbackexecutioncontrol.97a487fa3929",
       "kind": "exactCategory",
       "categoryId": "callbackexecutioncontrol",
       "entries": [
@@ -355,7 +382,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "queue",
+              "cancel"
+            ]
           },
           "affectsDisplay": false,
           "previewPolicy": "notRendered",
@@ -389,7 +420,7 @@
       ]
     },
     {
-      "id": "exact.colorandstyling.9004d2e673d3",
+      "id": "exact.colorandstyling.672318d04de2",
       "kind": "exactCategory",
       "categoryId": "colorandstyling",
       "entries": [
@@ -445,7 +476,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "line",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -498,7 +533,7 @@
       ]
     },
     {
-      "id": "exact.colorandtransparencymaps.bafbbb8bf769",
+      "id": "exact.colorandtransparencymaps.a8fd73cd4b45",
       "kind": "exactCategory",
       "categoryId": "colorandtransparencymaps",
       "entries": [
@@ -533,7 +568,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "linear",
+              "log"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -572,7 +611,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -611,7 +654,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "linear",
+              "log"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -650,7 +697,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -663,7 +714,7 @@
       ]
     },
     {
-      "id": "exact.font.571c323d68a0",
+      "id": "exact.font.5d69f9f1822c",
       "kind": "exactCategory",
       "categoryId": "font",
       "entries": [
@@ -716,7 +767,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -736,7 +791,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -756,7 +815,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "pixels",
+              "points",
+              "normalized",
+              "inches",
+              "centimeters"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -769,7 +835,7 @@
       ]
     },
     {
-      "id": "exact.font.ec9da849d336",
+      "id": "exact.font.8efcd1a89888",
       "kind": "exactCategory",
       "categoryId": "font",
       "entries": [
@@ -822,7 +888,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -842,7 +912,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -876,7 +950,7 @@
       ]
     },
     {
-      "id": "exact.fontandcolor.1c9b39207ba1",
+      "id": "exact.fontandcolor.1e974f782153",
       "kind": "exactCategory",
       "categoryId": "fontandcolor",
       "entries": [
@@ -929,7 +1003,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -949,7 +1027,147 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontColor",
+          "valueContract": {
+            "kind": "color",
+            "matlabClasses": [
+              "char",
+              "double",
+              "string"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
             "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "color",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "BackgroundColor",
+          "valueContract": {
+            "kind": "color",
+            "matlabClasses": [
+              "char",
+              "double",
+              "string"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "color",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "exact.fontandcolor.35f0875cd68d",
+      "kind": "exactCategory",
+      "categoryId": "fontandcolor",
+      "entries": [
+        {
+          "path": "FontName",
+          "valueContract": {
+            "kind": "text",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "text",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontSize",
+          "valueContract": {
+            "kind": "number",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "number",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontWeight",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontAngle",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1025,266 +1243,7 @@
       ]
     },
     {
-      "id": "exact.fontandcolor.26568df5fb66",
-      "kind": "exactCategory",
-      "categoryId": "fontandcolor",
-      "entries": [
-        {
-          "path": "FontName",
-          "valueContract": {
-            "kind": "text",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "text",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontSize",
-          "valueContract": {
-            "kind": "number",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "number",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontWeight",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontAngle",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontColor",
-          "valueContract": {
-            "kind": "color",
-            "matlabClasses": [
-              "char",
-              "double",
-              "string"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "color",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "BackgroundColor",
-          "valueContract": {
-            "kind": "color",
-            "matlabClasses": [
-              "char",
-              "double",
-              "string"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "color",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.gauge.ff6a72209bfa",
-      "kind": "exactCategory",
-      "categoryId": "gauge",
-      "entries": [
-        {
-          "path": "Value",
-          "valueContract": {
-            "kind": "number",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [
-              {
-                "kind": "withinLimitsOf",
-                "property": "Limits"
-              }
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "number",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Limits",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Orientation",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ScaleDirection",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ScaleColors",
-          "valueContract": {
-            "kind": "stringList",
-            "matlabClasses": [
-              "categorical",
-              "cell",
-              "char",
-              "string"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "stringList",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ScaleColorLimits",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.grids.356da5448044",
+      "id": "exact.grids.a3817d34ad79",
       "kind": "exactCategory",
       "categoryId": "grids",
       "entries": [
@@ -1361,7 +1320,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "bottom",
+              "top"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1381,7 +1344,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "-",
+              "--",
+              ":",
+              "-.",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1462,7 +1432,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1501,7 +1475,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1584,7 +1562,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              ":",
+              "-",
+              "--",
+              "-.",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1665,7 +1650,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1704,100 +1693,15 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
           "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.interactivity.2868c87f98d0",
-      "kind": "exactCategory",
-      "categoryId": "interactivity",
-      "entries": [
-        {
-          "path": "Visible",
-          "valueContract": {
-            "kind": "onOff",
-            "matlabClasses": [
-              "char",
-              "logical",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "onOff",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Enable",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Tooltip",
-          "valueContract": {
-            "kind": "stringList",
-            "matlabClasses": [
-              "categorical",
-              "cell",
-              "char",
-              "string"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "stringList",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ContextMenu",
-          "valueContract": {
-            "kind": "componentReference",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -1959,7 +1863,7 @@
       ]
     },
     {
-      "id": "exact.labels.3ddefe6d1a29",
+      "id": "exact.labels.9c06736f2caf",
       "kind": "exactCategory",
       "categoryId": "labels",
       "entries": [
@@ -2013,7 +1917,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "left",
+              "right"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2109,181 +2018,7 @@
       ]
     },
     {
-      "id": "exact.multipleplots.11711c9a4046",
-      "kind": "exactCategory",
-      "categoryId": "multipleplots",
-      "entries": [
-        {
-          "path": "ColorOrder",
-          "valueContract": {
-            "kind": "color",
-            "matlabClasses": [
-              "char",
-              "double",
-              "string"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "color",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ColorOrderIndex",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        },
-        {
-          "path": "LineStyleOrder",
-          "valueContract": {
-            "kind": "stringList",
-            "matlabClasses": [
-              "categorical",
-              "cell",
-              "char",
-              "string"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "stringList",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "LineStyleCyclingMethod",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        },
-        {
-          "path": "NextSeriesIndex",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "documentedReadOnly"
-            ]
-          }
-        },
-        {
-          "path": "NextPlot",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "SortMethod",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "LineStyleOrderIndex",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.multipleplots.dfec4596a19a",
+      "id": "exact.multipleplots.f60264b7b9ff",
       "kind": "exactCategory",
       "categoryId": "multipleplots",
       "entries": [
@@ -2382,7 +2117,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "replace",
+              "add",
+              "replacechildren",
+              "replaceall"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2402,7 +2143,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "depth",
+              "childorder"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2457,7 +2202,7 @@
       ]
     },
     {
-      "id": "exact.position.6dd9e2671d0c",
+      "id": "exact.position.d7f947c6c3d8",
       "kind": "exactCategory",
       "categoryId": "position",
       "entries": [
@@ -2497,94 +2242,6 @@
           "disposition": {
             "kind": "omitted",
             "reasonCodes": [
-              "documentedReadOnly"
-            ]
-          }
-        },
-        {
-          "path": "OuterPosition",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        },
-        {
-          "path": "Units",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.position.c8b0564957d2",
-      "kind": "exactCategory",
-      "categoryId": "position",
-      "entries": [
-        {
-          "path": "Position",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "InnerPosition",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
               "lowDesignTimeValue"
             ]
           }
@@ -2620,7 +2277,15 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "pixels",
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "characters"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2633,7 +2298,7 @@
       ]
     },
     {
-      "id": "exact.rulers.fe7aaa03f121",
+      "id": "exact.rulers.cb5e5fef594a",
       "kind": "exactCategory",
       "categoryId": "rulers",
       "entries": [
@@ -2744,7 +2409,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2804,7 +2473,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "tickaligned",
+              "tight",
+              "padded"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2887,7 +2561,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "bottom",
+              "top",
+              "origin"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2907,7 +2586,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "left",
+              "right",
+              "origin"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2990,7 +2674,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3010,7 +2698,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3030,7 +2722,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3050,7 +2746,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "reverse"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3070,7 +2770,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "reverse"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3090,7 +2794,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "reverse"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3150,7 +2858,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "linear",
+              "log"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3163,7 +2875,7 @@
       ]
     },
     {
-      "id": "exact.switch.cc737bc3f384",
+      "id": "exact.switch.958bd16ac0f1",
       "kind": "exactCategory",
       "categoryId": "switch",
       "entries": [
@@ -3263,7 +2975,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "vertical",
+              "horizontal"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3276,134 +2992,7 @@
       ]
     },
     {
-      "id": "exact.ticks.458d77dd4986",
-      "kind": "exactCategory",
-      "categoryId": "ticks",
-      "entries": [
-        {
-          "path": "MajorTicks",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MajorTicksMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MajorTickLabels",
-          "valueContract": {
-            "kind": "stringList",
-            "matlabClasses": [
-              "categorical",
-              "cell",
-              "char",
-              "string"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "stringList",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MajorTickLabelsMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MinorTicks",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "MinorTicksMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.ticks.fd34964b3e8f",
+      "id": "exact.ticks.1bd57d1dbfe2",
       "kind": "exactCategory",
       "categoryId": "ticks",
       "entries": [
@@ -3514,7 +3103,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3640,7 +3233,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3660,7 +3257,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "tex",
+              "latex",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3777,7 +3379,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3860,7 +3466,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "in",
+              "out",
+              "both",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3880,7 +3492,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3912,7 +3528,146 @@
       ]
     },
     {
-      "id": "exact.title.d4dd3ebbc800",
+      "id": "exact.ticks.54cad1cfbd30",
+      "kind": "exactCategory",
+      "categoryId": "ticks",
+      "entries": [
+        {
+          "path": "MajorTicks",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MajorTicksMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MajorTickLabels",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MajorTickLabelsMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MinorTicks",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "MinorTicksMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "exact.title.7db3f195c57f",
       "kind": "exactCategory",
       "categoryId": "title",
       "entries": [
@@ -3945,7 +3700,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "lefttop",
+              "centertop",
+              "righttop"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3958,7 +3718,7 @@
       ]
     },
     {
-      "id": "exact.view.8c5a8dffbd56",
+      "id": "exact.view.3c7989b775f1",
       "kind": "exactCategory",
       "categoryId": "view",
       "entries": [
@@ -3991,7 +3751,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "orthographic",
+              "perspective"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4030,7 +3794,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4069,7 +3837,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4108,7 +3880,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4147,7 +3923,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4235,7 +4015,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "back",
+              "full"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4276,7 +4060,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "3dbox",
+              "rectangle"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4324,7 +4112,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "visible",
+              "all",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4471,7 +4264,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4510,7 +4307,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4530,7 +4331,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4592,7 +4397,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "bold",
+              "normal"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4612,7 +4421,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4632,7 +4445,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "points",
+              "inches",
+              "centimeters",
+              "normalized",
+              "pixels"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4993,12 +4813,14 @@
             "allowsEmpty": false,
             "constraints": []
           },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         },
         {
@@ -5112,7 +4934,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5151,7 +4977,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5268,7 +5098,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "visible",
+              "all",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5434,7 +5269,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5454,7 +5293,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5474,7 +5317,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5536,7 +5383,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "bold",
+              "normal"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5556,7 +5407,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5576,7 +5431,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "points",
+              "inches",
+              "centimeters",
+              "normalized",
+              "pixels"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5624,7 +5486,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "-",
+              "--",
+              ":",
+              "-.",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5665,7 +5534,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5704,7 +5577,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6014,7 +5891,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "left",
+              "right"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6102,7 +5984,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "streets-light",
+              "streets-dark",
+              "streets",
+              "satellite",
+              "topographic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6183,7 +6072,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6222,7 +6115,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6361,12 +6258,14 @@
             "allowsEmpty": false,
             "constraints": []
           },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         },
         {
@@ -6440,7 +6339,15 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "pixels",
+              "characters"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6559,7 +6466,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "in",
+              "out",
+              "both",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6579,7 +6492,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "manual",
+              "auto"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6735,7 +6652,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "visible",
+              "all",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6901,7 +6823,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6921,7 +6847,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6941,7 +6871,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6982,7 +6916,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "bold",
+              "normal"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7002,7 +6940,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7022,7 +6964,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "points",
+              "inches",
+              "centimeters",
+              "normalized",
+              "pixels"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7112,7 +7061,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "bottom",
+              "top"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7132,7 +7085,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "-",
+              "--",
+              ":",
+              "-.",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7173,7 +7133,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7212,7 +7176,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7274,7 +7242,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              ":",
+              "-",
+              "--",
+              "-.",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7315,7 +7290,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7354,7 +7333,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7666,7 +7649,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "left",
+              "right"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7694,6 +7682,190 @@
             "kind": "omitted",
             "reasonCodes": [
               "documentedReadOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.polaraxes.multipleplots",
+      "kind": "variantLocal",
+      "categoryId": "multipleplots",
+      "entries": [
+        {
+          "path": "ColorOrder",
+          "valueContract": {
+            "kind": "color",
+            "matlabClasses": [
+              "char",
+              "double",
+              "string"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "color",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ColorOrderIndex",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "LineStyleOrder",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "LineStyleCyclingMethod",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "NextSeriesIndex",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "documentedReadOnly"
+            ]
+          }
+        },
+        {
+          "path": "NextPlot",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "replace",
+              "add",
+              "replacechildren",
+              "replaceall"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "SortMethod",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "depth",
+              "childorder"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "LineStyleOrderIndex",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
             ]
           }
         }
@@ -7805,12 +7977,14 @@
             "allowsEmpty": false,
             "constraints": []
           },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         },
         {
@@ -8073,7 +8247,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8114,7 +8292,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8155,7 +8337,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8175,7 +8361,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "reverse"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8195,7 +8385,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "counterclockwise",
+              "clockwise"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8215,7 +8409,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "degrees",
+              "radians"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8261,7 +8459,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8303,7 +8505,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8342,7 +8548,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8384,7 +8594,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8423,7 +8637,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8485,7 +8703,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "right",
+              "top",
+              "left",
+              "bottom"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8505,7 +8729,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "in",
+              "out",
+              "both",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8525,7 +8755,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8545,7 +8779,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "tex",
+              "latex",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8673,7 +8912,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "back",
+              "full"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8714,7 +8957,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "3dbox",
+              "rectangle"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8762,7 +9009,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "visible",
+              "all",
+              "none"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8928,7 +9180,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8948,7 +9204,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8968,7 +9228,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9030,7 +9294,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "bold",
+              "normal"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9050,7 +9318,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9070,7 +9342,14 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "pixels",
+              "inches",
+              "centimeters",
+              "normalized",
+              "points"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9344,6 +9623,190 @@
       ]
     },
     {
+      "id": "local.uiaxes.multipleplots",
+      "kind": "variantLocal",
+      "categoryId": "multipleplots",
+      "entries": [
+        {
+          "path": "ColorOrder",
+          "valueContract": {
+            "kind": "color",
+            "matlabClasses": [
+              "char",
+              "double",
+              "string"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "color",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ColorOrderIndex",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "LineStyleOrder",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "LineStyleCyclingMethod",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "NextSeriesIndex",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "documentedReadOnly"
+            ]
+          }
+        },
+        {
+          "path": "NextPlot",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "replacechildren",
+              "add",
+              "replaceall",
+              "replace"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "SortMethod",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "depth",
+              "childorder"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "LineStyleOrderIndex",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uiaxes.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -9449,12 +9912,14 @@
             "allowsEmpty": false,
             "constraints": []
           },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         },
         {
@@ -9528,7 +9993,15 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "pixels",
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "characters"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9567,7 +10040,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9606,7 +10083,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9951,7 +10432,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -10242,7 +10723,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -11024,7 +11505,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -11044,7 +11529,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -11238,7 +11727,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -11606,7 +12095,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -12277,7 +12766,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -12756,7 +13245,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -13075,7 +13564,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -13264,7 +13753,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "right",
+              "left",
+              "center"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -13610,7 +14104,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -13714,7 +14208,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "text",
+              "letters",
+              "digits",
+              "alphanumerics"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -13753,7 +14253,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "left",
+              "right",
+              "center"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14137,7 +14642,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "extend",
+              "alt",
+              "open"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14259,7 +14770,15 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "arrow",
+              "ibeam",
+              "crosshair",
+              "watch",
+              "topl",
+              "custom"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14465,7 +14984,15 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "pixels",
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "characters"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14490,7 +15017,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -14576,7 +15103,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "modal",
+              "alwaysontop"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14596,7 +15128,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "minimized",
+              "maximized",
+              "fullscreen"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14920,7 +15458,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "clockwise",
+              "counterclockwise"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -15134,7 +15676,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -15298,7 +15840,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "horizontal",
+              "vertical"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -15512,7 +16058,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -15614,6 +16160,147 @@
               "callbackExecutable",
               "callbackManaged"
             ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uigauge-ninetydegree.gauge",
+      "kind": "variantLocal",
+      "categoryId": "gauge",
+      "entries": [
+        {
+          "path": "Value",
+          "valueContract": {
+            "kind": "number",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [
+              {
+                "kind": "withinLimitsOf",
+                "property": "Limits"
+              }
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "number",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Limits",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Orientation",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "northwest",
+              "northeast",
+              "southwest",
+              "southeast"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ScaleDirection",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "clockwise",
+              "counterclockwise"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ScaleColors",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ScaleColorLimits",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
           }
         }
       ]
@@ -15779,7 +16466,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -15881,6 +16568,147 @@
               "callbackExecutable",
               "callbackManaged"
             ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uigauge-semicircular.gauge",
+      "kind": "variantLocal",
+      "categoryId": "gauge",
+      "entries": [
+        {
+          "path": "Value",
+          "valueContract": {
+            "kind": "number",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [
+              {
+                "kind": "withinLimitsOf",
+                "property": "Limits"
+              }
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "number",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Limits",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Orientation",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "north",
+              "south",
+              "east",
+              "west"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ScaleDirection",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "clockwise",
+              "counterclockwise"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ScaleColors",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ScaleColorLimits",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
           }
         }
       ]
@@ -16046,7 +16874,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -16542,7 +17370,7 @@
           "disposition": {
             "kind": "omitted",
             "reasonCodes": [
-              "documentedReadOnly"
+              "lowDesignTimeValue"
             ]
           }
         },
@@ -16977,7 +17805,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -17161,7 +17989,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17181,7 +18013,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17293,7 +18129,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "left",
+              "right",
+              "center"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17313,7 +18154,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "top",
+              "bottom"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17617,7 +18463,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -17883,7 +18729,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "left",
+              "right"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17903,7 +18754,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "top",
+              "bottom"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17923,7 +18779,15 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "fit",
+              "fill",
+              "none",
+              "scaledown",
+              "scaleup",
+              "stretch"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -18153,7 +19017,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -18518,7 +19382,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -18902,7 +19766,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -19169,7 +20033,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -19257,7 +20121,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "none",
+              "tex",
+              "latex",
+              "html"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -19277,7 +20147,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "left",
+              "right",
+              "center"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -19297,7 +20172,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "center",
+              "top",
+              "bottom"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -19486,6 +20366,99 @@
       ]
     },
     {
+      "id": "local.uilamp.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "Visible",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Enable",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "on",
+              "off"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Tooltip",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "componentReference",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uilamp.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -19574,7 +20547,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -20117,7 +21090,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -21338,7 +22311,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "none",
+              "tex",
+              "latex",
+              "html"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -21587,7 +22566,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -21880,7 +22859,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -21984,7 +22963,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "horizontal",
+              "vertical"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -22023,7 +23006,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -22299,7 +23286,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -22408,7 +23395,11 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "horizontal",
+              "vertical"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -22712,7 +23703,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -22920,7 +23911,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "right",
+              "left",
+              "center"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -23214,7 +24210,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -23505,7 +24501,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -23552,6 +24548,123 @@
               "handleReference",
               "hierarchyManaged"
             ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uiswitch-slider.switch",
+      "kind": "variantLocal",
+      "categoryId": "switch",
+      "entries": [
+        {
+          "path": "Value",
+          "valueContract": {
+            "kind": "number",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "number",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Items",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ItemsData",
+          "valueContract": {
+            "kind": "arbitraryData",
+            "matlabClasses": [
+              "any"
+            ],
+            "shape": "propertyDependent",
+            "allowsEmpty": true,
+            "constraints": [
+              {
+                "kind": "sameLengthAs",
+                "property": "Items"
+              }
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "structuredData",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ValueIndex",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "Orientation",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "horizontal",
+              "vertical"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
           }
         }
       ]
@@ -23796,7 +24909,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -24184,7 +25297,7 @@
           "disposition": {
             "kind": "omitted",
             "reasonCodes": [
-              "documentedReadOnly"
+              "lowDesignTimeValue"
             ]
           }
         },
@@ -24219,7 +25332,15 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "pixels",
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "characters"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -24633,7 +25754,13 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "top",
+              "bottom",
+              "left",
+              "right"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -25110,6 +26237,100 @@
       ]
     },
     {
+      "id": "local.uitable.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "Visible",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Enable",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "on",
+              "inactive",
+              "off"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Tooltip",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "componentReference",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uitable.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -25478,7 +26699,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "cell",
+              "row",
+              "column"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -25921,7 +27147,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -26028,7 +27254,12 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "values": [
+              "left",
+              "right",
+              "center"
+            ]
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -26277,7 +27508,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -27399,7 +28630,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
@@ -27991,7 +29222,7 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "readOnly",
+            "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
             ]

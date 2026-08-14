@@ -42,13 +42,17 @@ function ConvertTo-NormalizedValueContract {
         }) | Sort-Object { "$($_.kind)`u{001F}$($_.property)" }
     )
 
-    return [ordered]@{
+    $result = [ordered]@{
         kind          = [string]$ValueContract.kind
         matlabClasses = @(ConvertTo-StringArray $ValueContract.matlabClasses | Sort-Object)
         shape         = [string]$ValueContract.shape
         allowsEmpty   = [bool]$ValueContract.allowsEmpty
         constraints   = $constraints
     }
+    if ($null -ne $ValueContract.PSObject.Properties["values"]) {
+        $result.values = @(ConvertTo-StringArray $ValueContract.values)
+    }
+    return $result
 }
 
 function ConvertTo-NormalizedDisposition {

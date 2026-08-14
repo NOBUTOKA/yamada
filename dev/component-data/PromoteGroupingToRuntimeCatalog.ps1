@@ -45,6 +45,18 @@ function Get-PropertyMetadata {
 
     $editor = [string]$Capability.requiredEditor
     if ($editor -eq "none") { $editor = "readOnly" }
+    $valueSchema = [ordered]@{
+        kind = [string]$Capability.valueContract.kind
+        matlabClasses = @($Capability.valueContract.matlabClasses | ForEach-Object { [string]$_ })
+        shape = [string]$Capability.valueContract.shape
+        allowsEmpty = [bool]$Capability.valueContract.allowsEmpty
+        constraints = @($Capability.valueContract.constraints | ForEach-Object {
+            [ordered]@{ kind = [string]$_.kind; property = [string]$_.property }
+        })
+    }
+    if ($null -ne $Capability.valueContract.PSObject.Properties["values"]) {
+        $valueSchema.values = @($Capability.valueContract.values | ForEach-Object { [string]$_ })
+    }
     return [ordered]@{
         displayName = [string]$SourceProperty.path
         description = [string]$SourceProperty.summary
@@ -55,15 +67,7 @@ function Get-PropertyMetadata {
         editor = $editor
         previewPolicy = [string]$Capability.previewPolicy
         auditDisposition = [string]$Capability.disposition.kind
-        valueSchema = [ordered]@{
-            kind = [string]$Capability.valueContract.kind
-            matlabClasses = @($Capability.valueContract.matlabClasses | ForEach-Object { [string]$_ })
-            shape = [string]$Capability.valueContract.shape
-            allowsEmpty = [bool]$Capability.valueContract.allowsEmpty
-            constraints = @($Capability.valueContract.constraints | ForEach-Object {
-                [ordered]@{ kind = [string]$_.kind; property = [string]$_.property }
-            })
-        }
+        valueSchema = $valueSchema
     }
 }
 

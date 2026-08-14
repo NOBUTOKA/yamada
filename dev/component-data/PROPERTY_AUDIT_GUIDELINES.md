@@ -89,6 +89,11 @@ Recommended semantic kinds include:
 same class, and an empty documented default does not by itself prove that the
 property accepts an empty value. Record `allowsEmpty` independently.
 
+For an `enum` whose documentation establishes the complete finite choice set,
+record its normalized, unquoted values in `valueContract.values`. Include the
+documented default when it is one of the choices. Do not synthesize a partial
+list from examples or prose: omit `values` until the complete set is known.
+
 ### Cross-property constraints
 
 Place each constraint only on the dependent property and name the dependency

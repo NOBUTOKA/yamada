@@ -214,6 +214,16 @@
         "allowsEmpty": {
           "type": "boolean"
         },
+        "values": {
+          "description": "Complete finite choices for an enum contract, normalized without MATLAB literal quotes. Omit when the documentation does not establish a complete finite set.",
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
         "constraints": {
           "type": "array",
           "items": {

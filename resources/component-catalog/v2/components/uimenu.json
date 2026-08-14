@@ -348,7 +348,7 @@
       "entries": [
         {
           "path": "Interruptible",
-          "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+          "groupId": "exact.callbackexecutioncontrol.97a487fa3929",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
@@ -356,7 +356,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
-            "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+            "groupId": "exact.callbackexecutioncontrol.97a487fa3929",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -375,7 +375,7 @@
         },
         {
           "path": "BusyAction",
-          "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+          "groupId": "exact.callbackexecutioncontrol.97a487fa3929",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
@@ -383,7 +383,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
-            "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+            "groupId": "exact.callbackexecutioncontrol.97a487fa3929",
             "editor": "enum",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -395,13 +395,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },
         {
           "path": "BeingDeleted",
-          "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+          "groupId": "exact.callbackexecutioncontrol.97a487fa3929",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
@@ -409,7 +413,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
-            "groupId": "exact.callbackexecutioncontrol.ab6e8410be1a",
+            "groupId": "exact.callbackexecutioncontrol.97a487fa3929",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
             "auditDisposition": "omitted",

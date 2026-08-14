@@ -37,6 +37,23 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function enablesCatalogEnumDropDown(testCase)
+            % enablesCatalogEnumDropDown Use audited finite choices in an editable native DropDown.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uibutton-push");
+            definition = definition.Properties([definition.Properties.Path] == "FontWeight");
+            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+                figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "normal", true);
+            drawnow;
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.Items), ["normal", "bold"]);
+            testCase.verifyEqual(string(control.Enable), "on");
+            clear cleanup
+        end
+
         function defersUnsupportedEditorAsReadOnly(testCase)
             % defersUnsupportedEditorAsReadOnly Keep unimplemented kinds non-editable.
 

@@ -45,17 +45,21 @@ function Get-Hash {
 
 function Get-PropertyCapability {
     param([object]$Property)
+    $valueContract = [ordered]@{
+        kind = [string]$Property.valueContract.kind
+        matlabClasses = @($Property.valueContract.matlabClasses | ForEach-Object { [string]$_ } | Sort-Object)
+        shape = [string]$Property.valueContract.shape
+        allowsEmpty = [bool]$Property.valueContract.allowsEmpty
+        constraints = @($Property.valueContract.constraints | ForEach-Object {
+            [ordered]@{ kind = [string]$_.kind; property = [string]$_.property }
+        } | Sort-Object { "$($_.kind)`u{001F}$($_.property)" })
+    }
+    if ($null -ne $Property.valueContract.PSObject.Properties["values"]) {
+        $valueContract.values = @($Property.valueContract.values | ForEach-Object { [string]$_ })
+    }
     return [ordered]@{
         path = [string]$Property.path
-        valueContract = [ordered]@{
-            kind = [string]$Property.valueContract.kind
-            matlabClasses = @($Property.valueContract.matlabClasses | ForEach-Object { [string]$_ } | Sort-Object)
-            shape = [string]$Property.valueContract.shape
-            allowsEmpty = [bool]$Property.valueContract.allowsEmpty
-            constraints = @($Property.valueContract.constraints | ForEach-Object {
-                [ordered]@{ kind = [string]$_.kind; property = [string]$_.property }
-            } | Sort-Object { "$($_.kind)`u{001F}$($_.property)" })
-        }
+        valueContract = $valueContract
         affectsDisplay = [bool]$Property.affectsDisplay
         previewPolicy = [string]$Property.previewPolicy
         requiredEditor = [string]$Property.requiredEditor

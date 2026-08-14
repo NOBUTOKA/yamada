@@ -66,7 +66,7 @@
       "entries": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.2868c87f98d0",
+          "groupId": "local.uilamp.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
@@ -74,7 +74,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
-            "groupId": "exact.interactivity.2868c87f98d0",
+            "groupId": "local.uilamp.interactivity",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -93,7 +93,7 @@
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.2868c87f98d0",
+          "groupId": "local.uilamp.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
@@ -101,7 +101,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
-            "groupId": "exact.interactivity.2868c87f98d0",
+            "groupId": "local.uilamp.interactivity",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -113,13 +113,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "on",
+                "off"
+              ]
             }
           }
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.2868c87f98d0",
+          "groupId": "local.uilamp.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
@@ -127,7 +131,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
-            "groupId": "exact.interactivity.2868c87f98d0",
+            "groupId": "local.uilamp.interactivity",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -147,7 +151,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.2868c87f98d0",
+          "groupId": "local.uilamp.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -155,7 +159,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
-            "groupId": "exact.interactivity.2868c87f98d0",
+            "groupId": "local.uilamp.interactivity",
             "editor": "componentReference",
             "previewPolicy": "skip",
             "auditDisposition": "editable",
@@ -215,7 +219,7 @@
             "groupId": "local.uilamp.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
               "matlabClasses": [
@@ -394,7 +398,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

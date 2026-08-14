@@ -21,7 +21,8 @@ classdef PropertyEditorFactory
                     items = macd.ui.inspector.PropertyEditorFactory.enumItems(definition);
                     control = uidropdown(parent, "Items", cellstr(items), ...
                         "Tag", "macd-inspector-property-editor", ...
-                        "ValueChangedFcn", @(source, ~) commitFcn(string(source.Value)));
+                        "ValueChangedFcn", @(source, ~) commitFcn( ...
+                        macd.source.LiteralEncoder.encode(char(source.Value))));
                 case "number"
                     control = uieditfield(parent, "numeric", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -82,12 +83,18 @@ classdef PropertyEditorFactory
                 control.Value = logicalValue == "on" || logicalValue == "true" || logicalValue == "1";
                 control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
             elseif isa(control, "matlab.ui.control.DropDown")
+                % Prefer the raw char or string value over its inspector literal rendering.
+                selectedValue = value;
+                if (ischar(rawValue) && isrow(rawValue)) || ...
+                        (isstring(rawValue) && isscalar(rawValue))
+                    selectedValue = string(rawValue);
+                end
                 % Retain documented or runtime defaults absent from an incomplete enum contract.
                 items = string(control.Items);
-                if ~any(items == value)
-                    control.Items = cellstr([items(:); value]);
+                if ~any(items == selectedValue)
+                    control.Items = cellstr([items(:); selectedValue]);
                 end
-                control.Value = char(value);
+                control.Value = char(selectedValue);
                 control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
             elseif isa(control, "matlab.ui.control.NumericEditField")
                 number = str2double(value);

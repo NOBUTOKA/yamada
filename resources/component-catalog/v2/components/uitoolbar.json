@@ -147,7 +147,7 @@
       "entries": [
         {
           "path": "Interruptible",
-          "groupId": "exact.callbackexecutioncontrol.24ca74ea269b",
+          "groupId": "exact.callbackexecutioncontrol.9727da922b1e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
@@ -155,7 +155,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
-            "groupId": "exact.callbackexecutioncontrol.24ca74ea269b",
+            "groupId": "exact.callbackexecutioncontrol.9727da922b1e",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -174,7 +174,7 @@
         },
         {
           "path": "BusyAction",
-          "groupId": "exact.callbackexecutioncontrol.24ca74ea269b",
+          "groupId": "exact.callbackexecutioncontrol.9727da922b1e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
@@ -182,7 +182,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
-            "groupId": "exact.callbackexecutioncontrol.24ca74ea269b",
+            "groupId": "exact.callbackexecutioncontrol.9727da922b1e",
             "editor": "enum",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -194,13 +194,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },
         {
           "path": "BeingDeleted",
-          "groupId": "exact.callbackexecutioncontrol.24ca74ea269b",
+          "groupId": "exact.callbackexecutioncontrol.9727da922b1e",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
@@ -208,7 +212,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
-            "groupId": "exact.callbackexecutioncontrol.24ca74ea269b",
+            "groupId": "exact.callbackexecutioncontrol.9727da922b1e",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
             "auditDisposition": "omitted",
@@ -225,7 +229,7 @@
         },
         {
           "path": "HitTest",
-          "groupId": "exact.callbackexecutioncontrol.24ca74ea269b",
+          "groupId": "exact.callbackexecutioncontrol.9727da922b1e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HitTest",
@@ -233,7 +237,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 4,
-            "groupId": "exact.callbackexecutioncontrol.24ca74ea269b",
+            "groupId": "exact.callbackexecutioncontrol.9727da922b1e",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",

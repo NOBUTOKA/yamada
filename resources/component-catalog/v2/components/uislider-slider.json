@@ -119,7 +119,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "horizontal",
+                "vertical"
+              ]
             }
           }
         }
@@ -132,7 +136,7 @@
       "entries": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.458d77dd4986",
+          "groupId": "exact.ticks.54cad1cfbd30",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTicks",
@@ -140,7 +144,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 1,
-            "groupId": "exact.ticks.458d77dd4986",
+            "groupId": "exact.ticks.54cad1cfbd30",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -157,7 +161,7 @@
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.458d77dd4986",
+          "groupId": "exact.ticks.54cad1cfbd30",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTicksMode",
@@ -165,7 +169,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 2,
-            "groupId": "exact.ticks.458d77dd4986",
+            "groupId": "exact.ticks.54cad1cfbd30",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -177,13 +181,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.458d77dd4986",
+          "groupId": "exact.ticks.54cad1cfbd30",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTickLabels",
@@ -191,7 +199,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 3,
-            "groupId": "exact.ticks.458d77dd4986",
+            "groupId": "exact.ticks.54cad1cfbd30",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -211,7 +219,7 @@
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.458d77dd4986",
+          "groupId": "exact.ticks.54cad1cfbd30",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTickLabelsMode",
@@ -219,7 +227,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 4,
-            "groupId": "exact.ticks.458d77dd4986",
+            "groupId": "exact.ticks.54cad1cfbd30",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -231,13 +239,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.458d77dd4986",
+          "groupId": "exact.ticks.54cad1cfbd30",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorTicks",
@@ -245,7 +257,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 5,
-            "groupId": "exact.ticks.458d77dd4986",
+            "groupId": "exact.ticks.54cad1cfbd30",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -262,7 +274,7 @@
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.458d77dd4986",
+          "groupId": "exact.ticks.54cad1cfbd30",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorTicksMode",
@@ -270,7 +282,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 6,
-            "groupId": "exact.ticks.458d77dd4986",
+            "groupId": "exact.ticks.54cad1cfbd30",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -282,7 +294,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
             }
           }
         }
@@ -295,7 +311,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -303,7 +319,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -321,7 +337,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -329,7 +345,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -346,7 +362,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -354,7 +370,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -366,13 +382,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -380,7 +400,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -392,13 +412,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
             }
           }
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -406,7 +430,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -582,7 +606,7 @@
             "groupId": "local.uislider-slider.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
               "matlabClasses": [
@@ -815,7 +839,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

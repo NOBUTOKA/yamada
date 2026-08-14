@@ -38,7 +38,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.switch.cc737bc3f384",
+          "groupId": "local.uiswitch-slider.switch",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -46,7 +46,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 1,
-            "groupId": "exact.switch.cc737bc3f384",
+            "groupId": "local.uiswitch-slider.switch",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -63,7 +63,7 @@
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.cc737bc3f384",
+          "groupId": "local.uiswitch-slider.switch",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Items",
@@ -71,7 +71,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 2,
-            "groupId": "exact.switch.cc737bc3f384",
+            "groupId": "local.uiswitch-slider.switch",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -91,7 +91,7 @@
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.cc737bc3f384",
+          "groupId": "local.uiswitch-slider.switch",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ItemsData",
@@ -99,7 +99,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 3,
-            "groupId": "exact.switch.cc737bc3f384",
+            "groupId": "local.uiswitch-slider.switch",
             "editor": "structuredData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -121,7 +121,7 @@
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.cc737bc3f384",
+          "groupId": "local.uiswitch-slider.switch",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ValueIndex",
@@ -129,7 +129,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 4,
-            "groupId": "exact.switch.cc737bc3f384",
+            "groupId": "local.uiswitch-slider.switch",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -146,7 +146,7 @@
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.cc737bc3f384",
+          "groupId": "local.uiswitch-slider.switch",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Orientation",
@@ -154,7 +154,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 5,
-            "groupId": "exact.switch.cc737bc3f384",
+            "groupId": "local.uiswitch-slider.switch",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -166,7 +166,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "horizontal",
+                "vertical"
+              ]
             }
           }
         }
@@ -179,7 +183,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -187,7 +191,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -205,7 +209,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -213,7 +217,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -230,7 +234,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -238,7 +242,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -250,13 +254,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -264,7 +272,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -276,13 +284,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
             }
           }
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.ec9da849d336",
+          "groupId": "exact.font.8efcd1a89888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -290,7 +302,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.ec9da849d336",
+            "groupId": "exact.font.8efcd1a89888",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -466,7 +478,7 @@
             "groupId": "local.uiswitch-slider.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
               "matlabClasses": [
@@ -672,7 +684,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

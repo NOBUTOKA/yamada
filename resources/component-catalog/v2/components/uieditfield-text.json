@@ -108,7 +108,13 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "text",
+                "letters",
+                "digits",
+                "alphanumerics"
+              ]
             }
           }
         },
@@ -159,7 +165,12 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "left",
+                "right",
+                "center"
+              ]
             }
           }
         }
@@ -172,7 +183,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.26568df5fb66",
+          "groupId": "exact.fontandcolor.1e974f782153",
           "runtimeSetAccess": "unresolved",
           "metadata": {
             "displayName": "FontName",
@@ -180,7 +191,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 1,
-            "groupId": "exact.fontandcolor.26568df5fb66",
+            "groupId": "exact.fontandcolor.1e974f782153",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -198,7 +209,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.26568df5fb66",
+          "groupId": "exact.fontandcolor.1e974f782153",
           "runtimeSetAccess": "unresolved",
           "metadata": {
             "displayName": "FontSize",
@@ -206,7 +217,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 2,
-            "groupId": "exact.fontandcolor.26568df5fb66",
+            "groupId": "exact.fontandcolor.1e974f782153",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -223,7 +234,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.26568df5fb66",
+          "groupId": "exact.fontandcolor.1e974f782153",
           "runtimeSetAccess": "unresolved",
           "metadata": {
             "displayName": "FontWeight",
@@ -231,7 +242,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 3,
-            "groupId": "exact.fontandcolor.26568df5fb66",
+            "groupId": "exact.fontandcolor.1e974f782153",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -243,13 +254,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.26568df5fb66",
+          "groupId": "exact.fontandcolor.1e974f782153",
           "runtimeSetAccess": "unresolved",
           "metadata": {
             "displayName": "FontAngle",
@@ -257,7 +272,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 4,
-            "groupId": "exact.fontandcolor.26568df5fb66",
+            "groupId": "exact.fontandcolor.1e974f782153",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -269,13 +284,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
             }
           }
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.26568df5fb66",
+          "groupId": "exact.fontandcolor.1e974f782153",
           "runtimeSetAccess": "unresolved",
           "metadata": {
             "displayName": "FontColor",
@@ -283,7 +302,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 5,
-            "groupId": "exact.fontandcolor.26568df5fb66",
+            "groupId": "exact.fontandcolor.1e974f782153",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -302,7 +321,7 @@
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.26568df5fb66",
+          "groupId": "exact.fontandcolor.1e974f782153",
           "runtimeSetAccess": "unresolved",
           "metadata": {
             "displayName": "BackgroundColor",
@@ -310,7 +329,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 6,
-            "groupId": "exact.fontandcolor.26568df5fb66",
+            "groupId": "exact.fontandcolor.1e974f782153",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -513,7 +532,7 @@
             "groupId": "local.uieditfield-text.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
               "matlabClasses": [
@@ -746,7 +765,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },

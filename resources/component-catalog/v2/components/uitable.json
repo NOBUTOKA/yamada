@@ -268,7 +268,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -276,7 +276,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -294,7 +294,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -302,7 +302,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -319,7 +319,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -327,7 +327,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -339,13 +339,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
             }
           }
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -353,7 +357,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -365,13 +369,17 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
             }
           }
         },
         {
           "path": "FontUnits",
-          "groupId": "exact.font.571c323d68a0",
+          "groupId": "exact.font.5d69f9f1822c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontUnits",
@@ -379,7 +387,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.571c323d68a0",
+            "groupId": "exact.font.5d69f9f1822c",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -391,7 +399,14 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "pixels",
+                "points",
+                "normalized",
+                "inches",
+                "centimeters"
+              ]
             }
           }
         }
@@ -404,7 +419,7 @@
       "entries": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.2868c87f98d0",
+          "groupId": "local.uitable.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
@@ -412,7 +427,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
-            "groupId": "exact.interactivity.2868c87f98d0",
+            "groupId": "local.uitable.interactivity",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -431,7 +446,7 @@
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.2868c87f98d0",
+          "groupId": "local.uitable.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
@@ -439,7 +454,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
-            "groupId": "exact.interactivity.2868c87f98d0",
+            "groupId": "local.uitable.interactivity",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -451,13 +466,18 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "on",
+                "inactive",
+                "off"
+              ]
             }
           }
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.2868c87f98d0",
+          "groupId": "local.uitable.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
@@ -465,7 +485,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
-            "groupId": "exact.interactivity.2868c87f98d0",
+            "groupId": "local.uitable.interactivity",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -485,7 +505,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.2868c87f98d0",
+          "groupId": "local.uitable.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -493,7 +513,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
-            "groupId": "exact.interactivity.2868c87f98d0",
+            "groupId": "local.uitable.interactivity",
             "editor": "componentReference",
             "previewPolicy": "skip",
             "auditDisposition": "editable",
@@ -605,7 +625,7 @@
       "entries": [
         {
           "path": "Position",
-          "groupId": "exact.position.c8b0564957d2",
+          "groupId": "exact.position.d7f947c6c3d8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
@@ -613,7 +633,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 1,
-            "groupId": "exact.position.c8b0564957d2",
+            "groupId": "exact.position.d7f947c6c3d8",
             "editor": "numericVector",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
@@ -630,7 +650,7 @@
         },
         {
           "path": "InnerPosition",
-          "groupId": "exact.position.c8b0564957d2",
+          "groupId": "exact.position.d7f947c6c3d8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InnerPosition",
@@ -638,10 +658,10 @@
             "categoryId": "position",
             "category": "Position",
             "order": 2,
-            "groupId": "exact.position.c8b0564957d2",
+            "groupId": "exact.position.d7f947c6c3d8",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
               "matlabClasses": [
@@ -655,7 +675,7 @@
         },
         {
           "path": "OuterPosition",
-          "groupId": "exact.position.c8b0564957d2",
+          "groupId": "exact.position.d7f947c6c3d8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "OuterPosition",
@@ -663,7 +683,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 3,
-            "groupId": "exact.position.c8b0564957d2",
+            "groupId": "exact.position.d7f947c6c3d8",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -680,7 +700,7 @@
         },
         {
           "path": "Units",
-          "groupId": "exact.position.c8b0564957d2",
+          "groupId": "exact.position.d7f947c6c3d8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
@@ -688,7 +708,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 4,
-            "groupId": "exact.position.c8b0564957d2",
+            "groupId": "exact.position.d7f947c6c3d8",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -700,7 +720,15 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "pixels",
+                "normalized",
+                "inches",
+                "centimeters",
+                "points",
+                "characters"
+              ]
             }
           }
         }
@@ -956,7 +984,11 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
             }
           }
         },
@@ -1344,7 +1376,12 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "cell",
+                "row",
+                "column"
+              ]
             }
           }
         },

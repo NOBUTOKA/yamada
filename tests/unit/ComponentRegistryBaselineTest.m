@@ -34,6 +34,13 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                     testCase.verifyEqual(actual.AuditDisposition, string(expected.disposition.kind));
                     testCase.verifyEqual(string(actual.ValueSchema.kind), ...
                         string(expected.valueContract.kind));
+                    if isfield(expected.valueContract, "values")
+                        testCase.verifyTrue(isfield(actual.ValueSchema, "values"));
+                        testCase.verifyEqual(string(actual.ValueSchema.values), ...
+                            string(expected.valueContract.values));
+                    else
+                        testCase.verifyFalse(isfield(actual.ValueSchema, "values"));
+                    end
                 end
             end
         end
@@ -49,7 +56,7 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(manifest.schemaVersion, 2);
             testCase.verifyEqual(string(manifest.matlabRelease), "R2024a");
             testCase.verifyEqual(string(manifest.sourceGroupingSha256), string(groups.inputSha256));
-            testCase.verifyEqual(numel(groups.groups), 310);
+            testCase.verifyEqual(numel(groups.groups), 313);
             testCase.verifyEqual(sort(string(manifest.orderProfileFiles)), "order-profiles.json");
             testCase.verifyEqual(sort(string({profiles.profiles.id})), ...
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
@@ -67,6 +74,24 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(pointer.Editor, "enum");
             testCase.verifyEqual(customShape.AuditDisposition, "omitted");
             testCase.verifyEqual(hotSpot.AuditDisposition, "omitted");
+        end
+
+        function innerPositionRemainsOmittedAcrossTheCatalog(testCase)
+            % innerPositionRemainsOmittedAcrossTheCatalog Keep derived geometry out of the inspector.
+
+            % Position is the editable design-time geometry surface for every variant.
+            registry = macd.model.ComponentRegistry.createDefault();
+            count = 0;
+            for id = registry.listVariantIds()
+                definition = registry.getById(id);
+                matches = definition.Properties([definition.Properties.Path] == "InnerPosition");
+                if isempty(matches)
+                    continue
+                end
+                count = count + 1;
+                testCase.verifyEqual(matches.AuditDisposition, "omitted");
+            end
+            testCase.verifyGreaterThan(count, 0);
         end
 
         function effectivePropertiesRemainUniqueForEveryConcreteVariant(testCase)
