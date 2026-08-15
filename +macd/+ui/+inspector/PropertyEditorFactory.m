@@ -388,9 +388,9 @@ classdef PropertyEditorFactory
             % openStructuredDataEditor Select the ItemsData or generic safe-literal editor.
             if isstruct(state) && isfield(state, "HasItems") && state.HasItems
                 macd.ui.inspector.ItemsDataEditorDialog.open( ...
-                    state.Items{1}, state.Value{1}, commitFcn);
+                    state.Items{1}, state.Value, commitFcn);
             elseif isstruct(state) && isfield(state, "Value")
-                macd.ui.inspector.StructuredDataEditorDialog.open(state.Value{1}, commitFcn);
+                macd.ui.inspector.StructuredDataEditorDialog.open(state.Value, commitFcn);
             else
                 macd.ui.inspector.StructuredDataEditorDialog.open(state, commitFcn);
             end
