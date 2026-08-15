@@ -1,8 +1,11 @@
 # Visual verification procedure
 
 Until Safe Preview can represent the editor application with no material layout
-or component omissions, perform this manual comparison after parser or preview
-renderer changes.
+or component omissions, this procedure is available for parser or preview
+renderer changes. Do not execute it unless the user explicitly requests a
+Visual Test for the current change. Automated MATLAB tests may construct hidden
+UI fixtures, but they are not a Visual Test and do not require screenshots or
+interactive-window inspection.
 
 ## Targets
 

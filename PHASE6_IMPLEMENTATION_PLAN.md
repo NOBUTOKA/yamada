@@ -656,9 +656,11 @@ slice. No uncommitted Step 5 code remains in the working tree.
 
 #### 6.9.6 Add structured-data editing for finite safe literals
 
-- [x] Add a dialog editor for the audited editable `ItemsData` and `NodeData`
-  surfaces. Keep `uihtml.Data` visible read-only and do not route it through this
-  adapter unless a later audit explicitly changes its disposition.
+- [x] Add an `ItemsData` dialog whose immutable left column is the effective
+  `Items` list and whose editable right column is the matching `ItemsData`
+  value, with a Clear action. Retain the generic finite-literal dialog for
+  `NodeData`. Keep `uihtml.Data` visible read-only and do not route it through
+  either adapter unless a later audit explicitly changes its disposition.
 - [x] Accept only the existing non-evaluating scalar/matrix/row-cell literal
   subset plus deliberately added rectangular-cell support. Never call `eval`,
   execute constructors, or coerce an unsupported expression to text data.
@@ -715,7 +717,8 @@ commit/undo/redo atomically, and survive Preview and source round-trip.
   `numericMatrix` editor deferred to a later phase. Omitted table selection
   values do not create an exception to that boundary.
 - [ ] Run the focused suites after every editor slice, then the licensed R2024a
-  full suite and a manual Inspector geometry/dialog/focus procedure. Record
+  full suite. Run the manual Inspector geometry/dialog/focus procedure only on
+  an explicit user request, following `VISUAL_VERIFICATION.md`. Record
   actual test counts, known unsupported value forms, and completion commits.
 
 **Exit gate:** multiline text, asset, URL, date/time, structured-data,
