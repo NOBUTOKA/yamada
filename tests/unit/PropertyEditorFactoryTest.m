@@ -148,6 +148,28 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function normalizesMultilineTextAreaLinesToSourceSafeRowCells(testCase)
+            % normalizesMultilineTextAreaLinesToSourceSafeRowCells Preserve multiline text in a literal form.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.PropertyDefinition("Text", [], false, true, ...
+                struct("editor", "multilineText"));
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+                @(value) setappdata(figure, "committed", value));
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, {'Line one'; 'Line two'});
+            control.Value = {'Line one'; 'Line two'; 'Line three'};
+            callback = control.ValueChangedFcn;
+            callback(control, struct());
+            drawnow;
+            committed = getappdata(figure, "committed");
+            testCase.verifyTrue(isrow(committed));
+            testCase.verifyEqual(committed, {'Line one', 'Line two', 'Line three'});
+            testCase.verifyEqual(macd.source.LiteralEncoder.encode(committed), ...
+                "{'Line one', 'Line two', 'Line three'}");
+            clear cleanup
+        end
+
         function defersItemsDataAsReadOnly(testCase)
             % defersItemsDataAsReadOnly Keep arbitrary list-associated data out of the string editor.
 

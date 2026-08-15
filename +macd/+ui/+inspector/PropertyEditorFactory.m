@@ -337,6 +337,9 @@ classdef PropertyEditorFactory
                 draft = char(draft{1});
             elseif isstring(original) && isscalar(original) && iscell(draft) && numel(draft) == 1
                 draft = string(draft{1});
+            elseif iscell(draft)
+                % TextArea returns visual lines as a column; source literals use a row cell array.
+                draft = reshape(draft, 1, []);
             end
             commitFcn(draft);
         end
