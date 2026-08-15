@@ -611,9 +611,10 @@ lines without rebuilding the selected component's Inspector.
 
 #### 6.9.3 Add the URL editor
 
-- [x] Reuse a compact text presentation while validating only the audited URL
-  literal/URI syntax. Do not perform network access, normalization that changes
-  source meaning, or reachability checks.
+- [x] Reuse a compact text presentation and validate the audited text type only.
+  The R2024a contract admits character vectors and string scalars without a
+  finite URI grammar, so do not reject relative/custom schemes, perform network
+  access, normalize source meaning, or check reachability.
 - [x] Preserve empty and supported char/string values exactly enough for safe
   source round-trip; keep expressions and unsupported values source-backed and
   read-only.
