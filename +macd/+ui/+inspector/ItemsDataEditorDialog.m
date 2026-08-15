@@ -17,12 +17,13 @@ classdef ItemsDataEditorDialog
             dialog = uifigure("Name", "Edit item data", "Position", [100 100 520 330], ...
                 "WindowStyle", "modal");
             grid = uigridlayout(dialog, [3 2], "Padding", [12 12 12 12], ...
-                "RowHeight", {"1x", 24, 30}, "ColumnWidth", {"1x", 90});
+                "RowHeight", {"1x", 24, 30}, "ColumnWidth", {90, "1x"});
             table = uitable(grid, "Data", data, "ColumnName", {"Items", "ItemsData"}, ...
                 "ColumnEditable", [false true], "Tag", "macd-items-data-editor-table");
             table.Layout.Row = 1;
             table.Layout.Column = [1 2];
-            message = uilabel(grid, "Text", "", "FontColor", [0.7 0 0]);
+            message = uilabel(grid, "Text", "Enter literals such as 1, ""Text"", or 'Text'.", ...
+                "FontColor", [0.3 0.3 0.3]);
             message.Layout.Row = 2;
             message.Layout.Column = [1 2];
             uibutton(grid, "Text", "Clear", "ButtonPushedFcn", @(~, ~) clearData());
@@ -39,6 +40,7 @@ classdef ItemsDataEditorDialog
                     value = macd.ui.inspector.ItemsDataEditorDialog.commitValue(table.Data);
                 catch exception
                     message.Text = string(exception.message);
+                    message.FontColor = [0.7 0 0];
                     return
                 end
                 close(dialog);
@@ -75,22 +77,47 @@ classdef ItemsDataEditorDialog
             end
             for index = 1:numel(labels)
                 if iscell(value)
-                    data{index, 2} = value{index};
+                    item = value{index};
                 else
-                    data{index, 2} = value(index);
+                    item = value(index);
                 end
+                data{index, 2} = macd.ui.inspector.ItemsDataEditorDialog.literalText(item);
             end
         end
 
         function value = commitValue(data)
             % commitValue Preserve homogeneous numeric/logical rows or heterogeneous cell rows.
-            values = data(:, 2)';
+            source = string(data(:, 2))';
+            values = cell(1, numel(source));
+            for index = 1:numel(source)
+                if strlength(strtrim(source(index))) == 0
+                    values{index} = [];
+                    continue
+                end
+                [item, isLiteral] = macd.source.MatlabLiteralParser.parse(source(index));
+                if ~isLiteral
+                    error("macd:ItemsDataEditorDialog:InvalidLiteral", ...
+                        "ItemsData row %d must be a supported MATLAB literal.", index);
+                end
+                values{index} = item;
+            end
             if all(cellfun(@(item) isnumeric(item) && isscalar(item), values))
                 value = cell2mat(values);
             elseif all(cellfun(@(item) islogical(item) && isscalar(item), values))
                 value = logical(cell2mat(values));
+            elseif all(cellfun(@(item) isstring(item) && isscalar(item), values))
+                value = string([values{:}]);
             else
                 value = values;
+            end
+        end
+
+        function text = literalText(value)
+            % literalText Display each associated value using a safe typed MATLAB literal.
+            try
+                text = macd.source.LiteralEncoder.encode(value);
+            catch
+                text = "<unsupported>";
             end
         end
     end

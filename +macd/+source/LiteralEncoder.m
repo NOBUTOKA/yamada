@@ -24,6 +24,16 @@ classdef LiteralEncoder
                 % Character conversion is confined to escaping generated syntax.
                 escaped = strrep(char(string(value)), '"', '""');
                 text = string(['"' escaped '"']);
+            elseif isstring(value) && ismatrix(value)
+                rows = strings(1, size(value, 1));
+                for row = 1:size(value, 1)
+                    encoded = strings(1, size(value, 2));
+                    for column = 1:size(value, 2)
+                        encoded(column) = macd.source.LiteralEncoder.encode(value(row, column));
+                    end
+                    rows(row) = strjoin(encoded, " ");
+                end
+                text = "[" + strjoin(rows, "; ") + "]";
             elseif ischar(value) && ismatrix(value)
                 rows = strings(1, size(value, 1));
                 for row = 1:size(value, 1)

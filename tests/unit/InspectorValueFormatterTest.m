@@ -29,13 +29,13 @@ classdef InspectorValueFormatterTest < matlab.unittest.TestCase
             testCase.verifyEqual(text, "''");
         end
 
-        function describesUnsupportedStringArray(testCase)
-            % describesUnsupportedStringArray Show string arrays without throwing.
+        function encodesStringArray(testCase)
+            % encodesStringArray Render string arrays using safe matrix literal syntax.
 
-            % String arrays cannot use the encoder's scalar string syntax.
+            % Matrix support preserves ItemsData string values through source generation.
             entry = macd.model.PropertyEntry("Items", ["Light", "Dark", "System"]);
             text = macd.ui.InspectorValueFormatter.format(entry);
-            testCase.verifyEqual(text, "<unsupported: string array>");
+            testCase.verifyEqual(text, "[""Light"" ""Dark"" ""System""]");
         end
 
         function preservesSourceExpression(testCase)

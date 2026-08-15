@@ -236,7 +236,7 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(control.Enable), "on");
             testCase.verifyEqual(string(control.Text), "[1 2]");
             testCase.verifyTrue(control.UserData.HasItems);
-            testCase.verifyEqual(string(control.UserData.Items), ["First", "Second"]);
+            testCase.verifyEqual(string(control.UserData.Items{1}), ["First", "Second"]);
             clear cleanup
         end
 

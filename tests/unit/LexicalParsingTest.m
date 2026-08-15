@@ -83,6 +83,17 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             testCase.verifyFalse(isLiteral);
             testCase.verifyEmpty(value);
         end
+
+        function literalEncoderRoundTripsStringArrays(testCase)
+            % literalEncoderRoundTripsStringArrays Preserve typed string vectors used by ItemsData.
+
+            original = ["Low", "High"];
+            source = macd.source.LiteralEncoder.encode(original);
+            [parsed, isLiteral] = macd.source.MatlabLiteralParser.parse(source);
+            testCase.verifyEqual(source, "[""Low"" ""High""]");
+            testCase.verifyTrue(isLiteral);
+            testCase.verifyEqual(parsed, original);
+        end
     end
 end
 

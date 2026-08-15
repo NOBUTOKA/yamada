@@ -151,9 +151,9 @@ classdef PropertyEditorFactory
                     return
                 end
                 if control.Tag == "macd-inspector-structured-data-editor"
-                    state = struct("Value", rawValue, "Items", [], "HasItems", false);
+                    state = struct("Value", {rawValue}, "Items", {[]}, "HasItems", false);
                     if isfield(relatedValues, "Items")
-                        state.Items = relatedValues.Items;
+                        state.Items = {relatedValues.Items};
                         state.HasItems = true;
                     end
                     control.UserData = state;
@@ -387,9 +387,10 @@ classdef PropertyEditorFactory
         function openStructuredDataEditor(state, commitFcn)
             % openStructuredDataEditor Select the ItemsData or generic safe-literal editor.
             if isstruct(state) && isfield(state, "HasItems") && state.HasItems
-                macd.ui.inspector.ItemsDataEditorDialog.open(state.Items, state.Value, commitFcn);
+                macd.ui.inspector.ItemsDataEditorDialog.open( ...
+                    state.Items{1}, state.Value{1}, commitFcn);
             elseif isstruct(state) && isfield(state, "Value")
-                macd.ui.inspector.StructuredDataEditorDialog.open(state.Value, commitFcn);
+                macd.ui.inspector.StructuredDataEditorDialog.open(state.Value{1}, commitFcn);
             else
                 macd.ui.inspector.StructuredDataEditorDialog.open(state, commitFcn);
             end
