@@ -36,10 +36,13 @@ classdef ItemsDataEditorDialog
             end
 
             function applyData()
-                try
-                    value = macd.ui.inspector.ItemsDataEditorDialog.commitValue(table.Data);
-                catch exception
-                    message.Text = string(exception.message);
+                removeStyle(table);
+                [value, errorRow, errorMessage] = ...
+                    macd.ui.inspector.ItemsDataEditorDialog.commitValue(table.Data);
+                if errorRow > 0
+                    errorStyle = uistyle("BackgroundColor", [1 0.9 0.9]);
+                    addStyle(table, errorStyle, "cell", [errorRow 2]);
+                    message.Text = errorMessage;
                     message.FontColor = [0.7 0 0];
                     return
                 end
@@ -85,10 +88,12 @@ classdef ItemsDataEditorDialog
             end
         end
 
-        function value = commitValue(data)
-            % commitValue Preserve homogeneous numeric/logical rows or heterogeneous cell rows.
+        function [value, errorRow, errorMessage] = commitValue(data)
+            % commitValue Parse typed literals or fall back to plain string text.
             source = string(data(:, 2))';
             values = cell(1, numel(source));
+            errorRow = 0;
+            errorMessage = "";
             for index = 1:numel(source)
                 if strlength(strtrim(source(index))) == 0
                     values{index} = [];
@@ -96,8 +101,15 @@ classdef ItemsDataEditorDialog
                 end
                 [item, isLiteral] = macd.source.MatlabLiteralParser.parse(source(index));
                 if ~isLiteral
-                    error("macd:ItemsDataEditorDialog:InvalidLiteral", ...
-                        "ItemsData row %d must be a supported MATLAB literal.", index);
+                    if macd.ui.inspector.ItemsDataEditorDialog.isPlainText(source(index))
+                        item = source(index);
+                    else
+                        value = [];
+                        errorRow = index;
+                        errorMessage = "ItemsData row " + index + ...
+                            " has an invalid MATLAB literal.";
+                        return
+                    end
                 end
                 values{index} = item;
             end
@@ -110,6 +122,11 @@ classdef ItemsDataEditorDialog
             else
                 value = values;
             end
+        end
+
+        function result = isPlainText(value)
+            % isPlainText Identify unquoted text that should become a string scalar.
+            result = ~contains(value, ["'", '"', "[", "]", "{", "}"]);
         end
 
         function text = literalText(value)
