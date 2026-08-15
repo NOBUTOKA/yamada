@@ -47,6 +47,11 @@ classdef PropertyEditorFactory
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn(string(source.Value)));
+                case "url"
+                    control = uieditfield(parent, "text", ...
+                        "Tag", "macd-inspector-property-editor-url", ...
+                        "ValueChangedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.commitUrl(source, commitFcn));
                 otherwise
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor");
@@ -65,7 +70,7 @@ classdef PropertyEditorFactory
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
                 "onOff", "enum", "number", "numericVector", "color", "stringList", ...
-                "multilineText"]);
+                "multilineText", "url"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -133,6 +138,17 @@ classdef PropertyEditorFactory
                     control.Value = {char(value)};
                 end
                 control.UserData = rawValue;
+                control.Editable = isEditable;
+            elseif isprop(control, "UserData") && ...
+                    isequal(control.Tag, "macd-inspector-property-editor-url")
+                control.UserData = rawValue;
+                if ischar(rawValue) && isrow(rawValue)
+                    control.Value = string(rawValue);
+                elseif isstring(rawValue) && isscalar(rawValue)
+                    control.Value = rawValue;
+                else
+                    control.Value = string(value);
+                end
                 control.Editable = isEditable;
             else
                 control.Value = char(value);
@@ -269,6 +285,20 @@ classdef PropertyEditorFactory
                 draft = string(draft{1});
             end
             commitFcn(draft);
+        end
+
+        function commitUrl(control, commitFcn)
+            % commitUrl Commit a URL as plain text while preserving char/string style.
+            draft = string(control.Value);
+            if contains(draft, newline) || contains(draft, char(13))
+                return
+            end
+            original = control.UserData;
+            if ischar(original)
+                commitFcn(char(draft));
+            else
+                commitFcn(draft);
+            end
         end
     end
 end

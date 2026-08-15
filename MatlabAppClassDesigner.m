@@ -1562,7 +1562,19 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 app.setStatus(message);
                 return
             end
-            if ischar(value) || (isstring(value) && isscalar(value))
+            definition = app.inspectorDefinition(component, path);
+            if definition.Editor == "url"
+                if ~(ischar(value) && isrow(value)) && ~(isstring(value) && isscalar(value))
+                    message = "Enter one URL as text.";
+                    app.setStatus(message);
+                    return
+                end
+                if contains(string(value), newline) || contains(string(value), char(13))
+                    message = "URL must not contain line breaks.";
+                    app.setStatus(message);
+                    return
+                end
+            elseif ischar(value) || (isstring(value) && isscalar(value))
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(value));
                 if ~isLiteral
                     message = "Enter a supported MATLAB literal.";
@@ -1570,7 +1582,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     return
                 end
             end
-            definition = app.inspectorDefinition(component, path);
             message = app.validateInspectorValue(definition, value);
             if strlength(message) > 0
                 app.setStatus(message);

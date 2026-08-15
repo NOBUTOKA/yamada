@@ -197,6 +197,25 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(control.Text), "1-by-2 string");
             clear cleanup
         end
+
+        function createsUrlTextEditor(testCase)
+            % createsUrlTextEditor Edit hyperlink values as plain URL text.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uihyperlink");
+            definition = definition.Properties([definition.Properties.Path] == "URL");
+            received = "";
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+                @(value) assignin("caller", "received", value));
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'https://example.com'", true, ...
+                "https://example.com");
+            drawnow;
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.Value), "https://example.com");
+            testCase.verifyTrue(control.Editable);
+            clear cleanup
+        end
     end
 end
 
