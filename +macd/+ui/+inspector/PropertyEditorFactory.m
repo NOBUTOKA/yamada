@@ -39,6 +39,10 @@ classdef PropertyEditorFactory
                         "Tag", "macd-inspector-string-list-editor", ...
                         "ButtonPushedFcn", @(source, ~) ...
                         macd.ui.inspector.StringListEditorDialog.open(source.UserData, commitFcn));
+                case "multilineText"
+                    control = uitextarea(parent, "Tag", "macd-inspector-property-editor", ...
+                        "ValueChangedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.commitTextArea(source, commitFcn));
                 case {"literal", "text", "numericVector"}
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -60,7 +64,8 @@ classdef PropertyEditorFactory
             end
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
-                "onOff", "enum", "number", "numericVector", "color", "stringList"]);
+                "onOff", "enum", "number", "numericVector", "color", "stringList", ...
+                "multilineText"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -119,6 +124,16 @@ classdef PropertyEditorFactory
                     control.BackgroundColor = [0.94 0.94 0.94];
                     control.UserData = [];
                 end
+            elseif isa(control, "matlab.ui.control.TextArea")
+                if iscell(rawValue) || (isstring(rawValue) && ~isscalar(rawValue))
+                    control.Value = rawValue;
+                elseif ischar(rawValue) || (isstring(rawValue) && isscalar(rawValue))
+                    control.Value = {char(rawValue)};
+                else
+                    control.Value = {char(value)};
+                end
+                control.UserData = rawValue;
+                control.Editable = isEditable;
             else
                 control.Value = char(value);
                 control.Editable = isEditable && ~macd.ui.inspector.PropertyEditorFactory.isReadOnlyFallback(control);
@@ -133,7 +148,8 @@ classdef PropertyEditorFactory
 
             if isa(control, "matlab.ui.control.CheckBox") || ...
                     isa(control, "matlab.ui.control.NumericEditField") || ...
-                    isa(control, "matlab.ui.control.EditField")
+                    isa(control, "matlab.ui.control.EditField") || ...
+                    isa(control, "matlab.ui.control.TextArea")
                 value = control.Value;
             elseif isa(control, "matlab.ui.control.Button")
                 value = control.UserData;
@@ -151,7 +167,8 @@ classdef PropertyEditorFactory
 
             if isa(control, "matlab.ui.control.CheckBox") || ...
                     isa(control, "matlab.ui.control.NumericEditField") || ...
-                    isa(control, "matlab.ui.control.EditField")
+                    isa(control, "matlab.ui.control.EditField") || ...
+                    isa(control, "matlab.ui.control.TextArea")
                 control.Value = value;
             elseif isa(control, "matlab.ui.control.Button")
                 control.UserData = value;
@@ -240,6 +257,18 @@ classdef PropertyEditorFactory
             else
                 text = "Edit list";
             end
+        end
+
+        function commitTextArea(control, commitFcn)
+            % commitTextArea Preserve scalar char/string representation when possible.
+            draft = control.Value;
+            original = control.UserData;
+            if ischar(original) && isrow(original) && iscell(draft) && numel(draft) == 1
+                draft = char(draft{1});
+            elseif isstring(original) && isscalar(original) && iscell(draft) && numel(draft) == 1
+                draft = string(draft{1});
+            end
+            commitFcn(draft);
         end
     end
 end

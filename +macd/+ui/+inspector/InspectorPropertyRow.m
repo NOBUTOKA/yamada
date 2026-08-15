@@ -33,7 +33,7 @@ classdef InspectorPropertyRow < handle
             grid.Padding = [0 0 0 0];
             grid.ColumnSpacing = 4;
             grid.ColumnWidth = {105, "1x"};
-            grid.RowHeight = {28};
+            grid.RowHeight = {macd.ui.inspector.InspectorPropertyRow.rowHeight(definition)};
             obj.ComponentId = componentId;
             obj.Path = definition.Path;
             obj.Definition = definition;
@@ -170,6 +170,17 @@ classdef InspectorPropertyRow < handle
             figure = ancestor(obj.Editor, "figure");
             if ~isempty(figure) && isvalid(figure) && isprop(figure, "CurrentObject")
                 result = isequal(figure.CurrentObject, obj.Editor);
+            end
+        end
+    end
+
+    methods (Static, Access = private)
+        function height = rowHeight(definition)
+            % rowHeight Return the compact or multiline height for one property row.
+            if definition.Editor == "multilineText"
+                height = 84;
+            else
+                height = 28;
             end
         end
     end

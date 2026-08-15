@@ -130,8 +130,8 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
-        function defersMultilineTextUntilItsSpecializedEditorExists(testCase)
-            % defersMultilineTextUntilItsSpecializedEditorExists Keep planned prose editing safe before Phase 6.9.
+        function createsMultilineTextArea(testCase)
+            % createsMultilineTextArea Render prose properties in an inline multiline editor.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -139,10 +139,12 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
                 struct("editor", "multilineText"));
             control = macd.ui.inspector.PropertyEditorFactory.create( ...
                 figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'Line one'", true);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'Line one'", true, 'Line one');
             drawnow;
-            testCase.verifyFalse(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyFalse(control.Editable);
+            testCase.verifyClass(control, "matlab.ui.control.TextArea");
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyTrue(control.Editable);
+            testCase.verifyEqual(string(control.Value), "Line one");
             clear cleanup
         end
 

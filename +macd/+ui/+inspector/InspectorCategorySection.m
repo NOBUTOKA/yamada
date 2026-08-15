@@ -48,6 +48,18 @@ classdef InspectorCategorySection < handle
             end
             obj.Panel.Layout.Row = row;
         end
+
+        function setRowHeight(obj, row, height)
+            % setRowHeight Set one property row's native control height.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorCategorySection
+                row (1, 1) double {mustBeInteger, mustBePositive}
+                height (1, 1) double {mustBePositive}
+            end
+            heights = obj.Grid.RowHeight;
+            heights{row} = height;
+            obj.Grid.RowHeight = heights;
+        end
     end
 end
 

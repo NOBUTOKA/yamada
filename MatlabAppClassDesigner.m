@@ -1628,7 +1628,9 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             for categoryIndex = 1:numel(categories)
                 category = categories(categoryIndex);
                 indices = find(arrayfun(@(state) state.Definition.Category == category, states));
-                contentHeight = contentHeight + 40 + 31 * numel(indices);
+                contentHeight = contentHeight + 40 + 31 * numel(indices) + 56 * ...
+                    sum(arrayfun(@(index) states(indices(index)).Definition.Editor == "multilineText", ...
+                    1:numel(indices)));
                 section = macd.ui.inspector.InspectorCategorySection(content, category, numel(indices));
                 section.setLayoutRow(categoryIndex);
                 for rowIndex = 1:numel(indices)
@@ -1636,6 +1638,9 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     row = macd.ui.inspector.InspectorPropertyRow(section.contentGrid(), rowIndex, ...
                         component.Id, state.Definition, @(id, path, text) ...
                         app.inspectorValueCommitted(id, path, text));
+                    if state.Definition.Editor == "multilineText"
+                        section.setRowHeight(rowIndex, 84);
+                    end
                     app.InspectorRows(end + 1) = row;
                 end
             end
