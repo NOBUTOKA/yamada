@@ -198,6 +198,23 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function createsStructuredDataLiteralEditor(testCase)
+            % createsStructuredDataLiteralEditor Keep arbitrary data on the safe literal path.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
+            definition = definition.Properties([definition.Properties.Path] == "ItemsData");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 2]", true, [1 2]);
+            drawnow;
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyClass(control, "matlab.ui.control.EditField");
+            testCase.verifyTrue(control.Editable);
+            testCase.verifyEqual(string(control.Value), "[1 2]");
+            clear cleanup
+        end
+
         function createsUrlTextEditor(testCase)
             % createsUrlTextEditor Edit hyperlink values as plain URL text.
 

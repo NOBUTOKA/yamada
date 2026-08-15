@@ -1582,7 +1582,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     return
                 end
             end
-            message = app.validateInspectorValue(definition, value);
+            message = app.validateInspectorValue(component, definition, value);
             if strlength(message) > 0
                 app.setStatus(message);
                 return
@@ -1796,10 +1796,11 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
         end
 
-        function message = validateInspectorValue(~, definition, value)
+        function message = validateInspectorValue(~, component, definition, value)
             % validateInspectorValue Reject invalid editor values before model mutation.
             arguments (Input)
                 ~
+                component (1, 1) macd.model.ComponentRecord
                 definition (1, 1) macd.model.PropertyDefinition
                 value
             end
@@ -1843,6 +1844,27 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 if isfield(schema, "minimum") && any(value < schema.minimum)
                     message = "Vector values are below the allowed minimum.";
                     return
+                end
+            end
+            if isfield(schema, "constraints")
+                constraints = schema.constraints;
+                if isstruct(constraints)
+                    constraints = num2cell(constraints);
+                end
+                for constraint = constraints
+                    rule = constraint{1};
+                    if string(rule.kind) ~= "sameLengthAs"
+                        continue
+                    end
+                    reference = component.getProperty(string(rule.property));
+                    if isempty(reference) || reference.ValueKind ~= "literal"
+                        continue
+                    end
+                    if numel(value) ~= numel(reference.LiteralValue)
+                        message = "The value must have the same number of elements as " + ...
+                            string(rule.property) + ".";
+                        return
+                    end
                 end
             end
         end
