@@ -109,7 +109,10 @@
       "documentedDefault": "'lefttop'",
       "documentedAcceptedValues": [
         "'centertop'",
-        "'righttop'"
+        "'righttop'",
+        "'leftbottom'",
+        "'centerbottom'",
+        "'rightbottom'"
       ],
       "valueContract": {
         "kind": "enum",
@@ -123,7 +126,10 @@
         "values": [
           "lefttop",
           "centertop",
-          "righttop"
+          "righttop",
+          "leftbottom",
+          "centerbottom",
+          "rightbottom"
         ]
       },
       "affectsDisplay": true,
@@ -208,7 +214,11 @@
       "summary": "Button group border",
       "documentedAcceptedValues": [
         "'line'",
-        "'none'"
+        "'none'",
+        "'etchedin'",
+        "'etchedout'",
+        "'beveledin'",
+        "'beveledout'"
       ],
       "valueContract": {
         "kind": "enum",
@@ -221,7 +231,11 @@
         ],
         "values": [
           "line",
-          "none"
+          "none",
+          "etchedin",
+          "etchedout",
+          "beveledin",
+          "beveledout"
         ]
       },
       "affectsDisplay": true,

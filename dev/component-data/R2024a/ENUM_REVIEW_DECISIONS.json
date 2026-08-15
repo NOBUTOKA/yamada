@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "release": "R2024a",
+  "reviewBasis": "R2024a official property-page heading, body text, and value table/list for the representative entry; values are normalized to individual MATLAB character literals.",
+  "decisions": [
+    {
+      "reviewUnitId": "local.uifigure.mousepointer|Pointer",
+      "representativeComponentId": "uifigure",
+      "derivedComponentIds": ["uifigure"],
+      "path": "Pointer",
+      "sourceUrl": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.figureappd-properties.html",
+      "documentedDefault": "'arrow'",
+      "values": ["arrow", "ibeam", "crosshair", "watch", "topl", "custom", "botr", "topr", "botl", "circle", "cross", "fleur", "left", "right", "top", "bottom", "hand"],
+      "completeCandidateBasis": "Pointer property value table; aliases are recorded as separate accepted literals."
+    },
+    {
+      "reviewUnitId": "local.geoaxes.maps|Basemap",
+      "representativeComponentId": "geoaxes",
+      "derivedComponentIds": ["geoaxes"],
+      "path": "Basemap",
+      "sourceUrl": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+      "documentedDefault": "'streets-light'",
+      "values": ["streets-light", "streets-dark", "streets", "satellite", "topographic", "landcover", "colorterrain", "grayterrain", "bluegreen", "grayland", "darkwater", "none"],
+      "completeCandidateBasis": "Basemap property value list in the property section."
+    },
+    {
+      "reviewUnitId": "exact.title.2cae7d8d7937|TitlePosition",
+      "representativeComponentId": "uibuttongroup",
+      "derivedComponentIds": ["uibuttongroup", "uipanel"],
+      "path": "TitlePosition",
+      "sourceUrl": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.buttongroup-properties.html",
+      "documentedDefault": "'lefttop'",
+      "values": ["lefttop", "centertop", "righttop", "leftbottom", "centerbottom", "rightbottom"],
+      "completeCandidateBasis": "TitlePosition property value list in the property section."
+    },
+    {
+      "reviewUnitId": "exact.colorandstyling.eb2dc6b675cd|BorderType",
+      "representativeComponentId": "uibuttongroup",
+      "derivedComponentIds": ["uibuttongroup", "uipanel"],
+      "path": "BorderType",
+      "sourceUrl": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.buttongroup-properties.html",
+      "values": ["line", "none", "etchedin", "etchedout", "beveledin", "beveledout"],
+      "completeCandidateBasis": "BorderType property value list in the property section; no documented default marker was present in the R2024a heading."
+    }
+  ]
+}

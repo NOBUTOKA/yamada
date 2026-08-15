@@ -110,6 +110,20 @@ Parent-dependent effective-surface rules are defined in
 audit procedure is
 [`../PROPERTY_AUDIT_GUIDELINES.md`](../PROPERTY_AUDIT_GUIDELINES.md).
 
+## Ellipsis-enum audit
+
+[`ENUM_AUDIT.json`](ENUM_AUDIT.json) is the complete R2024a audit of all 415
+properties whose normalized contract kind is `enum`, including editable,
+omitted, and read-only dispositions. [`ENUM_REVIEW_UNITS.json`](ENUM_REVIEW_UNITS.json)
+groups those entries by `groupId + path` while retaining every derived
+component and source URL. All 415 release-fixed HTML property sections were
+retrieved successfully; four review units contained an ellipsis in the value
+line. Their representative body/value-table decisions are recorded in
+[`ENUM_REVIEW_DECISIONS.json`](ENUM_REVIEW_DECISIONS.json), and the two scripts
+[`AuditEllipsisEnums.ps1`](AuditEllipsisEnums.ps1) and
+[`ApplyEnumReviewDecisions.ps1`](ApplyEnumReviewDecisions.ps1) reproduce the
+audit and ledger update without editing the runtime catalog directly.
+
 ## Grouping derivation artifacts
 
 The category-oriented grouping procedure is defined in

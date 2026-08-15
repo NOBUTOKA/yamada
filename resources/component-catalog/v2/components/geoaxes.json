@@ -60,7 +60,14 @@
                 "streets-dark",
                 "streets",
                 "satellite",
-                "topographic"
+                "topographic",
+                "landcover",
+                "colorterrain",
+                "grayterrain",
+                "bluegreen",
+                "grayland",
+                "darkwater",
+                "none"
               ]
             }
           }

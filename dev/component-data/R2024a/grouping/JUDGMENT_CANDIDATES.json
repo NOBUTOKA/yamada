@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "7b8f26abcc1f846321f0e54dafa9dbf043d5055351efadfa2f0637e3116be424",
+  "inputSha256": "dccd3cda5a905e325c09423eac759426d6046403e39383f1f238e88e89e0e05c",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -2607,12 +2607,12 @@
           ]
         },
         {
-          "candidateId": "candidate.colorandstyling.672318d04de2",
+          "candidateId": "candidate.colorandstyling.eb2dc6b675cd",
           "categoryId": "colorandstyling",
           "categoryDisplayName": "Color and Styling",
           "sharingScope": "familyScoped",
           "scopeRationale": "Container-family styling.",
-          "capabilitySha256": "672318d04de20e9f66f477eee6815723b847c30b5dea28bf3c1bfeb80dc143af",
+          "capabilitySha256": "eb2dc6b675cd504b9c2b0f689abd468fb8fcd4a5d108a2bc40d21482b2acc15e",
           "propertyPaths": [
             "ForegroundColor",
             "BackgroundColor",
@@ -2623,7 +2623,7 @@
           "propertyCapabilitySha256": [
             "9f66ad960942c8452a1a0d84a7bfdfd590f1b7f64e8c9b27e4f9695b6ac5e39b",
             "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3",
-            "f9904077fe90cd76a16765edf2f4195d5f33c647ebf6df8691ee7f703645aa68",
+            "9a8c3b48eb92ed3d2f862b1b224602a43ae7b468fcd8d22c17d57a6a95dffd8a",
             "a77d2de2753e07c21db74ca478f5a65c19f332f815928acae0e0fa6848da6efc",
             "b2e95e25ffd6cc068be606875bb7536949421a222ff637e4bc7e49ed91d917a3"
           ],
@@ -2643,28 +2643,28 @@
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
             "candidate.colorandstyling.0b611eb4e625",
-            "candidate.colorandstyling.672318d04de2"
+            "candidate.colorandstyling.eb2dc6b675cd"
           ]
         },
         {
           "path": "BorderColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.colorandstyling.672318d04de2"
+            "candidate.colorandstyling.eb2dc6b675cd"
           ]
         },
         {
           "path": "BorderType",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.colorandstyling.672318d04de2"
+            "candidate.colorandstyling.eb2dc6b675cd"
           ]
         },
         {
           "path": "BorderWidth",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.colorandstyling.672318d04de2"
+            "candidate.colorandstyling.eb2dc6b675cd"
           ]
         },
         {
@@ -2672,7 +2672,7 @@
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
             "candidate.colorandstyling.0b611eb4e625",
-            "candidate.colorandstyling.672318d04de2"
+            "candidate.colorandstyling.eb2dc6b675cd"
           ]
         },
         {

@@ -390,7 +390,18 @@
         "'crosshair'",
         "'watch'",
         "'topl'",
-        "'custom'"
+        "'custom'",
+        "'botr'",
+        "'topr'",
+        "'botl'",
+        "'circle'",
+        "'cross'",
+        "'fleur'",
+        "'left'",
+        "'right'",
+        "'top'",
+        "'bottom'",
+        "'hand'"
       ],
       "valueContract": {
         "kind": "enum",
@@ -407,7 +418,18 @@
           "crosshair",
           "watch",
           "topl",
-          "custom"
+          "custom",
+          "botr",
+          "topr",
+          "botl",
+          "circle",
+          "cross",
+          "fleur",
+          "left",
+          "right",
+          "top",
+          "bottom",
+          "hand"
         ]
       },
       "affectsDisplay": true,

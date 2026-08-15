@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "62e8bacc7503f2aff5bd1e741fe99f22aebb569b",
-  "inputSha256": "7b8f26abcc1f846321f0e54dafa9dbf043d5055351efadfa2f0637e3116be424",
+  "ledgerBaselineGitCommit": "cba3c9abc642be709b97e342c3e4dad64192487b",
+  "inputSha256": "dccd3cda5a905e325c09423eac759426d6046403e39383f1f238e88e89e0e05c",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -81,7 +81,7 @@
     },
     {
       "path": "components/geoaxes.json",
-      "sha256": "5832788b2b6bda38f40b7ca1228a4a834f4aab02793cab101fe0e2d099a6a115"
+      "sha256": "7b41dfab90d335cd360828ffa7f4aa77df34df4f7f7edce4d8854a7e35e8aa6e"
     },
     {
       "path": "components/polaraxes.json",
@@ -101,7 +101,7 @@
     },
     {
       "path": "components/uibuttongroup.json",
-      "sha256": "2a67eb8a7caf23f2096e9d38df0e488ed2fce4c21bd119f298831e2becac04c3"
+      "sha256": "65726553ed01aa8a1a04cb7982b0c3def371cc729e0acba8ccef05f1b4c7b144"
     },
     {
       "path": "components/uicheckbox.json",
@@ -133,7 +133,7 @@
     },
     {
       "path": "components/uifigure.json",
-      "sha256": "6b88976c7525f0bebe0ec31af205244ac6ca4e5a466e470fbd4c7ddaf1e31729"
+      "sha256": "bed67d51f60c04ad36f06647059e0f98074fb58c4198728dea223e3423f0888f"
     },
     {
       "path": "components/uigauge-circular.json",
@@ -193,7 +193,7 @@
     },
     {
       "path": "components/uipanel.json",
-      "sha256": "29d902233a9bba5820ea8adef7b7e5c54a904ed11f8a9d08c3040d1bcf627d4d"
+      "sha256": "a5e7dae3def0f48f00ee8982c5844b01d1dc831e5f01e675c0393a8230ac4b52"
     },
     {
       "path": "components/uipushtool.json",

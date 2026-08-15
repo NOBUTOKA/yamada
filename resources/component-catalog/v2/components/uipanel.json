@@ -55,7 +55,7 @@
       "entries": [
         {
           "path": "Title",
-          "groupId": "exact.title.7db3f195c57f",
+          "groupId": "exact.title.2cae7d8d7937",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Title",
@@ -63,7 +63,7 @@
             "categoryId": "title",
             "category": "Title",
             "order": 1,
-            "groupId": "exact.title.7db3f195c57f",
+            "groupId": "exact.title.2cae7d8d7937",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -80,7 +80,7 @@
         },
         {
           "path": "TitlePosition",
-          "groupId": "exact.title.7db3f195c57f",
+          "groupId": "exact.title.2cae7d8d7937",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitlePosition",
@@ -88,7 +88,7 @@
             "categoryId": "title",
             "category": "Title",
             "order": 2,
-            "groupId": "exact.title.7db3f195c57f",
+            "groupId": "exact.title.2cae7d8d7937",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -104,7 +104,10 @@
               "values": [
                 "lefttop",
                 "centertop",
-                "righttop"
+                "righttop",
+                "leftbottom",
+                "centerbottom",
+                "rightbottom"
               ]
             }
           }
@@ -118,7 +121,7 @@
       "entries": [
         {
           "path": "ForegroundColor",
-          "groupId": "exact.colorandstyling.672318d04de2",
+          "groupId": "exact.colorandstyling.eb2dc6b675cd",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ForegroundColor",
@@ -126,7 +129,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 1,
-            "groupId": "exact.colorandstyling.672318d04de2",
+            "groupId": "exact.colorandstyling.eb2dc6b675cd",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -145,7 +148,7 @@
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.colorandstyling.672318d04de2",
+          "groupId": "exact.colorandstyling.eb2dc6b675cd",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
@@ -153,7 +156,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 2,
-            "groupId": "exact.colorandstyling.672318d04de2",
+            "groupId": "exact.colorandstyling.eb2dc6b675cd",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -172,7 +175,7 @@
         },
         {
           "path": "BorderType",
-          "groupId": "exact.colorandstyling.672318d04de2",
+          "groupId": "exact.colorandstyling.eb2dc6b675cd",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderType",
@@ -180,7 +183,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 3,
-            "groupId": "exact.colorandstyling.672318d04de2",
+            "groupId": "exact.colorandstyling.eb2dc6b675cd",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -195,14 +198,18 @@
               "constraints": [],
               "values": [
                 "line",
-                "none"
+                "none",
+                "etchedin",
+                "etchedout",
+                "beveledin",
+                "beveledout"
               ]
             }
           }
         },
         {
           "path": "BorderWidth",
-          "groupId": "exact.colorandstyling.672318d04de2",
+          "groupId": "exact.colorandstyling.eb2dc6b675cd",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderWidth",
@@ -210,7 +217,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 4,
-            "groupId": "exact.colorandstyling.672318d04de2",
+            "groupId": "exact.colorandstyling.eb2dc6b675cd",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -227,7 +234,7 @@
         },
         {
           "path": "BorderColor",
-          "groupId": "exact.colorandstyling.672318d04de2",
+          "groupId": "exact.colorandstyling.eb2dc6b675cd",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderColor",
@@ -235,7 +242,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 5,
-            "groupId": "exact.colorandstyling.672318d04de2",
+            "groupId": "exact.colorandstyling.eb2dc6b675cd",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",

@@ -54,6 +54,67 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function enablesEllipsisEnumDropDowns(testCase)
+            % enablesEllipsisEnumDropDowns Verify complete choices recovered from R2024a value tables.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uifigure");
+            definition = definition.Properties([definition.Properties.Path] == "Pointer");
+            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+                figure, definition, @(~) []);
+            expected = ["arrow", "ibeam", "crosshair", "watch", "topl", "custom", ...
+                "botr", "topr", "botl", "circle", "cross", "fleur", "left", ...
+                "right", "top", "bottom", "hand"];
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "arrow", true);
+            drawnow;
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.Items), expected);
+            testCase.verifyEqual(string(control.Enable), "on");
+            clear cleanup
+        end
+
+        function enablesEveryRecoveredEllipsisSurface(testCase)
+            % enablesEveryRecoveredEllipsisSurface Check all representative recovered enum surfaces.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            registry = macd.model.ComponentRegistry.createDefault();
+            cases = {
+                "uifigure", "Pointer", ...
+                ["arrow", "ibeam", "crosshair", "watch", "topl", "custom", ...
+                "botr", "topr", "botl", "circle", "cross", "fleur", "left", ...
+                "right", "top", "bottom", "hand"];
+                "geoaxes", "Basemap", ...
+                ["streets-light", "streets-dark", "streets", "satellite", ...
+                "topographic", "landcover", "colorterrain", "grayterrain", ...
+                "bluegreen", "grayland", "darkwater", "none"];
+                "uibuttongroup", "TitlePosition", ...
+                ["lefttop", "centertop", "righttop", "leftbottom", ...
+                "centerbottom", "rightbottom"];
+                "uipanel", "TitlePosition", ...
+                ["lefttop", "centertop", "righttop", "leftbottom", ...
+                "centerbottom", "rightbottom"];
+                "uibuttongroup", "BorderType", ...
+                ["line", "none", "etchedin", "etchedout", "beveledin", "beveledout"];
+                "uipanel", "BorderType", ...
+                ["line", "none", "etchedin", "etchedout", "beveledin", "beveledout"]};
+            for caseIndex = 1:size(cases, 1)
+                definition = registry.getById(cases{caseIndex, 1});
+                definition = definition.Properties([definition.Properties.Path] == cases{caseIndex, 2});
+                control = macd.ui.inspector.PropertyEditorFactory.create( ...
+                    figure, definition, @(~) []);
+                macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                    control, cases{caseIndex, 3}(1), true);
+                drawnow;
+                testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+                testCase.verifyEqual(string(control.Items), cases{caseIndex, 3});
+                testCase.verifyEqual(string(control.Enable), "on");
+                delete(control);
+            end
+            clear cleanup
+        end
+
         function defersUnsupportedEditorAsReadOnly(testCase)
             % defersUnsupportedEditorAsReadOnly Keep unimplemented kinds non-editable.
 

@@ -105,7 +105,14 @@
         "'streets-dark'",
         "'streets'",
         "'satellite'",
-        "'topographic'"
+        "'topographic'",
+        "'landcover'",
+        "'colorterrain'",
+        "'grayterrain'",
+        "'bluegreen'",
+        "'grayland'",
+        "'darkwater'",
+        "'none'"
       ],
       "valueContract": {
         "kind": "enum",
@@ -121,7 +128,14 @@
           "streets-dark",
           "streets",
           "satellite",
-          "topographic"
+          "topographic",
+          "landcover",
+          "colorterrain",
+          "grayterrain",
+          "bluegreen",
+          "grayland",
+          "darkwater",
+          "none"
         ]
       },
       "affectsDisplay": true,

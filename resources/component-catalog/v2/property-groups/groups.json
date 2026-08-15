@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "3830850ca8fa9b469531b151ceaa30a3ffaef38750c096f177bae35bd93f83a2",
+  "inputSha256": "4634ab6de792173f25a44e8fab2c9501961a5983775e5328dbf6e63e68257b98",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -420,7 +420,7 @@
       ]
     },
     {
-      "id": "exact.colorandstyling.672318d04de2",
+      "id": "exact.colorandstyling.eb2dc6b675cd",
       "kind": "exactCategory",
       "categoryId": "colorandstyling",
       "entries": [
@@ -479,7 +479,11 @@
             "constraints": [],
             "values": [
               "line",
-              "none"
+              "none",
+              "etchedin",
+              "etchedout",
+              "beveledin",
+              "beveledout"
             ]
           },
           "affectsDisplay": true,
@@ -3717,7 +3721,7 @@
       ]
     },
     {
-      "id": "exact.title.7db3f195c57f",
+      "id": "exact.title.2cae7d8d7937",
       "kind": "exactCategory",
       "categoryId": "title",
       "entries": [
@@ -3754,7 +3758,10 @@
             "values": [
               "lefttop",
               "centertop",
-              "righttop"
+              "righttop",
+              "leftbottom",
+              "centerbottom",
+              "rightbottom"
             ]
           },
           "affectsDisplay": true,
@@ -6040,7 +6047,14 @@
               "streets-dark",
               "streets",
               "satellite",
-              "topographic"
+              "topographic",
+              "landcover",
+              "colorterrain",
+              "grayterrain",
+              "bluegreen",
+              "grayland",
+              "darkwater",
+              "none"
             ]
           },
           "affectsDisplay": true,
@@ -14843,7 +14857,18 @@
               "crosshair",
               "watch",
               "topl",
-              "custom"
+              "custom",
+              "botr",
+              "topr",
+              "botl",
+              "circle",
+              "cross",
+              "fleur",
+              "left",
+              "right",
+              "top",
+              "bottom",
+              "hand"
             ]
           },
           "affectsDisplay": true,

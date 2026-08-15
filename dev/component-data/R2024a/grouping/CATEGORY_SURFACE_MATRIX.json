@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "7b8f26abcc1f846321f0e54dafa9dbf043d5055351efadfa2f0637e3116be424",
+  "inputSha256": "dccd3cda5a905e325c09423eac759426d6046403e39383f1f238e88e89e0e05c",
   "occurrences": [
     {
       "componentId": "axes",
@@ -526,7 +526,7 @@
         "Scalebar"
       ],
       "propertyCapabilitySha256": [
-        "e60e837c4487e3108e62e7e356247989af18d3d330c042e5a5b88c0111488636",
+        "dee072c02a9100714958c4dfced0135be21783eb6c879e62b86e9ca4bd6ae5dc",
         "27ec1ee5edd95202874bf3bb010fb51bb76c7a89fbf3bdcee59b4cd3e29f128d",
         "f4cfbcb6e0f0d560adfab89bd12bc646c10a4b0418056ef95246282898878c1b",
         "85784c275dc935c44bf99b5e6fe3256f33f4eb28f623ab1b65528c2929ba58f7",
@@ -535,7 +535,7 @@
         "40b6a58e0947effc33e00c12bb780c86d43bb4e73d53005a563198f5e6b24d64",
         "ac873b8f62172f0cadd05c5ab3752a6df5580248ee71eb131615197af7e021a1"
       ],
-      "capabilitySha256": "a8f97ea46618f6d83f7af8bbaa509dd4045aa95dcccc5f6a9d21ff6d3b73110b"
+      "capabilitySha256": "031a01fdd8ad2d6dd38ec93975af0e180c393702e695fd6c01410db3e758abcc"
     },
     {
       "componentId": "geoaxes",
@@ -2131,9 +2131,9 @@
       ],
       "propertyCapabilitySha256": [
         "9e91df2ea2884b23703911ac495391f8d019872c7f2c064d946742c3cc29c6d3",
-        "8c0484f816ab71b43a64f4128952a6f39f6449dfea2f6eef2d3285702433dd84"
+        "81591f1994ebca3ed56e1ee4745332078e5755f69cca013bcaf9fc2bf5b01d8e"
       ],
-      "capabilitySha256": "7db3f195c57f9b84bb01d63ffcf5afdd03a7ba85a748b459e9ece3e6d591906f"
+      "capabilitySha256": "2cae7d8d7937cea59ac4baa64d1fad18e0689ae1d17efc3a69c74fe0bf95eff6"
     },
     {
       "componentId": "uibuttongroup",
@@ -2152,11 +2152,11 @@
       "propertyCapabilitySha256": [
         "9f66ad960942c8452a1a0d84a7bfdfd590f1b7f64e8c9b27e4f9695b6ac5e39b",
         "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3",
-        "f9904077fe90cd76a16765edf2f4195d5f33c647ebf6df8691ee7f703645aa68",
+        "9a8c3b48eb92ed3d2f862b1b224602a43ae7b468fcd8d22c17d57a6a95dffd8a",
         "a77d2de2753e07c21db74ca478f5a65c19f332f815928acae0e0fa6848da6efc",
         "b2e95e25ffd6cc068be606875bb7536949421a222ff637e4bc7e49ed91d917a3"
       ],
-      "capabilitySha256": "672318d04de20e9f66f477eee6815723b847c30b5dea28bf3c1bfeb80dc143af"
+      "capabilitySha256": "eb2dc6b675cd504b9c2b0f689abd468fb8fcd4a5d108a2bc40d21482b2acc15e"
     },
     {
       "componentId": "uibuttongroup",
@@ -3479,11 +3479,11 @@
         "PointerShapeHotSpot"
       ],
       "propertyCapabilitySha256": [
-        "23d66f2057c79f99b1b02f76ff41f4b1280e105f22fce7d9991256d12972a921",
+        "73104fcccb495fae4f329dafef847dbfc1854fcf93e0802d2a537847b79791c2",
         "751fda75c76bb159d744aafe88559972efc41c90b18b69ad73d1eb3027ea9ab0",
         "599483551d4b3f4d93061c3f245cc51df5c4a30d77813793b3cf651e34a666ee"
       ],
-      "capabilitySha256": "bbb62c904695bd2c72dbeaef733b4de55b637065110305384b20dcc2c0675ab7"
+      "capabilitySha256": "6a3699c2689952e34ce2a60d4407a8f36876b97aa064471ca203db703526e0a8"
     },
     {
       "componentId": "uifigure",
@@ -5955,9 +5955,9 @@
       ],
       "propertyCapabilitySha256": [
         "9e91df2ea2884b23703911ac495391f8d019872c7f2c064d946742c3cc29c6d3",
-        "8c0484f816ab71b43a64f4128952a6f39f6449dfea2f6eef2d3285702433dd84"
+        "81591f1994ebca3ed56e1ee4745332078e5755f69cca013bcaf9fc2bf5b01d8e"
       ],
-      "capabilitySha256": "7db3f195c57f9b84bb01d63ffcf5afdd03a7ba85a748b459e9ece3e6d591906f"
+      "capabilitySha256": "2cae7d8d7937cea59ac4baa64d1fad18e0689ae1d17efc3a69c74fe0bf95eff6"
     },
     {
       "componentId": "uipanel",
@@ -5976,11 +5976,11 @@
       "propertyCapabilitySha256": [
         "9f66ad960942c8452a1a0d84a7bfdfd590f1b7f64e8c9b27e4f9695b6ac5e39b",
         "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3",
-        "f9904077fe90cd76a16765edf2f4195d5f33c647ebf6df8691ee7f703645aa68",
+        "9a8c3b48eb92ed3d2f862b1b224602a43ae7b468fcd8d22c17d57a6a95dffd8a",
         "a77d2de2753e07c21db74ca478f5a65c19f332f815928acae0e0fa6848da6efc",
         "b2e95e25ffd6cc068be606875bb7536949421a222ff637e4bc7e49ed91d917a3"
       ],
-      "capabilitySha256": "672318d04de20e9f66f477eee6815723b847c30b5dea28bf3c1bfeb80dc143af"
+      "capabilitySha256": "eb2dc6b675cd504b9c2b0f689abd468fb8fcd4a5d108a2bc40d21482b2acc15e"
     },
     {
       "componentId": "uipanel",
