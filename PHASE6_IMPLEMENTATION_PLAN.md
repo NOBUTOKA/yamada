@@ -568,21 +568,21 @@ integration tests before its feature commit.
 
 #### 6.9.1 Correct and freeze specialized-editor ledger contracts
 
-- [ ] Mark `uihtml.Data` visible read-only for this phase. It accepts arbitrary
+- [x] Mark `uihtml.Data` visible read-only for this phase. It accepts arbitrary
   MATLAB data and must not inherit a table-data editor merely because several
   documented classes are tabular.
-- [ ] Mark `uitable.Selection` and `uitable.SelectionType` omitted with
+- [x] Mark `uitable.Selection` and `uitable.SelectionType` omitted with
   `lowDesignTimeValue`; neither is part of the static table appearance edited in
   this phase.
-- [ ] Reclassify `uitable.ColumnRearrangeable` as an `onOff` value using the
+- [x] Reclassify `uitable.ColumnRearrangeable` as an `onOff` value using the
   existing checkbox adapter.
-- [ ] Reclassify `uitable.Data` from `stringList` to the dedicated `tableData`
+- [x] Reclassify `uitable.Data` from `stringList` to the dedicated `tableData`
   editor. Record `ColumnName` and `RowName` as related values edited by the same
   table-data dialog while retaining their independently audited contracts.
-- [ ] Reclassify `uitable.ColumnWidth`, `ColumnEditable`, `ColumnSortable`, and
+- [x] Reclassify `uitable.ColumnWidth`, `ColumnEditable`, `ColumnSortable`, and
   `ColumnFormat` to a dedicated `columnSettings` editor. Re-read the R2024a
   accepted values and defaults before freezing per-column and all-column modes.
-- [ ] Extend the development schema, behavior allowlist, grouping projection,
+- [x] Extend the development schema, behavior allowlist, grouping projection,
   and runtime schema only for the new audited editor identifiers and related
   property paths. Regenerate; require intrinsic and parent-effective parity and
   verify that no unrelated group splits.
@@ -593,14 +593,14 @@ entries remain readable but cannot create an editable adapter.
 
 #### 6.9.2 Add inline multiline text editing and variable row heights
 
-- [ ] Let an Inspector definition request a row pixel height. Replace the fixed
+- [x] Let an Inspector definition request a row pixel height. Replace the fixed
   28-pixel category rows and `31 * propertyCount` content-height estimate with
   deterministic per-row heights and their measured total.
-- [ ] Render `multilineText` as an inline `uitextarea` with a compact fixed
+- [x] Render `multilineText` as an inline `uitextarea` with a compact fixed
   multi-line height; do not open a separate dialog. Extend synchronization,
   draft/error state, focus restoration, and editor-value extraction for
   `matlab.ui.control.TextArea`.
-- [ ] Map one edited line to the audited scalar text form and multiple lines to
+- [x] Map one edited line to the audited scalar text form and multiple lines to
   an audited line-array form. Preserve supported char/string/cell source forms
   when possible and never reuse this adapter for `Items`, tick labels, table
   labels, or other `stringList` data.
@@ -611,10 +611,10 @@ lines without rebuilding the selected component's Inspector.
 
 #### 6.9.3 Add the URL editor
 
-- [ ] Reuse a compact text presentation while validating only the audited URL
+- [x] Reuse a compact text presentation while validating only the audited URL
   literal/URI syntax. Do not perform network access, normalization that changes
   source meaning, or reachability checks.
-- [ ] Preserve empty and supported char/string values exactly enough for safe
+- [x] Preserve empty and supported char/string values exactly enough for safe
   source round-trip; keep expressions and unsupported values source-backed and
   read-only.
 
@@ -623,19 +623,19 @@ reject malformed edits without changing model, history, Preview, or source.
 
 #### 6.9.4 Add the asset editor
 
-- [ ] Add a compact path field plus Browse action for audited file-backed
+- [x] Add a compact path field plus Browse action for audited file-backed
   `Icon`, `ImageSource`, `HTMLSource`, and related surfaces. Define per-property
   asset modes in metadata rather than component conditionals.
-- [ ] Resolve and display source-relative paths without copying, moving,
+- [x] Resolve and display source-relative paths without copying, moving,
   embedding, opening, or rewriting the selected asset. Preserve predefined
   values and empty paths supported by each property.
-- [ ] Keep numeric image arrays, expressions, and other initially unsupported
+- [x] Keep numeric image arrays, expressions, and other initially unsupported
   asset forms typed read-only until their own audited editor contract exists.
 
 **Gate:** new and opened apps round-trip supported absolute and source-relative
 asset paths without filesystem mutation, while unsupported forms remain intact.
 
-#### 6.9.5 Add audited date/time editors
+#### 6.9.5 Add audited date/time editors (deferred)
 
 - [ ] Implement distinct scalar-date, two-element limit, and date-list modes for
   `uidatepicker.Value`, `Limits`, and `DisabledDates`; do not infer one shape
@@ -649,15 +649,19 @@ asset paths without filesystem mutation, while unsupported forms remain intact.
 **Gate:** each supported mode constructs, edits, validates, undoes/redoes, and
 regenerates in R2024a; unsupported temporal values are preserved byte-for-byte.
 
+Implementation is intentionally deferred after the Step 5 review: temporal
+literal parsing/encoding and scalar/limit/list modes require a separate audited
+slice. No uncommitted Step 5 code remains in the working tree.
+
 #### 6.9.6 Add structured-data editing for finite safe literals
 
-- [ ] Add a dialog editor for the audited editable `ItemsData` and `NodeData`
+- [x] Add a dialog editor for the audited editable `ItemsData` and `NodeData`
   surfaces. Keep `uihtml.Data` visible read-only and do not route it through this
   adapter unless a later audit explicitly changes its disposition.
-- [ ] Accept only the existing non-evaluating scalar/matrix/row-cell literal
+- [x] Accept only the existing non-evaluating scalar/matrix/row-cell literal
   subset plus deliberately added rectangular-cell support. Never call `eval`,
   execute constructors, or coerce an unsupported expression to text data.
-- [ ] Validate `ItemsData -> Items` as a one-way same-length dependency using the
+- [x] Validate `ItemsData -> Items` as a one-way same-length dependency using the
   effective related-property value. Keep unmatched or source-backed values
   visible and non-editable.
 

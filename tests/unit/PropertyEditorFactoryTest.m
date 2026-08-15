@@ -209,9 +209,9 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 2]", true, [1 2]);
             drawnow;
             testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyClass(control, "matlab.ui.control.EditField");
-            testCase.verifyTrue(control.Editable);
-            testCase.verifyEqual(string(control.Value), "[1 2]");
+            testCase.verifyClass(control, "matlab.ui.control.Button");
+            testCase.verifyEqual(string(control.Enable), "on");
+            testCase.verifyEqual(string(control.Text), "[1 2]");
             clear cleanup
         end
 

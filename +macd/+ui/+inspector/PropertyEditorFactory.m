@@ -54,7 +54,12 @@ classdef PropertyEditorFactory
                     control = uitextarea(parent, "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) ...
                         macd.ui.inspector.PropertyEditorFactory.commitTextArea(source, commitFcn));
-                case {"literal", "text", "numericVector", "structuredData"}
+                case "structuredData"
+                    control = uibutton(parent, "Text", "Edit data", ...
+                        "Tag", "macd-inspector-structured-data-editor", ...
+                        "ButtonPushedFcn", @(source, ~) ...
+                        macd.ui.inspector.StructuredDataEditorDialog.open(source.UserData, commitFcn));
+                case {"literal", "text", "numericVector"}
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn(string(source.Value)));
@@ -142,6 +147,11 @@ classdef PropertyEditorFactory
                     control.Text = macd.ui.inspector.PropertyEditorFactory.listSummary(rawValue);
                     return
                 end
+                if control.Tag == "macd-inspector-structured-data-editor"
+                    control.UserData = rawValue;
+                    control.Text = macd.ui.inspector.PropertyEditorFactory.structuredSummary(rawValue, value);
+                    return
+                end
                 [rgb, isLiteral] = macd.source.MatlabLiteralParser.parse(value);
                 if isLiteral && isnumeric(rgb) && isequal(size(rgb), [1 3]) && ...
                         all(isfinite(rgb)) && all(rgb >= 0) && all(rgb <= 1)
@@ -217,6 +227,8 @@ classdef PropertyEditorFactory
                 control.UserData = value;
                 if control.Tag == "macd-inspector-string-list-editor"
                     control.Text = macd.ui.inspector.PropertyEditorFactory.listSummary(value);
+                elseif control.Tag == "macd-inspector-structured-data-editor"
+                    control.Text = macd.ui.inspector.PropertyEditorFactory.structuredSummary(value, "");
                 elseif isnumeric(value) && isequal(size(value), [1 3])
                     control.BackgroundColor = value;
                 end
@@ -299,6 +311,21 @@ classdef PropertyEditorFactory
                 text = sprintf("%d item cell list", numel(value));
             else
                 text = "Edit list";
+            end
+        end
+
+        function text = structuredSummary(value, fallback)
+            % structuredSummary Describe safe structured data without coercing its type.
+            try
+                text = macd.source.LiteralEncoder.encode(value);
+            catch
+                text = string(fallback);
+                if strlength(text) == 0
+                    text = "Unsupported data";
+                end
+            end
+            if strlength(text) > 42
+                text = extractBefore(text, 40) + "...";
             end
         end
 
