@@ -494,17 +494,17 @@ Follow `dev/component-data/PROPERTY_GROUPING_GUIDELINES.md` against the complete
 R2024a concrete-variant ledger before promoting another family into the runtime
 catalog.
 
-- [ ] Generate exact category-surface clusters from ordered property paths and
+- [x] Generate exact category-surface clusters from ordered property paths and
   audited capability signatures.
-- [ ] Explain same-name category conflicts and distinguish exact shared groups,
+- [x] Explain same-name category conflicts and distinguish exact shared groups,
   family groups, justified core/extension splits, and variant-local categories.
-- [ ] Design stable group IDs without copying parent-contributed layout
+- [x] Design stable group IDs without copying parent-contributed layout
   properties into intrinsic component groups.
-- [ ] Derive reusable family category-order profiles from the documented
+- [x] Derive reusable family category-order profiles from the documented
   sequences. Keep the documented order in the audit ledger, but make runtime
   variants record only justified profile deltas wherever practical.
-- [ ] Map every concrete variant to groups, an order profile, and local deltas.
-- [ ] Expand the proposed representation for intrinsic and supported parent
+- [x] Map every concrete variant to groups, an order profile, and local deltas.
+- [x] Expand the proposed representation for intrinsic and supported parent
   contexts and compare it mechanically with the audited ledger.
 
 **Required evidence:** exact-cluster/conflict report, reviewed group and profile
@@ -516,17 +516,24 @@ every variant has deterministic category and property order, dependencies and
 parent-context rules remain valid, and no capability metadata drifts from the
 expanded ledger.
 
+**Completion record (2026-08-15):** The R2024a ledger derives 313 reviewed
+groups and five reusable order profiles for all 48 concrete variants. Expansion
+parity passes for all 48 intrinsic surfaces and all 144 supported direct-parent
+contexts. The category-sharing classification, judgment record, order-profile
+design, and parity artifacts remain reproducible development inputs. Commits
+include `19033ae`, `fb45878`, `98678de`, `4980c07`, `9c09dc9`, and `f3c9d39`.
+
 ### 6.8 Promote audited component families systematically
 
-- [ ] Promote broadly shared structural categories and order profiles before
+- [x] Promote broadly shared structural categories and order profiles before
   family-specific properties.
-- [ ] Promote common controls and containers, including push and state Button as
+- [x] Promote common controls and containers, including push and state Button as
   representative variants rather than a one-off catalog design.
-- [ ] Promote navigation and data controls.
-- [ ] Promote axes and safely supported programmatic axes.
-- [ ] Promote instrumentation components and supported styles.
-- [ ] Promote HTML and Figure Tools.
-- [ ] Mark every candidate editable, visible read-only, or omitted with a reason.
+- [x] Promote navigation and data controls.
+- [x] Promote axes and safely supported programmatic axes.
+- [x] Promote instrumentation components and supported styles.
+- [x] Promote HTML and Figure Tools.
+- [x] Mark every candidate editable, visible read-only, or omitted with a reason.
 
 Each family lands with JSON, shared-group changes, adapters/validators, registry
 tests, representative Preview comparisons, generator tests, and grouped-surface
@@ -534,42 +541,185 @@ parity against the R2024a ledger. Shared category/order definitions must be
 reused when their audited signatures match; family or variant differences must
 remain explicit.
 
-**Exit gate:** every Phase 4.5 factory/style has a complete audit and every
-editable property names implemented allowlisted behavior. Button and the other
-families work end to end through JSON, loader, registry, inspector,
-model/history, Preview, validation, and source generation.
+**Exit gate:** every Phase 4.5 factory/style has a complete audit and is promoted
+through the grouped runtime catalog. Each property has a reviewed disposition
+and required editor kind. Common adapters work end to end; the explicitly
+identified specialized adapters are the owned scope of Phase 6.9 rather than an
+unrecorded exception to this gate.
+
+**Completion record (2026-08-15):** All 38 factories and 48 concrete variants
+are promoted through the version 2 grouped runtime catalog with deterministic
+category order. The registry, defaults provider, existing inspector adapters,
+Preview, and source paths consume the promoted definitions. Enum and multiline
+surfaces were re-audited before specialized-editor work; the licensed R2024a
+suite passed 93 tests with zero failures. Specialized asset, URL, date/time,
+structured-data, and table editors remain explicitly assigned to Phase 6.9.
+Commits include `f9d3b3c`, `17d79c8`, `94dcba3`, `436cd91`, `62e8bac`,
+`cba3c9a`, and `520db80`.
 
 ### 6.9 Add audited specialized value editors
 
-- [ ] Add a `multilineText` editor for the audited `Text`, `Tooltip`, and
-  `uitextarea.Value` surfaces. Map each edited line explicitly to the supported
-  character/string scalar or line-array representation; do not reuse it for
-  `Items`, tick labels, table labels, or other `stringList` data.
-- [ ] Add an `asset` editor for `Icon`, `ImageSource`, `HTMLSource`, and similar
-  resource-valued properties without file copying, movement, or embedding.
-  Define and test source-relative path handling and the supported predefined
-  asset forms.
-- [ ] Add a `url` editor, reusing the text-control presentation where suitable
-  while validating and round-tripping supported URL values safely.
-- [ ] Add `dateTime` editors for scalar dates, date limits, and date lists;
-  retain values outside the implemented date contract as typed read-only source.
-- [ ] Add a `structuredData` editor with an explicitly allowlisted literal
-  contract for `ItemsData`, `NodeData`, and equivalent arbitrary-data values.
-  Preserve values outside that contract as read-only rather than evaluating or
-  coercing them.
-- [ ] Add `tableData` editors for `uitable` data and its audited column and
-  selection configuration properties. Define each supported table shape and
-  column-oriented representation before permitting model mutation.
-- [ ] Preserve unsupported handle expressions, component references, and other
-  deferred structured values as typed read-only source.
-- [ ] Defer the model-owned `ContextMenu`/component-reference selector and the
-  `numericMatrix` editor to a later phase; their catalog entries remain visible
-  through the read-only fallback until separately scoped.
+Implement each editor as a vertical slice: correct its development-ledger
+contract first, regenerate grouping/runtime catalog data, then add only the
+Inspector, model/history, literal, Preview, and source-generation behavior that
+the audited contract requires. Every slice ends with real control/dialog
+construction, `drawnow`, destruction, round-trip, invalid-input, and focused
+integration tests before its feature commit.
 
-**Exit gate:** asset, URL, date/time, structured-data, and table-data values
-round-trip only through their audited contracts, without evaluation, asset
-mutation, or conversion of unsupported expressions to strings. Deferred
-component-reference and numeric-matrix values remain readable and non-editable.
+#### 6.9.1 Correct and freeze specialized-editor ledger contracts
+
+- [ ] Mark `uihtml.Data` visible read-only for this phase. It accepts arbitrary
+  MATLAB data and must not inherit a table-data editor merely because several
+  documented classes are tabular.
+- [ ] Mark `uitable.Selection` and `uitable.SelectionType` omitted with
+  `lowDesignTimeValue`; neither is part of the static table appearance edited in
+  this phase.
+- [ ] Reclassify `uitable.ColumnRearrangeable` as an `onOff` value using the
+  existing checkbox adapter.
+- [ ] Reclassify `uitable.Data` from `stringList` to the dedicated `tableData`
+  editor. Record `ColumnName` and `RowName` as related values edited by the same
+  table-data dialog while retaining their independently audited contracts.
+- [ ] Reclassify `uitable.ColumnWidth`, `ColumnEditable`, `ColumnSortable`, and
+  `ColumnFormat` to a dedicated `columnSettings` editor. Re-read the R2024a
+  accepted values and defaults before freezing per-column and all-column modes.
+- [ ] Extend the development schema, behavior allowlist, grouping projection,
+  and runtime schema only for the new audited editor identifiers and related
+  property paths. Regenerate; require intrinsic and parent-effective parity and
+  verify that no unrelated group splits.
+
+**Gate:** the development ledger, generated grouping artifacts, and runtime
+catalog agree on every changed disposition/editor/value contract. Deferred
+entries remain readable but cannot create an editable adapter.
+
+#### 6.9.2 Add inline multiline text editing and variable row heights
+
+- [ ] Let an Inspector definition request a row pixel height. Replace the fixed
+  28-pixel category rows and `31 * propertyCount` content-height estimate with
+  deterministic per-row heights and their measured total.
+- [ ] Render `multilineText` as an inline `uitextarea` with a compact fixed
+  multi-line height; do not open a separate dialog. Extend synchronization,
+  draft/error state, focus restoration, and editor-value extraction for
+  `matlab.ui.control.TextArea`.
+- [ ] Map one edited line to the audited scalar text form and multiple lines to
+  an audited line-array form. Preserve supported char/string/cell source forms
+  when possible and never reuse this adapter for `Items`, tick labels, table
+  labels, or other `stringList` data.
+
+**Gate:** all audited `Text`, `Tooltip`, and `uitextarea.Value` surfaces edit
+inline, scroll correctly, retain invalid drafts, and round-trip one and multiple
+lines without rebuilding the selected component's Inspector.
+
+#### 6.9.3 Add the URL editor
+
+- [ ] Reuse a compact text presentation while validating only the audited URL
+  literal/URI syntax. Do not perform network access, normalization that changes
+  source meaning, or reachability checks.
+- [ ] Preserve empty and supported char/string values exactly enough for safe
+  source round-trip; keep expressions and unsupported values source-backed and
+  read-only.
+
+**Gate:** both audited URL surfaces accept and regenerate supported values, and
+reject malformed edits without changing model, history, Preview, or source.
+
+#### 6.9.4 Add the asset editor
+
+- [ ] Add a compact path field plus Browse action for audited file-backed
+  `Icon`, `ImageSource`, `HTMLSource`, and related surfaces. Define per-property
+  asset modes in metadata rather than component conditionals.
+- [ ] Resolve and display source-relative paths without copying, moving,
+  embedding, opening, or rewriting the selected asset. Preserve predefined
+  values and empty paths supported by each property.
+- [ ] Keep numeric image arrays, expressions, and other initially unsupported
+  asset forms typed read-only until their own audited editor contract exists.
+
+**Gate:** new and opened apps round-trip supported absolute and source-relative
+asset paths without filesystem mutation, while unsupported forms remain intact.
+
+#### 6.9.5 Add audited date/time editors
+
+- [ ] Implement distinct scalar-date, two-element limit, and date-list modes for
+  `uidatepicker.Value`, `Limits`, and `DisabledDates`; do not infer one shape
+  from the editor name alone.
+- [ ] Extend non-evaluating parsing/encoding only for explicitly constructed
+  datetime, duration, and calendar-duration forms admitted by the audited mode.
+  Keep every other expression source-backed and read-only.
+- [ ] Connect validation, default display, Preview, history, and source editing
+  without locale-dependent text round-trip.
+
+**Gate:** each supported mode constructs, edits, validates, undoes/redoes, and
+regenerates in R2024a; unsupported temporal values are preserved byte-for-byte.
+
+#### 6.9.6 Add structured-data editing for finite safe literals
+
+- [ ] Add a dialog editor for the audited editable `ItemsData` and `NodeData`
+  surfaces. Keep `uihtml.Data` visible read-only and do not route it through this
+  adapter unless a later audit explicitly changes its disposition.
+- [ ] Accept only the existing non-evaluating scalar/matrix/row-cell literal
+  subset plus deliberately added rectangular-cell support. Never call `eval`,
+  execute constructors, or coerce an unsupported expression to text data.
+- [ ] Validate `ItemsData -> Items` as a one-way same-length dependency using the
+  effective related-property value. Keep unmatched or source-backed values
+  visible and non-editable.
+
+**Gate:** supported arbitrary-data literals round-trip with model/history and
+dependency validation, while handles, objects, expressions, and arbitrary
+constructors remain source-preserved read-only values.
+
+#### 6.9.7 Add the table-data dialog and atomic related-property commits
+
+- [ ] Add an editor button for `uitable.Data` that opens a modal dialog with a
+  real `uitable`, row/column add and delete actions, and column-name and row-name
+  editing. The dialog edits `Data`, `ColumnName`, and `RowName` together.
+- [ ] Initially support empty, numeric, logical, string, and rectangular cell
+  matrices whose cells are safe scalar literals. Keep `table`, `timetable`,
+  categorical, object, and expression-backed data read-only until explicitly
+  implemented.
+- [ ] Add a model-owned atomic multi-property mutation: validate all related
+  values first, then create one history record, one Preview refresh, and one
+  Inspector synchronization. Failure changes none of the related properties.
+- [ ] Extend literal parsing/encoding for the accepted rectangular table-data
+  forms without evaluation and preserve parsed assignments outside that subset.
+
+**Gate:** row/column/name edits apply atomically, undo/redo atomically, regenerate
+reviewable source, and never partially update after validation failure.
+
+#### 6.9.8 Add the column-settings dialog
+
+- [ ] Use one metadata-driven dialog for `ColumnWidth`, `ColumnEditable`,
+  `ColumnSortable`, and `ColumnFormat`. Determine the per-column row count from
+  the effective supported `uitable.Data` width rather than cached UI state.
+- [ ] Provide per-column controls plus audited all-column actions: all on/off for
+  editable/sortable and, if confirmed by the R2024a re-audit, All auto, All fit,
+  and All 1x for width. Represent custom numeric widths and documented format
+  choices without losing scalar-versus-vector intent unnecessarily.
+- [ ] Make each related Inspector row open the same current settings view. Apply
+  all changed column properties through the atomic multi-property mutation and
+  preserve unrelated explicit values.
+- [ ] Disable per-column mutation when effective Data is unsupported or
+  source-backed and its width cannot be established safely; retain readable
+  summaries and source.
+
+**Gate:** global and per-column changes stay length-consistent with Data,
+commit/undo/redo atomically, and survive Preview and source round-trip.
+
+#### 6.9.9 Complete specialized-editor integration and record deferrals
+
+- [ ] Preserve unsupported handle expressions, component references, and other
+  deferred structured values through the typed read-only adapter.
+- [ ] Keep the model-owned `ContextMenu`/component-reference selector and general
+  `numericMatrix` editor deferred to a later phase. Omitted table selection
+  values do not create an exception to that boundary.
+- [ ] Run the focused suites after every editor slice, then the licensed R2024a
+  full suite and a manual Inspector geometry/dialog/focus procedure. Record
+  actual test counts, known unsupported value forms, and completion commits.
+
+**Exit gate:** multiline text, asset, URL, date/time, structured-data,
+table-data, and column-settings values round-trip only through their audited
+contracts, without evaluation, asset mutation, partial related-property commits,
+or conversion of unsupported expressions to strings. Deferred
+component-reference and numeric-matrix values remain readable and non-editable,
+and every implemented editor is selected by metadata rather than component
+conditionals.
 
 ### 6.10 Complete Preview, validation, generation, and packaging
 
