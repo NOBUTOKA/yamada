@@ -1,7 +1,7 @@
 classdef ItemsDataEditorDialog
     % ItemsDataEditorDialog Edit data paired one-to-one with an Items list.
     %   The dialog displays immutable item labels beside editable associated
-    %   values and commits either a matching numeric/cell row or an empty array.
+    %   values as typed literal text and commits a matching typed row or an empty array.
 
     methods (Static)
         function open(items, initialData, commitFcn)
@@ -65,9 +65,9 @@ classdef ItemsDataEditorDialog
         end
 
         function data = tableData(labels, value)
-            % tableData Construct two columns without coercing existing data types.
-            data = cell(numel(labels), 2);
-            data(:, 1) = cellstr(labels);
+            % tableData Construct a string matrix so UITable accepts typed literal text.
+            data = strings(numel(labels), 2);
+            data(:, 1) = labels;
             if isempty(value)
                 return
             end
@@ -81,7 +81,7 @@ classdef ItemsDataEditorDialog
                 else
                     item = value(index);
                 end
-                data{index, 2} = macd.ui.inspector.ItemsDataEditorDialog.literalText(item);
+                data(index, 2) = macd.ui.inspector.ItemsDataEditorDialog.literalText(item);
             end
         end
 
