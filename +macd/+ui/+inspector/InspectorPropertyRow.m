@@ -46,19 +46,20 @@ classdef InspectorPropertyRow < handle
             obj.captureNormalBackgroundColor();
         end
 
-        function synchronize(obj, value, isEditable, rawValue)
+        function synchronize(obj, value, isEditable, rawValue, relatedValues)
             % synchronize Load a current value and editability presentation.
             arguments (Input)
                 obj (1, 1) macd.ui.inspector.InspectorPropertyRow
                 value (1, 1) string
                 isEditable (1, 1) logical
                 rawValue = []
+                relatedValues struct = struct()
             end
             % Clear a stale error presentation before loading the current model value.
             obj.restoreNormalBackgroundColor();
             macd.ui.inspector.PropertyEditorFactory.synchronize( ...
                 obj.Editor, value, isEditable && ...
-                macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue);
+                macd.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue, relatedValues);
             obj.ErrorMessage = "";
             obj.Editor.Tooltip = "";
             obj.captureNormalBackgroundColor();

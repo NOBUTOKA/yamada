@@ -228,12 +228,15 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
             definition = definition.Properties([definition.Properties.Path] == "ItemsData");
             control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 2]", true, [1 2]);
+            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                control, "[1 2]", true, [1 2], struct("Items", ["First", "Second"]));
             drawnow;
             testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
             testCase.verifyClass(control, "matlab.ui.control.Button");
             testCase.verifyEqual(string(control.Enable), "on");
             testCase.verifyEqual(string(control.Text), "[1 2]");
+            testCase.verifyTrue(control.UserData.HasItems);
+            testCase.verifyEqual(string(control.UserData.Items), ["First", "Second"]);
             clear cleanup
         end
 
@@ -267,6 +270,7 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
                 "https://example.com");
             drawnow;
             testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.Tag), "macd-inspector-property-editor");
             testCase.verifyEqual(string(control.Value), "https://example.com");
             testCase.verifyTrue(control.Editable);
             clear cleanup

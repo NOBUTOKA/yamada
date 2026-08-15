@@ -1883,6 +1883,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             definitions = arrayfun(@(state) state.Definition, states);
             defaults = app.DefaultValueProvider.resolveAll(component, parentFactory, definitions);
+            itemStateIndex = find(arrayfun(@(state) state.Definition.Path == "Items", states), 1);
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
@@ -1903,7 +1904,17 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                         rawValue = defaultValue;
                     end
                 end
-                app.InspectorRows(index).synchronize(value, editable, rawValue);
+                relatedValues = struct();
+                if states(index).Definition.Editor == "structuredData" && ...
+                        states(index).Definition.Path == "ItemsData" && ~isempty(itemStateIndex)
+                    itemEntry = states(itemStateIndex).Entry;
+                    if ~isempty(itemEntry) && itemEntry.ValueKind == "literal"
+                        relatedValues.Items = itemEntry.LiteralValue;
+                    elseif defaults.Found(itemStateIndex)
+                        relatedValues.Items = defaults.Values{itemStateIndex};
+                    end
+                end
+                app.InspectorRows(index).synchronize(value, editable, rawValue, relatedValues);
             end
         end
 

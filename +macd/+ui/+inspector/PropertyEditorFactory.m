@@ -58,16 +58,18 @@ classdef PropertyEditorFactory
                     control = uibutton(parent, "Text", "Edit data", ...
                         "Tag", "macd-inspector-structured-data-editor", ...
                         "ButtonPushedFcn", @(source, ~) ...
-                        macd.ui.inspector.StructuredDataEditorDialog.open(source.UserData, commitFcn));
+                        macd.ui.inspector.PropertyEditorFactory.openStructuredDataEditor( ...
+                        source.UserData, commitFcn));
                 case {"literal", "text", "numericVector"}
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn(string(source.Value)));
                 case "url"
                     control = uieditfield(parent, "text", ...
-                        "Tag", "macd-inspector-property-editor-url", ...
+                        "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) ...
                         macd.ui.inspector.PropertyEditorFactory.commitUrl(source, commitFcn));
+                    control.UserData = struct("Kind", "url", "Value", []);
                 otherwise
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor");
@@ -92,13 +94,14 @@ classdef PropertyEditorFactory
             end
         end
 
-        function synchronize(control, value, isEditable, rawValue)
+        function synchronize(control, value, isEditable, rawValue, relatedValues)
             % synchronize Load a model value into one factory-created editor.
             arguments (Input)
                 control
                 value (1, 1) string
                 isEditable (1, 1) logical
                 rawValue = []
+                relatedValues struct = struct()
             end
 
             if isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
@@ -148,10 +151,16 @@ classdef PropertyEditorFactory
                     return
                 end
                 if control.Tag == "macd-inspector-structured-data-editor"
-                    control.UserData = rawValue;
+                    state = struct("Value", rawValue, "Items", [], "HasItems", false);
+                    if isfield(relatedValues, "Items")
+                        state.Items = relatedValues.Items;
+                        state.HasItems = true;
+                    end
+                    control.UserData = state;
                     control.Text = macd.ui.inspector.PropertyEditorFactory.structuredSummary(rawValue, value);
                     control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
-                        isEditable && macd.ui.inspector.PropertyEditorFactory.isSafeStructuredLiteral(rawValue));
+                        isEditable && (state.HasItems || ...
+                        macd.ui.inspector.PropertyEditorFactory.isSafeStructuredLiteral(rawValue)));
                     return
                 end
                 [rgb, isLiteral] = macd.source.MatlabLiteralParser.parse(value);
@@ -173,9 +182,11 @@ classdef PropertyEditorFactory
                 end
                 control.UserData = rawValue;
                 control.Editable = isEditable;
-            elseif isprop(control, "UserData") && ...
-                    isequal(control.Tag, "macd-inspector-property-editor-url")
-                control.UserData = rawValue;
+            elseif isprop(control, "UserData") && isstruct(control.UserData) && ...
+                    isfield(control.UserData, "Kind") && control.UserData.Kind == "url"
+                state = control.UserData;
+                state.Value = rawValue;
+                control.UserData = state;
                 if ischar(rawValue) && isrow(rawValue)
                     control.Value = string(rawValue);
                 elseif isstring(rawValue) && isscalar(rawValue)
@@ -365,11 +376,22 @@ classdef PropertyEditorFactory
             if contains(draft, newline) || contains(draft, char(13))
                 return
             end
-            original = control.UserData;
+            original = control.UserData.Value;
             if ischar(original)
                 commitFcn(char(draft));
             else
                 commitFcn(draft);
+            end
+        end
+
+        function openStructuredDataEditor(state, commitFcn)
+            % openStructuredDataEditor Select the ItemsData or generic safe-literal editor.
+            if isstruct(state) && isfield(state, "HasItems") && state.HasItems
+                macd.ui.inspector.ItemsDataEditorDialog.open(state.Items, state.Value, commitFcn);
+            elseif isstruct(state) && isfield(state, "Value")
+                macd.ui.inspector.StructuredDataEditorDialog.open(state.Value, commitFcn);
+            else
+                macd.ui.inspector.StructuredDataEditorDialog.open(state, commitFcn);
             end
         end
 
