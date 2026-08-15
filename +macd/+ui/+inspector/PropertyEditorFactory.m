@@ -150,6 +150,8 @@ classdef PropertyEditorFactory
                 if control.Tag == "macd-inspector-structured-data-editor"
                     control.UserData = rawValue;
                     control.Text = macd.ui.inspector.PropertyEditorFactory.structuredSummary(rawValue, value);
+                    control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                        isEditable && macd.ui.inspector.PropertyEditorFactory.isSafeStructuredLiteral(rawValue));
                     return
                 end
                 [rgb, isLiteral] = macd.source.MatlabLiteralParser.parse(value);
@@ -326,6 +328,19 @@ classdef PropertyEditorFactory
             end
             if strlength(text) > 42
                 text = extractBefore(text, 40) + "...";
+            end
+        end
+
+        function result = isSafeStructuredLiteral(value)
+            % isSafeStructuredLiteral Return whether data can enter the modal literal editor.
+            try
+                macd.source.LiteralEncoder.encode(value);
+                result = true;
+            catch exception
+                if exception.identifier ~= "macd:LiteralEncoder:UnsupportedValue"
+                    rethrow(exception)
+                end
+                result = false;
             end
         end
 

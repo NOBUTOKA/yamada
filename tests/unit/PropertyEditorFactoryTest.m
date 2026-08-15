@@ -237,6 +237,22 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function defersUnsupportedStructuredData(testCase)
+            % defersUnsupportedStructuredData Keep unsupported arbitrary values source-preserved.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
+            definition = definition.Properties([definition.Properties.Path] == "ItemsData");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                control, "<unsupported: struct>", true, struct("Code", 1));
+            drawnow;
+            testCase.verifyEqual(string(control.Enable), "off");
+            testCase.verifyEqual(string(control.Text), "<unsupported: struct>");
+            clear cleanup
+        end
+
         function createsUrlTextEditor(testCase)
             % createsUrlTextEditor Edit hyperlink values as plain URL text.
 
