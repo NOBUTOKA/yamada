@@ -216,6 +216,23 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyTrue(control.Editable);
             clear cleanup
         end
+
+        function createsAssetPathEditor(testCase)
+            % createsAssetPathEditor Render asset paths with an inline browse action.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uibutton-push");
+            definition = definition.Properties([definition.Properties.Path] == "Icon");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'icon.png'", true, "icon.png");
+            drawnow;
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.Tag), "macd-inspector-asset-editor");
+            testCase.verifyEqual(string(control.UserData.Edit.Value), "icon.png");
+            testCase.verifyEqual(string(control.UserData.Browse.Enable), "on");
+            clear cleanup
+        end
     end
 end
 

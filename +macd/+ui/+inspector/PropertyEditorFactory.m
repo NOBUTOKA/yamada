@@ -23,6 +23,17 @@ classdef PropertyEditorFactory
                         "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn( ...
                         macd.source.LiteralEncoder.encode(char(source.Value))));
+                case "asset"
+                    control = uipanel(parent, "BorderType", "none", ...
+                        "Tag", "macd-inspector-asset-editor");
+                    grid = uigridlayout(control, [1 2], "Padding", [0 0 0 0], ...
+                        "ColumnWidth", {"1x", 34}, "ColumnSpacing", 3);
+                    edit = uieditfield(grid, "text", "Tag", "macd-inspector-asset-path", ...
+                        "ValueChangedFcn", @(source, ~) commitFcn(string(source.Value)));
+                    browse = uibutton(grid, "Text", "...", "Tag", "macd-inspector-asset-browse", ...
+                        "ButtonPushedFcn", @(~, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.browseAsset(control, commitFcn));
+                    control.UserData = struct("Edit", edit, "Browse", browse);
                 case "number"
                     control = uieditfield(parent, "numeric", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -70,7 +81,7 @@ classdef PropertyEditorFactory
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
                 "onOff", "enum", "number", "numericVector", "color", "stringList", ...
-                "multilineText", "url"]);
+                "multilineText", "url", "asset"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -85,7 +96,18 @@ classdef PropertyEditorFactory
                 rawValue = []
             end
 
-            if isa(control, "matlab.ui.control.CheckBox")
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
+                parts = control.UserData;
+                if ischar(rawValue) && isrow(rawValue)
+                    parts.Edit.Value = string(rawValue);
+                elseif isstring(rawValue) && isscalar(rawValue)
+                    parts.Edit.Value = rawValue;
+                else
+                    parts.Edit.Value = string(value);
+                end
+                parts.Edit.Editable = isEditable;
+                parts.Browse.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
+            elseif isa(control, "matlab.ui.control.CheckBox")
                 logicalValue = value;
                 if ~isempty(rawValue)
                     logicalValue = string(rawValue);
@@ -162,7 +184,9 @@ classdef PropertyEditorFactory
                 control
             end
 
-            if isa(control, "matlab.ui.control.CheckBox") || ...
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
+                value = control.UserData.Edit.Value;
+            elseif isa(control, "matlab.ui.control.CheckBox") || ...
                     isa(control, "matlab.ui.control.NumericEditField") || ...
                     isa(control, "matlab.ui.control.EditField") || ...
                     isa(control, "matlab.ui.control.TextArea")
@@ -181,7 +205,10 @@ classdef PropertyEditorFactory
                 value
             end
 
-            if isa(control, "matlab.ui.control.CheckBox") || ...
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
+                parts = control.UserData;
+                parts.Edit.Value = value;
+            elseif isa(control, "matlab.ui.control.CheckBox") || ...
                     isa(control, "matlab.ui.control.NumericEditField") || ...
                     isa(control, "matlab.ui.control.EditField") || ...
                     isa(control, "matlab.ui.control.TextArea")
@@ -298,6 +325,21 @@ classdef PropertyEditorFactory
                 commitFcn(char(draft));
             else
                 commitFcn(draft);
+            end
+        end
+
+        function browseAsset(container, commitFcn)
+            % browseAsset Select an asset path without reading or evaluating the file.
+            [name, folder] = uigetfile({"*.*", "All files"}, "Select asset");
+            if isequal(name, 0) || isequal(folder, 0)
+                return
+            end
+            selected = fullfile(folder, name);
+            original = container.UserData.Edit.Value;
+            if ischar(original)
+                commitFcn(char(selected));
+            else
+                commitFcn(string(selected));
             end
         end
     end

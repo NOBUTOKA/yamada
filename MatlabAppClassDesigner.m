@@ -1563,9 +1563,9 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 return
             end
             definition = app.inspectorDefinition(component, path);
-            if definition.Editor == "url"
+            if any(definition.Editor == ["url", "asset"])
                 if ~(ischar(value) && isrow(value)) && ~(isstring(value) && isscalar(value))
-                    message = "Enter one URL as text.";
+                    message = "Enter one path or URL as text.";
                     app.setStatus(message);
                     return
                 end
