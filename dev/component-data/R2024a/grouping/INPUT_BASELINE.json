@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "cba3c9abc642be709b97e342c3e4dad64192487b",
-  "inputSha256": "dccd3cda5a905e325c09423eac759426d6046403e39383f1f238e88e89e0e05c",
+  "ledgerBaselineGitCommit": "520db80fec09319f5392ca0106f2d4eccfcfe773",
+  "inputSha256": "2849c4390c44861f6554bbc4d4765d71137edec72ec4ec320bb66bfdcad08593",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -157,7 +157,7 @@
     },
     {
       "path": "components/uihtml.json",
-      "sha256": "0f6b843fc4bdddf37b1bcc5f904f10ca58b32e6e6f9f79b551d5a1d6eda2fa2b"
+      "sha256": "efefc7d18111fbf8bb97d7f79f56638b1b8156c0014c69480c2ec4fbdbfdd28a"
     },
     {
       "path": "components/uihyperlink.json",
@@ -237,7 +237,7 @@
     },
     {
       "path": "components/uitable.json",
-      "sha256": "d7bc418e3d6c0ed99f959ab08bc15b4cf2040412dd4c71ea04c1e6fde1898f58"
+      "sha256": "5d19d16563d3560bc6826cbefc891edbf0567c0707bb1bc1c39f8d48a49ef86a"
     },
     {
       "path": "components/uitextarea.json",
@@ -273,7 +273,7 @@
     },
     {
       "path": "schema.json",
-      "sha256": "3893a01feb1d3629b41f25427cf550b11aa8a287c039c184a46aabb328a0115b"
+      "sha256": "0f157a2dbb92273e32e0c2595829ea66417fd930264b2089fae6de875af96e5f"
     }
   ],
   "validation": {

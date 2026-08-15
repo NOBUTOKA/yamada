@@ -101,7 +101,7 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "stringList",
+      "requiredEditor": "tableData",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -168,7 +168,7 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "tableData",
+      "requiredEditor": "columnSettings",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -202,7 +202,7 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "tableData",
+      "requiredEditor": "columnSettings",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -219,23 +219,19 @@
         "on/off logical value"
       ],
       "valueContract": {
-        "kind": "tabularData",
-        "shape": "any",
-        "allowsEmpty": true,
+        "kind": "onOff",
+        "shape": "scalar",
+        "allowsEmpty": false,
         "constraints": [],
         "matlabClasses": [
-          "table",
-          "timetable",
-          "cell",
+          "char",
           "string",
-          "categorical",
-          "double",
           "logical"
         ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "tableData",
+      "requiredEditor": "onOff",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -265,7 +261,7 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "stringList",
+      "requiredEditor": "columnSettings",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -1375,7 +1371,7 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "tableData",
+      "requiredEditor": "columnSettings",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -1438,10 +1434,12 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "tableData",
+      "requiredEditor": "none",
       "disposition": {
-        "kind": "editable",
-        "reasonCodes": []
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
       },
       "runtimeSetAccess": "public"
     },
@@ -1502,10 +1500,12 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "enum",
+      "requiredEditor": "none",
       "disposition": {
-        "kind": "editable",
-        "reasonCodes": []
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
       },
       "runtimeSetAccess": "public"
     },

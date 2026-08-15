@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "matlabRelease": "R2024a",
-  "sourceGroupingSha256": "4634ab6de792173f25a44e8fab2c9501961a5983775e5328dbf6e63e68257b98",
+  "sourceGroupingSha256": "467b9e82f504e7a08c47dd598c704156f795815d38ed795a21a985203ae3757e",
   "propertyGroupFiles": [
     "property-groups/groups.json"
   ],

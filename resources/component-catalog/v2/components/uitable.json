@@ -65,7 +65,7 @@
             "category": "Table",
             "order": 1,
             "groupId": "local.uitable.table",
-            "editor": "stringList",
+            "editor": "tableData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -121,7 +121,7 @@
             "category": "Table",
             "order": 3,
             "groupId": "local.uitable.table",
-            "editor": "tableData",
+            "editor": "columnSettings",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -152,7 +152,7 @@
             "category": "Table",
             "order": 4,
             "groupId": "local.uitable.table",
-            "editor": "tableData",
+            "editor": "columnSettings",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -183,22 +183,18 @@
             "category": "Table",
             "order": 5,
             "groupId": "local.uitable.table",
-            "editor": "tableData",
+            "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "tabularData",
+              "kind": "onOff",
               "matlabClasses": [
-                "categorical",
-                "cell",
-                "double",
+                "char",
                 "logical",
-                "string",
-                "table",
-                "timetable"
+                "string"
               ],
-              "shape": "any",
-              "allowsEmpty": true,
+              "shape": "scalar",
+              "allowsEmpty": false,
               "constraints": []
             }
           }
@@ -214,7 +210,7 @@
             "category": "Table",
             "order": 6,
             "groupId": "local.uitable.table",
-            "editor": "stringList",
+            "editor": "columnSettings",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -1253,7 +1249,7 @@
             "category": "uifigure -Based Apps Only",
             "order": 2,
             "groupId": "local.uitable.uifigurebasedappsonly",
-            "editor": "tableData",
+            "editor": "columnSettings",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -1309,9 +1305,9 @@
             "category": "uifigure -Based Apps Only",
             "order": 4,
             "groupId": "local.uitable.uifigurebasedappsonly",
-            "editor": "tableData",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "tabularData",
               "matlabClasses": [
@@ -1365,9 +1361,9 @@
             "category": "uifigure -Based Apps Only",
             "order": 6,
             "groupId": "local.uitable.uifigurebasedappsonly",
-            "editor": "enum",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "enum",
               "matlabClasses": [

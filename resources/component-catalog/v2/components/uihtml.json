@@ -68,9 +68,9 @@
             "category": "HTML",
             "order": 2,
             "groupId": "local.uihtml.html",
-            "editor": "tableData",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "tabularData",
               "matlabClasses": [

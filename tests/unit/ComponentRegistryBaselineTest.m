@@ -136,6 +136,33 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual([textCount, tooltipCount, valueCount], [7, 37, 1]);
         end
 
+        function phase69SpecializedEditorContractsAreClassified(testCase)
+            % phase69SpecializedEditorContractsAreClassified Guard the Step 1 ledger decisions.
+
+            % Keep arbitrary HTML data visible but non-editable in the inspector.
+            registry = macd.model.ComponentRegistry.createDefault();
+            html = registry.getById("uihtml");
+            data = html.Properties([html.Properties.Path] == "Data");
+            testCase.verifyEqual(data.Editor, "readOnly");
+            testCase.verifyEqual(data.AuditDisposition, "readOnly");
+
+            % Reserve one table-data editor for the table itself and one column-settings
+            % editor for all column-oriented settings until their dialogs are implemented.
+            table = registry.getById("uitable");
+            testCase.verifyEqual(table.Properties([table.Properties.Path] == "Data").Editor, "tableData");
+            for path = ["ColumnWidth", "ColumnEditable", "ColumnSortable", "ColumnFormat"]
+                property = table.Properties([table.Properties.Path] == path);
+                testCase.verifyEqual(property.Editor, "columnSettings");
+            end
+            rearrangeable = table.Properties([table.Properties.Path] == "ColumnRearrangeable");
+            testCase.verifyEqual(rearrangeable.Editor, "onOff");
+            for path = ["Selection", "SelectionType"]
+                property = table.Properties([table.Properties.Path] == path);
+                testCase.verifyEqual(property.AuditDisposition, "omitted");
+                testCase.verifyEqual(property.Editor, "readOnly");
+            end
+        end
+
         function innerPositionRemainsOmittedAcrossTheCatalog(testCase)
             % innerPositionRemainsOmittedAcrossTheCatalog Keep derived geometry out of the inspector.
 

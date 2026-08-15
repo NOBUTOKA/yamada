@@ -110,10 +110,12 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "tableData",
+      "requiredEditor": "none",
       "disposition": {
-        "kind": "editable",
-        "reasonCodes": []
+        "kind": "readOnly",
+        "reasonCodes": [
+          "arbitraryData"
+        ]
       },
       "runtimeSetAccess": "public"
     },

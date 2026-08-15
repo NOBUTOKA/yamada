@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "dccd3cda5a905e325c09423eac759426d6046403e39383f1f238e88e89e0e05c",
+  "inputSha256": "2849c4390c44861f6554bbc4d4765d71137edec72ec4ec320bb66bfdcad08593",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -6975,6 +6975,49 @@
       ],
       "surfaces": [
         {
+          "candidateId": "candidate.uifigurebasedappsonly.0375d7814d2f",
+          "categoryId": "uifigurebasedappsonly",
+          "categoryDisplayName": "uifigure -Based Apps Only",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Figure-app structural surface, not a generic control capability.",
+          "capabilitySha256": "0375d7814d2f8bd55873d435944d340e9ab64bbe12d6a5281b409f5f534927c6",
+          "propertyPaths": [
+            "DisplayData",
+            "ColumnSortable",
+            "StyleConfigurations",
+            "Selection",
+            "DisplaySelection",
+            "SelectionType",
+            "Multiselect",
+            "SelectionChangedFcn",
+            "DisplayDataChangedFcn",
+            "ClickedFcn",
+            "DoubleClickedFcn",
+            "Layout"
+          ],
+          "propertyCapabilitySha256": [
+            "d1e1dd21c8bb163051223f16804b3be3ab85b5b21afee6550593802eef663dfb",
+            "49cd69d3345fa191cf6478d6fc9b4889c8d62ea912a63ad6eb2195720c2e1e75",
+            "a27505081f43e4a0f3ec24f5d9dbfc48d4a0612ee6c1d44342e6f5b60b1b30f8",
+            "82db7af3508d5dad78d4931ded1f81e6a5f52046f48b526dadf01b8b8fc5331e",
+            "e11ec51f6b43fc37194255da8f0795b425c793b178f9f535610545021e9f78d5",
+            "b42c874462d57966163f48ed7827a0dd99bff464b3cfaa6202cf8c23da94fa32",
+            "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
+            "fa0eb6022e6bf6c07a50bfc751bb24b1d13b29408dda5c08185ef5ef02da5838",
+            "22051a1b42e1f5b5e0ee22865f7acfbc655c072ad5d6c5664a64d30fb1bbb7b9",
+            "51d2cc9046ad2647c0f94c83ecc539f1ad8627c7a34f3875bda7cbfe61a2c4b9",
+            "b3f4a75556bb9006147ef873cce3982420cc3c905a5f64b048560bc408a398b9",
+            "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+          ],
+          "memberVariantIds": [
+            "uitable"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            10
+          ]
+        },
+        {
           "candidateId": "candidate.uifigurebasedappsonly.248afdb3d556",
           "categoryId": "uifigurebasedappsonly",
           "categoryDisplayName": "uifigure -Based Apps Only",
@@ -6995,49 +7038,6 @@
           "reuseCount": 1,
           "documentedCategoryOrders": [
             8
-          ]
-        },
-        {
-          "candidateId": "candidate.uifigurebasedappsonly.2523d77b8638",
-          "categoryId": "uifigurebasedappsonly",
-          "categoryDisplayName": "uifigure -Based Apps Only",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Figure-app structural surface, not a generic control capability.",
-          "capabilitySha256": "2523d77b8638f063c46c0a2d32d13d719e2d6a3858f85c12870ad3980d2f1a98",
-          "propertyPaths": [
-            "DisplayData",
-            "ColumnSortable",
-            "StyleConfigurations",
-            "Selection",
-            "DisplaySelection",
-            "SelectionType",
-            "Multiselect",
-            "SelectionChangedFcn",
-            "DisplayDataChangedFcn",
-            "ClickedFcn",
-            "DoubleClickedFcn",
-            "Layout"
-          ],
-          "propertyCapabilitySha256": [
-            "d1e1dd21c8bb163051223f16804b3be3ab85b5b21afee6550593802eef663dfb",
-            "f961ebadf2a03187a7eefa9e24d38fcaac54815c8b3e90a23f61056d93909c5e",
-            "a27505081f43e4a0f3ec24f5d9dbfc48d4a0612ee6c1d44342e6f5b60b1b30f8",
-            "73169cabe7ef99a5126cc63dd98f45728e4a5a174830ef48e17dc9db7aafc5d8",
-            "e11ec51f6b43fc37194255da8f0795b425c793b178f9f535610545021e9f78d5",
-            "f5e49f9dac8b02af1d62ce27f230ba8d5e8780b5a170ba7ac4cd6271a4218457",
-            "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
-            "fa0eb6022e6bf6c07a50bfc751bb24b1d13b29408dda5c08185ef5ef02da5838",
-            "22051a1b42e1f5b5e0ee22865f7acfbc655c072ad5d6c5664a64d30fb1bbb7b9",
-            "51d2cc9046ad2647c0f94c83ecc539f1ad8627c7a34f3875bda7cbfe61a2c4b9",
-            "b3f4a75556bb9006147ef873cce3982420cc3c905a5f64b048560bc408a398b9",
-            "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
-          ],
-          "memberVariantIds": [
-            "uitable"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            10
           ]
         },
         {
@@ -7197,42 +7197,42 @@
           "path": "ClickedFcn",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
           "path": "ColumnSortable",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
           "path": "DisplayData",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
           "path": "DisplayDataChangedFcn",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
           "path": "DisplaySelection",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
           "path": "DoubleClickedFcn",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
@@ -7247,7 +7247,7 @@
           "path": "Layout",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638",
+            "candidate.uifigurebasedappsonly.0375d7814d2f",
             "candidate.uifigurebasedappsonly.4d5dc115fa26",
             "candidate.uifigurebasedappsonly.86eb0f2bda58",
             "candidate.uifigurebasedappsonly.a3829483d817"
@@ -7257,7 +7257,7 @@
           "path": "Multiselect",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
@@ -7273,28 +7273,28 @@
           "path": "Selection",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
           "path": "SelectionChangedFcn",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
           "path": "SelectionType",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {
           "path": "StyleConfigurations",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.uifigurebasedappsonly.2523d77b8638"
+            "candidate.uifigurebasedappsonly.0375d7814d2f"
           ]
         },
         {

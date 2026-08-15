@@ -183,7 +183,7 @@
         },
         "requiredEditor": {
           "description": "Semantic editor requirement for an editable property; this does not assert adapter implementation status.",
-          "enum": ["none", "text", "multilineText", "logical", "onOff", "enum", "number", "numericVector", "numericMatrix", "color", "stringList", "asset", "url", "dateTime", "tableData", "componentReference", "structuredData"]
+          "enum": ["none", "text", "multilineText", "logical", "onOff", "enum", "number", "numericVector", "numericMatrix", "color", "stringList", "asset", "url", "dateTime", "tableData", "columnSettings", "componentReference", "structuredData"]
         },
         "disposition": {
           "description": "Initial product disposition, independent of current adapter availability.",

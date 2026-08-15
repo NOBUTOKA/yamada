@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "4634ab6de792173f25a44e8fab2c9501961a5983775e5328dbf6e63e68257b98",
+  "inputSha256": "467b9e82f504e7a08c47dd598c704156f795815d38ed795a21a985203ae3757e",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -17658,10 +17658,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "tableData",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "arbitraryData"
+            ]
           }
         }
       ]
@@ -26513,7 +26515,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "tableData",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26560,7 +26562,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "tableData",
+          "requiredEditor": "columnSettings",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26585,7 +26587,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "tableData",
+          "requiredEditor": "columnSettings",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26594,23 +26596,19 @@
         {
           "path": "ColumnRearrangeable",
           "valueContract": {
-            "kind": "tabularData",
+            "kind": "onOff",
             "matlabClasses": [
-              "categorical",
-              "cell",
-              "double",
+              "char",
               "logical",
-              "string",
-              "table",
-              "timetable"
+              "string"
             ],
-            "shape": "any",
-            "allowsEmpty": true,
+            "shape": "scalar",
+            "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "tableData",
+          "requiredEditor": "onOff",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26632,7 +26630,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "columnSettings",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26707,7 +26705,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "tableData",
+          "requiredEditor": "columnSettings",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26753,10 +26751,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "tableData",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         },
         {
@@ -26799,10 +26799,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "enum",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
           }
         },
         {
