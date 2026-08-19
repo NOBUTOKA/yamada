@@ -566,6 +566,36 @@ the audited contract requires. Every slice ends with real control/dialog
 construction, `drawnow`, destruction, round-trip, invalid-input, and focused
 integration tests before its feature commit.
 
+**Remaining status and execution order (2026-08-20):** Multiline text, URL,
+asset, generic finite structured data, and the paired `ItemsData` editor are
+implemented. Date/time, table-data, column-settings, and final integration are
+still pending. Until those slices land, their catalog entries deliberately use
+the Inspector's readable, disabled fallback instead of pretending that a typed
+editor exists.
+
+Complete the remaining work in this order:
+
+1. Re-audit the exact R2024a value contracts used by the three pending editors.
+   The current `dateTime` contracts still contain provisional broad classes and
+   `shape: any`; the `uitable.Data` and column-setting contracts are likewise
+   too coarse to drive a safe UI directly.
+2. Add the shared transaction and collection-editing support described in
+   6.9.5. Validate a complete candidate state before changing the document.
+3. Implement the scalar, limits, and disabled-date modes in 6.9.5.
+4. Implement the table-data dialog in 6.9.7, including structural reconciliation
+   of every affected row- and column-indexed property.
+5. Implement the column-settings dialog in 6.9.8 on the same atomic mutation
+   path.
+6. Finish deferral, round-trip, and full-suite records in 6.9.9.
+
+Commonize only stable mechanics. Share a small dialog transaction contract,
+model-owned atomic property batches, candidate-state validation, collection
+selection/add/delete helpers, and table-cell error styling. Keep temporal value
+conversion, heterogeneous table-cell conversion, column-setting normalization,
+and the three concrete dialog layouts in their own adapters. A universal dialog
+base or universal row model would hide materially different value semantics and
+is not justified by these three uses.
+
 #### 6.9.1 Correct and freeze specialized-editor ledger contracts
 
 - [x] Mark `uihtml.Data` visible read-only for this phase. It accepts arbitrary
@@ -636,23 +666,46 @@ reject malformed edits without changing model, history, Preview, or source.
 **Gate:** new and opened apps round-trip supported absolute and source-relative
 asset paths without filesystem mutation, while unsupported forms remain intact.
 
-#### 6.9.5 Add audited date/time editors (deferred)
+#### 6.9.5 Add shared transaction support and audited date/time editors
 
-- [ ] Implement distinct scalar-date, two-element limit, and date-list modes for
-  `uidatepicker.Value`, `Limits`, and `DisabledDates`; do not infer one shape
-  from the editor name alone.
-- [ ] Extend non-evaluating parsing/encoding only for explicitly constructed
-  datetime, duration, and calendar-duration forms admitted by the audited mode.
-  Keep every other expression source-backed and read-only.
-- [ ] Connect validation, default display, Preview, history, and source editing
-  without locale-dependent text round-trip.
+- [ ] Re-read the R2024a contracts for `uidatepicker.Value`, `Limits`, and
+  `DisabledDates`, then replace the provisional shared `dateTime` schema with
+  explicit scalar-date, ordered two-date limits, and date-list modes. Record
+  exact empty/`NaT`, orientation, time-zone, and supported constructor rules;
+  do not admit `duration` or `calendarDuration` merely because the provisional
+  ledger currently lists them.
+- [ ] Add a registry-aware batch validator that evaluates all proposed values
+  against one prospective effective component state. Add a model-owned atomic
+  property-batch mutation that preflights existence and editability, applies all
+  values or none, and records one reversible history item. The application must
+  perform validation once and refresh diagnostics, Preview, and Inspector once
+  after a successful batch.
+- [ ] Define a shared modal transaction convention: dialogs retain a local
+  draft; Apply parses and validates the whole draft before committing; Cancel
+  changes nothing; and Clear has an explicit property-specific value. Reuse
+  focused helpers for selected-row normalization, insertion/deletion, and pale
+  red cell error styling. Do not replace the existing specialized dialogs with
+  one generic dialog class.
+- [ ] Render scalar `Value` as a compact inline native date picker when its
+  audited value can be represented losslessly. Use a small modal dialog with
+  Start and End date pickers for `Limits`. Use a modal date-list dialog for
+  `DisabledDates`, with Add, Delete selected, Clear, Apply, and Cancel actions;
+  this dialog consumes the shared collection helpers also used by table rows.
+- [ ] Extend non-evaluating parsing and encoding only for the allowlisted
+  temporal forms admitted by each audited mode. Pass typed temporal values from
+  native controls to the model without a locale-formatted text round-trip. Keep
+  all other expressions and unsupported temporal metadata source-backed and
+  read-only.
+- [ ] Cover draft cancellation, empty/`NaT`, ordered and reversed limits,
+  multiple disabled-date row edits, Apply, failed Apply, undo/redo, Preview,
+  parsed-source preservation, and generated-source round-trip. Construct,
+  `drawnow`, and destroy each hidden control/dialog fixture.
 
-**Gate:** each supported mode constructs, edits, validates, undoes/redoes, and
-regenerates in R2024a; unsupported temporal values are preserved byte-for-byte.
-
-Implementation is intentionally deferred after the Step 5 review: temporal
-literal parsing/encoding and scalar/limit/list modes require a separate audited
-slice. No uncommitted Step 5 code remains in the working tree.
+**Gate:** the batch infrastructure proves all-or-nothing mutation independently
+of the date UI, and every supported date mode constructs, edits, validates,
+undoes/redoes, and regenerates in R2024a. Unsupported temporal values remain
+byte-for-byte preserved. The earlier Step 5 attempt remains discarded; this is
+a new audited implementation slice.
 
 #### 6.9.6 Add structured-data editing for finite safe literals
 
@@ -674,33 +727,55 @@ constructors remain source-preserved read-only values.
 
 #### 6.9.7 Add the table-data dialog and atomic related-property commits
 
-- [ ] Add an editor button for `uitable.Data` that opens a modal dialog with a
-  real `uitable`, row/column add and delete actions, and column-name and row-name
-  editing. The dialog edits `Data`, `ColumnName`, and `RowName` together.
+- [ ] Replace the provisional `uitable.Data`, `ColumnName`, and `RowName` value
+  contracts with their exact R2024a forms. Route all three Inspector rows to the
+  same current table view rather than leaving the name rows on an unrelated
+  string-list dialog.
+- [ ] Open a large modal dialog containing a real `uitable`, a compact toolbar
+  for Add Row, Delete Row, Add Column, and Delete Column, and a separate names
+  area for row and column labels. Reuse the shared row-selection, insertion,
+  deletion, draft, and cell-error helpers, but keep table-specific data and name
+  normalization inside this adapter.
 - [ ] Initially support empty, numeric, logical, string, and rectangular cell
   matrices whose cells are safe scalar literals. Keep `table`, `timetable`,
   categorical, object, and expression-backed data read-only until explicitly
   implemented.
-- [ ] Add a model-owned atomic multi-property mutation: validate all related
-  values first, then create one history record, one Preview refresh, and one
-  Inspector synchronization. Failure changes none of the related properties.
+- [ ] Treat structural changes as a prospective component state. Row changes
+  reconcile `RowName`; column changes reconcile `ColumnName` and every explicit
+  per-column `ColumnWidth`, `ColumnEditable`, `ColumnSortable`, and
+  `ColumnFormat` value. Preserve valid scalar all-column forms; insert or remove
+  the audited per-column default only for vector/cell forms.
+- [ ] Apply Data, names, and any derived column-setting adjustments through the
+  6.9.5 atomic property batch. Validate all lengths and types against the final
+  candidate state, then create one history record, one Preview refresh, and one
+  Inspector synchronization. A failed cell or property changes nothing.
 - [ ] Extend literal parsing/encoding for the accepted rectangular table-data
-  forms without evaluation and preserve parsed assignments outside that subset.
+  forms without evaluation. Keep a typed draft separate from the `uitable`
+  display matrix so numeric, logical, string, char, and heterogeneous cell
+  values are not silently collapsed to one text class. Preserve parsed
+  assignments outside the supported subset.
 
-**Gate:** row/column/name edits apply atomically, undo/redo atomically, regenerate
-reviewable source, and never partially update after validation failure.
+**Gate:** row/column/name edits and derived per-column adjustments apply and
+undo/redo as one transaction, regenerate reviewable source, preserve supported
+cell types, and never partially update after validation failure.
 
 #### 6.9.8 Add the column-settings dialog
 
-- [ ] Use one metadata-driven dialog for `ColumnWidth`, `ColumnEditable`,
-  `ColumnSortable`, and `ColumnFormat`. Determine the per-column row count from
-  the effective supported `uitable.Data` width rather than cached UI state.
+- [ ] Re-audit and store property-specific contracts for `ColumnWidth`,
+  `ColumnEditable`, `ColumnSortable`, and `ColumnFormat`; do not use the current
+  broad shared tabular-data class list as their validator.
+- [ ] Use one metadata-driven modal dialog for all four properties. Each
+  Inspector row opens that same current settings view. Show one row per effective
+  Data column, with a read-only index/name, width control, editable and sortable
+  checkboxes, and format control. Determine the row count from the effective
+  supported `uitable.Data` width rather than cached dialog state.
 - [ ] Provide per-column controls plus audited all-column actions: all on/off for
   editable/sortable and, if confirmed by the R2024a re-audit, All auto, All fit,
   and All 1x for width. Represent custom numeric widths and documented format
   choices without losing scalar-versus-vector intent unnecessarily.
-- [ ] Make each related Inspector row open the same current settings view. Apply
-  all changed column properties through the atomic multi-property mutation and
+- [ ] Keep changes in a local draft and apply all changed column properties
+  through the 6.9.5 atomic property batch. Preserve a valid scalar all-column
+  representation when the user has not requested per-column divergence, and
   preserve unrelated explicit values.
 - [ ] Disable per-column mutation when effective Data is unsupported or
   source-backed and its width cannot be established safely; retain readable
@@ -720,6 +795,9 @@ commit/undo/redo atomically, and survive Preview and source round-trip.
   full suite. Run the manual Inspector geometry/dialog/focus procedure only on
   an explicit user request, following `VISUAL_VERIFICATION.md`. Record
   actual test counts, known unsupported value forms, and completion commits.
+- [ ] Verify that all modal editors restore focus to the designer after Apply,
+  Cancel, Clear, and window-close paths, and that one atomic batch triggers only
+  one Inspector synchronization and one Preview update.
 
 **Exit gate:** multiline text, asset, URL, date/time, structured-data,
 table-data, and column-settings values round-trip only through their audited
