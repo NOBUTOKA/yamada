@@ -579,8 +579,10 @@ Complete the remaining work in this order:
    The current `dateTime` contracts still contain provisional broad classes and
    `shape: any`; the `uitable.Data` and column-setting contracts are likewise
    too coarse to drive a safe UI directly.
-2. Add the shared transaction and collection-editing support described in
-   6.9.5. Validate a complete candidate state before changing the document.
+2. Add the shared transaction and collection-state logic described in
+   6.9.5, then selectively retrofit the existing dialog editors that already
+   implement the same mechanics. Validate a complete candidate state before
+   changing the document.
 3. Implement the scalar, limits, and disabled-date modes in 6.9.5.
 4. Implement the table-data dialog in 6.9.7, including structural reconciliation
    of every affected row- and column-indexed property.
@@ -588,13 +590,26 @@ Complete the remaining work in this order:
    path.
 6. Finish deferral, round-trip, and full-suite records in 6.9.9.
 
-Commonize only stable mechanics. Share a small dialog transaction contract,
-model-owned atomic property batches, candidate-state validation, collection
-selection/add/delete helpers, and table-cell error styling. Keep temporal value
-conversion, heterogeneous table-cell conversion, column-setting normalization,
-and the three concrete dialog layouts in their own adapters. A universal dialog
-base or universal row model would hide materially different value semantics and
-is not justified by these three uses.
+Commonize stable value and mutation logic rather than dialog widgets. Share
+model-owned atomic property batches, prospective candidate-state validation,
+pure draft collection operations, effective related-property resolution, typed
+cell parsing/formatting, and structured validation results containing a property
+path or cell coordinate. Each editor remains responsible for presenting those
+results with controls appropriate to its value type. Temporal conversion,
+heterogeneous table reconstruction, and column-setting normalization remain
+separate policy adapters built on the shared primitives.
+
+Apply the logic support retrospectively where it removes existing duplication
+without changing an editor's UI or value contract. Extract the per-cell safe
+literal conversion currently embedded in `ItemsDataEditorDialog` into a
+configurable typed-cell codec for both ItemsData and table-data. Continue using
+the existing `MatlabLiteralParser` and `LiteralEncoder` foundation from
+`StructuredDataEditorDialog` and `StringListEditorDialog`, moving only repeated
+accepted-type validation into value adapters when duplication actually appears.
+Generalize the current Items-only related-value resolution so existing
+ItemsData, table-data, and column-settings consume the same effective-state
+snapshot. Keep existing dialog layouts, buttons, focus handling, and inline
+single-property commit behavior local to their editors.
 
 #### 6.9.1 Correct and freeze specialized-editor ledger contracts
 
@@ -680,17 +695,32 @@ asset paths without filesystem mutation, while unsupported forms remain intact.
   values or none, and records one reversible history item. The application must
   perform validation once and refresh diagnostics, Preview, and Inspector once
   after a successful batch.
-- [ ] Define a shared modal transaction convention: dialogs retain a local
-  draft; Apply parses and validates the whole draft before committing; Cancel
-  changes nothing; and Clear has an explicit property-specific value. Reuse
-  focused helpers for selected-row normalization, insertion/deletion, and pale
-  red cell error styling. Do not replace the existing specialized dialogs with
-  one generic dialog class.
+- [ ] Define a UI-independent draft change-set contract. It must copy effective
+  starting values, stage replacement/clear/collection operations without model
+  mutation, validate the complete prospective state, and emit either a typed
+  property batch or structured errors. Modal dialogs may map this to
+  Apply/Cancel while inline editors may submit a complete single value directly.
+- [ ] Add pure collection operations for selected-row normalization, insertion,
+  deletion, and index-preserving dependent-list reconciliation. Add a typed-cell
+  codec that returns a typed value or a cell coordinate and message. The date
+  list and table-data dialog reuse the collection operations; ItemsData and
+  table-data reuse the typed-cell codec. Every editor chooses its own controls
+  and error presentation.
+- [ ] Before adding the temporal UI, extract `ItemsDataEditorDialog.commitValue`
+  and literal formatting into the shared typed-cell logic, and replace its
+  Items-specific effective-value lookup with the general related-state snapshot.
+  Preserve the existing ItemsData UI and Clear/Apply semantics. Reuse existing
+  parser/encoder code from structured-data and string-list editors without
+  introducing a shared dialog superclass.
 - [ ] Render scalar `Value` as a compact inline native date picker when its
-  audited value can be represented losslessly. Use a small modal dialog with
-  Start and End date pickers for `Limits`. Use a modal date-list dialog for
-  `DisabledDates`, with Add, Delete selected, Clear, Apply, and Cancel actions;
-  this dialog consumes the shared collection helpers also used by table rows.
+  audited value can be represented losslessly. Render `Limits` inline as one
+  two-row composite editor containing Start and End native date pickers; request
+  a deterministic taller Inspector row through editor metadata rather than a
+  component/path conditional. Each accepted change submits the complete ordered
+  two-element value, so the model never contains only one edited bound. Use a
+  modal date-list dialog only for `DisabledDates`, with Add, Delete selected,
+  Clear, Apply, and Cancel actions; this dialog consumes the shared collection
+  helpers also used by table rows.
 - [ ] Extend non-evaluating parsing and encoding only for the allowlisted
   temporal forms admitted by each audited mode. Pass typed temporal values from
   native controls to the model without a locale-formatted text round-trip. Keep
@@ -700,6 +730,10 @@ asset paths without filesystem mutation, while unsupported forms remain intact.
   multiple disabled-date row edits, Apply, failed Apply, undo/redo, Preview,
   parsed-source preservation, and generated-source round-trip. Construct,
   `drawnow`, and destroy each hidden control/dialog fixture.
+- [ ] Add regression coverage for the retrofitted existing editors before the
+  date slice commit: accepted value types, invalid cell coordinates and
+  messages, Clear/Apply behavior, effective related values, and unchanged
+  single-property history and UI semantics.
 
 **Gate:** the batch infrastructure proves all-or-nothing mutation independently
 of the date UI, and every supported date mode constructs, edits, validates,
@@ -798,6 +832,11 @@ commit/undo/redo atomically, and survive Preview and source round-trip.
 - [ ] Verify that all modal editors restore focus to the designer after Apply,
   Cancel, Clear, and window-close paths, and that one atomic batch triggers only
   one Inspector synchronization and one Preview update.
+- [ ] Confirm that existing and new editors use the shared effective-state,
+  typed-cell, validation-result, candidate-state, and atomic-mutation logic where
+  applicable. UI-layout duplication is acceptable; record only duplicated value
+  conversion, validation, dependency reconciliation, or mutation logic that
+  still requires justification before declaring Phase 6.9 complete.
 
 **Exit gate:** multiline text, asset, URL, date/time, structured-data,
 table-data, and column-settings values round-trip only through their audited
