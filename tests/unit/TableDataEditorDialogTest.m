@@ -57,8 +57,37 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             rowDelete = findall(dialog, "Tag", "macd-table-data-delete-row");
             testCase.verifyEqual(rowDelete.Layout.Row, 2);
             testCase.verifyEqual(rowDelete.FontSize, 14);
+            rowAdd = findall(dialog, "Tag", "macd-table-data-add-row");
+            columnAdd = findall(dialog, "Tag", "macd-table-data-add-column");
+            testCase.verifyEqual(rowAdd.Layout.Row, 1);
+            testCase.verifyEqual(columnAdd.Layout.Column, 1);
             testCase.verifyEmpty(findall(dialog, "Tag", "macd-table-data-column-name"));
             testCase.verifyEmpty(findall(dialog, "Tag", "macd-table-data-row-name"));
+            clear cleanup
+        end
+
+        function keepsTableActionsInsideTheScrollableTableSurface(testCase)
+            % keepsTableActionsInsideTheScrollableTableSurface Keep every structural action on one scroll canvas.
+
+            owner = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(owner));
+            state = struct("Data", {num2cell(zeros(30, 7))}, "ColumnName", "numbered", ...
+                "RowName", "numbered", "HasData", true, ...
+                "HasColumnName", true, "HasRowName", true);
+            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+                state, @(~) "", false);
+            drawnow;
+            host = findall(dialog, "Tag", "macd-table-data-scroll-host");
+            content = findall(dialog, "Tag", "macd-table-data-scroll-content");
+            table = findall(dialog, "Tag", "macd-table-data-editor-table");
+            rowActions = findall(dialog, "Tag", "macd-table-data-row-actions");
+            columnActions = findall(dialog, "Tag", "macd-table-data-column-actions");
+
+            testCase.verifyEqual(string(host.Scrollable), "on");
+            testCase.verifyGreaterThan(content.Position(4), host.Position(4));
+            testCase.verifyEqual(table.Parent, content);
+            testCase.verifyEqual(rowActions.Parent, content);
+            testCase.verifyEqual(columnActions.Parent, content);
             clear cleanup
         end
 

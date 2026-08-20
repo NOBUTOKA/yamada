@@ -42,20 +42,21 @@ classdef TableDataEditorDialog
                 "WindowStyle", "modal", "Position", [260 220 760 510], ...
                 "Tag", "macd-inspector-table-data-dialog");
             dialog.CloseRequestFcn = @(~, ~) closeDialog();
-            grid = uigridlayout(dialog, [5 2], "Padding", [12 12 12 12], ...
-                "RowHeight", {"1x", 30, 32, 22, 32}, "ColumnWidth", {"1x", 38}, ...
-                "RowSpacing", 6, "ColumnSpacing", 6);
-            table = uitable(grid, "ColumnEditable", true, "RowStriping", "off", ...
+            grid = uigridlayout(dialog, [4 1], "Padding", [12 12 12 12], ...
+                "RowHeight", {"1x", 32, 22, 32}, "RowSpacing", 6);
+            tableHost = uipanel(grid, "BorderType", "line", "Scrollable", "on", ...
+                "AutoResizeChildren", "off", "Tag", "macd-table-data-scroll-host");
+            tableContent = uipanel(tableHost, "BorderType", "none", ...
+                "Tag", "macd-table-data-scroll-content");
+            table = uitable(tableContent, "ColumnEditable", true, "RowStriping", "off", ...
                 "Tag", "macd-table-data-editor-table");
-            rowActions = uipanel(grid, "BorderType", "none", ...
+            rowActions = uipanel(tableContent, "BorderType", "none", ...
                 "Tag", "macd-table-data-row-actions");
-            columnActions = uipanel(grid, "BorderType", "none", ...
+            columnActions = uipanel(tableContent, "BorderType", "none", ...
                 "Tag", "macd-table-data-column-actions");
-            columnActions.Layout.Row = 2;
-            structuralActions = uigridlayout(grid, [1 4], "Padding", [0 0 0 0], ...
-                "ColumnWidth", {"1x", "1x", "1x", "1x"}, "ColumnSpacing", 6);
-            structuralActions.Layout.Row = 3;
-            structuralActions.Layout.Column = [1 2];
+            structuralActions = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
+                "ColumnWidth", {"1x", "1x"}, "ColumnSpacing", 6);
+            structuralActions.Layout.Row = 2;
             rowNumberedButton = uibutton(structuralActions, "state", "Text", "Numbered rows", ...
                 "Tag", "macd-table-data-numbered-rows", ...
                 "ValueChangedFcn", @(source, ~) setRowNumbered(source.Value));
@@ -64,19 +65,13 @@ classdef TableDataEditorDialog
                 "Tag", "macd-table-data-numbered-columns", ...
                 "ValueChangedFcn", @(source, ~) setColumnNumbered(source.Value));
             columnNumberedButton.Value = columnNumbered;
-            uibutton(structuralActions, "Text", "+ Row", "FontWeight", "bold", ...
-                "Tag", "macd-table-data-add-row", "ButtonPushedFcn", @(~, ~) addRow());
-            uibutton(structuralActions, "Text", "+ Column", "FontWeight", "bold", ...
-                "Tag", "macd-table-data-add-column", "ButtonPushedFcn", @(~, ~) addColumn());
             message = uilabel(grid, "Text", ...
                 "Enter MATLAB literals; unquoted text becomes a string.", ...
                 "FontColor", [0.3 0.3 0.3], "Tag", "macd-table-data-message");
-            message.Layout.Row = 4;
-            message.Layout.Column = [1 2];
+            message.Layout.Row = 3;
             actions = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
                 "ColumnWidth", {90, "1x"}, "ColumnSpacing", 6);
-            actions.Layout.Row = 5;
-            actions.Layout.Column = [1 2];
+            actions.Layout.Row = 4;
             uibutton(actions, "Text", "Clear", "Tag", "macd-table-data-clear", ...
                 "ButtonPushedFcn", @(~, ~) clearDraft());
             uibutton(actions, "Text", "Apply", "Tag", "macd-table-data-apply", ...
@@ -91,9 +86,11 @@ classdef TableDataEditorDialog
                 delete(rowActions.Children);
                 delete(columnActions.Children);
                 macd.ui.inspector.TableDataEditorDialog.createRowActions( ...
-                    rowActions, size(draftText, 1), @(source) deleteRow(source.UserData));
+                    rowActions, size(draftText, 1), @(~, ~) addRow(), ...
+                    @(source) deleteRow(source.UserData));
                 macd.ui.inspector.TableDataEditorDialog.createColumnActions( ...
-                    columnActions, size(draftText, 2), @(source) deleteColumn(source.UserData));
+                    columnActions, size(draftText, 2), @(~, ~) addColumn(), ...
+                    @(source) deleteColumn(source.UserData));
                 table.Data = macd.ui.inspector.TableDataEditorDialog.editorMatrix( ...
                     draftText, rowLabels, columnLabels, rowNumbered, columnNumbered);
                 table.ColumnName = [];
@@ -103,6 +100,29 @@ classdef TableDataEditorDialog
                 removeStyle(table);
                 macd.ui.inspector.TableDataEditorDialog.styleNameCells(table, ...
                     size(draftText, 1), size(draftText, 2));
+                layoutTableSurface();
+            end
+
+            function layoutTableSurface()
+                % layoutTableSurface Size one scrollable canvas so every table action scrolls with its cell.
+                padding = 4;
+                rowActionWidth = 32;
+                columnActionHeight = 22;
+                rowCount = max(size(table.Data, 1), 1);
+                columnCount = max(size(table.Data, 2), 1);
+                tableWidth = macd.ui.inspector.TableDataEditorDialog.editorPixelWidth(columnCount);
+                tableHeight = macd.ui.inspector.TableDataEditorDialog.editorPixelHeight(rowCount);
+                hostPosition = getpixelposition(tableHost, true);
+                contentWidth = max(tableWidth + rowActionWidth + 2 * padding, ...
+                    hostPosition(3) - 18);
+                contentHeight = max(tableHeight + columnActionHeight + 2 * padding, ...
+                    hostPosition(4) + 1);
+                tableContent.Position = [1 1 contentWidth contentHeight];
+                tableY = contentHeight - padding - columnActionHeight - tableHeight;
+                tableX = padding + rowActionWidth;
+                table.Position = [tableX tableY tableWidth tableHeight];
+                rowActions.Position = [padding tableY rowActionWidth tableHeight];
+                columnActions.Position = [tableX tableY + tableHeight tableWidth columnActionHeight];
             end
 
             function addRow()
@@ -382,12 +402,14 @@ classdef TableDataEditorDialog
             end
         end
 
-        function createRowActions(parent, rowCount, deleteFcn)
-            % createRowActions Align each row delete button beneath the table heading row.
-            rowHeights = [{22}, repmat({22}, 1, rowCount)];
+        function createRowActions(parent, rowCount, addFcn, deleteFcn)
+            % createRowActions Align the row add and delete actions beside the table's visible rows.
+            rowHeights = repmat({22}, 1, rowCount + 1);
             grid = uigridlayout(parent, [rowCount + 1 1], "Padding", [0 0 0 0], ...
                 "RowSpacing", 0, "RowHeight", rowHeights);
-            uilabel(grid, "Text", "");
+            uibutton(grid, "Text", "+", "FontSize", 18, "FontWeight", "bold", ...
+                "FontColor", [0 0.55 0], "Tag", "macd-table-data-add-row", ...
+                "ButtonPushedFcn", addFcn);
             for index = 1:rowCount
                 button = uibutton(grid, "Text", "−", "FontSize", 14, "FontWeight", "bold", ...
                     "FontColor", [0.8 0 0], "Tag", "macd-table-data-delete-row", ...
@@ -396,14 +418,16 @@ classdef TableDataEditorDialog
             end
         end
 
-        function createColumnActions(parent, columnCount, deleteFcn)
-            % createColumnActions Align each column delete button under its table-data column.
+        function createColumnActions(parent, columnCount, addFcn, deleteFcn)
+            % createColumnActions Align the column add and delete actions above the table's visible columns.
             grid = uigridlayout(parent, [1 columnCount + 1], "Padding", [0 0 0 0], ...
                 "ColumnSpacing", 0, "ColumnWidth", ...
                 macd.ui.inspector.TableDataEditorDialog.editorColumnWidths(columnCount + 1));
-            uilabel(grid, "Text", "");
+            uibutton(grid, "Text", "+", "FontSize", 18, "FontWeight", "bold", ...
+                "FontColor", [0 0.55 0], "Tag", "macd-table-data-add-column", ...
+                "ButtonPushedFcn", addFcn);
             for index = 1:columnCount
-                button = uibutton(grid, "Text", "−", "FontSize", 18, "FontWeight", "bold", ...
+                button = uibutton(grid, "Text", "−", "FontSize", 14, "FontWeight", "bold", ...
                     "FontColor", [0.8 0 0], "Tag", "macd-table-data-delete-column", ...
                     "ButtonPushedFcn", @(source, ~) deleteFcn(source));
                 button.UserData = index;
@@ -490,6 +514,16 @@ classdef TableDataEditorDialog
             if count > 0
                 widths{1} = 120;
             end
+        end
+
+        function value = editorPixelWidth(columnCount)
+            % editorPixelWidth Return the pixel width required to show every native table column.
+            value = sum(cell2mat(macd.ui.inspector.TableDataEditorDialog.editorColumnWidths(columnCount)));
+        end
+
+        function value = editorPixelHeight(rowCount)
+            % editorPixelHeight Return the native table extent for all displayed cells at the shared action height.
+            value = 22 * rowCount;
         end
 
         function styleNameCells(table, dataRows, dataColumns)
