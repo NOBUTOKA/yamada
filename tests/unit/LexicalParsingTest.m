@@ -52,6 +52,7 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             [emptyCharacters, isEmptyCharacters] = macd.source.MatlabLiteralParser.parse("''");
             [emptyArray, isEmptyArray] = macd.source.MatlabLiteralParser.parse("[]");
             [characters, isCharacters] = macd.source.MatlabLiteralParser.parse("['ab'; 'cd']");
+            [infiniteValues, isInfiniteValues] = macd.source.MatlabLiteralParser.parse("[-Inf Inf]");
 
             testCase.verifyTrue(isMatrix);
             testCase.verifyEqual(matrix, [1 2; 3 4]);
@@ -71,6 +72,8 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             testCase.verifyEmpty(emptyArray);
             testCase.verifyTrue(isCharacters);
             testCase.verifyEqual(characters, ['ab'; 'cd']);
+            testCase.verifyTrue(isInfiniteValues);
+            testCase.verifyEqual(infiniteValues, [-Inf Inf]);
         end
 
         function literalParserRejectsExpressions(testCase)
@@ -91,6 +94,17 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             source = macd.source.LiteralEncoder.encode(original);
             [parsed, isLiteral] = macd.source.MatlabLiteralParser.parse(source);
             testCase.verifyEqual(source, "[""Low"" ""High""]");
+            testCase.verifyTrue(isLiteral);
+            testCase.verifyEqual(parsed, original);
+        end
+
+        function literalParserRoundTripsInfiniteNumericValues(testCase)
+            % literalParserRoundTripsInfiniteNumericValues Preserve documented unbounded UI limits.
+
+            original = [-Inf Inf];
+            source = macd.source.LiteralEncoder.encode(original);
+            [parsed, isLiteral] = macd.source.MatlabLiteralParser.parse(source);
+            testCase.verifyEqual(source, "[-Inf Inf]");
             testCase.verifyTrue(isLiteral);
             testCase.verifyEqual(parsed, original);
         end

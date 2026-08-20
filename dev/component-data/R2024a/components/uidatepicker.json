@@ -108,15 +108,18 @@
         "string scalar"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
+        "kind": "text",
+        "shape": "scalar",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "char",
+          "string"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "text",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -171,15 +174,18 @@
         "string scalar"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
-        "allowsEmpty": false,
+        "kind": "text",
+        "shape": "scalar",
+        "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "char",
+          "string"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "text",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -235,20 +241,19 @@
         "string vector"
       ],
       "valueContract": {
-        "kind": "stringList",
+        "kind": "dayOfWeekList",
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
-          "char",
+          "numeric",
           "string",
-          "cell",
-          "categorical"
+          "cell"
         ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "stringList",
+      "requiredEditor": "structuredData",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -295,7 +300,12 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "minimum": 0,
+        "exclusiveMinimum": true,
+        "integer": false
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",

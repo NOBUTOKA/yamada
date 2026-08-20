@@ -71,15 +71,19 @@
         "categorical array"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
-        "allowsEmpty": false,
+        "kind": "text",
+        "shape": "scalar",
+        "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "char",
+          "string",
+          "categorical"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "text",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []

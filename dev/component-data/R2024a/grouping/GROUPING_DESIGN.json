@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "508f8fc296ba6c345c3760901ce784ddcf4974474a181a406ae1b5eb62798bfb",
+  "inputSha256": "1a26799abad72269d841c148d6ab80ccea0fb58246f9aff5327f6602f2453155",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -483,7 +483,7 @@
       ]
     },
     {
-      "id": "exact.colorandstyling.eb2dc6b675cd",
+      "id": "exact.colorandstyling.7afb8367a736",
       "kind": "exactCategory",
       "categoryId": "colorandstyling",
       "capabilities": [
@@ -560,17 +560,20 @@
         {
           "path": "BorderWidth",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "number",
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "number",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -604,7 +607,7 @@
       ]
     },
     {
-      "id": "exact.colorandtransparencymaps.a8fd73cd4b45",
+      "id": "exact.colorandtransparencymaps.abd6f1739aa6",
       "kind": "exactCategory",
       "categoryId": "colorandtransparencymaps",
       "capabilities": [
@@ -660,9 +663,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -705,7 +709,9 @@
             ],
             "shape": "vector",
             "allowsEmpty": true,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -746,9 +752,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -791,7 +798,7 @@
       ]
     },
     {
-      "id": "exact.font.5d69f9f1822c",
+      "id": "exact.font.3a0afe7fc975",
       "kind": "exactCategory",
       "categoryId": "font",
       "capabilities": [
@@ -824,7 +831,138 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "number",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontWeight",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontAngle",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontColor",
+          "valueContract": {
+            "kind": "color",
+            "matlabClasses": [
+              "char",
+              "double",
+              "string"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
             "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "color",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle"
+      ]
+    },
+    {
+      "id": "exact.font.aea229d3c60f",
+      "kind": "exactCategory",
+      "categoryId": "font",
+      "capabilities": [
+        {
+          "path": "FontName",
+          "valueContract": {
+            "kind": "text",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "text",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontSize",
+          "valueContract": {
+            "kind": "number",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -917,132 +1055,7 @@
       ]
     },
     {
-      "id": "exact.font.8efcd1a89888",
-      "kind": "exactCategory",
-      "categoryId": "font",
-      "capabilities": [
-        {
-          "path": "FontName",
-          "valueContract": {
-            "kind": "text",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "text",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontSize",
-          "valueContract": {
-            "kind": "number",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "number",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontWeight",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "normal",
-              "bold"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontAngle",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "normal",
-              "italic"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontColor",
-          "valueContract": {
-            "kind": "color",
-            "matlabClasses": [
-              "char",
-              "double",
-              "string"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "color",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ],
-      "memberVariantIds": [
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle"
-      ]
-    },
-    {
-      "id": "exact.fontandcolor.1e974f782153",
+      "id": "exact.fontandcolor.1e661cc8facf",
       "kind": "exactCategory",
       "categoryId": "fontandcolor",
       "capabilities": [
@@ -1075,7 +1088,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1193,7 +1209,7 @@
       ]
     },
     {
-      "id": "exact.fontandcolor.35f0875cd68d",
+      "id": "exact.fontandcolor.d0526128c26c",
       "kind": "exactCategory",
       "categoryId": "fontandcolor",
       "capabilities": [
@@ -1226,7 +1242,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1356,7 +1375,7 @@
       ]
     },
     {
-      "id": "exact.grids.a3817d34ad79",
+      "id": "exact.grids.d1c9b4a9ab90",
       "kind": "exactCategory",
       "categoryId": "grids",
       "capabilities": [
@@ -1483,7 +1502,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1568,7 +1589,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1701,7 +1724,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1786,7 +1811,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1824,6 +1851,120 @@
       "memberVariantIds": [
         "axes",
         "uiaxes"
+      ]
+    },
+    {
+      "id": "exact.interactivity.3454f326d786",
+      "kind": "exactCategory",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "Visible",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "notRendered",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Enable",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "notRendered",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Tooltip",
+          "valueContract": {
+            "kind": "text",
+            "matlabClasses": [
+              "categorical",
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "notRendered",
+          "requiredEditor": "text",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "notRendered",
+          "requiredEditor": "componentReference",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "TooltipString",
+          "valueContract": {
+            "kind": "text",
+            "matlabClasses": [
+              "categorical",
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "notRendered",
+          "requiredEditor": "text",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uipushtool",
+        "uitoggletool"
       ]
     },
     {
@@ -1875,116 +2016,6 @@
       "memberVariantIds": [
         "uipanel",
         "uitabgroup"
-      ]
-    },
-    {
-      "id": "exact.interactivity.8af34219bf03",
-      "kind": "exactCategory",
-      "categoryId": "interactivity",
-      "capabilities": [
-        {
-          "path": "Visible",
-          "valueContract": {
-            "kind": "onOff",
-            "matlabClasses": [
-              "char",
-              "logical",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "notRendered",
-          "requiredEditor": "onOff",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Enable",
-          "valueContract": {
-            "kind": "onOff",
-            "matlabClasses": [
-              "char",
-              "logical",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "notRendered",
-          "requiredEditor": "onOff",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Tooltip",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "notRendered",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ContextMenu",
-          "valueContract": {
-            "kind": "componentReference",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "notRendered",
-          "requiredEditor": "componentReference",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "TooltipString",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "notRendered",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ],
-      "memberVariantIds": [
-        "uipushtool",
-        "uitoggletool"
       ]
     },
     {
@@ -2437,7 +2468,7 @@
       ]
     },
     {
-      "id": "exact.rulers.f5456dc24f40",
+      "id": "exact.rulers.efb74ddb42a0",
       "kind": "exactCategory",
       "categoryId": "rulers",
       "capabilities": [
@@ -2486,9 +2517,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3044,24 +3076,24 @@
       ]
     },
     {
-      "id": "exact.switch.958bd16ac0f1",
+      "id": "exact.switch.e4feb5a034e7",
       "kind": "exactCategory",
       "categoryId": "switch",
       "capabilities": [
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
+            "shape": "propertyDependent",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -3313,7 +3345,7 @@
       ]
     },
     {
-      "id": "exact.ticks.70f2e84890c5",
+      "id": "exact.ticks.d9789c09f239",
       "kind": "exactCategory",
       "categoryId": "ticks",
       "capabilities": [
@@ -3650,17 +3682,17 @@
         {
           "path": "ZTickLabelRotation",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "number",
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
-            "allowsEmpty": true,
+            "shape": "scalar",
+            "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "number",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -3858,9 +3890,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3877,24 +3910,26 @@
       ]
     },
     {
-      "id": "exact.title.2cae7d8d7937",
+      "id": "exact.title.29b523ae5b31",
       "kind": "exactCategory",
       "categoryId": "title",
       "capabilities": [
         {
           "path": "Title",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "categorical",
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -3935,7 +3970,7 @@
       ]
     },
     {
-      "id": "exact.view.3c7989b775f1",
+      "id": "exact.view.17630eed8ac9",
       "kind": "exactCategory",
       "categoryId": "view",
       "capabilities": [
@@ -3946,9 +3981,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3989,9 +4025,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4032,9 +4069,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4075,9 +4113,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4120,7 +4159,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 180,
+            "exclusiveMaximum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4195,7 +4237,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5032,9 +5076,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 4
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5154,9 +5199,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5197,9 +5243,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5295,7 +5342,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5814,7 +5863,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6326,9 +6377,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6371,7 +6423,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 25
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6517,9 +6571,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 4
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6801,9 +6856,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7459,7 +7515,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7616,7 +7674,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8275,9 +8335,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 4
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8429,9 +8490,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8472,9 +8534,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8946,17 +9009,17 @@
         {
           "path": "RTickLabelRotation",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "number",
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
-            "allowsEmpty": true,
+            "shape": "scalar",
+            "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "number",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -9136,9 +9199,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9209,7 +9273,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9898,20 +9964,23 @@
         {
           "path": "CurrentPoint",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "opaque",
             "matlabClasses": [
-              "double"
+              "unknown"
             ],
-            "shape": "vector",
+            "shape": "any",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue",
+              "runtimeSetRestricted"
+            ]
           }
         },
         {
@@ -10293,9 +10362,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 4
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -10382,9 +10452,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -10425,9 +10496,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -11906,7 +11978,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -12944,17 +13019,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -12989,17 +13065,18 @@
         {
           "path": "DisplayFormat",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13033,11 +13110,10 @@
         {
           "path": "DisabledDaysOfWeek",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "dayOfWeekList",
             "matlabClasses": [
-              "categorical",
               "cell",
-              "char",
+              "numeric",
               "string"
             ],
             "shape": "vector",
@@ -13046,7 +13122,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "structuredData",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13447,17 +13523,17 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
+            "shape": "propertyDependent",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13533,17 +13609,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14176,9 +14253,11 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2,
+            "allowsInfinity": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14212,17 +14291,18 @@
         {
           "path": "ValueDisplayFormat",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14252,17 +14332,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14706,17 +14787,18 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14729,9 +14811,11 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2,
+            "allowsInfinity": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14770,17 +14854,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -16032,9 +16117,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -16429,9 +16515,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -16826,9 +16913,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17249,9 +17337,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17675,11 +17764,11 @@
         {
           "path": "ColumnWidth",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "gridTrackList",
             "matlabClasses": [
-              "categorical",
               "cell",
               "char",
+              "numeric",
               "string"
             ],
             "shape": "vector",
@@ -17688,7 +17777,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "gridTrackList",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -17697,11 +17786,11 @@
         {
           "path": "RowHeight",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "gridTrackList",
             "matlabClasses": [
-              "categorical",
               "cell",
               "char",
+              "numeric",
               "string"
             ],
             "shape": "vector",
@@ -17710,7 +17799,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "gridTrackList",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -18666,7 +18755,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -19554,17 +19646,18 @@
         {
           "path": "AltText",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -20021,9 +20114,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -20349,17 +20443,17 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
+            "shape": "propertyDependent",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -21724,17 +21818,17 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
-            "allowsEmpty": false,
+            "shape": "propertyDependent",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -23814,9 +23908,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -23833,9 +23928,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -23878,7 +23974,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -24280,9 +24378,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -24715,9 +24814,11 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2,
+            "allowsInfinity": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -24770,17 +24871,18 @@
         {
           "path": "ValueDisplayFormat",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -24810,17 +24912,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -25512,17 +25615,17 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
+            "shape": "propertyDependent",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26342,17 +26445,19 @@
         {
           "path": "Title",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "categorical",
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -28266,17 +28371,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -30923,127 +31029,127 @@
       "propertyOwners": [
         {
           "path": "XTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabel",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabel",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabel",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickLabelInterpreter",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelRotation",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelRotation",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelRotation",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelRotationMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelRotationMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelRotationMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XMinorTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YMinorTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZMinorTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickDir",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickDirMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickLength",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         }
       ]
@@ -31083,132 +31189,132 @@
       "propertyOwners": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         }
       ]
@@ -31243,107 +31349,107 @@
       "propertyOwners": [
         {
           "path": "XGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Layer",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridLineStyle",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridLineWidth",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridLineWidthMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridColor",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridColorMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridAlpha",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridAlphaMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XMinorGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YMinorGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZMinorGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridLineStyle",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridLineWidth",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridLineWidthMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridColor",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridColorMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridAlpha",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridAlphaMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         }
       ]
@@ -31473,42 +31579,42 @@
       "propertyOwners": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         }
       ]
@@ -31658,52 +31764,52 @@
       "propertyOwners": [
         {
           "path": "View",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Projection",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraPosition",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraPositionMode",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraTarget",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraTargetMode",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraUpVector",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraUpVectorMode",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraViewAngle",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraViewAngleMode",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         }
       ]
@@ -32229,42 +32335,42 @@
       "propertyOwners": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         }
       ]
@@ -33009,42 +33115,42 @@
       "propertyOwners": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         }
       ]
@@ -33419,127 +33525,127 @@
       "propertyOwners": [
         {
           "path": "XTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabel",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabel",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabel",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickLabelInterpreter",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelRotation",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelRotation",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelRotation",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelRotationMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelRotationMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelRotationMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XMinorTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YMinorTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZMinorTick",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickDir",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickDirMode",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickLength",
-          "groupId": "exact.ticks.70f2e84890c5",
+          "groupId": "exact.ticks.d9789c09f239",
           "runtimeSetAccess": "public"
         }
       ]
@@ -33579,132 +33685,132 @@
       "propertyOwners": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.f5456dc24f40",
+          "groupId": "exact.rulers.efb74ddb42a0",
           "runtimeSetAccess": "public"
         }
       ]
@@ -33739,107 +33845,107 @@
       "propertyOwners": [
         {
           "path": "XGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Layer",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridLineStyle",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridLineWidth",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridLineWidthMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridColor",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridColorMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridAlpha",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "GridAlphaMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XMinorGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YMinorGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZMinorGrid",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridLineStyle",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridLineWidth",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridLineWidthMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridColor",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridColorMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridAlpha",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorGridAlphaMode",
-          "groupId": "exact.grids.a3817d34ad79",
+          "groupId": "exact.grids.d1c9b4a9ab90",
           "runtimeSetAccess": "public"
         }
       ]
@@ -33969,42 +34075,42 @@
       "propertyOwners": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34160,52 +34266,52 @@
       "propertyOwners": [
         {
           "path": "View",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Projection",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraPosition",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraPositionMode",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraTarget",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraTargetMode",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraUpVector",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraUpVectorMode",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraViewAngle",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraViewAngleMode",
-          "groupId": "exact.view.3c7989b775f1",
+          "groupId": "exact.view.17630eed8ac9",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34429,32 +34535,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34693,32 +34799,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34920,12 +35026,12 @@
       "propertyOwners": [
         {
           "path": "Title",
-          "groupId": "exact.title.2cae7d8d7937",
+          "groupId": "exact.title.29b523ae5b31",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TitlePosition",
-          "groupId": "exact.title.2cae7d8d7937",
+          "groupId": "exact.title.29b523ae5b31",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34944,27 +35050,27 @@
       "propertyOwners": [
         {
           "path": "ForegroundColor",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BorderType",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BorderWidth",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BorderColor",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34983,27 +35089,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontUnits",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         }
       ]
@@ -35860,32 +35966,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -36119,37 +36225,37 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "StyleConfigurations",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "restricted"
         }
       ]
@@ -36418,32 +36524,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         }
       ]
@@ -36676,32 +36782,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "unresolved"
         }
       ]
@@ -37372,32 +37478,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -37663,32 +37769,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -37960,32 +38066,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -38257,32 +38363,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -39420,27 +39526,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         }
       ]
@@ -39666,27 +39772,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         }
       ]
@@ -39913,32 +40019,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -40331,37 +40437,37 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "StyleConfigurations",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "restricted"
         }
       ]
@@ -40752,12 +40858,12 @@
       "propertyOwners": [
         {
           "path": "Title",
-          "groupId": "exact.title.2cae7d8d7937",
+          "groupId": "exact.title.29b523ae5b31",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TitlePosition",
-          "groupId": "exact.title.2cae7d8d7937",
+          "groupId": "exact.title.29b523ae5b31",
           "runtimeSetAccess": "public"
         }
       ]
@@ -40776,27 +40882,27 @@
       "propertyOwners": [
         {
           "path": "ForegroundColor",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BorderType",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BorderWidth",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BorderColor",
-          "groupId": "exact.colorandstyling.eb2dc6b675cd",
+          "groupId": "exact.colorandstyling.7afb8367a736",
           "runtimeSetAccess": "public"
         }
       ]
@@ -40815,27 +40921,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontUnits",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         }
       ]
@@ -41109,27 +41215,27 @@
       "propertyOwners": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TooltipString",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         }
       ]
@@ -41289,27 +41395,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         }
       ]
@@ -41568,27 +41674,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         }
       ]
@@ -41853,27 +41959,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42136,32 +42242,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42360,27 +42466,27 @@
       "propertyOwners": [
         {
           "path": "Value",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42399,27 +42505,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42645,27 +42751,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42852,27 +42958,27 @@
       "propertyOwners": [
         {
           "path": "Value",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.958bd16ac0f1",
+          "groupId": "exact.switch.e4feb5a034e7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42891,27 +42997,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public"
         }
       ]
@@ -43587,27 +43693,27 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontUnits",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public"
         }
       ]
@@ -43987,32 +44093,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -44245,32 +44351,32 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e974f782153",
+          "groupId": "exact.fontandcolor.1e661cc8facf",
           "runtimeSetAccess": "public"
         }
       ]
@@ -44496,27 +44602,27 @@
       "propertyOwners": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TooltipString",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public"
         }
       ]
@@ -44816,37 +44922,37 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public"
         },
         {
           "path": "StyleConfigurations",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "restricted"
         }
       ]
@@ -45104,37 +45210,37 @@
       "propertyOwners": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "unresolved"
         },
         {
           "path": "StyleConfigurations",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "unresolved"
         }
       ]

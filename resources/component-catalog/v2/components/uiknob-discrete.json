@@ -49,15 +49,15 @@
             "category": "Knob",
             "order": 1,
             "groupId": "local.uiknob-discrete.knob",
-            "editor": "number",
+            "editor": "itemSelection",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "number",
+              "kind": "itemSelection",
               "matlabClasses": [
-                "double"
+                "any"
               ],
-              "shape": "scalar",
+              "shape": "propertyDependent",
               "allowsEmpty": false,
               "constraints": []
             }
@@ -155,7 +155,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -163,7 +163,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.8efcd1a89888",
+            "groupId": "exact.font.3a0afe7fc975",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -181,7 +181,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -189,7 +189,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.8efcd1a89888",
+            "groupId": "exact.font.3a0afe7fc975",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -200,13 +200,16 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "integer": false
             }
           }
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -214,7 +217,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.8efcd1a89888",
+            "groupId": "exact.font.3a0afe7fc975",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -236,7 +239,7 @@
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -244,7 +247,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.8efcd1a89888",
+            "groupId": "exact.font.3a0afe7fc975",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -266,7 +269,7 @@
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.8efcd1a89888",
+          "groupId": "exact.font.3a0afe7fc975",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -274,7 +277,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.8efcd1a89888",
+            "groupId": "exact.font.3a0afe7fc975",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",

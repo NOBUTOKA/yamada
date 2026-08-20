@@ -856,15 +856,17 @@
         "numeric value in degrees"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
-        "allowsEmpty": true,
+        "kind": "number",
+        "shape": "scalar",
+        "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "number",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -1125,10 +1127,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 2
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -1192,10 +1197,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 2
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -2078,7 +2086,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": "double",
+        "minimum": 0,
+        "exclusiveMinimum": true
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -2195,7 +2205,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": "double",
+        "minimum": 0,
+        "maximum": 1
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -2369,7 +2381,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": "double",
+        "minimum": 0,
+        "exclusiveMinimum": true
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -2486,7 +2500,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": "double",
+        "minimum": 0,
+        "maximum": 1
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3028,10 +3044,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 2
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3088,7 +3107,9 @@
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": "double",
+        "minimum": 0,
+        "maximum": 1
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3142,10 +3163,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 2
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3263,7 +3287,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": "double",
+        "minimum": 0,
+        "exclusiveMinimum": true
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3492,10 +3518,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 4
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3611,10 +3640,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 3
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3667,10 +3699,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 3
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3753,10 +3788,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 2
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3809,10 +3847,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 3
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3865,10 +3906,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 3
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3921,10 +3965,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 3
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -3981,7 +4028,10 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": "double",
+        "minimum": 0,
+        "maximum": 180,
+        "exclusiveMaximum": true
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -4140,18 +4190,23 @@
         "2-by-3 array"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
+        "kind": "opaque",
+        "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "none",
       "disposition": {
-        "kind": "editable",
-        "reasonCodes": []
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue",
+          "runtimeSetRestricted"
+        ]
       },
       "runtimeSetAccess": "restricted"
     },

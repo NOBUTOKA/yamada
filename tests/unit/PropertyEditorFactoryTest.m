@@ -276,6 +276,71 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function createsPlainTextEditorWithoutLiteralParsing(testCase)
+            % createsPlainTextEditor Commit plain text as a text value rather than source syntax.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            definition = definition.Properties([definition.Properties.Path] == "Placeholder");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+                @(value) setappdata(figure, "committed", value));
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "''", true, '');
+            control.Value = "No date selected";
+            control.ValueChangedFcn(control, struct());
+            drawnow;
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(getappdata(figure, "committed"), 'No date selected');
+            clear cleanup
+        end
+
+        function defersGridTrackEditorUntilItsDedicatedImplementation(testCase)
+            % defersGridTrackEditorUntilItsDedicatedImplementation Avoid a lossy string-list editor.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uigridlayout");
+            definition = definition.Properties([definition.Properties.Path] == "ColumnWidth");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "{'1x', '1x'}", true, {'1x', '1x'});
+            drawnow;
+            testCase.verifyFalse(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyFalse(control.Editable);
+            clear cleanup
+        end
+
+        function defersItemSelectionUntilItsDedicatedImplementation(testCase)
+            % defersItemSelectionUntilItsDedicatedImplementation Remove the incorrect numeric editor safely.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
+            definition = definition.Properties([definition.Properties.Path] == "Value");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'First'", true, 'First');
+            drawnow;
+            testCase.verifyFalse(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyFalse(control.Editable);
+            clear cleanup
+        end
+
+        function createsStructuredDayListEditor(testCase)
+            % createsStructuredDayListEditor Route numeric or localized day lists through safe literals.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            definition = definition.Properties([definition.Properties.Path] == "DisabledDaysOfWeek");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 3]", true, [1 3]);
+            drawnow;
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyClass(control, "matlab.ui.control.Button");
+            testCase.verifyEqual(string(control.Enable), "on");
+            testCase.verifyEqual(string(control.Text), "[1 3]");
+            clear cleanup
+        end
+
         function createsAssetPathEditor(testCase)
             % createsAssetPathEditor Render asset paths with an inline browse action.
 

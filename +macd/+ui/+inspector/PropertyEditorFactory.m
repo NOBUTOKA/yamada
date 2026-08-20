@@ -60,7 +60,13 @@ classdef PropertyEditorFactory
                         "ButtonPushedFcn", @(source, ~) ...
                         macd.ui.inspector.PropertyEditorFactory.openStructuredDataEditor( ...
                         source.UserData, commitFcn));
-                case {"literal", "text", "numericVector"}
+                case "text"
+                    control = uieditfield(parent, "text", ...
+                        "Tag", "macd-inspector-property-editor", ...
+                        "ValueChangedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.commitText(source, commitFcn));
+                    control.UserData = struct("Kind", "text", "Value", []);
+                case {"literal", "numericVector"}
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn(string(source.Value)));
@@ -181,6 +187,19 @@ classdef PropertyEditorFactory
                     control.Value = {char(value)};
                 end
                 control.UserData = rawValue;
+                control.Editable = isEditable;
+            elseif isprop(control, "UserData") && isstruct(control.UserData) && ...
+                    isfield(control.UserData, "Kind") && control.UserData.Kind == "text"
+                state = control.UserData;
+                state.Value = rawValue;
+                control.UserData = state;
+                if ischar(rawValue) && isrow(rawValue)
+                    control.Value = string(rawValue);
+                elseif isstring(rawValue) && isscalar(rawValue)
+                    control.Value = rawValue;
+                else
+                    control.Value = string(value);
+                end
                 control.Editable = isEditable;
             elseif isprop(control, "UserData") && isstruct(control.UserData) && ...
                     isfield(control.UserData, "Kind") && control.UserData.Kind == "url"
@@ -381,6 +400,25 @@ classdef PropertyEditorFactory
                 commitFcn(char(draft));
             else
                 commitFcn(draft);
+            end
+        end
+
+        function commitText(control, commitFcn)
+            % commitText Commit one plain text value without treating it as source syntax.
+            arguments (Input)
+                control (1, 1) matlab.ui.control.EditField
+                commitFcn (1, 1) function_handle
+            end
+
+            draft = string(control.Value);
+            original = control.UserData.Value;
+            if ischar(original) && isrow(original)
+                commitFcn(char(draft));
+            elseif isstring(original) && isscalar(original)
+                commitFcn(draft);
+            else
+                % Use character text for an absent or non-text default; it is the common API form.
+                commitFcn(char(draft));
             end
         end
 

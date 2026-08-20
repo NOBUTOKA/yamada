@@ -261,7 +261,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -269,7 +269,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.5d69f9f1822c",
+            "groupId": "exact.font.aea229d3c60f",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -287,7 +287,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -295,7 +295,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.5d69f9f1822c",
+            "groupId": "exact.font.aea229d3c60f",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -306,13 +306,16 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "integer": false
             }
           }
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -320,7 +323,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.5d69f9f1822c",
+            "groupId": "exact.font.aea229d3c60f",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -342,7 +345,7 @@
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -350,7 +353,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.5d69f9f1822c",
+            "groupId": "exact.font.aea229d3c60f",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -372,7 +375,7 @@
         },
         {
           "path": "FontUnits",
-          "groupId": "exact.font.5d69f9f1822c",
+          "groupId": "exact.font.aea229d3c60f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontUnits",
@@ -380,7 +383,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.5d69f9f1822c",
+            "groupId": "exact.font.aea229d3c60f",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",

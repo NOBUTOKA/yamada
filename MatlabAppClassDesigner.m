@@ -1574,6 +1574,12 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     app.setStatus(message);
                     return
                 end
+            elseif definition.Editor == "text"
+                if ~(ischar(value) && isrow(value)) && ~(isstring(value) && isscalar(value))
+                    message = "Enter one text value.";
+                    app.setStatus(message);
+                    return
+                end
             elseif ischar(value) || (isstring(value) && isscalar(value))
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(value));
                 if ~isLiteral
@@ -1824,8 +1830,18 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     message = "Value is below the allowed minimum.";
                     return
                 end
+                if isfield(schema, "exclusiveMinimum") && schema.exclusiveMinimum && ...
+                        isfield(schema, "minimum") && value <= schema.minimum
+                    message = "Value must be greater than the allowed minimum.";
+                    return
+                end
                 if isfield(schema, "maximum") && value > schema.maximum
                     message = "Value is above the allowed maximum.";
+                    return
+                end
+                if isfield(schema, "exclusiveMaximum") && schema.exclusiveMaximum && ...
+                        isfield(schema, "maximum") && value >= schema.maximum
+                    message = "Value must be less than the allowed maximum.";
                     return
                 end
                 if isfield(schema, "integer") && schema.integer && value ~= floor(value)
@@ -1833,16 +1849,53 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     return
                 end
             elseif definition.Editor == "numericVector"
-                if ~isnumeric(value) || (~isempty(value) && ~isvector(value)) || any(~isfinite(value))
-                    message = "Enter a finite numeric vector.";
+                allowsInfinity = isfield(schema, "allowsInfinity") && schema.allowsInfinity;
+                if ~isnumeric(value) || (~isempty(value) && ~isvector(value)) || any(isnan(value)) || ...
+                        (~allowsInfinity && any(~isfinite(value)))
+                    if allowsInfinity
+                        message = "Enter a numeric vector without NaN.";
+                    else
+                        message = "Enter a finite numeric vector.";
+                    end
                     return
                 end
-                if ~isempty(value) && isfield(schema, "length") && numel(value) ~= schema.length
+                requiredLength = [];
+                if isfield(schema, "fixedLength")
+                    requiredLength = schema.fixedLength;
+                elseif isfield(schema, "length")
+                    requiredLength = schema.length;
+                end
+                if ~isempty(value) && ~isempty(requiredLength) && numel(value) ~= requiredLength
                     message = "Enter a vector with the required number of values.";
                     return
                 end
                 if isfield(schema, "minimum") && any(value < schema.minimum)
                     message = "Vector values are below the allowed minimum.";
+                    return
+                end
+                if isfield(schema, "exclusiveMinimum") && schema.exclusiveMinimum && ...
+                        isfield(schema, "minimum") && any(value <= schema.minimum)
+                    message = "Vector values must be greater than the allowed minimum.";
+                    return
+                end
+                if isfield(schema, "maximum") && any(value > schema.maximum)
+                    message = "Vector values are above the allowed maximum.";
+                    return
+                end
+                if isfield(schema, "exclusiveMaximum") && schema.exclusiveMaximum && ...
+                        isfield(schema, "maximum") && any(value >= schema.maximum)
+                    message = "Vector values must be less than the allowed maximum.";
+                    return
+                end
+            end
+            if isfield(schema, "kind") && string(schema.kind) == "dayOfWeekList"
+                if ~(isempty(value) || (isnumeric(value) && isvector(value) && ...
+                        all(isfinite(value)) && all(value == floor(value)) && ...
+                        all(value >= 1 & value <= 7)) || ...
+                        (isstring(value) && isvector(value)) || ...
+                        (iscell(value) && isvector(value) && ...
+                        all(cellfun(@(item) ischar(item) && isrow(item), value))))
+                    message = "Enter day numbers 1 through 7, a string vector, or a cell vector of day names.";
                     return
                 end
             end

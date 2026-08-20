@@ -651,6 +651,12 @@ and non-batch acceptance rules cannot diverge.
   and runtime schema only for the new audited editor identifiers and related
   property paths. Regenerate; require intrinsic and parent-effective parity and
   verify that no unrelated group splits.
+- [x] Re-audit and normalize the remaining R2024a contracts affected by the
+  promoted inspector: correct text-versus-numeric misclassifications, companion
+  `Items`/`ItemsData` selection values, fixed numeric-vector cardinalities,
+  directly documented numeric bounds, and documented `Inf` limits. Promote the
+  corrections through the grouped catalog. Keep `gridTrackList` as an audited,
+  fail-closed deferred editor until GridLayout editing is designed as one scope.
 
 **Gate:** the development ledger, generated grouping artifacts, and runtime
 catalog agree on every changed disposition/editor/value contract. Deferred

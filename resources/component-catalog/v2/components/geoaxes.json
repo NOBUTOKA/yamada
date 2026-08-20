@@ -141,9 +141,10 @@
               "matlabClasses": [
                 "double"
               ],
-              "shape": "vector",
+              "shape": "fixedLengthVector",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "fixedLength": 2
             }
           }
         },
@@ -198,7 +199,9 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 25
             }
           }
         },
@@ -636,9 +639,10 @@
               "matlabClasses": [
                 "double"
               ],
-              "shape": "vector",
+              "shape": "fixedLengthVector",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "fixedLength": 2
             }
           }
         },
@@ -896,7 +900,9 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 1
             }
           }
         },
@@ -1330,7 +1336,7 @@
       "entries": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
@@ -1338,7 +1344,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 1,
-            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1357,7 +1363,7 @@
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorScale",
@@ -1365,7 +1371,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 2,
-            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1387,7 +1393,7 @@
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLim",
@@ -1395,7 +1401,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 3,
-            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1404,15 +1410,16 @@
               "matlabClasses": [
                 "double"
               ],
-              "shape": "vector",
+              "shape": "fixedLengthVector",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "fixedLength": 2
             }
           }
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLimMode",
@@ -1420,7 +1427,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 4,
-            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1442,7 +1449,7 @@
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
@@ -1450,7 +1457,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 5,
-            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1461,13 +1468,15 @@
               ],
               "shape": "vector",
               "allowsEmpty": true,
-              "constraints": []
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 1
             }
           }
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AlphaScale",
@@ -1475,7 +1484,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 6,
-            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1497,7 +1506,7 @@
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALim",
@@ -1505,7 +1514,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 7,
-            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1514,15 +1523,16 @@
               "matlabClasses": [
                 "double"
               ],
-              "shape": "vector",
+              "shape": "fixedLengthVector",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "fixedLength": 2
             }
           }
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALimMode",
@@ -1530,7 +1540,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 8,
-            "groupId": "exact.colorandtransparencymaps.a8fd73cd4b45",
+            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1605,7 +1615,9 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "minimum": 0,
+              "exclusiveMinimum": true
             }
           }
         },
@@ -1662,9 +1674,10 @@
               "matlabClasses": [
                 "double"
               ],
-              "shape": "vector",
+              "shape": "fixedLengthVector",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "fixedLength": 4
             }
           }
         },

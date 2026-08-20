@@ -47,15 +47,15 @@
             "category": "Drop-Down",
             "order": 1,
             "groupId": "local.uidropdown.dropdown",
-            "editor": "number",
+            "editor": "itemSelection",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "number",
+              "kind": "itemSelection",
               "matlabClasses": [
-                "double"
+                "any"
               ],
-              "shape": "scalar",
+              "shape": "propertyDependent",
               "allowsEmpty": false,
               "constraints": []
             }
@@ -155,15 +155,16 @@
             "category": "Drop-Down",
             "order": 5,
             "groupId": "local.uidropdown.dropdown",
-            "editor": "numericVector",
+            "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "numericArray",
+              "kind": "text",
               "matlabClasses": [
-                "double"
+                "char",
+                "string"
               ],
-              "shape": "vector",
+              "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
             }
@@ -178,7 +179,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -186,7 +187,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 1,
-            "groupId": "exact.fontandcolor.35f0875cd68d",
+            "groupId": "exact.fontandcolor.d0526128c26c",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -204,7 +205,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -212,7 +213,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 2,
-            "groupId": "exact.fontandcolor.35f0875cd68d",
+            "groupId": "exact.fontandcolor.d0526128c26c",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -223,13 +224,16 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "integer": false
             }
           }
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -237,7 +241,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 3,
-            "groupId": "exact.fontandcolor.35f0875cd68d",
+            "groupId": "exact.fontandcolor.d0526128c26c",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -259,7 +263,7 @@
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -267,7 +271,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 4,
-            "groupId": "exact.fontandcolor.35f0875cd68d",
+            "groupId": "exact.fontandcolor.d0526128c26c",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -289,7 +293,7 @@
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -297,7 +301,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 5,
-            "groupId": "exact.fontandcolor.35f0875cd68d",
+            "groupId": "exact.fontandcolor.d0526128c26c",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -316,7 +320,7 @@
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
@@ -324,7 +328,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 6,
-            "groupId": "exact.fontandcolor.35f0875cd68d",
+            "groupId": "exact.fontandcolor.d0526128c26c",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -343,7 +347,7 @@
         },
         {
           "path": "StyleConfigurations",
-          "groupId": "exact.fontandcolor.35f0875cd68d",
+          "groupId": "exact.fontandcolor.d0526128c26c",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "StyleConfigurations",
@@ -351,7 +355,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 7,
-            "groupId": "exact.fontandcolor.35f0875cd68d",
+            "groupId": "exact.fontandcolor.d0526128c26c",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",

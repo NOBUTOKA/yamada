@@ -71,15 +71,17 @@
         "{}"
       ],
       "valueContract": {
-        "kind": "number",
-        "shape": "scalar",
-        "allowsEmpty": false,
+        "kind": "itemSelection",
+        "shape": "propertyDependent",
+        "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "any"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "number",
+      "requiredEditor": "itemSelection",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -215,7 +217,12 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "minimum": 0,
+        "exclusiveMinimum": true,
+        "integer": false
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",

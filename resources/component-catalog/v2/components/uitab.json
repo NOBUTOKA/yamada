@@ -42,16 +42,18 @@
             "category": "Title and Color",
             "order": 1,
             "groupId": "local.uitab.titleandcolor",
-            "editor": "numericVector",
+            "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "numericArray",
+              "kind": "text",
               "matlabClasses": [
-                "double"
+                "categorical",
+                "char",
+                "string"
               ],
-              "shape": "vector",
-              "allowsEmpty": false,
+              "shape": "scalar",
+              "allowsEmpty": true,
               "constraints": []
             }
           }

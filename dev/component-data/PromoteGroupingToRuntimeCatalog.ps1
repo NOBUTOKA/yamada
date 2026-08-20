@@ -74,6 +74,11 @@ function Get-PropertyMetadata {
     if ($null -ne $Capability.valueContract.PSObject.Properties["normalization"]) {
         $valueSchema.normalization = [string]$Capability.valueContract.normalization
     }
+    foreach ($name in @("minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "integer", "allowsInfinity")) {
+        if ($null -ne $Capability.valueContract.PSObject.Properties[$name]) {
+            $valueSchema[$name] = $Capability.valueContract.$name
+        }
+    }
     return [ordered]@{
         displayName = [string]$SourceProperty.path
         description = [string]$SourceProperty.summary

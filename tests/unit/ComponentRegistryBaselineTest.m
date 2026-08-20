@@ -238,6 +238,74 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(format.normalization), "rowCell");
         end
 
+        function reauditedContractsReachRuntimeCatalog(testCase)
+            % reauditedContractsReachRuntimeCatalog Preserve the post-audit contract corrections.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+
+            % Text-valued fields must not surface through a numeric-vector editor.
+            textTargets = {"uidatepicker", "Placeholder"; "uidatepicker", "DisplayFormat"; ...
+                    "uidropdown", "Placeholder"; "uieditfield-text", "Value"; ...
+                    "uiimage", "AltText"; "uispinner", "ValueDisplayFormat"; ...
+                    "uipanel", "Title"; "uitab", "Title"};
+            for targetIndex = 1:size(textTargets, 1)
+                definition = registry.getById(textTargets{targetIndex, 1});
+                property = definition.Properties([definition.Properties.Path] == textTargets{targetIndex, 2});
+                testCase.verifyEqual(property.Editor, "text");
+                testCase.verifyEqual(string(property.ValueSchema.kind), "text");
+                testCase.verifyTrue(property.ValueSchema.allowsEmpty);
+            end
+
+            % Record heterogeneous day choices and defer grid-track editing safely.
+            datePicker = registry.getById("uidatepicker");
+            disabledDays = datePicker.Properties( ...
+                [datePicker.Properties.Path] == "DisabledDaysOfWeek");
+            testCase.verifyEqual(disabledDays.Editor, "structuredData");
+            testCase.verifyEqual(string(disabledDays.ValueSchema.kind), "dayOfWeekList");
+            testCase.verifyEqual(string(disabledDays.ValueSchema.matlabClasses(:))', ...
+                ["cell", "numeric", "string"]);
+
+            grid = registry.getById("uigridlayout");
+            for path = ["ColumnWidth", "RowHeight"]
+                property = grid.Properties([grid.Properties.Path] == path);
+                testCase.verifyEqual(property.Editor, "gridTrackList");
+                testCase.verifyEqual(string(property.ValueSchema.kind), "gridTrackList");
+                testCase.verifyEqual(string(property.ValueSchema.matlabClasses(:))', ...
+                    ["cell", "char", "numeric", "string"]);
+            end
+
+            % Values paired with ItemsData cannot be constrained to numeric scalars.
+            for id = ["uidropdown", "uiknob-discrete", "uilistbox", ...
+                    "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"]
+                definition = registry.getById(id);
+                property = definition.Properties([definition.Properties.Path] == "Value");
+                testCase.verifyEqual(property.Editor, "itemSelection");
+                testCase.verifyEqual(string(property.ValueSchema.kind), "itemSelection");
+                testCase.verifyEqual(string(property.ValueSchema.matlabClasses), "any");
+            end
+
+            % Fixed vectors and explicit numeric bounds must reach the runtime schema.
+            numeric = registry.getById("uieditfield-numeric");
+            limits = numeric.Properties([numeric.Properties.Path] == "Limits").ValueSchema;
+            testCase.verifyEqual(limits.fixedLength, 2);
+            testCase.verifyTrue(limits.allowsInfinity);
+            panel = registry.getById("uipanel");
+            border = panel.Properties([panel.Properties.Path] == "BorderWidth").ValueSchema;
+            testCase.verifyEqual(string(border.kind), "number");
+            testCase.verifyEqual(border.minimum, 0);
+            testCase.verifyTrue(border.exclusiveMinimum);
+            testCase.verifyTrue(border.integer);
+            font = panel.Properties([panel.Properties.Path] == "FontSize").ValueSchema;
+            testCase.verifyEqual(font.minimum, 0);
+            testCase.verifyTrue(font.exclusiveMinimum);
+
+            % CurrentPoint is interaction state even where runtime metadata exposes it.
+            axes = registry.getById("uiaxes");
+            currentPoint = axes.Properties([axes.Properties.Path] == "CurrentPoint");
+            testCase.verifyEqual(currentPoint.AuditDisposition, "omitted");
+            testCase.verifyEqual(currentPoint.Editor, "readOnly");
+        end
+
         function innerPositionRemainsOmittedAcrossTheCatalog(testCase)
             % innerPositionRemainsOmittedAcrossTheCatalog Keep derived geometry out of the inspector.
 

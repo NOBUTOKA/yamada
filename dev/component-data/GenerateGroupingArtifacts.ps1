@@ -70,6 +70,11 @@ function ConvertTo-NormalizedValueContract {
     if ($null -ne $ValueContract.PSObject.Properties["normalization"]) {
         $result.normalization = [string]$ValueContract.normalization
     }
+    foreach ($name in @("minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "integer", "allowsInfinity")) {
+        if ($null -ne $ValueContract.PSObject.Properties[$name]) {
+            $result[$name] = $ValueContract.$name
+        }
+    }
     return $result
 }
 

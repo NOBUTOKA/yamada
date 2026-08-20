@@ -86,15 +86,19 @@
         "categorical array"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
-        "allowsEmpty": false,
+        "kind": "text",
+        "shape": "scalar",
+        "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "char",
+          "string",
+          "categorical"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "text",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -257,15 +261,20 @@
         "positive integer value"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
+        "kind": "number",
+        "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "minimum": 0,
+        "exclusiveMinimum": true,
+        "integer": true
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "number",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -344,7 +353,12 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "minimum": 0,
+        "exclusiveMinimum": true,
+        "integer": false
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",

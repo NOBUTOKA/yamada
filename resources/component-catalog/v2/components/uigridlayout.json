@@ -46,15 +46,15 @@
             "category": "Grid",
             "order": 1,
             "groupId": "local.uigridlayout.grid",
-            "editor": "stringList",
+            "editor": "gridTrackList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "gridTrackList",
               "matlabClasses": [
-                "categorical",
                 "cell",
                 "char",
+                "numeric",
                 "string"
               ],
               "shape": "vector",
@@ -74,15 +74,15 @@
             "category": "Grid",
             "order": 2,
             "groupId": "local.uigridlayout.grid",
-            "editor": "stringList",
+            "editor": "gridTrackList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "gridTrackList",
               "matlabClasses": [
-                "categorical",
                 "cell",
                 "char",
+                "numeric",
                 "string"
               ],
               "shape": "vector",

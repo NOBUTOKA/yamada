@@ -37,6 +37,31 @@ function Set-RuntimeObservations($property, $observations) {
     $property | Add-Member -NotePropertyName runtimeObservations -NotePropertyValue @($observations) -Force
 }
 
+function Set-ContractOptions($property, $options) {
+    foreach ($name in $options.Keys) {
+        $property.valueContract | Add-Member -NotePropertyName $name -NotePropertyValue $options[$name] -Force
+    }
+}
+
+function Set-TextContract($document, $path, $classes) {
+    $property = Set-PropertyMetadata $document $path "text" "editable" @()
+    Set-ValueContract $property "text" $classes "scalar" $true @()
+}
+
+function Set-FixedNumericVectorContract($document, $path, $length) {
+    $property = Set-PropertyMetadata $document $path "numericVector" "editable" @()
+    Set-ValueContract $property "numericArray" @("double") "fixedLengthVector" $false @() ([ordered]@{ fixedLength = $length })
+}
+
+function Set-PositiveNumberContract($document, $path, $integer = $false) {
+    $property = Set-PropertyMetadata $document $path "number" "editable" @()
+    Set-ValueContract $property "number" @("double") "scalar" $false @() ([ordered]@{
+        minimum = 0
+        exclusiveMinimum = $true
+        integer = $integer
+    })
+}
+
 $uidatepickerPath = Join-Path $componentDirectory "uidatepicker.json"
 $uidatepicker = Get-Content -Raw $uidatepickerPath | ConvertFrom-Json
 $dateValue = Set-PropertyMetadata $uidatepicker "Value" "dateTime" "editable" @()
@@ -133,5 +158,161 @@ $uihtmlPath = Join-Path $componentDirectory "uihtml.json"
 $uihtml = Get-Content -Raw $uihtmlPath | ConvertFrom-Json
 Set-PropertyMetadata $uihtml "Data" "none" "readOnly" @("arbitraryData") | Out-Null
 Save-Json $uihtmlPath $uihtml
+
+# Correct text-like properties that an earlier classifier incorrectly labelled numeric.
+$textContracts = [ordered]@{
+    "uidatepicker" = [ordered]@{ Placeholder = @("char", "string"); DisplayFormat = @("char", "string") }
+    "uidropdown" = [ordered]@{ Placeholder = @("char", "string") }
+    "uieditfield-numeric" = [ordered]@{ Placeholder = @("char", "string"); ValueDisplayFormat = @("char", "string") }
+    "uieditfield-text" = [ordered]@{ Placeholder = @("char", "string"); Value = @("char", "string") }
+    "uiimage" = [ordered]@{ AltText = @("char", "string") }
+    "uipushtool" = [ordered]@{ Tooltip = @("char", "string", "categorical"); TooltipString = @("char", "string", "categorical") }
+    "uispinner" = [ordered]@{ Placeholder = @("char", "string"); ValueDisplayFormat = @("char", "string") }
+    "uitextarea" = [ordered]@{ Placeholder = @("char", "string") }
+    "uitoggletool" = [ordered]@{ Tooltip = @("char", "string", "categorical"); TooltipString = @("char", "string", "categorical") }
+    "uibuttongroup" = [ordered]@{ Title = @("char", "string", "categorical") }
+    "uipanel" = [ordered]@{ Title = @("char", "string", "categorical") }
+    "uitab" = [ordered]@{ Title = @("char", "string", "categorical") }
+}
+foreach ($componentId in $textContracts.Keys) {
+    $path = Join-Path $componentDirectory ($componentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    foreach ($propertyPath in $textContracts[$componentId].Keys) {
+        Set-TextContract $document $propertyPath $textContracts[$componentId][$propertyPath]
+    }
+    Save-Json $path $document
+}
+
+# Record heterogeneous and deferred grid-layout contracts without claiming a native adapter.
+$uidatepicker = Get-Content -Raw $uidatepickerPath | ConvertFrom-Json
+$disabledDays = Set-PropertyMetadata $uidatepicker "DisabledDaysOfWeek" "structuredData" "editable" @()
+Set-ValueContract $disabledDays "dayOfWeekList" @("numeric", "string", "cell") "vector" $true @()
+Save-Json $uidatepickerPath $uidatepicker
+
+$uigridlayoutPath = Join-Path $componentDirectory "uigridlayout.json"
+$uigridlayout = Get-Content -Raw $uigridlayoutPath | ConvertFrom-Json
+foreach ($path in @("ColumnWidth", "RowHeight")) {
+    $trackList = Set-PropertyMetadata $uigridlayout $path "gridTrackList" "editable" @()
+    Set-ValueContract $trackList "gridTrackList" @("numeric", "char", "string", "cell") "vector" $true @()
+}
+Save-Json $uigridlayoutPath $uigridlayout
+
+# Replace scalar numeric-vector misclassifications and preserve documented scalar bounds.
+foreach ($componentId in @("uibuttongroup", "uipanel")) {
+    $path = Join-Path $componentDirectory ($componentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    Set-PositiveNumberContract $document "BorderWidth" $true
+    Save-Json $path $document
+}
+foreach ($componentId in @("axes", "polaraxes", "uiaxes")) {
+    $path = Join-Path $componentDirectory ($componentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    $rotationPath = if ($componentId -eq "polaraxes") { "RTickLabelRotation" } else { "ZTickLabelRotation" }
+    $rotation = Set-PropertyMetadata $document $rotationPath "number" "editable" @()
+    Set-ValueContract $rotation "number" @("double") "scalar" $false @()
+    Save-Json $path $document
+}
+
+# Capture documented cardinality for editable numeric vectors.
+$fixedVectors = [ordered]@{
+    "axes" = [ordered]@{ ALim = 2; CameraPosition = 3; CameraTarget = 3; CameraUpVector = 3; CLim = 2; DataAspectRatio = 3; OuterPosition = 4; PlotBoxAspectRatio = 3; TickLength = 2; View = 2; ZLim = 2 }
+    "geoaxes" = [ordered]@{ ALim = 2; CLim = 2; MapCenter = 2; OuterPosition = 4; TickLength = 2 }
+    "polaraxes" = [ordered]@{ ALim = 2; CLim = 2; OuterPosition = 4; RLim = 2; ThetaLim = 2; TickLength = 2 }
+    "uiaxes" = [ordered]@{ ALim = 2; CameraPosition = 3; CameraTarget = 3; CameraUpVector = 3; CLim = 2; DataAspectRatio = 3; OuterPosition = 4; PlotBoxAspectRatio = 3; TickLength = 2; View = 2; ZLim = 2 }
+    "uieditfield-numeric" = [ordered]@{ Limits = 2 }
+    "uieditfield-text" = [ordered]@{ CharacterLimits = 2 }
+    "uigauge-circular" = [ordered]@{ Limits = 2 }
+    "uigauge-linear" = [ordered]@{ Limits = 2 }
+    "uigauge-ninetydegree" = [ordered]@{ Limits = 2 }
+    "uigauge-semicircular" = [ordered]@{ Limits = 2 }
+    "uiknob-continuous" = [ordered]@{ Limits = 2 }
+    "uislider-range" = [ordered]@{ Limits = 2; Value = 2 }
+    "uislider-slider" = [ordered]@{ Limits = 2 }
+    "uispinner" = [ordered]@{ Limits = 2 }
+}
+foreach ($componentId in $fixedVectors.Keys) {
+    $path = Join-Path $componentDirectory ($componentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    foreach ($propertyPath in $fixedVectors[$componentId].Keys) {
+        Set-FixedNumericVectorContract $document $propertyPath $fixedVectors[$componentId][$propertyPath]
+    }
+    Save-Json $path $document
+}
+
+# These three documented range surfaces expressly allow positive or negative infinity.
+foreach ($target in @(
+    @{ ComponentId = "uieditfield-numeric"; Path = "Limits" },
+    @{ ComponentId = "uieditfield-text"; Path = "CharacterLimits" },
+    @{ ComponentId = "uispinner"; Path = "Limits" }
+)) {
+    $path = Join-Path $componentDirectory ($target.ComponentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    $property = @($document.properties | Where-Object { $_.path -eq $target.Path }) | Select-Object -First 1
+    Set-ContractOptions $property ([ordered]@{ allowsInfinity = $true })
+    Save-Json $path $document
+}
+
+# Apply directly documented numeric ranges after the property shape has been normalized.
+$positiveFontComponents = @(
+    "uibutton-push", "uibutton-state", "uibuttongroup", "uicheckbox", "uidatepicker", "uidropdown", "uieditfield-numeric", "uieditfield-text", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular", "uihyperlink", "uiknob-continuous", "uiknob-discrete", "uilabel", "uilistbox", "uipanel", "uiradiobutton", "uislider-range", "uislider-slider", "uispinner", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uitable", "uitextarea", "uitogglebutton", "uitree", "uitree-checkbox")
+foreach ($componentId in $positiveFontComponents) {
+    $path = Join-Path $componentDirectory ($componentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    Set-PositiveNumberContract $document "FontSize"
+    Save-Json $path $document
+}
+
+foreach ($componentId in @("axes", "geoaxes", "polaraxes", "uiaxes")) {
+    $path = Join-Path $componentDirectory ($componentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    Set-ContractOptions (Set-PropertyMetadata $document "Alphamap" "numericVector" "editable" @()) ([ordered]@{ minimum = 0; maximum = 1 })
+    Set-ContractOptions (Set-PropertyMetadata $document "GridAlpha" "number" "editable" @()) ([ordered]@{ minimum = 0; maximum = 1 })
+    if ($componentId -in @("axes", "polaraxes", "uiaxes")) {
+        Set-ContractOptions (Set-PropertyMetadata $document "MinorGridAlpha" "number" "editable" @()) ([ordered]@{ minimum = 0; maximum = 1 })
+    }
+    Save-Json $path $document
+}
+foreach ($componentId in @("axes", "uiaxes")) {
+    $path = Join-Path $componentDirectory ($componentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    Set-ContractOptions (Set-PropertyMetadata $document "CameraViewAngle" "number" "editable" @()) ([ordered]@{ minimum = 0; maximum = 180; exclusiveMaximum = $true })
+    foreach ($propertyPath in @("GridLineWidth", "LineWidth", "MinorGridLineWidth")) {
+        Set-ContractOptions (Set-PropertyMetadata $document $propertyPath "number" "editable" @()) ([ordered]@{ minimum = 0; exclusiveMinimum = $true })
+    }
+    Save-Json $path $document
+}
+$geoaxesPath = Join-Path $componentDirectory "geoaxes.json"
+$geoaxes = Get-Content -Raw $geoaxesPath | ConvertFrom-Json
+Set-ContractOptions (Set-PropertyMetadata $geoaxes "LineWidth" "number" "editable" @()) ([ordered]@{ minimum = 0; exclusiveMinimum = $true })
+Set-ContractOptions (Set-PropertyMetadata $geoaxes "ZoomLevel" "number" "editable" @()) ([ordered]@{ minimum = 0; maximum = 25 })
+Save-Json $geoaxesPath $geoaxes
+$sliderPath = Join-Path $componentDirectory "uislider-range.json"
+$slider = Get-Content -Raw $sliderPath | ConvertFrom-Json
+Set-ContractOptions (Set-PropertyMetadata $slider "Step" "number" "editable" @()) ([ordered]@{ minimum = 0; exclusiveMinimum = $true })
+Save-Json $sliderPath $slider
+
+# Value is selected from Items or ItemsData; a numeric scalar editor was unsound.
+$itemSelectionComponents = [ordered]@{
+    "uidropdown" = $false
+    "uiknob-discrete" = $false
+    "uilistbox" = $true
+    "uiswitch-rocker" = $false
+    "uiswitch-slider" = $false
+    "uiswitch-toggle" = $false
+}
+foreach ($componentId in $itemSelectionComponents.Keys) {
+    $path = Join-Path $componentDirectory ($componentId + ".json")
+    $document = Get-Content -Raw $path | ConvertFrom-Json
+    $value = Set-PropertyMetadata $document "Value" "itemSelection" "editable" @()
+    Set-ValueContract $value "itemSelection" @("any") "propertyDependent" $itemSelectionComponents[$componentId] @()
+    Save-Json $path $document
+}
+
+# CurrentPoint is runtime interaction state, not an editable design-time property.
+$uiaxesPath = Join-Path $componentDirectory "uiaxes.json"
+$uiaxes = Get-Content -Raw $uiaxesPath | ConvertFrom-Json
+$currentPoint = Set-PropertyMetadata $uiaxes "CurrentPoint" "none" "omitted" @("lowDesignTimeValue", "runtimeSetRestricted")
+Set-ValueContract $currentPoint "opaque" @("unknown") "any" $false @()
+Save-Json $uiaxesPath $uiaxes
 
 Write-Host "Applied audited Phase 6.9 property contracts in $componentDirectory."

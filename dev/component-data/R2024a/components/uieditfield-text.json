@@ -71,15 +71,18 @@
         "string scalar"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
+        "kind": "text",
+        "shape": "scalar",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "char",
+          "string"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "text",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -97,10 +100,14 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 2,
+        "allowsInfinity": true
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -158,15 +165,18 @@
         "string scalar"
       ],
       "valueContract": {
-        "kind": "numericArray",
-        "shape": "vector",
+        "kind": "text",
+        "shape": "scalar",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "char",
+          "string"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "text",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -247,7 +257,12 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "minimum": 0,
+        "exclusiveMinimum": true,
+        "integer": false
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",

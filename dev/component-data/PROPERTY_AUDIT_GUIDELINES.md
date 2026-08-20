@@ -83,9 +83,11 @@ A value contract should be able to describe:
 Recommended semantic kinds include:
 
 - `text`, `logical`, `onOff`, `enum`, and `number`;
-- `numericArray`, `color`, and `stringList`;
+- `numericArray`, `color`, `stringList`, and `gridTrackList`;
 - `filePath`, `url`, `dateTime`, and `tabularData`;
-- `callback`, `componentReference`, and `graphicsObject`; and
+- `callback`, `componentReference`, and `graphicsObject`;
+- `dayOfWeekList` and `itemSelection` for documented heterogeneous or
+  companion-property selection surfaces; and
 - `arbitraryData` and `opaque` when no narrower safe contract is justified.
 
 `documentedDefault` does not prove that a property accepts every value of the
@@ -98,6 +100,12 @@ missing datetime value, not an empty array. Use `fixedLength` only with a
 requires a row or column vector. Use `normalization` only for a stable behavior
 that an editor must preserve, such as a date picker discarding time information
 or MATLAB storing heading input as a column vector.
+
+Use `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `integer`, and
+`allowsInfinity`
+only for bounds explicitly established by the release-fixed property page. These
+fields describe validation semantics; a native MATLAB editor can use inclusive
+visual limits while the commit validator enforces an exclusive bound.
 
 For an `enum` whose documentation establishes the complete finite choice set,
 record its normalized, unquoted values in `valueContract.values`. Include the

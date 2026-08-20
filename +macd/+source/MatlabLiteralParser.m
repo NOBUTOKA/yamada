@@ -55,7 +55,7 @@ classdef MatlabLiteralParser
                 return
             end
 
-            % Support numeric scalar and bracketed real matrix forms.
+            % Support numeric scalar and bracketed real matrix forms, including Inf.
             if macd.source.MatlabLiteralParser.isNumber(source)
                 value = str2double(source);
                 isLiteral = true;
@@ -101,7 +101,7 @@ classdef MatlabLiteralParser
             end
 
             % Keep the grammar explicit so str2double never receives an expression.
-            pattern = '^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$';
+            pattern = '^[+-]?(?:(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?|Inf)$';
             result = ~isempty(regexp(text, pattern, 'once'));
         end
 
@@ -120,7 +120,7 @@ classdef MatlabLiteralParser
             isLiteral = false;
             rows = strsplit(text, ';');
             rowValues = cell(1, numel(rows));
-            numberPattern = '[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?';
+            numberPattern = '[+-]?(?:(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?|Inf)';
             columnCount = [];
             for index = 1:numel(rows)
                 row = strtrim(rows{index});
@@ -130,7 +130,7 @@ classdef MatlabLiteralParser
                     return
                 end
                 values = str2double(tokens);
-                if any(~isfinite(values))
+                if any(isnan(values))
                     return
                 end
                 if isempty(columnCount)

@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "508f8fc296ba6c345c3760901ce784ddcf4974474a181a406ae1b5eb62798bfb",
+  "inputSha256": "1a26799abad72269d841c148d6ab80ccea0fb58246f9aff5327f6602f2453155",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -420,7 +420,7 @@
       ]
     },
     {
-      "id": "exact.colorandstyling.eb2dc6b675cd",
+      "id": "exact.colorandstyling.7afb8367a736",
       "kind": "exactCategory",
       "categoryId": "colorandstyling",
       "entries": [
@@ -497,17 +497,20 @@
         {
           "path": "BorderWidth",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "number",
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "number",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -537,7 +540,7 @@
       ]
     },
     {
-      "id": "exact.colorandtransparencymaps.a8fd73cd4b45",
+      "id": "exact.colorandtransparencymaps.abd6f1739aa6",
       "kind": "exactCategory",
       "categoryId": "colorandtransparencymaps",
       "entries": [
@@ -593,9 +596,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -638,7 +642,9 @@
             ],
             "shape": "vector",
             "allowsEmpty": true,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -679,9 +685,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -718,7 +725,7 @@
       ]
     },
     {
-      "id": "exact.font.5d69f9f1822c",
+      "id": "exact.font.3a0afe7fc975",
       "kind": "exactCategory",
       "categoryId": "font",
       "entries": [
@@ -751,7 +758,128 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "number",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontWeight",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normal",
+              "bold"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontAngle",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normal",
+              "italic"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontColor",
+          "valueContract": {
+            "kind": "color",
+            "matlabClasses": [
+              "char",
+              "double",
+              "string"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
             "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "color",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "exact.font.aea229d3c60f",
+      "kind": "exactCategory",
+      "categoryId": "font",
+      "entries": [
+        {
+          "path": "FontName",
+          "valueContract": {
+            "kind": "text",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "text",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "FontSize",
+          "valueContract": {
+            "kind": "number",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -839,122 +967,7 @@
       ]
     },
     {
-      "id": "exact.font.8efcd1a89888",
-      "kind": "exactCategory",
-      "categoryId": "font",
-      "entries": [
-        {
-          "path": "FontName",
-          "valueContract": {
-            "kind": "text",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "text",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontSize",
-          "valueContract": {
-            "kind": "number",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "number",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontWeight",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "normal",
-              "bold"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontAngle",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "normal",
-              "italic"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "FontColor",
-          "valueContract": {
-            "kind": "color",
-            "matlabClasses": [
-              "char",
-              "double",
-              "string"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "color",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.fontandcolor.1e974f782153",
+      "id": "exact.fontandcolor.1e661cc8facf",
       "kind": "exactCategory",
       "categoryId": "fontandcolor",
       "entries": [
@@ -987,7 +1000,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1090,7 +1106,7 @@
       ]
     },
     {
-      "id": "exact.fontandcolor.35f0875cd68d",
+      "id": "exact.fontandcolor.d0526128c26c",
       "kind": "exactCategory",
       "categoryId": "fontandcolor",
       "entries": [
@@ -1123,7 +1139,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1247,7 +1266,7 @@
       ]
     },
     {
-      "id": "exact.grids.a3817d34ad79",
+      "id": "exact.grids.d1c9b4a9ab90",
       "kind": "exactCategory",
       "categoryId": "grids",
       "entries": [
@@ -1374,7 +1393,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1459,7 +1480,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1592,7 +1615,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1677,7 +1702,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -1714,54 +1741,7 @@
       ]
     },
     {
-      "id": "exact.interactivity.75ceaf80f79f",
-      "kind": "exactCategory",
-      "categoryId": "interactivity",
-      "entries": [
-        {
-          "path": "Visible",
-          "valueContract": {
-            "kind": "onOff",
-            "matlabClasses": [
-              "char",
-              "logical",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "onOff",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ContextMenu",
-          "valueContract": {
-            "kind": "componentReference",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.interactivity.8af34219bf03",
+      "id": "exact.interactivity.3454f326d786",
       "kind": "exactCategory",
       "categoryId": "interactivity",
       "entries": [
@@ -1810,17 +1790,19 @@
         {
           "path": "Tooltip",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "categorical",
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -1848,17 +1830,66 @@
         {
           "path": "TooltipString",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "categorical",
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "exact.interactivity.75ceaf80f79f",
+      "kind": "exactCategory",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "Visible",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "componentReference",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -2302,7 +2333,7 @@
       ]
     },
     {
-      "id": "exact.rulers.f5456dc24f40",
+      "id": "exact.rulers.efb74ddb42a0",
       "kind": "exactCategory",
       "categoryId": "rulers",
       "entries": [
@@ -2351,9 +2382,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -2905,24 +2937,24 @@
       ]
     },
     {
-      "id": "exact.switch.958bd16ac0f1",
+      "id": "exact.switch.e4feb5a034e7",
       "kind": "exactCategory",
       "categoryId": "switch",
       "entries": [
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
+            "shape": "propertyDependent",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -3161,7 +3193,7 @@
       ]
     },
     {
-      "id": "exact.ticks.70f2e84890c5",
+      "id": "exact.ticks.d9789c09f239",
       "kind": "exactCategory",
       "categoryId": "ticks",
       "entries": [
@@ -3498,17 +3530,17 @@
         {
           "path": "ZTickLabelRotation",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "number",
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
-            "allowsEmpty": true,
+            "shape": "scalar",
+            "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "number",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -3706,9 +3738,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3721,24 +3754,26 @@
       ]
     },
     {
-      "id": "exact.title.2cae7d8d7937",
+      "id": "exact.title.29b523ae5b31",
       "kind": "exactCategory",
       "categoryId": "title",
       "entries": [
         {
           "path": "Title",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "categorical",
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -3775,7 +3810,7 @@
       ]
     },
     {
-      "id": "exact.view.3c7989b775f1",
+      "id": "exact.view.17630eed8ac9",
       "kind": "exactCategory",
       "categoryId": "view",
       "entries": [
@@ -3786,9 +3821,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3829,9 +3865,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3872,9 +3909,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3915,9 +3953,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -3960,7 +3999,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 180,
+            "exclusiveMaximum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4031,7 +4073,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4847,9 +4891,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 4
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4969,9 +5014,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5012,9 +5058,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5107,7 +5154,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -5614,7 +5663,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6114,9 +6165,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6159,7 +6211,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 25
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6299,9 +6353,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 4
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -6577,9 +6632,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7220,7 +7276,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -7377,7 +7435,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "maximum": 1
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8018,9 +8078,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 4
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8169,9 +8230,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8212,9 +8274,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8683,17 +8746,17 @@
         {
           "path": "RTickLabelRotation",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "number",
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
-            "allowsEmpty": true,
+            "shape": "scalar",
+            "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "number",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -8873,9 +8936,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -8943,7 +9007,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -9617,20 +9683,23 @@
         {
           "path": "CurrentPoint",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "opaque",
             "matlabClasses": [
-              "double"
+              "unknown"
             ],
-            "shape": "vector",
+            "shape": "any",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue",
+              "runtimeSetRestricted"
+            ]
           }
         },
         {
@@ -10003,9 +10072,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 4
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -10092,9 +10162,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -10135,9 +10206,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -11559,7 +11631,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -12555,17 +12630,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -12600,17 +12676,18 @@
         {
           "path": "DisplayFormat",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -12644,11 +12721,10 @@
         {
           "path": "DisabledDaysOfWeek",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "dayOfWeekList",
             "matlabClasses": [
-              "categorical",
               "cell",
-              "char",
+              "numeric",
               "string"
             ],
             "shape": "vector",
@@ -12657,7 +12733,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "structuredData",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13040,17 +13116,17 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
+            "shape": "propertyDependent",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13126,17 +13202,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13739,9 +13816,11 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2,
+            "allowsInfinity": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -13775,17 +13854,18 @@
         {
           "path": "ValueDisplayFormat",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13815,17 +13895,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14251,17 +14332,18 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14274,9 +14356,11 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2,
+            "allowsInfinity": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -14315,17 +14399,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -15541,9 +15626,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -15923,9 +16009,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -16305,9 +16392,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -16713,9 +16801,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17121,11 +17210,11 @@
         {
           "path": "ColumnWidth",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "gridTrackList",
             "matlabClasses": [
-              "categorical",
               "cell",
               "char",
+              "numeric",
               "string"
             ],
             "shape": "vector",
@@ -17134,7 +17223,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "gridTrackList",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -17143,11 +17232,11 @@
         {
           "path": "RowHeight",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "gridTrackList",
             "matlabClasses": [
-              "categorical",
               "cell",
               "char",
+              "numeric",
               "string"
             ],
             "shape": "vector",
@@ -17156,7 +17245,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "gridTrackList",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -18076,7 +18165,10 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "integer": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -18934,17 +19026,18 @@
         {
           "path": "AltText",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -19386,9 +19479,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -19699,17 +19793,17 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
+            "shape": "propertyDependent",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -21023,17 +21117,17 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
-            "allowsEmpty": false,
+            "shape": "propertyDependent",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -23029,9 +23123,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -23048,9 +23143,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -23093,7 +23189,9 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "minimum": 0,
+            "exclusiveMinimum": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -23480,9 +23578,10 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -23897,9 +23996,11 @@
             "matlabClasses": [
               "double"
             ],
-            "shape": "vector",
+            "shape": "fixedLengthVector",
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 2,
+            "allowsInfinity": true
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -23952,17 +24053,18 @@
         {
           "path": "ValueDisplayFormat",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -23992,17 +24094,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -24667,17 +24770,17 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "itemSelection",
             "matlabClasses": [
-              "double"
+              "any"
             ],
-            "shape": "scalar",
+            "shape": "propertyDependent",
             "allowsEmpty": false,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "itemSelection",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -25467,17 +25570,19 @@
         {
           "path": "Title",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "categorical",
+              "char",
+              "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": false,
+            "shape": "scalar",
+            "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -27328,17 +27433,18 @@
         {
           "path": "Placeholder",
           "valueContract": {
-            "kind": "numericArray",
+            "kind": "text",
             "matlabClasses": [
-              "double"
+              "char",
+              "string"
             ],
-            "shape": "vector",
+            "shape": "scalar",
             "allowsEmpty": true,
             "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "text",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []

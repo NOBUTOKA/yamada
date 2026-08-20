@@ -113,7 +113,7 @@
       "entries": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
@@ -121,7 +121,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
-            "groupId": "exact.interactivity.8af34219bf03",
+            "groupId": "exact.interactivity.3454f326d786",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -140,7 +140,7 @@
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
@@ -148,7 +148,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
-            "groupId": "exact.interactivity.8af34219bf03",
+            "groupId": "exact.interactivity.3454f326d786",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -167,7 +167,7 @@
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
@@ -175,24 +175,26 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
-            "groupId": "exact.interactivity.8af34219bf03",
-            "editor": "numericVector",
+            "groupId": "exact.interactivity.3454f326d786",
+            "editor": "text",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "numericArray",
+              "kind": "text",
               "matlabClasses": [
-                "double"
+                "categorical",
+                "char",
+                "string"
               ],
-              "shape": "vector",
-              "allowsEmpty": false,
+              "shape": "scalar",
+              "allowsEmpty": true,
               "constraints": []
             }
           }
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -200,7 +202,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
-            "groupId": "exact.interactivity.8af34219bf03",
+            "groupId": "exact.interactivity.3454f326d786",
             "editor": "componentReference",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -217,7 +219,7 @@
         },
         {
           "path": "TooltipString",
-          "groupId": "exact.interactivity.8af34219bf03",
+          "groupId": "exact.interactivity.3454f326d786",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TooltipString",
@@ -225,17 +227,19 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 5,
-            "groupId": "exact.interactivity.8af34219bf03",
-            "editor": "numericVector",
+            "groupId": "exact.interactivity.3454f326d786",
+            "editor": "text",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "numericArray",
+              "kind": "text",
               "matlabClasses": [
-                "double"
+                "categorical",
+                "char",
+                "string"
               ],
-              "shape": "vector",
-              "allowsEmpty": false,
+              "shape": "scalar",
+              "allowsEmpty": true,
               "constraints": []
             }
           }

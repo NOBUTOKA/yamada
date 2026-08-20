@@ -108,10 +108,13 @@
       ],
       "valueContract": {
         "kind": "numericArray",
-        "shape": "vector",
+        "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "fixedLength": 2
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -468,7 +471,12 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ],
+        "minimum": 0,
+        "exclusiveMinimum": true,
+        "integer": false
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",

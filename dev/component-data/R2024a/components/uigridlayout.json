@@ -72,20 +72,20 @@
         "numeric array"
       ],
       "valueContract": {
-        "kind": "stringList",
+        "kind": "gridTrackList",
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
+          "numeric",
           "char",
           "string",
-          "cell",
-          "categorical"
+          "cell"
         ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "stringList",
+      "requiredEditor": "gridTrackList",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
@@ -104,20 +104,20 @@
         "numeric array"
       ],
       "valueContract": {
-        "kind": "stringList",
+        "kind": "gridTrackList",
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
+          "numeric",
           "char",
           "string",
-          "cell",
-          "categorical"
+          "cell"
         ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "stringList",
+      "requiredEditor": "gridTrackList",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
