@@ -33,6 +33,7 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             data = changes([changes.Path] == "Data").Value;
             testCase.verifyEqual(data, {true, "Updated"; 1, 'last'});
             testCase.verifyFalse(isvalid(dialog));
+            deleteIfValid(dialog);
             clear cleanup
         end
 
@@ -57,12 +58,16 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             rowDelete = findall(dialog, "Tag", "macd-table-data-delete-row");
             testCase.verifyEqual(rowDelete.Layout.Row, 2);
             testCase.verifyEqual(rowDelete.FontSize, 14);
+            testCase.verifyEqual(rowDelete.Parent.RowHeight{2}, 23.3);
             rowAdd = findall(dialog, "Tag", "macd-table-data-add-row");
             columnAdd = findall(dialog, "Tag", "macd-table-data-add-column");
             testCase.verifyEqual(rowAdd.Layout.Row, 1);
             testCase.verifyEqual(columnAdd.Layout.Column, 1);
+            testCase.verifyEqual(rowAdd.FontSize, 14);
+            testCase.verifyEqual(columnAdd.FontSize, 14);
             testCase.verifyEmpty(findall(dialog, "Tag", "macd-table-data-column-name"));
             testCase.verifyEmpty(findall(dialog, "Tag", "macd-table-data-row-name"));
+            deleteIfValid(dialog);
             clear cleanup
         end
 
@@ -88,6 +93,7 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             testCase.verifyEqual(table.Parent, content);
             testCase.verifyEqual(rowActions.Parent, content);
             testCase.verifyEqual(columnActions.Parent, content);
+            deleteIfValid(dialog);
             clear cleanup
         end
 
@@ -112,6 +118,7 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             testCase.verifyEqual(changes([changes.Path] == "Data").Value, 3);
             testCase.verifyEqual(changes([changes.Path] == "ColumnName").Value, {'Amount'});
             testCase.verifyEqual(changes([changes.Path] == "RowName").Value, {'Total'});
+            deleteIfValid(dialog);
             clear cleanup
         end
 
@@ -137,6 +144,7 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             changes = getappdata(owner, "changes");
             testCase.verifyEqual(changes([changes.Path] == "ColumnName").Value, 'numbered');
             testCase.verifyEqual(changes([changes.Path] == "RowName").Value, 'numbered');
+            deleteIfValid(dialog);
             clear cleanup
         end
 
@@ -161,6 +169,7 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             testCase.verifyEmpty(changes([changes.Path] == "Data").Value);
             testCase.verifyEmpty(changes([changes.Path] == "ColumnName").Value);
             testCase.verifyEmpty(changes([changes.Path] == "RowName").Value);
+            deleteIfValid(dialog);
             clear cleanup
         end
 

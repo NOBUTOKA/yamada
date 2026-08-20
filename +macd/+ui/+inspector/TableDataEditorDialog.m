@@ -32,6 +32,8 @@ classdef TableDataEditorDialog
             draftText = macd.ui.inspector.TableDataEditorDialog.displayData(initialData);
             columnLabels = initialColumnLabels;
             rowLabels = initialRowLabels;
+            initialLayoutPending = false;
+            initialHostPosition = zeros(1, 4);
             transaction = macd.model.PropertyTransaction( ...
                 ["Data", "ColumnName", "RowName"], ...
                 {initialData, initialColumnName, initialRowName}, ...
@@ -43,10 +45,10 @@ classdef TableDataEditorDialog
                 "Tag", "macd-inspector-table-data-dialog");
             dialog.CloseRequestFcn = @(~, ~) closeDialog();
             grid = uigridlayout(dialog, [4 1], "Padding", [12 12 12 12], ...
-                "RowHeight", {"1x", 32, 22, 32}, "RowSpacing", 6);
+                "RowHeight", {"1x", 32, 23.3, 32}, "RowSpacing", 6);
             tableHost = uipanel(grid, "BorderType", "line", "Scrollable", "on", ...
                 "AutoResizeChildren", "off", "Tag", "macd-table-data-scroll-host");
-            tableContent = uipanel(tableHost, "BorderType", "none", ...
+            tableContent = uipanel(tableHost, "BorderType", "none", "AutoResizeChildren", "off", ...
                 "Tag", "macd-table-data-scroll-content");
             table = uitable(tableContent, "ColumnEditable", true, "RowStriping", "off", ...
                 "Tag", "macd-table-data-editor-table");
@@ -78,6 +80,9 @@ classdef TableDataEditorDialog
                 "ButtonPushedFcn", @(~, ~) applyDraft());
             rebuildChrome();
             if visible
+                initialLayoutPending = true;
+                initialHostPosition = getpixelposition(tableHost, true);
+                tableHost.SizeChangedFcn = @(~, ~) finishInitialLayout();
                 dialog.Visible = "on";
             end
 
@@ -107,22 +112,39 @@ classdef TableDataEditorDialog
                 % layoutTableSurface Size one scrollable canvas so every table action scrolls with its cell.
                 padding = 4;
                 rowActionWidth = 32;
-                columnActionHeight = 22;
+                columnActionHeight = 23.3;
                 rowCount = max(size(table.Data, 1), 1);
                 columnCount = max(size(table.Data, 2), 1);
-                tableWidth = macd.ui.inspector.TableDataEditorDialog.editorPixelWidth(columnCount);
-                tableHeight = macd.ui.inspector.TableDataEditorDialog.editorPixelHeight(rowCount);
+                tableSafetyMargin = 4;
+                actionHeight = macd.ui.inspector.TableDataEditorDialog.editorPixelHeight(rowCount);
+                tableWidth = macd.ui.inspector.TableDataEditorDialog.editorPixelWidth(columnCount) + ...
+                    tableSafetyMargin;
+                tableHeight = actionHeight + tableSafetyMargin;
                 hostPosition = getpixelposition(tableHost, true);
-                contentWidth = max(tableWidth + rowActionWidth + 2 * padding, ...
-                    hostPosition(3) - 18);
-                contentHeight = max(tableHeight + columnActionHeight + 2 * padding, ...
-                    hostPosition(4) + 1);
+                naturalWidth = tableWidth + rowActionWidth + 2 * padding;
+                naturalHeight = tableHeight + columnActionHeight + 2 * padding;
+                [contentWidth, contentHeight] = ...
+                    macd.ui.inspector.TableDataEditorDialog.scrollContentExtent( ...
+                    naturalWidth, naturalHeight, hostPosition(3), hostPosition(4));
                 tableContent.Position = [1 1 contentWidth contentHeight];
                 tableY = contentHeight - padding - columnActionHeight - tableHeight;
                 tableX = padding + rowActionWidth;
                 table.Position = [tableX tableY tableWidth tableHeight];
-                rowActions.Position = [padding tableY rowActionWidth tableHeight];
+                rowActions.Position = [padding tableY + tableSafetyMargin rowActionWidth actionHeight];
                 columnActions.Position = [tableX tableY + tableHeight tableWidth columnActionHeight];
+            end
+
+            function finishInitialLayout()
+                % finishInitialLayout Relayout once after the visible dialog resolves its real grid extent.
+                if ~initialLayoutPending || ~isvalid(tableHost)
+                    return
+                end
+                if isequal(getpixelposition(tableHost, true), initialHostPosition)
+                    return
+                end
+                initialLayoutPending = false;
+                tableHost.SizeChangedFcn = [];
+                layoutTableSurface();
             end
 
             function addRow()
@@ -404,10 +426,10 @@ classdef TableDataEditorDialog
 
         function createRowActions(parent, rowCount, addFcn, deleteFcn)
             % createRowActions Align the row add and delete actions beside the table's visible rows.
-            rowHeights = repmat({22}, 1, rowCount + 1);
+            rowHeights = repmat({23.3}, 1, rowCount + 1);
             grid = uigridlayout(parent, [rowCount + 1 1], "Padding", [0 0 0 0], ...
                 "RowSpacing", 0, "RowHeight", rowHeights);
-            uibutton(grid, "Text", "+", "FontSize", 18, "FontWeight", "bold", ...
+            uibutton(grid, "Text", "+", "FontSize", 14, "FontWeight", "bold", ...
                 "FontColor", [0 0.55 0], "Tag", "macd-table-data-add-row", ...
                 "ButtonPushedFcn", addFcn);
             for index = 1:rowCount
@@ -423,7 +445,7 @@ classdef TableDataEditorDialog
             grid = uigridlayout(parent, [1 columnCount + 1], "Padding", [0 0 0 0], ...
                 "ColumnSpacing", 0, "ColumnWidth", ...
                 macd.ui.inspector.TableDataEditorDialog.editorColumnWidths(columnCount + 1));
-            uibutton(grid, "Text", "+", "FontSize", 18, "FontWeight", "bold", ...
+            uibutton(grid, "Text", "+", "FontSize", 14, "FontWeight", "bold", ...
                 "FontColor", [0 0.55 0], "Tag", "macd-table-data-add-column", ...
                 "ButtonPushedFcn", addFcn);
             for index = 1:columnCount
@@ -523,7 +545,26 @@ classdef TableDataEditorDialog
 
         function value = editorPixelHeight(rowCount)
             % editorPixelHeight Return the native table extent for all displayed cells at the shared action height.
-            value = 22 * rowCount;
+            value = 23.3 * rowCount;
+        end
+
+        function [width, height] = scrollContentExtent(naturalWidth, naturalHeight, hostWidth, hostHeight)
+            % scrollContentExtent Fill the viewport without manufacturing scrollable slack around a small table.
+            borderWidth = 2;
+            scrollbarWidth = 18;
+            viewportSafetyMargin = 4;
+            viewportWidth = max(hostWidth - borderWidth - viewportSafetyMargin, 1);
+            viewportHeight = max(hostHeight - borderWidth - viewportSafetyMargin, 1);
+            needsVertical = naturalHeight > viewportHeight;
+            needsHorizontal = naturalWidth > viewportWidth - scrollbarWidth * needsVertical;
+            if needsHorizontal && naturalHeight > viewportHeight - scrollbarWidth
+                needsVertical = true;
+            end
+            if needsVertical && naturalWidth > viewportWidth - scrollbarWidth
+                needsHorizontal = true;
+            end
+            width = max(naturalWidth, viewportWidth - scrollbarWidth * needsVertical);
+            height = max(naturalHeight, viewportHeight - scrollbarWidth * needsHorizontal);
         end
 
         function styleNameCells(table, dataRows, dataColumns)
