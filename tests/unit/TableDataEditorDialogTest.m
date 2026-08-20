@@ -50,9 +50,13 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
 
             testCase.verifyEmpty(table.ColumnName);
             testCase.verifyEmpty(table.RowName);
+            testCase.verifyEqual(string(table.RowStriping), "off");
             testCase.verifyEqual(size(table.Data), [2 3]);
-            testCase.verifyTrue(all(table.Data(1, :) == ""));
-            testCase.verifyTrue(all(table.Data(:, 1) == ""));
+            testCase.verifyEqual(table.Data(1, 2:3), ["Column 1", "Column 2"]);
+            testCase.verifyEqual(table.Data(2, 1), "Row 1");
+            rowDelete = findall(dialog, "Tag", "macd-table-data-delete-row");
+            testCase.verifyEqual(rowDelete.Layout.Row, 2);
+            testCase.verifyEqual(rowDelete.FontSize, 14);
             testCase.verifyEmpty(findall(dialog, "Tag", "macd-table-data-column-name"));
             testCase.verifyEmpty(findall(dialog, "Tag", "macd-table-data-row-name"));
             clear cleanup
@@ -79,6 +83,31 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             testCase.verifyEqual(changes([changes.Path] == "Data").Value, 3);
             testCase.verifyEqual(changes([changes.Path] == "ColumnName").Value, {'Amount'});
             testCase.verifyEqual(changes([changes.Path] == "RowName").Value, {'Total'});
+            clear cleanup
+        end
+
+        function appliesNumberedNamesFromDedicatedControls(testCase)
+            % appliesNumberedNamesFromDedicatedControls Retain the documented numbered marker on Apply.
+
+            owner = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(owner));
+            setappdata(owner, "changes", struct.empty);
+            state = struct("Data", 1, "ColumnName", {{'Amount'}}, "RowName", {{'Total'}}, ...
+                "HasData", true, "HasColumnName", true, "HasRowName", true);
+            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+                state, @(changes) captureChanges(owner, changes), false);
+            rowButton = findall(dialog, "Tag", "macd-table-data-numbered-rows");
+            rowButton.Value = true;
+            rowButton.ValueChangedFcn(rowButton, struct());
+            columnButton = findall(dialog, "Tag", "macd-table-data-numbered-columns");
+            columnButton.Value = true;
+            columnButton.ValueChangedFcn(columnButton, struct());
+            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton.ButtonPushedFcn(applyButton, struct());
+
+            changes = getappdata(owner, "changes");
+            testCase.verifyEqual(changes([changes.Path] == "ColumnName").Value, 'numbered');
+            testCase.verifyEqual(changes([changes.Path] == "RowName").Value, 'numbered');
             clear cleanup
         end
 

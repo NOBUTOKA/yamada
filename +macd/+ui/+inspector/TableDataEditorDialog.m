@@ -27,6 +27,8 @@ classdef TableDataEditorDialog
                 state, "RowName", []);
             initialColumnLabels = macd.ui.inspector.TableDataEditorDialog.nameVector(initialColumnName);
             initialRowLabels = macd.ui.inspector.TableDataEditorDialog.nameVector(initialRowName);
+            columnNumbered = macd.ui.inspector.TableDataEditorDialog.isNumberedName(initialColumnName);
+            rowNumbered = macd.ui.inspector.TableDataEditorDialog.isNumberedName(initialRowName);
             draftText = macd.ui.inspector.TableDataEditorDialog.displayData(initialData);
             columnLabels = initialColumnLabels;
             rowLabels = initialRowLabels;
@@ -43,17 +45,25 @@ classdef TableDataEditorDialog
             grid = uigridlayout(dialog, [5 2], "Padding", [12 12 12 12], ...
                 "RowHeight", {"1x", 30, 32, 22, 32}, "ColumnWidth", {"1x", 38}, ...
                 "RowSpacing", 6, "ColumnSpacing", 6);
-            table = uitable(grid, "ColumnEditable", true, ...
+            table = uitable(grid, "ColumnEditable", true, "RowStriping", "off", ...
                 "Tag", "macd-table-data-editor-table");
             rowActions = uipanel(grid, "BorderType", "none", ...
                 "Tag", "macd-table-data-row-actions");
             columnActions = uipanel(grid, "BorderType", "none", ...
                 "Tag", "macd-table-data-column-actions");
             columnActions.Layout.Row = 2;
-            structuralActions = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
-                "ColumnWidth", {"1x", "1x"}, "ColumnSpacing", 6);
+            structuralActions = uigridlayout(grid, [1 4], "Padding", [0 0 0 0], ...
+                "ColumnWidth", {"1x", "1x", "1x", "1x"}, "ColumnSpacing", 6);
             structuralActions.Layout.Row = 3;
             structuralActions.Layout.Column = [1 2];
+            rowNumberedButton = uibutton(structuralActions, "state", "Text", "Numbered rows", ...
+                "Tag", "macd-table-data-numbered-rows", ...
+                "ValueChangedFcn", @(source, ~) setRowNumbered(source.Value));
+            rowNumberedButton.Value = rowNumbered;
+            columnNumberedButton = uibutton(structuralActions, "state", "Text", "Numbered columns", ...
+                "Tag", "macd-table-data-numbered-columns", ...
+                "ValueChangedFcn", @(source, ~) setColumnNumbered(source.Value));
+            columnNumberedButton.Value = columnNumbered;
             uibutton(structuralActions, "Text", "+ Row", "FontWeight", "bold", ...
                 "Tag", "macd-table-data-add-row", "ButtonPushedFcn", @(~, ~) addRow());
             uibutton(structuralActions, "Text", "+ Column", "FontWeight", "bold", ...
@@ -85,11 +95,12 @@ classdef TableDataEditorDialog
                 macd.ui.inspector.TableDataEditorDialog.createColumnActions( ...
                     columnActions, size(draftText, 2), @(source) deleteColumn(source.UserData));
                 table.Data = macd.ui.inspector.TableDataEditorDialog.editorMatrix( ...
-                    draftText, rowLabels, columnLabels);
+                    draftText, rowLabels, columnLabels, rowNumbered, columnNumbered);
                 table.ColumnName = [];
                 table.RowName = [];
                 table.ColumnWidth = macd.ui.inspector.TableDataEditorDialog.editorColumnWidths( ...
                     size(table.Data, 2));
+                removeStyle(table);
                 macd.ui.inspector.TableDataEditorDialog.styleNameCells(table, ...
                     size(draftText, 1), size(draftText, 2));
             end
@@ -152,6 +163,10 @@ classdef TableDataEditorDialog
                 draftText = strings(0, 0);
                 columnLabels = strings(0, 1);
                 rowLabels = strings(0, 1);
+                columnNumbered = false;
+                rowNumbered = false;
+                columnNumberedButton.Value = false;
+                rowNumberedButton.Value = false;
                 removeStyle(table);
                 setMessage("Enter MATLAB literals; unquoted text becomes a string.", [0.3 0.3 0.3]);
                 rebuildChrome();
@@ -161,9 +176,15 @@ classdef TableDataEditorDialog
                 % captureTableData Validate displayed cells before retaining a structural edit.
                 result = false;
                 removeStyle(table);
-                [draftText, rowLabels, columnLabels] = ...
+                [draftText, rowLabels, columnLabels, rowNumbered, columnNumbered] = ...
                     macd.ui.inspector.TableDataEditorDialog.editorValues( ...
-                    string(table.Data), size(draftText, 1), size(draftText, 2));
+                    string(table.Data), size(draftText, 1), size(draftText, 2), ...
+                    rowNumbered, columnNumbered);
+                rowNumberedButton.Value = rowNumbered;
+                columnNumberedButton.Value = columnNumbered;
+                removeStyle(table);
+                macd.ui.inspector.TableDataEditorDialog.styleNameCells(table, ...
+                    size(draftText, 1), size(draftText, 2));
                 [values, errorRow, errorColumn, errorMessage] = ...
                     macd.ui.inspector.TypedCellCodec.parse(draftText, true);
                 if errorRow > 0
@@ -198,9 +219,9 @@ classdef TableDataEditorDialog
                 end
                 data = macd.ui.inspector.TypedCellCodec.packMatrix(values);
                 columnName = macd.ui.inspector.TableDataEditorDialog.nameOutput( ...
-                    columnLabels, initialColumnLabels, initialColumnName);
+                    columnLabels, initialColumnLabels, initialColumnName, columnNumbered);
                 rowName = macd.ui.inspector.TableDataEditorDialog.nameOutput( ...
-                    rowLabels, initialRowLabels, initialRowName);
+                    rowLabels, initialRowLabels, initialRowName, rowNumbered);
                 if ~isequaln(data, initialData)
                     transaction.stage("Data", data);
                 end
@@ -221,6 +242,30 @@ classdef TableDataEditorDialog
                     return
                 end
                 closeDialog();
+            end
+
+            function setRowNumbered(value)
+                % setRowNumbered Switch the row-name representation without changing the document yet.
+                rowNumbered = value;
+                if rowNumbered
+                    rowLabels = strings(0, 1);
+                elseif isempty(rowLabels)
+                    rowLabels = macd.ui.inspector.TableDataEditorDialog.numberedNames( ...
+                        "Row", size(draftText, 1));
+                end
+                rebuildChrome();
+            end
+
+            function setColumnNumbered(value)
+                % setColumnNumbered Switch the column-name representation without changing the document yet.
+                columnNumbered = value;
+                if columnNumbered
+                    columnLabels = strings(0, 1);
+                elseif isempty(columnLabels)
+                    columnLabels = macd.ui.inspector.TableDataEditorDialog.numberedNames( ...
+                        "Column", size(draftText, 2));
+                end
+                rebuildChrome();
             end
 
             function setMessage(text, color)
@@ -338,14 +383,13 @@ classdef TableDataEditorDialog
         end
 
         function createRowActions(parent, rowCount, deleteFcn)
-            % createRowActions Align each row delete button below the table's blank header and name row.
-            rowHeights = [{22, 22}, repmat({22}, 1, rowCount)];
-            grid = uigridlayout(parent, [rowCount + 2 1], "Padding", [0 0 0 0], ...
+            % createRowActions Align each row delete button beneath the table heading row.
+            rowHeights = [{22}, repmat({22}, 1, rowCount)];
+            grid = uigridlayout(parent, [rowCount + 1 1], "Padding", [0 0 0 0], ...
                 "RowSpacing", 0, "RowHeight", rowHeights);
             uilabel(grid, "Text", "");
-            uilabel(grid, "Text", "");
             for index = 1:rowCount
-                button = uibutton(grid, "Text", "−", "FontSize", 18, "FontWeight", "bold", ...
+                button = uibutton(grid, "Text", "−", "FontSize", 14, "FontWeight", "bold", ...
                     "FontColor", [0.8 0 0], "Tag", "macd-table-data-delete-row", ...
                     "ButtonPushedFcn", @(source, ~) deleteFcn(source));
                 button.UserData = index;
@@ -373,15 +417,20 @@ classdef TableDataEditorDialog
             end
         end
 
-        function value = editorMatrix(data, rowLabels, columnLabels)
+        function value = editorMatrix(data, rowLabels, columnLabels, rowNumbered, columnNumbered)
             % editorMatrix Place editable names in the first row and first column of the native table.
             rowCount = max(size(data, 1), numel(rowLabels));
             columnCount = max(size(data, 2), numel(columnLabels));
             value = strings(rowCount + 1, columnCount + 1);
-            if ~isempty(columnLabels)
+            if columnNumbered
+                value(1, 2:end) = reshape( ...
+                    macd.ui.inspector.TableDataEditorDialog.numberedNames("Column", columnCount), 1, []);
+            elseif ~isempty(columnLabels)
                 value(1, 2:numel(columnLabels) + 1) = reshape(columnLabels, 1, []);
             end
-            if ~isempty(rowLabels)
+            if rowNumbered
+                value(2:end, 1) = macd.ui.inspector.TableDataEditorDialog.numberedNames("Row", rowCount);
+            elseif ~isempty(rowLabels)
                 value(2:numel(rowLabels) + 1, 1) = reshape(rowLabels, [], 1);
             end
             if ~isempty(data)
@@ -389,11 +438,50 @@ classdef TableDataEditorDialog
             end
         end
 
-        function [data, rowLabels, columnLabels] = editorValues(value, dataRows, dataColumns)
+        function [data, rowLabels, columnLabels, rowNumbered, columnNumbered] = editorValues( ...
+                value, dataRows, dataColumns, rowNumbered, columnNumbered)
             % editorValues Split native-table name cells from the editable data body.
-            rowLabels = reshape(value(2:end, 1), [], 1);
-            columnLabels = reshape(value(1, 2:end), [], 1);
+            displayedRows = reshape(value(2:end, 1), [], 1);
+            displayedColumns = reshape(value(1, 2:end), [], 1);
+            if rowNumbered && isequal(displayedRows, ...
+                    macd.ui.inspector.TableDataEditorDialog.numberedNames("Row", numel(displayedRows)))
+                rowLabels = strings(0, 1);
+            else
+                rowNumbered = false;
+                rowLabels = macd.ui.inspector.TableDataEditorDialog.trimTrailingEmptyNames(displayedRows);
+            end
+            if columnNumbered && isequal(displayedColumns, ...
+                    macd.ui.inspector.TableDataEditorDialog.numberedNames("Column", numel(displayedColumns)))
+                columnLabels = strings(0, 1);
+            else
+                columnNumbered = false;
+                columnLabels = macd.ui.inspector.TableDataEditorDialog.trimTrailingEmptyNames(displayedColumns);
+            end
             data = value(2:dataRows + 1, 2:dataColumns + 1);
+        end
+
+        function result = isNumberedName(value)
+            % isNumberedName Identify the documented special marker without accepting partial labels.
+            result = (ischar(value) && isrow(value) && strcmpi(value, "numbered")) || ...
+                (isstring(value) && isscalar(value) && lower(value) == "numbered");
+        end
+
+        function names = numberedNames(prefix, count)
+            % numberedNames Create the native UITable visible labels for the numbered name mode.
+            names = strings(count, 1);
+            for index = 1:count
+                names(index) = prefix + " " + string(index);
+            end
+        end
+
+        function labels = trimTrailingEmptyNames(labels)
+            % trimTrailingEmptyNames Remove unused trailing name cells while retaining intentional gaps.
+            last = find(strlength(labels) > 0, 1, "last");
+            if isempty(last)
+                labels = strings(0, 1);
+            else
+                labels = labels(1:last);
+            end
         end
 
         function widths = editorColumnWidths(count)
@@ -406,7 +494,7 @@ classdef TableDataEditorDialog
 
         function styleNameCells(table, dataRows, dataColumns)
             % styleNameCells Distinguish editable heading cells from literal data with a pale gray background.
-            nameStyle = uistyle("BackgroundColor", [0.94 0.94 0.94]);
+            nameStyle = uistyle("BackgroundColor", [0.88 0.88 0.88]);
             addStyle(table, nameStyle, "row", 1);
             addStyle(table, nameStyle, "column", 1);
             if dataRows == 0 && dataColumns == 0
@@ -414,9 +502,11 @@ classdef TableDataEditorDialog
             end
         end
 
-        function value = nameOutput(labels, initialLabels, initialValue)
+        function value = nameOutput(labels, initialLabels, initialValue, numbered)
             % nameOutput Preserve untouched source representation or emit editable headings as row char cells.
-            if isequal(labels, initialLabels)
+            if numbered
+                value = 'numbered';
+            elseif isequal(labels, initialLabels)
                 value = initialValue;
             elseif isempty(labels)
                 value = [];
