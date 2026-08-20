@@ -611,6 +611,26 @@ ItemsData, table-data, and column-settings consume the same effective-state
 snapshot. Keep existing dialog layouts, buttons, focus handling, and inline
 single-property commit behavior local to their editors.
 
+The existing transaction audit found three migration targets:
+
+- `ItemsDataEditorDialog` already keeps edits in `uitable.Data` until Apply, but
+  owns its parsing and commit orchestration locally. Its Clear path is the one
+  exception: it currently commits `[]` immediately and closes. Move its draft,
+  staged Clear, validation result, and Apply commit to the shared transaction.
+- `StructuredDataEditorDialog` keeps a text-area draft and implements its own
+  nested Apply/Cancel callbacks. Keep the text UI and literal policy, but move
+  transaction state and commit orchestration to the shared transaction.
+- `StringListEditorDialog` independently implements the same draft,
+  Apply/Cancel, and commit sequence. Keep its string-list validation and UI, but
+  move the transaction and final commit to the shared path.
+
+The asset and color native pickers do not maintain a multi-step editable draft;
+they commit only a returned selection and gain nothing from a transaction
+session. Inline text, multiline, URL, enum, logical/on-off, and numeric editors
+remain immediate single-property editors. Both immediate and transactional
+editors must nevertheless call the same property/candidate validator so batch
+and non-batch acceptance rules cannot diverge.
+
 #### 6.9.1 Correct and freeze specialized-editor ledger contracts
 
 - [x] Mark `uihtml.Data` visible read-only for this phase. It accepts arbitrary
@@ -706,12 +726,18 @@ asset paths without filesystem mutation, while unsupported forms remain intact.
   list and table-data dialog reuse the collection operations; ItemsData and
   table-data reuse the typed-cell codec. Every editor chooses its own controls
   and error presentation.
-- [ ] Before adding the temporal UI, extract `ItemsDataEditorDialog.commitValue`
-  and literal formatting into the shared typed-cell logic, and replace its
+- [ ] Before adding the temporal UI, migrate `ItemsDataEditorDialog`,
+  `StructuredDataEditorDialog`, and `StringListEditorDialog` to the shared draft
+  transaction and atomic batch commit entry point. A single-property dialog
+  emits a one-property batch, still producing exactly one undoable history item,
+  one Preview refresh, and one Inspector synchronization. Cancel/window-close
+  emits no batch. ItemsData Clear changes only the draft and requires Apply.
+- [ ] During that migration, extract `ItemsDataEditorDialog.commitValue` and
+  literal formatting into the shared typed-cell logic, and replace its
   Items-specific effective-value lookup with the general related-state snapshot.
-  Preserve the existing ItemsData UI and Clear/Apply semantics. Reuse existing
-  parser/encoder code from structured-data and string-list editors without
-  introducing a shared dialog superclass.
+  Reuse existing parser/encoder code from structured-data and string-list
+  editors without introducing a shared dialog superclass or changing their
+  accepted value contracts.
 - [ ] Render scalar `Value` as a compact inline native date picker when its
   audited value can be represented losslessly. Render `Limits` inline as one
   two-row composite editor containing Start and End native date pickers; request
@@ -732,8 +758,9 @@ asset paths without filesystem mutation, while unsupported forms remain intact.
   `drawnow`, and destroy each hidden control/dialog fixture.
 - [ ] Add regression coverage for the retrofitted existing editors before the
   date slice commit: accepted value types, invalid cell coordinates and
-  messages, Clear/Apply behavior, effective related values, and unchanged
-  single-property history and UI semantics.
+  messages, staged Clear, Apply/Cancel/window-close behavior, effective related
+  values, no pre-Apply model mutation, and exactly one history record, Preview
+  refresh, and Inspector synchronization per accepted Apply.
 
 **Gate:** the batch infrastructure proves all-or-nothing mutation independently
 of the date UI, and every supported date mode constructs, edits, validates,
