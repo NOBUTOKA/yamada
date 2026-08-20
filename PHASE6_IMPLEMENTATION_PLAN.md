@@ -763,10 +763,14 @@ parity were regenerated successfully.
   a deterministic taller Inspector row through its date-time schema rather than a
   component/path conditional. Each accepted change submits the complete ordered
   two-element value, so the model never contains only one edited bound. Use a
-  modal date-list dialog only for `DisabledDates`, with Add, Delete selected,
-  Clear, Apply, and Cancel actions. The initial dialog owns its normalized date
-  draft operations; table-row reuse remains in the unchecked shared collection
-  operations item above.
+  modal date-list dialog only for `DisabledDates`, with one native date picker
+  and Delete action per row, plus Add, Clear, Apply, and window-close Cancel.
+  The initial dialog owns its normalized date draft operations; table-row reuse
+  remains in the unchecked shared collection operations item above.
+- [x] Replace the generic finite-literal control for `DisabledDaysOfWeek` with
+  seven compact localized state buttons (Sunday through Saturday). Route by the
+  `dayOfWeekList` contract rather than a component/path condition, and preserve
+  numeric, string, or character-cell list representation when committing.
 - [x] Extend non-evaluating parsing and encoding only for the allowlisted
   temporal forms admitted by each audited mode. Pass typed temporal values from
   native controls to the model without a locale-formatted text round-trip. Keep

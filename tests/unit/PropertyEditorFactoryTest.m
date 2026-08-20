@@ -382,19 +382,26 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
         end
 
         function createsStructuredDayListEditor(testCase)
-            % createsStructuredDayListEditor Route numeric or localized day lists through safe literals.
+            % createsStructuredDayListEditor Route documented weekday values to state buttons.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
             definition = definition.Properties([definition.Properties.Path] == "DisabledDaysOfWeek");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+                @(value) setappdata(figure, "committed", value));
             macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 3]", true, [1 3]);
             drawnow;
             testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyClass(control, "matlab.ui.control.Button");
-            testCase.verifyEqual(string(control.Enable), "on");
-            testCase.verifyEqual(string(control.Text), "[1 3]");
+            testCase.verifyClass(control, "matlab.ui.container.Panel");
+            buttons = findall(control, "Tag", "macd-inspector-day-of-week-button");
+            testCase.verifyEqual(numel(buttons), 7);
+            selectedText = string({buttons([buttons.Value]).Text});
+            testCase.verifyEqual(sort(selectedText), ["日", "火"]);
+            monday = buttons(string({buttons.Text}) == "月");
+            monday.Value = true;
+            monday.ValueChangedFcn(monday, struct());
+            testCase.verifyEqual(getappdata(figure, "committed"), [1 2 3]);
             clear cleanup
         end
 

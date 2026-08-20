@@ -11,34 +11,34 @@ classdef DateListEditorDialogTest < matlab.unittest.TestCase
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
             dialog = macd.ui.inspector.DateListEditorDialog.open( ...
-                datetime.empty(0, 1), "DisabledDates", ...
+                [datetime(2024, 3, 1); datetime(2024, 3, 2)], "DisabledDates", ...
                 @(changes) captureChanges(owner, changes), false);
-            picker = findall(dialog, "Tag", "macd-inspector-date-list-picker");
-            addButton = findall(dialog, "Tag", "macd-inspector-date-list-add");
-            list = findall(dialog, "Tag", "macd-inspector-date-list-values");
-            deleteButton = findall(dialog, "Tag", "macd-inspector-date-list-delete");
             clearButton = findall(dialog, "Tag", "macd-inspector-date-list-clear");
             applyButton = findall(dialog, "Tag", "macd-inspector-date-list-apply");
 
-            picker.Value = datetime(2024, 3, 2);
-            addButton.ButtonPushedFcn(addButton, struct());
-            picker.Value = datetime(2024, 3, 1);
-            addButton.ButtonPushedFcn(addButton, struct());
             testCase.verifyEmpty(getappdata(owner, "changes"));
-            testCase.verifyEqual(string(list.Items), ["2024-03-01", "2024-03-02"]);
-            list.Value = '2024-03-01';
+            pickers = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
+            testCase.verifyEqual(numel(pickers), 2);
+            deleteButtons = findall(dialog, "Tag", "macd-inspector-date-list-delete");
+            deleteButton = deleteButtons([deleteButtons.UserData] == 1);
             deleteButton.ButtonPushedFcn(deleteButton, struct());
-            testCase.verifyEqual(string(list.Items), "2024-03-02");
+            pickers = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
+            testCase.verifyEqual(numel(pickers), 1);
+            testCase.verifyEqual(pickers.Value, datetime(2024, 3, 2));
             clearButton.ButtonPushedFcn(clearButton, struct());
-            testCase.verifyEmpty(list.Items);
-            picker.Value = datetime(2024, 3, 3);
+            testCase.verifyEmpty(findall(dialog, "Tag", "macd-inspector-date-list-row-picker"));
+            addButton = findall(dialog, "Tag", "macd-inspector-date-list-add");
             addButton.ButtonPushedFcn(addButton, struct());
+            picker = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
+            expected = datetime(2024, 3, 3);
+            picker.Value = expected;
+            picker.ValueChangedFcn(picker, struct());
             applyButton.ButtonPushedFcn(applyButton, struct());
 
             changes = getappdata(owner, "changes");
             testCase.verifySize(changes, [1 1]);
             testCase.verifyEqual(changes.Path, "DisabledDates");
-            testCase.verifyEqual(changes.Value, datetime(2024, 3, 3));
+            testCase.verifyEqual(changes.Value, expected);
             testCase.verifyFalse(isvalid(dialog));
             clear cleanup
         end
@@ -52,12 +52,9 @@ classdef DateListEditorDialogTest < matlab.unittest.TestCase
             dialog = macd.ui.inspector.DateListEditorDialog.open( ...
                 datetime.empty(0, 1), "DisabledDates", ...
                 @(changes) captureChanges(owner, changes), false);
-            picker = findall(dialog, "Tag", "macd-inspector-date-list-picker");
             addButton = findall(dialog, "Tag", "macd-inspector-date-list-add");
-            cancelButton = findall(dialog, "Tag", "macd-inspector-date-list-cancel");
-            picker.Value = datetime(2024, 3, 1);
             addButton.ButtonPushedFcn(addButton, struct());
-            cancelButton.ButtonPushedFcn(cancelButton, struct());
+            dialog.CloseRequestFcn(dialog, struct());
 
             testCase.verifyEmpty(getappdata(owner, "changes"));
             testCase.verifyFalse(isvalid(dialog));

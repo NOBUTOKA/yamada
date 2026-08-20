@@ -19,74 +19,60 @@ classdef DateListEditorDialog
             dates = macd.ui.inspector.DateListEditorDialog.normalize(initialValue);
             transaction = macd.model.PropertyTransaction(path, {dates});
             dialog = uifigure("Name", "Edit disabled dates", "Visible", "off", ...
-                "WindowStyle", "modal", "Position", [300 300 420 330], ...
+                "WindowStyle", "modal", "Position", [300 300 360 330], ...
                 "Tag", "macd-inspector-date-list-dialog");
-            grid = uigridlayout(dialog, [5 2], "Padding", [12 12 12 12], ...
-                "RowHeight", {22, "1x", 30, 30, 30}, "ColumnWidth", {"1x", 90});
-            uilabel(grid, "Text", "Disabled dates", ...
-                "Tag", "macd-inspector-date-list-label");
-            list = uilistbox(grid, "Multiselect", "on", ...
+            dialog.CloseRequestFcn = @(~, ~) closeDialog();
+            grid = uigridlayout(dialog, [2 1], "Padding", [12 12 12 12], ...
+                "RowHeight", {"1x", 32}, "RowSpacing", 8);
+            listPanel = uipanel(grid, "BorderType", "line", ...
                 "Tag", "macd-inspector-date-list-values");
-            list.Layout.Row = 2;
-            list.Layout.Column = [1 2];
-            picker = uidatepicker(grid, "Value", datetime("today"), ...
-                "Tag", "macd-inspector-date-list-picker");
-            picker.Layout.Row = 3;
-            addButton = uibutton(grid, "Text", "Add", ...
-                "Tag", "macd-inspector-date-list-add", ...
-                "ButtonPushedFcn", @(~, ~) addDate());
-            addButton.Layout.Row = 3;
-            addButton.Layout.Column = 2;
-            clearButton = uibutton(grid, "Text", "Clear", ...
+            listPanel.Scrollable = "on";
+            listPanel.AutoResizeChildren = "off";
+            buttons = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
+                "ColumnWidth", {90, "1x"}, "ColumnSpacing", 8);
+            uibutton(buttons, "Text", "Clear", ...
                 "Tag", "macd-inspector-date-list-clear", ...
                 "ButtonPushedFcn", @(~, ~) clearDates());
-            clearButton.Layout.Row = 4;
-            deleteButton = uibutton(grid, "Text", "Delete selected", ...
-                "Tag", "macd-inspector-date-list-delete", ...
-                "ButtonPushedFcn", @(~, ~) deleteSelected());
-            deleteButton.Layout.Row = 4;
-            deleteButton.Layout.Column = 2;
-            cancelButton = uibutton(grid, "Text", "Cancel", ...
-                "Tag", "macd-inspector-date-list-cancel", ...
-                "ButtonPushedFcn", @(~, ~) closeDialog());
-            cancelButton.Layout.Row = 5;
-            applyButton = uibutton(grid, "Text", "Apply", ...
+            uibutton(buttons, "Text", "Apply", ...
                 "Tag", "macd-inspector-date-list-apply", ...
                 "ButtonPushedFcn", @(~, ~) applyDates());
-            applyButton.Layout.Row = 5;
-            applyButton.Layout.Column = 2;
-            refreshList();
+            refreshRows();
             if visible
                 dialog.Visible = "on";
             end
 
             function addDate()
-                % addDate Stage one picker date locally and retain canonical ordering.
-                candidate = picker.Value;
-                if isnat(candidate)
-                    uialert(dialog, "Choose one calendar date before adding it.", "Invalid date");
-                    return
-                end
+                % addDate Insert one editable, nonduplicate calendar date into the local draft.
+                candidate = macd.ui.inspector.DateListEditorDialog.nextSuggestedDate(dates);
                 dates = macd.ui.inspector.DateListEditorDialog.normalize([dates; candidate]);
-                refreshList();
+                refreshRows();
             end
 
-            function deleteSelected()
-                % deleteSelected Remove the selected draft dates without committing the property.
-                selected = string(list.Value);
-                if isempty(selected)
+            function deleteDate(source)
+                % deleteDate Remove one draft row without changing the document.
+                index = source.UserData;
+                dates(index) = [];
+                dates = reshape(dates, [], 1);
+                refreshRows();
+            end
+
+            function changeDate(source)
+                % changeDate Replace one draft date and retain the documented normalized order.
+                index = source.UserData;
+                candidate = source.Value;
+                if isnat(candidate)
+                    source.Value = dates(index);
                     return
                 end
-                items = macd.ui.inspector.DateListEditorDialog.labels(dates);
-                dates(ismember(items, selected)) = [];
-                dates = reshape(dates, [], 1);
-                refreshList();
+                dates(index) = candidate;
+                dates = macd.ui.inspector.DateListEditorDialog.normalize(dates);
+                refreshRows();
             end
 
             function clearDates()
                 % clearDates Stage the documented empty column vector until Apply.
                 dates = datetime.empty(0, 1);
-                refreshList();
+                refreshRows();
             end
 
             function applyDates()
@@ -100,10 +86,36 @@ classdef DateListEditorDialog
                 closeDialog();
             end
 
-            function refreshList()
-                % refreshList Synchronize only dialog controls from its private draft.
-                list.Items = cellstr(macd.ui.inspector.DateListEditorDialog.labels(dates));
-                list.Value = {};
+            function refreshRows()
+                % refreshRows Rebuild native date rows from the dialog-owned draft only.
+                delete(listPanel.Children);
+                panelPosition = getpixelposition(listPanel, true);
+                rowCount = numel(dates) + 1;
+                contentHeight = max(6 + 33 * rowCount, panelPosition(4) + 1);
+                contentWidth = max(panelPosition(3) - 18, 1);
+                content = uipanel(listPanel, "BorderType", "none", ...
+                    "Position", [1 1 contentWidth contentHeight]);
+                rows = uigridlayout(content, [rowCount 2], "Padding", [3 3 3 3], ...
+                    "RowSpacing", 3, "ColumnSpacing", 6, ...
+                    "ColumnWidth", {"1x", 30}, ...
+                    "RowHeight", repmat({30}, 1, rowCount));
+                for index = 1:numel(dates)
+                    picker = uidatepicker(rows, "Value", dates(index), ...
+                        "Tag", "macd-inspector-date-list-row-picker", ...
+                        "ValueChangedFcn", @(source, ~) changeDate(source));
+                    picker.UserData = index;
+                    picker.Layout.Row = index;
+                    remove = uibutton(rows, "Text", "−", "FontColor", [0.8 0 0], ...
+                        "Tag", "macd-inspector-date-list-delete", ...
+                        "ButtonPushedFcn", @(source, ~) deleteDate(source));
+                    remove.UserData = index;
+                    remove.Layout.Row = index;
+                    remove.Layout.Column = 2;
+                end
+                add = uibutton(rows, "Text", "+", "FontColor", [0 0.55 0], ...
+                    "Tag", "macd-inspector-date-list-add", ...
+                    "ButtonPushedFcn", @(~, ~) addDate());
+                add.Layout.Row = rowCount;
             end
 
             function closeDialog()
@@ -146,6 +158,21 @@ classdef DateListEditorDialog
             end
 
             result = string(value, "yyyy-MM-dd");
+        end
+
+        function result = nextSuggestedDate(value)
+            % nextSuggestedDate Choose a visible new date without duplicating the current draft.
+            arguments (Input)
+                value datetime
+            end
+            arguments (Output)
+                result (1, 1) datetime
+            end
+
+            result = dateshift(datetime("today"), "start", "day");
+            if ~isempty(value) && result <= value(end)
+                result = value(end) + caldays(1);
+            end
         end
     end
 end
