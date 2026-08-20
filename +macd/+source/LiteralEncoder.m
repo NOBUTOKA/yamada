@@ -40,6 +40,8 @@ classdef LiteralEncoder
                     rows(row) = "'" + string(strrep(value(row, :), '''', '''''')) + "'";
                 end
                 text = "[" + strjoin(rows, "; ") + "]";
+            elseif isdatetime(value) && ismatrix(value)
+                text = macd.source.LiteralEncoder.encodeDateTime(value);
             elseif isnumeric(value) && isreal(value) && ismatrix(value)
                 text = string(mat2str(value, 17));
             elseif islogical(value) && ismatrix(value)
@@ -55,6 +57,47 @@ classdef LiteralEncoder
                 % Refuse values that cannot be round-tripped conservatively.
                 error("macd:LiteralEncoder:UnsupportedValue", ...
                     "Value cannot be represented as a safe MATLAB literal.");
+            end
+        end
+    end
+
+    methods (Static, Access = private)
+        function text = encodeDateTime(value)
+            % encodeDateTime Encode date-only, timezone-free datetime data without evaluation.
+            arguments (Input)
+                value datetime
+            end
+            arguments (Output)
+                text string
+            end
+
+            if isempty(value)
+                text = "datetime.empty(" + size(value, 1) + ", " + size(value, 2) + ")";
+                return
+            end
+            if ~isempty(value.TimeZone) || any(~isnat(value) & seconds(timeofday(value)) ~= 0, "all")
+                error("macd:LiteralEncoder:UnsupportedValue", ...
+                    "Value cannot be represented as a safe MATLAB literal.");
+            end
+
+            rows = strings(1, size(value, 1));
+            for row = 1:size(value, 1)
+                encoded = strings(1, size(value, 2));
+                for column = 1:size(value, 2)
+                    item = value(row, column);
+                    if isnat(item)
+                        encoded(column) = "NaT";
+                    else
+                        encoded(column) = "datetime(" + year(item) + ", " + ...
+                            month(item) + ", " + day(item) + ")";
+                    end
+                end
+                rows(row) = strjoin(encoded, " ");
+            end
+            if isscalar(value)
+                text = rows(1);
+            else
+                text = "[" + strjoin(rows, "; ") + "]";
             end
         end
     end

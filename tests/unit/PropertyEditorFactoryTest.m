@@ -170,6 +170,45 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function createsNativeDateTimeEditors(testCase)
+            % createsNativeDateTimeEditors Route scalar, bounds, and date lists by schema shape.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            component = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            scalar = component.Properties([component.Properties.Path] == "Value");
+            scalarControl = macd.ui.inspector.PropertyEditorFactory.create(figure, scalar, ...
+                @(value) setappdata(figure, "scalarDate", value));
+            selected = datetime(2024, 2, 29);
+            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                scalarControl, "", true, selected);
+            scalarControl.Value = datetime(2024, 3, 1);
+            scalarControl.ValueChangedFcn(scalarControl, struct());
+
+            limits = component.Properties([component.Properties.Path] == "Limits");
+            limitsControl = macd.ui.inspector.PropertyEditorFactory.create(figure, limits, ...
+                @(value) setappdata(figure, "dateLimits", value));
+            range = [datetime(2024, 1, 1) datetime(2024, 12, 31)];
+            macd.ui.inspector.PropertyEditorFactory.synchronize(limitsControl, "", true, range);
+            parts = limitsControl.UserData;
+            parts.Start.Value = datetime(2024, 2, 1);
+            parts.Start.ValueChangedFcn(parts.Start, struct());
+
+            list = component.Properties([component.Properties.Path] == "DisabledDates");
+            listControl = macd.ui.inspector.PropertyEditorFactory.create(figure, list, @(~) []);
+            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                listControl, "", true, datetime.empty(0, 1));
+            drawnow;
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(scalar));
+            testCase.verifyClass(scalarControl, "matlab.ui.control.DatePicker");
+            testCase.verifyEqual(getappdata(figure, "scalarDate"), datetime(2024, 3, 1));
+            testCase.verifyEqual(getappdata(figure, "dateLimits"), ...
+                [datetime(2024, 2, 1) datetime(2024, 12, 31)]);
+            testCase.verifyEqual(string(listControl.Tag), "macd-inspector-date-list-editor");
+            testCase.verifyEqual(string(listControl.Enable), "on");
+            clear cleanup
+        end
+
         function defersItemsDataAsReadOnly(testCase)
             % defersItemsDataAsReadOnly Keep arbitrary list-associated data out of the string editor.
 

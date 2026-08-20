@@ -68,6 +68,35 @@ classdef GenerationTest < matlab.unittest.TestCase
                 "app.GreetingLabel.Text = ""It's ready"";");
         end
 
+        function generatesAndParsesDateOnlyProperties(testCase)
+            % generatesAndParsesDateOnlyProperties Round-trip allowlisted native date values.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("DateApp", registry);
+            definition = registry.getById("uidatepicker");
+            picker = macd.model.ComponentRecord("date-1", "DatePicker", ...
+                definition.Factory, definition.DeclaredType, "generated");
+            picker.setProperty("Value", datetime(2024, 2, 29));
+            picker.setProperty("Limits", [datetime(2024, 1, 1) datetime(2024, 12, 31)]);
+            picker.setProperty("DisabledDates", datetime(2024, 3, 1));
+            document.addComponent(picker, document.RootComponentId);
+
+            [source, diagnostics] = macd.source.NewAppGenerator(registry).generate(document);
+            [parsed, parseDiagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            parsedPicker = parsed.getComponentByName("DatePicker");
+
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifySubstring(source, ...
+                "app.DatePicker.Value = datetime(2024, 2, 29);");
+            testCase.verifyEqual(parsedPicker.getProperty("Value").LiteralValue, ...
+                datetime(2024, 2, 29));
+            testCase.verifyEqual(parsedPicker.getProperty("Limits").LiteralValue, ...
+                [datetime(2024, 1, 1) datetime(2024, 12, 31)]);
+            testCase.verifyEqual(parsedPicker.getProperty("DisabledDates").LiteralValue, ...
+                datetime(2024, 3, 1));
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(parseDiagnostics));
+        end
+
         function invalidClassNameBlocksGeneration(testCase)
             % invalidClassNameBlocksGeneration Verify fatal name validation.
 

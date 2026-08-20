@@ -220,6 +220,11 @@ classdef InspectorPropertyRow < handle
             % rowHeight Return the compact or multiline height for one property row.
             if definition.Editor == "multilineText"
                 height = 84;
+            elseif definition.Editor == "dateTime" && ...
+                    isfield(definition.ValueSchema, "shape") && ...
+                    string(definition.ValueSchema.shape) == "fixedLengthVector"
+                % The date schema itself requests the two-picker presentation height.
+                height = 56;
             else
                 height = 28;
             end

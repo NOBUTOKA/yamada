@@ -68,6 +68,9 @@ classdef PropertyEditorFactory
                         "ButtonPushedFcn", @(source, ~) ...
                         macd.ui.inspector.PropertyEditorFactory.openStructuredDataEditor( ...
                         source.UserData, definition.Path, batchCommitFcn));
+                case "dateTime"
+                    control = macd.ui.inspector.PropertyEditorFactory.createDateTimeEditor( ...
+                        parent, definition, commitFcn, batchCommitFcn);
                 case "text"
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -102,7 +105,7 @@ classdef PropertyEditorFactory
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
                 "onOff", "enum", "number", "numericVector", "color", "stringList", ...
-                "multilineText", "url", "asset", "structuredData"]);
+                "multilineText", "url", "asset", "structuredData", "dateTime"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -118,7 +121,19 @@ classdef PropertyEditorFactory
                 relatedValues struct = struct()
             end
 
-            if isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
+                macd.ui.inspector.PropertyEditorFactory.synchronizeDatePicker( ...
+                    control, rawValue, isEditable);
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-limits-editor"
+                macd.ui.inspector.PropertyEditorFactory.synchronizeDateLimits( ...
+                    control, rawValue, isEditable);
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-list-editor"
+                control.UserData = rawValue;
+                control.Text = macd.ui.inspector.PropertyEditorFactory.dateListSummary(rawValue);
+                control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                    isEditable && macd.ui.inspector.PropertyEditorFactory.isSafeDateList(rawValue));
+                return
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
                 parts = control.UserData;
                 if ischar(rawValue) && isrow(rawValue)
                     parts.Edit.Value = string(rawValue);
@@ -242,7 +257,14 @@ classdef PropertyEditorFactory
                 control
             end
 
-            if isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
+                value = control.Value;
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-limits-editor"
+                parts = control.UserData;
+                value = [parts.Start.Value parts.End.Value];
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-list-editor"
+                value = control.UserData;
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
                 value = control.UserData.Edit.Value;
             elseif isa(control, "matlab.ui.control.CheckBox") || ...
                     isa(control, "matlab.ui.control.NumericEditField") || ...
@@ -263,7 +285,20 @@ classdef PropertyEditorFactory
                 value
             end
 
-            if isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
+                if isdatetime(value) && isscalar(value)
+                    control.Value = value;
+                end
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-limits-editor"
+                parts = control.UserData;
+                if isdatetime(value) && numel(value) == 2
+                    parts.Start.Value = value(1);
+                    parts.End.Value = value(2);
+                end
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-list-editor"
+                control.UserData = value;
+                control.Text = macd.ui.inspector.PropertyEditorFactory.dateListSummary(value);
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
                 parts = control.UserData;
                 parts.Edit.Value = value;
             elseif isa(control, "matlab.ui.control.CheckBox") || ...
@@ -285,6 +320,166 @@ classdef PropertyEditorFactory
     end
 
     methods (Static, Access = private)
+        function control = createDateTimeEditor(parent, definition, commitFcn, batchCommitFcn)
+            % createDateTimeEditor Select a native date adapter from the audited schema shape.
+            arguments (Input)
+                parent
+                definition (1, 1) macd.model.PropertyDefinition
+                commitFcn (1, 1) function_handle
+                batchCommitFcn (1, 1) function_handle
+            end
+            arguments (Output)
+                control
+            end
+
+            schema = definition.ValueSchema;
+            shape = string(schema.shape);
+            if shape == "scalar"
+                control = uidatepicker(parent, "Tag", "macd-inspector-date-picker-editor", ...
+                    "ValueChangedFcn", @(source, ~) commitFcn(source.Value));
+                return
+            end
+            if shape == "fixedLengthVector"
+                control = uipanel(parent, "BorderType", "none", ...
+                    "Tag", "macd-inspector-date-limits-editor");
+                grid = uigridlayout(control, [2 2], "Padding", [0 0 0 0], ...
+                    "RowHeight", {25, 25}, "ColumnWidth", {36, "1x"}, "RowSpacing", 2);
+                uilabel(grid, "Text", "Start");
+                start = uidatepicker(grid, "Tag", "macd-inspector-date-limit-start");
+                uilabel(grid, "Text", "End");
+                finish = uidatepicker(grid, "Tag", "macd-inspector-date-limit-end");
+                parts = struct("Start", start, "End", finish);
+                control.UserData = parts;
+                start.UserData = parts;
+                finish.UserData = parts;
+                start.ValueChangedFcn = @(source, ~) ...
+                    macd.ui.inspector.PropertyEditorFactory.commitDateLimits(source, commitFcn);
+                finish.ValueChangedFcn = @(source, ~) ...
+                    macd.ui.inspector.PropertyEditorFactory.commitDateLimits(source, commitFcn);
+                return
+            end
+            if shape == "vector"
+                control = uibutton(parent, "Text", "Edit dates", ...
+                    "Tag", "macd-inspector-date-list-editor", ...
+                    "ButtonPushedFcn", @(source, ~) ...
+                    macd.ui.inspector.DateListEditorDialog.open( ...
+                    source.UserData, definition.Path, batchCommitFcn));
+                return
+            end
+            error("macd:PropertyEditorFactory:UnsupportedDateTimeSchema", ...
+                "The dateTime editor requires a scalar, fixed-length vector, or vector schema.");
+        end
+
+        function synchronizeDatePicker(control, rawValue, isEditable)
+            % synchronizeDatePicker Load one lossless native calendar date into an inline picker.
+            arguments (Input)
+                control
+                rawValue
+                isEditable (1, 1) logical
+            end
+
+            if macd.ui.inspector.PropertyEditorFactory.isSafeDateScalar(rawValue)
+                control.Value = rawValue;
+                control.UserData = rawValue;
+                control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
+            else
+                control.Value = NaT;
+                control.UserData = [];
+                control.Enable = "off";
+            end
+        end
+
+        function synchronizeDateLimits(control, rawValue, isEditable)
+            % synchronizeDateLimits Load both bounds together, preserving the atomic editor contract.
+            arguments (Input)
+                control
+                rawValue
+                isEditable (1, 1) logical
+            end
+
+            parts = control.UserData;
+            if macd.ui.inspector.PropertyEditorFactory.isSafeDateLimits(rawValue)
+                parts.Start.Value = rawValue(1);
+                parts.End.Value = rawValue(2);
+                enabled = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
+                parts.Start.Enable = enabled;
+                parts.End.Enable = enabled;
+            else
+                parts.Start.Value = NaT;
+                parts.End.Value = NaT;
+                parts.Start.Enable = "off";
+                parts.End.Enable = "off";
+            end
+        end
+
+        function commitDateLimits(source, commitFcn)
+            % commitDateLimits Submit both bounds as one property candidate after either edit.
+            arguments (Input)
+                source
+                commitFcn (1, 1) function_handle
+            end
+
+            parts = source.UserData;
+            commitFcn([parts.Start.Value parts.End.Value]);
+        end
+
+        function result = isSafeDateScalar(value)
+            % isSafeDateScalar Return whether one value can enter a native date picker losslessly.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = isdatetime(value) && isscalar(value) && isempty(value.TimeZone) && ...
+                (isnat(value) || seconds(timeofday(value)) == 0);
+        end
+
+        function result = isSafeDateLimits(value)
+            % isSafeDateLimits Return whether two date-only bounds can enter paired pickers.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = isdatetime(value) && isvector(value) && numel(value) == 2 && ...
+                isempty(value.TimeZone) && ~any(isnat(value)) && ...
+                all(seconds(timeofday(value)) == 0);
+        end
+
+        function result = isSafeDateList(value)
+            % isSafeDateList Return whether a datetime vector can open the disabled-date dialog.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = isdatetime(value) && (isempty(value) || isvector(value)) && ...
+                isempty(value.TimeZone) && ~any(isnat(value)) && ...
+                all(seconds(timeofday(value)) == 0);
+        end
+
+        function text = dateListSummary(value)
+            % dateListSummary Describe a safe disabled-date vector without formatted source parsing.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+
+            if macd.ui.inspector.PropertyEditorFactory.isSafeDateList(value)
+                text = sprintf("%d disabled dates", numel(value));
+            else
+                text = "Unsupported dates";
+            end
+        end
+
         function items = enumItems(definition)
             % enumItems Extract finite enum choices from the definition schema.
             items = strings(1, 0);

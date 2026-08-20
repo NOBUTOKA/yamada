@@ -757,24 +757,26 @@ parity were regenerated successfully.
   Reuse existing parser/encoder code from structured-data and string-list
   editors without introducing a shared dialog superclass or changing their
   accepted value contracts.
-- [ ] Render scalar `Value` as a compact inline native date picker when its
+- [x] Render scalar `Value` as a compact inline native date picker when its
   audited value can be represented losslessly. Render `Limits` inline as one
   two-row composite editor containing Start and End native date pickers; request
-  a deterministic taller Inspector row through editor metadata rather than a
+  a deterministic taller Inspector row through its date-time schema rather than a
   component/path conditional. Each accepted change submits the complete ordered
   two-element value, so the model never contains only one edited bound. Use a
   modal date-list dialog only for `DisabledDates`, with Add, Delete selected,
-  Clear, Apply, and Cancel actions; this dialog consumes the shared collection
-  helpers also used by table rows.
-- [ ] Extend non-evaluating parsing and encoding only for the allowlisted
+  Clear, Apply, and Cancel actions. The initial dialog owns its normalized date
+  draft operations; table-row reuse remains in the unchecked shared collection
+  operations item above.
+- [x] Extend non-evaluating parsing and encoding only for the allowlisted
   temporal forms admitted by each audited mode. Pass typed temporal values from
   native controls to the model without a locale-formatted text round-trip. Keep
   all other expressions and unsupported temporal metadata source-backed and
   read-only.
-- [ ] Cover draft cancellation, empty/`NaT`, ordered and reversed limits,
-  multiple disabled-date row edits, Apply, failed Apply, undo/redo, Preview,
-  parsed-source preservation, and generated-source round-trip. Construct,
-  `drawnow`, and destroy each hidden control/dialog fixture.
+- [ ] Complete remaining coverage for failed Apply, undo/redo, and Preview.
+  Current coverage constructs and destroys hidden fixtures; covers draft
+  cancellation, empty/`NaT` parser round-trip, ordered and reversed limits,
+  Add/Delete/Clear/Apply date-list behavior, typed inline commits, and generated
+  source round-trip.
 - [ ] Add regression coverage for the retrofitted existing editors before the
   date slice commit: accepted value types, invalid cell coordinates and
   messages, staged Clear, Apply/Cancel/window-close behavior, effective related

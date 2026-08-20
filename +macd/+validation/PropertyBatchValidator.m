@@ -70,6 +70,11 @@ classdef PropertyBatchValidator
                 if strlength(message) > 0
                     return
                 end
+            elseif definition.Editor == "dateTime"
+                message = macd.validation.PropertyBatchValidator.validateDateTime(schema, value);
+                if strlength(message) > 0
+                    return
+                end
             end
             if isfield(schema, "kind") && string(schema.kind) == "dayOfWeekList" && ...
                     ~macd.validation.PropertyBatchValidator.isDayOfWeekList(value)
@@ -83,17 +88,34 @@ classdef PropertyBatchValidator
                 end
                 for constraint = constraints
                     rule = constraint{1};
-                    if string(rule.kind) ~= "sameLengthAs"
-                        continue
-                    end
-                    referencePath = string(rule.property);
-                    if ~transaction.hasValue(referencePath)
-                        continue
-                    end
-                    if numel(value) ~= numel(transaction.value(referencePath))
-                        message = "The value must have the same number of elements as " + ...
-                            referencePath + ".";
-                        return
+                    switch string(rule.kind)
+                        case "sameLengthAs"
+                            referencePath = string(rule.property);
+                            if transaction.hasValue(referencePath) && ...
+                                    numel(value) ~= numel(transaction.value(referencePath))
+                                message = "The value must have the same number of elements as " + ...
+                                    referencePath + ".";
+                                return
+                            end
+                        case "withinLimitsOf"
+                            referencePath = string(rule.property);
+                            if transaction.hasValue(referencePath)
+                                message = macd.validation.PropertyBatchValidator.validateWithinDateLimits( ...
+                                    value, transaction.value(referencePath));
+                                if strlength(message) > 0
+                                    return
+                                end
+                            end
+                        case "strictlyIncreasing"
+                            if numel(value) ~= 2 || value(1) >= value(2)
+                                message = "The end date must be later than the start date.";
+                                return
+                            end
+                        case "sortedAscending"
+                            if numel(value) > 1 && any(value(1:end - 1) > value(2:end))
+                                message = "Dates must be sorted in ascending order.";
+                                return
+                            end
                     end
                 end
             end
@@ -152,6 +174,82 @@ classdef PropertyBatchValidator
             elseif isfield(schema, "exclusiveMaximum") && schema.exclusiveMaximum && ...
                     isfield(schema, "maximum") && any(value >= schema.maximum)
                 message = "Vector values must be less than the allowed maximum.";
+            end
+        end
+
+        function message = validateDateTime(schema, value)
+            % validateDateTime Check one audited date-only datetime scalar or vector.
+            arguments (Input)
+                schema (1, 1) struct
+                value
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            message = "";
+            if ~isdatetime(value) || ~ismatrix(value)
+                message = "Enter a datetime value.";
+                return
+            end
+            if ~isempty(value.TimeZone) || any(~isnat(value) & ...
+                    seconds(timeofday(value)) ~= 0, "all")
+                message = "Dates must be timezone-free calendar dates.";
+                return
+            end
+            if ~isfield(schema, "allowsNaT") || ~schema.allowsNaT
+                if any(isnat(value), "all")
+                    message = "This date property does not accept NaT.";
+                    return
+                end
+            end
+            shape = "any";
+            if isfield(schema, "shape")
+                shape = string(schema.shape);
+            end
+            switch shape
+                case "scalar"
+                    if ~isscalar(value)
+                        message = "Enter one date.";
+                    end
+                case "fixedLengthVector"
+                    length = 0;
+                    if isfield(schema, "fixedLength")
+                        length = schema.fixedLength;
+                    end
+                    if ~isvector(value) || numel(value) ~= length
+                        message = "Enter the required number of dates.";
+                    elseif isfield(schema, "orientation") && string(schema.orientation) == "row" && ...
+                            size(value, 1) ~= 1
+                        message = "Dates must be a row vector.";
+                    end
+                case "vector"
+                    if ~isvector(value) && ~isempty(value)
+                        message = "Enter a date vector.";
+                    elseif isfield(schema, "orientation") && string(schema.orientation) == "column" && ...
+                            ~isempty(value) && size(value, 2) ~= 1
+                        message = "Dates must be a column vector.";
+                    end
+            end
+        end
+
+        function message = validateWithinDateLimits(value, limits)
+            % validateWithinDateLimits Check a nonmissing scalar date against effective limits.
+            arguments (Input)
+                value
+                limits
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            message = "";
+            if ~isdatetime(value) || ~isscalar(value) || isnat(value) || ...
+                    ~isdatetime(limits) || numel(limits) ~= 2 || any(isnat(limits))
+                return
+            end
+            if value < limits(1) || value > limits(2)
+                message = "The selected date must be within Limits.";
             end
         end
 

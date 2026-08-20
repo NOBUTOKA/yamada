@@ -55,6 +55,12 @@ classdef MatlabLiteralParser
                 return
             end
 
+            % Admit only generated date-only datetime syntax; never evaluate source text.
+            [value, isLiteral] = macd.source.MatlabLiteralParser.parseDateTimeScalar(source);
+            if isLiteral
+                return
+            end
+
             % Support numeric scalar and bracketed real matrix forms, including Inf.
             if macd.source.MatlabLiteralParser.isNumber(source)
                 value = str2double(source);
@@ -62,6 +68,11 @@ classdef MatlabLiteralParser
                 return
             end
             if source(1) == '[' && source(end) == ']'
+                [value, isLiteral] = macd.source.MatlabLiteralParser.parseDateTimeMatrix( ...
+                    source(2:end - 1));
+                if isLiteral
+                    return
+                end
                 if isempty(strtrim(source(2:end - 1)))
                     value = [];
                     isLiteral = true;
@@ -91,6 +102,92 @@ classdef MatlabLiteralParser
     end
 
     methods (Static, Access = private)
+        function [value, isLiteral] = parseDateTimeScalar(text)
+            % parseDateTimeScalar Parse one allowlisted date-only datetime expression.
+            arguments (Input)
+                text char
+            end
+            arguments (Output)
+                value datetime
+                isLiteral logical
+            end
+
+            value = datetime.empty(0, 0);
+            isLiteral = false;
+            if strcmp(text, 'NaT')
+                value = NaT;
+                isLiteral = true;
+                return
+            end
+            emptyMatch = regexp(text, '^datetime\.empty\(\s*(\d+)\s*,\s*(\d+)\s*\)$', ...
+                'tokens', 'once');
+            if ~isempty(emptyMatch)
+                value = datetime.empty(str2double(emptyMatch{1}), str2double(emptyMatch{2}));
+                isLiteral = true;
+                return
+            end
+            match = regexp(text, ['^datetime\(\s*([+-]?\d+)\s*,\s*([+-]?\d+)\s*,\s*' ...
+                '([+-]?\d+)\s*\)$'], 'tokens', 'once');
+            if isempty(match)
+                return
+            end
+            parts = str2double(match);
+            try
+                value = datetime(parts(1), parts(2), parts(3));
+            catch
+                value = datetime.empty(0, 0);
+                return
+            end
+            if year(value) ~= parts(1) || month(value) ~= parts(2) || day(value) ~= parts(3)
+                % Reject MATLAB's overflow normalization so source dates stay literal.
+                value = datetime.empty(0, 0);
+                return
+            end
+            isLiteral = true;
+        end
+
+        function [value, isLiteral] = parseDateTimeMatrix(text)
+            % parseDateTimeMatrix Parse a rectangular matrix of allowlisted datetime expressions.
+            arguments (Input)
+                text char
+            end
+            arguments (Output)
+                value datetime
+                isLiteral logical
+            end
+
+            value = datetime.empty(0, 0);
+            isLiteral = false;
+            pattern = '(?:NaT|datetime\(\s*[+-]?\d+\s*,\s*[+-]?\d+\s*,\s*[+-]?\d+\s*\))';
+            rows = macd.source.MatlabLiteralParser.splitTopLevel(text, ';');
+            rowValues = cell(1, numel(rows));
+            columnCount = [];
+            for row = 1:numel(rows)
+                sourceRow = strtrim(rows{row});
+                tokens = regexp(sourceRow, pattern, 'match');
+                remainder = regexprep(sourceRow, pattern, '');
+                if isempty(tokens) || ~isempty(regexprep(remainder, '[\s,]', ''))
+                    return
+                end
+                values = datetime.empty(1, 0);
+                for column = 1:numel(tokens)
+                    [item, isItemLiteral] = macd.source.MatlabLiteralParser.parseDateTimeScalar(tokens{column});
+                    if ~isItemLiteral || ~isscalar(item)
+                        return
+                    end
+                    values(end + 1) = item; %#ok<AGROW>
+                end
+                if isempty(columnCount)
+                    columnCount = numel(values);
+                elseif numel(values) ~= columnCount
+                    return
+                end
+                rowValues{row} = values;
+            end
+            value = vertcat(rowValues{:});
+            isLiteral = true;
+        end
+
         function result = isNumber(text)
             % isNumber Return true for one finite real decimal representation.
             arguments (Input)

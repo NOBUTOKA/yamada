@@ -108,6 +108,30 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             testCase.verifyTrue(isLiteral);
             testCase.verifyEqual(parsed, original);
         end
+
+        function literalParserRoundTripsAllowlistedDateOnlyValues(testCase)
+            % literalParserRoundTripsAllowlistedDateOnlyValues Preserve generated calendar dates without eval.
+
+            original = [datetime(2024, 2, 29) datetime(2024, 3, 1)];
+            source = macd.source.LiteralEncoder.encode(original);
+            [parsed, isLiteral] = macd.source.MatlabLiteralParser.parse(source);
+            emptySource = macd.source.LiteralEncoder.encode(datetime.empty(0, 1));
+            [emptyDates, isEmptyLiteral] = macd.source.MatlabLiteralParser.parse(emptySource);
+            [missingDate, isMissingLiteral] = macd.source.MatlabLiteralParser.parse("NaT");
+            [invalidDate, isInvalidLiteral] = macd.source.MatlabLiteralParser.parse( ...
+                "datetime(2024, 2, 30)");
+
+            testCase.verifyEqual(source, "[datetime(2024, 2, 29) datetime(2024, 3, 1)]");
+            testCase.verifyTrue(isLiteral);
+            testCase.verifyEqual(parsed, original);
+            testCase.verifyEqual(emptySource, "datetime.empty(0, 1)");
+            testCase.verifyTrue(isEmptyLiteral);
+            testCase.verifySize(emptyDates, [0 1]);
+            testCase.verifyTrue(isMissingLiteral);
+            testCase.verifyTrue(isnat(missingDate));
+            testCase.verifyFalse(isInvalidLiteral);
+            testCase.verifyEmpty(invalidDate);
+        end
     end
 end
 

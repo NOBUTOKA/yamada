@@ -145,6 +145,69 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function datePickerValueCommitPreservesTypedDate(testCase)
+            % datePickerValueCommitPreservesTypedDate Keep native datetime data out of text parsing.
+
+            % Insert a Date Picker, then invoke the native date editor callback.
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure.Visible = "off";
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Date Picker", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            labels = findall(figure, "Type", "uilabel", ...
+                "Tag", "macd-inspector-property-label");
+            label = labels(string({labels.Text}) == "Value");
+            editor = findall(label.Parent, "Tag", "macd-inspector-date-picker-editor");
+            selected = datetime(2024, 2, 29);
+            editor.Value = selected;
+            editor.ValueChangedFcn(editor, struct());
+            drawnow;
+
+            component = app.Document.getComponent(app.SelectedComponentId);
+            entry = component.getProperty("Value");
+            testCase.verifyClass(entry.LiteralValue, "datetime");
+            testCase.verifyEqual(entry.LiteralValue, selected);
+            clear cleanup
+        end
+
+        function datePickerLimitsCommitBothBoundsAtomically(testCase)
+            % datePickerLimitsCommitBothBoundsAtomically Reject a partial invalid range without mutation.
+
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure.Visible = "off";
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Date Picker", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            limitsEditor = findall(figure, "Tag", "macd-inspector-date-limits-editor");
+            parts = limitsEditor.UserData;
+            parts.Start.Value = datetime(2024, 12, 31);
+            parts.End.Value = datetime(2024, 1, 1);
+            parts.Start.ValueChangedFcn(parts.Start, struct());
+            component = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEmpty(component.getProperty("Limits"));
+            parts.Start.Value = datetime(2024, 1, 1);
+            parts.End.Value = datetime(2024, 12, 31);
+            parts.End.ValueChangedFcn(parts.End, struct());
+            entry = component.getProperty("Limits");
+            testCase.verifyEqual(entry.LiteralValue, ...
+                [datetime(2024, 1, 1) datetime(2024, 12, 31)]);
+            clear cleanup
+        end
+
         function editMenuExposesPhase5Commands(testCase)
             % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
 
