@@ -53,13 +53,18 @@
             "valueSchema": {
               "kind": "dateTime",
               "matlabClasses": [
-                "calendarDuration",
-                "datetime",
-                "duration"
+                "datetime"
               ],
-              "shape": "any",
-              "allowsEmpty": true,
-              "constraints": []
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [
+                {
+                  "kind": "withinLimitsOf",
+                  "property": "Limits"
+                }
+              ],
+              "allowsNaT": true,
+              "normalization": "dateOnly"
             }
           }
         },
@@ -105,13 +110,18 @@
             "valueSchema": {
               "kind": "dateTime",
               "matlabClasses": [
-                "calendarDuration",
-                "datetime",
-                "duration"
+                "datetime"
               ],
-              "shape": "any",
-              "allowsEmpty": true,
-              "constraints": []
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [
+                {
+                  "kind": "strictlyIncreasing"
+                }
+              ],
+              "fixedLength": 2,
+              "orientation": "row",
+              "allowsNaT": false
             }
           }
         },
@@ -157,13 +167,17 @@
             "valueSchema": {
               "kind": "dateTime",
               "matlabClasses": [
-                "calendarDuration",
-                "datetime",
-                "duration"
+                "datetime"
               ],
-              "shape": "any",
+              "shape": "vector",
               "allowsEmpty": true,
-              "constraints": []
+              "constraints": [
+                {
+                  "kind": "sortedAscending"
+                }
+              ],
+              "orientation": "column",
+              "allowsNaT": false
             }
           }
         },

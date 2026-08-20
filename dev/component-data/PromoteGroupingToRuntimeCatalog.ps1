@@ -45,17 +45,34 @@ function Get-PropertyMetadata {
 
     $editor = [string]$Capability.requiredEditor
     if ($editor -eq "none") { $editor = "readOnly" }
+    $constraints = @($Capability.valueContract.constraints | ForEach-Object {
+        $constraint = [ordered]@{ kind = [string]$_.kind }
+        if ($null -ne $_.PSObject.Properties["property"]) {
+            $constraint.property = [string]$_.property
+        }
+        $constraint
+    })
     $valueSchema = [ordered]@{
         kind = [string]$Capability.valueContract.kind
         matlabClasses = @($Capability.valueContract.matlabClasses | ForEach-Object { [string]$_ })
         shape = [string]$Capability.valueContract.shape
         allowsEmpty = [bool]$Capability.valueContract.allowsEmpty
-        constraints = @($Capability.valueContract.constraints | ForEach-Object {
-            [ordered]@{ kind = [string]$_.kind; property = [string]$_.property }
-        })
+        constraints = $constraints
     }
     if ($null -ne $Capability.valueContract.PSObject.Properties["values"]) {
         $valueSchema.values = @($Capability.valueContract.values | ForEach-Object { [string]$_ })
+    }
+    if ($null -ne $Capability.valueContract.PSObject.Properties["fixedLength"]) {
+        $valueSchema.fixedLength = [int]$Capability.valueContract.fixedLength
+    }
+    if ($null -ne $Capability.valueContract.PSObject.Properties["orientation"]) {
+        $valueSchema.orientation = [string]$Capability.valueContract.orientation
+    }
+    if ($null -ne $Capability.valueContract.PSObject.Properties["allowsNaT"]) {
+        $valueSchema.allowsNaT = [bool]$Capability.valueContract.allowsNaT
+    }
+    if ($null -ne $Capability.valueContract.PSObject.Properties["normalization"]) {
+        $valueSchema.normalization = [string]$Capability.valueContract.normalization
     }
     return [ordered]@{
         displayName = [string]$SourceProperty.path

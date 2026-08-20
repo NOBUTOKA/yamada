@@ -703,12 +703,24 @@ asset paths without filesystem mutation, while unsupported forms remain intact.
 
 #### 6.9.5 Add shared transaction support and audited date/time editors
 
-- [ ] Re-read the R2024a contracts for `uidatepicker.Value`, `Limits`, and
+- [x] Re-read the R2024a contracts for `uidatepicker.Value`, `Limits`, and
   `DisabledDates`, then replace the provisional shared `dateTime` schema with
   explicit scalar-date, ordered two-date limits, and date-list modes. Record
   exact empty/`NaT`, orientation, time-zone, and supported constructor rules;
   do not admit `duration` or `calendarDuration` merely because the provisional
   ledger currently lists them.
+
+**Contract audit record (2026-08-20):** The audit used only the release-fixed
+R2024a URLs stored in the component ledger:
+`matlab.ui.control.datepicker-properties.html`,
+`matlab.ui.control.table-properties.html`, `uidatepicker.html`, and
+`uitable.html`, all below `https://www.mathworks.com/help/releases/r2024a/`.
+The ledger schema now distinguishes fixed length, vector orientation, `NaT`
+acceptance, normalization, and intrinsic ordering constraints. Hidden R2024a
+assignment probes are recorded separately from documentation facts; where they
+differ, such as equal date limits or automatic disabled-date sorting, the
+normalized contract follows the documentation. Grouping and runtime-catalog
+parity were regenerated successfully.
 - [ ] Add a registry-aware batch validator that evaluates all proposed values
   against one prospective effective component state. Add a model-owned atomic
   property-batch mutation that preflights existence and editability, applies all
@@ -788,7 +800,7 @@ constructors remain source-preserved read-only values.
 
 #### 6.9.7 Add the table-data dialog and atomic related-property commits
 
-- [ ] Replace the provisional `uitable.Data`, `ColumnName`, and `RowName` value
+- [x] Replace the provisional `uitable.Data`, `ColumnName`, and `RowName` value
   contracts with their exact R2024a forms. Route all three Inspector rows to the
   same current table view rather than leaving the name rows on an unrelated
   string-list dialog.
@@ -806,10 +818,16 @@ constructors remain source-preserved read-only values.
   per-column `ColumnWidth`, `ColumnEditable`, `ColumnSortable`, and
   `ColumnFormat` value. Preserve valid scalar all-column forms; insert or remove
   the audited per-column default only for vector/cell forms.
+- [ ] Preserve documented mismatch behavior. Extra `ColumnName` entries can
+  create additional displayed columns, while `RowName` mismatch does not change
+  the Data row count. Do not reject imported names merely because their lengths
+  differ from Data. Base ordinary editor-created rows and columns on Data, but
+  retain and expose valid unmatched heading entries without silent truncation.
 - [ ] Apply Data, names, and any derived column-setting adjustments through the
   6.9.5 atomic property batch. Validate all lengths and types against the final
   candidate state, then create one history record, one Preview refresh, and one
-  Inspector synchronization. A failed cell or property changes nothing.
+  Inspector synchronization. Validate documented mismatch semantics rather than
+  imposing same-length constraints. A failed cell or property changes nothing.
 - [ ] Extend literal parsing/encoding for the accepted rectangular table-data
   forms without evaluation. Keep a typed draft separate from the `uitable`
   display matrix so numeric, logical, string, char, and heterogeneous cell
@@ -822,7 +840,7 @@ cell types, and never partially update after validation failure.
 
 #### 6.9.8 Add the column-settings dialog
 
-- [ ] Re-audit and store property-specific contracts for `ColumnWidth`,
+- [x] Re-audit and store property-specific contracts for `ColumnWidth`,
   `ColumnEditable`, `ColumnSortable`, and `ColumnFormat`; do not use the current
   broad shared tabular-data class list as their validator.
 - [ ] Use one metadata-driven modal dialog for all four properties. Each
@@ -838,12 +856,18 @@ cell types, and never partially update after validation failure.
   through the 6.9.5 atomic property batch. Preserve a valid scalar all-column
   representation when the user has not requested per-column divergence, and
   preserve unrelated explicit values.
+- [ ] Accept the documented shorter and longer per-column forms. Missing
+  `ColumnWidth` entries use `auto`; missing logical entries behave as `false`;
+  and excess width/editable/sortable entries are ignored by MATLAB. The dialog
+  may emit an exact per-column vector after a user requests divergence, but it
+  must not classify a valid imported short or long form as unsupported.
 - [ ] Disable per-column mutation when effective Data is unsupported or
   source-backed and its width cannot be established safely; retain readable
   summaries and source.
 
-**Gate:** global and per-column changes stay length-consistent with Data,
-commit/undo/redo atomically, and survive Preview and source round-trip.
+**Gate:** global and per-column changes preserve the documented scalar,
+short-vector, exact-vector, and long-vector semantics, commit/undo/redo
+atomically, and survive Preview and source round-trip.
 
 #### 6.9.9 Complete specialized-editor integration and record deferrals
 

@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "467b9e82f504e7a08c47dd598c704156f795815d38ed795a21a985203ae3757e",
+  "inputSha256": "508f8fc296ba6c345c3760901ce784ddcf4974474a181a406ae1b5eb62798bfb",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -12531,13 +12531,18 @@
           "valueContract": {
             "kind": "dateTime",
             "matlabClasses": [
-              "calendarDuration",
-              "datetime",
-              "duration"
+              "datetime"
             ],
-            "shape": "any",
-            "allowsEmpty": true,
-            "constraints": []
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [
+              {
+                "kind": "withinLimitsOf",
+                "property": "Limits"
+              }
+            ],
+            "allowsNaT": true,
+            "normalization": "dateOnly"
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -12571,13 +12576,18 @@
           "valueContract": {
             "kind": "dateTime",
             "matlabClasses": [
-              "calendarDuration",
-              "datetime",
-              "duration"
+              "datetime"
             ],
-            "shape": "any",
-            "allowsEmpty": true,
-            "constraints": []
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": [
+              {
+                "kind": "strictlyIncreasing"
+              }
+            ],
+            "fixedLength": 2,
+            "orientation": "row",
+            "allowsNaT": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -12611,13 +12621,17 @@
           "valueContract": {
             "kind": "dateTime",
             "matlabClasses": [
-              "calendarDuration",
-              "datetime",
-              "duration"
+              "datetime"
             ],
-            "shape": "any",
+            "shape": "vector",
             "allowsEmpty": true,
-            "constraints": []
+            "constraints": [
+              {
+                "kind": "sortedAscending"
+              }
+            ],
+            "orientation": "column",
+            "allowsNaT": false
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -26502,14 +26516,15 @@
         {
           "path": "Data",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "tabularData",
             "matlabClasses": [
-              "categorical",
               "cell",
-              "char",
-              "string"
+              "logical",
+              "numeric",
+              "string",
+              "table"
             ],
-            "shape": "vector",
+            "shape": "matrix",
             "allowsEmpty": true,
             "constraints": []
           },
@@ -26529,15 +26544,17 @@
               "categorical",
               "cell",
               "char",
+              "double",
               "string"
             ],
-            "shape": "vector",
+            "shape": "propertyDependent",
             "allowsEmpty": true,
-            "constraints": []
+            "constraints": [],
+            "normalization": "columnVector"
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "tableData",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26546,19 +26563,16 @@
         {
           "path": "ColumnWidth",
           "valueContract": {
-            "kind": "tabularData",
+            "kind": "columnWidth",
             "matlabClasses": [
-              "categorical",
               "cell",
-              "double",
-              "logical",
-              "string",
-              "table",
-              "timetable"
+              "char",
+              "string"
             ],
-            "shape": "any",
-            "allowsEmpty": true,
-            "constraints": []
+            "shape": "propertyDependent",
+            "allowsEmpty": false,
+            "constraints": [],
+            "normalization": "charOrRowCell"
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -26571,19 +26585,15 @@
         {
           "path": "ColumnEditable",
           "valueContract": {
-            "kind": "tabularData",
+            "kind": "logical",
             "matlabClasses": [
-              "categorical",
-              "cell",
               "double",
-              "logical",
-              "string",
-              "table",
-              "timetable"
+              "logical"
             ],
-            "shape": "any",
+            "shape": "propertyDependent",
             "allowsEmpty": true,
-            "constraints": []
+            "constraints": [],
+            "normalization": "logical"
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -26617,16 +26627,15 @@
         {
           "path": "ColumnFormat",
           "valueContract": {
-            "kind": "stringList",
+            "kind": "columnFormat",
             "matlabClasses": [
-              "categorical",
               "cell",
-              "char",
-              "string"
+              "double"
             ],
-            "shape": "vector",
+            "shape": "propertyDependent",
             "allowsEmpty": true,
-            "constraints": []
+            "constraints": [],
+            "normalization": "rowCell"
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -26644,15 +26653,17 @@
               "categorical",
               "cell",
               "char",
+              "double",
               "string"
             ],
-            "shape": "vector",
+            "shape": "propertyDependent",
             "allowsEmpty": true,
-            "constraints": []
+            "constraints": [],
+            "normalization": "columnVector"
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "stringList",
+          "requiredEditor": "tableData",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26689,19 +26700,15 @@
         {
           "path": "ColumnSortable",
           "valueContract": {
-            "kind": "tabularData",
+            "kind": "logical",
             "matlabClasses": [
-              "categorical",
-              "cell",
               "double",
-              "logical",
-              "string",
-              "table",
-              "timetable"
+              "logical"
             ],
-            "shape": "any",
+            "shape": "propertyDependent",
             "allowsEmpty": true,
-            "constraints": []
+            "constraints": [],
+            "normalization": "logical"
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",

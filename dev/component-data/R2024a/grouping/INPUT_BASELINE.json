@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "520db80fec09319f5392ca0106f2d4eccfcfe773",
-  "inputSha256": "2849c4390c44861f6554bbc4d4765d71137edec72ec4ec320bb66bfdcad08593",
+  "ledgerBaselineGitCommit": "02c85608fa09ac33f5a6cc451dce5658635cc49c",
+  "inputSha256": "bb525583d5636ddc7bb4f8253f33918b051d1668802614537da9e54de33ddc02",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -117,7 +117,7 @@
     },
     {
       "path": "components/uidatepicker.json",
-      "sha256": "ed512b898e76a13f17a88c247b2ad58b524e9e671fca4d16788618618097b3b6"
+      "sha256": "4090a4194b07685495f44a3eeb5f5a692fda1564697bbe3fb78b7b1d024f07df"
     },
     {
       "path": "components/uidropdown.json",
@@ -237,7 +237,7 @@
     },
     {
       "path": "components/uitable.json",
-      "sha256": "5d19d16563d3560bc6826cbefc891edbf0567c0707bb1bc1c39f8d48a49ef86a"
+      "sha256": "b60e371dfbe586bce367d4b8ed8e39c604d04a511fe2f119c69ef63502249a3e"
     },
     {
       "path": "components/uitextarea.json",
@@ -273,7 +273,7 @@
     },
     {
       "path": "schema.json",
-      "sha256": "0f157a2dbb92273e32e0c2595829ea66417fd930264b2089fae6de875af96e5f"
+      "sha256": "85a758d406899b7b01e3685f360192be97192f5a982d372955e4772c0bb2967d"
     }
   ],
   "validation": {

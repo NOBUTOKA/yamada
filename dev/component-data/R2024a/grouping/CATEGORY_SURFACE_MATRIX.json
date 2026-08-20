@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "2849c4390c44861f6554bbc4d4765d71137edec72ec4ec320bb66bfdcad08593",
+  "inputSha256": "bb525583d5636ddc7bb4f8253f33918b051d1668802614537da9e54de33ddc02",
   "occurrences": [
     {
       "componentId": "axes",
@@ -2741,14 +2741,14 @@
         "DisabledDaysOfWeek"
       ],
       "propertyCapabilitySha256": [
-        "901d50b28cceaa94e5f764c20f99da61216edbca6e376699550ee5a22720198f",
+        "8130a84a35e861b90119c10886b7d573335b46f3df92b9226036dff0740f65f3",
         "2f28cc7074499cfb36e035bdee7a36296c0339f92141569fcf412806a159dc01",
-        "864ca505357d06e09de0c16c2c37ef5ca5d1938729b05ac1f264dd58590ced8c",
+        "58cb2007e397387d3ff289333fac27aa4aeab9f2aeefce1f5462ef91137e4319",
         "8997f3c6efa47a88b55b111ac0337279558fdc9e88edd9d392edf00274524e45",
-        "d980134decd988e8390882a769a9d5a2a289036685d46d550e5d7bdefefa7365",
+        "28f05d59a80bcb96a550647e533832492fd67d5795940692403b9722b4a736ad",
         "78227a0a2de3f88c6c5936979d0a4ff1f52ead5459cd77b2b33ebf02cf03af9e"
       ],
-      "capabilitySha256": "aebf225dd07bea9230f7a8c983184b08bc7f70c3a66e7e02f53558bb80711f36"
+      "capabilitySha256": "4f8b070aab56695bd24a21a09fff0374c7faf71ed7c64adcf362d1fef037ebf4"
     },
     {
       "componentId": "uidatepicker",
@@ -7796,15 +7796,15 @@
         "RowName"
       ],
       "propertyCapabilitySha256": [
-        "5c77a6f2baa6c51b998dfc0852754e084dbabbbb4804a4462813eff8ef9c0026",
-        "e7a9776aa5eb4a2c87876969284e8c33f66ed5559c0cd646325ba1d4e2dffbe2",
-        "2c041a09ee9bc07a87c1be07cddffbbd5c180af90ddc902f35dc205571e187da",
-        "b23d24d0559965afa217a3a7af0227766edcc2389c0d817adbb9be83b29a409b",
+        "c711323f2af0cfb8e5c43090ab39fec5e2ae7f49a0a1845805b5c431d418012f",
+        "16dd69c201a6c8d72c535cff0119595a4b8c3133231ed41dc60dbcec30135f08",
+        "10058e1821778dd1bb90fb79d7040fd63e9532de5a7dc8575d2f4e341eda2013",
+        "73f42f5141186dc1c15facc6319539c04bd8197ea3c93d7aaeae3b311f7b2853",
         "4be1bd9f27020aad1e28dfde5e344f92b3bc0c1e17454a252efe96b6532e58c5",
-        "d18abfe7ba0c29e6fc898bac2cb8b9960eb8c057ed523e3faac85b75ebcc47bb",
-        "6184c02d01dde51f39f233baffb6fbf0903a75c3a5e1bc172580af7331c1bd70"
+        "61e3a527f3ddb49e7ce5204ce961fafc890d1225d5129e22d79383efac104f42",
+        "92b233e8154e50a8865f157c18348c39081e1ac281ea15a1bfeb83e7137bcede"
       ],
-      "capabilitySha256": "6358f33add2cd1233d3eaed4775849dc878dec8fe90590ce58c281819bc5490e"
+      "capabilitySha256": "c0d1911ca21e9f890b4d0062b2bca06a22f5dd0ce4a2707aacf8056752c87b6e"
     },
     {
       "componentId": "uitable",
@@ -7999,7 +7999,7 @@
       ],
       "propertyCapabilitySha256": [
         "d1e1dd21c8bb163051223f16804b3be3ab85b5b21afee6550593802eef663dfb",
-        "49cd69d3345fa191cf6478d6fc9b4889c8d62ea912a63ad6eb2195720c2e1e75",
+        "dc51c9fac40ff91375f554666e4b032ea484b5d6fd5bd50bcd6f69d2e0c14fa8",
         "a27505081f43e4a0f3ec24f5d9dbfc48d4a0612ee6c1d44342e6f5b60b1b30f8",
         "82db7af3508d5dad78d4931ded1f81e6a5f52046f48b526dadf01b8b8fc5331e",
         "e11ec51f6b43fc37194255da8f0795b425c793b178f9f535610545021e9f78d5",
@@ -8011,7 +8011,7 @@
         "b3f4a75556bb9006147ef873cce3982420cc3c905a5f64b048560bc408a398b9",
         "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
       ],
-      "capabilitySha256": "0375d7814d2f8bd55873d435944d340e9ab64bbe12d6a5281b409f5f534927c6"
+      "capabilitySha256": "d742122e8418e31ed900bd17b1c45b65ebbf5ee6985b4a538095f03c9e3e800e"
     },
     {
       "componentId": "uitable",

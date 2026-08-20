@@ -169,6 +169,14 @@
           "description": "Target-release meta.property SetAccess observation. This supporting evidence does not override documentedReadOnly.",
           "enum": ["public", "restricted", "unresolved"]
         },
+        "runtimeObservations": {
+          "description": "Target-release hidden-fixture observations retained separately from authoritative documentation facts.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
         "valueContract": {
           "description": "Normalized semantic value contract. Original documentation text remains in documentedAcceptedValues.",
           "$ref": "#/$defs/valueContract"
@@ -197,14 +205,14 @@
       "required": ["kind", "matlabClasses", "shape", "allowsEmpty", "constraints"],
       "properties": {
         "kind": {
-          "enum": ["text", "multilineText", "logical", "onOff", "enum", "number", "numericArray", "color", "stringList", "filePath", "url", "dateTime", "tabularData", "callback", "componentReference", "graphicsObject", "arbitraryData", "opaque"]
+          "enum": ["text", "multilineText", "logical", "onOff", "enum", "number", "numericArray", "color", "stringList", "filePath", "url", "dateTime", "tabularData", "columnWidth", "columnFormat", "callback", "componentReference", "graphicsObject", "arbitraryData", "opaque"]
         },
         "matlabClasses": {
           "description": "Normalized accepted MATLAB value classes. any and unknown are audit markers rather than MATLAB class names.",
           "type": "array",
           "minItems": 1,
           "items": {
-            "enum": ["char", "string", "cell", "categorical", "logical", "double", "datetime", "duration", "calendarDuration", "table", "timetable", "function_handle", "handle", "any", "unknown"]
+            "enum": ["char", "string", "cell", "categorical", "logical", "numeric", "double", "datetime", "duration", "calendarDuration", "table", "timetable", "function_handle", "handle", "any", "unknown"]
           },
           "uniqueItems": true
         },
@@ -213,6 +221,23 @@
         },
         "allowsEmpty": {
           "type": "boolean"
+        },
+        "fixedLength": {
+          "description": "Required element count when shape is fixedLengthVector.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "orientation": {
+          "description": "Documented orientation when vector orientation is significant.",
+          "enum": ["row", "column", "any"]
+        },
+        "allowsNaT": {
+          "description": "Whether a datetime contract admits NaT independently of empty-array support.",
+          "type": "boolean"
+        },
+        "normalization": {
+          "description": "Documented or target-runtime canonical form relevant to safe editing.",
+          "enum": ["dateOnly", "columnVector", "charOrRowCell", "logical", "rowCell"]
         },
         "values": {
           "description": "Complete finite choices for an enum contract, normalized without MATLAB literal quotes. Omit when the documentation does not establish a complete finite set.",
@@ -235,16 +260,30 @@
     "valueConstraint": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "property"],
+      "required": ["kind"],
       "properties": {
         "kind": {
-          "enum": ["sameLengthAs", "memberOf", "withinLimitsOf", "sameShapeAs", "pairedWith"]
+          "enum": ["sameLengthAs", "memberOf", "withinLimitsOf", "sameShapeAs", "pairedWith", "strictlyIncreasing", "sortedAscending"]
         },
         "property": {
           "type": "string",
           "pattern": "^[A-Za-z][A-Za-z0-9]*(\\.[A-Za-z][A-Za-z0-9]*)?$"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": ["sameLengthAs", "memberOf", "withinLimitsOf", "sameShapeAs", "pairedWith"]
+              }
+            }
+          },
+          "then": {
+            "required": ["property"]
+          }
+        }
+      ]
     },
     "disposition": {
       "type": "object",

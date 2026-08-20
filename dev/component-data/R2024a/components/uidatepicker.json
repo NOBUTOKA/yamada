@@ -71,14 +71,19 @@
       ],
       "valueContract": {
         "kind": "dateTime",
-        "shape": "any",
-        "allowsEmpty": true,
-        "constraints": [],
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [
+          {
+            "kind": "withinLimitsOf",
+            "property": "Limits"
+          }
+        ],
         "matlabClasses": [
-          "datetime",
-          "duration",
-          "calendarDuration"
-        ]
+          "datetime"
+        ],
+        "allowsNaT": true,
+        "normalization": "dateOnly"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -87,7 +92,10 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a preserves only the date when assigned a datetime containing time information; assigning [] is rejected."
+      ]
     },
     {
       "path": "Placeholder",
@@ -125,14 +133,19 @@
       ],
       "valueContract": {
         "kind": "dateTime",
-        "shape": "any",
-        "allowsEmpty": true,
-        "constraints": [],
+        "shape": "fixedLengthVector",
+        "allowsEmpty": false,
+        "constraints": [
+          {
+            "kind": "strictlyIncreasing"
+          }
+        ],
         "matlabClasses": [
-          "datetime",
-          "duration",
-          "calendarDuration"
-        ]
+          "datetime"
+        ],
+        "fixedLength": 2,
+        "orientation": "row",
+        "allowsNaT": false
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -141,7 +154,12 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "documentedDefault": "[datetime(0000,1,1) datetime(9999,12,31)]",
+      "runtimeObservations": [
+        "R2024a normalizes a two-element column input to a 1-by-2 row.",
+        "R2024a accepts equal bounds although the R2024a documentation says the second value must be later; the normalized contract follows the documentation."
+      ]
     },
     {
       "path": "DisplayFormat",
@@ -179,14 +197,18 @@
       ],
       "valueContract": {
         "kind": "dateTime",
-        "shape": "any",
+        "shape": "vector",
         "allowsEmpty": true,
-        "constraints": [],
+        "constraints": [
+          {
+            "kind": "sortedAscending"
+          }
+        ],
         "matlabClasses": [
-          "datetime",
-          "duration",
-          "calendarDuration"
-        ]
+          "datetime"
+        ],
+        "orientation": "column",
+        "allowsNaT": false
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -195,7 +217,11 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a accepts row input and stores it as a column, sorts descending input, and removes duplicate dates; the normalized contract follows the documented m-by-1 sorted input.",
+        "R2024a rejects nonempty DisabledDates values containing NaT and stores NaT(0) as an empty datetime array."
+      ]
     },
     {
       "path": "DisabledDaysOfWeek",

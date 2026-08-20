@@ -45,17 +45,37 @@ function Get-Hash {
 
 function Get-PropertyCapability {
     param([object]$Property)
+    $constraints = @($Property.valueContract.constraints | ForEach-Object {
+        $constraint = [ordered]@{ kind = [string]$_.kind }
+        if ($null -ne $_.PSObject.Properties["property"]) {
+            $constraint.property = [string]$_.property
+        }
+        $constraint
+    } | Sort-Object {
+        $target = if ($null -ne $_.PSObject.Properties["property"]) { [string]$_.property } else { "" }
+        "$($_.kind)`u{001F}$target"
+    })
     $valueContract = [ordered]@{
         kind = [string]$Property.valueContract.kind
         matlabClasses = @($Property.valueContract.matlabClasses | ForEach-Object { [string]$_ } | Sort-Object)
         shape = [string]$Property.valueContract.shape
         allowsEmpty = [bool]$Property.valueContract.allowsEmpty
-        constraints = @($Property.valueContract.constraints | ForEach-Object {
-            [ordered]@{ kind = [string]$_.kind; property = [string]$_.property }
-        } | Sort-Object { "$($_.kind)`u{001F}$($_.property)" })
+        constraints = $constraints
     }
     if ($null -ne $Property.valueContract.PSObject.Properties["values"]) {
         $valueContract.values = @($Property.valueContract.values | ForEach-Object { [string]$_ })
+    }
+    if ($null -ne $Property.valueContract.PSObject.Properties["fixedLength"]) {
+        $valueContract.fixedLength = [int]$Property.valueContract.fixedLength
+    }
+    if ($null -ne $Property.valueContract.PSObject.Properties["orientation"]) {
+        $valueContract.orientation = [string]$Property.valueContract.orientation
+    }
+    if ($null -ne $Property.valueContract.PSObject.Properties["allowsNaT"]) {
+        $valueContract.allowsNaT = [bool]$Property.valueContract.allowsNaT
+    }
+    if ($null -ne $Property.valueContract.PSObject.Properties["normalization"]) {
+        $valueContract.normalization = [string]$Property.valueContract.normalization
     }
     return [ordered]@{
         path = [string]$Property.path
@@ -274,14 +294,23 @@ foreach ($document in @($documents | Sort-Object id)) {
         }
         $paths = @($effective | ForEach-Object path)
         if ($paths.Count -ne @($paths | Sort-Object -Unique).Count) { throw "Effective context '$($context.id)' duplicates paths for '$($document.id)'." }
-        $missingTargets = @($effective | ForEach-Object { $_.valueContract.constraints } | ForEach-Object property | Where-Object { $paths -notcontains $_ } | Sort-Object -Unique)
+        $missingTargets = @($effective | ForEach-Object { $_.valueContract.constraints } |
+            Where-Object { $null -ne $_.PSObject.Properties["property"] } |
+            ForEach-Object property | Where-Object { $paths -notcontains $_ } | Sort-Object -Unique)
         $effectiveParity += [ordered]@{ componentId = [string]$document.id; contextId = [string]$context.id; passed = ($missingTargets.Count -eq 0); propertyCount = $paths.Count; missingConstraintTargets = $missingTargets }
     }
 }
 
 if (@($intrinsicParity | Where-Object { -not $_.passed }).Count -ne 0 -or @($effectiveParity | Where-Object { -not $_.passed }).Count -ne 0) { throw 'Grouping expansion parity failed.' }
 
-$design = [ordered]@{ artifactVersion = 1; matlabRelease = $release; inputSha256 = $inputDigest; groups = @($groupsById.Values | Sort-Object id); categoryMappings = $categoryMappings; profileAssignments = $profileAssignments }
+$design = [ordered]@{
+    artifactVersion = 1
+    matlabRelease = $release
+    inputSha256 = $inputDigest
+    groups = @($groupsById.Values | Sort-Object { [string]$_['id'] })
+    categoryMappings = $categoryMappings
+    profileAssignments = $profileAssignments
+}
 $profileAnalysis = [ordered]@{ artifactVersion = 1; matlabRelease = $release; inputSha256 = $inputDigest; profiles = @($profiles | ForEach-Object { [ordered]@{ id = [string]$_.id; categoryOrder = @($_.categoryOrder); assignedVariantIds = @($profileAssignments | Where-Object profileId -eq $_.id | ForEach-Object componentId | Sort-Object) } }); assignments = $profileAssignments }
 $parity = [ordered]@{ artifactVersion = 1; matlabRelease = $release; inputSha256 = $inputDigest; intrinsic = $intrinsicParity; parentEffective = $effectiveParity }
 Write-JsonFile (Join-Path $outputPath 'GROUPING_DESIGN.json') $design

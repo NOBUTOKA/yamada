@@ -69,14 +69,15 @@
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "tabularData",
               "matlabClasses": [
-                "categorical",
                 "cell",
-                "char",
-                "string"
+                "logical",
+                "numeric",
+                "string",
+                "table"
               ],
-              "shape": "vector",
+              "shape": "matrix",
               "allowsEmpty": true,
               "constraints": []
             }
@@ -93,7 +94,7 @@
             "category": "Table",
             "order": 2,
             "groupId": "local.uitable.table",
-            "editor": "stringList",
+            "editor": "tableData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -102,11 +103,13 @@
                 "categorical",
                 "cell",
                 "char",
+                "double",
                 "string"
               ],
-              "shape": "vector",
+              "shape": "propertyDependent",
               "allowsEmpty": true,
-              "constraints": []
+              "constraints": [],
+              "normalization": "columnVector"
             }
           }
         },
@@ -125,19 +128,16 @@
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "tabularData",
+              "kind": "columnWidth",
               "matlabClasses": [
-                "categorical",
                 "cell",
-                "double",
-                "logical",
-                "string",
-                "table",
-                "timetable"
+                "char",
+                "string"
               ],
-              "shape": "any",
-              "allowsEmpty": true,
-              "constraints": []
+              "shape": "propertyDependent",
+              "allowsEmpty": false,
+              "constraints": [],
+              "normalization": "charOrRowCell"
             }
           }
         },
@@ -156,19 +156,15 @@
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "tabularData",
+              "kind": "logical",
               "matlabClasses": [
-                "categorical",
-                "cell",
                 "double",
-                "logical",
-                "string",
-                "table",
-                "timetable"
+                "logical"
               ],
-              "shape": "any",
+              "shape": "propertyDependent",
               "allowsEmpty": true,
-              "constraints": []
+              "constraints": [],
+              "normalization": "logical"
             }
           }
         },
@@ -214,16 +210,15 @@
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "stringList",
+              "kind": "columnFormat",
               "matlabClasses": [
-                "categorical",
                 "cell",
-                "char",
-                "string"
+                "double"
               ],
-              "shape": "vector",
+              "shape": "propertyDependent",
               "allowsEmpty": true,
-              "constraints": []
+              "constraints": [],
+              "normalization": "rowCell"
             }
           }
         },
@@ -238,7 +233,7 @@
             "category": "Table",
             "order": 7,
             "groupId": "local.uitable.table",
-            "editor": "stringList",
+            "editor": "tableData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -247,11 +242,13 @@
                 "categorical",
                 "cell",
                 "char",
+                "double",
                 "string"
               ],
-              "shape": "vector",
+              "shape": "propertyDependent",
               "allowsEmpty": true,
-              "constraints": []
+              "constraints": [],
+              "normalization": "columnVector"
             }
           }
         }
@@ -1253,19 +1250,15 @@
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "tabularData",
+              "kind": "logical",
               "matlabClasses": [
-                "categorical",
-                "cell",
                 "double",
-                "logical",
-                "string",
-                "table",
-                "timetable"
+                "logical"
               ],
-              "shape": "any",
+              "shape": "propertyDependent",
               "allowsEmpty": true,
-              "constraints": []
+              "constraints": [],
+              "normalization": "logical"
             }
           }
         },

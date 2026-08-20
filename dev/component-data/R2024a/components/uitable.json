@@ -85,18 +85,20 @@
         "numeric array",
         "logical array",
         "cell array",
-        "string array"
+        "string array",
+        "cell array of character vectors"
       ],
       "valueContract": {
-        "kind": "stringList",
-        "shape": "vector",
+        "kind": "tabularData",
+        "shape": "matrix",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
-          "char",
-          "string",
+          "numeric",
+          "logical",
           "cell",
-          "categorical"
+          "string",
+          "table"
         ]
       },
       "affectsDisplay": true,
@@ -106,7 +108,10 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a accepts numeric subclasses such as single and int32 and rejects direct char, categorical, datetime, duration, timetable, and multidimensional array values."
+      ]
     },
     {
       "path": "ColumnName",
@@ -115,30 +120,37 @@
       "summary": "Column names",
       "documentedAcceptedValues": [
         "'numbered'",
-        "n -by-1 cell array of character vectors",
-        "n -by-1 string array",
-        "empty cell array ( {} )"
+        "n-by-1 cell array of character vectors",
+        "n-by-1 string array",
+        "categorical array",
+        "empty cell array ({})",
+        "empty matrix ([])"
       ],
       "valueContract": {
         "kind": "stringList",
-        "shape": "vector",
+        "shape": "propertyDependent",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
           "char",
           "string",
           "cell",
-          "categorical"
-        ]
+          "categorical",
+          "double"
+        ],
+        "normalization": "columnVector"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "stringList",
+      "requiredEditor": "tableData",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a stores string and categorical input as a column cell array of character vectors, reshapes matrix input column-wise, and stores [] as empty char."
+      ]
     },
     {
       "path": "ColumnWidth",
@@ -152,19 +164,16 @@
         "1-by- n cell array"
       ],
       "valueContract": {
-        "kind": "tabularData",
-        "shape": "any",
-        "allowsEmpty": true,
+        "kind": "columnWidth",
+        "shape": "propertyDependent",
+        "allowsEmpty": false,
         "constraints": [],
         "matlabClasses": [
-          "table",
-          "timetable",
-          "cell",
+          "char",
           "string",
-          "categorical",
-          "double",
-          "logical"
-        ]
+          "cell"
+        ],
+        "normalization": "charOrRowCell"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -173,7 +182,10 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a stores a string scalar as char and a string array as a row cell array; mixed cell entries can contain nonnegative numeric widths and documented text width specifications."
+      ]
     },
     {
       "path": "ColumnEditable",
@@ -186,19 +198,15 @@
         "logical scalar"
       ],
       "valueContract": {
-        "kind": "tabularData",
-        "shape": "any",
+        "kind": "logical",
+        "shape": "propertyDependent",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
-          "table",
-          "timetable",
-          "cell",
-          "string",
-          "categorical",
-          "double",
-          "logical"
-        ]
+          "logical",
+          "double"
+        ],
+        "normalization": "logical"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -207,7 +215,10 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a stores [] as an empty logical array and accepts a logical scalar or row vector; missing vector entries behave as false and excess entries are ignored."
+      ]
     },
     {
       "path": "ColumnRearrangeable",
@@ -248,16 +259,15 @@
         "1-by- n cell array of character vectors"
       ],
       "valueContract": {
-        "kind": "stringList",
-        "shape": "vector",
+        "kind": "columnFormat",
+        "shape": "propertyDependent",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
-          "char",
-          "string",
           "cell",
-          "categorical"
-        ]
+          "double"
+        ],
+        "normalization": "rowCell"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -266,7 +276,10 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a stores [] as an empty cell array, rejects string format elements, and accepts char format names, empty entries, and nested cell arrays of character vectors for pop-up menus."
+      ]
     },
     {
       "path": "RowName",
@@ -275,30 +288,37 @@
       "summary": "Row names",
       "documentedAcceptedValues": [
         "'numbered'",
-        "n -by-1 cell array of character vectors",
-        "n -by-1 string array",
-        "empty cell array ( {} )"
+        "n-by-1 cell array of character vectors",
+        "n-by-1 string array",
+        "categorical array",
+        "empty cell array ({})",
+        "empty matrix ([])"
       ],
       "valueContract": {
         "kind": "stringList",
-        "shape": "vector",
+        "shape": "propertyDependent",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
           "char",
           "string",
           "cell",
-          "categorical"
-        ]
+          "categorical",
+          "double"
+        ],
+        "normalization": "columnVector"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "stringList",
+      "requiredEditor": "tableData",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a stores string and categorical input as a column cell array of character vectors, reshapes matrix input column-wise, and stores [] as empty char."
+      ]
     },
     {
       "path": "FontName",
@@ -1355,19 +1375,15 @@
         "logical scalar"
       ],
       "valueContract": {
-        "kind": "tabularData",
-        "shape": "any",
+        "kind": "logical",
+        "shape": "propertyDependent",
         "allowsEmpty": true,
         "constraints": [],
         "matlabClasses": [
-          "table",
-          "timetable",
-          "cell",
-          "string",
-          "categorical",
-          "double",
-          "logical"
-        ]
+          "logical",
+          "double"
+        ],
+        "normalization": "logical"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -1376,7 +1392,10 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "R2024a stores [] as an empty logical array and accepts a logical scalar or row vector; missing vector entries behave as false and excess entries are ignored."
+      ]
     },
     {
       "path": "StyleConfigurations",

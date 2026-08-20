@@ -73,6 +73,9 @@ A value contract should be able to describe:
 - all accepted MATLAB value classes;
 - scalar, vector, matrix, fixed-size, or property-dependent shape;
 - whether an empty value is accepted;
+- fixed vector length and significant row or column orientation;
+- missing temporal-value acceptance independently of empty arrays;
+- a canonical normalization that affects safe editor round-trip;
 - finite enumeration values;
 - numeric bounds and integer requirements; and
 - cross-property constraints.
@@ -88,6 +91,13 @@ Recommended semantic kinds include:
 `documentedDefault` does not prove that a property accepts every value of the
 same class, and an empty documented default does not by itself prove that the
 property accepts an empty value. Record `allowsEmpty` independently.
+
+For datetime contracts, record `allowsNaT` independently. A scalar `NaT` is a
+missing datetime value, not an empty array. Use `fixedLength` only with a
+`fixedLengthVector` shape, and record `orientation` when the documentation
+requires a row or column vector. Use `normalization` only for a stable behavior
+that an editor must preserve, such as a date picker discarding time information
+or MATLAB storing heading input as a column vector.
 
 For an `enum` whose documentation establishes the complete finite choice set,
 record its normalized, unquoted values in `valueContract.values`. Include the
@@ -121,6 +131,10 @@ and direct or indirect cycles.
 Other directional constraint kinds may include `memberOf`, `withinLimitsOf`,
 `sameShapeAs`, and `pairedWith`. Add a new symbolic constraint kind only when
 its validation semantics are defined in allowlisted MATLAB code.
+
+Intrinsic constraints such as `strictlyIncreasing` and `sortedAscending` do not
+name another property. Keep them in the same constraint list, but do not add an
+empty `property` field merely to satisfy the cross-property shape.
 
 ## Parent-dependent surface
 

@@ -146,10 +146,13 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(data.Editor, "readOnly");
             testCase.verifyEqual(data.AuditDisposition, "readOnly");
 
-            % Reserve one table-data editor for the table itself and one column-settings
-            % editor for all column-oriented settings until their dialogs are implemented.
+            % Route table data and headings through one related-data editor, while
+            % reserving one column-settings editor for all column-oriented settings.
             table = registry.getById("uitable");
-            testCase.verifyEqual(table.Properties([table.Properties.Path] == "Data").Editor, "tableData");
+            for path = ["Data", "ColumnName", "RowName"]
+                property = table.Properties([table.Properties.Path] == path);
+                testCase.verifyEqual(property.Editor, "tableData");
+            end
             for path = ["ColumnWidth", "ColumnEditable", "ColumnSortable", "ColumnFormat"]
                 property = table.Properties([table.Properties.Path] == path);
                 testCase.verifyEqual(property.Editor, "columnSettings");
@@ -161,6 +164,78 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                 testCase.verifyEqual(property.AuditDisposition, "omitted");
                 testCase.verifyEqual(property.Editor, "readOnly");
             end
+        end
+
+        function phase69AuditedValueContractsReachRuntimeCatalog(testCase)
+            % phase69AuditedValueContractsReachRuntimeCatalog Verify exact pending-editor schemas.
+
+            % Check the three documented date-picker modes independently.
+            registry = macd.model.ComponentRegistry.createDefault();
+            datePicker = registry.getById("uidatepicker");
+            value = datePicker.Properties([datePicker.Properties.Path] == "Value").ValueSchema;
+            testCase.verifyEqual(string(value.kind), "dateTime");
+            testCase.verifyEqual(string(value.matlabClasses), "datetime");
+            testCase.verifyEqual(string(value.shape), "scalar");
+            testCase.verifyFalse(value.allowsEmpty);
+            testCase.verifyTrue(value.allowsNaT);
+            testCase.verifyEqual(string(value.normalization), "dateOnly");
+            testCase.verifyEqual(string(value.constraints.kind), "withinLimitsOf");
+            testCase.verifyEqual(string(value.constraints.property), "Limits");
+
+            limits = datePicker.Properties([datePicker.Properties.Path] == "Limits").ValueSchema;
+            testCase.verifyEqual(string(limits.matlabClasses), "datetime");
+            testCase.verifyEqual(string(limits.shape), "fixedLengthVector");
+            testCase.verifyEqual(limits.fixedLength, 2);
+            testCase.verifyEqual(string(limits.orientation), "row");
+            testCase.verifyFalse(limits.allowsEmpty);
+            testCase.verifyFalse(limits.allowsNaT);
+            testCase.verifyEqual(string(limits.constraints.kind), "strictlyIncreasing");
+
+            disabled = datePicker.Properties( ...
+                [datePicker.Properties.Path] == "DisabledDates").ValueSchema;
+            testCase.verifyEqual(string(disabled.matlabClasses), "datetime");
+            testCase.verifyEqual(string(disabled.shape), "vector");
+            testCase.verifyEqual(string(disabled.orientation), "column");
+            testCase.verifyTrue(disabled.allowsEmpty);
+            testCase.verifyFalse(disabled.allowsNaT);
+            testCase.verifyEqual(string(disabled.constraints.kind), "sortedAscending");
+
+            % Check table data, headings, and each property-specific column contract.
+            table = registry.getById("uitable");
+            data = table.Properties([table.Properties.Path] == "Data").ValueSchema;
+            testCase.verifyEqual(string(data.kind), "tabularData");
+            testCase.verifyEqual(string(data.matlabClasses(:))', ...
+                ["cell", "logical", "numeric", "string", "table"]);
+            testCase.verifyEqual(string(data.shape), "matrix");
+            testCase.verifyTrue(data.allowsEmpty);
+
+            for path = ["ColumnName", "RowName"]
+                heading = table.Properties([table.Properties.Path] == path).ValueSchema;
+                testCase.verifyEqual(string(heading.kind), "stringList");
+                testCase.verifyEqual(string(heading.shape), "propertyDependent");
+                testCase.verifyEqual(string(heading.normalization), "columnVector");
+            end
+
+            width = table.Properties([table.Properties.Path] == "ColumnWidth").ValueSchema;
+            testCase.verifyEqual(string(width.kind), "columnWidth");
+            testCase.verifyEqual(string(width.matlabClasses(:))', ["cell", "char", "string"]);
+            testCase.verifyFalse(width.allowsEmpty);
+            testCase.verifyEqual(string(width.normalization), "charOrRowCell");
+
+            for path = ["ColumnEditable", "ColumnSortable"]
+                logicalColumns = table.Properties([table.Properties.Path] == path).ValueSchema;
+                testCase.verifyEqual(string(logicalColumns.kind), "logical");
+                testCase.verifyEqual(string(logicalColumns.matlabClasses(:))', ...
+                    ["double", "logical"]);
+                testCase.verifyTrue(logicalColumns.allowsEmpty);
+                testCase.verifyEqual(string(logicalColumns.normalization), "logical");
+            end
+
+            format = table.Properties([table.Properties.Path] == "ColumnFormat").ValueSchema;
+            testCase.verifyEqual(string(format.kind), "columnFormat");
+            testCase.verifyEqual(string(format.matlabClasses(:))', ["cell", "double"]);
+            testCase.verifyTrue(format.allowsEmpty);
+            testCase.verifyEqual(string(format.normalization), "rowCell");
         end
 
         function innerPositionRemainsOmittedAcrossTheCatalog(testCase)

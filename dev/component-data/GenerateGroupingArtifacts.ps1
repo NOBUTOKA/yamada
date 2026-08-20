@@ -35,11 +35,17 @@ function ConvertTo-NormalizedValueContract {
 
     $constraints = @(
         @($ValueContract.constraints | ForEach-Object {
-            [ordered]@{
-                kind     = [string]$_.kind
-                property = [string]$_.property
+            $constraint = [ordered]@{
+                kind = [string]$_.kind
             }
-        }) | Sort-Object { "$($_.kind)`u{001F}$($_.property)" }
+            if ($null -ne $_.PSObject.Properties["property"]) {
+                $constraint.property = [string]$_.property
+            }
+            $constraint
+        }) | Sort-Object {
+            $target = if ($null -ne $_.PSObject.Properties["property"]) { [string]$_.property } else { "" }
+            "$($_.kind)`u{001F}$target"
+        }
     )
 
     $result = [ordered]@{
@@ -51,6 +57,18 @@ function ConvertTo-NormalizedValueContract {
     }
     if ($null -ne $ValueContract.PSObject.Properties["values"]) {
         $result.values = @(ConvertTo-StringArray $ValueContract.values)
+    }
+    if ($null -ne $ValueContract.PSObject.Properties["fixedLength"]) {
+        $result.fixedLength = [int]$ValueContract.fixedLength
+    }
+    if ($null -ne $ValueContract.PSObject.Properties["orientation"]) {
+        $result.orientation = [string]$ValueContract.orientation
+    }
+    if ($null -ne $ValueContract.PSObject.Properties["allowsNaT"]) {
+        $result.allowsNaT = [bool]$ValueContract.allowsNaT
+    }
+    if ($null -ne $ValueContract.PSObject.Properties["normalization"]) {
+        $result.normalization = [string]$ValueContract.normalization
     }
     return $result
 }
@@ -173,6 +191,9 @@ function Test-ComponentDocument {
     }
     foreach ($property in $properties) {
         foreach ($constraint in @($property.valueContract.constraints)) {
+            if ($null -eq $constraint.PSObject.Properties["property"]) {
+                continue
+            }
             $target = [string]$constraint.property
             if ($paths -notcontains $target) {
                 throw "$context property '$($property.path)' depends on missing property '$target'."
