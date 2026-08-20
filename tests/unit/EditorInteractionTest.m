@@ -210,6 +210,34 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function datePickerValueEditorSynchronizesEffectiveRestrictions(testCase)
+            % datePickerValueEditorSynchronizesEffectiveRestrictions Refresh the native calendar after a related inspector edit.
+
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure.Visible = "off";
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Date Picker", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            limits = [datetime(2024, 1, 1) datetime(2024, 12, 31)];
+            limitsEditor = findall(figure, "Tag", "macd-inspector-date-limits-editor");
+            parts = limitsEditor.UserData;
+            parts.Start.Value = limits(1);
+            parts.End.Value = limits(2);
+            parts.End.ValueChangedFcn(parts.End, struct());
+            drawnow;
+
+            editor = findall(figure, "Tag", "macd-inspector-date-picker-editor");
+            testCase.verifyEqual(editor.Limits, limits);
+            clear cleanup
+        end
+
         function editMenuExposesPhase5Commands(testCase)
             % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
 

@@ -382,7 +382,7 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
         end
 
         function createsStructuredDayListEditor(testCase)
-            % createsStructuredDayListEditor Route documented weekday values to state buttons.
+            % createsStructuredDayListEditor Route documented weekdays to the readable dialog action.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -393,15 +393,56 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 3]", true, [1 3]);
             drawnow;
             testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyClass(control, "matlab.ui.container.Panel");
-            buttons = findall(control, "Tag", "macd-inspector-day-of-week-button");
-            testCase.verifyEqual(numel(buttons), 7);
-            selectedText = string({buttons([buttons.Value]).Text});
-            testCase.verifyEqual(sort(selectedText), ["日", "火"]);
-            monday = buttons(string({buttons.Text}) == "月");
+            testCase.verifyClass(control, "matlab.ui.control.Button");
+            testCase.verifyEqual(string(control.Text), "Sun, Tue");
+            testCase.verifyEqual(control.UserData, [1 3]);
+            clear cleanup
+        end
+
+        function weekdayDialogUsesTheBatchCommitContract(testCase)
+            % weekdayDialogUsesTheBatchCommitContract Return validation messages through the dialog batch path.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            setappdata(figure, "changes", struct.empty);
+            definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            definition = definition.Properties([definition.Properties.Path] == "DisabledDaysOfWeek");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) [], ...
+                @(changes) captureBatch(figure, changes));
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 3]", true, [1 3]);
+            control.ButtonPushedFcn(control, struct());
+            dialog = findall(0, "Tag", "macd-inspector-day-of-week-dialog");
+            buttons = findall(dialog, "Tag", "macd-inspector-day-of-week-button");
+            monday = buttons(string({buttons.Text}) == "Mon");
             monday.Value = true;
-            monday.ValueChangedFcn(monday, struct());
-            testCase.verifyEqual(getappdata(figure, "committed"), [1 2 3]);
+            applyButton = findall(dialog, "Tag", "macd-inspector-day-of-week-apply");
+            applyButton.ButtonPushedFcn(applyButton, struct());
+
+            changes = getappdata(figure, "changes");
+            testCase.verifySize(changes, [1 1]);
+            testCase.verifyEqual(changes.Path, "DisabledDaysOfWeek");
+            testCase.verifyEqual(changes.Value, [1 2 3]);
+            clear cleanup
+        end
+
+        function synchronizesDatePickerRestrictionsFromRelatedValues(testCase)
+            % synchronizesDatePickerRestrictions Apply the effective date contracts to the native picker.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            definition = definition.Properties([definition.Properties.Path] == "Value");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            limits = [datetime(2024, 1, 1) datetime(2024, 12, 31)];
+            disabledDates = [datetime(2024, 3, 1); datetime(2024, 3, 2)];
+            relatedValues = struct("Paths", ["Limits", "DisabledDates", "DisabledDaysOfWeek"], ...
+                "Values", {{limits, disabledDates, [1 7]}}, "KnownValues", [true true true]);
+            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                control, "", true, datetime(2024, 2, 29), relatedValues);
+            drawnow;
+            testCase.verifyEqual(control.Limits, limits);
+            testCase.verifyEqual(control.DisabledDates, disabledDates);
+            testCase.verifyEqual(control.DisabledDaysOfWeek, [1 7]);
             clear cleanup
         end
 
@@ -433,6 +474,20 @@ end
 if ~isempty(value) && isvalid(value)
     delete(value);
 end
+end
+
+function message = captureBatch(owner, changes)
+% captureBatch Record one dialog batch while reporting that it was accepted.
+arguments (Input)
+    owner (1, 1) matlab.ui.Figure
+    changes (1, :) struct
+end
+arguments (Output)
+    message (1, 1) string
+end
+
+setappdata(owner, "changes", changes);
+message = "";
 end
 
 %{

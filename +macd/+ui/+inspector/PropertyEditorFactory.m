@@ -64,8 +64,11 @@ classdef PropertyEditorFactory
                         macd.ui.inspector.PropertyEditorFactory.commitTextArea(source, commitFcn));
                 case "structuredData"
                     if macd.ui.inspector.PropertyEditorFactory.isDayOfWeekSchema(definition)
-                        control = macd.ui.inspector.PropertyEditorFactory.createDayOfWeekEditor( ...
-                            parent, commitFcn);
+                        control = uibutton(parent, "Text", "Edit weekdays", ...
+                            "Tag", "macd-inspector-day-of-week-editor", ...
+                            "ButtonPushedFcn", @(source, ~) ...
+                            macd.ui.inspector.PropertyEditorFactory.openDayOfWeekEditor( ...
+                            source, definition.Path, batchCommitFcn));
                     else
                         control = uibutton(parent, "Text", "Edit data", ...
                             "Tag", "macd-inspector-structured-data-editor", ...
@@ -128,7 +131,7 @@ classdef PropertyEditorFactory
 
             if isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
                 macd.ui.inspector.PropertyEditorFactory.synchronizeDatePicker( ...
-                    control, rawValue, isEditable);
+                    control, rawValue, isEditable, relatedValues);
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-limits-editor"
                 macd.ui.inspector.PropertyEditorFactory.synchronizeDateLimits( ...
                     control, rawValue, isEditable);
@@ -139,8 +142,10 @@ classdef PropertyEditorFactory
                     isEditable && macd.ui.inspector.PropertyEditorFactory.isSafeDateList(rawValue));
                 return
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-day-of-week-editor"
-                macd.ui.inspector.PropertyEditorFactory.synchronizeDayOfWeek( ...
-                    control, rawValue, isEditable);
+                control.UserData = rawValue;
+                control.Text = macd.ui.inspector.PropertyEditorFactory.daySummary(rawValue);
+                control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                    isEditable && macd.ui.inspector.PropertyEditorFactory.isSafeDayOfWeekValue(rawValue));
                 return
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
                 parts = control.UserData;
@@ -274,10 +279,7 @@ classdef PropertyEditorFactory
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-list-editor"
                 value = control.UserData;
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-day-of-week-editor"
-                state = control.UserData;
-                value = macd.ui.inspector.PropertyEditorFactory.dayValue( ...
-                    macd.ui.inspector.PropertyEditorFactory.selectedDays(state.Buttons), ...
-                    state.Original);
+                value = control.UserData;
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
                 value = control.UserData.Edit.Value;
             elseif isa(control, "matlab.ui.control.CheckBox") || ...
@@ -313,7 +315,8 @@ classdef PropertyEditorFactory
                 control.UserData = value;
                 control.Text = macd.ui.inspector.PropertyEditorFactory.dateListSummary(value);
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-day-of-week-editor"
-                macd.ui.inspector.PropertyEditorFactory.synchronizeDayOfWeek(control, value, true);
+                control.UserData = value;
+                control.Text = macd.ui.inspector.PropertyEditorFactory.daySummary(value);
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
                 parts = control.UserData;
                 parts.Edit.Value = value;
@@ -349,79 +352,20 @@ classdef PropertyEditorFactory
                 string(definition.ValueSchema.kind) == "dayOfWeekList";
         end
 
-        function control = createDayOfWeekEditor(parent, commitFcn)
-            % createDayOfWeekEditor Construct seven localized state buttons for documented weekdays.
+        function openDayOfWeekEditor(control, path, batchCommitFcn)
+            % openDayOfWeekEditor Open a weekday draft that commits through the dialog batch path.
             arguments (Input)
-                parent
-                commitFcn (1, 1) function_handle
+                control (1, 1) matlab.ui.control.Button
+                path (1, 1) string
+                batchCommitFcn (1, 1) function_handle
             end
-            arguments (Output)
-                control
-            end
-
-            control = uipanel(parent, "BorderType", "none", ...
-                "Tag", "macd-inspector-day-of-week-editor");
-            grid = uigridlayout(control, [1 7], "Padding", [0 0 0 0], ...
-                "ColumnSpacing", 2, "ColumnWidth", repmat({"1x"}, 1, 7));
-            labels = ["日", "月", "火", "水", "木", "金", "土"];
-            buttons = cell(1, 7);
-            for index = 1:numel(labels)
-                button = uibutton(grid, "state", "Text", labels(index), ...
-                    "Tag", "macd-inspector-day-of-week-button");
-                buttons{index} = button;
-            end
-            state = struct("Buttons", {buttons}, "Original", []);
-            control.UserData = state;
-            for index = 1:numel(buttons)
-                buttons{index}.UserData = control;
-                buttons{index}.ValueChangedFcn = @(source, ~) ...
-                    macd.ui.inspector.PropertyEditorFactory.commitDayOfWeek(source, commitFcn);
-            end
-        end
-
-        function synchronizeDayOfWeek(control, rawValue, isEditable)
-            % synchronizeDayOfWeek Project documented weekday values into the seven button states.
-            arguments (Input)
-                control
-                rawValue
-                isEditable (1, 1) logical
-            end
-
-            state = control.UserData;
-            days = macd.ui.inspector.PropertyEditorFactory.dayNumbers(rawValue);
-            for index = 1:numel(state.Buttons)
-                button = state.Buttons{index};
-                button.Value = any(days == index);
-                button.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
-            end
-            state.Original = rawValue;
-            control.UserData = state;
-        end
-
-        function commitDayOfWeek(source, commitFcn)
-            % commitDayOfWeek Preserve the current representation while committing all button states.
-            arguments (Input)
-                source
-                commitFcn (1, 1) function_handle
-            end
-
-            control = source.UserData;
-            state = control.UserData;
-            selected = macd.ui.inspector.PropertyEditorFactory.selectedDays(state.Buttons);
-            commitFcn(macd.ui.inspector.PropertyEditorFactory.dayValue(selected, state.Original));
-        end
-
-        function result = selectedDays(buttons)
-            % selectedDays Return the one-based documented weekday values in display order.
-            arguments (Input)
-                buttons cell
-            end
-            arguments (Output)
-                result double
-            end
-
-            selected = cellfun(@(button) button.Value, buttons);
-            result = find(selected);
+            original = control.UserData;
+            days = macd.ui.inspector.PropertyEditorFactory.dayNumbers(original);
+            owner = ancestor(control, "figure");
+            visible = isempty(owner) || string(owner.Visible) == "on";
+            macd.ui.inspector.DayOfWeekEditorDialog.open(days, path, @(changes) ...
+                batchCommitFcn(struct("Path", changes.Path, "Value", ...
+                macd.ui.inspector.PropertyEditorFactory.dayValue(changes.Value, original))), visible);
         end
 
         function result = dayValue(days, original)
@@ -476,6 +420,36 @@ classdef PropertyEditorFactory
             result = unique(result, "sorted");
         end
 
+        function result = daySummary(value)
+            % daySummary Render selected weekdays in concise English for the inspector button.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                result (1, 1) string
+            end
+
+            names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            days = macd.ui.inspector.PropertyEditorFactory.dayNumbers(value);
+            if isempty(days)
+                result = "No disabled weekdays";
+            else
+                result = strjoin(names(days), ", ");
+            end
+        end
+
+        function result = isSafeDayOfWeekValue(value)
+            % isSafeDayOfWeekValue Return whether documented weekday data can open the dedicated editor.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = isnumeric(value) || isstring(value) || iscell(value);
+        end
+
         function control = createDateTimeEditor(parent, definition, commitFcn, batchCommitFcn)
             % createDateTimeEditor Select a native date adapter from the audited schema shape.
             arguments (Input)
@@ -526,15 +500,31 @@ classdef PropertyEditorFactory
                 "The dateTime editor requires a scalar, fixed-length vector, or vector schema.");
         end
 
-        function synchronizeDatePicker(control, rawValue, isEditable)
-            % synchronizeDatePicker Load one lossless native calendar date into an inline picker.
+        function synchronizeDatePicker(control, rawValue, isEditable, relatedValues)
+            % synchronizeDatePicker Load a date and its effective calendar restrictions into one picker.
             arguments (Input)
                 control
                 rawValue
                 isEditable (1, 1) logical
+                relatedValues struct = struct()
             end
 
             if macd.ui.inspector.PropertyEditorFactory.isSafeDateScalar(rawValue)
+                limits = macd.ui.inspector.PropertyEditorFactory.relatedValue( ...
+                    relatedValues, "Limits", []);
+                disabledDates = macd.ui.inspector.PropertyEditorFactory.relatedValue( ...
+                    relatedValues, "DisabledDates", datetime.empty(0, 1));
+                disabledDays = macd.ui.inspector.PropertyEditorFactory.relatedValue( ...
+                    relatedValues, "DisabledDaysOfWeek", []);
+                if macd.ui.inspector.PropertyEditorFactory.isSafeDateLimits(limits)
+                    control.Limits = limits;
+                end
+                if macd.ui.inspector.PropertyEditorFactory.isSafeDateList(disabledDates)
+                    control.DisabledDates = reshape(disabledDates, [], 1);
+                end
+                if macd.ui.inspector.PropertyEditorFactory.isSafeDayOfWeekValue(disabledDays)
+                    control.DisabledDaysOfWeek = disabledDays;
+                end
                 control.Value = rawValue;
                 control.UserData = rawValue;
                 control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff(isEditable);
@@ -542,6 +532,28 @@ classdef PropertyEditorFactory
                 control.Value = NaT;
                 control.UserData = [];
                 control.Enable = "off";
+            end
+        end
+
+        function value = relatedValue(relatedValues, path, fallback)
+            % relatedValue Read one known effective value from the inspector's property snapshot.
+            arguments (Input)
+                relatedValues struct
+                path (1, 1) string
+                fallback
+            end
+            arguments (Output)
+                value
+            end
+
+            value = fallback;
+            if ~isfield(relatedValues, "Paths") || ~isfield(relatedValues, "Values") || ...
+                    ~isfield(relatedValues, "KnownValues")
+                return
+            end
+            index = find(string(relatedValues.Paths) == path, 1);
+            if ~isempty(index) && relatedValues.KnownValues(index)
+                value = relatedValues.Values{index};
             end
         end
 
