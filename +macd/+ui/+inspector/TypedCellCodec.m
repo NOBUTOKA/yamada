@@ -67,6 +67,31 @@ classdef TypedCellCodec
             end
         end
 
+        function value = packMatrix(values)
+            % packMatrix Preserve homogeneous scalar matrix types where safe after table-cell parsing.
+            arguments (Input)
+                values cell
+            end
+            arguments (Output)
+                value
+            end
+
+            if isempty(values)
+                value = [];
+            elseif all(cellfun(@(item) isnumeric(item) && isscalar(item), values), "all")
+                value = cell2mat(values);
+            elseif all(cellfun(@(item) islogical(item) && isscalar(item), values), "all")
+                value = logical(cell2mat(values));
+            elseif all(cellfun(@(item) isstring(item) && isscalar(item), values), "all")
+                value = strings(size(values));
+                for index = 1:numel(values)
+                    value(index) = values{index};
+                end
+            else
+                value = values;
+            end
+        end
+
         function text = literalText(value)
             % literalText Format one typed value without evaluating user text.
             arguments (Input)

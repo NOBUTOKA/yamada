@@ -79,6 +79,13 @@ classdef PropertyEditorFactory
                 case "dateTime"
                     control = macd.ui.inspector.PropertyEditorFactory.createDateTimeEditor( ...
                         parent, definition, commitFcn, batchCommitFcn);
+                case "tableData"
+                    control = uibutton(parent, "Text", "Edit table", ...
+                        "Tag", "macd-inspector-table-data-editor", ...
+                        "ButtonPushedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.openTableDataEditor( ...
+                        source, batchCommitFcn));
+                    control.UserData = struct("Path", definition.Path);
                 case "text"
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -113,7 +120,7 @@ classdef PropertyEditorFactory
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
                 "onOff", "enum", "number", "numericVector", "color", "stringList", ...
-                "multilineText", "url", "asset", "structuredData", "dateTime"]);
+                "multilineText", "url", "asset", "structuredData", "dateTime", "tableData"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -146,6 +153,15 @@ classdef PropertyEditorFactory
                 control.Text = macd.ui.inspector.PropertyEditorFactory.daySummary(rawValue);
                 control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
                     isEditable && macd.ui.inspector.PropertyEditorFactory.isSafeDayOfWeekValue(rawValue));
+                return
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-table-data-editor"
+                state = macd.ui.inspector.PropertyEditorFactory.tableDataState( ...
+                    control.UserData.Path, rawValue, relatedValues);
+                control.UserData = state;
+                control.Text = macd.ui.inspector.TableDataEditorDialog.summary(state.Data);
+                control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                    isEditable && state.HasData && ...
+                    macd.ui.inspector.TableDataEditorDialog.supportsData(state.Data));
                 return
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
                 parts = control.UserData;
@@ -317,6 +333,14 @@ classdef PropertyEditorFactory
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-day-of-week-editor"
                 control.UserData = value;
                 control.Text = macd.ui.inspector.PropertyEditorFactory.daySummary(value);
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-table-data-editor"
+                state = control.UserData;
+                if isstruct(state) && isfield(state, "Path")
+                    state.Data = value;
+                    state.HasData = true;
+                    control.UserData = state;
+                    control.Text = macd.ui.inspector.TableDataEditorDialog.summary(value);
+                end
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-asset-editor"
                 parts = control.UserData;
                 parts.Edit.Value = value;
@@ -366,6 +390,75 @@ classdef PropertyEditorFactory
             macd.ui.inspector.DayOfWeekEditorDialog.open(days, path, @(changes) ...
                 batchCommitFcn(struct("Path", changes.Path, "Value", ...
                 macd.ui.inspector.PropertyEditorFactory.dayValue(changes.Value, original))), visible);
+        end
+
+        function openTableDataEditor(control, batchCommitFcn)
+            % openTableDataEditor Open the complete table draft through the shared batch pathway.
+            arguments (Input)
+                control (1, 1) matlab.ui.control.Button
+                batchCommitFcn (1, 1) function_handle
+            end
+
+            state = control.UserData;
+            owner = ancestor(control, "figure");
+            visible = isempty(owner) || string(owner.Visible) == "on";
+            macd.ui.inspector.TableDataEditorDialog.open(state, batchCommitFcn, visible);
+        end
+
+        function state = tableDataState(currentPath, rawValue, relatedValues)
+            % tableDataState Gather Data and heading values from one effective inspector snapshot.
+            arguments (Input)
+                currentPath (1, 1) string
+                rawValue
+                relatedValues struct
+            end
+            arguments (Output)
+                state (1, 1) struct
+            end
+
+            paths = ["Data", "ColumnName", "RowName"];
+            values = {[], [], []};
+            known = false(1, numel(paths));
+            for index = 1:numel(paths)
+                if paths(index) == currentPath
+                    values{index} = rawValue;
+                    known(index) = ~isempty(rawValue) || currentPath == "Data";
+                else
+                    [values{index}, known(index)] = ...
+                        macd.ui.inspector.PropertyEditorFactory.relatedKnownValue( ...
+                        relatedValues, paths(index), []);
+                end
+            end
+            state = struct("Path", currentPath, "Data", [], "ColumnName", [], "RowName", [], ...
+                "HasData", known(1), "HasColumnName", known(2), "HasRowName", known(3));
+            state.Data = values{1};
+            state.ColumnName = values{2};
+            state.RowName = values{3};
+        end
+
+        function [value, known] = relatedKnownValue(relatedValues, path, fallback)
+            % relatedKnownValue Read one value and its availability bit from a related snapshot.
+            arguments (Input)
+                relatedValues struct
+                path (1, 1) string
+                fallback
+            end
+            arguments (Output)
+                value
+                known (1, 1) logical
+            end
+
+            value = fallback;
+            known = false;
+            if ~isfield(relatedValues, "Paths") || ~isfield(relatedValues, "Values") || ...
+                    ~isfield(relatedValues, "KnownValues")
+                return
+            end
+            index = find(string(relatedValues.Paths) == path, 1);
+            if ~isempty(index) && relatedValues.KnownValues(index)
+                value = relatedValues.Values{index};
+                known = true;
+            end
         end
 
         function result = dayValue(days, original)

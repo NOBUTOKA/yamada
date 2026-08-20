@@ -425,6 +425,41 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function tableDataRowsShareOneTypedTableEditor(testCase)
+            % tableDataRowsShareOneTypedTableEditor Route Data and heading rows through one atomic table batch.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            setappdata(figure, "changes", struct.empty);
+            component = macd.model.ComponentRegistry.createDefault().getById("uitable");
+            paths = ["Data", "ColumnName", "RowName"];
+            relatedValues = struct("Paths", paths, ...
+                "Values", {{[1 2], {'First', 'Second'}, {'One'}}}, ...
+                "KnownValues", [true true true]);
+            for index = 1:numel(paths)
+                definition = component.Properties([component.Properties.Path] == paths(index));
+                control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) [], ...
+                    @(changes) captureBatch(figure, changes));
+                macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                    control, "", true, relatedValues.Values{index}, relatedValues);
+                testCase.verifyEqual(string(control.Tag), "macd-inspector-table-data-editor");
+                testCase.verifyEqual(string(control.Enable), "on");
+                if paths(index) == "Data"
+                    control.ButtonPushedFcn(control, struct());
+                end
+            end
+            dialog = findall(0, "Tag", "macd-inspector-table-data-dialog");
+            table = findall(dialog, "Tag", "macd-table-data-editor-table");
+            table.Data(2, 2:3) = ["3", "4"];
+            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton.ButtonPushedFcn(applyButton, struct());
+
+            changes = getappdata(figure, "changes");
+            testCase.verifyEqual(changes.Path, "Data");
+            testCase.verifyEqual(changes.Value, [3 4]);
+            clear cleanup
+        end
+
         function synchronizesDatePickerRestrictionsFromRelatedValues(testCase)
             % synchronizesDatePickerRestrictions Apply the effective date contracts to the native picker.
 

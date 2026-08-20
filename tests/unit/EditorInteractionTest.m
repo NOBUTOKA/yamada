@@ -238,6 +238,46 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function tableDataDialogCommitsTypedDataFromTheInspector(testCase)
+            % tableDataDialogCommitsTypedDataFromTheInspector Apply one typed table draft through the real row binding.
+
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure.Visible = "off";
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Table", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            labels = findall(figure, "Type", "uilabel", ...
+                "Tag", "macd-inspector-property-label");
+            dataLabel = labels(string({labels.Text}) == "Data");
+            editor = findall(dataLabel.Parent, "Tag", "macd-inspector-table-data-editor");
+            editor.ButtonPushedFcn(editor, struct());
+            dialog = findall(0, "Tag", "macd-inspector-table-data-dialog");
+            addColumn = findall(dialog, "Tag", "macd-table-data-add-column");
+            addColumn.ButtonPushedFcn(addColumn, struct());
+            addRow = findall(dialog, "Tag", "macd-table-data-add-row");
+            addRow.ButtonPushedFcn(addRow, struct());
+            table = findall(dialog, "Tag", "macd-table-data-editor-table");
+            bodyRows = size(table.Data, 1) - 1;
+            bodyColumns = size(table.Data, 2) - 1;
+            expected = reshape(1:bodyRows * bodyColumns, bodyRows, bodyColumns);
+            table.Data(2:end, 2:end) = string(expected);
+            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton.ButtonPushedFcn(applyButton, struct());
+            drawnow;
+
+            component = app.Document.getComponent(app.SelectedComponentId);
+            entry = component.getProperty("Data");
+            testCase.verifyEqual(entry.LiteralValue, expected);
+            clear cleanup
+        end
+
         function editMenuExposesPhase5Commands(testCase)
             % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
 
