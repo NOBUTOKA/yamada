@@ -193,6 +193,8 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             limitsEditor = findall(figure, "Tag", "macd-inspector-date-limits-editor");
+            editorPosition = getpixelposition(limitsEditor, true);
+            testCase.verifyGreaterThanOrEqual(editorPosition(4), 56);
             parts = limitsEditor.UserData;
             parts.Start.Value = datetime(2024, 12, 31);
             parts.End.Value = datetime(2024, 1, 1);

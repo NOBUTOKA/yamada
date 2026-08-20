@@ -197,6 +197,29 @@ classdef InspectorPropertyRow < handle
         end
     end
 
+    methods (Static)
+        function height = rowHeight(definition)
+            % rowHeight Return the deterministic native height requested by one editor schema.
+            arguments (Input)
+                definition (1, 1) macd.model.PropertyDefinition
+            end
+            arguments (Output)
+                height (1, 1) double
+            end
+
+            if definition.Editor == "multilineText"
+                height = 84;
+            elseif definition.Editor == "dateTime" && ...
+                    isfield(definition.ValueSchema, "shape") && ...
+                    string(definition.ValueSchema.shape) == "fixedLengthVector"
+                % The two native date pickers require a full two-row parent slot.
+                height = 56;
+            else
+                height = 28;
+            end
+        end
+    end
+
     methods (Static, Access = private)
         function message = commitSingleChange(commitFcn, componentId, changes)
             % commitSingleChange Adapt a legacy row callback to one staged property value.
@@ -216,19 +239,6 @@ classdef InspectorPropertyRow < handle
             message = commitFcn(componentId, string(changes.Path), changes.Value);
         end
 
-        function height = rowHeight(definition)
-            % rowHeight Return the compact or multiline height for one property row.
-            if definition.Editor == "multilineText"
-                height = 84;
-            elseif definition.Editor == "dateTime" && ...
-                    isfield(definition.ValueSchema, "shape") && ...
-                    string(definition.ValueSchema.shape) == "fixedLengthVector"
-                % The date schema itself requests the two-picker presentation height.
-                height = 56;
-            else
-                height = 28;
-            end
-        end
     end
 end
 
