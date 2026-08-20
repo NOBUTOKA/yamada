@@ -1582,7 +1582,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     return
                 end
             end
-            changes = struct("Path", path, "Value", value);
+            changes = macd.model.PropertyTransaction.singleChange(path, value);
             message = app.inspectorValuesCommitted(componentId, changes);
         end
 

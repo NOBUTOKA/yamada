@@ -22,6 +22,17 @@ classdef PropertyTransactionTest < matlab.unittest.TestCase
             testCase.verifyEmpty(changes(2).Value);
         end
 
+        function singleChangeRetainsOneCellArrayValue(testCase)
+            % singleChangeRetainsOneCellArrayValue Avoid expanding multiline text into multiple updates.
+
+            lines = {"First", "Second", "Third"};
+            changes = macd.model.PropertyTransaction.singleChange("Value", lines);
+
+            testCase.verifySize(changes, [1 1]);
+            testCase.verifyEqual(changes.Path, "Value");
+            testCase.verifyEqual(changes.Value, lines);
+        end
+
         function validatesCrossPropertyConstraintsAgainstOneCandidate(testCase)
             % validatesCrossPropertyConstraintsAgainstOneCandidate Use staged references before document mutation.
 

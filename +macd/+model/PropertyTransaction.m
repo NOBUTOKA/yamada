@@ -122,6 +122,22 @@ classdef PropertyTransaction < handle
         end
     end
 
+    methods (Static)
+        function changes = singleChange(path, value)
+            % singleChange Wrap one value without expanding cell contents into multiple changes.
+            arguments (Input)
+                path (1, 1) string
+                value
+            end
+            arguments (Output)
+                changes (1, 1) struct
+            end
+
+            % A cell value must remain one property value, rather than a struct array.
+            changes = struct("Path", path, "Value", {value});
+        end
+    end
+
     methods (Access = private)
         function index = pathIndex(obj, path)
             % pathIndex Resolve one known transaction path or report a programming error.

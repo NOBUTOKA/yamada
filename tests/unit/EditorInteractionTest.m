@@ -111,6 +111,40 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function textAreaValueCommitPreservesAllLines(testCase)
+            % textAreaValueCommitPreservesAllLines Keep one multiline Value as one transaction change.
+
+            % Insert a Text Area, then invoke its native multiline inspector callback.
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure.Visible = "off";
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Text Area", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            % Resolve the Value row without confusing it with the Tooltip text area.
+            labels = findall(figure, "Type", "uilabel", ...
+                "Tag", "macd-inspector-property-label");
+            label = labels(string({labels.Text}) == "Value");
+            editor = findall(label.Parent, "Type", "uitextarea", ...
+                "Tag", "macd-inspector-property-editor");
+            lines = {'First'; 'Second'; 'Third'};
+            editor.Value = lines;
+            editor.ValueChangedFcn(editor, struct());
+            drawnow;
+
+            component = app.Document.getComponent(app.SelectedComponentId);
+            entry = component.getProperty("Value");
+            testCase.verifyEqual(entry.LiteralValue, {'First', 'Second', 'Third'});
+            testCase.verifyEqual(string(editor.Value), string(lines));
+            clear cleanup
+        end
+
         function editMenuExposesPhase5Commands(testCase)
             % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
 
