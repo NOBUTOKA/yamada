@@ -240,6 +240,25 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function resolvesItemsDataFromGeneralRelatedState(testCase)
+            % resolvesItemsDataFromGeneralRelatedState Use the shared effective-value snapshot.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
+            definition = definition.Properties([definition.Properties.Path] == "ItemsData");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            relatedValues = struct("Paths", ["Items", "Value"], ...
+                "Values", {{["First", "Second"], "First"}}, ...
+                "KnownValues", [true true]);
+            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                control, "[1 2]", true, [1 2], relatedValues);
+            drawnow;
+            testCase.verifyTrue(control.UserData.HasItems);
+            testCase.verifyEqual(string(control.UserData.Items{1}), ["First", "Second"]);
+            clear cleanup
+        end
+
         function defersUnsupportedStructuredData(testCase)
             % defersUnsupportedStructuredData Keep unsupported arbitrary values source-preserved.
 
@@ -263,9 +282,8 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             cleanup = onCleanup(@() deleteIfValid(figure));
             definition = macd.model.ComponentRegistry.createDefault().getById("uihyperlink");
             definition = definition.Properties([definition.Properties.Path] == "URL");
-            received = "";
             control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
-                @(value) assignin("caller", "received", value));
+                @(~) []);
             macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'https://example.com'", true, ...
                 "https://example.com");
             drawnow;

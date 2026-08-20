@@ -181,6 +181,44 @@ classdef ModelTest < matlab.unittest.TestCase
                 [30 40 120 30]);
         end
 
+        function propertyBatchesAreAtomicAndUndoAsOneEdit(testCase)
+            % propertyBatchesAreAtomicAndUndoAsOneEdit Verify one reversible multi-property mutation.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            label = document.insertComponent(registry, "uilabel", ...
+                document.RootComponentId);
+            initialHistoryCount = numel(document.History);
+            changes = [struct("Path", "Text", "Value", "Ready"), ...
+                struct("Path", "Position", "Value", [30 40 120 30])];
+
+            document.setPropertyBatch(label.Id, changes);
+            testCase.verifyEqual(numel(document.History), initialHistoryCount + 1);
+            testCase.verifyEqual(label.getProperty("Text").LiteralValue, "Ready");
+            testCase.verifyEqual(label.getProperty("Position").LiteralValue, [30 40 120 30]);
+            document.undo();
+            testCase.verifyEmpty(label.getProperty("Text"));
+            testCase.verifyEqual(label.getProperty("Position").LiteralValue, [20 20 100 30]);
+            document.redo();
+            testCase.verifyEqual(label.getProperty("Text").LiteralValue, "Ready");
+            testCase.verifyEqual(label.getProperty("Position").LiteralValue, [30 40 120 30]);
+        end
+
+        function propertyBatchPreflightLeavesValuesUntouched(testCase)
+            % propertyBatchPreflightLeavesValuesUntouched Reject duplicate paths before mutation.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            label = document.insertComponent(registry, "uilabel", ...
+                document.RootComponentId);
+            changes = [struct("Path", "Text", "Value", "First"), ...
+                struct("Path", "Text", "Value", "Second")];
+
+            testCase.verifyError(@() document.setPropertyBatch(label.Id, changes), ...
+                "macd:DocumentModel:InvalidPropertyBatch");
+            testCase.verifyEmpty(label.getProperty("Text"));
+        end
+
         function insertionUndoRemovesWithoutDeletionIntent(testCase)
             % insertionUndoRemovesWithoutDeletionIntent Verify generated undo semantics.
 

@@ -175,6 +175,66 @@ classdef DocumentModel < handle
                 "NewValue", value));
         end
 
+        function entries = setPropertyBatch(obj, componentId, changes)
+            % setPropertyBatch Apply one preflighted property batch as a single undoable edit.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+                changes (1, :) struct
+            end
+            arguments (Output)
+                entries macd.model.PropertyEntry
+            end
+
+            % Preflight every target before changing any component property.
+            component = obj.getComponent(componentId);
+            if isempty(component)
+                error("macd:DocumentModel:UnknownComponent", ...
+                    "Component ID ""%s"" does not exist.", componentId);
+            end
+            if isempty(changes) || ~isfield(changes, "Path") || ~isfield(changes, "Value")
+                error("macd:DocumentModel:InvalidPropertyBatch", ...
+                    "Every property batch change must provide Path and Value fields.");
+            end
+            paths = string({changes.Path});
+            if any(strlength(paths) == 0) || numel(unique(paths)) ~= numel(paths)
+                error("macd:DocumentModel:InvalidPropertyBatch", ...
+                    "Property batch paths must be nonempty and unique.");
+            end
+            historyChanges = repmat(struct("Path", "", "HadOldValue", false, ...
+                "OldValue", [], "NewValue", []), 1, numel(changes));
+            for index = 1:numel(changes)
+                entry = component.getProperty(paths(index));
+                if ~isempty(entry) && ~entry.IsEditable
+                    error("macd:DocumentModel:ReadOnlyProperty", ...
+                        "Property ""%s"" is source-backed and read-only.", paths(index));
+                end
+                historyChanges(index).Path = paths(index);
+                historyChanges(index).HadOldValue = ~isempty(entry);
+                if ~isempty(entry)
+                    historyChanges(index).OldValue = entry.LiteralValue;
+                end
+                historyChanges(index).NewValue = changes(index).Value;
+            end
+
+            % Commit only after every target is known to be editable and reversible.
+            entries = macd.model.PropertyEntry.empty;
+            try
+                for index = 1:numel(changes)
+                    entries(end + 1) = component.setProperty( ...
+                        historyChanges(index).Path, historyChanges(index).NewValue); %#ok<AGROW>
+                end
+            catch exception
+                % Preserve all-or-nothing semantics even if a future entry setter can fail.
+                for rollbackIndex = index - 1:-1:1
+                    obj.restoreBatchValue(component, historyChanges(rollbackIndex));
+                end
+                rethrow(exception)
+            end
+            obj.recordHistory(struct("Kind", "property-batch", ...
+                "ComponentId", componentId, "Changes", historyChanges));
+        end
+
         function states = getEffectivePropertyStates(obj, registry, componentId)
             % getEffectivePropertyStates Join effective definitions with explicit entries only.
             arguments (Input)
@@ -435,6 +495,16 @@ classdef DocumentModel < handle
                     else
                         component.removeProperty(edit.Path);
                     end
+                case "property-batch"
+                    component = obj.getComponent(edit.ComponentId);
+                    for index = 1:numel(edit.Changes)
+                        change = edit.Changes(index);
+                        if forward
+                            component.setProperty(change.Path, change.NewValue);
+                        else
+                            obj.restoreBatchValue(component, change);
+                        end
+                    end
                 case "reset-property"
                     component = obj.getComponent(edit.ComponentId);
                     if forward
@@ -455,6 +525,21 @@ classdef DocumentModel < handle
                     obj.PendingEdits(index) = [];
                     return
                 end
+            end
+        end
+
+        function restoreBatchValue(~, component, change)
+            % restoreBatchValue Restore one prior batch value or its absent-property state.
+            arguments (Input)
+                ~
+                component (1, 1) macd.model.ComponentRecord
+                change (1, 1) struct
+            end
+
+            if change.HadOldValue
+                component.setProperty(change.Path, change.OldValue);
+            else
+                component.removeProperty(change.Path);
             end
         end
 

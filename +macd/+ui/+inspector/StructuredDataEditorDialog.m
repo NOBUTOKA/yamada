@@ -4,13 +4,15 @@ classdef StructuredDataEditorDialog
     %   MatlabLiteralParser and never executes user-entered MATLAB expressions.
 
     methods (Static)
-        function open(currentValue, commitFcn)
+        function open(currentValue, path, commitFcn)
             % open Show a modal structured-data literal editor.
             arguments (Input)
                 currentValue
+                path (1, 1) string
                 commitFcn (1, 1) function_handle
             end
 
+            transaction = macd.model.PropertyTransaction(path, {currentValue});
             dialog = uifigure("Name", "Edit data", "Position", [100 100 500 300], ...
                 "WindowStyle", "modal");
             grid = uigridlayout(dialog, [3 1], "Padding", [12 12 12 12], ...
@@ -24,7 +26,6 @@ classdef StructuredDataEditorDialog
                 "ColumnWidth", {"1x", 90});
             uibutton(buttons, "Text", "Cancel", "ButtonPushedFcn", @(~, ~) closeDialog());
             uibutton(buttons, "Text", "Apply", "ButtonPushedFcn", @(~, ~) applyValue());
-            uiwait(dialog);
 
             function applyValue()
                 source = strjoin(string(area.Value), newline);
@@ -34,8 +35,13 @@ classdef StructuredDataEditorDialog
                     area.BackgroundColor = [1 0.9 0.9];
                     return
                 end
+                transaction.stage(path, value);
+                message.Text = commitFcn(transaction.changes());
+                if strlength(message.Text) > 0
+                    area.BackgroundColor = [1 0.9 0.9];
+                    return
+                end
                 close(dialog);
-                commitFcn(value);
             end
 
             function closeDialog()

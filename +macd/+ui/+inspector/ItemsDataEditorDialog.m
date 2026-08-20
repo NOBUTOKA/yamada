@@ -4,16 +4,18 @@ classdef ItemsDataEditorDialog
     %   values as typed literal text and commits a matching typed row or an empty array.
 
     methods (Static)
-        function open(items, initialData, commitFcn)
+        function open(items, initialData, path, commitFcn)
             % open Show a paired Items and ItemsData editor.
             arguments (Input)
                 items
                 initialData
+                path (1, 1) string
                 commitFcn (1, 1) function_handle
             end
 
             labels = macd.ui.inspector.ItemsDataEditorDialog.itemLabels(items);
             data = macd.ui.inspector.ItemsDataEditorDialog.tableData(labels, initialData);
+            transaction = macd.model.PropertyTransaction(path, {initialData});
             dialog = uifigure("Name", "Edit item data", "Position", [100 100 520 330], ...
                 "WindowStyle", "modal");
             grid = uigridlayout(dialog, [3 2], "Padding", [12 12 12 12], ...
@@ -28,26 +30,39 @@ classdef ItemsDataEditorDialog
             message.Layout.Column = [1 2];
             uibutton(grid, "Text", "Clear", "ButtonPushedFcn", @(~, ~) clearData());
             uibutton(grid, "Text", "Apply", "ButtonPushedFcn", @(~, ~) applyData());
-            uiwait(dialog);
 
             function clearData()
-                close(dialog);
-                commitFcn([]);
+                % Stage the empty value locally so Clear still requires Apply.
+                transaction.clear(path);
+                table.Data = macd.ui.inspector.ItemsDataEditorDialog.tableData(labels, []);
+                removeStyle(table);
+                message.Text = "Enter literals such as 1, ""Text"", or 'Text'.";
+                message.FontColor = [0.3 0.3 0.3];
             end
 
             function applyData()
                 removeStyle(table);
-                [value, errorRow, errorMessage] = ...
-                    macd.ui.inspector.ItemsDataEditorDialog.commitValue(table.Data);
+                [values, errorRow, errorColumn, errorMessage] = ...
+                    macd.ui.inspector.TypedCellCodec.parse(table.Data(:, 2), true);
                 if errorRow > 0
                     errorStyle = uistyle("BackgroundColor", [1 0.9 0.9]);
-                    addStyle(table, errorStyle, "cell", [errorRow 2]);
+                    addStyle(table, errorStyle, "cell", [errorRow errorColumn + 1]);
+                    message.Text = errorMessage;
+                    message.FontColor = [0.7 0 0];
+                    return
+                end
+                if all(cellfun(@isempty, values))
+                    transaction.clear(path);
+                else
+                    transaction.stage(path, macd.ui.inspector.TypedCellCodec.packVector(values));
+                end
+                errorMessage = commitFcn(transaction.changes());
+                if strlength(errorMessage) > 0
                     message.Text = errorMessage;
                     message.FontColor = [0.7 0 0];
                     return
                 end
                 close(dialog);
-                commitFcn(value);
             end
         end
     end
@@ -88,54 +103,9 @@ classdef ItemsDataEditorDialog
             end
         end
 
-        function [value, errorRow, errorMessage] = commitValue(data)
-            % commitValue Parse typed literals or fall back to plain string text.
-            source = string(data(:, 2))';
-            values = cell(1, numel(source));
-            errorRow = 0;
-            errorMessage = "";
-            for index = 1:numel(source)
-                if strlength(strtrim(source(index))) == 0
-                    values{index} = [];
-                    continue
-                end
-                [item, isLiteral] = macd.source.MatlabLiteralParser.parse(source(index));
-                if ~isLiteral
-                    if macd.ui.inspector.ItemsDataEditorDialog.isPlainText(source(index))
-                        item = source(index);
-                    else
-                        value = [];
-                        errorRow = index;
-                        errorMessage = "ItemsData row " + index + ...
-                            " has an invalid MATLAB literal.";
-                        return
-                    end
-                end
-                values{index} = item;
-            end
-            if all(cellfun(@(item) isnumeric(item) && isscalar(item), values))
-                value = cell2mat(values);
-            elseif all(cellfun(@(item) islogical(item) && isscalar(item), values))
-                value = logical(cell2mat(values));
-            elseif all(cellfun(@(item) isstring(item) && isscalar(item), values))
-                value = string([values{:}]);
-            else
-                value = values;
-            end
-        end
-
-        function result = isPlainText(value)
-            % isPlainText Identify unquoted text that should become a string scalar.
-            result = ~contains(value, ["'", '"', "[", "]", "{", "}"]);
-        end
-
         function text = literalText(value)
             % literalText Display each associated value using a safe typed MATLAB literal.
-            try
-                text = macd.source.LiteralEncoder.encode(value);
-            catch
-                text = "<unsupported>";
-            end
+            text = macd.ui.inspector.TypedCellCodec.literalText(value);
         end
     end
 end

@@ -9,12 +9,14 @@ classdef InspectorPropertyRow < handle
         NormalBackgroundColor double = [1 1 1]
         Definition macd.model.PropertyDefinition
         CommitFcn function_handle
+        BatchCommitFcn function_handle
         ComponentId string
         Path string
     end
 
     methods
-        function obj = InspectorPropertyRow(parent, row, componentId, definition, commitFcn)
+        function obj = InspectorPropertyRow( ...
+                parent, row, componentId, definition, commitFcn, batchCommitFcn)
             % InspectorPropertyRow Create one disposable native property-row control set.
             arguments (Input)
                 parent
@@ -22,6 +24,7 @@ classdef InspectorPropertyRow < handle
                 componentId (1, 1) string
                 definition (1, 1) macd.model.PropertyDefinition
                 commitFcn (1, 1) function_handle
+                batchCommitFcn = []
             end
             arguments (Output)
                 obj (1, 1) macd.ui.inspector.InspectorPropertyRow
@@ -38,10 +41,16 @@ classdef InspectorPropertyRow < handle
             obj.Path = definition.Path;
             obj.Definition = definition;
             obj.CommitFcn = commitFcn;
+            if isempty(batchCommitFcn)
+                batchCommitFcn = @(id, changes) ...
+                    macd.ui.inspector.InspectorPropertyRow.commitSingleChange( ...
+                    commitFcn, id, changes);
+            end
+            obj.BatchCommitFcn = batchCommitFcn;
             uilabel(grid, "Text", definition.DisplayName, "Tooltip", definition.Path, ...
                 "Tag", "macd-inspector-property-label");
             obj.Editor = macd.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
-                @(value) obj.commit(value));
+                @(value) obj.commit(value), @(changes) obj.commitBatch(changes));
             obj.Editor.Layout.Column = 2;
             obj.captureNormalBackgroundColor();
         end
@@ -119,6 +128,19 @@ classdef InspectorPropertyRow < handle
             end
         end
 
+        function message = commitBatch(obj, changes)
+            % commitBatch Submit one dialog-owned staged property batch through the row binding.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            message = obj.BatchCommitFcn(obj.ComponentId, changes);
+        end
+
         function showError(obj, message)
             % showError Mark an invalid editor draft and expose its explanation by hover.
             arguments (Input)
@@ -176,6 +198,24 @@ classdef InspectorPropertyRow < handle
     end
 
     methods (Static, Access = private)
+        function message = commitSingleChange(commitFcn, componentId, changes)
+            % commitSingleChange Adapt a legacy row callback to one staged property value.
+            arguments (Input)
+                commitFcn (1, 1) function_handle
+                componentId (1, 1) string
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            if numel(changes) ~= 1
+                error("macd:InspectorPropertyRow:InvalidSingleChange", ...
+                    "A legacy inspector row can commit only one property value.");
+            end
+            message = commitFcn(componentId, string(changes.Path), changes.Value);
+        end
+
         function height = rowHeight(definition)
             % rowHeight Return the compact or multiline height for one property row.
             if definition.Editor == "multilineText"

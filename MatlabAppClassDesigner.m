@@ -1556,12 +1556,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 message = "Selection changed before the edit could be applied.";
                 return
             end
-            entry = component.getProperty(path);
-            if ~isempty(entry) && ~entry.IsEditable
-                message = "This source-backed property is read-only.";
-                app.setStatus(message);
-                return
-            end
             definition = app.inspectorDefinition(component, path);
             if any(definition.Editor == ["url", "asset"])
                 if ~(ischar(value) && isrow(value)) && ~(isstring(value) && isscalar(value))
@@ -1588,19 +1582,63 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     return
                 end
             end
-            message = app.validateInspectorValue(component, definition, value);
-            if strlength(message) > 0
+            changes = struct("Path", path, "Value", value);
+            message = app.inspectorValuesCommitted(componentId, changes);
+        end
+
+        function message = inspectorValuesCommitted(app, componentId, changes)
+            % inspectorValuesCommitted Validate and apply a complete candidate property batch.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                componentId (1, 1) string
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            component = app.Document.getComponent(componentId);
+            if isempty(component) || componentId ~= app.SelectedComponentId
+                message = "Selection changed before the edit could be applied.";
+                return
+            end
+            if isempty(changes) || ~isfield(changes, "Path") || ~isfield(changes, "Value")
+                message = "Each property update must include a path and value.";
                 app.setStatus(message);
                 return
             end
+            transaction = app.inspectorTransaction(component);
             try
-                app.Document.setProperty(component.Id, path, value);
+                for index = 1:numel(changes)
+                    transaction.stage(string(changes(index).Path), changes(index).Value);
+                end
             catch exception
                 message = string(exception.message);
                 app.setStatus(message);
                 return
             end
-            % Revalidate immediately so property-row commits refresh diagnostics.
+            for index = 1:numel(changes)
+                entry = component.getProperty(string(changes(index).Path));
+                if ~isempty(entry) && ~entry.IsEditable
+                    message = "This source-backed property is read-only.";
+                    app.setStatus(message);
+                    return
+                end
+            end
+            definitions = arrayfun(@(state) state.Definition, app.inspectorStates(component));
+            message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
+            if strlength(message) > 0
+                app.setStatus(message);
+                return
+            end
+            try
+                app.Document.setPropertyBatch(component.Id, transaction.changes());
+            catch exception
+                message = string(exception.message);
+                app.setStatus(message);
+                return
+            end
+            % Revalidate and refresh exactly once after an accepted complete batch.
             macd.validation.ModelValidator.validate(app.Document, app.Registry);
             app.refreshShell();
         end
@@ -1654,7 +1692,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                     state = states(indices(rowIndex));
                     row = macd.ui.inspector.InspectorPropertyRow(section.contentGrid(), rowIndex, ...
                         component.Id, state.Definition, @(id, path, text) ...
-                        app.inspectorValueCommitted(id, path, text));
+                        app.inspectorValueCommitted(id, path, text), @(id, changes) ...
+                        app.inspectorValuesCommitted(id, changes));
                     if state.Definition.Editor == "multilineText"
                         section.setRowHeight(rowIndex, 84);
                     end
@@ -1802,124 +1841,37 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
         end
 
-        function message = validateInspectorValue(~, component, definition, value)
-            % validateInspectorValue Reject invalid editor values before model mutation.
+        function transaction = inspectorTransaction(app, component)
+            % inspectorTransaction Copy all current effective values into one candidate state.
             arguments (Input)
-                ~
+                app (1, 1) MatlabAppClassDesigner
                 component (1, 1) macd.model.ComponentRecord
-                definition (1, 1) macd.model.PropertyDefinition
-                value
             end
             arguments (Output)
-                message (1, 1) string
+                transaction (1, 1) macd.model.PropertyTransaction
             end
 
-            message = "";
-            schema = definition.ValueSchema;
-            if definition.Editor == "enum" && isfield(schema, "values") && ...
-                    ~any(string(schema.values) == string(value))
-                message = "Choose one of the declared values.";
-                return
+            states = app.inspectorStates(component);
+            definitions = arrayfun(@(state) state.Definition, states);
+            parentFactory = "";
+            if strlength(component.ParentId) > 0
+                parentFactory = app.Document.getComponent(component.ParentId).Factory;
             end
-            if definition.Editor == "number"
-                if ~isnumeric(value) || ~isscalar(value) || ~isfinite(value)
-                    message = "Enter one finite number.";
-                    return
-                end
-                if isfield(schema, "minimum") && value < schema.minimum
-                    message = "Value is below the allowed minimum.";
-                    return
-                end
-                if isfield(schema, "exclusiveMinimum") && schema.exclusiveMinimum && ...
-                        isfield(schema, "minimum") && value <= schema.minimum
-                    message = "Value must be greater than the allowed minimum.";
-                    return
-                end
-                if isfield(schema, "maximum") && value > schema.maximum
-                    message = "Value is above the allowed maximum.";
-                    return
-                end
-                if isfield(schema, "exclusiveMaximum") && schema.exclusiveMaximum && ...
-                        isfield(schema, "maximum") && value >= schema.maximum
-                    message = "Value must be less than the allowed maximum.";
-                    return
-                end
-                if isfield(schema, "integer") && schema.integer && value ~= floor(value)
-                    message = "Enter an integer value.";
-                    return
-                end
-            elseif definition.Editor == "numericVector"
-                allowsInfinity = isfield(schema, "allowsInfinity") && schema.allowsInfinity;
-                if ~isnumeric(value) || (~isempty(value) && ~isvector(value)) || any(isnan(value)) || ...
-                        (~allowsInfinity && any(~isfinite(value)))
-                    if allowsInfinity
-                        message = "Enter a numeric vector without NaN.";
-                    else
-                        message = "Enter a finite numeric vector.";
-                    end
-                    return
-                end
-                requiredLength = [];
-                if isfield(schema, "fixedLength")
-                    requiredLength = schema.fixedLength;
-                elseif isfield(schema, "length")
-                    requiredLength = schema.length;
-                end
-                if ~isempty(value) && ~isempty(requiredLength) && numel(value) ~= requiredLength
-                    message = "Enter a vector with the required number of values.";
-                    return
-                end
-                if isfield(schema, "minimum") && any(value < schema.minimum)
-                    message = "Vector values are below the allowed minimum.";
-                    return
-                end
-                if isfield(schema, "exclusiveMinimum") && schema.exclusiveMinimum && ...
-                        isfield(schema, "minimum") && any(value <= schema.minimum)
-                    message = "Vector values must be greater than the allowed minimum.";
-                    return
-                end
-                if isfield(schema, "maximum") && any(value > schema.maximum)
-                    message = "Vector values are above the allowed maximum.";
-                    return
-                end
-                if isfield(schema, "exclusiveMaximum") && schema.exclusiveMaximum && ...
-                        isfield(schema, "maximum") && any(value >= schema.maximum)
-                    message = "Vector values must be less than the allowed maximum.";
-                    return
+            defaults = app.DefaultValueProvider.resolveAll(component, parentFactory, definitions);
+            values = cell(1, numel(states));
+            known = false(1, numel(states));
+            for index = 1:numel(states)
+                entry = states(index).Entry;
+                if ~isempty(entry) && entry.ValueKind == "literal"
+                    values{index} = entry.LiteralValue;
+                    known(index) = true;
+                elseif isempty(entry) && defaults.Found(index)
+                    values{index} = defaults.Values{index};
+                    known(index) = true;
                 end
             end
-            if isfield(schema, "kind") && string(schema.kind) == "dayOfWeekList"
-                if ~(isempty(value) || (isnumeric(value) && isvector(value) && ...
-                        all(isfinite(value)) && all(value == floor(value)) && ...
-                        all(value >= 1 & value <= 7)) || ...
-                        (isstring(value) && isvector(value)) || ...
-                        (iscell(value) && isvector(value) && ...
-                        all(cellfun(@(item) ischar(item) && isrow(item), value))))
-                    message = "Enter day numbers 1 through 7, a string vector, or a cell vector of day names.";
-                    return
-                end
-            end
-            if isfield(schema, "constraints")
-                constraints = schema.constraints;
-                if isstruct(constraints)
-                    constraints = num2cell(constraints);
-                end
-                for constraint = constraints
-                    rule = constraint{1};
-                    if string(rule.kind) ~= "sameLengthAs"
-                        continue
-                    end
-                    reference = component.getProperty(string(rule.property));
-                    if isempty(reference) || reference.ValueKind ~= "literal"
-                        continue
-                    end
-                    if numel(value) ~= numel(reference.LiteralValue)
-                        message = "The value must have the same number of elements as " + ...
-                            string(rule.property) + ".";
-                        return
-                    end
-                end
-            end
+            transaction = macd.model.PropertyTransaction( ...
+                string({definitions.Path}), values, known);
         end
 
         function synchronizeInspectorRows(app, component, states)
@@ -1936,7 +1888,10 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             end
             definitions = arrayfun(@(state) state.Definition, states);
             defaults = app.DefaultValueProvider.resolveAll(component, parentFactory, definitions);
-            itemStateIndex = find(arrayfun(@(state) state.Definition.Path == "Items", states), 1);
+            relatedTransaction = app.inspectorTransaction(component);
+            relatedValues = struct("Paths", relatedTransaction.Paths, ...
+                "Values", {relatedTransaction.DraftValues}, ...
+                "KnownValues", relatedTransaction.KnownValues);
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
@@ -1955,16 +1910,6 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                         defaultEntry = macd.model.PropertyEntry(states(index).Definition.Path, defaultValue);
                         value = macd.ui.InspectorValueFormatter.format(defaultEntry);
                         rawValue = defaultValue;
-                    end
-                end
-                relatedValues = struct();
-                if states(index).Definition.Editor == "structuredData" && ...
-                        states(index).Definition.Path == "ItemsData" && ~isempty(itemStateIndex)
-                    itemEntry = states(itemStateIndex).Entry;
-                    if ~isempty(itemEntry) && itemEntry.ValueKind == "literal"
-                        relatedValues.Items = itemEntry.LiteralValue;
-                    elseif defaults.Found(itemStateIndex)
-                        relatedValues.Items = defaults.Values{itemStateIndex};
                     end
                 end
                 app.InspectorRows(index).synchronize(value, editable, rawValue, relatedValues);

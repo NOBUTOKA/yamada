@@ -4,12 +4,19 @@ classdef PropertyEditorFactory
     %   never evaluates catalog text as MATLAB code.
 
     methods (Static)
-        function control = create(parent, definition, commitFcn)
+        function control = create(parent, definition, commitFcn, batchCommitFcn)
             % create Construct one editor control for a typed property definition.
             arguments (Input)
                 parent
                 definition (1, 1) macd.model.PropertyDefinition
                 commitFcn (1, 1) function_handle
+                batchCommitFcn = []
+            end
+
+            % Preserve the public three-argument factory contract for focused tests.
+            if isempty(batchCommitFcn)
+                batchCommitFcn = @(changes) ...
+                    macd.ui.inspector.PropertyEditorFactory.commitSingleChange(commitFcn, changes);
             end
 
             switch definition.Editor
@@ -49,7 +56,8 @@ classdef PropertyEditorFactory
                     control = uibutton(parent, "Text", "", ...
                         "Tag", "macd-inspector-string-list-editor", ...
                         "ButtonPushedFcn", @(source, ~) ...
-                        macd.ui.inspector.StringListEditorDialog.open(source.UserData, commitFcn));
+                        macd.ui.inspector.StringListEditorDialog.open( ...
+                        source.UserData, definition.Path, batchCommitFcn));
                 case "multilineText"
                     control = uitextarea(parent, "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) ...
@@ -59,7 +67,7 @@ classdef PropertyEditorFactory
                         "Tag", "macd-inspector-structured-data-editor", ...
                         "ButtonPushedFcn", @(source, ~) ...
                         macd.ui.inspector.PropertyEditorFactory.openStructuredDataEditor( ...
-                        source.UserData, commitFcn));
+                        source.UserData, definition.Path, batchCommitFcn));
                 case "text"
                     control = uieditfield(parent, "text", ...
                         "Tag", "macd-inspector-property-editor", ...
@@ -158,7 +166,15 @@ classdef PropertyEditorFactory
                 end
                 if control.Tag == "macd-inspector-structured-data-editor"
                     state = struct("Value", {rawValue}, "Items", {[]}, "HasItems", false);
-                    if isfield(relatedValues, "Items")
+                    if isfield(relatedValues, "Paths") && isfield(relatedValues, "Values") && ...
+                            isfield(relatedValues, "KnownValues")
+                        itemIndex = find(string(relatedValues.Paths) == "Items", 1);
+                        if ~isempty(itemIndex) && relatedValues.KnownValues(itemIndex)
+                            state.Items = relatedValues.Values(itemIndex);
+                            state.HasItems = true;
+                        end
+                    elseif isfield(relatedValues, "Items")
+                        % Retain direct factory-test compatibility with the prior narrow snapshot.
                         state.Items = {relatedValues.Items};
                         state.HasItems = true;
                     end
@@ -378,9 +394,9 @@ classdef PropertyEditorFactory
             % commitTextArea Preserve scalar char/string representation when possible.
             draft = control.Value;
             original = control.UserData;
-            if ischar(original) && isrow(original) && iscell(draft) && numel(draft) == 1
+            if ischar(original) && isrow(original) && iscell(draft) && isscalar(draft)
                 draft = char(draft{1});
-            elseif isstring(original) && isscalar(original) && iscell(draft) && numel(draft) == 1
+            elseif isstring(original) && isscalar(original) && iscell(draft) && isscalar(draft)
                 draft = string(draft{1});
             elseif iscell(draft)
                 % TextArea returns visual lines as a column; source literals use a row cell array.
@@ -422,16 +438,34 @@ classdef PropertyEditorFactory
             end
         end
 
-        function openStructuredDataEditor(state, commitFcn)
+        function openStructuredDataEditor(state, path, commitFcn)
             % openStructuredDataEditor Select the ItemsData or generic safe-literal editor.
             if isstruct(state) && isfield(state, "HasItems") && state.HasItems
                 macd.ui.inspector.ItemsDataEditorDialog.open( ...
-                    state.Items{1}, state.Value, commitFcn);
+                    state.Items{1}, state.Value, path, commitFcn);
             elseif isstruct(state) && isfield(state, "Value")
-                macd.ui.inspector.StructuredDataEditorDialog.open(state.Value, commitFcn);
+                macd.ui.inspector.StructuredDataEditorDialog.open(state.Value, path, commitFcn);
             else
-                macd.ui.inspector.StructuredDataEditorDialog.open(state, commitFcn);
+                macd.ui.inspector.StructuredDataEditorDialog.open(state, path, commitFcn);
             end
+        end
+
+        function message = commitSingleChange(commitFcn, changes)
+            % commitSingleChange Adapt legacy one-value callbacks to a one-property batch.
+            arguments (Input)
+                commitFcn (1, 1) function_handle
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            if numel(changes) ~= 1
+                error("macd:PropertyEditorFactory:InvalidSingleChange", ...
+                    "A legacy editor callback can commit only one property value.");
+            end
+            commitFcn(changes.Value);
+            message = "";
         end
 
         function browseAsset(container, commitFcn)

@@ -579,9 +579,10 @@ Complete the remaining work in this order:
    The current `dateTime` contracts still contain provisional broad classes and
    `shape: any`; the `uitable.Data` and column-setting contracts are likewise
    too coarse to drive a safe UI directly.
-2. Add the shared transaction and collection-state logic described in
-   6.9.5, then selectively retrofit the existing dialog editors that already
-   implement the same mechanics. Validate a complete candidate state before
+2. Add the shared transaction, typed-cell, and candidate-state logic described
+   in 6.9.5, then selectively retrofit the existing dialog editors that already
+   implement the same mechanics. Keep collection-state operations with the date
+   and table slices that consume them. Validate a complete candidate state before
    changing the document.
 3. Implement the scalar, limits, and disabled-date modes in 6.9.5.
 4. Implement the table-data dialog in 6.9.7, including structural reconciliation
@@ -727,16 +728,16 @@ assignment probes are recorded separately from documentation facts; where they
 differ, such as equal date limits or automatic disabled-date sorting, the
 normalized contract follows the documentation. Grouping and runtime-catalog
 parity were regenerated successfully.
-- [ ] Add a registry-aware batch validator that evaluates all proposed values
+- [x] Add a registry-aware batch validator that evaluates all proposed values
   against one prospective effective component state. Add a model-owned atomic
   property-batch mutation that preflights existence and editability, applies all
   values or none, and records one reversible history item. The application must
   perform validation once and refresh diagnostics, Preview, and Inspector once
   after a successful batch.
-- [ ] Define a UI-independent draft change-set contract. It must copy effective
-  starting values, stage replacement/clear/collection operations without model
-  mutation, validate the complete prospective state, and emit either a typed
-  property batch or structured errors. Modal dialogs may map this to
+- [x] Define a UI-independent draft change-set contract. It copies effective
+  starting values, stages replacement and clear operations without model
+  mutation, and emits a typed property batch for candidate validation. Modal
+  dialogs map this to
   Apply/Cancel while inline editors may submit a complete single value directly.
 - [ ] Add pure collection operations for selected-row normalization, insertion,
   deletion, and index-preserving dependent-list reconciliation. Add a typed-cell
@@ -744,13 +745,13 @@ parity were regenerated successfully.
   list and table-data dialog reuse the collection operations; ItemsData and
   table-data reuse the typed-cell codec. Every editor chooses its own controls
   and error presentation.
-- [ ] Before adding the temporal UI, migrate `ItemsDataEditorDialog`,
+- [x] Before adding the temporal UI, migrate `ItemsDataEditorDialog`,
   `StructuredDataEditorDialog`, and `StringListEditorDialog` to the shared draft
   transaction and atomic batch commit entry point. A single-property dialog
   emits a one-property batch, still producing exactly one undoable history item,
   one Preview refresh, and one Inspector synchronization. Cancel/window-close
   emits no batch. ItemsData Clear changes only the draft and requires Apply.
-- [ ] During that migration, extract `ItemsDataEditorDialog.commitValue` and
+- [x] During that migration, extract `ItemsDataEditorDialog.commitValue` and
   literal formatting into the shared typed-cell logic, and replace its
   Items-specific effective-value lookup with the general related-state snapshot.
   Reuse existing parser/encoder code from structured-data and string-list

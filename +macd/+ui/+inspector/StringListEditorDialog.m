@@ -4,13 +4,15 @@ classdef StringListEditorDialog
     %   literal and commits only supported string-list values.
 
     methods (Static)
-        function open(initialValue, commitFcn)
+        function open(initialValue, path, commitFcn)
             % open Create a modal string-list editor for one property value.
             arguments (Input)
                 initialValue
+                path (1, 1) string
                 commitFcn (1, 1) function_handle
             end
 
+            transaction = macd.model.PropertyTransaction(path, {initialValue});
             dialog = uifigure("Name", "Edit list", "Visible", "off", ...
                 "WindowStyle", "modal", "Position", [300 300 420 260]);
             grid = uigridlayout(dialog, [3 2]);
@@ -26,7 +28,8 @@ classdef StringListEditorDialog
             editor.Layout.Column = [1 2];
             saveButton = uibutton(grid, "Text", "Apply", ...
                 "ButtonPushedFcn", @(~, ~) ...
-                macd.ui.inspector.StringListEditorDialog.save(dialog, editor, commitFcn));
+                macd.ui.inspector.StringListEditorDialog.save( ...
+                dialog, editor, transaction, path, commitFcn));
             saveButton.Layout.Row = 3;
             cancelButton = uibutton(grid, "Text", "Cancel", ...
                 "ButtonPushedFcn", @(~, ~) delete(dialog));
@@ -37,15 +40,28 @@ classdef StringListEditorDialog
     end
 
     methods (Static, Access = private)
-        function save(dialog, editor, commitFcn)
+        function save(dialog, editor, transaction, path, commitFcn)
             % save Parse and commit the dialog text only when it is a safe list literal.
+            arguments (Input)
+                dialog (1, 1) matlab.ui.Figure
+                editor (1, 1) matlab.ui.control.TextArea
+                transaction (1, 1) macd.model.PropertyTransaction
+                path (1, 1) string
+                commitFcn (1, 1) function_handle
+            end
+
             text = strjoin(string(editor.Value), newline);
             [value, isLiteral] = macd.source.MatlabLiteralParser.parse(text);
             if ~isLiteral || ~(isstring(value) || iscell(value))
                 uialert(dialog, "Enter a string array or row cell array literal.", "Invalid list");
                 return
             end
-            commitFcn(value);
+            transaction.stage(path, value);
+            message = commitFcn(transaction.changes());
+            if strlength(message) > 0
+                uialert(dialog, message, "Invalid list");
+                return
+            end
             delete(dialog);
         end
 

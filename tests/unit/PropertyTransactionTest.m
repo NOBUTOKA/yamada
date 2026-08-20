@@ -1,0 +1,105 @@
+classdef PropertyTransactionTest < matlab.unittest.TestCase
+    % PropertyTransactionTest Verify staged property candidates and typed-cell parsing.
+    %   These tests cover the nonvisual transaction primitives shared by modal
+    %   editors. They do not construct a visible application window or mutate a
+    %   document except through focused model coverage elsewhere.
+
+    methods (Test)
+        function stagesReplacementAndClearWithoutMutatingSnapshot(testCase)
+            % stagesReplacementAndClearWithoutMutatingSnapshot Keep candidate values local to a transaction.
+
+            transaction = macd.model.PropertyTransaction(["Items", "ItemsData"], ...
+                {"First", [1 2]}, [true true]);
+            transaction.stage("Items", "Second");
+            transaction.clear("ItemsData");
+
+            testCase.verifyEqual(transaction.InitialValues{1}, "First");
+            testCase.verifyEqual(transaction.value("Items"), "Second");
+            testCase.verifyEmpty(transaction.value("ItemsData"));
+            changes = transaction.changes();
+            testCase.verifyEqual(string({changes.Path}), ["Items", "ItemsData"]);
+            testCase.verifyEqual(changes(1).Value, "Second");
+            testCase.verifyEmpty(changes(2).Value);
+        end
+
+        function validatesCrossPropertyConstraintsAgainstOneCandidate(testCase)
+            % validatesCrossPropertyConstraintsAgainstOneCandidate Use staged references before document mutation.
+
+            itemDefinition = macd.model.PropertyDefinition("Items", [], false, true, ...
+                struct("editor", "stringList", "auditDisposition", "editable"));
+            dataDefinition = macd.model.PropertyDefinition("ItemsData", [], false, true, ...
+                struct("editor", "structuredData", "auditDisposition", "editable", ...
+                "valueSchema", struct("constraints", struct( ...
+                "kind", "sameLengthAs", "property", "Items"))));
+            transaction = macd.model.PropertyTransaction(["Items", "ItemsData"], ...
+                {{"One", "Two"}, [1 2]}, [true true]);
+            transaction.stage("Items", {"One", "Two", "Three"});
+            transaction.stage("ItemsData", [1 2 3]);
+
+            message = macd.validation.PropertyBatchValidator.validate( ...
+                [itemDefinition dataDefinition], transaction);
+            testCase.verifyEqual(message, "");
+            transaction.stage("ItemsData", [1 2]);
+            message = macd.validation.PropertyBatchValidator.validate( ...
+                [itemDefinition dataDefinition], transaction);
+            testCase.verifyEqual(message, ...
+                "The value must have the same number of elements as Items.");
+            dataDefinition = macd.model.PropertyDefinition("ItemsData", [], false, true, ...
+                struct("editor", "structuredData", "auditDisposition", "editable", ...
+                "valueSchema", struct("allowsEmpty", true, "constraints", struct( ...
+                "kind", "sameLengthAs", "property", "Items"))));
+            transaction.clear("ItemsData");
+            message = macd.validation.PropertyBatchValidator.validate( ...
+                [itemDefinition dataDefinition], transaction);
+            testCase.verifyEqual(message, "");
+        end
+
+        function typedCellCodecPreservesSafeTypesAndReportsCoordinates(testCase)
+            % typedCellCodecPreservesSafeTypesAndReportsCoordinates Keep literal cell failures local.
+
+            [values, row, column, message] = macd.ui.inspector.TypedCellCodec.parse( ...
+                ["1"; "true"; """Text"""], true);
+            testCase.verifyEqual(row, 0);
+            testCase.verifyEqual(column, 0);
+            testCase.verifyEqual(message, "");
+            testCase.verifyEqual(values{1}, 1);
+            testCase.verifyTrue(values{2});
+            testCase.verifyEqual(values{3}, "Text");
+            [~, row, column, message] = macd.ui.inspector.TypedCellCodec.parse( ...
+                ["1"; "[1"], true);
+            testCase.verifyEqual([row column], [2 1]);
+            testCase.verifyEqual(message, "This cell has an invalid MATLAB literal.");
+        end
+
+        function typedCellCodecPacksHomogeneousValues(testCase)
+            % typedCellCodecPacksHomogeneousValues Retain compact homogeneous vector forms.
+
+            testCase.verifyEqual(macd.ui.inspector.TypedCellCodec.packVector( ...
+                {1, 2, 3}), [1 2 3]);
+            testCase.verifyEqual(macd.ui.inspector.TypedCellCodec.packVector( ...
+                {"One", "Two"}), ["One", "Two"]);
+            result = macd.ui.inspector.TypedCellCodec.packVector({1, "Two"});
+            testCase.verifyClass(result, "cell");
+            testCase.verifyEqual(result, {1, "Two"});
+        end
+    end
+end
+
+%{
+Copyright (C) 2026 Nobuto Kaitoh
+
+This file is part of MatlabAppClassDesigner.
+
+MatlabAppClassDesigner is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+MatlabAppClassDesigner is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MatlabAppClassDesigner. If not, see <https://www.gnu.org/licenses/>.
+%}
