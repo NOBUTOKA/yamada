@@ -566,12 +566,12 @@ the audited contract requires. Every slice ends with real control/dialog
 construction, `drawnow`, destruction, round-trip, invalid-input, and focused
 integration tests before its feature commit.
 
-**Remaining status and execution order (2026-08-20):** Multiline text, URL,
-asset, generic finite structured data, and the paired `ItemsData` editor are
-implemented. Date/time, table-data, column-settings, and final integration are
-still pending. Until those slices land, their catalog entries deliberately use
-the Inspector's readable, disabled fallback instead of pretending that a typed
-editor exists.
+**Remaining status and execution order (2026-08-22):** Multiline text, URL,
+asset, generic finite structured data, the paired `ItemsData` editor, and
+date/time editing are implemented. Table-data hardening is in progress;
+composite Inspector rows, column-settings, and final integration remain. Until
+those slices land, their catalog entries deliberately use the Inspector's
+readable, disabled fallback instead of pretending that a typed editor exists.
 
 Complete the remaining work in this order:
 
@@ -587,9 +587,11 @@ Complete the remaining work in this order:
 3. Implement the scalar, limits, and disabled-date modes in 6.9.5.
 4. Implement the table-data dialog in 6.9.7, including structural reconciliation
    of every affected row- and column-indexed property.
-5. Implement the column-settings dialog in 6.9.8 on the same atomic mutation
-   path.
-6. Finish deferral, round-trip, and full-suite records in 6.9.9.
+5. Add the composite Inspector-row infrastructure and initial grouped rows in
+   6.9.8.
+6. Implement the column-settings dialog in 6.9.9 on its single `Columns` row and
+   the same atomic mutation path.
+7. Finish deferral, round-trip, and full-suite records in 6.9.10.
 
 Commonize stable value and mutation logic rather than dialog widgets. Share
 model-owned atomic property batches, prospective candidate-state validation,
@@ -851,21 +853,68 @@ constructors remain source-preserved read-only values.
 undo/redo as one transaction, regenerate reviewable source, preserve supported
 cell types, and never partially update after validation failure.
 
-#### 6.9.8 Add the column-settings dialog
+#### 6.9.8 Add composite Inspector rows for related properties
+
+Use the selection criteria, candidate inventory, catalog schema, runtime
+projection, and staged implementation sequence in
+[`dev/component-data/COMPOSITE_INSPECTOR_ROWS.md`](dev/component-data/COMPOSITE_INSPECTOR_ROWS.md).
+The decisive semantic test is whether the member set has one natural user-facing
+name; common category membership or implementation reuse alone is insufficient.
+
+- [ ] Add a separate versioned `inspector-rows.json` development/runtime
+  artifact and strict schema. Keep property definitions atomic and preserve the
+  effective-property parity hash; composite rows are presentation overlays.
+- [ ] Load allowlisted typed `InspectorRowDefinition` templates into the
+  registry. Match them against effective intrinsic and parent-contributed
+  property states, reject overlaps, and project unmatched properties to the
+  existing singleton-row behavior.
+- [ ] Generalize Inspector row construction, synchronization, transient drafts,
+  member-specific editability, and error routing from one property path to an
+  ordered member-state array. Submit all row changes through the existing atomic
+  batch callback; a one-control gesture may still submit one changed member.
+- [ ] Replace `uitable`'s three duplicate table-data launch rows with one
+  `Data & Names` row for `Data`, `ColumnName`, and `RowName`. Add one `Columns`
+  row for `ColumnWidth`, `ColumnEditable`, `ColumnRearrangeable`,
+  `ColumnSortable`, and `ColumnFormat`. Project `ColumnSortable` from its
+  documented source category into this row without changing property metadata.
+- [ ] Replace separate `Items`/`ItemsData` rows with one `Items` row for each
+  applicable component. Let the paired dialog stage both columns and preserve
+  the one-way ItemsData-to-Items constraint in one prospective candidate.
+- [ ] Add one inline `Font Style` row for `FontWeight` and `FontAngle`, using
+  bold `B` and italic `I` state buttons with independent synchronization and
+  editability. Keep `FontSize` separate until a complete `Font` row layout is
+  reviewed.
+- [ ] Add the high-confidence follow-up candidates only as separate vertical
+  slices after their row name, controls, error routing, and commit semantics are
+  reviewed. Axes-family and full-font composites are recorded candidates, not
+  implicit requirements of the initial infrastructure commit.
+- [ ] Verify strict catalog failures, deterministic row projection, unchanged
+  property parity, one-button table surfaces, member-specific unsupported state,
+  one atomic history record/refresh cycle per modal Apply, hidden UI lifecycle,
+  and source round-trip. Manual visual inspection remains opt-in.
+
+**Gate:** table data/names, table columns, Items/ItemsData, and font style each
+appear as one naturally named Inspector row without changing their underlying
+property contracts. Singleton rows continue to work through the same projected
+surface, and catalog errors fail before a partial Inspector is built.
+
+#### 6.9.9 Add the column-settings dialog
 
 - [x] Re-audit and store property-specific contracts for `ColumnWidth`,
-  `ColumnEditable`, `ColumnSortable`, and `ColumnFormat`; do not use the current
-  broad shared tabular-data class list as their validator.
-- [ ] Use one metadata-driven modal dialog for all four properties. Each
-  Inspector row opens that same current settings view. Show one row per effective
+  `ColumnEditable`, `ColumnRearrangeable`, `ColumnSortable`, and `ColumnFormat`;
+  do not use the current broad shared tabular-data class list as their validator.
+- [ ] Use one metadata-driven modal dialog for all five properties. The single
+  `Columns` Inspector row opens the settings view. Show one row per effective
   Data column, with a read-only index/name, width control, editable and sortable
-  checkboxes, and format control. Determine the row count from the effective
+  checkboxes, and format control. Add one table-wide rearrangeability check box
+  outside the per-column grid. Determine the row count from the effective
   supported `uitable.Data` width rather than cached dialog state.
 - [ ] Provide per-column controls plus audited all-column actions: all on/off for
   editable/sortable and, if confirmed by the R2024a re-audit, All auto, All fit,
   and All 1x for width. Represent custom numeric widths and documented format
   choices without losing scalar-versus-vector intent unnecessarily.
-- [ ] Keep changes in a local draft and apply all changed column properties
+- [ ] Keep changes in a local draft and apply all changed column properties,
+  including table-wide rearrangeability,
   through the 6.9.5 atomic property batch. Preserve a valid scalar all-column
   representation when the user has not requested per-column divergence, and
   preserve unrelated explicit values.
@@ -882,7 +931,7 @@ cell types, and never partially update after validation failure.
 short-vector, exact-vector, and long-vector semantics, commit/undo/redo
 atomically, and survive Preview and source round-trip.
 
-#### 6.9.9 Complete specialized-editor integration and record deferrals
+#### 6.9.10 Complete specialized-editor integration and record deferrals
 
 - [ ] Preserve unsupported handle expressions, component references, and other
   deferred structured values through the typed read-only adapter.
