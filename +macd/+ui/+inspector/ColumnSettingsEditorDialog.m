@@ -33,7 +33,7 @@ classdef ColumnSettingsEditorDialog
                 "Tag", "macd-column-settings-dialog");
             grid = uigridlayout(dialog, [6 6], "Padding", [12 12 12 12], ...
                 "RowHeight", {24, "1x", 24, 24, 24, 30}, ...
-                "ColumnWidth", {"fit", "fit", "fit", "fit", "1x", "fit"}, ...
+                "ColumnWidth", {92, 92, 76, 76, 76, "1x"}, ...
                 "ColumnSpacing", 6);
             rearrange = uicheckbox(grid, "Text", "Allow column rearranging", ...
                 "Value", macd.ui.inspector.ColumnSettingsEditorDialog.onOffValue( ...
@@ -41,38 +41,42 @@ classdef ColumnSettingsEditorDialog
             rearrange.Layout.Row = 1;
             rearrange.Layout.Column = [1 6];
             data = macd.ui.inspector.ColumnSettingsEditorDialog.displayData( ...
-                names, widths, editable, sortable, formats);
+                names, editable, sortable, widths, formats);
             table = uitable(grid, "Data", data, ...
-                "ColumnName", {"Column", "Width", "Editable", "Sortable", "Format"}, ...
+                "ColumnName", {"Column", "Editable", "Sortable", "Width", "Format"}, ...
                 "ColumnEditable", [false true true true true], ...
-                "ColumnWidth", {100, 100, 70, 70, "1x"}, ...
+                "ColumnWidth", {100, 70, 70, 100, "1x"}, ...
                 "Tag", "macd-column-settings-table");
             table.Layout.Row = 2;
             table.Layout.Column = [1 6];
             allOn = uibutton(grid, "Text", "All editable", "Tag", ...
-                "macd-column-settings-all-editable", "ButtonPushedFcn", @(~, ~) setLogicalColumn(3, true));
+                "macd-column-settings-all-editable", "ButtonPushedFcn", @(~, ~) setLogicalColumn(2, true));
             allOn.Layout.Row = 3;
+            allOn.Layout.Column = 1;
             allOff = uibutton(grid, "Text", "None editable", "Tag", ...
-                "macd-column-settings-no-editable", "ButtonPushedFcn", @(~, ~) setLogicalColumn(3, false));
-            allOff.Layout.Row = 3;
+                "macd-column-settings-no-editable", "ButtonPushedFcn", @(~, ~) setLogicalColumn(2, false));
+            allOff.Layout.Row = 4;
+            allOff.Layout.Column = 1;
             sortOn = uibutton(grid, "Text", "All sortable", "Tag", ...
-                "macd-column-settings-all-sortable", "ButtonPushedFcn", @(~, ~) setLogicalColumn(4, true));
+                "macd-column-settings-all-sortable", "ButtonPushedFcn", @(~, ~) setLogicalColumn(3, true));
             sortOn.Layout.Row = 3;
+            sortOn.Layout.Column = 2;
             sortOff = uibutton(grid, "Text", "None sortable", "Tag", ...
-                "macd-column-settings-no-sortable", "ButtonPushedFcn", @(~, ~) setLogicalColumn(4, false));
-            sortOff.Layout.Row = 3;
+                "macd-column-settings-no-sortable", "ButtonPushedFcn", @(~, ~) setLogicalColumn(3, false));
+            sortOff.Layout.Row = 4;
+            sortOff.Layout.Column = 2;
             widthAuto = uibutton(grid, "Text", "All auto", "Tag", ...
                 "macd-column-settings-all-auto", "ButtonPushedFcn", @(~, ~) setWidth("auto"));
             widthAuto.Layout.Row = 3;
-            widthAuto.Layout.Column = 5;
+            widthAuto.Layout.Column = 3;
             widthFit = uibutton(grid, "Text", "All fit", "Tag", ...
                 "macd-column-settings-all-fit", "ButtonPushedFcn", @(~, ~) setWidth("fit"));
             widthFit.Layout.Row = 3;
-            widthFit.Layout.Column = 6;
+            widthFit.Layout.Column = 4;
             widthOneX = uibutton(grid, "Text", "All 1x", "Tag", ...
                 "macd-column-settings-all-1x", "ButtonPushedFcn", @(~, ~) setWidth("1x"));
-            widthOneX.Layout.Row = 4;
-            widthOneX.Layout.Column = [5 6];
+            widthOneX.Layout.Row = 3;
+            widthOneX.Layout.Column = 5;
             message = uilabel(grid, "Text", "Widths accept auto, fit, 1x, or nonnegative numeric literals.", ...
                 "FontColor", [0.3 0.3 0.3]);
             message.Layout.Row = 5;
@@ -106,16 +110,16 @@ classdef ColumnSettingsEditorDialog
             function setWidth(value)
                 % setWidth Apply one all-column documented width token to the local draft.
                 if ~isempty(table.Data)
-                    table.Data(:, 2) = repmat({char(value)}, size(table.Data, 1), 1);
+                    table.Data(:, 4) = repmat({char(value)}, size(table.Data, 1), 1);
                 end
             end
 
             function clearDraft()
                 % clearDraft Stage documented empty/default column values without mutation.
                 if ~isempty(table.Data)
-                    table.Data(:, 2) = repmat({'auto'}, size(table.Data, 1), 1);
+                    table.Data(:, 2) = num2cell(false(size(table.Data, 1), 1));
                     table.Data(:, 3) = num2cell(false(size(table.Data, 1), 1));
-                    table.Data(:, 4) = num2cell(false(size(table.Data, 1), 1));
+                    table.Data(:, 4) = repmat({'auto'}, size(table.Data, 1), 1);
                     table.Data(:, 5) = repmat({''}, size(table.Data, 1), 1);
                 end
                 rearrange.Value = false;
@@ -126,9 +130,9 @@ classdef ColumnSettingsEditorDialog
             function applyDraft()
                 % applyDraft Parse every column field and atomically submit only changed values.
                 removeStyle(table);
-                [width, row, messageText] = macd.ui.inspector.ColumnSettingsEditorDialog.parseWidths(table.Data(:, 2));
+                [width, row, messageText] = macd.ui.inspector.ColumnSettingsEditorDialog.parseWidths(table.Data(:, 4));
                 if row > 0
-                    markError(row, 2, messageText);
+                    markError(row, 4, messageText);
                     return
                 end
                 [format, row, messageText] = macd.ui.inspector.ColumnSettingsEditorDialog.parseFormats(table.Data(:, 5));
@@ -136,13 +140,17 @@ classdef ColumnSettingsEditorDialog
                     markError(row, 5, messageText);
                     return
                 end
-                editableValue = logical(cell2mat(table.Data(:, 3))).';
-                sortableValue = logical(cell2mat(table.Data(:, 4))).';
+                editableValue = logical(cell2mat(table.Data(:, 2))).';
+                sortableValue = logical(cell2mat(table.Data(:, 3))).';
                 transaction = macd.model.PropertyTransaction( ...
                     ["ColumnWidth", "ColumnEditable", "ColumnRearrangeable", "ColumnSortable", "ColumnFormat"], ...
                     {initial.ColumnWidth, initial.ColumnEditable, initial.ColumnRearrangeable, ...
                     initial.ColumnSortable, initial.ColumnFormat});
                 width = macd.ui.inspector.ColumnSettingsEditorDialog.compactWidth(width, initial.ColumnWidth);
+                editableValue = macd.ui.inspector.ColumnSettingsEditorDialog.compactLogical( ...
+                    editableValue, initial.ColumnEditable);
+                sortableValue = macd.ui.inspector.ColumnSettingsEditorDialog.compactLogical( ...
+                    sortableValue, initial.ColumnSortable);
                 format = macd.ui.inspector.ColumnSettingsEditorDialog.compactFormat(format, initial.ColumnFormat);
                 if ~isequaln(width, initial.ColumnWidth), transaction.stage("ColumnWidth", width); end
                 if ~isequaln(editableValue, initial.ColumnEditable), transaction.stage("ColumnEditable", editableValue); end
@@ -152,7 +160,12 @@ classdef ColumnSettingsEditorDialog
                     transaction.stage("ColumnRearrangeable", rearrangeValue);
                 end
                 if ~isequaln(format, initial.ColumnFormat), transaction.stage("ColumnFormat", format); end
-                errorMessage = commitFcn(transaction.changes());
+                changes = transaction.changes();
+                if isempty(changes)
+                    delete(dialog);
+                    return
+                end
+                errorMessage = commitFcn(changes);
                 if strlength(errorMessage) > 0
                     message.Text = errorMessage;
                     message.FontColor = [0.7 0 0];
@@ -202,7 +215,7 @@ classdef ColumnSettingsEditorDialog
 
         function result = widthValues(value, count)
             % widthValues Expand documented scalar or row-cell widths to visible columns.
-            result = repmat({'auto'}, count, 1);
+            result = repmat({'auto'}, 1, count);
             if iscell(value)
                 values = value(:);
             elseif ischar(value) || (isstring(value) && isscalar(value))
@@ -213,7 +226,7 @@ classdef ColumnSettingsEditorDialog
                 values = {};
             end
             for index = 1:min(count, numel(values))
-                result{index} = macd.ui.inspector.TypedCellCodec.literalText(values{index});
+                result{index} = macd.ui.inspector.ColumnSettingsEditorDialog.widthText(values{index});
             end
         end
 
@@ -233,7 +246,7 @@ classdef ColumnSettingsEditorDialog
 
         function result = formatValues(value, count)
             % formatValues Expand per-column format cells to safely rendered text.
-            result = repmat({''}, count, 1);
+            result = repmat({''}, 1, count);
             if ~iscell(value)
                 return
             end
@@ -242,14 +255,33 @@ classdef ColumnSettingsEditorDialog
             end
         end
 
-        function result = displayData(names, widths, editable, sortable, formats)
+        function result = displayData(names, editable, sortable, widths, formats)
             % displayData Construct native UITable-compatible heterogeneous column cells.
             result = cell(numel(names), 5);
             for index = 1:numel(names)
-                result(index, :) = {char(names(index)), char(string(widths{index})), ...
-                    logical(editable(index)), logical(sortable(index)), ...
+                result(index, :) = {char(names(index)), logical(editable(index)), ...
+                    logical(sortable(index)), char(string(widths{index})), ...
                     char(string(formats{index}))};
             end
+        end
+
+        function text = widthText(value)
+            % widthText Render width keywords as editor tokens rather than MATLAB literals.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+
+            if (ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))
+                token = lower(string(value));
+                if any(token == ["auto", "fit", "1x"])
+                    text = token;
+                    return
+                end
+            end
+            text = macd.ui.inspector.TypedCellCodec.literalText(value);
         end
 
         function [values, errorRow, message] = parseWidths(text)
@@ -315,6 +347,22 @@ classdef ColumnSettingsEditorDialog
                 value = original;
             elseif all(cellfun(@isempty, values))
                 value = cell(1, 0);
+            else
+                value = values;
+            end
+        end
+
+        function value = compactLogical(values, original)
+            % compactLogical Preserve empty or scalar all-column logical representations.
+            arguments (Input)
+                values (1, :) logical
+                original
+            end
+
+            expanded = macd.ui.inspector.ColumnSettingsEditorDialog.logicalValues( ...
+                original, numel(values)).';
+            if isequaln(values, expanded)
+                value = original;
             else
                 value = values;
             end

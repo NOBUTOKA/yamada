@@ -239,6 +239,32 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function datePickerInspectorRetainsItsCompleteEditableSurface(testCase)
+            % datePickerInspectorRetainsItsCompleteEditableSurface Keep all audited Date Picker rows visible.
+
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure.Visible = "off";
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Date Picker", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            labels = findall(figure, "Type", "uilabel", ...
+                "Tag", "macd-inspector-property-label");
+            actual = string({labels.Text});
+            expected = ["Value", "Placeholder", "Limits", "DisplayFormat", ...
+                "DisabledDates", "DisabledDaysOfWeek", "FontName", "FontSize", ...
+                "Font Style", "FontColor", "BackgroundColor", "Visible", "Editable", ...
+                "Enable", "Tooltip", "ContextMenu", "Position", "Interruptible", "BusyAction"];
+            testCase.verifyTrue(all(ismember(expected, actual)));
+            clear cleanup
+        end
+
         function tableDataDialogCommitsTypedDataFromTheInspector(testCase)
             % tableDataDialogCommitsTypedDataFromTheInspector Apply one typed table draft through the real row binding.
 

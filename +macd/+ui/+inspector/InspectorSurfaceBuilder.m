@@ -76,7 +76,8 @@ classdef InspectorSurfaceBuilder
                 row.IsComposite = false;
                 rows(end + 1) = row; %#ok<AGROW>
             end
-            rows = macd.ui.inspector.InspectorSurfaceBuilder.sortRows(rows);
+            categoryOrder = unique(arrayfun(@(state) state.Definition.Category, states), "stable");
+            rows = macd.ui.inspector.InspectorSurfaceBuilder.sortRows(rows, categoryOrder);
         end
     end
 
@@ -89,11 +90,18 @@ classdef InspectorSurfaceBuilder
                 "IsComposite", false);
         end
 
-        function rows = sortRows(rows)
-            % sortRows Order rows by first appearance of category and numeric anchor order.
-            categories = unique(string({rows.Category}), "stable");
+        function rows = sortRows(rows, categoryOrder)
+            % sortRows Preserve catalog category order while ordering each anchor numerically.
+            arguments (Input)
+                rows (1, :) struct
+                categoryOrder (1, :) string
+            end
+            arguments (Output)
+                rows (1, :) struct
+            end
+
             ordered = rows([]);
-            for category = categories
+            for category = categoryOrder
                 members = rows(string({rows.Category}) == category);
                 [~, order] = sort([members.Order]);
                 ordered = [ordered, members(order)]; %#ok<AGROW>

@@ -863,8 +863,10 @@ name; common category membership or implementation reuse alone is insufficient.
   `ColumnSortable`, and `ColumnFormat`. Project `ColumnSortable` from its
   documented source category into this row without changing property metadata.
 - [x] Replace separate `Items`/`ItemsData` rows with one `Items` row for each
-  applicable component. Let the paired dialog stage both columns and preserve
-  the one-way ItemsData-to-Items constraint in one prospective candidate.
+  variable-length applicable component. Let the paired dialog stage both
+  columns and preserve the one-way ItemsData-to-Items constraint in one
+  prospective candidate. Keep fixed two-state switch items separate until a
+  dedicated editor is reviewed.
 - [x] Add one inline `Font Style` row for `FontWeight` and `FontAngle`, using
   bold `B` and italic `I` state buttons with independent synchronization and
   editability. Keep `FontSize` separate until a complete `Font` row layout is

@@ -39,7 +39,7 @@
         {
           "path": "Value",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
             "description": "Text in edit field",
@@ -65,7 +65,7 @@
         {
           "path": "CharacterLimits",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CharacterLimits",
             "description": "Minimum and maximum number of characters",
@@ -92,7 +92,7 @@
         {
           "path": "InputType",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InputType",
             "description": "Valid text content",
@@ -124,7 +124,7 @@
         {
           "path": "Placeholder",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Placeholder",
             "description": "Placeholder text in edit field",
@@ -150,7 +150,7 @@
         {
           "path": "HorizontalAlignment",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HorizontalAlignment",
             "description": "Horizontal alignment of text within edit field",
@@ -188,7 +188,7 @@
         {
           "path": "FontName",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
             "description": "Font name",
@@ -214,7 +214,7 @@
         {
           "path": "FontSize",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
             "description": "Font size",
@@ -242,7 +242,7 @@
         {
           "path": "FontWeight",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
             "description": "Font weight",
@@ -272,7 +272,7 @@
         {
           "path": "FontAngle",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
             "description": "Font angle",
@@ -302,7 +302,7 @@
         {
           "path": "FontColor",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
             "description": "Font color",
@@ -329,7 +329,7 @@
         {
           "path": "BackgroundColor",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
             "description": "Background color",
@@ -363,7 +363,7 @@
         {
           "path": "Visible",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
             "description": "State of visibility",
@@ -390,7 +390,7 @@
         {
           "path": "Editable",
           "groupId": "local.uieditfield-text.interactivity",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Editable",
             "description": "Whether edit field is editable",
@@ -417,7 +417,7 @@
         {
           "path": "Enable",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
             "description": "Operational state of edit field",
@@ -444,7 +444,7 @@
         {
           "path": "Tooltip",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
             "description": "Tooltip",
@@ -472,7 +472,7 @@
         {
           "path": "ContextMenu",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
             "description": "Context menu",
@@ -504,7 +504,7 @@
         {
           "path": "Position",
           "groupId": "local.uieditfield-text.position",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
             "description": "Location and size of edit field",
@@ -726,7 +726,7 @@
         {
           "path": "Interruptible",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
             "description": "Callback interruption",
@@ -753,7 +753,7 @@
         {
           "path": "BusyAction",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
             "description": "Callback queuing",

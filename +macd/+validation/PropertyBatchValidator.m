@@ -75,6 +75,11 @@ classdef PropertyBatchValidator
                 if strlength(message) > 0
                     return
                 end
+            elseif isfield(schema, "shape") && string(schema.shape) == "fixedLengthVector" && ...
+                    (~isvector(value) || ~isfield(schema, "fixedLength") || ...
+                    numel(value) ~= schema.fixedLength)
+                message = "Enter a vector with the required number of values.";
+                return
             end
             if isfield(schema, "kind") && string(schema.kind) == "dayOfWeekList" && ...
                     ~macd.validation.PropertyBatchValidator.isDayOfWeekList(value)

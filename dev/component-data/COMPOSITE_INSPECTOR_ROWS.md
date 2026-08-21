@@ -29,7 +29,7 @@ rows even when the implementation shares validation or transaction logic.
 | --- | --- | --- | --- | --- |
 | `Data & Names` | `Data`, `ColumnName`, `RowName` | `uitable` | One `Edit...` button opening the existing table-data dialog | One dialog already edits all three atomically. `Table Schema` is less precise because this group includes row data and row names. |
 | `Columns` | `ColumnWidth`, `ColumnEditable`, `ColumnRearrangeable`, `ColumnSortable`, `ColumnFormat` | `uitable` | One button opening the column-settings dialog | All values describe column behavior. Per-column values are reconciled against the effective Data width; rearrangeability remains a table-wide control in the same dialog. |
-| `Items` | `Items`, `ItemsData` | dropdown, list box, discrete knob, and switch variants | One button opening a paired Items/ItemsData dialog | `ItemsData` is interpreted against `Items`; both should be staged and applied together. |
+| `Items` | `Items`, `ItemsData` | dropdown, list box, and discrete knob | One button opening a paired Items/ItemsData dialog | `ItemsData` is interpreted against `Items`; both should be staged and applied together. |
 | `Font Style` | `FontWeight`, `FontAngle` | all components that expose both properties | Inline bold `B` and italic `I` state buttons | Both values are binary typographic style switches and fit naturally in one compact row. |
 
 `FontSize` is not included in the initial `Font Style` row. A later `Font` row
@@ -37,6 +37,12 @@ could combine `FontName`, `FontSize`, `FontWeight`, and `FontAngle`, but it woul
 need either a two-line row or a dialog in the current narrow Inspector. The
 first slice should establish the multi-property contract without deciding that
 larger layout yet.
+
+Switch variants are intentionally excluded from the generic `Items` row. Their
+`Items` contract is exactly two states, while their `ItemsData` contract is the
+matching two-element data form or empty. They need a dedicated two-state editor
+with a reviewed name and interaction model rather than an unrestricted list
+dialog.
 
 ### High-confidence follow-up candidates
 
@@ -206,8 +212,9 @@ the existing pale-red/error-tooltip fallback.
 4. Migrate `uitable.Data`, `ColumnName`, and `RowName` to one `Data & Names` row.
    Remove the duplicate launch rows and retain the existing atomic dialog.
 5. Implement one `Columns` row for the column-settings dialog, including the
-   table-wide `ColumnRearrangeable` control, and one `Items` row whose paired
-   dialog can stage both `Items` and `ItemsData`.
+   table-wide `ColumnRearrangeable` control, and one variable-length `Items` row
+   whose paired dialog can stage both `Items` and `ItemsData`. Keep fixed
+   two-state switch items separate pending a dedicated editor.
 6. Add the inline `Font Style` adapter with bold and italic state buttons.
    Synchronize and enable the buttons independently; preserve char/string and
    logical/on-off boundary conversions already audited for each property.
@@ -222,8 +229,9 @@ the existing pale-red/error-tooltip fallback.
 
 - `uitable` exposes one `Data & Names` row and one `Columns` row, with no
   duplicate member launch buttons.
-- Each Items/ItemsData pair exposes one `Items` row and commits both values as
-  one candidate when both changed.
+- Each variable-length Items/ItemsData pair exposes one `Items` row and commits
+  both values as one candidate when both changed. Fixed two-state switch items
+  remain separate and retain their cardinality contract.
 - Components with both font-style properties expose one `Font Style` row whose
   bold and italic controls remain independently editable.
 - Catalog parity tests prove that grouping changes no effective property path,

@@ -87,7 +87,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "CharacterLimits",
@@ -116,7 +116,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "InputType",
@@ -152,7 +152,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "Placeholder",
@@ -181,7 +181,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "HorizontalAlignment",
@@ -215,7 +215,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "FontName",
@@ -242,7 +242,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "FontSize",
@@ -271,7 +271,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "FontWeight",
@@ -303,7 +303,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "FontAngle",
@@ -335,7 +335,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "FontColor",
@@ -368,7 +368,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "BackgroundColor",
@@ -401,7 +401,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "Visible",
@@ -430,7 +430,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "Editable",
@@ -459,7 +459,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "Enable",
@@ -488,7 +488,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "Tooltip",
@@ -521,7 +521,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "ContextMenu",
@@ -546,7 +546,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "Position",
@@ -571,7 +571,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "InnerPosition",
@@ -819,7 +819,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "BusyAction",
@@ -851,7 +851,7 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "public"
     },
     {
       "path": "BeingDeleted",

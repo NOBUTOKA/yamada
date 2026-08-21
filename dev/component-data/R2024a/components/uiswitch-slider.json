@@ -100,8 +100,9 @@
       ],
       "valueContract": {
         "kind": "stringList",
-        "shape": "vector",
-        "allowsEmpty": true,
+        "shape": "fixedLengthVector",
+        "allowsEmpty": false,
+        "fixedLength": 2,
         "constraints": [],
         "matlabClasses": [
           "char",

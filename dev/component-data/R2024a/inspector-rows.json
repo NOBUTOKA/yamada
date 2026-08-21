@@ -42,8 +42,7 @@
       "orderAnchor": "Items",
       "match": {
         "componentIds": [
-          "uidropdown", "uilistbox", "uiknob-discrete",
-          "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"
+          "uidropdown", "uilistbox", "uiknob-discrete"
         ],
         "parentContextIds": []
       }

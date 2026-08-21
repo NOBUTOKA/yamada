@@ -83,8 +83,9 @@
                 "char",
                 "string"
               ],
-              "shape": "vector",
-              "allowsEmpty": true,
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "fixedLength": 2,
               "constraints": []
             }
           }

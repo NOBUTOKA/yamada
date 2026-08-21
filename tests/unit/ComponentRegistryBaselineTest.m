@@ -73,6 +73,9 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(tableColumns.MemberPaths, ["ColumnWidth", "ColumnEditable", ...
                 "ColumnRearrangeable", "ColumnSortable", "ColumnFormat"]);
             testCase.verifyEqual(tableColumns.CategoryId, "table");
+            items = rows([rows.Id] == "itemsAndData");
+            testCase.verifyEqual(items.ComponentIds, ...
+                ["uidropdown", "uilistbox", "uiknob-discrete"]);
         end
 
         function figureCustomPointerShapesRemainOmitted(testCase)
@@ -119,6 +122,43 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             definition = registry.getById("uiaxes");
             smoothing = definition.Properties([definition.Properties.Path] == "FontSmoothing");
             testCase.verifyEqual(smoothing.AuditDisposition, "omitted");
+        end
+
+        function editFieldPublicPropertiesAreNotLeftUnresolved(testCase)
+            % editFieldPublicPropertiesAreNotLeftUnresolved Preserve audited editable field surfaces.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            expected = struct();
+            expected.('uieditfield-text') = ["Value", "CharacterLimits", "InputType", ...
+                "Placeholder", "HorizontalAlignment", "FontName", "FontSize", ...
+                "FontWeight", "FontAngle", "FontColor", "BackgroundColor", "Visible", ...
+                "Editable", "Enable", "Tooltip", "Position", "Interruptible", "BusyAction"];
+            expected.('uieditfield-numeric') = ["Value", "Limits", "RoundFractionalValues", ...
+                "ValueDisplayFormat", "AllowEmpty", "Placeholder", "HorizontalAlignment", ...
+                "LowerLimitInclusive", "UpperLimitInclusive", "FontName", "FontSize", ...
+                "FontWeight", "FontAngle", "FontColor", "BackgroundColor", "Visible", ...
+                "Editable", "Enable", "Tooltip", "Position", "Interruptible", "BusyAction"];
+            ids = string(fieldnames(expected));
+            for id = ids.'
+                definition = registry.getById(id);
+                for path = expected.(char(id))
+                    property = definition.Properties([definition.Properties.Path] == path);
+                    testCase.verifyTrue(property.IsEditable, id + "." + path);
+                end
+            end
+        end
+
+        function switchItemsRetainTheirTwoStateContract(testCase)
+            % switchItemsRetainTheirTwoStateContract Keep switches out of the generic Items dialog.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"]
+                definition = registry.getById(id);
+                items = definition.Properties([definition.Properties.Path] == "Items");
+                testCase.verifyEqual(string(items.ValueSchema.shape), "fixedLengthVector");
+                testCase.verifyEqual(items.ValueSchema.fixedLength, 2);
+                testCase.verifyFalse(items.ValueSchema.allowsEmpty);
+            end
         end
 
         function multilineTextSurfacesRemainDistinguishedFromStringLists(testCase)

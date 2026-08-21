@@ -33,6 +33,21 @@ classdef InspectorSurfaceBuilderTest < matlab.unittest.TestCase
                 "uitable", "uifigure", states, [first, second]), ...
                 "macd:InspectorSurfaceBuilder:OverlappingRows");
         end
+
+        function preservesCatalogCategoryOrderWhenTemplateComesFirst(testCase)
+            % preservesCatalogCategoryOrderWhenTemplateComesFirst Keep core categories ahead of font templates.
+
+            states = makeStates(["Value", "FontWeight", "FontAngle"], ...
+                ["Gauge", "Font and Color", "Font and Color"]);
+            template = macd.model.InspectorRowDefinition("fontStyle", ...
+                "Font Style", "fontStyle", ["FontWeight", "FontAngle"], ...
+                ["weight", "angle"], "", "FontWeight", "", "");
+            rows = macd.ui.inspector.InspectorSurfaceBuilder.build( ...
+                "uigauge-circular", "uifigure", states, template);
+
+            testCase.verifyEqual(string({rows.Category}), ["Gauge", "Font and Color"]);
+            testCase.verifyEqual(string({rows.Id}), ["property:Value", "fontStyle"]);
+        end
     end
 end
 

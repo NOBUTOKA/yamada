@@ -65,6 +65,20 @@ classdef PropertyTransactionTest < matlab.unittest.TestCase
             testCase.verifyEqual(message, "");
         end
 
+        function validatesFixedLengthStringLists(testCase)
+            % validatesFixedLengthStringLists Reject a switch state list with the wrong cardinality.
+
+            definition = macd.model.PropertyDefinition("Items", [], false, true, ...
+                struct("editor", "stringList", "auditDisposition", "editable", ...
+                "valueSchema", struct("shape", "fixedLengthVector", "fixedLength", 2, ...
+                "allowsEmpty", false, "constraints", [])));
+            transaction = macd.model.PropertyTransaction("Items", {{"Off", "On"}}, true);
+            transaction.stage("Items", ["Low", "Medium", "High"]);
+
+            message = macd.validation.PropertyBatchValidator.validate(definition, transaction);
+            testCase.verifyEqual(message, "Enter a vector with the required number of values.");
+        end
+
         function typedCellCodecPreservesSafeTypesAndReportsCoordinates(testCase)
             % typedCellCodecPreservesSafeTypesAndReportsCoordinates Keep literal cell failures local.
 
