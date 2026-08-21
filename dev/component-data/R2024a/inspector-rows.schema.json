@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MatlabAppClassDesigner R2024a composite Inspector rows",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifactVersion", "matlabRelease", "rows"],
+  "properties": {
+    "artifactVersion": { "const": 1 },
+    "matlabRelease": { "const": "R2024a" },
+    "runtimeArtifact": { "type": "string", "minLength": 1 },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "displayName", "editor", "members", "orderAnchor", "match"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "displayName": { "type": "string", "minLength": 1 },
+          "editor": { "enum": ["tableData", "columnSettings", "items", "fontStyle"] },
+          "categoryId": { "type": "string" },
+          "orderAnchor": { "type": "string", "minLength": 1 },
+          "members": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "role"],
+              "properties": {
+                "path": { "type": "string", "minLength": 1 },
+                "role": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          "match": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "componentIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "parentContextIds": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

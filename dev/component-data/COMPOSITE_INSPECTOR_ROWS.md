@@ -122,9 +122,10 @@ The schema rules are:
 - `id`, `displayName`, and `editor` are nonempty scalar strings.
 - `editor` is resolved through the existing allowlisted behavior boundary.
 - `members` contains at least two unique paths and unique roles.
-- `categoryId` identifies the category in which the composite row is shown.
-- `orderAnchor` names one member in that category and determines the projected
-  row position.
+- A nonempty `categoryId` identifies the category in which the composite row is
+  shown. When it is empty, the `orderAnchor` member's category is used.
+- `orderAnchor` names one member and determines the projected row position.
+  The anchor must belong to the explicit `categoryId` when one is supplied.
 - Empty `componentIds` means any component with the complete matching member
   set; an explicit list narrows application.
 - `parentContextIds` is empty for intrinsic groups and identifies contributed

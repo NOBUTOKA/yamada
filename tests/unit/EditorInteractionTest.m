@@ -79,10 +79,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
-        function enumDropDownCommitsCatalogChoice(testCase)
-            % enumDropDownCommitsCatalogChoice Commit a finite catalog enum through the live inspector.
+        function fontStyleButtonCommitsCatalogChoice(testCase)
+            % fontStyleButtonCommitsCatalogChoice Commit a typographic style toggle through the live inspector.
 
-            % Insert a button through the palette so its FontWeight row is reconstructed.
+            % Insert a button through the palette so its Font Style row is reconstructed.
             app = MatlabAppClassDesigner();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
@@ -94,15 +94,16 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
             drawnow;
 
-            % Select and commit one documented dropdown item using the real callback binding.
+            % Toggle the compact bold state button using the real batch callback binding.
             labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
-            label = labels(string({labels.Text}) == "FontWeight");
+            label = labels(string({labels.Text}) == "Font Style");
             testCase.verifyEqual(numel(label), 1);
-            control = findall(label.Parent, "Type", "uidropdown", ...
-                "Tag", "macd-inspector-property-editor");
+            controls = findall(figure, "Tag", "macd-inspector-font-weight-button");
+            control = controls(arrayfun(@(candidate) isa(candidate, ...
+                "matlab.ui.control.StateButton") && isvalid(candidate), controls));
+            testCase.verifyEqual(numel(control), 1);
             testCase.verifyEqual(string(control.Enable), "on");
-            testCase.verifyEqual(string(control.Items), ["normal", "bold"]);
-            control.Value = "bold";
+            control.Value = true;
             control.ValueChangedFcn(control, struct());
             drawnow;
             component = app.Document.getComponent(app.SelectedComponentId);
@@ -255,7 +256,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             labels = findall(figure, "Type", "uilabel", ...
                 "Tag", "macd-inspector-property-label");
-            dataLabel = labels(string({labels.Text}) == "Data");
+            dataLabel = labels(string({labels.Text}) == "Data & Names");
             editor = findall(dataLabel.Parent, "Tag", "macd-inspector-table-data-editor");
             editor.ButtonPushedFcn(editor, struct());
             dialog = findall(0, "Tag", "macd-inspector-table-data-dialog");
@@ -267,6 +268,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             bodyRows = size(table.Data, 1) - 1;
             bodyColumns = size(table.Data, 2) - 1;
             expected = reshape(1:bodyRows * bodyColumns, bodyRows, bodyColumns);
+            dataType = findall(dialog, "Tag", "macd-table-data-type");
+            dataType.Value = "numeric";
+            dataType.ValueChangedFcn(dataType, struct());
             table.Data(2:end, 2:end) = string(expected);
             applyButton = findall(dialog, "Tag", "macd-table-data-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
@@ -275,6 +279,25 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             component = app.Document.getComponent(app.SelectedComponentId);
             entry = component.getProperty("Data");
             testCase.verifyEqual(entry.LiteralValue, expected);
+            columnEditors = findall(figure, "Tag", "macd-inspector-column-settings-editor");
+            columnEditor = columnEditors(arrayfun(@(candidate) isa(candidate, ...
+                "matlab.ui.control.Button") && isvalid(candidate), columnEditors));
+            testCase.verifyEqual(numel(columnEditor), 1);
+            columnEditor.ButtonPushedFcn(columnEditor, struct());
+            columnDialog = findall(0, "Tag", "macd-column-settings-dialog");
+            columnTable = findall(columnDialog, "Tag", "macd-column-settings-table");
+            columnTable.Data{1, 2} = 'fit';
+            columnTable.Data{1, 3} = true;
+            columnTable.Data{1, 4} = true;
+            columnTable.Data{1, 5} = '''bank''';
+            columnApply = findall(columnDialog, "Tag", "macd-column-settings-apply");
+            columnApply.ButtonPushedFcn(columnApply, struct());
+            drawnow;
+            component = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEqual(component.getProperty("ColumnWidth").LiteralValue, 'fit');
+            testCase.verifyTrue(component.getProperty("ColumnEditable").LiteralValue);
+            testCase.verifyTrue(component.getProperty("ColumnSortable").LiteralValue);
+            testCase.verifyEqual(component.getProperty("ColumnFormat").LiteralValue, {'bank'});
             clear cleanup
         end
 

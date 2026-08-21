@@ -109,6 +109,52 @@ classdef PropertyEditorFactory
             end
         end
 
+        function control = createComposite(parent, row, batchCommitFcn)
+            % createComposite Construct one allowlisted multi-property Inspector editor.
+            arguments (Input)
+                parent
+                row (1, 1) struct
+                batchCommitFcn (1, 1) function_handle
+            end
+
+            switch string(row.Editor)
+                case "tableData"
+                    control = uibutton(parent, "Text", "Edit table", ...
+                        "Tag", "macd-inspector-table-data-editor", ...
+                        "ButtonPushedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.openTableDataEditor(source, batchCommitFcn));
+                case "columnSettings"
+                    control = uibutton(parent, "Text", "Edit columns", ...
+                        "Tag", "macd-inspector-column-settings-editor", ...
+                        "ButtonPushedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.openColumnSettingsEditor(source, batchCommitFcn));
+                case "items"
+                    control = uibutton(parent, "Text", "Edit items", ...
+                        "Tag", "macd-inspector-items-editor", ...
+                        "ButtonPushedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.openItemsEditor(source, batchCommitFcn));
+                case "fontStyle"
+                    control = uipanel(parent, "BorderType", "none", ...
+                        "Tag", "macd-inspector-font-style-editor");
+                    grid = uigridlayout(control, [1 2], "Padding", [0 0 0 0], ...
+                        "ColumnWidth", {34, 34}, "ColumnSpacing", 3);
+                    weight = uibutton(grid, "state", "Text", "B", "FontWeight", "bold", ...
+                        "Tag", "macd-inspector-font-weight-button", ...
+                        "ValueChangedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.commitFontStyle( ...
+                        source, "FontWeight", "bold", "normal", batchCommitFcn));
+                    angle = uibutton(grid, "state", "Text", "I", "FontAngle", "italic", ...
+                        "Tag", "macd-inspector-font-angle-button", ...
+                        "ValueChangedFcn", @(source, ~) ...
+                        macd.ui.inspector.PropertyEditorFactory.commitFontStyle( ...
+                        source, "FontAngle", "italic", "normal", batchCommitFcn));
+                    control.UserData = struct("Weight", weight, "Angle", angle);
+                otherwise
+                    error("macd:PropertyEditorFactory:UnknownCompositeEditor", ...
+                        "Unknown composite Inspector editor.");
+            end
+        end
+
         function result = supportsEditing(definition)
             % supportsEditing Return whether the definition has a native editable adapter.
             arguments (Input)
@@ -123,6 +169,71 @@ classdef PropertyEditorFactory
                 "multilineText", "url", "asset", "structuredData", "dateTime", "tableData"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
+            end
+        end
+
+        function synchronizeComposite(control, row, members, relatedValues)
+            % synchronizeComposite Load all member values into one composite editor host.
+            arguments (Input)
+                control
+                row (1, 1) struct
+                members (1, :) struct
+                relatedValues struct = struct()
+            end
+
+            switch string(row.Editor)
+                case "tableData"
+                    state = macd.ui.inspector.PropertyEditorFactory.compositeState( ...
+                        members, ["Data", "ColumnName", "RowName"]);
+                    indexedPaths = ["ColumnWidth", "ColumnEditable", "ColumnSortable", "ColumnFormat"];
+                    for indexedPath = indexedPaths
+                        [state.(char(indexedPath)), state.("Has" + indexedPath)] = ...
+                            macd.ui.inspector.PropertyEditorFactory.relatedKnownValue( ...
+                            relatedValues, indexedPath, []);
+                    end
+                    state.HasData = macd.ui.inspector.PropertyEditorFactory.memberKnown(state, "Data");
+                    control.UserData = state;
+                    control.Text = macd.ui.inspector.TableDataEditorDialog.summary(state.Data);
+                    control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                        macd.ui.inspector.PropertyEditorFactory.membersEditable(members) && ...
+                        state.HasData && macd.ui.inspector.TableDataEditorDialog.supportsData(state.Data));
+                case "columnSettings"
+                    state = macd.ui.inspector.PropertyEditorFactory.compositeState( ...
+                        members, ["ColumnWidth", "ColumnEditable", "ColumnRearrangeable", ...
+                        "ColumnSortable", "ColumnFormat"]);
+                    [state.Data, state.HasData] = macd.ui.inspector.PropertyEditorFactory.relatedKnownValue( ...
+                        relatedValues, "Data", []);
+                    [state.ColumnName, state.HasColumnName] = ...
+                        macd.ui.inspector.PropertyEditorFactory.relatedKnownValue( ...
+                        relatedValues, "ColumnName", []);
+                    control.UserData = state;
+                    control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                        macd.ui.inspector.PropertyEditorFactory.membersEditable(members) && ...
+                        state.HasData && macd.ui.inspector.TableDataEditorDialog.supportsData(state.Data));
+                case "items"
+                    state = macd.ui.inspector.PropertyEditorFactory.compositeState( ...
+                        members, ["Items", "ItemsData"]);
+                    control.UserData = state;
+                    control.Text = macd.ui.inspector.PropertyEditorFactory.listSummary(state.Items);
+                    control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                        macd.ui.inspector.PropertyEditorFactory.membersEditable(members) && ...
+                        macd.ui.inspector.PropertyEditorFactory.isEditableItemList(state.Items));
+                case "fontStyle"
+                    state = macd.ui.inspector.PropertyEditorFactory.compositeState( ...
+                        members, ["FontWeight", "FontAngle"]);
+                    controls = control.UserData;
+                    controls.Weight.Value = macd.ui.inspector.PropertyEditorFactory.fontState( ...
+                        state.FontWeight, "bold");
+                    controls.Angle.Value = macd.ui.inspector.PropertyEditorFactory.fontState( ...
+                        state.FontAngle, "italic");
+                    controls.Weight.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                        macd.ui.inspector.PropertyEditorFactory.memberEditable(members, "FontWeight"));
+                    controls.Angle.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                        macd.ui.inspector.PropertyEditorFactory.memberEditable(members, "FontAngle"));
+                    control.UserData = controls;
+                otherwise
+                    error("macd:PropertyEditorFactory:UnknownCompositeEditor", ...
+                        "Unknown composite Inspector editor.");
             end
         end
 
@@ -405,6 +516,32 @@ classdef PropertyEditorFactory
             macd.ui.inspector.TableDataEditorDialog.open(state, batchCommitFcn, visible);
         end
 
+        function openColumnSettingsEditor(control, batchCommitFcn)
+            % openColumnSettingsEditor Open the staged per-column settings dialog.
+            arguments (Input)
+                control (1, 1) matlab.ui.control.Button
+                batchCommitFcn (1, 1) function_handle
+            end
+
+            owner = ancestor(control, "figure");
+            visible = isempty(owner) || string(owner.Visible) == "on";
+            macd.ui.inspector.ColumnSettingsEditorDialog.open( ...
+                control.UserData, batchCommitFcn, visible);
+        end
+
+        function openItemsEditor(control, batchCommitFcn)
+            % openItemsEditor Open one paired Items and ItemsData candidate dialog.
+            arguments (Input)
+                control (1, 1) matlab.ui.control.Button
+                batchCommitFcn (1, 1) function_handle
+            end
+
+            owner = ancestor(control, "figure");
+            visible = isempty(owner) || string(owner.Visible) == "on";
+            macd.ui.inspector.ItemsDataEditorDialog.openComposite( ...
+                control.UserData, batchCommitFcn, visible);
+        end
+
         function state = tableDataState(currentPath, rawValue, relatedValues)
             % tableDataState Gather Data and heading values from one effective inspector snapshot.
             arguments (Input)
@@ -434,6 +571,84 @@ classdef PropertyEditorFactory
             state.Data = values{1};
             state.ColumnName = values{2};
             state.RowName = values{3};
+        end
+
+        function state = compositeState(members, paths)
+            % compositeState Copy named member values and editability into one adapter state.
+            arguments (Input)
+                members (1, :) struct
+                paths (1, :) string
+            end
+            arguments (Output)
+                state (1, 1) struct
+            end
+
+            state = struct();
+            state.MemberPaths = paths;
+            state.MemberEditable = false(1, numel(paths));
+            state.MemberKnown = false(1, numel(paths));
+            for index = 1:numel(paths)
+                memberIndex = find(string({members.Path}) == paths(index), 1);
+                if isempty(memberIndex)
+                    continue
+                end
+                member = members(memberIndex);
+                state.(char(paths(index))) = member.RawValue;
+                state.MemberEditable(index) = member.IsEditable;
+                state.MemberKnown(index) = member.IsKnown;
+            end
+        end
+
+        function result = memberKnown(state, path)
+            % memberKnown Read one composite availability bit by property path.
+            index = find(state.MemberPaths == path, 1);
+            result = ~isempty(index) && state.MemberKnown(index);
+        end
+
+        function result = membersEditable(members)
+            % membersEditable Require all composite members to be editable and known.
+            result = all([members.IsEditable]) && all([members.IsKnown]);
+        end
+
+        function result = memberEditable(members, path)
+            % memberEditable Read one member-specific editability state.
+            index = find(string({members.Path}) == path, 1);
+            result = ~isempty(index) && members(index).IsEditable && members(index).IsKnown;
+        end
+
+        function result = fontState(value, enabledValue)
+            % fontState Map normalized text values to one typographic state button.
+            result = (ischar(value) || (isstring(value) && isscalar(value))) && ...
+                lower(string(value)) == enabledValue;
+        end
+
+        function result = isEditableItemList(value)
+            % isEditableItemList Limit paired item editing to documented text list forms.
+            result = isstring(value) || iscell(value) || (ischar(value) && isrow(value));
+            if iscell(value)
+                result = all(cellfun(@(item) ischar(item) && isrow(item), value));
+            end
+        end
+
+        function commitFontStyle(control, path, enabledValue, disabledValue, batchCommitFcn)
+            % commitFontStyle Submit one font-style toggle through the common batch route.
+            arguments (Input)
+                control (1, 1) matlab.ui.control.StateButton
+                path (1, 1) string
+                enabledValue (1, 1) string
+                disabledValue (1, 1) string
+                batchCommitFcn (1, 1) function_handle
+            end
+
+            value = char(disabledValue);
+            if control.Value
+                value = char(enabledValue);
+            end
+            message = batchCommitFcn(macd.model.PropertyTransaction.singleChange(path, value));
+            if strlength(message) > 0
+                control.Tooltip = message;
+                control.BackgroundColor = [1 0.9 0.9];
+            end
         end
 
         function [value, known] = relatedKnownValue(relatedValues, path, fallback)

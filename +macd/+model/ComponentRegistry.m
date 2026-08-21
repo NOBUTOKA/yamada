@@ -12,6 +12,8 @@ classdef ComponentRegistry < handle
         Definitions containers.Map
         FactoryVariantIds containers.Map
         ParentContextRules macd.model.ParentContextRule = macd.model.ParentContextRule.empty
+        InspectorRowDefinitions macd.model.InspectorRowDefinition = ...
+            macd.model.InspectorRowDefinition.empty
     end
 
     methods
@@ -25,6 +27,7 @@ classdef ComponentRegistry < handle
             obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
             obj.FactoryVariantIds = containers.Map("KeyType", "char", "ValueType", "any");
             obj.ParentContextRules = [macd.model.ParentContextRule.grid(); macd.model.ParentContextRule.absolute()];
+            obj.InspectorRowDefinitions = macd.model.InspectorRowDefinition.empty;
         end
 
         function register(obj, definition)
@@ -165,6 +168,33 @@ classdef ComponentRegistry < handle
                 rules macd.model.ParentContextRule
             end
             obj.ParentContextRules = rules(:);
+        end
+
+        function setInspectorRowDefinitions(obj, definitions)
+            % setInspectorRowDefinitions Replace validated presentation-only row templates.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+                definitions macd.model.InspectorRowDefinition
+            end
+
+            ids = string({definitions.Id});
+            if numel(ids) ~= numel(unique(ids))
+                error("macd:ComponentRegistry:DuplicateInspectorRowId", ...
+                    "Inspector row template IDs must be unique.");
+            end
+            obj.InspectorRowDefinitions = definitions(:);
+        end
+
+        function definitions = inspectorRows(obj)
+            % inspectorRows Return the catalog-owned Inspector presentation templates.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                definitions macd.model.InspectorRowDefinition
+            end
+
+            definitions = obj.InspectorRowDefinitions;
         end
 
         function properties = getEffectiveProperties(obj, factory, parentFactory, creationArguments)

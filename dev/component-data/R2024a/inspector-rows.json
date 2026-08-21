@@ -1,0 +1,63 @@
+{
+  "artifactVersion": 1,
+  "matlabRelease": "R2024a",
+  "runtimeArtifact": "resources/component-catalog/v2/inspector-rows.json",
+  "rows": [
+    {
+      "id": "tableDataAndNames",
+      "displayName": "Data & Names",
+      "editor": "tableData",
+      "members": [
+        { "path": "Data", "role": "data" },
+        { "path": "ColumnName", "role": "columnNames" },
+        { "path": "RowName", "role": "rowNames" }
+      ],
+      "categoryId": "table",
+      "orderAnchor": "Data",
+      "match": { "componentIds": ["uitable"], "parentContextIds": [] }
+    },
+    {
+      "id": "tableColumns",
+      "displayName": "Columns",
+      "editor": "columnSettings",
+      "members": [
+        { "path": "ColumnWidth", "role": "width" },
+        { "path": "ColumnEditable", "role": "editable" },
+        { "path": "ColumnRearrangeable", "role": "rearrangeable" },
+        { "path": "ColumnSortable", "role": "sortable" },
+        { "path": "ColumnFormat", "role": "format" }
+      ],
+      "categoryId": "table",
+      "orderAnchor": "ColumnWidth",
+      "match": { "componentIds": ["uitable"], "parentContextIds": [] }
+    },
+    {
+      "id": "itemsAndData",
+      "displayName": "Items",
+      "editor": "items",
+      "members": [
+        { "path": "Items", "role": "items" },
+        { "path": "ItemsData", "role": "itemsData" }
+      ],
+      "orderAnchor": "Items",
+      "match": {
+        "componentIds": [
+          "uidropdown", "uilistbox", "uiknob-discrete",
+          "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"
+        ],
+        "parentContextIds": []
+      }
+    },
+    {
+      "id": "fontStyle",
+      "displayName": "Font Style",
+      "editor": "fontStyle",
+      "members": [
+        { "path": "FontWeight", "role": "weight" },
+        { "path": "FontAngle", "role": "angle" }
+      ],
+      "orderAnchor": "FontWeight",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    }
+  ]
+}

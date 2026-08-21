@@ -31,6 +31,31 @@ classdef DialogTransactionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function compositeItemsDialogStagesBothProperties(testCase)
+            % compositeItemsDialogStagesBothProperties Commit paired labels and data as one batch.
+
+            owner = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(owner));
+            state = struct();
+            state.Items = ["One", "Two"];
+            state.ItemsData = [1 2];
+            macd.ui.inspector.ItemsDataEditorDialog.openComposite( ...
+                state, @(changes) captureBatch(owner, changes), false);
+            dialog = findall(0, "Tag", "macd-items-editor-dialog");
+            table = findall(dialog, "Tag", "macd-items-editor-table");
+            table.Data(1, 1) = "Updated";
+            table.Data(1, 2) = "5";
+            apply = findall(dialog, "Tag", "macd-items-editor-apply");
+            apply.ButtonPushedFcn(apply, struct());
+
+            changes = getappdata(owner, "batch");
+            testCase.verifyEqual(string({changes.Path}), ["Items", "ItemsData"]);
+            testCase.verifyEqual(changes(1).Value, ["Updated", "Two"]);
+            testCase.verifyEqual(changes(2).Value, [5 2]);
+            testCase.verifyFalse(isvalid(dialog));
+            clear cleanup
+        end
+
         function structuredDataApplyEmitsOneTypedBatch(testCase)
             % structuredDataApplyEmitsOneTypedBatch Route a finite literal through the shared transaction.
 

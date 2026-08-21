@@ -1673,7 +1673,8 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             % Rebuild all category and row controls for a changed surface only.
             states = app.inspectorStates(component);
-            [states, categories] = app.sortedInspectorStates(states);
+            rows = app.inspectorRowsFor(component, states);
+            categories = unique(string({rows.Category}), "stable");
             app.saveInspectorViewState();
             app.InspectorView.clear();
             app.InspectorRows = macd.ui.inspector.InspectorPropertyRow.empty;
@@ -1682,17 +1683,21 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             contentHeight = 0;
             for categoryIndex = 1:numel(categories)
                 category = categories(categoryIndex);
-                indices = find(arrayfun(@(state) state.Definition.Category == category, states));
+                indices = find(string({rows.Category}) == category);
                 rowHeights = arrayfun(@(index) ...
                     macd.ui.inspector.InspectorPropertyRow.rowHeight( ...
-                    states(indices(index)).Definition), 1:numel(indices));
+                    rows(indices(index))), 1:numel(indices));
                 contentHeight = contentHeight + 40 + sum(rowHeights) + 3 * numel(indices);
                 section = macd.ui.inspector.InspectorCategorySection(content, category, numel(indices));
                 section.setLayoutRow(categoryIndex);
                 for rowIndex = 1:numel(indices)
-                    state = states(indices(rowIndex));
+                    rowState = rows(indices(rowIndex));
+                    binding = rowState;
+                    if ~rowState.IsComposite
+                        binding = states(rowState.MemberIndices).Definition;
+                    end
                     row = macd.ui.inspector.InspectorPropertyRow(section.contentGrid(), rowIndex, ...
-                        component.Id, state.Definition, @(id, path, text) ...
+                        component.Id, binding, @(id, path, text) ...
                         app.inspectorValueCommitted(id, path, text), @(id, changes) ...
                         app.inspectorValuesCommitted(id, changes));
                     section.setRowHeight(rowIndex, rowHeights(rowIndex));
@@ -1700,7 +1705,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 end
             end
             app.InspectorView.setContentHeight(max(contentHeight, 1));
-            app.synchronizeInspectorRows(component, states);
+            app.synchronizeInspectorRows(component, states, rows);
             app.restoreInspectorViewState(component.Id);
             app.InspectorComponentId = component.Id;
             app.InspectorSurfaceKey = surfaceKey;
@@ -1715,12 +1720,14 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
 
             % Preserve row controls when explicit values, history, or preview change.
             states = app.inspectorStates(component);
-            [states, ~] = app.sortedInspectorStates(states);
-            if numel(states) ~= numel(app.InspectorRows)
+            rows = app.inspectorRowsFor(component, states);
+            rowIds = string({rows.Id});
+            existingIds = arrayfun(@(row) row.identifier(), app.InspectorRows);
+            if numel(rows) ~= numel(app.InspectorRows) || ~isequal(rowIds, existingIds)
                 app.rebuildInspector(component, app.inspectorSurfaceKey(component));
                 return
             end
-            app.synchronizeInspectorRows(component, states);
+            app.synchronizeInspectorRows(component, states, rows);
         end
 
         function clearInspector(app)
@@ -1787,6 +1794,27 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 ordered = [ordered, members(order)]; %#ok<AGROW>
             end
             states = ordered;
+        end
+
+        function rows = inspectorRowsFor(app, component, states)
+            % inspectorRowsFor Project one effective property surface into catalog-owned rows.
+            arguments (Input)
+                app (1, 1) MatlabAppClassDesigner
+                component (1, 1) macd.model.ComponentRecord
+                states
+            end
+            arguments (Output)
+                rows (1, :) struct
+            end
+
+            parentFactory = "";
+            if strlength(component.ParentId) > 0
+                parent = app.Document.getComponent(component.ParentId);
+                parentFactory = parent.Factory;
+            end
+            definition = app.Registry.get(component.Factory, component.CreationArguments);
+            rows = macd.ui.inspector.InspectorSurfaceBuilder.build( ...
+                definition.Id, parentFactory, states, app.Registry.inspectorRows());
         end
 
         function states = inspectorStates(app, component)
@@ -1873,12 +1901,13 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                 string({definitions.Path}), values, known);
         end
 
-        function synchronizeInspectorRows(app, component, states)
+        function synchronizeInspectorRows(app, component, states, rows)
             % synchronizeInspectorRows Load current model values into stable native rows.
             arguments (Input)
                 app (1, 1) MatlabAppClassDesigner
                 component (1, 1) macd.model.ComponentRecord
                 states
+                rows (1, :) struct
             end
 
             parentFactory = "";
@@ -1891,16 +1920,20 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             relatedValues = struct("Paths", relatedTransaction.Paths, ...
                 "Values", {relatedTransaction.DraftValues}, ...
                 "KnownValues", relatedTransaction.KnownValues);
+            members = repmat(struct("Path", "", "Value", "", "RawValue", [], ...
+                "IsEditable", false, "IsKnown", false), 1, numel(states));
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
                 rawValue = [];
+                isKnown = false;
                 editable = states(index).Definition.IsEditable && ...
                     states(index).Definition.AuditDisposition == "editable";
                 if ~isempty(entry)
                     value = macd.ui.InspectorValueFormatter.format(entry);
                     if entry.ValueKind == "literal"
                         rawValue = entry.LiteralValue;
+                        isKnown = true;
                     end
                     editable = editable && entry.IsEditable;
                 else
@@ -1909,9 +1942,18 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
                         defaultEntry = macd.model.PropertyEntry(states(index).Definition.Path, defaultValue);
                         value = macd.ui.InspectorValueFormatter.format(defaultEntry);
                         rawValue = defaultValue;
+                        isKnown = true;
                     end
                 end
-                app.InspectorRows(index).synchronize(value, editable, rawValue, relatedValues);
+                members(index).Path = states(index).Definition.Path;
+                members(index).Value = value;
+                members(index).RawValue = rawValue;
+                members(index).IsEditable = editable;
+                members(index).IsKnown = isKnown;
+            end
+            for index = 1:numel(rows)
+                app.InspectorRows(index).synchronizeMembers( ...
+                    members(rows(index).MemberIndices), relatedValues);
             end
         end
 

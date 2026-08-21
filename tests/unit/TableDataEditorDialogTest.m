@@ -173,6 +173,36 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function structuralColumnEditReconcilesExplicitColumnSettings(testCase)
+            % structuralColumnEditReconcilesExplicitColumnSettings Resize indexed settings in one batch.
+
+            owner = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(owner));
+            setappdata(owner, "changes", struct.empty);
+            state = struct("Data", {num2cell([1 2])}, "ColumnName", {{'A', 'B'}}, ...
+                "RowName", {{'One'}}, "HasData", true, "HasColumnName", true, ...
+                "HasRowName", true, "ColumnWidth", {{'fit', 'auto'}}, ...
+                "ColumnEditable", [true false], "ColumnSortable", [false true], ...
+                "ColumnFormat", {{'bank', 'char'}}, "HasColumnWidth", true, ...
+                "HasColumnEditable", true, "HasColumnSortable", true, ...
+                "HasColumnFormat", true);
+            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+                state, @(changes) captureChanges(owner, changes), false);
+            buttons = findall(dialog, "Tag", "macd-table-data-delete-column");
+            button = buttons([buttons.UserData] == 1);
+            button.ButtonPushedFcn(button, struct());
+            apply = findall(dialog, "Tag", "macd-table-data-apply");
+            apply.ButtonPushedFcn(apply, struct());
+
+            changes = getappdata(owner, "changes");
+            testCase.verifyEqual(changes([changes.Path] == "Data").Value, {2});
+            testCase.verifyEqual(changes([changes.Path] == "ColumnWidth").Value, {'auto'});
+            testCase.verifyEqual(changes([changes.Path] == "ColumnEditable").Value, false);
+            testCase.verifyEqual(changes([changes.Path] == "ColumnSortable").Value, true);
+            testCase.verifyEqual(changes([changes.Path] == "ColumnFormat").Value, {'char'});
+            clear cleanup
+        end
+
         function rejectsUnsupportedTableData(testCase)
             % rejectsUnsupportedTableData Defer table-class values instead of coercing them through the UI.
 

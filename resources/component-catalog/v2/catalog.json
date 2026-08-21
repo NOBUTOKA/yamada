@@ -8,6 +8,9 @@
   "orderProfileFiles": [
     "order-profiles.json"
   ],
+  "inspectorRowFiles": [
+    "inspector-rows.json"
+  ],
   "parentContextRules": [
     {
       "parentFactories": [

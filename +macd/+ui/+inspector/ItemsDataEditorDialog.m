@@ -65,6 +65,106 @@ classdef ItemsDataEditorDialog
                 close(dialog);
             end
         end
+
+        function openComposite(state, commitFcn, visible)
+            % openComposite Edit paired Items and ItemsData in one atomic candidate dialog.
+            arguments (Input)
+                state (1, 1) struct
+                commitFcn (1, 1) function_handle
+                visible (1, 1) logical = true
+            end
+
+            initialItems = state.Items;
+            initialData = state.ItemsData;
+            labels = macd.ui.inspector.ItemsDataEditorDialog.itemLabels(initialItems);
+            data = macd.ui.inspector.ItemsDataEditorDialog.tableData(labels, initialData);
+            transaction = macd.model.PropertyTransaction(["Items", "ItemsData"], ...
+                {initialItems, initialData});
+            dialog = uifigure("Name", "Edit items", "Position", [100 100 520 360], ...
+                "WindowStyle", "modal", "Visible", macd.ui.inspector.ItemsDataEditorDialog.onOff(visible), ...
+                "Tag", "macd-items-editor-dialog");
+            grid = uigridlayout(dialog, [4 3], "Padding", [12 12 12 12], ...
+                "RowHeight", {"1x", 24, 24, 30}, "ColumnWidth", {70, 70, "1x"}, ...
+                "ColumnSpacing", 6);
+            table = uitable(grid, "Data", data, "ColumnName", {"Items", "ItemsData"}, ...
+                "ColumnEditable", [true true], "Tag", "macd-items-editor-table");
+            table.Layout.Row = 1;
+            table.Layout.Column = [1 3];
+            add = uibutton(grid, "Text", "+", "FontSize", 14, "FontWeight", "bold", ...
+                "FontColor", [0 0.55 0], "Tag", "macd-items-editor-add", ...
+                "ButtonPushedFcn", @(~, ~) addRow());
+            add.Layout.Row = 2;
+            remove = uibutton(grid, "Text", "−", "FontSize", 14, "FontWeight", "bold", ...
+                "FontColor", [0.8 0 0], "Tag", "macd-items-editor-remove", ...
+                "ButtonPushedFcn", @(~, ~) removeRow());
+            remove.Layout.Row = 2;
+            message = uilabel(grid, "Text", "Enter item text and MATLAB literals for item data.", ...
+                "FontColor", [0.3 0.3 0.3]);
+            message.Layout.Row = 2;
+            message.Layout.Column = 3;
+            clearButton = uibutton(grid, "Text", "Clear", "Tag", "macd-items-editor-clear", ...
+                "ButtonPushedFcn", @(~, ~) clearDraft());
+            clearButton.Layout.Row = 4;
+            apply = uibutton(grid, "Text", "Apply", "Tag", "macd-items-editor-apply", ...
+                "ButtonPushedFcn", @(~, ~) applyDraft());
+            apply.Layout.Row = 4;
+            apply.Layout.Column = [2 3];
+
+            function addRow()
+                % addRow Extend both paired columns in the local candidate only.
+                table.Data(end + 1, :) = ["", ""];
+            end
+
+            function removeRow()
+                % removeRow Remove the final paired item only from the local candidate.
+                if size(table.Data, 1) > 0
+                    table.Data(end, :) = [];
+                end
+            end
+
+            function clearDraft()
+                % clearDraft Reset the local pair without mutating the document.
+                table.Data = strings(0, 2);
+                message.Text = "Enter item text and MATLAB literals for item data.";
+                message.FontColor = [0.3 0.3 0.3];
+            end
+
+            function applyDraft()
+                % applyDraft Parse both columns and submit the complete pair once.
+                removeStyle(table);
+                itemTexts = string(table.Data(:, 1));
+                [values, errorRow, errorColumn, errorMessage] = ...
+                    macd.ui.inspector.TypedCellCodec.parse(table.Data(:, 2), true);
+                if errorRow > 0
+                    errorStyle = uistyle("BackgroundColor", [1 0.9 0.9]);
+                    addStyle(table, errorStyle, "cell", [errorRow errorColumn + 1]);
+                    message.Text = errorMessage;
+                    message.FontColor = [0.7 0 0];
+                    return
+                end
+                items = macd.ui.inspector.ItemsDataEditorDialog.itemOutput(itemTexts, initialItems);
+                if isempty(values) || all(cellfun(@isempty, values))
+                    itemData = [];
+                else
+                    itemData = macd.ui.inspector.TypedCellCodec.packVector(values);
+                end
+                if ~isequaln(items, initialItems)
+                    transaction.stage("Items", items);
+                end
+                if ~isequaln(itemData, initialData)
+                    transaction.stage("ItemsData", itemData);
+                end
+                errorMessage = commitFcn(transaction.changes());
+                if strlength(errorMessage) > 0
+                    message.Text = errorMessage;
+                    message.FontColor = [0.7 0 0];
+                    return
+                end
+                if isvalid(dialog)
+                    delete(dialog);
+                end
+            end
+        end
     end
 
     methods (Static, Access = private)
@@ -100,6 +200,30 @@ classdef ItemsDataEditorDialog
                     item = value(index);
                 end
                 data(index, 2) = macd.ui.inspector.ItemsDataEditorDialog.literalText(item);
+            end
+        end
+
+        function value = itemOutput(labels, original)
+            % itemOutput Preserve the documented text-list style while storing edited labels.
+            if isstring(original)
+                value = reshape(labels, 1, []);
+            elseif ischar(original)
+                if isscalar(labels)
+                    value = char(labels);
+                else
+                    value = cellstr(reshape(labels, 1, []));
+                end
+            else
+                value = cellstr(reshape(labels, 1, []));
+            end
+        end
+
+        function value = onOff(enabled)
+            % onOff Convert a visibility flag to the native UI token.
+            if enabled
+                value = "on";
+            else
+                value = "off";
             end
         end
 

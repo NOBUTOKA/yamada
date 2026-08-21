@@ -62,6 +62,19 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
         end
 
+        function runtimeCatalogLoadsInitialCompositeInspectorRows(testCase)
+            % runtimeCatalogLoadsInitialCompositeInspectorRows Keep presentation overlays separate from properties.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            rows = registry.inspectorRows();
+            testCase.verifyEqual(string({rows.Id}), ...
+                ["tableDataAndNames", "tableColumns", "itemsAndData", "fontStyle"]);
+            tableColumns = rows([rows.Id] == "tableColumns");
+            testCase.verifyEqual(tableColumns.MemberPaths, ["ColumnWidth", "ColumnEditable", ...
+                "ColumnRearrangeable", "ColumnSortable", "ColumnFormat"]);
+            testCase.verifyEqual(tableColumns.CategoryId, "table");
+        end
+
         function figureCustomPointerShapesRemainOmitted(testCase)
             % figureCustomPointerShapesRemainOmitted Keep bitmap-pointer data outside the inspector catalog.
 

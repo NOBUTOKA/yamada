@@ -12,6 +12,8 @@ classdef InspectorPropertyRow < handle
         BatchCommitFcn function_handle
         ComponentId string
         Path string
+        Row struct = struct()
+        IsComposite logical = false
     end
 
     methods
@@ -22,7 +24,7 @@ classdef InspectorPropertyRow < handle
                 parent
                 row (1, 1) double {mustBeInteger, mustBePositive}
                 componentId (1, 1) string
-                definition (1, 1) macd.model.PropertyDefinition
+                definition
                 commitFcn (1, 1) function_handle
                 batchCommitFcn = []
             end
@@ -38,8 +40,21 @@ classdef InspectorPropertyRow < handle
             grid.ColumnWidth = {105, "1x"};
             grid.RowHeight = {macd.ui.inspector.InspectorPropertyRow.rowHeight(definition)};
             obj.ComponentId = componentId;
-            obj.Path = definition.Path;
-            obj.Definition = definition;
+            obj.IsComposite = isstruct(definition) && isfield(definition, "IsComposite") && ...
+                definition.IsComposite;
+            if obj.IsComposite
+                obj.Row = definition;
+                obj.Path = definition.Id;
+                obj.Definition = macd.model.PropertyDefinition(definition.Id, [], false, false, ...
+                    struct("displayName", definition.DisplayName, "editor", definition.Editor));
+                displayName = definition.DisplayName;
+                tooltip = strjoin(definition.MemberPaths, ", ");
+            else
+                obj.Path = definition.Path;
+                obj.Definition = definition;
+                displayName = definition.DisplayName;
+                tooltip = definition.Path;
+            end
             obj.CommitFcn = commitFcn;
             if isempty(batchCommitFcn)
                 batchCommitFcn = @(id, changes) ...
@@ -47,10 +62,15 @@ classdef InspectorPropertyRow < handle
                     commitFcn, id, changes);
             end
             obj.BatchCommitFcn = batchCommitFcn;
-            uilabel(grid, "Text", definition.DisplayName, "Tooltip", definition.Path, ...
+            uilabel(grid, "Text", displayName, "Tooltip", tooltip, ...
                 "Tag", "macd-inspector-property-label");
-            obj.Editor = macd.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
-                @(value) obj.commit(value), @(changes) obj.commitBatch(changes));
+            if obj.IsComposite
+                obj.Editor = macd.ui.inspector.PropertyEditorFactory.createComposite( ...
+                    grid, definition, @(changes) obj.commitBatch(changes));
+            else
+                obj.Editor = macd.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
+                    @(value) obj.commit(value), @(changes) obj.commitBatch(changes));
+            end
             obj.Editor.Layout.Column = 2;
             obj.captureNormalBackgroundColor();
         end
@@ -64,6 +84,10 @@ classdef InspectorPropertyRow < handle
                 rawValue = []
                 relatedValues struct = struct()
             end
+            if obj.IsComposite
+                error("macd:InspectorPropertyRow:CompositeSynchronization", ...
+                    "Composite rows require ordered member synchronization.");
+            end
             % Clear a stale error presentation before loading the current model value.
             obj.restoreNormalBackgroundColor();
             macd.ui.inspector.PropertyEditorFactory.synchronize( ...
@@ -72,6 +96,42 @@ classdef InspectorPropertyRow < handle
             obj.ErrorMessage = "";
             obj.Editor.Tooltip = "";
             obj.captureNormalBackgroundColor();
+        end
+
+        function synchronizeMembers(obj, members, relatedValues)
+            % synchronizeMembers Load an ordered multi-property row from effective member state.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                members (1, :) struct
+                relatedValues struct = struct()
+            end
+
+            if ~obj.IsComposite
+                if numel(members) ~= 1
+                    error("macd:InspectorPropertyRow:UnexpectedMemberCount", ...
+                        "A singleton Inspector row requires exactly one member.");
+                end
+                obj.synchronize(members.Value, members.IsEditable, members.RawValue, relatedValues);
+                return
+            end
+            obj.restoreNormalBackgroundColor();
+            macd.ui.inspector.PropertyEditorFactory.synchronizeComposite( ...
+                obj.Editor, obj.Row, members, relatedValues);
+            obj.ErrorMessage = "";
+            obj.Editor.Tooltip = "";
+            obj.captureNormalBackgroundColor();
+        end
+
+        function id = identifier(obj)
+            % identifier Return the stable projected row identifier for surface comparison.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+            end
+            arguments (Output)
+                id (1, 1) string
+            end
+
+            id = obj.Path;
         end
 
         function state = snapshotTransientState(obj)
@@ -84,7 +144,8 @@ classdef InspectorPropertyRow < handle
             end
 
             % Only invalid drafts are transient state; committed values come from the model.
-            state = struct("Path", obj.Path, "HasDraft", strlength(obj.ErrorMessage) > 0, ...
+            state = struct("Path", obj.Path, "HasDraft", strlength(obj.ErrorMessage) > 0 && ...
+                ~obj.IsComposite, ...
                 "Value", [], "Message", obj.ErrorMessage, "HasFocus", obj.hasFocus());
             if state.HasDraft
                 state.Value = macd.ui.inspector.PropertyEditorFactory.editorValue(obj.Editor);
@@ -98,7 +159,7 @@ classdef InspectorPropertyRow < handle
                 state (1, 1) struct
             end
 
-            if state.Path ~= obj.Path
+            if state.Path ~= obj.Path || obj.IsComposite
                 return
             end
             if state.HasDraft
@@ -201,13 +262,15 @@ classdef InspectorPropertyRow < handle
         function height = rowHeight(definition)
             % rowHeight Return the deterministic native height requested by one editor schema.
             arguments (Input)
-                definition (1, 1) macd.model.PropertyDefinition
+                definition
             end
             arguments (Output)
                 height (1, 1) double
             end
 
-            if definition.Editor == "multilineText"
+            if isstruct(definition) && isfield(definition, "IsComposite") && definition.IsComposite
+                height = 28;
+            elseif definition.Editor == "multilineText"
                 height = 84;
             elseif definition.Editor == "dateTime" && ...
                     isfield(definition.ValueSchema, "shape") && ...

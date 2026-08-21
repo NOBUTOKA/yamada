@@ -1,7 +1,8 @@
 classdef TableDataEditorDialog
     % TableDataEditorDialog Edit a supported UITable data draft and its visible headings.
     %   The dialog retains typed cell values and row/column names locally. It emits
-    %   one property batch for Data, ColumnName, and RowName only after Apply.
+    %   one property batch for Data, headings, and affected indexed column
+    %   settings only after Apply.
 
     methods (Static)
         function dialog = open(state, commitFcn, visible)
@@ -25,6 +26,16 @@ classdef TableDataEditorDialog
                 state, "ColumnName", []);
             initialRowName = macd.ui.inspector.TableDataEditorDialog.stateValue( ...
                 state, "RowName", []);
+            indexedPaths = ["ColumnWidth", "ColumnEditable", "ColumnSortable", "ColumnFormat"];
+            indexedInitial = cell(1, numel(indexedPaths));
+            indexedKnown = false(1, numel(indexedPaths));
+            for initialSettingIndex = 1:numel(indexedPaths)
+                path = indexedPaths(initialSettingIndex);
+                indexedInitial{initialSettingIndex} = macd.ui.inspector.TableDataEditorDialog.stateValue( ...
+                    state, path, []);
+                indexedKnown(initialSettingIndex) = isfield(state, char("Has" + path)) && ...
+                    state.(char("Has" + path));
+            end
             initialColumnLabels = macd.ui.inspector.TableDataEditorDialog.nameVector(initialColumnName);
             initialRowLabels = macd.ui.inspector.TableDataEditorDialog.nameVector(initialRowName);
             columnNumbered = macd.ui.inspector.TableDataEditorDialog.isNumberedName(initialColumnName);
@@ -33,13 +44,14 @@ classdef TableDataEditorDialog
             dataKind = macd.ui.inspector.TypedCellCodec.inferTableDataKind(initialData);
             columnLabels = initialColumnLabels;
             rowLabels = initialRowLabels;
+            columnSourceIndices = 1:size(initialData, 2);
             initialLayoutPending = false;
             initialHostPosition = zeros(1, 4);
             transaction = macd.model.PropertyTransaction( ...
-                ["Data", "ColumnName", "RowName"], ...
-                {initialData, initialColumnName, initialRowName}, ...
+                ["Data", "ColumnName", "RowName", indexedPaths], ...
+                [{initialData, initialColumnName, initialRowName}, indexedInitial], ...
                 [true, isfield(state, "HasColumnName") && state.HasColumnName, ...
-                isfield(state, "HasRowName") && state.HasRowName]);
+                isfield(state, "HasRowName") && state.HasRowName, indexedKnown]);
 
             dialog = uifigure("Name", "Edit table data", "Visible", "off", ...
                 "WindowStyle", "modal", "Position", [260 220 760 510], ...
@@ -72,7 +84,7 @@ classdef TableDataEditorDialog
                 "ColumnWidth", {100, "1x"}, "ColumnSpacing", 6);
             typeActions.Layout.Row = 3;
             uilabel(typeActions, "Text", "Data type");
-            dataTypeSelector = uidropdown(typeActions, ...
+            uidropdown(typeActions, ...
                 "Items", ["Numeric", "Logical", "String", "Cell", "Char vectors"], ...
                 "ItemsData", ["numeric", "logical", "string", "cell", "charCell"], ...
                 "Value", dataKind, "Tag", "macd-table-data-type", ...
@@ -191,6 +203,7 @@ classdef TableDataEditorDialog
                     return
                 end
                 draftText(:, end + 1) = "";
+                columnSourceIndices(end + 1) = 0;
                 if ~isempty(columnLabels)
                     columnLabels = macd.ui.inspector.TableDataEditorDialog.extendName( ...
                         columnLabels, size(draftText, 2), "Column");
@@ -204,6 +217,7 @@ classdef TableDataEditorDialog
                     return
                 end
                 draftText(:, index) = [];
+                columnSourceIndices(index) = [];
                 if index <= numel(columnLabels)
                     columnLabels(index) = [];
                 end
@@ -215,6 +229,7 @@ classdef TableDataEditorDialog
                 draftText = strings(0, 0);
                 columnLabels = strings(0, 1);
                 rowLabels = strings(0, 1);
+                columnSourceIndices = zeros(1, 0);
                 columnNumbered = false;
                 rowNumbered = false;
                 columnNumberedButton.Value = false;
@@ -227,7 +242,7 @@ classdef TableDataEditorDialog
             function [result, data] = captureTableData()
                 % captureTableData Validate displayed cells before retaining a structural edit.
                 result = false;
-                data = [];
+                data = []; %#ok<NASGU>
                 removeStyle(table);
                 [draftText, rowLabels, columnLabels, rowNumbered, columnNumbered] = ...
                     macd.ui.inspector.TableDataEditorDialog.editorValues( ...
@@ -266,6 +281,22 @@ classdef TableDataEditorDialog
                 end
                 if ~isequaln(rowName, initialRowName)
                     transaction.stage("RowName", rowName);
+                end
+                previousColumnCount = size(initialData, 2);
+                currentColumnCount = size(data, 2);
+                if previousColumnCount ~= currentColumnCount || ...
+                        ~isequal(columnSourceIndices, 1:previousColumnCount)
+                    for settingIndex = 1:numel(indexedPaths)
+                        if ~indexedKnown(settingIndex)
+                            continue
+                        end
+                        path = indexedPaths(settingIndex);
+                        value = macd.ui.inspector.TableDataEditorDialog.reconcileIndexedValue( ...
+                            path, indexedInitial{settingIndex}, columnSourceIndices);
+                        if ~isequaln(value, indexedInitial{settingIndex})
+                            transaction.stage(path, value);
+                        end
+                    end
                 end
                 changes = transaction.changes();
                 if isempty(changes)
@@ -374,6 +405,73 @@ classdef TableDataEditorDialog
                 value = state.(name);
             else
                 value = fallback;
+            end
+        end
+
+        function value = reconcileIndexedValue(path, value, sourceIndices)
+            % reconcileIndexedValue Preserve scalars and map explicit values through column edits.
+            arguments (Input)
+                path (1, 1) string
+                value
+                sourceIndices (1, :) double
+            end
+            switch path
+                case "ColumnWidth"
+                    if ischar(value) || (isstring(value) && isscalar(value))
+                        return
+                    end
+                    if isstring(value)
+                        value = cellstr(value(:).');
+                    end
+                    if iscell(value)
+                        value = reshape(value, 1, []);
+                        value = macd.ui.inspector.TableDataEditorDialog.mapCellValues( ...
+                            value, sourceIndices, 'auto');
+                    end
+                case {"ColumnEditable", "ColumnSortable"}
+                    if isempty(value) || isscalar(value)
+                        return
+                    end
+                    value = logical(reshape(value, 1, []));
+                    value = macd.ui.inspector.TableDataEditorDialog.mapLogicalValues( ...
+                        value, sourceIndices, false);
+                case "ColumnFormat"
+                    if isempty(value)
+                        return
+                    end
+                    if iscell(value)
+                        value = reshape(value, 1, []);
+                        value = macd.ui.inspector.TableDataEditorDialog.mapCellValues( ...
+                            value, sourceIndices, []);
+                    end
+            end
+        end
+
+        function values = mapCellValues(values, sourceIndices, fill)
+            % mapCellValues Retain surviving column cells and fill newly added columns.
+            original = values;
+            values = cell(1, numel(sourceIndices));
+            for index = 1:numel(sourceIndices)
+                sourceIndex = sourceIndices(index);
+                if sourceIndex > 0 && sourceIndex <= numel(original)
+                    values{index} = original{sourceIndex};
+                else
+                    values{index} = fill;
+                end
+            end
+        end
+
+        function values = mapLogicalValues(values, sourceIndices, fill)
+            % mapLogicalValues Retain surviving logicals and fill newly added columns.
+            original = values;
+            values = false(1, numel(sourceIndices));
+            for index = 1:numel(sourceIndices)
+                sourceIndex = sourceIndices(index);
+                if sourceIndex > 0 && sourceIndex <= numel(original)
+                    values(index) = original(sourceIndex);
+                else
+                    values(index) = fill;
+                end
             end
         end
 

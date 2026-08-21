@@ -22,7 +22,7 @@ classdef ComponentCatalogLoader
                 catalogRoot + "/catalog.json");
             macd.catalog.ComponentCatalogLoader.rejectUnknownFields(manifest, ["schemaVersion", ...
                 "matlabRelease", "propertyGroupFiles", "componentFiles", "parentContextRules", ...
-                "sourceGroupingSha256", "orderProfileFiles"], ...
+                "sourceGroupingSha256", "orderProfileFiles", "inspectorRowFiles"], ...
                 catalogRoot + "/catalog.json");
             if manifest.schemaVersion == 2
                 registry = macd.catalog.ComponentCatalogLoader.loadVersion2(catalogRoot, manifest);
@@ -101,6 +101,12 @@ classdef ComponentCatalogLoader
             profiles = macd.catalog.ComponentCatalogLoader.readOrderProfiles(root, ...
                 macd.catalog.ComponentCatalogLoader.stringList(manifest.orderProfileFiles, ...
                 root + "/catalog.json.orderProfileFiles"));
+            inspectorRows = macd.model.InspectorRowDefinition.empty;
+            if isfield(manifest, "inspectorRowFiles")
+                inspectorRows = macd.catalog.ComponentCatalogLoader.readInspectorRows(root, ...
+                    macd.catalog.ComponentCatalogLoader.stringList(manifest.inspectorRowFiles, ...
+                    root + "/catalog.json.inspectorRowFiles"));
+            end
             files = macd.catalog.ComponentCatalogLoader.stringList(manifest.componentFiles, ...
                 root + "/catalog.json.componentFiles");
             registry = macd.model.ComponentRegistry();
@@ -122,6 +128,9 @@ classdef ComponentCatalogLoader
                 variantIds(end + 1) = definition.Id; %#ok<AGROW>
                 registry.register(definition);
             end
+            macd.catalog.ComponentCatalogLoader.validateInspectorRowComponentIds( ...
+                inspectorRows, variantIds, root + "/catalog.json.inspectorRowFiles");
+            registry.setInspectorRowDefinitions(inspectorRows);
         end
 
         function groups = readVersion2Groups(root, files)
@@ -190,6 +199,121 @@ classdef ComponentCatalogLoader
                     end
                     profiles(char(id)) = macd.catalog.ComponentCatalogLoader.stringList( ...
                         value.categoryOrder, context + ".profiles.categoryOrder");
+                end
+            end
+        end
+
+        function definitions = readInspectorRows(root, files)
+            % readInspectorRows Load strict presentation-only composite row templates.
+            arguments (Input)
+                root (1, 1) string
+                files (1, :) string
+            end
+            arguments (Output)
+                definitions macd.model.InspectorRowDefinition
+            end
+
+            definitions = macd.model.InspectorRowDefinition.empty;
+            for fileIndex = 1:numel(files)
+                relativePath = files(fileIndex);
+                document = macd.catalog.ComponentCatalogLoader.readDocument(root, relativePath);
+                context = root + "/" + relativePath;
+                macd.catalog.ComponentCatalogLoader.requireFields(document, ...
+                    ["artifactVersion", "matlabRelease", "rows"], context);
+                macd.catalog.ComponentCatalogLoader.rejectUnknownFields(document, ...
+                    ["artifactVersion", "matlabRelease", "rows"], context);
+                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= "R2024a"
+                    macd.catalog.ComponentCatalogLoader.fail(context, ...
+                        "Expected R2024a inspector-row artifactVersion 1.");
+                end
+                rows = macd.catalog.ComponentCatalogLoader.objectList(document.rows, context + ".rows");
+                for rowIndex = 1:numel(rows)
+                    row = rows{rowIndex};
+                    rowContext = context + ".rows[" + string(rowIndex) + "]";
+                    macd.catalog.ComponentCatalogLoader.requireFields(row, ...
+                        ["id", "displayName", "editor", "members", "orderAnchor", "match"], rowContext);
+                    macd.catalog.ComponentCatalogLoader.rejectUnknownFields(row, ...
+                        ["id", "displayName", "editor", "members", "categoryId", "orderAnchor", "match"], rowContext);
+                    id = macd.catalog.ComponentCatalogLoader.scalarString(row.id, rowContext + ".id");
+                    displayName = macd.catalog.ComponentCatalogLoader.scalarString( ...
+                        row.displayName, rowContext + ".displayName");
+                    editor = macd.catalog.ComponentCatalogLoader.scalarString(row.editor, rowContext + ".editor");
+                    if ~any(editor == ["tableData", "columnSettings", "items", "fontStyle"])
+                        macd.catalog.ComponentCatalogLoader.fail(rowContext + ".editor", ...
+                            "Unknown composite Inspector editor.");
+                    end
+                    members = macd.catalog.ComponentCatalogLoader.objectList(row.members, rowContext + ".members");
+                    if numel(members) < 2
+                        macd.catalog.ComponentCatalogLoader.fail(rowContext + ".members", ...
+                            "A composite Inspector row requires at least two members.");
+                    end
+                    paths = strings(1, numel(members));
+                    roles = strings(1, numel(members));
+                    for memberIndex = 1:numel(members)
+                        member = members{memberIndex};
+                        memberContext = rowContext + ".members[" + string(memberIndex) + "]";
+                        macd.catalog.ComponentCatalogLoader.requireFields(member, ["path", "role"], memberContext);
+                        macd.catalog.ComponentCatalogLoader.rejectUnknownFields(member, ["path", "role"], memberContext);
+                        paths(memberIndex) = macd.catalog.ComponentCatalogLoader.scalarString( ...
+                            member.path, memberContext + ".path");
+                        roles(memberIndex) = macd.catalog.ComponentCatalogLoader.scalarString( ...
+                            member.role, memberContext + ".role");
+                    end
+                    if numel(unique(paths)) ~= numel(paths) || numel(unique(roles)) ~= numel(roles)
+                        macd.catalog.ComponentCatalogLoader.fail(rowContext + ".members", ...
+                            "Member paths and roles must each be unique.");
+                    end
+                    orderAnchor = macd.catalog.ComponentCatalogLoader.scalarString( ...
+                        row.orderAnchor, rowContext + ".orderAnchor");
+                    if ~any(paths == orderAnchor)
+                        macd.catalog.ComponentCatalogLoader.fail(rowContext + ".orderAnchor", ...
+                            "The order anchor must name one member path.");
+                    end
+                    categoryId = "";
+                    if isfield(row, "categoryId")
+                        if ~(ischar(row.categoryId) || (isstring(row.categoryId) && isscalar(row.categoryId)))
+                            macd.catalog.ComponentCatalogLoader.fail(rowContext + ".categoryId", ...
+                                "Expected one JSON string.");
+                        end
+                        categoryId = string(row.categoryId);
+                    end
+                    match = row.match;
+                    if ~isstruct(match) || ~isscalar(match)
+                        macd.catalog.ComponentCatalogLoader.fail(rowContext + ".match", "Expected one object.");
+                    end
+                    macd.catalog.ComponentCatalogLoader.rejectUnknownFields(match, ...
+                        ["componentIds", "parentContextIds"], rowContext + ".match");
+                    componentIds = macd.catalog.ComponentCatalogLoader.optionalStringList( ...
+                        match, "componentIds", rowContext + ".match");
+                    parentContextIds = macd.catalog.ComponentCatalogLoader.optionalStringList( ...
+                        match, "parentContextIds", rowContext + ".match");
+                    definitions(end + 1) = macd.model.InspectorRowDefinition( ...
+                        id, displayName, editor, paths, roles, categoryId, orderAnchor, ...
+                        componentIds, parentContextIds); %#ok<AGROW>
+                end
+            end
+            ids = string({definitions.Id});
+            if numel(ids) ~= numel(unique(ids))
+                macd.catalog.ComponentCatalogLoader.fail(root + "/catalog.json.inspectorRowFiles", ...
+                    "Composite Inspector row IDs must be unique.");
+            end
+        end
+
+        function validateInspectorRowComponentIds(definitions, componentIds, context)
+            % validateInspectorRowComponentIds Reject templates scoped to unknown concrete variants.
+            arguments (Input)
+                definitions macd.model.InspectorRowDefinition
+                componentIds (1, :) string
+                context (1, 1) string
+            end
+
+            for index = 1:numel(definitions)
+                unknown = definitions(index).ComponentIds(~ismember( ...
+                    definitions(index).ComponentIds, componentIds));
+                if ~isempty(unknown)
+                    macd.catalog.ComponentCatalogLoader.fail(context, ...
+                        "Composite Inspector row " + definitions(index).Id + ...
+                        " names unknown component variant " + unknown(1) + ".");
                 end
             end
         end
