@@ -1684,9 +1684,18 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
             for categoryIndex = 1:numel(categories)
                 category = categories(categoryIndex);
                 indices = find(string({rows.Category}) == category);
-                rowHeights = arrayfun(@(index) ...
-                    macd.ui.inspector.InspectorPropertyRow.rowHeight( ...
-                    rows(indices(index))), 1:numel(indices));
+                rowHeights = zeros(1, numel(indices));
+                for rowIndex = 1:numel(indices)
+                    rowState = rows(indices(rowIndex));
+                    heightDefinition = rowState;
+                    if ~rowState.IsComposite
+                        % Singleton rows retain the catalog definition needed by
+                        % editor-specific sizing, such as two-value date limits.
+                        heightDefinition = states(rowState.MemberIndices).Definition;
+                    end
+                    rowHeights(rowIndex) = ...
+                        macd.ui.inspector.InspectorPropertyRow.rowHeight(heightDefinition);
+                end
                 contentHeight = contentHeight + 40 + sum(rowHeights) + 3 * numel(indices);
                 section = macd.ui.inspector.InspectorCategorySection(content, category, numel(indices));
                 section.setLayoutRow(categoryIndex);
