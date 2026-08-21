@@ -30,6 +30,7 @@ classdef TableDataEditorDialog
             columnNumbered = macd.ui.inspector.TableDataEditorDialog.isNumberedName(initialColumnName);
             rowNumbered = macd.ui.inspector.TableDataEditorDialog.isNumberedName(initialRowName);
             draftText = macd.ui.inspector.TableDataEditorDialog.displayData(initialData);
+            dataKind = macd.ui.inspector.TypedCellCodec.inferTableDataKind(initialData);
             columnLabels = initialColumnLabels;
             rowLabels = initialRowLabels;
             initialLayoutPending = false;
@@ -44,8 +45,8 @@ classdef TableDataEditorDialog
                 "WindowStyle", "modal", "Position", [260 220 760 510], ...
                 "Tag", "macd-inspector-table-data-dialog");
             dialog.CloseRequestFcn = @(~, ~) closeDialog();
-            grid = uigridlayout(dialog, [4 1], "Padding", [12 12 12 12], ...
-                "RowHeight", {"1x", 32, 23.3, 32}, "RowSpacing", 6);
+            grid = uigridlayout(dialog, [5 1], "Padding", [12 12 12 12], ...
+                "RowHeight", {"1x", 32, 23.3, 23.3, 32}, "RowSpacing", 6);
             tableHost = uipanel(grid, "BorderType", "line", "Scrollable", "on", ...
                 "AutoResizeChildren", "off", "Tag", "macd-table-data-scroll-host");
             tableContent = uipanel(tableHost, "BorderType", "none", "AutoResizeChildren", "off", ...
@@ -67,13 +68,22 @@ classdef TableDataEditorDialog
                 "Tag", "macd-table-data-numbered-columns", ...
                 "ValueChangedFcn", @(source, ~) setColumnNumbered(source.Value));
             columnNumberedButton.Value = columnNumbered;
+            typeActions = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
+                "ColumnWidth", {100, "1x"}, "ColumnSpacing", 6);
+            typeActions.Layout.Row = 3;
+            uilabel(typeActions, "Text", "Data type");
+            dataTypeSelector = uidropdown(typeActions, ...
+                "Items", ["Numeric", "Logical", "String", "Cell", "Char vectors"], ...
+                "ItemsData", ["numeric", "logical", "string", "cell", "charCell"], ...
+                "Value", dataKind, "Tag", "macd-table-data-type", ...
+                "ValueChangedFcn", @(source, ~) setDataKind(source.Value));
             message = uilabel(grid, "Text", ...
-                "Enter MATLAB literals; unquoted text becomes a string.", ...
+                macd.ui.inspector.TableDataEditorDialog.dataKindMessage(dataKind), ...
                 "FontColor", [0.3 0.3 0.3], "Tag", "macd-table-data-message");
-            message.Layout.Row = 3;
+            message.Layout.Row = 4;
             actions = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
                 "ColumnWidth", {90, "1x"}, "ColumnSpacing", 6);
-            actions.Layout.Row = 4;
+            actions.Layout.Row = 5;
             uibutton(actions, "Text", "Clear", "Tag", "macd-table-data-clear", ...
                 "ButtonPushedFcn", @(~, ~) clearDraft());
             uibutton(actions, "Text", "Apply", "Tag", "macd-table-data-apply", ...
@@ -214,9 +224,10 @@ classdef TableDataEditorDialog
                 rebuildChrome();
             end
 
-            function result = captureTableData()
+            function [result, data] = captureTableData()
                 % captureTableData Validate displayed cells before retaining a structural edit.
                 result = false;
+                data = [];
                 removeStyle(table);
                 [draftText, rowLabels, columnLabels, rowNumbered, columnNumbered] = ...
                     macd.ui.inspector.TableDataEditorDialog.editorValues( ...
@@ -227,16 +238,11 @@ classdef TableDataEditorDialog
                 removeStyle(table);
                 macd.ui.inspector.TableDataEditorDialog.styleNameCells(table, ...
                     size(draftText, 1), size(draftText, 2));
-                [values, errorRow, errorColumn, errorMessage] = ...
-                    macd.ui.inspector.TypedCellCodec.parse(draftText, true);
+                [data, errorRow, errorColumn, errorMessage] = ...
+                    macd.ui.inspector.TypedCellCodec.parseTableMatrix(draftText, dataKind);
                 if errorRow > 0
                     macd.ui.inspector.TableDataEditorDialog.markCellError( ...
                         table, errorRow, errorColumn, errorMessage, message);
-                    return
-                end
-                if ~macd.ui.inspector.TableDataEditorDialog.supportsCells(values)
-                    setMessage("Table cells must be empty, scalar numeric, logical, string, or char values.", ...
-                        [0.7 0 0]);
                     return
                 end
                 result = true;
@@ -244,22 +250,10 @@ classdef TableDataEditorDialog
 
             function applyDraft()
                 % applyDraft Parse, type-pack, and atomically submit every changed table surface.
-                if ~captureTableData()
+                [isValid, data] = captureTableData();
+                if ~isValid
                     return
                 end
-                [values, errorRow, errorColumn, errorMessage] = ...
-                    macd.ui.inspector.TypedCellCodec.parse(draftText, true);
-                if errorRow > 0
-                    macd.ui.inspector.TableDataEditorDialog.markCellError( ...
-                        table, errorRow, errorColumn, errorMessage, message);
-                    return
-                end
-                if ~macd.ui.inspector.TableDataEditorDialog.supportsCells(values)
-                    setMessage("Table cells must be empty, scalar numeric, logical, string, or char values.", ...
-                        [0.7 0 0]);
-                    return
-                end
-                data = macd.ui.inspector.TypedCellCodec.packMatrix(values);
                 columnName = macd.ui.inspector.TableDataEditorDialog.nameOutput( ...
                     columnLabels, initialColumnLabels, initialColumnName, columnNumbered);
                 rowName = macd.ui.inspector.TableDataEditorDialog.nameOutput( ...
@@ -308,6 +302,13 @@ classdef TableDataEditorDialog
                         "Column", size(draftText, 2));
                 end
                 rebuildChrome();
+            end
+
+            function setDataKind(value)
+                % setDataKind Retain the explicit output representation without changing the draft text.
+                dataKind = string(value);
+                setMessage(macd.ui.inspector.TableDataEditorDialog.dataKindMessage(dataKind), ...
+                    [0.3 0.3 0.3]);
             end
 
             function setMessage(text, color)
@@ -382,6 +383,15 @@ classdef TableDataEditorDialog
                 values = num2cell(values);
             end
             result = all(cellfun(@macd.ui.inspector.TableDataEditorDialog.isSupportedCell, values), "all");
+        end
+
+        function text = dataKindMessage(kind)
+            % dataKindMessage Describe the grammar that applies to one explicit table data type.
+            if kind == "charCell"
+                text = "Enter text; single or double quotes are optional.";
+            else
+                text = "Enter MATLAB literals; unquoted text becomes a string.";
+            end
         end
 
         function result = isSupportedCell(value)
@@ -593,7 +603,7 @@ classdef TableDataEditorDialog
         function markCellError(table, row, column, errorMessage, messageLabel)
             % markCellError Highlight one malformed table cell without replacing its user draft.
             errorStyle = uistyle("BackgroundColor", [1 0.9 0.9]);
-            addStyle(table, errorStyle, "cell", [row column]);
+            addStyle(table, errorStyle, "cell", [row + 1 column + 1]);
             messageLabel.Text = errorMessage;
             messageLabel.FontColor = [0.7 0 0];
         end

@@ -94,6 +94,43 @@ classdef PropertyTransactionTest < matlab.unittest.TestCase
             testCase.verifyEqual(result, {1, "Two"});
         end
 
+        function typedCellCodecPacksExplicitTableDataKinds(testCase)
+            % typedCellCodecPacksExplicitTableDataKinds Apply blank-cell rules for each documented UITable Data type.
+
+            [numericData, row, column, message] = ...
+                macd.ui.inspector.TypedCellCodec.parseTableMatrix( ...
+                ["1", ""; "NaN", "Inf"], "numeric");
+            testCase.verifyEqual([row column], [0 0]);
+            testCase.verifyEqual(message, "");
+            testCase.verifyEqual(numericData(1, 1), 1);
+            testCase.verifyTrue(isnan(numericData(1, 2)));
+            testCase.verifyTrue(isnan(numericData(2, 1)));
+            testCase.verifyEqual(numericData(2, 2), Inf);
+
+            logicalData = macd.ui.inspector.TypedCellCodec.parseTableMatrix( ...
+                ["true", ""; "false", "true"], "logical");
+            testCase.verifyEqual(logicalData, logical([1 0; 0 1]));
+
+            stringData = macd.ui.inspector.TypedCellCodec.parseTableMatrix( ...
+                ["""One""", ""; "'Three'", "plain"], "string");
+            testCase.verifyEqual(stringData, ["One", ""; "Three", "plain"]);
+
+            cellData = macd.ui.inspector.TypedCellCodec.parseTableMatrix( ...
+                ["1", ""; "true", """Text"""], "cell");
+            testCase.verifyEqual(cellData{1, 1}, 1);
+            testCase.verifyEmpty(cellData{1, 2});
+            testCase.verifyTrue(cellData{2, 1});
+            testCase.verifyEqual(cellData{2, 2}, 'Text');
+
+            charCellData = macd.ui.inspector.TypedCellCodec.parseTableMatrix( ...
+                ["123", ""; "NaN", """Four"""], "charCell");
+            testCase.verifyEqual(charCellData, {'123', ''; 'NaN', 'Four'});
+            testCase.verifyEqual(macd.ui.inspector.TypedCellCodec.inferTableDataKind( ...
+                {'one', 'two'}), "charCell");
+            testCase.verifyEqual(macd.ui.inspector.TypedCellCodec.inferTableDataKind( ...
+                {1, 'two'}), "cell");
+        end
+
         function validatesDateTimeShapesAndCrossPropertyRules(testCase)
             % validatesDateTimeShapesAndCrossPropertyRules Check the audited date picker contract.
 

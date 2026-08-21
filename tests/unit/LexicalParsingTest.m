@@ -53,6 +53,8 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             [emptyArray, isEmptyArray] = macd.source.MatlabLiteralParser.parse("[]");
             [characters, isCharacters] = macd.source.MatlabLiteralParser.parse("['ab'; 'cd']");
             [infiniteValues, isInfiniteValues] = macd.source.MatlabLiteralParser.parse("[-Inf Inf]");
+            [notANumber, isNotANumber] = macd.source.MatlabLiteralParser.parse("NaN");
+            [lowerInfinity, isLowerInfinity] = macd.source.MatlabLiteralParser.parse("inf");
 
             testCase.verifyTrue(isMatrix);
             testCase.verifyEqual(matrix, [1 2; 3 4]);
@@ -74,6 +76,11 @@ classdef LexicalParsingTest < matlab.unittest.TestCase
             testCase.verifyEqual(characters, ['ab'; 'cd']);
             testCase.verifyTrue(isInfiniteValues);
             testCase.verifyEqual(infiniteValues, [-Inf Inf]);
+            testCase.verifyTrue(isNotANumber);
+            testCase.verifyClass(notANumber, "double");
+            testCase.verifyTrue(isnan(notANumber));
+            testCase.verifyTrue(isLowerInfinity);
+            testCase.verifyEqual(lowerInfinity, Inf);
         end
 
         function literalParserRejectsExpressions(testCase)

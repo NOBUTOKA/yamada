@@ -31,7 +31,7 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             changes = getappdata(owner, "changes");
             testCase.verifyEqual(string({changes.Path}), ["Data", "ColumnName", "RowName"]);
             data = changes([changes.Path] == "Data").Value;
-            testCase.verifyEqual(data, {true, "Updated"; 1, 'last'});
+            testCase.verifyEqual(data, {true, 'Updated'; 1, 'last'});
             testCase.verifyFalse(isvalid(dialog));
             deleteIfValid(dialog);
             clear cleanup
@@ -180,6 +180,18 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
                 "HasData", true, "HasColumnName", false, "HasRowName", false);
             testCase.verifyError(@() macd.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(~) "", false), "macd:TableDataEditorDialog:UnsupportedData");
+        end
+
+        function nativeUITableAcceptsMixedCellDataWithCharacterVectors(testCase)
+            % nativeUITableAcceptsMixedCellDataWithCharacterVectors Verify the runtime cell-array contract.
+
+            owner = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(owner));
+            data = {1, 'Text'; [], true};
+            control = uitable(owner, "Data", data);
+
+            testCase.verifyEqual(control.Data, data);
+            clear cleanup
         end
     end
 end

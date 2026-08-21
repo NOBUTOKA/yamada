@@ -92,6 +92,67 @@ classdef TypedCellCodec
             end
         end
 
+        function kind = inferTableDataKind(value)
+            % inferTableDataKind Classify imported UITable Data for the explicit editor selector.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                kind (1, 1) string
+            end
+
+            if isempty(value)
+                kind = "cell";
+            elseif islogical(value)
+                kind = "logical";
+            elseif isnumeric(value)
+                kind = "numeric";
+            elseif isstring(value)
+                kind = "string";
+            elseif iscell(value) && all(cellfun(@(item) ischar(item) && isrow(item), value), "all")
+                kind = "charCell";
+            elseif iscell(value)
+                kind = "cell";
+            else
+                kind = "cell";
+            end
+        end
+
+        function [value, errorRow, errorColumn, message] = parseTableMatrix(data, kind)
+            % parseTableMatrix Decode table cells according to one explicit documented Data representation.
+            arguments (Input)
+                data
+                kind (1, 1) string
+            end
+            arguments (Output)
+                value
+                errorRow (1, 1) double
+                errorColumn (1, 1) double
+                message (1, 1) string
+            end
+
+            source = string(data);
+            values = cell(size(source));
+            errorRow = 0;
+            errorColumn = 0;
+            message = "";
+            for row = 1:size(source, 1)
+                for column = 1:size(source, 2)
+                    [cellValue, isValid, cellMessage] = ...
+                        macd.ui.inspector.TypedCellCodec.parseTableCell(source(row, column), kind);
+                    if ~isValid
+                        value = [];
+                        errorRow = row;
+                        errorColumn = column;
+                        message = cellMessage;
+                        return
+                    end
+                    values{row, column} = cellValue;
+                end
+            end
+            value = macd.ui.inspector.TypedCellCodec.packTableMatrix(values, kind);
+        end
+
         function text = literalText(value)
             % literalText Format one typed value without evaluating user text.
             arguments (Input)
@@ -110,6 +171,103 @@ classdef TypedCellCodec
     end
 
     methods (Static, Access = private)
+        function [value, isValid, message] = parseTableCell(text, kind)
+            % parseTableCell Decode one visible table cell for its selected output representation.
+            isBlank = strlength(strtrim(text)) == 0;
+            if isBlank
+                switch kind
+                    case "numeric"
+                        value = NaN;
+                    case "cell"
+                        value = [];
+                    case "logical"
+                        value = false;
+                    case "string"
+                        value = "";
+                    case "charCell"
+                        value = '';
+                    otherwise
+                        value = [];
+                end
+                isValid = true;
+                message = "";
+                return
+            end
+
+            if kind == "charCell"
+                [value, isLiteral] = macd.source.MatlabLiteralParser.parse(text);
+                if isLiteral && ischar(value) && isrow(value)
+                    % Retain explicitly quoted character text without its delimiters.
+                elseif isLiteral && isstring(value) && isscalar(value)
+                    value = char(value);
+                else
+                    % Interpret numeric-looking and all other unquoted text as character data.
+                    value = char(text);
+                end
+                isValid = true;
+                message = "";
+                return
+            end
+
+            [value, isLiteral] = macd.source.MatlabLiteralParser.parse(text);
+            if ~isLiteral && macd.ui.inspector.TypedCellCodec.isPlainText(text)
+                value = text;
+                isLiteral = true;
+            end
+            if ~isLiteral
+                isValid = false;
+                message = "This cell has an invalid MATLAB literal.";
+                return
+            end
+            switch kind
+                case "numeric"
+                    isValid = isnumeric(value) && isscalar(value);
+                    message = "Numeric cells must contain a scalar number.";
+                case "logical"
+                    isValid = islogical(value) && isscalar(value);
+                    message = "Logical cells must contain true or false.";
+                case "string"
+                    if ischar(value) && isrow(value)
+                        value = string(value);
+                    end
+                    isValid = isstring(value) && isscalar(value);
+                    message = "String cells must contain text.";
+                case "cell"
+                    if isstring(value) && isscalar(value)
+                        value = char(value);
+                    end
+                    isValid = isempty(value) || (isnumeric(value) && isscalar(value)) || ...
+                        (islogical(value) && isscalar(value)) || (ischar(value) && isrow(value));
+                    message = "Cell values must be scalar numeric, logical, char, or [].";
+                otherwise
+                    isValid = false;
+                    message = "Select a supported table data type.";
+            end
+        end
+
+        function value = packTableMatrix(values, kind)
+            % packTableMatrix Emit the documented UITable Data representation selected by the user.
+            if isempty(values)
+                value = [];
+                return
+            end
+            switch kind
+                case "numeric"
+                    value = cell2mat(values);
+                case "logical"
+                    value = logical(cell2mat(values));
+                case "string"
+                    value = strings(size(values));
+                    for index = 1:numel(values)
+                        value(index) = values{index};
+                    end
+                case {"cell", "charCell"}
+                    value = values;
+                otherwise
+                    value = values;
+            end
+        end
+
         function result = isPlainText(value)
             % isPlainText Identify unquoted text that intentionally becomes a string scalar.
             result = ~contains(value, ["'", '"', "[", "]", "{", "}"]);
