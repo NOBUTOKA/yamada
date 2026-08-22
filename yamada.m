@@ -1626,6 +1626,7 @@ classdef yamada < matlab.apps.AppBase
                 end
             end
             definitions = arrayfun(@(state) state.Definition, app.inspectorStates(component));
+            app.reconcileItemSelectionValues(transaction, definitions);
             message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
             if strlength(message) > 0
                 app.setStatus(message);
@@ -1643,6 +1644,60 @@ classdef yamada < matlab.apps.AppBase
             app.refreshShell();
         end
 
+        function reconcileItemSelectionValues(app, transaction, definitions)
+            % reconcileItemSelectionValues Preserve selections across Items pair edits.
+            %   ItemsData changes the value domain from display labels to paired
+            %   literals. Translate the current selection by its item index in the
+            %   same transaction, preventing an out-of-domain stale Value.
+            arguments (Input)
+                app (1, 1) yamada
+                transaction (1, 1) macd.model.PropertyTransaction
+                definitions macd.model.PropertyDefinition
+            end
+
+            if isempty(app.Registry)
+                return
+            end
+            changedPaths = transaction.Paths(transaction.IsStaged);
+            if ~any(changedPaths == "Items") && ~any(changedPaths == "ItemsData")
+                return
+            end
+            required = ["Value", "Items", "ItemsData"];
+            if ~all(ismember(required, transaction.Paths)) || ...
+                    ~transaction.hasValue("Value") || ~transaction.hasValue("Items")
+                return
+            end
+            isSelection = arrayfun(@(definition) definition.Path == "Value" && ...
+                definition.Editor == "itemSelection", definitions);
+            if ~any(isSelection)
+                return
+            end
+
+            oldItems = transaction.InitialValues{find(transaction.Paths == "Items", 1)};
+            oldData = [];
+            oldDataIndex = find(transaction.Paths == "ItemsData", 1);
+            if transaction.KnownValues(oldDataIndex)
+                oldData = transaction.InitialValues{oldDataIndex};
+            end
+            [oldCandidates, oldValid] = itemSelectionCandidates(oldItems, oldData);
+            [newCandidates, newValid] = itemSelectionCandidates( ...
+                transaction.value("Items"), transaction.value("ItemsData"));
+            if ~oldValid || ~newValid || isempty(newCandidates)
+                return
+            end
+            selected = itemSelectionCells(transaction.value("Value"));
+            if isempty(selected)
+                return
+            end
+            indices = itemSelectionIndices(selected, oldCandidates);
+            if isempty(indices) || any(indices > numel(newCandidates))
+                return
+            end
+            translated = itemSelectionOutput(newCandidates(indices));
+            if ~isequaln(translated, transaction.value("Value"))
+                transaction.stage("Value", translated);
+            end
+        end
         function refreshInspector(app)
             % refreshInspector Rebuild or synchronize the current inspector surface.
             arguments (Input)
@@ -2159,6 +2214,62 @@ classdef yamada < matlab.apps.AppBase
     end
 end
 
+function [candidates, valid] = itemSelectionCandidates(items, itemsData)
+% itemSelectionCandidates Select the documented ItemData mapping when valid.
+candidates = itemSelectionCells(items);
+valid = ~isempty(candidates);
+if ~isempty(itemsData)
+    data = itemSelectionCells(itemsData);
+    valid = valid && numel(data) == numel(candidates);
+    if valid
+        candidates = data;
+    end
+end
+end
+
+function cells = itemSelectionCells(value)
+% itemSelectionCells Split a documented item or item-data vector into cells.
+if iscell(value)
+    cells = reshape(value, 1, []);
+elseif ischar(value) && isrow(value)
+    cells = {value};
+elseif isstring(value) || isvector(value)
+    cells = num2cell(reshape(value, 1, []));
+else
+    cells = cell(1, 0);
+end
+end
+
+function indices = itemSelectionIndices(selected, candidates)
+% itemSelectionIndices Locate each selected literal without type coercion.
+indices = zeros(1, numel(selected));
+for index = 1:numel(selected)
+    candidate = find(cellfun(@(value) isequaln(value, selected{index}), candidates), 1);
+    if isempty(candidate)
+        indices = zeros(1, 0);
+        return
+    end
+    indices(index) = candidate;
+end
+end
+
+function value = itemSelectionOutput(values)
+% itemSelectionOutput Recreate a natural MATLAB representation for selected values.
+if isempty(values)
+    value = [];
+elseif isscalar(values)
+    value = values{1};
+elseif all(cellfun(@(item) isnumeric(item) && isscalar(item), values)) || ...
+        all(cellfun(@(item) islogical(item) && isscalar(item), values))
+    value = cell2mat(values);
+elseif all(cellfun(@(item) ischar(item) && isrow(item), values))
+    value = reshape(values, 1, []);
+elseif all(cellfun(@(item) isstring(item) && isscalar(item), values))
+    value = [values{:}];
+else
+    value = values;
+end
+end
 %{
 Copyright (C) 2026 Nobuto Kaitoh
 

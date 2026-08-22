@@ -108,6 +108,34 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
             testCase.verifyEmpty(warningMessage);
             clear cleanup
         end
+        function itemSelectionDependenciesRenderBeforeValue(testCase)
+            % itemSelectionDependenciesRenderBeforeValue Render mapped and multiselect values.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ItemSelectionApp", registry);
+            dropDown = document.insertComponent(registry, "uidropdown", document.RootComponentId);
+            listBox = document.insertComponent(registry, "uilistbox", document.RootComponentId);
+            % Deliberately store the dependent value first; PreviewRenderer must
+            % still apply Items, ItemsData, and Multiselect before it.
+            dropDown.setProperty("Value", 20);
+            dropDown.setProperty("ItemsData", [10 20]);
+            dropDown.setProperty("Items", ["First", "Second"]);
+            listBox.setProperty("Value", [10 30]);
+            listBox.setProperty("ItemsData", [10 20 30]);
+            listBox.setProperty("Items", ["One", "Two", "Three"]);
+            listBox.setProperty("Multiselect", "on");
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 700 500]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+
+            testCase.verifyEmpty(diagnostics);
+            testCase.verifyEqual(handles(char(dropDown.Id)).Value, 20);
+            testCase.verifyEqual(handles(char(listBox.Id)).Value, [10 30]);
+            clear cleanup
+        end
     end
 
     methods (Access = private)

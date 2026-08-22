@@ -257,7 +257,10 @@ classdef PropertyBatchValidator
 
             message = "";
             if ~transaction.hasValue("Items")
-                message = "Define Items before choosing a value.";
+                % A source-backed or otherwise unavailable Items value cannot be
+                % checked safely here.  The native editor only exposes candidates
+                % when it can read Items, so do not misreport that state as an
+                % empty list and reject an already selected literal.
                 return
             end
             items = macd.validation.PropertyBatchValidator.itemSelectionCells( ...

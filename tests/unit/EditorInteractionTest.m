@@ -144,6 +144,43 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function itemsDataEditRetainsAndRebindsTheCurrentSelection(testCase)
+            % itemsDataEditRetainsAndRebindsTheCurrentSelection Keep Value in ItemsData's domain.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure.Visible = "off";
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Drop Down", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            editItems = findall(figure, "Tag", "macd-inspector-items-editor");
+            editItems.ButtonPushedFcn(editItems, struct());
+            dialog = findall(0, "Type", "figure", "Tag", "macd-items-editor-dialog");
+            table = findall(dialog, "Type", "uitable", "Tag", "macd-items-editor-table");
+            data = table.Data;
+            data(:, 2) = string((10:10:(10 * size(data, 1)))');
+            table.Data = data;
+            apply = findall(dialog, "Tag", "macd-items-editor-apply");
+            apply.ButtonPushedFcn(apply, struct());
+            drawnow;
+
+            component = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, 10);
+            labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
+            valueLabel = labels(string({labels.Text}) == "Value");
+            editor = findall(valueLabel.Parent, "Tag", "macd-inspector-item-selection-editor");
+            editor.Value = char(editor.Items{2});
+            editor.ValueChangedFcn(editor, struct());
+            drawnow;
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, 20);
+            clear cleanup
+        end
         function textAreaValueCommitPreservesAllLines(testCase)
             % textAreaValueCommitPreservesAllLines Keep one multiline Value as one transaction change.
 
