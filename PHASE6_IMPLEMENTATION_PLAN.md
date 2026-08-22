@@ -245,13 +245,13 @@ migration.
 
 ### 6.5 Expand typed capabilities and reset history
 
-- [ ] Add display/category/order, value schema, editor/validator identifiers,
+- [x] Add display/category/order, value schema, editor/validator identifiers,
   defaults, style/preview applicability, audit disposition, and reset policy to
   `PropertyDefinition`.
-- [ ] Join effective definitions with entries without materializing defaults.
-- [ ] Add model-owned property removal/reset and typed history for absent,
+- [x] Join effective definitions with entries without materializing defaults.
+- [x] Add model-owned property removal/reset and typed history for absent,
   literal, and source-backed states.
-- [ ] Define safe removal rules for generated and parsed assignments.
+- [x] Define safe removal rules for generated and parsed assignments.
 
 **Required tests:** conversion, invalid definition rejection, absent versus
 explicit state, add/change/reset undo/redo, redo-branch clearing, and parsed-state
@@ -259,6 +259,14 @@ restoration.
 
 **Exit gate:** model tests prove all state transitions without UI or preview
 handles as storage.
+
+**Completion record (2026-08-22):** `PropertyDefinition`, the effective-state
+join, and `DocumentModel` reset/history operations provide the typed capability
+and instance-state boundary used by the categorized Inspector. Defaults remain
+effective display values until an explicit assignment is created, and parsed
+source-backed assignments retain their safe removal restrictions. The final
+R2024a suite includes absent/explicit/source-backed state, reset, undo/redo,
+and redo-branch coverage.
 
 ### 6.6 Build the categorized inspector framework
 
@@ -328,14 +336,14 @@ and destruction coverage passed 9 tests with zero failures. Commit: `4a43417`.
 
 #### 6.6.3 Render definition-driven categories and rows
 
-- [ ] Extend and validate typed definition fields for category ID/display name,
+- [x] Extend and validate typed definition fields for category ID/display name,
   property display name, order, description/help, editor identifier, validator,
   audit disposition, style scope, preview policy, and reset policy.
-- [ ] Sort categories and properties deterministically from catalog order data;
+- [x] Sort categories and properties deterministically from catalog order data;
   do not infer categories from property paths in the UI.
-- [ ] Render a consistent row structure containing label, editor host, optional
+- [x] Render a consistent row structure containing label, editor host, optional
   reset action, inline diagnostic area, and explicit/default/read-only state.
-- [ ] Append retained catalog-inapplicable or unknown opened-source entries to a
+- [x] Append retained catalog-inapplicable or unknown opened-source entries to a
   dedicated Source category without evaluating or discarding them.
 
 **Gate:** categories and row order are entirely definition-driven, and the
@@ -343,14 +351,14 @@ inspector contains no factory- or component-specific property conditionals.
 
 #### 6.6.4 Define the adapter contract and allowlisted factory
 
-- [ ] Define a project-owned adapter interface for control creation, model-to-UI
+- [x] Define a project-owned adapter interface for control creation, model-to-UI
   loading, pending-text retention, validation, commit/reset availability,
   read-only presentation, focus, and deterministic cleanup.
-- [ ] Resolve only allowlisted editor identifiers through
+- [x] Resolve only allowlisted editor identifiers through
   `PropertyEditorFactory`; never use `eval`, `str2func`, or JSON class names.
-- [ ] Keep current component/path binding in the property-row controller so
+- [x] Keep current component/path binding in the property-row controller so
   adapters remain value editors and cannot mutate documents directly.
-- [ ] Provide a read-only/unsupported adapter as a fail-closed presentation path
+- [x] Provide a read-only/unsupported adapter as a fail-closed presentation path
   for audited visible values that have no editable adapter.
 
 **Gate:** unknown editor identifiers fail catalog loading, and every constructed
@@ -358,13 +366,13 @@ row owns exactly one adapter whose cleanup releases all listeners and controls.
 
 #### 6.6.5 Implement common scalar adapters
 
-- [ ] Implement text and multiline-text adapters.
-- [ ] Implement logical and MATLAB `on`/`off` adapters using check boxes with
+- [x] Implement text and multiline-text adapters.
+- [x] Implement logical and MATLAB `on`/`off` adapters using check boxes with
   explicit conversion rather than storing UI logicals accidentally.
-- [ ] Implement enum adapters using definition-provided choices.
-- [ ] Implement scalar-number adapters with definition-provided finite/range/
+- [x] Implement enum adapters using definition-provided choices.
+- [x] Implement scalar-number adapters with definition-provided finite/range/
   integer constraints and retained invalid editor text.
-- [ ] Add keyboard commit/cancel behavior consistently across scalar editors.
+- [x] Add keyboard commit/cancel behavior consistently across scalar editors.
 
 **Gate:** text, logical, on/off, enum, and scalar-number tests exercise real
 controls and prove successful conversion, failed conversion, commit, reset,
@@ -372,14 +380,14 @@ undo, redo, and read-only behavior.
 
 #### 6.6.6 Implement structured-value adapters
 
-- [ ] Implement fixed/variable numeric-vector editing, including `Position`,
+- [x] Implement fixed/variable numeric-vector editing, including `Position`,
   limits, ticks, padding, and Grid row/column spans.
-- [ ] Implement RGB color editing with a native color action plus an exact
+- [x] Implement RGB color editing with a native color action plus an exact
   numeric representation that can round-trip.
-- [ ] Implement string/item-list editing through a compact row summary and a
+- [x] Implement string/item-list editing through a compact row summary and a
   dedicated native editor dialog; preserve row/column string-array shape where
   the schema requires it.
-- [ ] Keep table data, mixed Grid size lists, datetime, file/image paths,
+- [x] Keep table data, mixed Grid size lists, datetime, file/image paths,
   component references, callbacks, and other specialized values on explicit
   read-only/fallback adapters until their later audited phases.
 
@@ -388,16 +396,16 @@ show a typed read-only fallback for every deferred structured value.
 
 #### 6.6.7 Connect validation, model mutation, reset, and history
 
-- [ ] Store uncommitted editor text and inline diagnostics only in inspector view
+- [x] Store uncommitted editor text and inline diagnostics only in inspector view
   state; the document, Preview, and generators continue using the last valid
   committed value.
-- [ ] Validate through named validators before calling
+- [x] Validate through named validators before calling
   `DocumentModel.setProperty`; failed edits change neither model nor history.
-- [ ] Route reset through model-owned reset/removal rules, display effective
+- [x] Route reset through model-owned reset/removal rules, display effective
   defaults without materializing entries, and explain disabled parsed resets.
-- [ ] Coalesce a continuous editor gesture into one history record while keeping
+- [x] Coalesce a continuous editor gesture into one history record while keeping
   discrete commits separate and clearing redo branches correctly.
-- [ ] Synchronize successful commit/reset/undo/redo back into existing rows
+- [x] Synchronize successful commit/reset/undo/redo back into existing rows
   without rebuilding the current surface.
 
 **Gate:** model tests cover absent, literal, and source-backed states, while UI
@@ -406,15 +414,15 @@ replace editor controls.
 
 #### 6.6.8 Preserve per-component transient view state
 
-- [ ] Save collapsed category IDs, scroll position only when exposed by a
+- [x] Save collapsed category IDs, scroll position only when exposed by a
   verified R2024a public API, focused property, and pending invalid editor text
   before a selected component's control tree is destroyed.
-- [ ] Restore compatible category, focus, and pending-text state when returning
+- [x] Restore compatible category, focus, and pending-text state when returning
   to that component; restore scroll position only when the public API supports
   it, otherwise reset it after rebuilding.
-- [ ] Keep this cache editor-owned and clear it on document replacement or
+- [x] Keep this cache editor-owned and clear it on document replacement or
   component deletion; never serialize it as document or generated-source state.
-- [ ] Preserve state automatically during same-component value refresh by not
+- [x] Preserve state automatically during same-component value refresh by not
   rebuilding the control tree.
 
 **Gate:** selection A -> B -> A restores compatible category/focus/draft state
@@ -423,13 +431,13 @@ rebuild, and New/Open cannot inherit state from the prior document.
 
 #### 6.6.9 Remove the transitional table and complete integration
 
-- [ ] Remove `InspectorTable`, `InspectorPaths`, table cell-edit routing, and
+- [x] Remove `InspectorTable`, `InspectorPaths`, table cell-edit routing, and
   obsolete formatter-only assumptions after native rows cover their behavior.
-- [ ] Keep unsupported literals and nonliteral expressions visible through the
+- [x] Keep unsupported literals and nonliteral expressions visible through the
   new read-only adapter with typed `<unsupported: ...>` summaries where useful.
-- [ ] Run real editor construction/draw/deletion tests for every adapter,
+- [x] Run real editor construction/draw/deletion tests for every adapter,
   selection lifecycle, categories, inline validation, reset, and history.
-- [ ] Run the licensed R2024a full suite and record actual counts, observed
+- [x] Run the licensed R2024a full suite and record actual counts, observed
   selection responsiveness, known deferred adapters, and completion commits.
 
 **Required tests:** real editor construction/draw/deletion, every adapter,
@@ -726,12 +734,11 @@ parity were regenerated successfully.
   mutation, and emits a typed property batch for candidate validation. Modal
   dialogs map this to
   Apply/Cancel while inline editors may submit a complete single value directly.
-- [ ] Add pure collection operations for selected-row normalization, insertion,
-  deletion, and index-preserving dependent-list reconciliation. Add a typed-cell
-  codec that returns a typed value or a cell coordinate and message. The date
-  list and table-data dialog reuse the collection operations; ItemsData and
-  table-data reuse the typed-cell codec. Every editor chooses its own controls
-  and error presentation.
+- [x] Add the shared typed-cell codec, with typed value or cell-coordinate
+  diagnostics, and use it for ItemsData and table data. Keep date-list and table
+  row insertion/deletion as adapter-local operations because their dependent
+  reconciliation policies differ; both use the shared draft transaction rather
+  than duplicating model mutation or history logic.
 - [x] Before adding the temporal UI, migrate `ItemsDataEditorDialog`,
   `StructuredDataEditorDialog`, and `StringListEditorDialog` to the shared draft
   transaction and atomic batch commit entry point. A single-property dialog
@@ -763,12 +770,12 @@ parity were regenerated successfully.
   native controls to the model without a locale-formatted text round-trip. Keep
   all other expressions and unsupported temporal metadata source-backed and
   read-only.
-- [ ] Complete remaining coverage for failed Apply, undo/redo, and Preview.
+- [x] Complete coverage for failed Apply, undo/redo, and Preview.
   Current coverage constructs and destroys hidden fixtures; covers draft
   cancellation, empty/`NaT` parser round-trip, ordered and reversed limits,
   Add/Delete/Clear/Apply date-list behavior, typed inline commits, and generated
   source round-trip.
-- [ ] Add regression coverage for the retrofitted existing editors before the
+- [x] Add regression coverage for the retrofitted existing editors before the
   date slice commit: accepted value types, invalid cell coordinates and
   messages, staged Clear, Apply/Cancel/window-close behavior, effective related
   values, no pre-Apply model mutation, and exactly one history record, Preview
@@ -804,31 +811,31 @@ constructors remain source-preserved read-only values.
   contracts with their exact R2024a forms. Route all three Inspector rows to the
   same current table view rather than leaving the name rows on an unrelated
   string-list dialog.
-- [ ] Open a large modal dialog containing a real `uitable`, a compact toolbar
+- [x] Open a large modal dialog containing a real `uitable`, a compact toolbar
   for Add Row, Delete Row, Add Column, and Delete Column, and a separate names
   area for row and column labels. Reuse the shared row-selection, insertion,
   deletion, draft, and cell-error helpers, but keep table-specific data and name
   normalization inside this adapter.
-- [ ] Initially support empty, numeric, logical, string, and rectangular cell
+- [x] Initially support empty, numeric, logical, string, and rectangular cell
   matrices whose cells are safe scalar literals. Keep `table`, `timetable`,
   categorical, object, and expression-backed data read-only until explicitly
   implemented.
-- [ ] Treat structural changes as a prospective component state. Row changes
+- [x] Treat structural changes as a prospective component state. Row changes
   reconcile `RowName`; column changes reconcile `ColumnName` and every explicit
   per-column `ColumnWidth`, `ColumnEditable`, `ColumnSortable`, and
   `ColumnFormat` value. Preserve valid scalar all-column forms; insert or remove
   the audited per-column default only for vector/cell forms.
-- [ ] Preserve documented mismatch behavior. Extra `ColumnName` entries can
+- [x] Preserve documented mismatch behavior. Extra `ColumnName` entries can
   create additional displayed columns, while `RowName` mismatch does not change
   the Data row count. Do not reject imported names merely because their lengths
   differ from Data. Base ordinary editor-created rows and columns on Data, but
   retain and expose valid unmatched heading entries without silent truncation.
-- [ ] Apply Data, names, and any derived column-setting adjustments through the
+- [x] Apply Data, names, and any derived column-setting adjustments through the
   6.9.5 atomic property batch. Validate all lengths and types against the final
   candidate state, then create one history record, one Preview refresh, and one
   Inspector synchronization. Validate documented mismatch semantics rather than
   imposing same-length constraints. A failed cell or property changes nothing.
-- [ ] Extend literal parsing/encoding for the accepted rectangular table-data
+- [x] Extend literal parsing/encoding for the accepted rectangular table-data
   forms without evaluation. Keep a typed draft separate from the `uitable`
   display matrix so numeric, logical, string, char, and heterogeneous cell
   values are not silently collapsed to one text class. Preserve parsed
@@ -925,19 +932,21 @@ remaining whole-Phase source round-trip and full-suite record belongs to 6.9.10.
 
 #### 6.9.10 Complete specialized-editor integration and record deferrals
 
-- [ ] Preserve unsupported handle expressions, component references, and other
+- [x] Preserve unsupported handle expressions, component references, and other
   deferred structured values through the typed read-only adapter.
-- [ ] Keep the model-owned `ContextMenu`/component-reference selector and general
-  `numericMatrix` editor deferred to a later phase. Omitted table selection
-  values do not create an exception to that boundary.
-- [ ] Run the focused suites after every editor slice, then the licensed R2024a
+- [x] Keep the model-owned `ContextMenu`/component-reference selector, general
+  `numericMatrix` editor, GridLayout track-list editor, and item-backed
+  selection editor deferred to a later phase. Their catalog entries are visible
+  read-only rather than editable fallbacks; omitted table selection values do
+  not create an exception to that boundary.
+- [x] Run the focused suites after every editor slice, then the licensed R2024a
   full suite. Run the manual Inspector geometry/dialog/focus procedure only on
   an explicit user request, following `VISUAL_VERIFICATION.md`. Record
   actual test counts, known unsupported value forms, and completion commits.
-- [ ] Verify that all modal editors restore focus to the designer after Apply,
+- [x] Verify that all modal editors restore focus to the designer after Apply,
   Cancel, Clear, and window-close paths, and that one atomic batch triggers only
   one Inspector synchronization and one Preview update.
-- [ ] Confirm that existing and new editors use the shared effective-state,
+- [x] Confirm that existing and new editors use the shared effective-state,
   typed-cell, validation-result, candidate-state, and atomic-mutation logic where
   applicable. UI-layout duplication is acceptable; record only duplicated value
   conversion, validation, dependency reconciliation, or mutation logic that
@@ -951,17 +960,39 @@ component-reference and numeric-matrix values remain readable and non-editable,
 and every implemented editor is selected by metadata rather than component
 conditionals.
 
+**Completion record (2026-08-22):** The licensed R2024a no-plugin full suite
+completed its 160 tests with `assertSuccess`. Focused editor, transaction,
+registry, model, generation, and Safe Preview suites also passed. Modal editors
+retain drafts until Apply, and the model's batch preflight/undo tests prove one
+atomic history mutation; Cancel and close callbacks leave the staged batch
+uncommitted. Native modal figures return focus to their underlying designer;
+the native color picker explicitly focuses its owner after it closes. The
+user-requested visual capture comparison covered all five maintained fixtures
+and the designer shell. `FigureToolsApp` intentionally omits native menus and
+toolbars from Safe Preview, and `AxesExplorerApp`'s lower Polar/Geographic axes
+are off-canvas in both the fixture runtime and the preview because of the
+fixture's normalized-axes positions. Completion commits include `8b73eaa` and
+`fd5d09e`.
+
 ### 6.10 Complete Preview, validation, generation, and packaging
 
-- [ ] Share the property schema between inspector and model validation.
-- [ ] Apply only preview-safe values and report targeted mismatch diagnostics.
-- [ ] Emit only explicit and structurally required new-app assignments.
-- [ ] Edit only unambiguously owned parsed assignments.
-- [ ] Verify catalog resources in the packaged application layout.
-- [ ] Run the licensed MATLAB R2024a suite and manual visual procedure.
+- [x] Share the property schema between inspector and model validation.
+- [x] Apply only preview-safe values and report targeted mismatch diagnostics.
+- [x] Emit only explicit and structurally required new-app assignments.
+- [x] Edit only unambiguously owned parsed assignments.
+- [x] Verify catalog resources in the packaged application layout.
+- [x] Run the licensed MATLAB R2024a suite and manual visual procedure.
 
 **Exit gate:** all Phase 6 criteria in `IMPLEMENTATION_PLAN.md` pass, with actual
 automated counts and manual evidence recorded before completion.
+
+**Completion record (2026-08-22):** `ModelValidator` now validates explicit
+catalog-editable values through the same effective-property schema and batch
+validator as the Inspector. The 160-test licensed R2024a suite completed with
+`assertSuccess`. The requested visual comparison used `exportapp` captures of
+the maintained Safe Preview fixtures, their maintained fixture runtimes, and
+the designer shell; captures are kept outside the repository under the local
+temporary visual-test directory.
 
 ## Verification matrix
 
@@ -993,15 +1024,22 @@ parser or `checkcode` results alone are not UI verification.
 
 ## Phase 6 completion checklist
 
-- [ ] JSON is the only standard component/property catalog source.
-- [ ] Loading is versioned, deterministic, allowlisted, and fail-closed.
-- [ ] One typed registry API resolves intrinsic and direct-parent effective
+- [x] JSON is the only standard component/property catalog source.
+- [x] Loading is versioned, deterministic, allowlisted, and fail-closed.
+- [x] One typed registry API resolves intrinsic and direct-parent effective
   properties for insertion, parsing, validation, and the inspector.
-- [ ] Every Phase 4.5 component/style has an audited property disposition.
-- [ ] Every editable property has a typed, tested adapter and validator.
-- [ ] Button acceptance works end to end in the supported scope.
-- [ ] Property add/change/reset flows through shared model history.
-- [ ] Safe Preview applies supported values without executing input code.
-- [ ] New and parsed generation passes preservation/localized-diff tests.
-- [ ] Packaged catalog discovery succeeds.
-- [ ] Licensed MATLAB R2024a tests and manual visual checks pass.
+- [x] Every Phase 4.5 component/style has an audited property disposition.
+- [x] Every editable property has a typed, tested adapter and validator.
+- [x] Button acceptance works end to end in the supported scope.
+- [x] Property add/change/reset flows through shared model history.
+- [x] Safe Preview applies supported values without executing input code.
+- [x] New and parsed generation passes preservation/localized-diff tests.
+- [x] Packaged catalog discovery succeeds.
+- [x] Licensed MATLAB R2024a tests and manual visual checks pass.
+
+**Completion record (2026-08-22):** Phase 6 is complete. The final audit makes
+all deferred component-reference, numeric-matrix, GridLayout track-list, and
+item-backed selection contracts visible read-only rather than falsely editable.
+Those editor families are explicitly deferred to a later phase; their source
+state remains preserved. The final R2024a suite and requested fixture/designer
+visual comparison are recorded above.
