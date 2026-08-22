@@ -427,7 +427,7 @@
       "entries": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.75ceaf80f79f",
+          "groupId": "local.uipanel.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
@@ -435,7 +435,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
-            "groupId": "exact.interactivity.75ceaf80f79f",
+            "groupId": "local.uipanel.interactivity",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -454,7 +454,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.75ceaf80f79f",
+          "groupId": "local.uipanel.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -462,10 +462,10 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
-            "groupId": "exact.interactivity.75ceaf80f79f",
-            "editor": "componentReference",
+            "groupId": "local.uipanel.interactivity",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -844,7 +844,7 @@
             "groupId": "local.uipanel.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

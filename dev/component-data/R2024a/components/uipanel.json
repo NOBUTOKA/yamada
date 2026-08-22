@@ -518,10 +518,12 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "skip",
-      "requiredEditor": "componentReference",
+      "requiredEditor": "none",
       "disposition": {
-        "kind": "editable",
-        "reasonCodes": []
+        "kind": "readOnly",
+        "reasonCodes": [
+          "deferredComponentReference"
+        ]
       },
       "runtimeSetAccess": "public"
     },
@@ -918,9 +920,9 @@
       "previewPolicy": "skip",
       "requiredEditor": "none",
       "disposition": {
-        "kind": "omitted",
+        "kind": "readOnly",
         "reasonCodes": [
-          "hierarchyManaged"
+          "deferredComponentReference"
         ]
       },
       "runtimeSetAccess": "public"

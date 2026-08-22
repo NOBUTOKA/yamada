@@ -40,7 +40,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -48,10 +48,10 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 1,
-            "groupId": "exact.switch.e4feb5a034e7",
-            "editor": "itemSelection",
+            "groupId": "exact.switch.d0467d05aa98",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "itemSelection",
               "matlabClasses": [
@@ -65,7 +65,7 @@
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Items",
@@ -73,7 +73,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 2,
-            "groupId": "exact.switch.e4feb5a034e7",
+            "groupId": "exact.switch.d0467d05aa98",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -87,14 +87,14 @@
               ],
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
-              "fixedLength": 2,
-              "constraints": []
+              "constraints": [],
+              "fixedLength": 2
             }
           }
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ItemsData",
@@ -102,7 +102,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 3,
-            "groupId": "exact.switch.e4feb5a034e7",
+            "groupId": "exact.switch.d0467d05aa98",
             "editor": "structuredData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -124,7 +124,7 @@
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ValueIndex",
@@ -132,7 +132,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 4,
-            "groupId": "exact.switch.e4feb5a034e7",
+            "groupId": "exact.switch.d0467d05aa98",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -149,7 +149,7 @@
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Orientation",
@@ -157,7 +157,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 5,
-            "groupId": "exact.switch.e4feb5a034e7",
+            "groupId": "exact.switch.d0467d05aa98",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -425,9 +425,9 @@
             "category": "Interactivity",
             "order": 4,
             "groupId": "standardInteractivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -743,7 +743,7 @@
             "groupId": "local.uiswitch-rocker.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

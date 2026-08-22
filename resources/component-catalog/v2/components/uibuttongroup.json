@@ -488,9 +488,9 @@
             "category": "Interactivity",
             "order": 3,
             "groupId": "local.uibuttongroup.interactivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -896,7 +896,7 @@
             "groupId": "local.uibuttongroup.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

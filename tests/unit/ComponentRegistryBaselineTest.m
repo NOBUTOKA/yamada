@@ -56,7 +56,7 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(manifest.schemaVersion, 2);
             testCase.verifyEqual(string(manifest.matlabRelease), "R2024a");
             testCase.verifyEqual(string(manifest.sourceGroupingSha256), string(groups.inputSha256));
-            testCase.verifyEqual(numel(groups.groups), 313);
+            testCase.verifyEqual(numel(groups.groups), 314);
             testCase.verifyEqual(sort(string(manifest.orderProfileFiles)), "order-profiles.json");
             testCase.verifyEqual(sort(string({profiles.profiles.id})), ...
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
@@ -76,6 +76,40 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             items = rows([rows.Id] == "itemsAndData");
             testCase.verifyEqual(items.ComponentIds, ...
                 ["uidropdown", "uilistbox", "uiknob-discrete"]);
+        end
+
+        function editablePropertiesProjectToSupportedInspectorEditors(testCase)
+            % editablePropertiesProjectToSupportedInspectorEditors Verify every editable capability has a row adapter.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            templates = registry.inspectorRows();
+            for id = registry.listVariantIds()
+                definition = registry.getById(id);
+                states = repmat(struct("Definition", macd.model.PropertyDefinition()), ...
+                    1, numel(definition.Properties));
+                for propertyIndex = 1:numel(definition.Properties)
+                    states(propertyIndex).Definition = definition.Properties(propertyIndex);
+                end
+                rows = macd.ui.inspector.InspectorSurfaceBuilder.build( ...
+                    id, "", states, templates);
+                for rowIndex = 1:numel(rows)
+                    members = definition.Properties(rows(rowIndex).MemberIndices);
+                    editable = [members.IsEditable] & ...
+                        [members.AuditDisposition] == "editable";
+                    if ~any(editable)
+                        continue
+                    end
+                    if rows(rowIndex).IsComposite
+                        testCase.verifyTrue(any(rows(rowIndex).Editor == ...
+                            ["tableData", "columnSettings", "items", "fontStyle"]), ...
+                            id + ":" + rows(rowIndex).Id);
+                    else
+                        testCase.verifyTrue( ...
+                            macd.ui.inspector.PropertyEditorFactory.supportsEditing(members), ...
+                            id + ":" + members.Path);
+                    end
+                end
+            end
         end
 
         function figureCustomPointerShapesRemainOmitted(testCase)
@@ -128,20 +162,20 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             % editFieldPublicPropertiesAreNotLeftUnresolved Preserve audited editable field surfaces.
 
             registry = macd.model.ComponentRegistry.createDefault();
-            expected = struct();
-            expected.('uieditfield-text') = ["Value", "CharacterLimits", "InputType", ...
+            ids = ["uieditfield-text", "uieditfield-numeric"];
+            expected = {["Value", "CharacterLimits", "InputType", ...
                 "Placeholder", "HorizontalAlignment", "FontName", "FontSize", ...
                 "FontWeight", "FontAngle", "FontColor", "BackgroundColor", "Visible", ...
-                "Editable", "Enable", "Tooltip", "Position", "Interruptible", "BusyAction"];
-            expected.('uieditfield-numeric') = ["Value", "Limits", "RoundFractionalValues", ...
+                "Editable", "Enable", "Tooltip", "Position", "Interruptible", "BusyAction"], ...
+                ["Value", "Limits", "RoundFractionalValues", ...
                 "ValueDisplayFormat", "AllowEmpty", "Placeholder", "HorizontalAlignment", ...
                 "LowerLimitInclusive", "UpperLimitInclusive", "FontName", "FontSize", ...
                 "FontWeight", "FontAngle", "FontColor", "BackgroundColor", "Visible", ...
-                "Editable", "Enable", "Tooltip", "Position", "Interruptible", "BusyAction"];
-            ids = string(fieldnames(expected));
-            for id = ids.'
+                "Editable", "Enable", "Tooltip", "Position", "Interruptible", "BusyAction"]};
+            for index = 1:numel(ids)
+                id = ids(index);
                 definition = registry.getById(id);
-                for path = expected.(char(id))
+                for path = expected{index}
                     property = definition.Properties([definition.Properties.Path] == path);
                     testCase.verifyTrue(property.IsEditable, id + "." + path);
                 end
@@ -321,18 +355,21 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             grid = registry.getById("uigridlayout");
             for path = ["ColumnWidth", "RowHeight"]
                 property = grid.Properties([grid.Properties.Path] == path);
-                testCase.verifyEqual(property.Editor, "gridTrackList");
+                testCase.verifyEqual(property.Editor, "readOnly");
+                testCase.verifyEqual(property.AuditDisposition, "readOnly");
                 testCase.verifyEqual(string(property.ValueSchema.kind), "gridTrackList");
                 testCase.verifyEqual(string(property.ValueSchema.matlabClasses(:))', ...
                     ["cell", "char", "numeric", "string"]);
             end
 
-            % Values paired with ItemsData cannot be constrained to numeric scalars.
+            % Item-backed selections require a dedicated dependent-value editor.
+            % Keep their heterogeneous contracts readable until that editor exists.
             for id = ["uidropdown", "uiknob-discrete", "uilistbox", ...
                     "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"]
                 definition = registry.getById(id);
                 property = definition.Properties([definition.Properties.Path] == "Value");
-                testCase.verifyEqual(property.Editor, "itemSelection");
+                testCase.verifyEqual(property.Editor, "readOnly");
+                testCase.verifyEqual(property.AuditDisposition, "readOnly");
                 testCase.verifyEqual(string(property.ValueSchema.kind), "itemSelection");
                 testCase.verifyEqual(string(property.ValueSchema.matlabClasses), "any");
             end

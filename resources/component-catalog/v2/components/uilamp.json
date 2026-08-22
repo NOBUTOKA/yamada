@@ -160,9 +160,9 @@
             "category": "Interactivity",
             "order": 4,
             "groupId": "local.uilamp.interactivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -451,7 +451,7 @@
             "groupId": "local.uilamp.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

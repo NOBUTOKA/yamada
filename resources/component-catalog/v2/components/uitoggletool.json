@@ -140,7 +140,7 @@
       "entries": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
@@ -148,7 +148,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
-            "groupId": "exact.interactivity.3454f326d786",
+            "groupId": "exact.interactivity.98156a67d0ff",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -167,7 +167,7 @@
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
@@ -175,7 +175,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
-            "groupId": "exact.interactivity.3454f326d786",
+            "groupId": "exact.interactivity.98156a67d0ff",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -194,7 +194,7 @@
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
@@ -202,7 +202,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
-            "groupId": "exact.interactivity.3454f326d786",
+            "groupId": "exact.interactivity.98156a67d0ff",
             "editor": "text",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -221,7 +221,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -229,10 +229,10 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
-            "groupId": "exact.interactivity.3454f326d786",
-            "editor": "componentReference",
+            "groupId": "exact.interactivity.98156a67d0ff",
+            "editor": "readOnly",
             "previewPolicy": "notRendered",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -246,7 +246,7 @@
         },
         {
           "path": "TooltipString",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TooltipString",
@@ -254,7 +254,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 5,
-            "groupId": "exact.interactivity.3454f326d786",
+            "groupId": "exact.interactivity.98156a67d0ff",
             "editor": "text",
             "previewPolicy": "notRendered",
             "auditDisposition": "editable",
@@ -549,7 +549,7 @@
             "groupId": "local.uitoggletool.parentchild",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

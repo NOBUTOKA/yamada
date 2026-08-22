@@ -78,9 +78,9 @@
             "category": "Tabs",
             "order": 2,
             "groupId": "local.uitabgroup.tabs",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -101,7 +101,7 @@
       "entries": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.75ceaf80f79f",
+          "groupId": "local.uitabgroup.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
@@ -109,7 +109,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
-            "groupId": "exact.interactivity.75ceaf80f79f",
+            "groupId": "local.uitabgroup.interactivity",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -128,7 +128,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.75ceaf80f79f",
+          "groupId": "local.uitabgroup.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -136,10 +136,10 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
-            "groupId": "exact.interactivity.75ceaf80f79f",
-            "editor": "componentReference",
+            "groupId": "local.uitabgroup.interactivity",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -518,7 +518,7 @@
             "groupId": "local.uitabgroup.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

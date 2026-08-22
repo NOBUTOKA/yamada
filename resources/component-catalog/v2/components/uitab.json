@@ -158,9 +158,9 @@
             "category": "Interactivity",
             "order": 2,
             "groupId": "local.uitab.interactivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -512,7 +512,7 @@
             "groupId": "local.uitab.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

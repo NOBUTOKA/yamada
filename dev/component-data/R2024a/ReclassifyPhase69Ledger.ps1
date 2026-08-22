@@ -308,6 +308,38 @@ foreach ($componentId in $itemSelectionComponents.Keys) {
     Save-Json $path $document
 }
 
+# Model-owned component references and GridLayout track lists need dedicated
+# interaction contracts. Keep their documented values visible, but do not
+# advertise an editable adapter before those later vertical slices exist.
+foreach ($file in @(Get-ChildItem -LiteralPath $componentDirectory -Filter '*.json' -File)) {
+    $document = Get-Content -Raw $file.FullName | ConvertFrom-Json
+    $changed = $false
+    foreach ($property in @($document.properties)) {
+        $kind = [string]$property.valueContract.kind
+        if ($kind -eq 'componentReference') {
+            $property.requiredEditor = 'none'
+            $property.disposition.kind = 'readOnly'
+            $property.disposition.reasonCodes = @('deferredComponentReference')
+            $changed = $true
+        }
+        elseif ($kind -eq 'gridTrackList') {
+            $property.requiredEditor = 'none'
+            $property.disposition.kind = 'readOnly'
+            $property.disposition.reasonCodes = @('deferredGridTrackList')
+            $changed = $true
+        }
+        elseif ($kind -eq 'itemSelection') {
+            $property.requiredEditor = 'none'
+            $property.disposition.kind = 'readOnly'
+            $property.disposition.reasonCodes = @('deferredItemSelection')
+            $changed = $true
+        }
+    }
+    if ($changed) {
+        Save-Json $file.FullName $document
+    }
+}
+
 # CurrentPoint is runtime interaction state, not an editable design-time property.
 $uiaxesPath = Join-Path $componentDirectory "uiaxes.json"
 $uiaxes = Get-Content -Raw $uiaxesPath | ConvertFrom-Json

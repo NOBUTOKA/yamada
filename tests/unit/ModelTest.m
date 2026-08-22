@@ -276,6 +276,23 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
 
+        function modelValidationUsesTheInspectorPropertySchema(testCase)
+            % modelValidationUsesTheInspectorPropertySchema Reject catalog-invalid values outside the Inspector.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            picker = document.insertComponent(registry, "uidatepicker", ...
+                document.RootComponentId);
+            picker.setProperty("Limits", [datetime(2024, 12, 31) datetime(2024, 1, 1)]);
+
+            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+
+            invalid = diagnostics([diagnostics.Code] == "invalid-catalog-property");
+            testCase.verifyNotEmpty(invalid);
+            testCase.verifyEqual(invalid(1).Message, ...
+                "The end date must be later than the start date.");
+        end
+
         function effectivePropertiesFollowDirectParentContext(testCase)
             % effectivePropertiesFollowDirectParentContext Verify geometry follows the direct parent.
 

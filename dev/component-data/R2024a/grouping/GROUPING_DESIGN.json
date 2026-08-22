@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "1a26799abad72269d841c148d6ab80ccea0fb58246f9aff5327f6602f2453155",
+  "inputSha256": "79897f14d019bc5145c8c806e322b75776bbc67443ec7a78833e1d85416b505e",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -1854,7 +1854,7 @@
       ]
     },
     {
-      "id": "exact.interactivity.3454f326d786",
+      "id": "exact.interactivity.98156a67d0ff",
       "kind": "exactCategory",
       "categoryId": "interactivity",
       "capabilities": [
@@ -1934,10 +1934,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -1965,57 +1967,6 @@
       "memberVariantIds": [
         "uipushtool",
         "uitoggletool"
-      ]
-    },
-    {
-      "id": "exact.interactivity.75ceaf80f79f",
-      "kind": "exactCategory",
-      "categoryId": "interactivity",
-      "capabilities": [
-        {
-          "path": "Visible",
-          "valueContract": {
-            "kind": "onOff",
-            "matlabClasses": [
-              "char",
-              "logical",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "onOff",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ContextMenu",
-          "valueContract": {
-            "kind": "componentReference",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ],
-      "memberVariantIds": [
-        "uipanel",
-        "uitabgroup"
       ]
     },
     {
@@ -3076,7 +3027,7 @@
       ]
     },
     {
-      "id": "exact.switch.e4feb5a034e7",
+      "id": "exact.switch.d0467d05aa98",
       "kind": "exactCategory",
       "categoryId": "switch",
       "capabilities": [
@@ -3093,10 +3044,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -3109,9 +3062,10 @@
               "char",
               "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4937,10 +4891,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -5010,9 +4966,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -6100,10 +6056,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -6505,9 +6463,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -7913,10 +7871,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -8269,9 +8229,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -9996,10 +9956,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -10256,9 +10218,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -10811,9 +10773,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -11114,9 +11076,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -11567,10 +11529,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -11598,9 +11562,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -12160,9 +12124,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -12546,9 +12510,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -12849,9 +12813,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -13259,9 +13223,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -13533,10 +13497,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -13757,9 +13723,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -14091,9 +14057,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -14653,9 +14619,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -15335,10 +15301,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -16295,9 +16263,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -16693,9 +16661,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -17117,9 +17085,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -17541,9 +17509,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -17777,10 +17745,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "gridTrackList",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredGridTrackList"
+            ]
           }
         },
         {
@@ -17799,10 +17769,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "gridTrackList",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredGridTrackList"
+            ]
           }
         },
         {
@@ -18002,10 +17974,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -18033,9 +18007,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -18482,10 +18456,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -18513,9 +18489,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -19164,10 +19140,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -19195,9 +19173,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -19740,10 +19718,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -19771,9 +19751,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -20152,9 +20132,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -20453,10 +20433,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -20551,9 +20533,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -20830,9 +20812,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -21334,10 +21316,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -21365,9 +21349,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -21799,10 +21783,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -21828,10 +21814,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -21926,9 +21914,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -22269,10 +22257,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -22413,9 +22403,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -22743,6 +22733,58 @@
       ]
     },
     {
+      "id": "local.uipanel.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "Visible",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uipanel"
+      ]
+    },
+    {
       "id": "local.uipanel.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -22762,9 +22804,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -23110,9 +23152,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -23465,9 +23507,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -23770,9 +23812,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -24216,9 +24258,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -24652,9 +24694,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -25178,9 +25220,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -25481,9 +25523,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -25625,10 +25667,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -25641,9 +25685,10 @@
               "char",
               "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -25904,9 +25949,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -26251,10 +26296,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -26282,9 +26329,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -26768,6 +26815,58 @@
       ]
     },
     {
+      "id": "local.uitabgroup.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "Visible",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uitabgroup"
+      ]
+    },
+    {
       "id": "local.uitabgroup.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -26787,9 +26886,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -26885,10 +26984,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -27445,10 +27546,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -27476,9 +27579,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -28215,9 +28318,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -28592,9 +28695,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -28921,9 +29024,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -29218,10 +29321,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -29249,9 +29354,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -29738,9 +29843,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -30286,10 +30391,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -30348,9 +30455,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -30646,10 +30753,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -30747,9 +30856,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -30883,10 +30992,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ],
@@ -36465,47 +36576,47 @@
         {
           "path": "Value",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Limits",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "RoundFractionalValues",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "ValueDisplayFormat",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "AllowEmpty",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Placeholder",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "HorizontalAlignment",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "LowerLimitInclusive",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "UpperLimitInclusive",
           "groupId": "local.uieditfield-numeric.value",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -36525,32 +36636,32 @@
         {
           "path": "FontName",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -36569,27 +36680,27 @@
         {
           "path": "Visible",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Editable",
           "groupId": "local.uieditfield-numeric.interactivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Enable",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Tooltip",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -36607,7 +36718,7 @@
         {
           "path": "Position",
           "groupId": "local.uieditfield-numeric.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "InnerPosition",
@@ -36666,12 +36777,12 @@
         {
           "path": "Interruptible",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BusyAction",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BeingDeleted",
@@ -36743,27 +36854,27 @@
         {
           "path": "Value",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "CharacterLimits",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "InputType",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Placeholder",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "HorizontalAlignment",
           "groupId": "local.uieditfield-text.text",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -36783,32 +36894,32 @@
         {
           "path": "FontName",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
           "groupId": "exact.fontandcolor.1e661cc8facf",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -36827,27 +36938,27 @@
         {
           "path": "Visible",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Editable",
           "groupId": "local.uieditfield-text.interactivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Enable",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Tooltip",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -36865,7 +36976,7 @@
         {
           "path": "Position",
           "groupId": "local.uieditfield-text.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "InnerPosition",
@@ -36930,12 +37041,12 @@
         {
           "path": "Interruptible",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BusyAction",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BeingDeleted",
@@ -40957,12 +41068,12 @@
       "propertyOwners": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.75ceaf80f79f",
+          "groupId": "local.uipanel.interactivity",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.75ceaf80f79f",
+          "groupId": "local.uipanel.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -41215,27 +41326,27 @@
       "propertyOwners": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TooltipString",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42466,27 +42577,27 @@
       "propertyOwners": [
         {
           "path": "Value",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42958,27 +43069,27 @@
       "propertyOwners": [
         {
           "path": "Value",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.e4feb5a034e7",
+          "groupId": "exact.switch.d0467d05aa98",
           "runtimeSetAccess": "public"
         }
       ]
@@ -43438,12 +43549,12 @@
       "propertyOwners": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.75ceaf80f79f",
+          "groupId": "local.uitabgroup.interactivity",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.75ceaf80f79f",
+          "groupId": "local.uitabgroup.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -44602,27 +44713,27 @@
       "propertyOwners": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TooltipString",
-          "groupId": "exact.interactivity.3454f326d786",
+          "groupId": "exact.interactivity.98156a67d0ff",
           "runtimeSetAccess": "public"
         }
       ]

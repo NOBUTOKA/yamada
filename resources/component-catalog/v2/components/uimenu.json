@@ -237,9 +237,9 @@
             "category": "Interactivity",
             "order": 3,
             "groupId": "local.uimenu.interactivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "notRendered",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -448,7 +448,7 @@
             "groupId": "local.uimenu.parentchild",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

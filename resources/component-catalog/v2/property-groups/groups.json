@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "1a26799abad72269d841c148d6ab80ccea0fb58246f9aff5327f6602f2453155",
+  "inputSha256": "79897f14d019bc5145c8c806e322b75776bbc67443ec7a78833e1d85416b505e",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -1741,7 +1741,7 @@
       ]
     },
     {
-      "id": "exact.interactivity.3454f326d786",
+      "id": "exact.interactivity.98156a67d0ff",
       "kind": "exactCategory",
       "categoryId": "interactivity",
       "entries": [
@@ -1821,10 +1821,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -1843,53 +1845,6 @@
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
           "requiredEditor": "text",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.interactivity.75ceaf80f79f",
-      "kind": "exactCategory",
-      "categoryId": "interactivity",
-      "entries": [
-        {
-          "path": "Visible",
-          "valueContract": {
-            "kind": "onOff",
-            "matlabClasses": [
-              "char",
-              "logical",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "onOff",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "ContextMenu",
-          "valueContract": {
-            "kind": "componentReference",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -2937,7 +2892,7 @@
       ]
     },
     {
-      "id": "exact.switch.e4feb5a034e7",
+      "id": "exact.switch.d0467d05aa98",
       "kind": "exactCategory",
       "categoryId": "switch",
       "entries": [
@@ -2954,10 +2909,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -2970,9 +2927,10 @@
               "char",
               "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -4758,10 +4716,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -4828,9 +4788,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -5894,10 +5854,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -6290,9 +6252,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -7668,10 +7630,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -8015,9 +7979,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -9715,10 +9679,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         },
         {
@@ -9969,9 +9935,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -10509,9 +10475,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -10800,9 +10766,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -11235,10 +11201,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -11263,9 +11231,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -11807,9 +11775,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -12175,9 +12143,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -12466,9 +12434,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -12861,9 +12829,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -13126,10 +13094,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -13341,9 +13311,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -13660,9 +13630,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -14204,9 +14174,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -14871,10 +14841,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -15798,9 +15770,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -16181,9 +16153,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -16590,9 +16562,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -16999,9 +16971,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -17223,10 +17195,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "gridTrackList",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredGridTrackList"
+            ]
           }
         },
         {
@@ -17245,10 +17219,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "gridTrackList",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredGridTrackList"
+            ]
           }
         },
         {
@@ -17442,10 +17418,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -17470,9 +17448,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -17904,10 +17882,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -17932,9 +17912,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -18565,10 +18545,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -18593,9 +18575,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -19120,10 +19102,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -19148,9 +19132,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -19514,9 +19498,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -19803,10 +19787,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -19898,9 +19884,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -20165,9 +20151,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -20651,10 +20637,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -20679,9 +20667,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -21101,10 +21089,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -21127,10 +21117,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -21222,9 +21214,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -21553,10 +21545,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -21691,9 +21685,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -22003,6 +21997,55 @@
       ]
     },
     {
+      "id": "local.uipanel.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "Visible",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uipanel.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -22022,9 +22065,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -22358,9 +22401,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -22698,9 +22741,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -22991,9 +23034,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -23422,9 +23465,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -23840,9 +23883,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -24351,9 +24394,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -24642,9 +24685,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -24780,10 +24823,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "itemSelection",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredItemSelection"
+            ]
           }
         },
         {
@@ -24796,9 +24841,10 @@
               "char",
               "string"
             ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": [],
+            "fixedLength": 2
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -25050,9 +25096,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -25385,10 +25431,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -25413,9 +25461,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -25881,6 +25929,55 @@
       ]
     },
     {
+      "id": "local.uitabgroup.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "Visible",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uitabgroup.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -25900,9 +25997,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -25995,10 +26092,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -26534,10 +26633,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -26562,9 +26663,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -27283,9 +27384,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -27645,9 +27746,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -27962,9 +28063,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -28247,10 +28348,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "notRendered",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -28275,9 +28378,9 @@
           "previewPolicy": "notRendered",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -28746,9 +28849,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -29282,10 +29385,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -29338,9 +29443,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -29624,10 +29729,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -29719,9 +29826,9 @@
           "previewPolicy": "skip",
           "requiredEditor": "none",
           "disposition": {
-            "kind": "omitted",
+            "kind": "readOnly",
             "reasonCodes": [
-              "hierarchyManaged"
+              "deferredComponentReference"
             ]
           }
         },
@@ -29852,10 +29959,12 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "skip",
-          "requiredEditor": "componentReference",
+          "requiredEditor": "none",
           "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]

@@ -99,6 +99,7 @@ $legacyPath = (Resolve-Path -LiteralPath $LegacyCatalogRoot).Path
 $designPath = Join-Path $releasePath "grouping/GROUPING_DESIGN.json"
 $groupingInputPath = Join-Path $releasePath "grouping-design-input.json"
 $componentPath = Join-Path $releasePath "components"
+$inspectorRowsPath = Join-Path $releasePath "inspector-rows.json"
 
 foreach ($path in @($designPath, $groupingInputPath, $componentPath)) {
     if (-not (Test-Path -LiteralPath $path)) { throw "Required promotion input '$path' does not exist." }
@@ -156,6 +157,16 @@ Write-Utf8JsonFile (Join-Path $catalogPath "order-profiles.json") ([ordered]@{
         [ordered]@{ id = [string]$_.id; categoryOrder = @($_.categoryOrder | ForEach-Object { [string]$_ }) }
     })
 })
+
+# Inspector rows are presentation overlays, not grouping-derived property
+# capabilities. Preserve their separately reviewed release artifact verbatim.
+$inspectorRowFiles = @()
+if (Test-Path -LiteralPath $inspectorRowsPath -PathType Leaf) {
+    $inspectorRowsText = [IO.File]::ReadAllText($inspectorRowsPath)
+    $inspectorRowsText = [regex]::Replace($inspectorRowsText, '(?m)^\s*"runtimeArtifact"\s*:\s*"[^"]+",\s*\r?\n', '')
+    [IO.File]::WriteAllText((Join-Path $catalogPath "inspector-rows.json"), $inspectorRowsText, [Text.UTF8Encoding]::new($false))
+    $inspectorRowFiles = @("inspector-rows.json")
+}
 
 $componentFiles = @()
 foreach ($componentId in @($documents.Keys | Sort-Object)) {
@@ -241,6 +252,7 @@ Write-Utf8JsonFile (Join-Path $catalogPath "catalog.json") ([ordered]@{
     sourceGroupingSha256 = [string]$design.inputSha256
     propertyGroupFiles = @("property-groups/groups.json")
     orderProfileFiles = @("order-profiles.json")
+    inspectorRowFiles = $inspectorRowFiles
     parentContextRules = $parentContextRules
     componentFiles = $componentFiles
 })

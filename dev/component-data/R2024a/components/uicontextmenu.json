@@ -249,9 +249,9 @@
       "previewPolicy": "notRendered",
       "requiredEditor": "none",
       "disposition": {
-        "kind": "omitted",
+        "kind": "readOnly",
         "reasonCodes": [
-          "hierarchyManaged"
+          "deferredComponentReference"
         ]
       },
       "runtimeSetAccess": "public"

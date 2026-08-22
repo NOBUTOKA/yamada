@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "75e74f102ac440e8c256083556435c4085cfccebb4fc6f932c189f9f94397951",
+  "inputSha256": "8bed539511066c515c460cb3e40e0c0341d9f67e32a0749f1a3d86d6db27a8f9",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -358,33 +358,12 @@
       ],
       "surfaces": [
         {
-          "candidateId": "candidate.interactivity.01e42b0a874b",
+          "candidateId": "candidate.interactivity.006f7b894f5a",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc",
-          "propertyPaths": [
-            "ContextMenu"
-          ],
-          "propertyCapabilitySha256": [
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-          ],
-          "memberVariantIds": [
-            "uitreenode"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            2
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.044758088fdd",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "044758088fdd7b1d5f8e57f7979cbd66ef5e31a2790b5453be33c245c7bc9860",
+          "capabilitySha256": "006f7b894f5a4c0e73581bf090c3e57da43719cb8c3ffa243c305c9f4238afb7",
           "propertyPaths": [
             "Visible",
             "Scrollable",
@@ -393,7 +372,7 @@
           "propertyCapabilitySha256": [
             "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
             "389f11d5152bf41c84d2e3f8978c7c1ab7db95b4d3f2b93d89d8e3fe66509b39",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
             "uigridlayout"
@@ -404,14 +383,50 @@
           ]
         },
         {
-          "candidateId": "candidate.interactivity.0b5cfef7b4db",
+          "candidateId": "candidate.interactivity.0779736d8082",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "0b5cfef7b4db6a5a4f3550558d3d95ff9d4f7c1fa527a08070a074871b7a952a",
+          "capabilitySha256": "0779736d8082a411d2b4294ab6be6f81062190a538f924871722cff727335412",
+          "propertyPaths": [
+            "Visible",
+            "CurrentAxes",
+            "CurrentObject",
+            "CurrentPoint",
+            "CurrentCharacter",
+            "SelectionType",
+            "Scrollable",
+            "ContextMenu"
+          ],
+          "propertyCapabilitySha256": [
+            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "62e163fa8344a37436d87a1939dc20e102289e3872bf37cc4cb6631253888e34",
+            "abd62793faf92ed6c3caeedf74d12bec07f2ca5583462527155bab9a8ff54a98",
+            "78450c860c1d685b23b04aea44f0db02af31b4c059021ecb64654c76c15c9cae",
+            "88c22162bd2105e277353c986b92872974009643251c2ea8af43d9c579f193d0",
+            "9d8d5aec804b2ca46c40dacb5e9f5e644f9a56d23d07cba9d5534a7632a8b046",
+            "389f11d5152bf41c84d2e3f8978c7c1ab7db95b4d3f2b93d89d8e3fe66509b39",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
+          ],
+          "memberVariantIds": [
+            "uifigure"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            5
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.0cce3314b67b",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "0cce3314b67bef7b90ed40d0ffe2a07829a7a1220567cda5b4bba4db9bcfc604",
           "propertyPaths": [
             "URL",
+            "AltText",
             "Visible",
             "Enable",
             "Tooltip",
@@ -419,13 +434,14 @@
           ],
           "propertyCapabilitySha256": [
             "836caed1da5adfde4c320c61801dd340c35c0f10af0531e7f916f3a436a42019",
+            "f89d5f5273a888b23c19a02d4a4893d90b0b7de30e6ef9388ac1943c87178212",
             "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
             "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
             "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
-            "uihyperlink"
+            "uiimage"
           ],
           "reuseCount": 1,
           "documentedCategoryOrders": [
@@ -433,224 +449,60 @@
           ]
         },
         {
-          "candidateId": "candidate.interactivity.0cea7bcd84a2",
+          "candidateId": "candidate.interactivity.10003da1a26a",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "0cea7bcd84a245930eb16691e61f4e67ef9eb15bfad000ecab370ff438e7139d",
-          "propertyPaths": [
-            "InteractionOptions",
-            "Toolbar",
-            "Interactions",
-            "Visible",
-            "CurrentPoint",
-            "ContextMenu",
-            "Selected",
-            "SelectionHighlight"
-          ],
-          "propertyCapabilitySha256": [
-            "19e6a09d79bbda0b9fd4933f82cc1f2829559955ebcdf18d691bcb75036d4dd2",
-            "01a0ffa0a15e2e547b663bccc97839614530924897d585aa19deb8345d7371f3",
-            "3a190335f69332dd465cdc7fe3d9d378f22c5f6c6b1faf60161f1987fd4af14b",
-            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "2265fcde46f51d91b778430d99eb37c35b4a22fd3de2a2b57d47cf99c22c3dfc",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc",
-            "58cfe62c5e88fb8935e6baf560f6cd6bcd6473ae6d6a38d5e065509339dca18f",
-            "bb8615fbd7188b4fd5b05c774cc5c781e1bffead2541688345f8ff4e09a66d7f"
-          ],
-          "memberVariantIds": [
-            "polaraxes"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            10
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.2827bee60a93",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "2827bee60a93e31b370bd99b70740680169f90e02fc0e46eb2e0190a28ab1116",
+          "capabilitySha256": "10003da1a26afaae55069e32742d7d12b7f7b30068bd845a79339fa86c294388",
           "propertyPaths": [
             "Visible",
-            "Multiselect",
             "Enable",
             "Tooltip",
             "ContextMenu"
           ],
           "propertyCapabilitySha256": [
             "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
-            "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+            "7d4cd611d89703faf656b177d27348bf5c0fc9995ea482eefe3cfca98fa4b101",
             "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
-            "uilistbox"
+            "uilamp"
           ],
           "reuseCount": 1,
-          "documentedCategoryOrders": [
-            3
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.3454f326d786",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "3454f326d786be720fad6c3cbdffcf410fd6e1ddd449d56ae7a0783fd06ab3ee",
-          "propertyPaths": [
-            "Visible",
-            "Enable",
-            "Tooltip",
-            "ContextMenu",
-            "TooltipString"
-          ],
-          "propertyCapabilitySha256": [
-            "8e5b2ae8c3a77c1739263ef4c080870a07eab2f4e9000c8110577c9e58a59287",
-            "2dbcc27bfd0ea983215ef9a7b6ebca1df13aad5dbc269cdc949c833a98a631af",
-            "dc06f70ca86664bb0efc9025249c5d292d0d86db377e7d94636cd4704884a68b",
-            "935e315d24c5b02dac513dd50728b3cfa7876041d5953b1f5cdb9a38bc9d5524",
-            "4c52e92e388cb9956c835f70923f522196a49fa416d0e9149b0c0616a0f32f41"
-          ],
-          "memberVariantIds": [
-            "uipushtool",
-            "uitoggletool"
-          ],
-          "reuseCount": 2,
           "documentedCategoryOrders": [
             2
           ]
         },
         {
-          "candidateId": "candidate.interactivity.36af81c0f23c",
+          "candidateId": "candidate.interactivity.154cbac75635",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "36af81c0f23c856bd6376a9caa4c1a99a121f5a3923125067e4ff1d95c59f29c",
+          "capabilitySha256": "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae",
           "propertyPaths": [
-            "Visible",
-            "Enable",
-            "Tooltip",
             "ContextMenu"
           ],
           "propertyCapabilitySha256": [
-            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "5e1796215e4d611e974b798cda186287d8e1d4af710afa351bba15f433b63a9a",
-            "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
-            "uitable"
+            "uitreenode"
           ],
           "reuseCount": 1,
           "documentedCategoryOrders": [
-            3
+            2
           ]
         },
         {
-          "candidateId": "candidate.interactivity.3dfc65bf61ec",
+          "candidateId": "candidate.interactivity.1ab2e79dd3ee",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "3dfc65bf61ec066703690bdc08f65b7534021b59a4d174449473c1c3e0926244",
-          "propertyPaths": [
-            "Visible",
-            "ContextMenu"
-          ],
-          "propertyCapabilitySha256": [
-            "8e5b2ae8c3a77c1739263ef4c080870a07eab2f4e9000c8110577c9e58a59287",
-            "935e315d24c5b02dac513dd50728b3cfa7876041d5953b1f5cdb9a38bc9d5524"
-          ],
-          "memberVariantIds": [
-            "uitoolbar"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            1
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.4cda3394469e",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "4cda3394469e7f0fce258c07f606765f5362b3d9a3df196abf369b340ca8d1b8",
-          "propertyPaths": [
-            "InteractionOptions",
-            "Toolbar",
-            "Interactions",
-            "Visible",
-            "CurrentPoint",
-            "ContextMenu",
-            "Selected",
-            "SelectionHighlight"
-          ],
-          "propertyCapabilitySha256": [
-            "19e6a09d79bbda0b9fd4933f82cc1f2829559955ebcdf18d691bcb75036d4dd2",
-            "01a0ffa0a15e2e547b663bccc97839614530924897d585aa19deb8345d7371f3",
-            "b3687dc7585f7aef172c7d0ac9198856a30d09935114dc4d78d17478405d82d2",
-            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "2265fcde46f51d91b778430d99eb37c35b4a22fd3de2a2b57d47cf99c22c3dfc",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc",
-            "58cfe62c5e88fb8935e6baf560f6cd6bcd6473ae6d6a38d5e065509339dca18f",
-            "bb8615fbd7188b4fd5b05c774cc5c781e1bffead2541688345f8ff4e09a66d7f"
-          ],
-          "memberVariantIds": [
-            "geoaxes"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            11
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.56e02904d7dd",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "56e02904d7dd305a643405774e1917e806c683e17811b933907eb28fc03e747a",
-          "propertyPaths": [
-            "Toolbar",
-            "Interactions",
-            "Visible",
-            "CurrentPoint",
-            "ContextMenu",
-            "Selected",
-            "SelectionHighlight"
-          ],
-          "propertyCapabilitySha256": [
-            "01a0ffa0a15e2e547b663bccc97839614530924897d585aa19deb8345d7371f3",
-            "b3687dc7585f7aef172c7d0ac9198856a30d09935114dc4d78d17478405d82d2",
-            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "2265fcde46f51d91b778430d99eb37c35b4a22fd3de2a2b57d47cf99c22c3dfc",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc",
-            "58cfe62c5e88fb8935e6baf560f6cd6bcd6473ae6d6a38d5e065509339dca18f",
-            "bb8615fbd7188b4fd5b05c774cc5c781e1bffead2541688345f8ff4e09a66d7f"
-          ],
-          "memberVariantIds": [
-            "axes"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            11
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.687dfb229ee2",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "687dfb229ee25742291afcd3cb3e258a580e5cb066751e835a76dc63932740bc",
+          "capabilitySha256": "1ab2e79dd3ee24a372817292610f310f41c41898b1c53973a815a03315f4763e",
           "propertyPaths": [
             "Visible",
             "Editable",
@@ -663,7 +515,7 @@
             "e492628c06a7d3eac681c0305f0f42af2204e018d3e974a5cc7e490589cc5e95",
             "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
             "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
             "uidatepicker",
@@ -680,24 +532,57 @@
           ]
         },
         {
-          "candidateId": "candidate.interactivity.697316998a10",
+          "candidateId": "candidate.interactivity.1d40933911ec",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "697316998a1070b29e02aa2031bb4b98d2b950a798aa6bf3ac21b069cc0ec3b7",
+          "capabilitySha256": "1d40933911ec18a283c319facc9fc1ec9ef6f79a101eac70e953b7e64292dd6a",
+          "propertyPaths": [
+            "Toolbar",
+            "Interactions",
+            "Visible",
+            "CurrentPoint",
+            "ContextMenu",
+            "Selected",
+            "SelectionHighlight"
+          ],
+          "propertyCapabilitySha256": [
+            "01a0ffa0a15e2e547b663bccc97839614530924897d585aa19deb8345d7371f3",
+            "b3687dc7585f7aef172c7d0ac9198856a30d09935114dc4d78d17478405d82d2",
+            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "2265fcde46f51d91b778430d99eb37c35b4a22fd3de2a2b57d47cf99c22c3dfc",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae",
+            "58cfe62c5e88fb8935e6baf560f6cd6bcd6473ae6d6a38d5e065509339dca18f",
+            "bb8615fbd7188b4fd5b05c774cc5c781e1bffead2541688345f8ff4e09a66d7f"
+          ],
+          "memberVariantIds": [
+            "axes"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            11
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.2ccfd3b56d68",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "2ccfd3b56d68b48eff1f18416c3f81692ad4ecd56c1bd44a2f30f43505497c8b",
           "propertyPaths": [
             "Visible",
-            "Enable",
+            "Tooltip",
             "ContextMenu"
           ],
           "propertyCapabilitySha256": [
-            "8e5b2ae8c3a77c1739263ef4c080870a07eab2f4e9000c8110577c9e58a59287",
-            "2dbcc27bfd0ea983215ef9a7b6ebca1df13aad5dbc269cdc949c833a98a631af",
-            "935e315d24c5b02dac513dd50728b3cfa7876041d5953b1f5cdb9a38bc9d5524"
+            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
-            "uimenu"
+            "uihtml"
           ],
           "reuseCount": 1,
           "documentedCategoryOrders": [
@@ -705,12 +590,12 @@
           ]
         },
         {
-          "candidateId": "candidate.interactivity.70304e8a7cc7",
+          "candidateId": "candidate.interactivity.341f77c53323",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "70304e8a7cc7d4c14bf12ec6bbdfe451d4a36d14d8a45a2ef4608f5dd843b83b",
+          "capabilitySha256": "341f77c53323c7a3758dd2cd6d926686b8820c41221781cf884d4a8dc0a3d980",
           "propertyPaths": [
             "Visible",
             "Enable",
@@ -721,7 +606,7 @@
             "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
             "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
             "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
             "uibutton-push",
@@ -750,55 +635,28 @@
           ]
         },
         {
-          "candidateId": "candidate.interactivity.75ceaf80f79f",
+          "candidateId": "candidate.interactivity.3425e08dd6e1",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "75ceaf80f79f6b0b7ec7fa6a7ce1c8de6b4dbc40ab13e526b948643a27d6c6e4",
+          "capabilitySha256": "3425e08dd6e1d99925d7c2dc73e2038f56c95d453b37c363947a7b77fb7a16a1",
           "propertyPaths": [
+            "URL",
             "Visible",
-            "ContextMenu"
-          ],
-          "propertyCapabilitySha256": [
-            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-          ],
-          "memberVariantIds": [
-            "uipanel",
-            "uitabgroup"
-          ],
-          "reuseCount": 2,
-          "documentedCategoryOrders": [
-            2,
-            4
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.9c1fd4935e81",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "9c1fd4935e815df5d7d9589046f4bddbe985389113fe98d41c1e26df03af0e8c",
-          "propertyPaths": [
-            "Visible",
-            "Multiselect",
-            "Editable",
             "Enable",
             "Tooltip",
             "ContextMenu"
           ],
           "propertyCapabilitySha256": [
+            "836caed1da5adfde4c320c61801dd340c35c0f10af0531e7f916f3a436a42019",
             "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
-            "e492628c06a7d3eac681c0305f0f42af2204e018d3e974a5cc7e490589cc5e95",
             "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
             "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
-            "uitree"
+            "uihyperlink"
           ],
           "reuseCount": 1,
           "documentedCategoryOrders": [
@@ -806,95 +664,39 @@
           ]
         },
         {
-          "candidateId": "candidate.interactivity.a9b7f8afd50b",
+          "candidateId": "candidate.interactivity.3f57676f1e1e",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "a9b7f8afd50ba13f79799238303a0782103272ef69afdd82614d8b4583f179e5",
+          "capabilitySha256": "3f57676f1e1ea8f25ec192d8b086db88623b1c8b796a7c93f26061f3972212bb",
           "propertyPaths": [
             "Visible",
+            "Enable",
             "Tooltip",
             "ContextMenu"
           ],
           "propertyCapabilitySha256": [
             "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "5e1796215e4d611e974b798cda186287d8e1d4af710afa351bba15f433b63a9a",
             "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
-            "uihtml"
+            "uitable"
           ],
           "reuseCount": 1,
           "documentedCategoryOrders": [
-            2
+            3
           ]
         },
         {
-          "candidateId": "candidate.interactivity.bbcac8576117",
+          "candidateId": "candidate.interactivity.490f04d27ac4",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "bbcac8576117c546d54e727487bcca159665fcb3b4ba1ba1964ea243b7ce1df4",
-          "propertyPaths": [
-            "Visible",
-            "CurrentAxes",
-            "CurrentObject",
-            "CurrentPoint",
-            "CurrentCharacter",
-            "SelectionType",
-            "Scrollable",
-            "ContextMenu"
-          ],
-          "propertyCapabilitySha256": [
-            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "62e163fa8344a37436d87a1939dc20e102289e3872bf37cc4cb6631253888e34",
-            "abd62793faf92ed6c3caeedf74d12bec07f2ca5583462527155bab9a8ff54a98",
-            "78450c860c1d685b23b04aea44f0db02af31b4c059021ecb64654c76c15c9cae",
-            "88c22162bd2105e277353c986b92872974009643251c2ea8af43d9c579f193d0",
-            "9d8d5aec804b2ca46c40dacb5e9f5e644f9a56d23d07cba9d5534a7632a8b046",
-            "389f11d5152bf41c84d2e3f8978c7c1ab7db95b4d3f2b93d89d8e3fe66509b39",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-          ],
-          "memberVariantIds": [
-            "uifigure"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            5
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.bcdf2a1c3b7e",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "bcdf2a1c3b7ec9f1934fcb7508ce19192c5041b4b7f5a73d1d9d02d8e1de7aba",
-          "propertyPaths": [
-            "Tooltip",
-            "ContextMenu"
-          ],
-          "propertyCapabilitySha256": [
-            "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-          ],
-          "memberVariantIds": [
-            "uitab"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            2
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.dc6bf65574cf",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "dc6bf65574cf69eef1799051d5c5cb1b6c2162a6353547c509a2046da592b399",
+          "capabilitySha256": "490f04d27ac4bc3ab712d204b251b40439d149fd506dabfcc390a0e4754805da",
           "propertyPaths": [
             "Visible",
             "SelectedObject",
@@ -903,7 +705,7 @@
           "propertyCapabilitySha256": [
             "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
             "5d4c7c32760f68fabc7e436436726db76b2689ce6c4c53d91739d29aff9be973",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
             "uibuttongroup"
@@ -914,26 +716,45 @@
           ]
         },
         {
-          "candidateId": "candidate.interactivity.e9103e2a3715",
+          "candidateId": "candidate.interactivity.57ae65151a94",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "e9103e2a371574b4d1e82c8b8db2c937823075bc46921f0c348b49c0238457db",
+          "capabilitySha256": "57ae65151a942944d029faebcb31c170985eea21c8af506ed30e5803ca20036b",
           "propertyPaths": [
             "Visible",
-            "Enable",
+            "ContextMenu"
+          ],
+          "propertyCapabilitySha256": [
+            "8e5b2ae8c3a77c1739263ef4c080870a07eab2f4e9000c8110577c9e58a59287",
+            "49b055c155d75cd70e4602a4e9e0abd76f63769456aff5c088bab4f3ba1050bc"
+          ],
+          "memberVariantIds": [
+            "uitoolbar"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            1
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.68921af21bbe",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "68921af21bbebd3db46761e2410448d344328aef1e8bfa5dc69d3c3fe21ff02d",
+          "propertyPaths": [
             "Tooltip",
             "ContextMenu"
           ],
           "propertyCapabilitySha256": [
-            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "7d4cd611d89703faf656b177d27348bf5c0fc9995ea482eefe3cfca98fa4b101",
             "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
           ],
           "memberVariantIds": [
-            "uilamp"
+            "uitab"
           ],
           "reuseCount": 1,
           "documentedCategoryOrders": [
@@ -941,43 +762,12 @@
           ]
         },
         {
-          "candidateId": "candidate.interactivity.f748e164255a",
+          "candidateId": "candidate.interactivity.6e28ff3b46a5",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
           "sharingScope": "crossCutting",
           "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "f748e164255a632fe1e109f0329f8d60cfb93a51b5eaa71879d2ff9820d85ce2",
-          "propertyPaths": [
-            "URL",
-            "AltText",
-            "Visible",
-            "Enable",
-            "Tooltip",
-            "ContextMenu"
-          ],
-          "propertyCapabilitySha256": [
-            "836caed1da5adfde4c320c61801dd340c35c0f10af0531e7f916f3a436a42019",
-            "f89d5f5273a888b23c19a02d4a4893d90b0b7de30e6ef9388ac1943c87178212",
-            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-            "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-            "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc"
-          ],
-          "memberVariantIds": [
-            "uiimage"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            3
-          ]
-        },
-        {
-          "candidateId": "candidate.interactivity.fac9bb7a3a39",
-          "categoryId": "interactivity",
-          "categoryDisplayName": "Interactivity",
-          "sharingScope": "crossCutting",
-          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-          "capabilitySha256": "fac9bb7a3a39417a94f4ac256d1fad986385260193e75936e65ac66d3cc77a69",
+          "capabilitySha256": "6e28ff3b46a5a982de5bd09a4d6d8f1f53b3b3d6be44bac0f9c4e9d78acba707",
           "propertyPaths": [
             "InteractionOptions",
             "Toolbar",
@@ -994,7 +784,7 @@
             "b3687dc7585f7aef172c7d0ac9198856a30d09935114dc4d78d17478405d82d2",
             "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
             "7eccc23c5bf4839a88067e6c80ce72532ef8fdfdb5bc319d15e365c54ec6c43c",
-            "01e42b0a874bcd90432b6e48dfa956a72f8c6a9b59a0d5dcd49df4e7fb265ecc",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae",
             "58cfe62c5e88fb8935e6baf560f6cd6bcd6473ae6d6a38d5e065509339dca18f",
             "bb8615fbd7188b4fd5b05c774cc5c781e1bffead2541688345f8ff4e09a66d7f"
           ],
@@ -1005,6 +795,216 @@
           "documentedCategoryOrders": [
             11
           ]
+        },
+        {
+          "candidateId": "candidate.interactivity.7aff49145b19",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "7aff49145b19f48da9fa3338adfc9da02cd9b14790e694b962d2fc4754aa9839",
+          "propertyPaths": [
+            "Visible",
+            "Multiselect",
+            "Enable",
+            "Tooltip",
+            "ContextMenu"
+          ],
+          "propertyCapabilitySha256": [
+            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
+            "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+            "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
+          ],
+          "memberVariantIds": [
+            "uilistbox"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            3
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.8cb1d1d5a8f3",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "8cb1d1d5a8f3074453b2bf0aa2c8bc2bd114771d5292953bb2b722722af1ff3c",
+          "propertyPaths": [
+            "InteractionOptions",
+            "Toolbar",
+            "Interactions",
+            "Visible",
+            "CurrentPoint",
+            "ContextMenu",
+            "Selected",
+            "SelectionHighlight"
+          ],
+          "propertyCapabilitySha256": [
+            "19e6a09d79bbda0b9fd4933f82cc1f2829559955ebcdf18d691bcb75036d4dd2",
+            "01a0ffa0a15e2e547b663bccc97839614530924897d585aa19deb8345d7371f3",
+            "b3687dc7585f7aef172c7d0ac9198856a30d09935114dc4d78d17478405d82d2",
+            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "2265fcde46f51d91b778430d99eb37c35b4a22fd3de2a2b57d47cf99c22c3dfc",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae",
+            "58cfe62c5e88fb8935e6baf560f6cd6bcd6473ae6d6a38d5e065509339dca18f",
+            "bb8615fbd7188b4fd5b05c774cc5c781e1bffead2541688345f8ff4e09a66d7f"
+          ],
+          "memberVariantIds": [
+            "geoaxes"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            11
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.98156a67d0ff",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "98156a67d0ffe75aea4acddd72d6d076191b540d33296ffcd8a795ad4d08e59b",
+          "propertyPaths": [
+            "Visible",
+            "Enable",
+            "Tooltip",
+            "ContextMenu",
+            "TooltipString"
+          ],
+          "propertyCapabilitySha256": [
+            "8e5b2ae8c3a77c1739263ef4c080870a07eab2f4e9000c8110577c9e58a59287",
+            "2dbcc27bfd0ea983215ef9a7b6ebca1df13aad5dbc269cdc949c833a98a631af",
+            "dc06f70ca86664bb0efc9025249c5d292d0d86db377e7d94636cd4704884a68b",
+            "49b055c155d75cd70e4602a4e9e0abd76f63769456aff5c088bab4f3ba1050bc",
+            "4c52e92e388cb9956c835f70923f522196a49fa416d0e9149b0c0616a0f32f41"
+          ],
+          "memberVariantIds": [
+            "uipushtool",
+            "uitoggletool"
+          ],
+          "reuseCount": 2,
+          "documentedCategoryOrders": [
+            2
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.d4f9b94f60d5",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "d4f9b94f60d50b0898a99f724833373ff435e9ed4ab12cb0309024121f1ca91b",
+          "propertyPaths": [
+            "Visible",
+            "Enable",
+            "ContextMenu"
+          ],
+          "propertyCapabilitySha256": [
+            "8e5b2ae8c3a77c1739263ef4c080870a07eab2f4e9000c8110577c9e58a59287",
+            "2dbcc27bfd0ea983215ef9a7b6ebca1df13aad5dbc269cdc949c833a98a631af",
+            "49b055c155d75cd70e4602a4e9e0abd76f63769456aff5c088bab4f3ba1050bc"
+          ],
+          "memberVariantIds": [
+            "uimenu"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            2
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.e14655703842",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "e146557038429c037c95661e40ed05e0b6ae751160044c8f14cc153756aa90d2",
+          "propertyPaths": [
+            "Visible",
+            "Multiselect",
+            "Editable",
+            "Enable",
+            "Tooltip",
+            "ContextMenu"
+          ],
+          "propertyCapabilitySha256": [
+            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "a4d192c5fa70b35deef49a165d733411a7b357bc650d3700735275c10171d383",
+            "e492628c06a7d3eac681c0305f0f42af2204e018d3e974a5cc7e490589cc5e95",
+            "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
+            "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
+          ],
+          "memberVariantIds": [
+            "uitree"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            3
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.e21d679c65a5",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "e21d679c65a52c4780c7cc68add3916f28b69e4c2eb530665578606ff9d08ca6",
+          "propertyPaths": [
+            "Visible",
+            "ContextMenu"
+          ],
+          "propertyCapabilitySha256": [
+            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
+          ],
+          "memberVariantIds": [
+            "uipanel",
+            "uitabgroup"
+          ],
+          "reuseCount": 2,
+          "documentedCategoryOrders": [
+            2,
+            4
+          ]
+        },
+        {
+          "candidateId": "candidate.interactivity.e533fc4e226c",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "e533fc4e226c77d5dedf67eacb891fbf765241730a5c26eb9a5c4c5d22c0c69d",
+          "propertyPaths": [
+            "InteractionOptions",
+            "Toolbar",
+            "Interactions",
+            "Visible",
+            "CurrentPoint",
+            "ContextMenu",
+            "Selected",
+            "SelectionHighlight"
+          ],
+          "propertyCapabilitySha256": [
+            "19e6a09d79bbda0b9fd4933f82cc1f2829559955ebcdf18d691bcb75036d4dd2",
+            "01a0ffa0a15e2e547b663bccc97839614530924897d585aa19deb8345d7371f3",
+            "3a190335f69332dd465cdc7fe3d9d378f22c5f6c6b1faf60161f1987fd4af14b",
+            "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
+            "2265fcde46f51d91b778430d99eb37c35b4a22fd3de2a2b57d47cf99c22c3dfc",
+            "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae",
+            "58cfe62c5e88fb8935e6baf560f6cd6bcd6473ae6d6a38d5e065509339dca18f",
+            "bb8615fbd7188b4fd5b05c774cc5c781e1bffead2541688345f8ff4e09a66d7f"
+          ],
+          "memberVariantIds": [
+            "polaraxes"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            10
+          ]
         }
       ],
       "pathCoverage": [
@@ -1012,228 +1012,228 @@
           "path": "AltText",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.interactivity.f748e164255a"
+            "candidate.interactivity.0cce3314b67b"
           ]
         },
         {
           "path": "ContextMenu",
           "presentInSurfaceCount": 22,
           "presentInCandidateIds": [
-            "candidate.interactivity.01e42b0a874b",
-            "candidate.interactivity.044758088fdd",
-            "candidate.interactivity.0b5cfef7b4db",
-            "candidate.interactivity.0cea7bcd84a2",
-            "candidate.interactivity.2827bee60a93",
-            "candidate.interactivity.3454f326d786",
-            "candidate.interactivity.36af81c0f23c",
-            "candidate.interactivity.3dfc65bf61ec",
-            "candidate.interactivity.4cda3394469e",
-            "candidate.interactivity.56e02904d7dd",
-            "candidate.interactivity.687dfb229ee2",
-            "candidate.interactivity.697316998a10",
-            "candidate.interactivity.70304e8a7cc7",
-            "candidate.interactivity.75ceaf80f79f",
-            "candidate.interactivity.9c1fd4935e81",
-            "candidate.interactivity.a9b7f8afd50b",
-            "candidate.interactivity.bbcac8576117",
-            "candidate.interactivity.bcdf2a1c3b7e",
-            "candidate.interactivity.dc6bf65574cf",
-            "candidate.interactivity.e9103e2a3715",
-            "candidate.interactivity.f748e164255a",
-            "candidate.interactivity.fac9bb7a3a39"
+            "candidate.interactivity.006f7b894f5a",
+            "candidate.interactivity.0779736d8082",
+            "candidate.interactivity.0cce3314b67b",
+            "candidate.interactivity.10003da1a26a",
+            "candidate.interactivity.154cbac75635",
+            "candidate.interactivity.1ab2e79dd3ee",
+            "candidate.interactivity.1d40933911ec",
+            "candidate.interactivity.2ccfd3b56d68",
+            "candidate.interactivity.341f77c53323",
+            "candidate.interactivity.3425e08dd6e1",
+            "candidate.interactivity.3f57676f1e1e",
+            "candidate.interactivity.490f04d27ac4",
+            "candidate.interactivity.57ae65151a94",
+            "candidate.interactivity.68921af21bbe",
+            "candidate.interactivity.6e28ff3b46a5",
+            "candidate.interactivity.7aff49145b19",
+            "candidate.interactivity.8cb1d1d5a8f3",
+            "candidate.interactivity.98156a67d0ff",
+            "candidate.interactivity.d4f9b94f60d5",
+            "candidate.interactivity.e14655703842",
+            "candidate.interactivity.e21d679c65a5",
+            "candidate.interactivity.e533fc4e226c"
           ]
         },
         {
           "path": "CurrentAxes",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.interactivity.bbcac8576117"
+            "candidate.interactivity.0779736d8082"
           ]
         },
         {
           "path": "CurrentCharacter",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.interactivity.bbcac8576117"
+            "candidate.interactivity.0779736d8082"
           ]
         },
         {
           "path": "CurrentObject",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.interactivity.bbcac8576117"
+            "candidate.interactivity.0779736d8082"
           ]
         },
         {
           "path": "CurrentPoint",
           "presentInSurfaceCount": 5,
           "presentInCandidateIds": [
-            "candidate.interactivity.0cea7bcd84a2",
-            "candidate.interactivity.4cda3394469e",
-            "candidate.interactivity.56e02904d7dd",
-            "candidate.interactivity.bbcac8576117",
-            "candidate.interactivity.fac9bb7a3a39"
+            "candidate.interactivity.0779736d8082",
+            "candidate.interactivity.1d40933911ec",
+            "candidate.interactivity.6e28ff3b46a5",
+            "candidate.interactivity.8cb1d1d5a8f3",
+            "candidate.interactivity.e533fc4e226c"
           ]
         },
         {
           "path": "Editable",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.interactivity.687dfb229ee2",
-            "candidate.interactivity.9c1fd4935e81"
+            "candidate.interactivity.1ab2e79dd3ee",
+            "candidate.interactivity.e14655703842"
           ]
         },
         {
           "path": "Enable",
           "presentInSurfaceCount": 10,
           "presentInCandidateIds": [
-            "candidate.interactivity.0b5cfef7b4db",
-            "candidate.interactivity.2827bee60a93",
-            "candidate.interactivity.3454f326d786",
-            "candidate.interactivity.36af81c0f23c",
-            "candidate.interactivity.687dfb229ee2",
-            "candidate.interactivity.697316998a10",
-            "candidate.interactivity.70304e8a7cc7",
-            "candidate.interactivity.9c1fd4935e81",
-            "candidate.interactivity.e9103e2a3715",
-            "candidate.interactivity.f748e164255a"
+            "candidate.interactivity.0cce3314b67b",
+            "candidate.interactivity.10003da1a26a",
+            "candidate.interactivity.1ab2e79dd3ee",
+            "candidate.interactivity.341f77c53323",
+            "candidate.interactivity.3425e08dd6e1",
+            "candidate.interactivity.3f57676f1e1e",
+            "candidate.interactivity.7aff49145b19",
+            "candidate.interactivity.98156a67d0ff",
+            "candidate.interactivity.d4f9b94f60d5",
+            "candidate.interactivity.e14655703842"
           ]
         },
         {
           "path": "InteractionOptions",
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
-            "candidate.interactivity.0cea7bcd84a2",
-            "candidate.interactivity.4cda3394469e",
-            "candidate.interactivity.fac9bb7a3a39"
+            "candidate.interactivity.6e28ff3b46a5",
+            "candidate.interactivity.8cb1d1d5a8f3",
+            "candidate.interactivity.e533fc4e226c"
           ]
         },
         {
           "path": "Interactions",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.interactivity.0cea7bcd84a2",
-            "candidate.interactivity.4cda3394469e",
-            "candidate.interactivity.56e02904d7dd",
-            "candidate.interactivity.fac9bb7a3a39"
+            "candidate.interactivity.1d40933911ec",
+            "candidate.interactivity.6e28ff3b46a5",
+            "candidate.interactivity.8cb1d1d5a8f3",
+            "candidate.interactivity.e533fc4e226c"
           ]
         },
         {
           "path": "Multiselect",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.interactivity.2827bee60a93",
-            "candidate.interactivity.9c1fd4935e81"
+            "candidate.interactivity.7aff49145b19",
+            "candidate.interactivity.e14655703842"
           ]
         },
         {
           "path": "Scrollable",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.interactivity.044758088fdd",
-            "candidate.interactivity.bbcac8576117"
+            "candidate.interactivity.006f7b894f5a",
+            "candidate.interactivity.0779736d8082"
           ]
         },
         {
           "path": "Selected",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.interactivity.0cea7bcd84a2",
-            "candidate.interactivity.4cda3394469e",
-            "candidate.interactivity.56e02904d7dd",
-            "candidate.interactivity.fac9bb7a3a39"
+            "candidate.interactivity.1d40933911ec",
+            "candidate.interactivity.6e28ff3b46a5",
+            "candidate.interactivity.8cb1d1d5a8f3",
+            "candidate.interactivity.e533fc4e226c"
           ]
         },
         {
           "path": "SelectedObject",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.interactivity.dc6bf65574cf"
+            "candidate.interactivity.490f04d27ac4"
           ]
         },
         {
           "path": "SelectionHighlight",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.interactivity.0cea7bcd84a2",
-            "candidate.interactivity.4cda3394469e",
-            "candidate.interactivity.56e02904d7dd",
-            "candidate.interactivity.fac9bb7a3a39"
+            "candidate.interactivity.1d40933911ec",
+            "candidate.interactivity.6e28ff3b46a5",
+            "candidate.interactivity.8cb1d1d5a8f3",
+            "candidate.interactivity.e533fc4e226c"
           ]
         },
         {
           "path": "SelectionType",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.interactivity.bbcac8576117"
+            "candidate.interactivity.0779736d8082"
           ]
         },
         {
           "path": "Toolbar",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.interactivity.0cea7bcd84a2",
-            "candidate.interactivity.4cda3394469e",
-            "candidate.interactivity.56e02904d7dd",
-            "candidate.interactivity.fac9bb7a3a39"
+            "candidate.interactivity.1d40933911ec",
+            "candidate.interactivity.6e28ff3b46a5",
+            "candidate.interactivity.8cb1d1d5a8f3",
+            "candidate.interactivity.e533fc4e226c"
           ]
         },
         {
           "path": "Tooltip",
           "presentInSurfaceCount": 11,
           "presentInCandidateIds": [
-            "candidate.interactivity.0b5cfef7b4db",
-            "candidate.interactivity.2827bee60a93",
-            "candidate.interactivity.3454f326d786",
-            "candidate.interactivity.36af81c0f23c",
-            "candidate.interactivity.687dfb229ee2",
-            "candidate.interactivity.70304e8a7cc7",
-            "candidate.interactivity.9c1fd4935e81",
-            "candidate.interactivity.a9b7f8afd50b",
-            "candidate.interactivity.bcdf2a1c3b7e",
-            "candidate.interactivity.e9103e2a3715",
-            "candidate.interactivity.f748e164255a"
+            "candidate.interactivity.0cce3314b67b",
+            "candidate.interactivity.10003da1a26a",
+            "candidate.interactivity.1ab2e79dd3ee",
+            "candidate.interactivity.2ccfd3b56d68",
+            "candidate.interactivity.341f77c53323",
+            "candidate.interactivity.3425e08dd6e1",
+            "candidate.interactivity.3f57676f1e1e",
+            "candidate.interactivity.68921af21bbe",
+            "candidate.interactivity.7aff49145b19",
+            "candidate.interactivity.98156a67d0ff",
+            "candidate.interactivity.e14655703842"
           ]
         },
         {
           "path": "TooltipString",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.interactivity.3454f326d786"
+            "candidate.interactivity.98156a67d0ff"
           ]
         },
         {
           "path": "URL",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.interactivity.0b5cfef7b4db",
-            "candidate.interactivity.f748e164255a"
+            "candidate.interactivity.0cce3314b67b",
+            "candidate.interactivity.3425e08dd6e1"
           ]
         },
         {
           "path": "Visible",
           "presentInSurfaceCount": 20,
           "presentInCandidateIds": [
-            "candidate.interactivity.044758088fdd",
-            "candidate.interactivity.0b5cfef7b4db",
-            "candidate.interactivity.0cea7bcd84a2",
-            "candidate.interactivity.2827bee60a93",
-            "candidate.interactivity.3454f326d786",
-            "candidate.interactivity.36af81c0f23c",
-            "candidate.interactivity.3dfc65bf61ec",
-            "candidate.interactivity.4cda3394469e",
-            "candidate.interactivity.56e02904d7dd",
-            "candidate.interactivity.687dfb229ee2",
-            "candidate.interactivity.697316998a10",
-            "candidate.interactivity.70304e8a7cc7",
-            "candidate.interactivity.75ceaf80f79f",
-            "candidate.interactivity.9c1fd4935e81",
-            "candidate.interactivity.a9b7f8afd50b",
-            "candidate.interactivity.bbcac8576117",
-            "candidate.interactivity.dc6bf65574cf",
-            "candidate.interactivity.e9103e2a3715",
-            "candidate.interactivity.f748e164255a",
-            "candidate.interactivity.fac9bb7a3a39"
+            "candidate.interactivity.006f7b894f5a",
+            "candidate.interactivity.0779736d8082",
+            "candidate.interactivity.0cce3314b67b",
+            "candidate.interactivity.10003da1a26a",
+            "candidate.interactivity.1ab2e79dd3ee",
+            "candidate.interactivity.1d40933911ec",
+            "candidate.interactivity.2ccfd3b56d68",
+            "candidate.interactivity.341f77c53323",
+            "candidate.interactivity.3425e08dd6e1",
+            "candidate.interactivity.3f57676f1e1e",
+            "candidate.interactivity.490f04d27ac4",
+            "candidate.interactivity.57ae65151a94",
+            "candidate.interactivity.6e28ff3b46a5",
+            "candidate.interactivity.7aff49145b19",
+            "candidate.interactivity.8cb1d1d5a8f3",
+            "candidate.interactivity.98156a67d0ff",
+            "candidate.interactivity.d4f9b94f60d5",
+            "candidate.interactivity.e14655703842",
+            "candidate.interactivity.e21d679c65a5",
+            "candidate.interactivity.e533fc4e226c"
           ]
         }
       ],
@@ -4164,12 +4164,12 @@
           ]
         },
         {
-          "candidateId": "candidate.knob.38906b3f170d",
+          "candidateId": "candidate.knob.b16cfb853bde",
           "categoryId": "knob",
           "categoryDisplayName": "Knob",
           "sharingScope": "familyScoped",
           "scopeRationale": "Knob-style and scale settings.",
-          "capabilitySha256": "38906b3f170dd83b23a53d3335ecbb1854e870bd6a7f3fb5754c423ee2eb06cd",
+          "capabilitySha256": "b16cfb853bde5036631932d56db43ae40521491565ddb960cc6b46840d4a2fa6",
           "propertyPaths": [
             "Value",
             "Items",
@@ -4177,7 +4177,7 @@
             "ValueIndex"
           ],
           "propertyCapabilitySha256": [
-            "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
+            "1ccbfabaf427eb51474f16a92cb40b3f7e260fa166110d794e94c6dbecce5fbb",
             "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
             "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
             "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb"
@@ -4196,14 +4196,14 @@
           "path": "Items",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.knob.38906b3f170d"
+            "candidate.knob.b16cfb853bde"
           ]
         },
         {
           "path": "ItemsData",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.knob.38906b3f170d"
+            "candidate.knob.b16cfb853bde"
           ]
         },
         {
@@ -4218,14 +4218,14 @@
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
             "candidate.knob.1b94ec3e8599",
-            "candidate.knob.38906b3f170d"
+            "candidate.knob.b16cfb853bde"
           ]
         },
         {
           "path": "ValueIndex",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.knob.38906b3f170d"
+            "candidate.knob.b16cfb853bde"
           ]
         }
       ],
@@ -4749,113 +4749,18 @@
       ],
       "surfaces": [
         {
-          "candidateId": "candidate.parentchild.3c4bfb19e050",
+          "candidateId": "candidate.parentchild.1614338cd0ba",
           "categoryId": "parentchild",
           "categoryDisplayName": "Parent/Child",
           "sharingScope": "familyScoped",
           "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
-          "capabilitySha256": "3c4bfb19e050cabeed798f92c5d9b57d9b8651f635f3fac247e9a66a10a2a2cd",
-          "propertyPaths": [
-            "Parent",
-            "Children",
-            "HandleVisibility"
-          ],
-          "propertyCapabilitySha256": [
-            "565e8ff026237689ec391d89a99303c20af78d986de64dbee22a8e86fab40bbc",
-            "d8384d88e388b757b47fe27cf70ff71e0e8346f4f3dced51b059d84733d4b9ca",
-            "cf01bf47fa2aa02c13d6faf62eb71bb42e67d534f61de5d4dd995bb0ea24c676"
-          ],
-          "memberVariantIds": [
-            "uicontextmenu",
-            "uimenu",
-            "uitoolbar"
-          ],
-          "reuseCount": 3,
-          "documentedCategoryOrders": [
-            3,
-            4,
-            5
-          ]
-        },
-        {
-          "candidateId": "candidate.parentchild.81d1391e9656",
-          "categoryId": "parentchild",
-          "categoryDisplayName": "Parent/Child",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
-          "capabilitySha256": "81d1391e965680a99cd55fd0f4412dd14a3c58a75c5c48b92408e6086f08a962",
+          "capabilitySha256": "1614338cd0ba5847a88e4cce0e60a54160eca14bc3f1ef5580f840628b4f7203",
           "propertyPaths": [
             "Parent",
             "HandleVisibility"
           ],
           "propertyCapabilitySha256": [
-            "565e8ff026237689ec391d89a99303c20af78d986de64dbee22a8e86fab40bbc",
-            "cf01bf47fa2aa02c13d6faf62eb71bb42e67d534f61de5d4dd995bb0ea24c676"
-          ],
-          "memberVariantIds": [
-            "uipushtool",
-            "uitoggletool"
-          ],
-          "reuseCount": 2,
-          "documentedCategoryOrders": [
-            5
-          ]
-        },
-        {
-          "candidateId": "candidate.parentchild.8f2d4fc6440c",
-          "categoryId": "parentchild",
-          "categoryDisplayName": "Parent/Child",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
-          "capabilitySha256": "8f2d4fc6440c42aefca64523e8ac9020fb2e2263f35bda3f42bfde9e40eb2d05",
-          "propertyPaths": [
-            "Parent",
-            "Children",
-            "HandleVisibility"
-          ],
-          "propertyCapabilitySha256": [
-            "c7712c1cd49b0cc9b1c36621bc16404d87a7baf5c6276c5bc961444c80a46d1d",
-            "a99c92aa638861ca3c11c9d050eb0de701f88d079f51a0387242892b0178d5ef",
-            "0d557ca8a3b9f9c1db3709b975c33d59022364f60f8356381226251fb25def83"
-          ],
-          "memberVariantIds": [
-            "axes",
-            "geoaxes",
-            "polaraxes",
-            "uiaxes",
-            "uibuttongroup",
-            "uigridlayout",
-            "uipanel",
-            "uitab",
-            "uitabgroup",
-            "uitable",
-            "uitree",
-            "uitree-checkbox",
-            "uitreenode"
-          ],
-          "reuseCount": 13,
-          "documentedCategoryOrders": [
-            5,
-            6,
-            7,
-            8,
-            13,
-            14
-          ]
-        },
-        {
-          "candidateId": "candidate.parentchild.f2a7e6713fe3",
-          "categoryId": "parentchild",
-          "categoryDisplayName": "Parent/Child",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
-          "capabilitySha256": "f2a7e6713fe3f4dddbb4c6ccd33ab6eba6fd774ef5eaa8d23efcf2013ad5d9c3",
-          "propertyPaths": [
-            "Parent",
-            "HandleVisibility"
-          ],
-          "propertyCapabilitySha256": [
-            "c7712c1cd49b0cc9b1c36621bc16404d87a7baf5c6276c5bc961444c80a46d1d",
+            "34eac3878409bd42bd8a9933a78c45798424176f01c6af205a1d48b4d0a70e41",
             "0d557ca8a3b9f9c1db3709b975c33d59022364f60f8356381226251fb25def83"
           ],
           "memberVariantIds": [
@@ -4895,6 +4800,101 @@
             7,
             8
           ]
+        },
+        {
+          "candidateId": "candidate.parentchild.824df8047d11",
+          "categoryId": "parentchild",
+          "categoryDisplayName": "Parent/Child",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
+          "capabilitySha256": "824df8047d11352488451178c3413a38a330a6e7e3d868a525def60a83ace4b0",
+          "propertyPaths": [
+            "Parent",
+            "HandleVisibility"
+          ],
+          "propertyCapabilitySha256": [
+            "1262585a57c9974cbacbcb9fe3b7d8b80b1b3f80f3304a47bbd65d658a669879",
+            "cf01bf47fa2aa02c13d6faf62eb71bb42e67d534f61de5d4dd995bb0ea24c676"
+          ],
+          "memberVariantIds": [
+            "uipushtool",
+            "uitoggletool"
+          ],
+          "reuseCount": 2,
+          "documentedCategoryOrders": [
+            5
+          ]
+        },
+        {
+          "candidateId": "candidate.parentchild.a55d498d6448",
+          "categoryId": "parentchild",
+          "categoryDisplayName": "Parent/Child",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
+          "capabilitySha256": "a55d498d64480f3e5419fb2b6ca43301bbe4a21925cd0e514b2915ee21b1b565",
+          "propertyPaths": [
+            "Parent",
+            "Children",
+            "HandleVisibility"
+          ],
+          "propertyCapabilitySha256": [
+            "1262585a57c9974cbacbcb9fe3b7d8b80b1b3f80f3304a47bbd65d658a669879",
+            "d8384d88e388b757b47fe27cf70ff71e0e8346f4f3dced51b059d84733d4b9ca",
+            "cf01bf47fa2aa02c13d6faf62eb71bb42e67d534f61de5d4dd995bb0ea24c676"
+          ],
+          "memberVariantIds": [
+            "uicontextmenu",
+            "uimenu",
+            "uitoolbar"
+          ],
+          "reuseCount": 3,
+          "documentedCategoryOrders": [
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "candidateId": "candidate.parentchild.b0afde452a3c",
+          "categoryId": "parentchild",
+          "categoryDisplayName": "Parent/Child",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
+          "capabilitySha256": "b0afde452a3c4e50cf90c317f7829b622666951f448f9b94cfd54a7a81b02ed0",
+          "propertyPaths": [
+            "Parent",
+            "Children",
+            "HandleVisibility"
+          ],
+          "propertyCapabilitySha256": [
+            "34eac3878409bd42bd8a9933a78c45798424176f01c6af205a1d48b4d0a70e41",
+            "a99c92aa638861ca3c11c9d050eb0de701f88d079f51a0387242892b0178d5ef",
+            "0d557ca8a3b9f9c1db3709b975c33d59022364f60f8356381226251fb25def83"
+          ],
+          "memberVariantIds": [
+            "axes",
+            "geoaxes",
+            "polaraxes",
+            "uiaxes",
+            "uibuttongroup",
+            "uigridlayout",
+            "uipanel",
+            "uitab",
+            "uitabgroup",
+            "uitable",
+            "uitree",
+            "uitree-checkbox",
+            "uitreenode"
+          ],
+          "reuseCount": 13,
+          "documentedCategoryOrders": [
+            5,
+            6,
+            7,
+            8,
+            13,
+            14
+          ]
         }
       ],
       "pathCoverage": [
@@ -4902,28 +4902,28 @@
           "path": "Children",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.parentchild.3c4bfb19e050",
-            "candidate.parentchild.8f2d4fc6440c"
+            "candidate.parentchild.a55d498d6448",
+            "candidate.parentchild.b0afde452a3c"
           ]
         },
         {
           "path": "HandleVisibility",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.parentchild.3c4bfb19e050",
-            "candidate.parentchild.81d1391e9656",
-            "candidate.parentchild.8f2d4fc6440c",
-            "candidate.parentchild.f2a7e6713fe3"
+            "candidate.parentchild.1614338cd0ba",
+            "candidate.parentchild.824df8047d11",
+            "candidate.parentchild.a55d498d6448",
+            "candidate.parentchild.b0afde452a3c"
           ]
         },
         {
           "path": "Parent",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.parentchild.3c4bfb19e050",
-            "candidate.parentchild.81d1391e9656",
-            "candidate.parentchild.8f2d4fc6440c",
-            "candidate.parentchild.f2a7e6713fe3"
+            "candidate.parentchild.1614338cd0ba",
+            "candidate.parentchild.824df8047d11",
+            "candidate.parentchild.a55d498d6448",
+            "candidate.parentchild.b0afde452a3c"
           ]
         }
       ],
@@ -6145,12 +6145,12 @@
       ],
       "surfaces": [
         {
-          "candidateId": "candidate.switch.308c05378d86",
+          "candidateId": "candidate.switch.d0467d05aa98",
           "categoryId": "switch",
           "categoryDisplayName": "Switch",
           "sharingScope": "familyScoped",
           "scopeRationale": "Switch-style settings.",
-          "capabilitySha256": "308c05378d8631443755370f4425f3efe6da803f869611cb74a14fb404ef405f",
+          "capabilitySha256": "d0467d05aa980ab36b7fee882c4586f42369fe85d0c0ddb51f35f68f163ad11d",
           "propertyPaths": [
             "Value",
             "Items",
@@ -6159,37 +6159,8 @@
             "Orientation"
           ],
           "propertyCapabilitySha256": [
-            "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
-            "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
-            "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
-            "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
-            "3c631321d885eda979ac4c655313756ef7f3b305a0b80f04435e4b92a88c98fa"
-          ],
-          "memberVariantIds": [
-            "uiswitch-slider"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            1
-          ]
-        },
-        {
-          "candidateId": "candidate.switch.e4feb5a034e7",
-          "categoryId": "switch",
-          "categoryDisplayName": "Switch",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Switch-style settings.",
-          "capabilitySha256": "e4feb5a034e7415c54d00b8a90535468191c150479ad4faf1e7f44e2438f9fa6",
-          "propertyPaths": [
-            "Value",
-            "Items",
-            "ItemsData",
-            "ValueIndex",
-            "Orientation"
-          ],
-          "propertyCapabilitySha256": [
-            "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
-            "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
+            "1ccbfabaf427eb51474f16a92cb40b3f7e260fa166110d794e94c6dbecce5fbb",
+            "61a48ed368999826c2e45597f1b647e8cbca210a88f12412e884a2d1afcef6a6",
             "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
             "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
             "683c12e648b12bb238aeece0fcb5bf8f8401022fee168f2653b81b5ada390553"
@@ -6202,6 +6173,35 @@
           "documentedCategoryOrders": [
             1
           ]
+        },
+        {
+          "candidateId": "candidate.switch.fb839a553c82",
+          "categoryId": "switch",
+          "categoryDisplayName": "Switch",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Switch-style settings.",
+          "capabilitySha256": "fb839a553c8213eb5278e9e7e5f671bbb6c83adbc8327a6ed242da94379680e3",
+          "propertyPaths": [
+            "Value",
+            "Items",
+            "ItemsData",
+            "ValueIndex",
+            "Orientation"
+          ],
+          "propertyCapabilitySha256": [
+            "1ccbfabaf427eb51474f16a92cb40b3f7e260fa166110d794e94c6dbecce5fbb",
+            "61a48ed368999826c2e45597f1b647e8cbca210a88f12412e884a2d1afcef6a6",
+            "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
+            "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
+            "3c631321d885eda979ac4c655313756ef7f3b305a0b80f04435e4b92a88c98fa"
+          ],
+          "memberVariantIds": [
+            "uiswitch-slider"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            1
+          ]
         }
       ],
       "pathCoverage": [
@@ -6209,40 +6209,40 @@
           "path": "Items",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.switch.308c05378d86",
-            "candidate.switch.e4feb5a034e7"
+            "candidate.switch.d0467d05aa98",
+            "candidate.switch.fb839a553c82"
           ]
         },
         {
           "path": "ItemsData",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.switch.308c05378d86",
-            "candidate.switch.e4feb5a034e7"
+            "candidate.switch.d0467d05aa98",
+            "candidate.switch.fb839a553c82"
           ]
         },
         {
           "path": "Orientation",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.switch.308c05378d86",
-            "candidate.switch.e4feb5a034e7"
+            "candidate.switch.d0467d05aa98",
+            "candidate.switch.fb839a553c82"
           ]
         },
         {
           "path": "Value",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.switch.308c05378d86",
-            "candidate.switch.e4feb5a034e7"
+            "candidate.switch.d0467d05aa98",
+            "candidate.switch.fb839a553c82"
           ]
         },
         {
           "path": "ValueIndex",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.switch.308c05378d86",
-            "candidate.switch.e4feb5a034e7"
+            "candidate.switch.d0467d05aa98",
+            "candidate.switch.fb839a553c82"
           ]
         }
       ],
@@ -7649,12 +7649,38 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
         "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "extendedCandidateId": "candidate.interactivity.68921af21bbe",
+      "extendedVariantIds": [
+        "uitab"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Tooltip"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Tooltip",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
+      "baseVariantIds": [
+        "uitreenode"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.e21d679c65a5",
       "extendedVariantIds": [
         "uipanel",
         "uitabgroup"
@@ -7676,116 +7702,44 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.1ab2e79dd3ee",
       "baseVariantIds": [
-        "uitreenode"
+        "uidatepicker",
+        "uidropdown",
+        "uieditfield-numeric",
+        "uieditfield-text",
+        "uispinner",
+        "uitextarea",
+        "uitree-checkbox"
       ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
-      "extendedVariantIds": [
-        "uitab"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Tooltip"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.0b5cfef7b4db",
-      "baseVariantIds": [
-        "uihyperlink"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.f748e164255a",
-      "extendedVariantIds": [
-        "uiimage"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "AltText"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "AltText",
-          "insertedAfterPath": "URL"
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.2827bee60a93",
-      "baseVariantIds": [
-        "uilistbox"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.9c1fd4935e81",
+      "baseReuseCount": 7,
+      "extendedCandidateId": "candidate.interactivity.e14655703842",
       "extendedVariantIds": [
         "uitree"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
-        "Editable"
+        "Multiselect"
       ],
       "extensionPropertyCount": 1,
       "extensionInsertions": [
         {
-          "path": "Editable",
-          "insertedAfterPath": "Multiselect"
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.3dfc65bf61ec",
-      "baseVariantIds": [
-        "uitoolbar"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.697316998a10",
-      "extendedVariantIds": [
-        "uimenu"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Enable"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "Enable",
+          "path": "Multiselect",
           "insertedAfterPath": "Visible"
         }
       ],
-      "reviewPriority": "informational",
+      "reviewPriority": "medium",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.56e02904d7dd",
+      "baseCandidateId": "candidate.interactivity.1d40933911ec",
       "baseVariantIds": [
         "axes"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.4cda3394469e",
+      "extendedCandidateId": "candidate.interactivity.8cb1d1d5a8f3",
       "extendedVariantIds": [
         "geoaxes"
       ],
@@ -7806,262 +7760,14 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.687dfb229ee2",
-      "baseVariantIds": [
-        "uidatepicker",
-        "uidropdown",
-        "uieditfield-numeric",
-        "uieditfield-text",
-        "uispinner",
-        "uitextarea",
-        "uitree-checkbox"
-      ],
-      "baseReuseCount": 7,
-      "extendedCandidateId": "candidate.interactivity.9c1fd4935e81",
-      "extendedVariantIds": [
-        "uitree"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Multiselect"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "Multiselect",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.70304e8a7cc7",
-      "baseVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "baseReuseCount": 18,
-      "extendedCandidateId": "candidate.interactivity.0b5cfef7b4db",
-      "extendedVariantIds": [
-        "uihyperlink"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "URL"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "URL",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.70304e8a7cc7",
-      "baseVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "baseReuseCount": 18,
-      "extendedCandidateId": "candidate.interactivity.2827bee60a93",
-      "extendedVariantIds": [
-        "uilistbox"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Multiselect"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "Multiselect",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.70304e8a7cc7",
-      "baseVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "baseReuseCount": 18,
-      "extendedCandidateId": "candidate.interactivity.687dfb229ee2",
-      "extendedVariantIds": [
-        "uidatepicker",
-        "uidropdown",
-        "uieditfield-numeric",
-        "uieditfield-text",
-        "uispinner",
-        "uitextarea",
-        "uitree-checkbox"
-      ],
-      "extendedReuseCount": 7,
-      "extensionPropertyPaths": [
-        "Editable"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "Editable",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "high",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
-      "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
-      ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.044758088fdd",
-      "extendedVariantIds": [
-        "uigridlayout"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Scrollable"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "Scrollable",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
-      "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
-      ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.a9b7f8afd50b",
-      "extendedVariantIds": [
-        "uihtml"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Tooltip"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
-      "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
-      ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.dc6bf65574cf",
-      "extendedVariantIds": [
-        "uibuttongroup"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "SelectedObject"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "SelectedObject",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.a9b7f8afd50b",
+      "baseCandidateId": "candidate.interactivity.2ccfd3b56d68",
       "baseVariantIds": [
         "uihtml"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.36af81c0f23c",
+      "extendedCandidateId": "candidate.interactivity.10003da1a26a",
       "extendedVariantIds": [
-        "uitable"
+        "uilamp"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
@@ -8080,12 +7786,12 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.a9b7f8afd50b",
+      "baseCandidateId": "candidate.interactivity.2ccfd3b56d68",
       "baseVariantIds": [
         "uihtml"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.70304e8a7cc7",
+      "extendedCandidateId": "candidate.interactivity.341f77c53323",
       "extendedVariantIds": [
         "uibutton-push",
         "uibutton-state",
@@ -8123,14 +7829,14 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.a9b7f8afd50b",
+      "baseCandidateId": "candidate.interactivity.2ccfd3b56d68",
       "baseVariantIds": [
         "uihtml"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.e9103e2a3715",
+      "extendedCandidateId": "candidate.interactivity.3f57676f1e1e",
       "extendedVariantIds": [
-        "uilamp"
+        "uitable"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
@@ -8149,12 +7855,199 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
+      "baseCandidateId": "candidate.interactivity.341f77c53323",
+      "baseVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "baseReuseCount": 18,
+      "extendedCandidateId": "candidate.interactivity.1ab2e79dd3ee",
+      "extendedVariantIds": [
+        "uidatepicker",
+        "uidropdown",
+        "uieditfield-numeric",
+        "uieditfield-text",
+        "uispinner",
+        "uitextarea",
+        "uitree-checkbox"
+      ],
+      "extendedReuseCount": 7,
+      "extensionPropertyPaths": [
+        "Editable"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Editable",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "high",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.341f77c53323",
+      "baseVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "baseReuseCount": 18,
+      "extendedCandidateId": "candidate.interactivity.3425e08dd6e1",
+      "extendedVariantIds": [
+        "uihyperlink"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "URL"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "URL",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.341f77c53323",
+      "baseVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "baseReuseCount": 18,
+      "extendedCandidateId": "candidate.interactivity.7aff49145b19",
+      "extendedVariantIds": [
+        "uilistbox"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Multiselect"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Multiselect",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.3425e08dd6e1",
+      "baseVariantIds": [
+        "uihyperlink"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.0cce3314b67b",
+      "extendedVariantIds": [
+        "uiimage"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "AltText"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "AltText",
+          "insertedAfterPath": "URL"
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.57ae65151a94",
+      "baseVariantIds": [
+        "uitoolbar"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.d4f9b94f60d5",
+      "extendedVariantIds": [
+        "uimenu"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Enable"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Enable",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
       "baseVariantIds": [
         "uitab"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.a9b7f8afd50b",
+      "extendedCandidateId": "candidate.interactivity.2ccfd3b56d68",
       "extendedVariantIds": [
         "uihtml"
       ],
@@ -8175,12 +8068,119 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.7aff49145b19",
+      "baseVariantIds": [
+        "uilistbox"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.e14655703842",
+      "extendedVariantIds": [
+        "uitree"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Editable"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Editable",
+          "insertedAfterPath": "Multiselect"
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
+      "baseVariantIds": [
+        "uipanel",
+        "uitabgroup"
+      ],
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.006f7b894f5a",
+      "extendedVariantIds": [
+        "uigridlayout"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Scrollable"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Scrollable",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
+      "baseVariantIds": [
+        "uipanel",
+        "uitabgroup"
+      ],
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.2ccfd3b56d68",
+      "extendedVariantIds": [
+        "uihtml"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Tooltip"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Tooltip",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
+      "baseVariantIds": [
+        "uipanel",
+        "uitabgroup"
+      ],
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.490f04d27ac4",
+      "extendedVariantIds": [
+        "uibuttongroup"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "SelectedObject"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "SelectedObject",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
         "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.044758088fdd",
+      "extendedCandidateId": "candidate.interactivity.006f7b894f5a",
       "extendedVariantIds": [
         "uigridlayout"
       ],
@@ -8206,12 +8206,12 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
         "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.a9b7f8afd50b",
+      "extendedCandidateId": "candidate.interactivity.2ccfd3b56d68",
       "extendedVariantIds": [
         "uihtml"
       ],
@@ -8237,12 +8237,12 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
         "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.dc6bf65574cf",
+      "extendedCandidateId": "candidate.interactivity.490f04d27ac4",
       "extendedVariantIds": [
         "uibuttongroup"
       ],
@@ -8268,12 +8268,317 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.697316998a10",
+      "baseCandidateId": "candidate.interactivity.2ccfd3b56d68",
+      "baseVariantIds": [
+        "uihtml"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.1ab2e79dd3ee",
+      "extendedVariantIds": [
+        "uidatepicker",
+        "uidropdown",
+        "uieditfield-numeric",
+        "uieditfield-text",
+        "uispinner",
+        "uitextarea",
+        "uitree-checkbox"
+      ],
+      "extendedReuseCount": 7,
+      "extensionPropertyPaths": [
+        "Editable",
+        "Enable"
+      ],
+      "extensionPropertyCount": 2,
+      "extensionInsertions": [
+        {
+          "path": "Editable",
+          "insertedAfterPath": "Visible"
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.2ccfd3b56d68",
+      "baseVariantIds": [
+        "uihtml"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.3425e08dd6e1",
+      "extendedVariantIds": [
+        "uihyperlink"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "URL",
+        "Enable"
+      ],
+      "extensionPropertyCount": 2,
+      "extensionInsertions": [
+        {
+          "path": "URL",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.2ccfd3b56d68",
+      "baseVariantIds": [
+        "uihtml"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.7aff49145b19",
+      "extendedVariantIds": [
+        "uilistbox"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Multiselect",
+        "Enable"
+      ],
+      "extensionPropertyCount": 2,
+      "extensionInsertions": [
+        {
+          "path": "Multiselect",
+          "insertedAfterPath": "Visible"
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.341f77c53323",
+      "baseVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "baseReuseCount": 18,
+      "extendedCandidateId": "candidate.interactivity.0cce3314b67b",
+      "extendedVariantIds": [
+        "uiimage"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "URL",
+        "AltText"
+      ],
+      "extensionPropertyCount": 2,
+      "extensionInsertions": [
+        {
+          "path": "URL",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "AltText",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.341f77c53323",
+      "baseVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "baseReuseCount": 18,
+      "extendedCandidateId": "candidate.interactivity.e14655703842",
+      "extendedVariantIds": [
+        "uitree"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Multiselect",
+        "Editable"
+      ],
+      "extensionPropertyCount": 2,
+      "extensionInsertions": [
+        {
+          "path": "Multiselect",
+          "insertedAfterPath": "Visible"
+        },
+        {
+          "path": "Editable",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
+      "baseVariantIds": [
+        "uitab"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.10003da1a26a",
+      "extendedVariantIds": [
+        "uilamp"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Visible",
+        "Enable"
+      ],
+      "extensionPropertyCount": 2,
+      "extensionInsertions": [
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
+      "baseVariantIds": [
+        "uitab"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.341f77c53323",
+      "extendedVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "extendedReuseCount": 18,
+      "extensionPropertyPaths": [
+        "Visible",
+        "Enable"
+      ],
+      "extensionPropertyCount": 2,
+      "extensionInsertions": [
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
+      "baseVariantIds": [
+        "uitab"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.3f57676f1e1e",
+      "extendedVariantIds": [
+        "uitable"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Visible",
+        "Enable"
+      ],
+      "extensionPropertyCount": 2,
+      "extensionInsertions": [
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.d4f9b94f60d5",
       "baseVariantIds": [
         "uimenu"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.3454f326d786",
+      "extendedCandidateId": "candidate.interactivity.98156a67d0ff",
       "extendedVariantIds": [
         "uipushtool",
         "uitoggletool"
@@ -8300,111 +8605,15 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.70304e8a7cc7",
-      "baseVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "baseReuseCount": 18,
-      "extendedCandidateId": "candidate.interactivity.9c1fd4935e81",
-      "extendedVariantIds": [
-        "uitree"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Multiselect",
-        "Editable"
-      ],
-      "extensionPropertyCount": 2,
-      "extensionInsertions": [
-        {
-          "path": "Multiselect",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Editable",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.70304e8a7cc7",
-      "baseVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "baseReuseCount": 18,
-      "extendedCandidateId": "candidate.interactivity.f748e164255a",
-      "extendedVariantIds": [
-        "uiimage"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "URL",
-        "AltText"
-      ],
-      "extensionPropertyCount": 2,
-      "extensionInsertions": [
-        {
-          "path": "URL",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "AltText",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
         "uipanel",
         "uitabgroup"
       ],
       "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.36af81c0f23c",
+      "extendedCandidateId": "candidate.interactivity.10003da1a26a",
       "extendedVariantIds": [
-        "uitable"
+        "uilamp"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
@@ -8428,13 +8637,13 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
         "uipanel",
         "uitabgroup"
       ],
       "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.70304e8a7cc7",
+      "extendedCandidateId": "candidate.interactivity.341f77c53323",
       "extendedVariantIds": [
         "uibutton-push",
         "uibutton-state",
@@ -8477,15 +8686,15 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
         "uipanel",
         "uitabgroup"
       ],
       "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.e9103e2a3715",
+      "extendedCandidateId": "candidate.interactivity.3f57676f1e1e",
       "extendedVariantIds": [
-        "uilamp"
+        "uitable"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
@@ -8509,24 +8718,154 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.a9b7f8afd50b",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
+      "baseVariantIds": [
+        "uitreenode"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.10003da1a26a",
+      "extendedVariantIds": [
+        "uilamp"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Visible",
+        "Enable",
+        "Tooltip"
+      ],
+      "extensionPropertyCount": 3,
+      "extensionInsertions": [
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Tooltip",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
+      "baseVariantIds": [
+        "uitreenode"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.341f77c53323",
+      "extendedVariantIds": [
+        "uibutton-push",
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uilabel",
+        "uiradiobutton",
+        "uislider-range",
+        "uislider-slider",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uitogglebutton"
+      ],
+      "extendedReuseCount": 18,
+      "extensionPropertyPaths": [
+        "Visible",
+        "Enable",
+        "Tooltip"
+      ],
+      "extensionPropertyCount": 3,
+      "extensionInsertions": [
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Tooltip",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
+      "baseVariantIds": [
+        "uitreenode"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.3f57676f1e1e",
+      "extendedVariantIds": [
+        "uitable"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Visible",
+        "Enable",
+        "Tooltip"
+      ],
+      "extensionPropertyCount": 3,
+      "extensionInsertions": [
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Tooltip",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.2ccfd3b56d68",
       "baseVariantIds": [
         "uihtml"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.0b5cfef7b4db",
+      "extendedCandidateId": "candidate.interactivity.0cce3314b67b",
       "extendedVariantIds": [
-        "uihyperlink"
+        "uiimage"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
         "URL",
+        "AltText",
         "Enable"
       ],
-      "extensionPropertyCount": 2,
+      "extensionPropertyCount": 3,
       "extensionInsertions": [
         {
           "path": "URL",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "AltText",
           "insertedAfterPath": null
         },
         {
@@ -8540,59 +8879,27 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.a9b7f8afd50b",
+      "baseCandidateId": "candidate.interactivity.2ccfd3b56d68",
       "baseVariantIds": [
         "uihtml"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.2827bee60a93",
+      "extendedCandidateId": "candidate.interactivity.e14655703842",
       "extendedVariantIds": [
-        "uilistbox"
+        "uitree"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
         "Multiselect",
+        "Editable",
         "Enable"
       ],
-      "extensionPropertyCount": 2,
+      "extensionPropertyCount": 3,
       "extensionInsertions": [
         {
           "path": "Multiselect",
           "insertedAfterPath": "Visible"
         },
-        {
-          "path": "Enable",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.a9b7f8afd50b",
-      "baseVariantIds": [
-        "uihtml"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.687dfb229ee2",
-      "extendedVariantIds": [
-        "uidatepicker",
-        "uidropdown",
-        "uieditfield-numeric",
-        "uieditfield-text",
-        "uispinner",
-        "uitextarea",
-        "uitree-checkbox"
-      ],
-      "extendedReuseCount": 7,
-      "extensionPropertyPaths": [
-        "Editable",
-        "Enable"
-      ],
-      "extensionPropertyCount": 2,
-      "extensionInsertions": [
         {
           "path": "Editable",
           "insertedAfterPath": "Visible"
@@ -8602,253 +8909,18 @@
           "insertedAfterPath": "Visible"
         }
       ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
-      "baseVariantIds": [
-        "uitab"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.36af81c0f23c",
-      "extendedVariantIds": [
-        "uitable"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Visible",
-        "Enable"
-      ],
-      "extensionPropertyCount": 2,
-      "extensionInsertions": [
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
-        }
-      ],
       "reviewPriority": "informational",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
-      "baseVariantIds": [
-        "uitab"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.70304e8a7cc7",
-      "extendedVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "extendedReuseCount": 18,
-      "extensionPropertyPaths": [
-        "Visible",
-        "Enable"
-      ],
-      "extensionPropertyCount": 2,
-      "extensionInsertions": [
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
-      "baseVariantIds": [
-        "uitab"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.e9103e2a3715",
-      "extendedVariantIds": [
-        "uilamp"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Visible",
-        "Enable"
-      ],
-      "extensionPropertyCount": 2,
-      "extensionInsertions": [
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
-      "baseVariantIds": [
-        "uitreenode"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.36af81c0f23c",
-      "extendedVariantIds": [
-        "uitable"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Visible",
-        "Enable",
-        "Tooltip"
-      ],
-      "extensionPropertyCount": 3,
-      "extensionInsertions": [
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
-      "baseVariantIds": [
-        "uitreenode"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.70304e8a7cc7",
-      "extendedVariantIds": [
-        "uibutton-push",
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilabel",
-        "uiradiobutton",
-        "uislider-range",
-        "uislider-slider",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
-      ],
-      "extendedReuseCount": 18,
-      "extensionPropertyPaths": [
-        "Visible",
-        "Enable",
-        "Tooltip"
-      ],
-      "extensionPropertyCount": 3,
-      "extensionInsertions": [
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
-      "baseVariantIds": [
-        "uitreenode"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.e9103e2a3715",
-      "extendedVariantIds": [
-        "uilamp"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Visible",
-        "Enable",
-        "Tooltip"
-      ],
-      "extensionPropertyCount": 3,
-      "extensionInsertions": [
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.3dfc65bf61ec",
+      "baseCandidateId": "candidate.interactivity.57ae65151a94",
       "baseVariantIds": [
         "uitoolbar"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.3454f326d786",
+      "extendedCandidateId": "candidate.interactivity.98156a67d0ff",
       "extendedVariantIds": [
         "uipushtool",
         "uitoggletool"
@@ -8880,21 +8952,62 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
       "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
+        "uitab"
       ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.0b5cfef7b4db",
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.1ab2e79dd3ee",
+      "extendedVariantIds": [
+        "uidatepicker",
+        "uidropdown",
+        "uieditfield-numeric",
+        "uieditfield-text",
+        "uispinner",
+        "uitextarea",
+        "uitree-checkbox"
+      ],
+      "extendedReuseCount": 7,
+      "extensionPropertyPaths": [
+        "Visible",
+        "Editable",
+        "Enable"
+      ],
+      "extensionPropertyCount": 3,
+      "extensionInsertions": [
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Editable",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
+      "baseVariantIds": [
+        "uitab"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.3425e08dd6e1",
       "extendedVariantIds": [
         "uihyperlink"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
         "URL",
-        "Enable",
-        "Tooltip"
+        "Visible",
+        "Enable"
       ],
       "extensionPropertyCount": 3,
       "extensionInsertions": [
@@ -8903,64 +9016,63 @@
           "insertedAfterPath": null
         },
         {
-          "path": "Enable",
-          "insertedAfterPath": "Visible"
+          "path": "Visible",
+          "insertedAfterPath": null
         },
         {
-          "path": "Tooltip",
-          "insertedAfterPath": "Visible"
+          "path": "Enable",
+          "insertedAfterPath": null
         }
       ],
-      "reviewPriority": "medium",
+      "reviewPriority": "informational",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
       "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
+        "uitab"
       ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.2827bee60a93",
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.7aff49145b19",
       "extendedVariantIds": [
         "uilistbox"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
+        "Visible",
         "Multiselect",
-        "Enable",
-        "Tooltip"
+        "Enable"
       ],
       "extensionPropertyCount": 3,
       "extensionInsertions": [
         {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
           "path": "Multiselect",
-          "insertedAfterPath": "Visible"
+          "insertedAfterPath": null
         },
         {
           "path": "Enable",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": "Visible"
+          "insertedAfterPath": null
         }
       ],
-      "reviewPriority": "medium",
+      "reviewPriority": "informational",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
         "uipanel",
         "uitabgroup"
       ],
       "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.687dfb229ee2",
+      "extendedCandidateId": "candidate.interactivity.1ab2e79dd3ee",
       "extendedVariantIds": [
         "uidatepicker",
         "uidropdown",
@@ -8997,92 +9109,21 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.a9b7f8afd50b",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
-        "uihtml"
+        "uipanel",
+        "uitabgroup"
       ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.9c1fd4935e81",
-      "extendedVariantIds": [
-        "uitree"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Multiselect",
-        "Editable",
-        "Enable"
-      ],
-      "extensionPropertyCount": 3,
-      "extensionInsertions": [
-        {
-          "path": "Multiselect",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Editable",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.a9b7f8afd50b",
-      "baseVariantIds": [
-        "uihtml"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.f748e164255a",
-      "extendedVariantIds": [
-        "uiimage"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "URL",
-        "AltText",
-        "Enable"
-      ],
-      "extensionPropertyCount": 3,
-      "extensionInsertions": [
-        {
-          "path": "URL",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "AltText",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
-      "baseVariantIds": [
-        "uitab"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.0b5cfef7b4db",
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.3425e08dd6e1",
       "extendedVariantIds": [
         "uihyperlink"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
         "URL",
-        "Visible",
-        "Enable"
+        "Enable",
+        "Tooltip"
       ],
       "extensionPropertyCount": 3,
       "extensionInsertions": [
@@ -9091,90 +9132,12 @@
           "insertedAfterPath": null
         },
         {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
           "path": "Enable",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
-      "baseVariantIds": [
-        "uitab"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.2827bee60a93",
-      "extendedVariantIds": [
-        "uilistbox"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Visible",
-        "Multiselect",
-        "Enable"
-      ],
-      "extensionPropertyCount": 3,
-      "extensionInsertions": [
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
+          "insertedAfterPath": "Visible"
         },
         {
-          "path": "Multiselect",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
-      "baseVariantIds": [
-        "uitab"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.687dfb229ee2",
-      "extendedVariantIds": [
-        "uidatepicker",
-        "uidropdown",
-        "uieditfield-numeric",
-        "uieditfield-text",
-        "uispinner",
-        "uitextarea",
-        "uitree-checkbox"
-      ],
-      "extendedReuseCount": 7,
-      "extensionPropertyPaths": [
-        "Visible",
-        "Editable",
-        "Enable"
-      ],
-      "extensionPropertyCount": 3,
-      "extensionInsertions": [
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Editable",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
+          "path": "Tooltip",
+          "insertedAfterPath": "Visible"
         }
       ],
       "reviewPriority": "medium",
@@ -9183,94 +9146,49 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
-        "uitreenode"
+        "uipanel",
+        "uitabgroup"
       ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.0b5cfef7b4db",
-      "extendedVariantIds": [
-        "uihyperlink"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "URL",
-        "Visible",
-        "Enable",
-        "Tooltip"
-      ],
-      "extensionPropertyCount": 4,
-      "extensionInsertions": [
-        {
-          "path": "URL",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": null
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
-      "baseVariantIds": [
-        "uitreenode"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.2827bee60a93",
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.7aff49145b19",
       "extendedVariantIds": [
         "uilistbox"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
-        "Visible",
         "Multiselect",
         "Enable",
         "Tooltip"
       ],
-      "extensionPropertyCount": 4,
+      "extensionPropertyCount": 3,
       "extensionInsertions": [
         {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
           "path": "Multiselect",
-          "insertedAfterPath": null
+          "insertedAfterPath": "Visible"
         },
         {
           "path": "Enable",
-          "insertedAfterPath": null
+          "insertedAfterPath": "Visible"
         },
         {
           "path": "Tooltip",
-          "insertedAfterPath": null
+          "insertedAfterPath": "Visible"
         }
       ],
-      "reviewPriority": "informational",
+      "reviewPriority": "medium",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
         "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.687dfb229ee2",
+      "extendedCandidateId": "candidate.interactivity.1ab2e79dd3ee",
       "extendedVariantIds": [
         "uidatepicker",
         "uidropdown",
@@ -9312,62 +9230,19 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
+        "uitreenode"
       ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.9c1fd4935e81",
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.3425e08dd6e1",
       "extendedVariantIds": [
-        "uitree"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "Multiselect",
-        "Editable",
-        "Enable",
-        "Tooltip"
-      ],
-      "extensionPropertyCount": 4,
-      "extensionInsertions": [
-        {
-          "path": "Multiselect",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Editable",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Enable",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": "Visible"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
-      "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
-      ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.f748e164255a",
-      "extendedVariantIds": [
-        "uiimage"
+        "uihyperlink"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
         "URL",
-        "AltText",
+        "Visible",
         "Enable",
         "Tooltip"
       ],
@@ -9378,39 +9253,39 @@
           "insertedAfterPath": null
         },
         {
-          "path": "AltText",
+          "path": "Visible",
           "insertedAfterPath": null
         },
         {
           "path": "Enable",
-          "insertedAfterPath": "Visible"
+          "insertedAfterPath": null
         },
         {
           "path": "Tooltip",
-          "insertedAfterPath": "Visible"
+          "insertedAfterPath": null
         }
       ],
-      "reviewPriority": "medium",
+      "reviewPriority": "informational",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
-        "uitab"
+        "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.9c1fd4935e81",
+      "extendedCandidateId": "candidate.interactivity.7aff49145b19",
       "extendedVariantIds": [
-        "uitree"
+        "uilistbox"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
         "Visible",
         "Multiselect",
-        "Editable",
-        "Enable"
+        "Enable",
+        "Tooltip"
       ],
       "extensionPropertyCount": 4,
       "extensionInsertions": [
@@ -9423,11 +9298,11 @@
           "insertedAfterPath": null
         },
         {
-          "path": "Editable",
+          "path": "Enable",
           "insertedAfterPath": null
         },
         {
-          "path": "Enable",
+          "path": "Tooltip",
           "insertedAfterPath": null
         }
       ],
@@ -9437,12 +9312,12 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.bcdf2a1c3b7e",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
       "baseVariantIds": [
         "uitab"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.f748e164255a",
+      "extendedCandidateId": "candidate.interactivity.0cce3314b67b",
       "extendedVariantIds": [
         "uiimage"
       ],
@@ -9478,12 +9353,12 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.68921af21bbe",
       "baseVariantIds": [
-        "uitreenode"
+        "uitab"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.9c1fd4935e81",
+      "extendedCandidateId": "candidate.interactivity.e14655703842",
       "extendedVariantIds": [
         "uitree"
       ],
@@ -9492,10 +9367,9 @@
         "Visible",
         "Multiselect",
         "Editable",
-        "Enable",
-        "Tooltip"
+        "Enable"
       ],
-      "extensionPropertyCount": 5,
+      "extensionPropertyCount": 4,
       "extensionInsertions": [
         {
           "path": "Visible",
@@ -9512,10 +9386,6 @@
         {
           "path": "Enable",
           "insertedAfterPath": null
-        },
-        {
-          "path": "Tooltip",
-          "insertedAfterPath": null
         }
       ],
       "reviewPriority": "informational",
@@ -9524,12 +9394,13 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
-        "uitreenode"
+        "uipanel",
+        "uitabgroup"
       ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.f748e164255a",
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.0cce3314b67b",
       "extendedVariantIds": [
         "uiimage"
       ],
@@ -9537,11 +9408,10 @@
       "extensionPropertyPaths": [
         "URL",
         "AltText",
-        "Visible",
         "Enable",
         "Tooltip"
       ],
-      "extensionPropertyCount": 5,
+      "extensionPropertyCount": 4,
       "extensionInsertions": [
         {
           "path": "URL",
@@ -9552,30 +9422,68 @@
           "insertedAfterPath": null
         },
         {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
           "path": "Enable",
-          "insertedAfterPath": null
+          "insertedAfterPath": "Visible"
         },
         {
           "path": "Tooltip",
-          "insertedAfterPath": null
+          "insertedAfterPath": "Visible"
         }
       ],
-      "reviewPriority": "informational",
+      "reviewPriority": "medium",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.044758088fdd",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
+      "baseVariantIds": [
+        "uipanel",
+        "uitabgroup"
+      ],
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.e14655703842",
+      "extendedVariantIds": [
+        "uitree"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Multiselect",
+        "Editable",
+        "Enable",
+        "Tooltip"
+      ],
+      "extensionPropertyCount": 4,
+      "extensionInsertions": [
+        {
+          "path": "Multiselect",
+          "insertedAfterPath": "Visible"
+        },
+        {
+          "path": "Editable",
+          "insertedAfterPath": "Visible"
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": "Visible"
+        },
+        {
+          "path": "Tooltip",
+          "insertedAfterPath": "Visible"
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.006f7b894f5a",
       "baseVariantIds": [
         "uigridlayout"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.bbcac8576117",
+      "extendedCandidateId": "candidate.interactivity.0779736d8082",
       "extendedVariantIds": [
         "uifigure"
       ],
@@ -9616,13 +9524,105 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
+      "baseVariantIds": [
+        "uitreenode"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.0cce3314b67b",
+      "extendedVariantIds": [
+        "uiimage"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "URL",
+        "AltText",
+        "Visible",
+        "Enable",
+        "Tooltip"
+      ],
+      "extensionPropertyCount": 5,
+      "extensionInsertions": [
+        {
+          "path": "URL",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "AltText",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Tooltip",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
+      "baseVariantIds": [
+        "uitreenode"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.e14655703842",
+      "extendedVariantIds": [
+        "uitree"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Visible",
+        "Multiselect",
+        "Editable",
+        "Enable",
+        "Tooltip"
+      ],
+      "extensionPropertyCount": 5,
+      "extensionInsertions": [
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Multiselect",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Editable",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Enable",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Tooltip",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
         "uipanel",
         "uitabgroup"
       ],
       "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.56e02904d7dd",
+      "extendedCandidateId": "candidate.interactivity.1d40933911ec",
       "extendedVariantIds": [
         "axes"
       ],
@@ -9663,12 +9663,12 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
         "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.56e02904d7dd",
+      "extendedCandidateId": "candidate.interactivity.1d40933911ec",
       "extendedVariantIds": [
         "axes"
       ],
@@ -9714,117 +9714,13 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
         "uipanel",
         "uitabgroup"
       ],
       "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.0cea7bcd84a2",
-      "extendedVariantIds": [
-        "polaraxes"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "InteractionOptions",
-        "Toolbar",
-        "Interactions",
-        "CurrentPoint",
-        "Selected",
-        "SelectionHighlight"
-      ],
-      "extensionPropertyCount": 6,
-      "extensionInsertions": [
-        {
-          "path": "InteractionOptions",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Toolbar",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Interactions",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "CurrentPoint",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Selected",
-          "insertedAfterPath": "ContextMenu"
-        },
-        {
-          "path": "SelectionHighlight",
-          "insertedAfterPath": "ContextMenu"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
-      "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
-      ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.4cda3394469e",
-      "extendedVariantIds": [
-        "geoaxes"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "InteractionOptions",
-        "Toolbar",
-        "Interactions",
-        "CurrentPoint",
-        "Selected",
-        "SelectionHighlight"
-      ],
-      "extensionPropertyCount": 6,
-      "extensionInsertions": [
-        {
-          "path": "InteractionOptions",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Toolbar",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Interactions",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "CurrentPoint",
-          "insertedAfterPath": "Visible"
-        },
-        {
-          "path": "Selected",
-          "insertedAfterPath": "ContextMenu"
-        },
-        {
-          "path": "SelectionHighlight",
-          "insertedAfterPath": "ContextMenu"
-        }
-      ],
-      "reviewPriority": "medium",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
-      "baseVariantIds": [
-        "uipanel",
-        "uitabgroup"
-      ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.bbcac8576117",
+      "extendedCandidateId": "candidate.interactivity.0779736d8082",
       "extendedVariantIds": [
         "uifigure"
       ],
@@ -9870,13 +9766,13 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.75ceaf80f79f",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
         "uipanel",
         "uitabgroup"
       ],
       "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.interactivity.fac9bb7a3a39",
+      "extendedCandidateId": "candidate.interactivity.6e28ff3b46a5",
       "extendedVariantIds": [
         "uiaxes"
       ],
@@ -9922,68 +9818,13 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
       "baseVariantIds": [
-        "uitreenode"
+        "uipanel",
+        "uitabgroup"
       ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.0cea7bcd84a2",
-      "extendedVariantIds": [
-        "polaraxes"
-      ],
-      "extendedReuseCount": 1,
-      "extensionPropertyPaths": [
-        "InteractionOptions",
-        "Toolbar",
-        "Interactions",
-        "Visible",
-        "CurrentPoint",
-        "Selected",
-        "SelectionHighlight"
-      ],
-      "extensionPropertyCount": 7,
-      "extensionInsertions": [
-        {
-          "path": "InteractionOptions",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Toolbar",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Interactions",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "CurrentPoint",
-          "insertedAfterPath": null
-        },
-        {
-          "path": "Selected",
-          "insertedAfterPath": "ContextMenu"
-        },
-        {
-          "path": "SelectionHighlight",
-          "insertedAfterPath": "ContextMenu"
-        }
-      ],
-      "reviewPriority": "informational",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "interactivity",
-      "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
-      "baseVariantIds": [
-        "uitreenode"
-      ],
-      "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.4cda3394469e",
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.8cb1d1d5a8f3",
       "extendedVariantIds": [
         "geoaxes"
       ],
@@ -9992,12 +9833,11 @@
         "InteractionOptions",
         "Toolbar",
         "Interactions",
-        "Visible",
         "CurrentPoint",
         "Selected",
         "SelectionHighlight"
       ],
-      "extensionPropertyCount": 7,
+      "extensionPropertyCount": 6,
       "extensionInsertions": [
         {
           "path": "InteractionOptions",
@@ -10012,12 +9852,8 @@
           "insertedAfterPath": null
         },
         {
-          "path": "Visible",
-          "insertedAfterPath": null
-        },
-        {
           "path": "CurrentPoint",
-          "insertedAfterPath": null
+          "insertedAfterPath": "Visible"
         },
         {
           "path": "Selected",
@@ -10028,18 +9864,70 @@
           "insertedAfterPath": "ContextMenu"
         }
       ],
-      "reviewPriority": "informational",
+      "reviewPriority": "medium",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.e21d679c65a5",
+      "baseVariantIds": [
+        "uipanel",
+        "uitabgroup"
+      ],
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.interactivity.e533fc4e226c",
+      "extendedVariantIds": [
+        "polaraxes"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "InteractionOptions",
+        "Toolbar",
+        "Interactions",
+        "CurrentPoint",
+        "Selected",
+        "SelectionHighlight"
+      ],
+      "extensionPropertyCount": 6,
+      "extensionInsertions": [
+        {
+          "path": "InteractionOptions",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Toolbar",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Interactions",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "CurrentPoint",
+          "insertedAfterPath": "Visible"
+        },
+        {
+          "path": "Selected",
+          "insertedAfterPath": "ContextMenu"
+        },
+        {
+          "path": "SelectionHighlight",
+          "insertedAfterPath": "ContextMenu"
+        }
+      ],
+      "reviewPriority": "medium",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
         "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.bbcac8576117",
+      "extendedCandidateId": "candidate.interactivity.0779736d8082",
       "extendedVariantIds": [
         "uifigure"
       ],
@@ -10090,14 +9978,126 @@
     {
       "categoryId": "interactivity",
       "sharingScope": "crossCutting",
-      "baseCandidateId": "candidate.interactivity.01e42b0a874b",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
       "baseVariantIds": [
         "uitreenode"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.interactivity.fac9bb7a3a39",
+      "extendedCandidateId": "candidate.interactivity.6e28ff3b46a5",
       "extendedVariantIds": [
         "uiaxes"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "InteractionOptions",
+        "Toolbar",
+        "Interactions",
+        "Visible",
+        "CurrentPoint",
+        "Selected",
+        "SelectionHighlight"
+      ],
+      "extensionPropertyCount": 7,
+      "extensionInsertions": [
+        {
+          "path": "InteractionOptions",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Toolbar",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Interactions",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "CurrentPoint",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Selected",
+          "insertedAfterPath": "ContextMenu"
+        },
+        {
+          "path": "SelectionHighlight",
+          "insertedAfterPath": "ContextMenu"
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
+      "baseVariantIds": [
+        "uitreenode"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.8cb1d1d5a8f3",
+      "extendedVariantIds": [
+        "geoaxes"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "InteractionOptions",
+        "Toolbar",
+        "Interactions",
+        "Visible",
+        "CurrentPoint",
+        "Selected",
+        "SelectionHighlight"
+      ],
+      "extensionPropertyCount": 7,
+      "extensionInsertions": [
+        {
+          "path": "InteractionOptions",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Toolbar",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Interactions",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Visible",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "CurrentPoint",
+          "insertedAfterPath": null
+        },
+        {
+          "path": "Selected",
+          "insertedAfterPath": "ContextMenu"
+        },
+        {
+          "path": "SelectionHighlight",
+          "insertedAfterPath": "ContextMenu"
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "interactivity",
+      "sharingScope": "crossCutting",
+      "baseCandidateId": "candidate.interactivity.154cbac75635",
+      "baseVariantIds": [
+        "uitreenode"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.interactivity.e533fc4e226c",
+      "extendedVariantIds": [
+        "polaraxes"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
@@ -11756,36 +11756,7 @@
     {
       "categoryId": "parentchild",
       "sharingScope": "familyScoped",
-      "baseCandidateId": "candidate.parentchild.81d1391e9656",
-      "baseVariantIds": [
-        "uipushtool",
-        "uitoggletool"
-      ],
-      "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.parentchild.3c4bfb19e050",
-      "extendedVariantIds": [
-        "uicontextmenu",
-        "uimenu",
-        "uitoolbar"
-      ],
-      "extendedReuseCount": 3,
-      "extensionPropertyPaths": [
-        "Children"
-      ],
-      "extensionPropertyCount": 1,
-      "extensionInsertions": [
-        {
-          "path": "Children",
-          "insertedAfterPath": "Parent"
-        }
-      ],
-      "reviewPriority": "high",
-      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
-    },
-    {
-      "categoryId": "parentchild",
-      "sharingScope": "familyScoped",
-      "baseCandidateId": "candidate.parentchild.f2a7e6713fe3",
+      "baseCandidateId": "candidate.parentchild.1614338cd0ba",
       "baseVariantIds": [
         "uibutton-push",
         "uibutton-state",
@@ -11818,7 +11789,7 @@
         "uitogglebutton"
       ],
       "baseReuseCount": 29,
-      "extendedCandidateId": "candidate.parentchild.8f2d4fc6440c",
+      "extendedCandidateId": "candidate.parentchild.b0afde452a3c",
       "extendedVariantIds": [
         "axes",
         "geoaxes",
@@ -11835,6 +11806,35 @@
         "uitreenode"
       ],
       "extendedReuseCount": 13,
+      "extensionPropertyPaths": [
+        "Children"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Children",
+          "insertedAfterPath": "Parent"
+        }
+      ],
+      "reviewPriority": "high",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "parentchild",
+      "sharingScope": "familyScoped",
+      "baseCandidateId": "candidate.parentchild.824df8047d11",
+      "baseVariantIds": [
+        "uipushtool",
+        "uitoggletool"
+      ],
+      "baseReuseCount": 2,
+      "extendedCandidateId": "candidate.parentchild.a55d498d6448",
+      "extendedVariantIds": [
+        "uicontextmenu",
+        "uimenu",
+        "uitoolbar"
+      ],
+      "extendedReuseCount": 3,
       "extensionPropertyPaths": [
         "Children"
       ],

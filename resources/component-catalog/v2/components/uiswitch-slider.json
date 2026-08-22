@@ -47,9 +47,9 @@
             "category": "Switch",
             "order": 1,
             "groupId": "local.uiswitch-slider.switch",
-            "editor": "itemSelection",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "itemSelection",
               "matlabClasses": [
@@ -85,8 +85,8 @@
               ],
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
-              "fixedLength": 2,
-              "constraints": []
+              "constraints": [],
+              "fixedLength": 2
             }
           }
         },
@@ -423,9 +423,9 @@
             "category": "Interactivity",
             "order": 4,
             "groupId": "standardInteractivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -741,7 +741,7 @@
             "groupId": "local.uiswitch-slider.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

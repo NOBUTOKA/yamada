@@ -86,6 +86,8 @@ classdef ModelValidator
                 effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
                     component.CreationArguments);
                 supportedPaths = [effectiveProperties.Path];
+                transaction = macd.validation.ModelValidator.propertyTransaction( ...
+                    component, effectiveProperties);
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
                     if ~any(supportedPaths == entry.Path)
@@ -101,6 +103,17 @@ classdef ModelValidator
                             "editable-expression", ...
                             "Source expressions cannot be marked editable.", component.Id); %#ok<AGROW>
                     elseif entry.ValueKind == "literal"
+                        definition = effectiveProperties( ...
+                            find(supportedPaths == entry.Path, 1));
+                        if definition.IsEditable && definition.AuditDisposition == "editable"
+                            transaction.stage(entry.Path, entry.LiteralValue);
+                            message = macd.validation.PropertyBatchValidator.validate( ...
+                                effectiveProperties, transaction);
+                            if strlength(message) > 0
+                                diagnostics(end + 1) = macd.validation.ModelValidator.error( ...
+                                    "invalid-catalog-property", message, component.Id); %#ok<AGROW>
+                            end
+                        end
                         geometryDiagnostic = macd.validation.ModelValidator.validateGeometry( ...
                             entry, component.Id);
                         if ~isempty(geometryDiagnostic)
@@ -142,6 +155,29 @@ classdef ModelValidator
     end
 
     methods (Static, Access = private)
+        function transaction = propertyTransaction(component, definitions)
+            % propertyTransaction Snapshot literal effective values for shared schema validation.
+            arguments (Input)
+                component (1, 1) macd.model.ComponentRecord
+                definitions macd.model.PropertyDefinition
+            end
+            arguments (Output)
+                transaction (1, 1) macd.model.PropertyTransaction
+            end
+
+            paths = string({definitions.Path});
+            values = cell(1, numel(definitions));
+            known = false(1, numel(definitions));
+            for index = 1:numel(definitions)
+                entry = component.getProperty(paths(index));
+                if ~isempty(entry) && entry.ValueKind == "literal"
+                    values{index} = entry.LiteralValue;
+                    known(index) = true;
+                end
+            end
+            transaction = macd.model.PropertyTransaction(paths, values, known);
+        end
+
         function result = isNotRenderedFigureTool(factory)
             % isNotRenderedFigureTool Identify Figure Tools intentionally outside preview scope.
             arguments (Input)

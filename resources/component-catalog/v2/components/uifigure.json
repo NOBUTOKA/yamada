@@ -617,9 +617,9 @@
             "category": "Interactivity",
             "order": 8,
             "groupId": "local.uifigure.interactivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

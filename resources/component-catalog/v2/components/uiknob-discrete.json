@@ -49,9 +49,9 @@
             "category": "Knob",
             "order": 1,
             "groupId": "local.uiknob-discrete.knob",
-            "editor": "itemSelection",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "itemSelection",
               "matlabClasses": [
@@ -394,9 +394,9 @@
             "category": "Interactivity",
             "order": 4,
             "groupId": "standardInteractivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -712,7 +712,7 @@
             "groupId": "local.uiknob-discrete.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

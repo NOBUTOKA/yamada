@@ -46,9 +46,9 @@
             "category": "Grid",
             "order": 1,
             "groupId": "local.uigridlayout.grid",
-            "editor": "gridTrackList",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "gridTrackList",
               "matlabClasses": [
@@ -74,9 +74,9 @@
             "category": "Grid",
             "order": 2,
             "groupId": "local.uigridlayout.grid",
-            "editor": "gridTrackList",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "gridTrackList",
               "matlabClasses": [
@@ -272,9 +272,9 @@
             "category": "Interactivity",
             "order": 3,
             "groupId": "local.uigridlayout.interactivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -563,7 +563,7 @@
             "groupId": "local.uigridlayout.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [

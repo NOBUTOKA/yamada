@@ -47,9 +47,9 @@
             "category": "List Box",
             "order": 1,
             "groupId": "local.uilistbox.listbox",
-            "editor": "itemSelection",
+            "editor": "readOnly",
             "previewPolicy": "apply",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "itemSelection",
               "matlabClasses": [
@@ -471,9 +471,9 @@
             "category": "Interactivity",
             "order": 5,
             "groupId": "local.uilistbox.interactivity",
-            "editor": "componentReference",
+            "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "editable",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
@@ -843,7 +843,7 @@
             "groupId": "local.uilistbox.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
-            "auditDisposition": "omitted",
+            "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
               "matlabClasses": [
