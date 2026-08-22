@@ -3,7 +3,7 @@
 ## Purpose and status
 
 This document is the detailed execution plan for Phase 6 of
-MatlabAppClassDesigner. The Phase 6 section of `IMPLEMENTATION_PLAN.md` remains
+yamada. The Phase 6 section of `IMPLEMENTATION_PLAN.md` remains
 the architectural and completion contract; this file records the implementation
 order, concrete work packages, verification gates, and progress so the work can
 be resumed without reconstructing prior design decisions.
@@ -313,7 +313,7 @@ changes. No adapter callback retains a previously selected component ID.
   single-column layout that owns category sections.
 - [x] Add lightweight `InspectorView`, `InspectorCategorySection`, and
   `InspectorPropertyRow` responsibilities under `+macd/+ui/+inspector` rather
-  than expanding component-specific logic in `MatlabAppClassDesigner`.
+  than expanding component-specific logic in `yamada`.
 - [x] Build a selected component's complete control tree off the active update
   path where practical, publish it once, and avoid `drawnow` inside row loops.
 - [x] Verify the public R2024a scrolling API used by the chosen native container

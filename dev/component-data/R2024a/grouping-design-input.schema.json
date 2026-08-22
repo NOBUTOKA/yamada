@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://matlabappclassdesigner.dev/schemas/component-data/R2024a/grouping-design-input.schema.json",
-  "title": "MatlabAppClassDesigner R2024a grouping design input",
+  "$id": "https://yamada.dev/schemas/component-data/R2024a/grouping-design-input.schema.json",
+  "title": "yamada R2024a grouping design input",
   "description": "Human-reviewed design input for Steps 7 through 11. Generated grouping artifacts are not input to this schema.",
   "type": "object",
   "additionalProperties": false,

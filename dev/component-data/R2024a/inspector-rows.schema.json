@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "MatlabAppClassDesigner R2024a composite Inspector rows",
+  "title": "yamada R2024a composite Inspector rows",
   "type": "object",
   "additionalProperties": false,
   "required": ["artifactVersion", "matlabRelease", "rows"],

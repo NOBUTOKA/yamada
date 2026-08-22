@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://matlabappclassdesigner.dev/schemas/component-data/R2024a/parent-context-rules.schema.json",
-  "title": "MatlabAppClassDesigner R2024a parent-context audit rules",
+  "$id": "https://yamada.dev/schemas/component-data/R2024a/parent-context-rules.schema.json",
+  "title": "yamada R2024a parent-context audit rules",
   "description": "Development-only rules for deriving a child component's effective property surface from its direct-parent context.",
   "type": "object",
   "additionalProperties": false,

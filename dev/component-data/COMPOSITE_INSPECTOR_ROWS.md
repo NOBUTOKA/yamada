@@ -156,7 +156,7 @@ and validation behavior are defined.
 Add a typed `InspectorRowDefinition` runtime value with stable ID, display name,
 editor identifier, ordered member path/role records, matching scope, and order
 anchor. Store the loaded templates in `ComponentRegistry`; do not hard-code
-component IDs or member paths in `MatlabAppClassDesigner`.
+component IDs or member paths in `yamada`.
 
 An `InspectorSurfaceBuilder` consumes the effective property states and the
 matching row templates. It performs these steps:

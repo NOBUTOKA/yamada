@@ -1,11 +1,11 @@
-classdef MatlabAppClassDesigner < matlab.apps.AppBase
-    % MatlabAppClassDesigner Edit programmatic AppBase classes without executing them.
+classdef yamada < matlab.apps.AppBase
+    % yamada Edit programmatic AppBase classes without executing them.
     %   This application coordinates the shared document model, conservative source
     %   parser, source generators, hierarchy browser, safe preview, property
     %   inspector, and diagnostics. It never instantiates an opened application.
     %
     %   Example:
-    %       editor = MatlabAppClassDesigner();
+    %       editor = yamada();
 
     properties (SetAccess = private)
         % Document - Current new or parsed AppBase document, when available.
@@ -67,10 +67,10 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
     end
 
     methods
-        function app = MatlabAppClassDesigner()
-            % MatlabAppClassDesigner Create the editor shell and an empty document.
+        function app = yamada()
+            % yamada Create the editor shell and an empty document.
             arguments (Output)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Keep capability definitions shared by New, Open, preview, and validation.
@@ -88,7 +88,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function delete(app)
             % delete Release the editor figure when the application is deleted.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Stop deferred UI work before releasing the editor figure.
@@ -110,12 +110,12 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function createComponents(app)
             % createComponents Build the editor-owned interface controls.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Compose the command bar, browsers, preview, and diagnostic surfaces.
             app.UIFigure = uifigure("Visible", "off", ...
-                "Name", "MATLAB App Class Designer", ...
+                "Name", "Yet Another MATLAB App Designer Alternative", ...
                 "Position", [100 100 1280 760], ...
                 "WindowKeyPressFcn", @(~, event) app.editorKeyPressed(event));
             app.MainGrid = uigridlayout(app.UIFigure, [3 3]);
@@ -192,7 +192,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function createMenus(app)
             % createMenus Build the menu bar and keyboard accelerators.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Keep file actions separate from editing commands and shortcuts.
@@ -227,7 +227,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function newButtonPushed(app)
             % newButtonPushed Request a class name and start a new empty document.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Keep creation in the same model pipeline used by parsed documents.
@@ -242,7 +242,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function openButtonPushed(app)
             % openButtonPushed Select and parse an existing AppBase source file.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Parse source only; no constructor, callback, or helper method is run.
@@ -258,7 +258,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function saveAsButtonPushed(app)
             % saveAsButtonPushed Generate safely and save source to a selected path.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Require a fresh diagnostic pass before exposing a potentially unsafe save.
@@ -284,7 +284,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function saveButtonPushed(app)
             % saveButtonPushed Generate and save the current document to its known path.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Require an explicit path from Open or Save As before writing in place.
@@ -311,7 +311,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function validateButtonPushed(app)
             % validateButtonPushed Validate the shared document and refresh the shell.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Validation is model-only and is safe for both new and opened documents.
@@ -328,7 +328,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function diffButtonPushed(app)
             % diffButtonPushed Display original and generated source side by side.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Generate through the matching source owner without writing a file.
@@ -355,7 +355,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function newDocument(app, className)
             % newDocument Create and display a new empty shared document model.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 className string
             end
 
@@ -372,7 +372,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function openDocument(app, filePath)
             % openDocument Parse one source file and display its supported model.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 filePath string
             end
 
@@ -395,7 +395,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function hierarchySelectionChanged(app, event)
             % hierarchySelectionChanged Select the component stored on a tree node.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 event
             end
 
@@ -414,7 +414,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshShell(app)
             % refreshShell Rebuild all document-derived editor surfaces.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Set the drawer state before measuring the preview panel geometry.
@@ -430,7 +430,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshPalette(app)
             % refreshPalette Populate the palette from eligible registry definitions.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Keep the palette deterministic while retaining registry categories.
@@ -455,7 +455,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function paletteSelectionChanged(app, event)
             % paletteSelectionChanged Store the selected palette factory name.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 event
             end
 
@@ -475,7 +475,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function paletteDoubleClicked(app, event)
             % paletteDoubleClicked Insert the explicitly double-clicked palette item.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 event
             end
 
@@ -493,7 +493,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function addComponentButtonPushed(app)
             % addComponentButtonPushed Insert the selected palette component.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             parent = app.insertionParent(app.SelectedPaletteFactory);
@@ -517,7 +517,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function deleteComponentButtonPushed(app)
             % deleteComponentButtonPushed Delete the selected leaf explicitly.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             component = app.selectedComponent();
@@ -540,7 +540,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function undoButtonPushed(app)
             % undoButtonPushed Undo the most recent model edit.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             try
@@ -557,7 +557,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function redoButtonPushed(app)
             % redoButtonPushed Redo the next model edit.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             try
@@ -574,7 +574,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function editorKeyPressed(app, event)
             % editorKeyPressed Dispatch Delete and Ctrl-based edit shortcuts.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 event
             end
 
@@ -592,7 +592,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshEditCommands(app)
             % refreshEditCommands Synchronize palette and edit command enablement.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if isempty(app.Document)
@@ -622,7 +622,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function parent = insertionParent(app, factory)
             % insertionParent Find the nearest selected ancestor accepting a factory.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 factory string
             end
             arguments (Output)
@@ -650,7 +650,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function result = isPaletteFactory(app, factory)
             % isPaletteFactory Report whether a factory is in the initial edit scope.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 factory string
             end
             arguments (Output)
@@ -667,7 +667,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function ensureSelectionExists(app)
             % ensureSelectionExists Move selection to the root after undoable removal.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
             if isempty(app.selectedComponent())
                 app.SelectedComponentId = app.Document.RootComponentId;
@@ -677,7 +677,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshHierarchy(app)
             % refreshHierarchy Rebuild the component browser from parent links.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Delete old nodes so the browser cannot retain stale model identities.
@@ -691,7 +691,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function node = addHierarchyNode(app, parentNode, componentId)
             % addHierarchyNode Add a component and its descendants to the tree.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 parentNode
                 componentId string
             end
@@ -718,7 +718,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshPreview(app)
             % refreshPreview Render registered component data without running input code.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % The preview is disposable editor state and never shares opened handles.
@@ -744,7 +744,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function updatePreviewScale(app, root)
             % updatePreviewScale Recover source-to-preview pixel scale.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 root (1, 1) macd.model.ComponentRecord
             end
 
@@ -767,7 +767,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function createInteractionOverlay(app)
             % createInteractionOverlay Add the transparent SVG editing surface.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % The overlay owns pointer capture and never changes preview controls.
@@ -784,7 +784,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function updateInteractionOverlay(app)
             % updateInteractionOverlay Send component silhouettes to the SVG layer.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if isempty(app.InteractionOverlay) || ~isvalid(app.InteractionOverlay) || ...
@@ -853,7 +853,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function interactionOverlayEvent(app, event)
             % interactionOverlayEvent Process pointer events from the SVG overlay.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 event
             end
 
@@ -878,7 +878,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function beginOverlayInteraction(app, componentId, handle, point)
             % beginOverlayInteraction Select a component and begin a move or resize.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId (1, 1) string
                 handle (1, 1) string
                 point (1, 2) double
@@ -910,7 +910,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function selectTabFromOverlay(app, componentId, tabIndex)
             % selectTabFromOverlay Select a preview tab from an overlay click.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId (1, 1) string
                 tabIndex (1, 1) double
             end
@@ -939,7 +939,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function visible = isVisibleInSelectedTab(app, componentId)
             % isVisibleInSelectedTab Check whether a component belongs to the active tab.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId string
             end
             arguments (Output)
@@ -967,7 +967,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function scheduleOverlayRefresh(app)
             % scheduleOverlayRefresh Refresh tab-child geometry after layout completion.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if isempty(app.Document) || ~any([app.Document.Components.Factory] == "uitabgroup")
@@ -991,7 +991,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshOverlayAfterTabLayout(app, timerObject)
             % refreshOverlayAfterTabLayout Update geometry after deferred tab layout.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 timerObject timer
             end
 
@@ -1025,7 +1025,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function signature = activeTabGeometrySignature(app)
             % activeTabGeometrySignature Summarize visible preview geometry for polling.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
             arguments (Output)
                 signature (1, 1) string
@@ -1058,7 +1058,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function restorePreviewTabSelections(app)
             % restorePreviewTabSelections Restore transient preview tab selections after rendering.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if isempty(app.PreviewTabSelections) || isempty(app.PreviewHandles)
@@ -1084,7 +1084,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function moveOverlayInteraction(app, point)
             % moveOverlayInteraction Update the overlay-only candidate geometry.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 point (1, 2) double
             end
 
@@ -1107,7 +1107,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function finishOverlayInteraction(app)
             % finishOverlayInteraction Commit one completed overlay gesture.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if strlength(app.InteractionComponentId) == 0
@@ -1131,7 +1131,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function position = movedPosition(app, componentId, startPosition, delta)
             % movedPosition Apply a bounded absolute-position translation.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId (1, 1) string
                 startPosition (1, 4) double
                 delta (1, 2) double
@@ -1160,7 +1160,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function rectangle = interactionDisplayPosition(app, componentId, actual)
             % interactionDisplayPosition Preserve runtime control dimensions while editing.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId (1, 1) string
                 actual (1, 4) double
             end
@@ -1194,7 +1194,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function attachPreviewCallbacks(app)
             % attachPreviewCallbacks Attach editor-only selection callbacks to previews.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if isempty(app.PreviewHandles)
@@ -1214,7 +1214,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshSelectionHandles(app)
             % refreshSelectionHandles Rebuild eight handles for an absolute selection.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Selection adornments are disposable editor-owned controls.
@@ -1250,7 +1250,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function position = previewDisplayPosition(app, preview)
             % previewDisplayPosition Return a preview handle rectangle in panel pixels.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 preview
             end
             arguments (Output)
@@ -1294,7 +1294,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function resizeHandleButtonDown(app, kind)
             % resizeHandleButtonDown Begin one source-coordinate resize gesture.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 kind (1, 1) string
             end
 
@@ -1317,7 +1317,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function resizeHandleMoved(app)
             % resizeHandleMoved Update one resize handle gesture in the preview.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if strlength(app.ResizeTargetId) == 0 || isempty(app.PreviewHandles)
@@ -1342,7 +1342,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function resizeHandleFinished(app)
             % resizeHandleFinished Commit one completed resize to the document model.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if strlength(app.ResizeTargetId) == 0 || isempty(app.PreviewHandles)
@@ -1400,7 +1400,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function position = applyResizePolicy(app, position, startPosition, kind)
             % applyResizePolicy Apply registry-defined control size constraints.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 position (1, 4) double
                 startPosition (1, 4) double
                 kind (1, 1) string
@@ -1454,7 +1454,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function previewComponentButtonDown(app, componentId)
             % previewComponentButtonDown Select and begin absolute drag editing.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId string
             end
 
@@ -1486,7 +1486,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function previewDragMoved(app)
             % previewDragMoved Move the preview handle while preserving source units.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if strlength(app.DragComponentId) == 0 || isempty(app.PreviewHandles)
@@ -1516,7 +1516,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function previewDragFinished(app)
             % previewDragFinished Commit one completed preview drag to the model.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if strlength(app.DragComponentId) == 0 || isempty(app.PreviewHandles)
@@ -1542,7 +1542,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function message = inspectorValueCommitted(app, componentId, path, value)
             % inspectorValueCommitted Parse and commit one native property-row value.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId (1, 1) string
                 path (1, 1) string
                 value
@@ -1589,7 +1589,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function message = inspectorValuesCommitted(app, componentId, changes)
             % inspectorValuesCommitted Validate and apply a complete candidate property batch.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId (1, 1) string
                 changes (1, :) struct
             end
@@ -1646,7 +1646,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshInspector(app)
             % refreshInspector Rebuild or synchronize the current inspector surface.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             component = app.selectedComponent();
@@ -1666,7 +1666,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function rebuildInspector(app, component, surfaceKey)
             % rebuildInspector Replace inspector rows for a new effective surface.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 component (1, 1) macd.model.ComponentRecord
                 surfaceKey (1, 1) string
             end
@@ -1723,7 +1723,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshInspectorValues(app, component)
             % refreshInspectorValues Synchronize values without replacing the surface.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 component (1, 1) macd.model.ComponentRecord
             end
 
@@ -1742,7 +1742,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function clearInspector(app)
             % clearInspector Remove transient inspector state for no selection.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             app.InspectorRows = macd.ui.inspector.InspectorPropertyRow.empty;
@@ -1755,7 +1755,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function saveInspectorViewState(app)
             % saveInspectorViewState Cache invalid drafts before the active row tree is destroyed.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             if strlength(app.InspectorComponentId) == 0 || isempty(app.InspectorRows)
@@ -1768,7 +1768,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function restoreInspectorViewState(app, componentId)
             % restoreInspectorViewState Restore compatible invalid drafts for a rebuilt component.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 componentId (1, 1) string
             end
 
@@ -1808,7 +1808,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function rows = inspectorRowsFor(app, component, states)
             % inspectorRowsFor Project one effective property surface into catalog-owned rows.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 component (1, 1) macd.model.ComponentRecord
                 states
             end
@@ -1829,7 +1829,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function states = inspectorStates(app, component)
             % inspectorStates Append retained source-only entries to effective definitions.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 component (1, 1) macd.model.ComponentRecord
             end
 
@@ -1859,7 +1859,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function definition = inspectorDefinition(app, component, path)
             % inspectorDefinition Find one currently effective inspector definition.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 component (1, 1) macd.model.ComponentRecord
                 path (1, 1) string
             end
@@ -1880,7 +1880,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function transaction = inspectorTransaction(app, component)
             % inspectorTransaction Copy all current effective values into one candidate state.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 component (1, 1) macd.model.ComponentRecord
             end
             arguments (Output)
@@ -1913,7 +1913,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function synchronizeInspectorRows(app, component, states, rows)
             % synchronizeInspectorRows Load current model values into stable native rows.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 component (1, 1) macd.model.ComponentRecord
                 states
                 rows (1, :) struct
@@ -1969,7 +1969,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function key = inspectorSurfaceKey(app, component)
             % inspectorSurfaceKey Identify one component's ordered editor surface.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 component (1, 1) macd.model.ComponentRecord
             end
             arguments (Output)
@@ -2002,7 +2002,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function refreshDiagnostics(app, diagnostics)
             % refreshDiagnostics Present structured diagnostics in the bottom table.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 diagnostics macd.model.Diagnostic
             end
 
@@ -2036,7 +2036,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function [source, diagnostics] = generateSource(app)
             % generateSource Select the canonical or round-trip generator for the document.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
             arguments (Output)
                 source string
@@ -2050,7 +2050,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function component = selectedComponent(app)
             % selectedComponent Return the selected record or an empty result.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
             arguments (Output)
                 component
@@ -2066,19 +2066,19 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function writeUtf8(app, filePath, source)
             % writeUtf8 Write source bytes as UTF-8 without a byte-order mark.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 filePath string
                 source string
             end
 
             % Write bytes directly so the selected document line endings are preserved.
             if ~isvalid(app.UIFigure)
-                error("macd:MatlabAppClassDesigner:ClosedEditor", ...
+                error("macd:yamada:ClosedEditor", ...
                     "The editor is closed and cannot save source.");
             end
             fileId = fopen(filePath, "wb");
             if fileId < 0
-                error("macd:MatlabAppClassDesigner:SaveFailed", ...
+                error("macd:yamada:SaveFailed", ...
                     "Could not open ""%s"" for writing.", filePath);
             end
             cleanup = onCleanup(@() fclose(fileId));
@@ -2089,7 +2089,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function setStatus(app, message)
             % setStatus Update the concise editor status text.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 message string
             end
 
@@ -2100,7 +2100,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function focusEditor(app)
             % focusEditor Bring the editor figure to the foreground after a dialog.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Restore the app window after native dialogs return focus to MATLAB.
@@ -2115,7 +2115,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function updateSaveState(app, diagnostics)
             % updateSaveState Enable Save only for a confirmed path without fatal errors.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 diagnostics macd.model.Diagnostic
             end
 
@@ -2130,7 +2130,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function toggleDiagnostics(app)
             % toggleDiagnostics Toggle the diagnostics drawer near its summary.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
             end
 
             % Preserve the current diagnostics while changing only the drawer state.
@@ -2140,7 +2140,7 @@ classdef MatlabAppClassDesigner < matlab.apps.AppBase
         function setDiagnosticsDrawer(app, isExpanded)
             % setDiagnosticsDrawer Show or collapse the diagnostics table drawer.
             arguments (Input)
-                app (1, 1) MatlabAppClassDesigner
+                app (1, 1) yamada
                 isExpanded (1, 1) logical
             end
 
@@ -2162,18 +2162,18 @@ end
 %{
 Copyright (C) 2026 Nobuto Kaitoh
 
-This file is part of MatlabAppClassDesigner.
+This file is part of yamada.
 
-MatlabAppClassDesigner is free software: you can redistribute it and/or modify
+yamada is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-MatlabAppClassDesigner is distributed in the hope that it will be useful,
+yamada is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with MatlabAppClassDesigner. If not, see <https://www.gnu.org/licenses/>.
+along with yamada. If not, see <https://www.gnu.org/licenses/>.
 %}

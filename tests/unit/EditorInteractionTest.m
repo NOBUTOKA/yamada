@@ -9,7 +9,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % editorBuildsPhase5Surfaces Verify palette, right pane, and toolbar.
 
             % Construct the editor through its ordinary application entry point.
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
 
@@ -42,7 +42,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % hierarchySelectionCallbackUpdatesInspector Verify real tree selection.
 
             % Select the root node through the live uitree callback path.
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
             trees = findall(0, "Type", "uitree");
@@ -61,10 +61,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
             % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
 
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figures = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figures = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -83,10 +83,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % fontStyleButtonCommitsCatalogChoice Commit a typographic style toggle through the live inspector.
 
             % Insert a button through the palette so its Font Style row is reconstructed.
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -115,9 +115,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         function itemSelectionInspectorCommitsAnItemsChoice(testCase)
             % itemSelectionInspectorCommitsAnItemsChoice Route a native selection through the live inspector.
 
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -148,9 +148,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % textAreaValueCommitPreservesAllLines Keep one multiline Value as one transaction change.
 
             % Insert a Text Area, then invoke its native multiline inspector callback.
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -182,9 +182,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % datePickerValueCommitPreservesTypedDate Keep native datetime data out of text parsing.
 
             % Insert a Date Picker, then invoke the native date editor callback.
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -213,9 +213,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         function datePickerLimitsCommitBothBoundsAtomically(testCase)
             % datePickerLimitsCommitBothBoundsAtomically Reject a partial invalid range without mutation.
 
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -246,9 +246,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         function datePickerValueEditorSynchronizesEffectiveRestrictions(testCase)
             % datePickerValueEditorSynchronizesEffectiveRestrictions Refresh the native calendar after a related inspector edit.
 
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -274,9 +274,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         function datePickerInspectorRetainsItsCompleteEditableSurface(testCase)
             % datePickerInspectorRetainsItsCompleteEditableSurface Keep all audited Date Picker rows visible.
 
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -300,9 +300,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         function tableDataDialogCommitsTypedDataFromTheInspector(testCase)
             % tableDataDialogCommitsTypedDataFromTheInspector Apply one typed table draft through the real row binding.
 
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -363,7 +363,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
 
             % Inspect the actual menu hierarchy after editor construction.
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
             menus = findall(0, "Type", "uimenu");
@@ -379,11 +379,11 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % tabSelectorEventChangesPreviewTab Verify the overlay tab selector route.
 
             % Add a tab group and two tabs through the same palette callback path users use.
-            app = MatlabAppClassDesigner();
+            app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
             figures = findall(0, "Type", "figure", ...
-                "Name", "MATLAB App Class Designer");
+                "Name", "Yet Another MATLAB App Designer Alternative");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == ...
                 "Component") && any(string(table.ColumnName) == "Category"), tables));
@@ -492,18 +492,18 @@ end
 %{
 Copyright (C) 2026 Nobuto Kaitoh
 
-This file is part of MatlabAppClassDesigner.
+This file is part of yamada.
 
-MatlabAppClassDesigner is free software: you can redistribute it and/or modify
+yamada is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-MatlabAppClassDesigner is distributed in the hope that it will be useful,
+yamada is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with MatlabAppClassDesigner. If not, see <https://www.gnu.org/licenses/>.
+along with yamada. If not, see <https://www.gnu.org/licenses/>.
 %}

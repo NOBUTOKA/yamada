@@ -14,16 +14,16 @@ interactive-window inspection.
 - `tests/fixtures/AxesExplorerApp.m`
 - `tests/fixtures/NavigationDataApp.m`
 - `tests/fixtures/FigureToolsApp.m`
-- `MatlabAppClassDesigner.m`
+- `yamada.m`
 
 ## Capture procedure
 
-1. Start `MatlabAppClassDesigner` and use **File > Open** to load one target.
+1. Start `yamada` and use **File > Open** to load one target.
 2. Wait for Safe Preview and the diagnostics drawer to finish laying out, then
    capture the full editor window. Include the hierarchy and diagnostics drawer.
 3. For maintained fixtures only, run the named class from `tests/fixtures` in
    MATLAB, capture its application window, and close it. For the final target,
-   start a separate `MatlabAppClassDesigner` instance and capture its window.
+   start a separate `yamada` instance and capture its window.
 4. Compare the two captures at the same desktop scaling. Check root bounds,
    panel and grid placement, visible text, table headers, axes, and ordinary
    controls.

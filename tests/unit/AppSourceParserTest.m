@@ -216,12 +216,12 @@ classdef AppSourceParserTest < matlab.unittest.TestCase
 
             % Use the production source as a regression fixture without executing it.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            sourcePath = string(fullfile(projectRoot, "MatlabAppClassDesigner.m"));
+            sourcePath = string(fullfile(projectRoot, "yamada.m"));
             registry = macd.model.ComponentRegistry.createDefault();
             [document, diagnostics] = macd.source.AppSourceParser.parseFile(sourcePath, registry);
 
             % Recover an editable root despite source-only callback properties.
-            testCase.verifyEqual(document.ClassName, "MatlabAppClassDesigner");
+            testCase.verifyEqual(document.ClassName, "yamada");
             testCase.verifyNotEmpty(document.getComponentByName("UIFigure"));
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
@@ -363,18 +363,18 @@ end
 %{
 Copyright (C) 2026 Nobuto Kaitoh
 
-This file is part of MatlabAppClassDesigner.
+This file is part of yamada.
 
-MatlabAppClassDesigner is free software: you can redistribute it and/or modify
+yamada is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-MatlabAppClassDesigner is distributed in the hope that it will be useful,
+yamada is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with MatlabAppClassDesigner. If not, see <https://www.gnu.org/licenses/>.
+along with yamada. If not, see <https://www.gnu.org/licenses/>.
 %}

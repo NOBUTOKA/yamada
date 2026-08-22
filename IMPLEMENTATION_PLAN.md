@@ -134,7 +134,7 @@ The first version should prioritize clear selection and property editing over vi
 ## Proposed project structure
 
 ```text
-MatlabAppClassDesigner.m
+yamada.m
 +macd/
   +model/
   +source/
@@ -233,7 +233,7 @@ additional source reference blocks generation with an actionable diagnostic.
 - [x] Connect New and Open workflows.
 - [x] Add hierarchy selection, preview rendering, property inspection, and diagnostics.
 
-Phase 4 adds `MatlabAppClassDesigner`, a programmatic AppBase editor shell.
+Phase 4 adds `yamada`, a programmatic AppBase editor shell.
 Its New and Open commands converge on `DocumentModel`; Open remains a parser-only
 workflow. The shell displays a component hierarchy, a registry-only preview that
 never constructs the opened class, read-only property inspection, structured

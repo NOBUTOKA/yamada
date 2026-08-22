@@ -37,7 +37,7 @@ match the product inspector.
 The release ledger records the order used by the release-fixed MathWorks
 property page. This is documentation evidence and must not be normalized.
 
-The runtime catalog defines the order presented by MatlabAppClassDesigner. That
+The runtime catalog defines the order presented by yamada. That
 order should be shared wherever practical:
 
 - a category group owns the order of properties inside that category;

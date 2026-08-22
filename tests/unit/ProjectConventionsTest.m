@@ -37,7 +37,7 @@ classdef ProjectConventionsTest < matlab.unittest.TestCase
                     "GNU General Public License for more details.", filePath);
                 licensePattern = ...
                     "\r\n%\{\r\nCopyright \(C\) 2026 Nobuto Kaitoh\r\n" + ...
-                    "\r\nThis file is part of MatlabAppClassDesigner\.\r\n" + ...
+                    "\r\nThis file is part of yamada\.\r\n" + ...
                     "[\s\S]*\r\n%\}\r\n$";
                 testCase.verifyNotEmpty( ...
                     regexp(text, licensePattern, "once"), filePath);
@@ -84,18 +84,18 @@ end
 %{
 Copyright (C) 2026 Nobuto Kaitoh
 
-This file is part of MatlabAppClassDesigner.
+This file is part of yamada.
 
-MatlabAppClassDesigner is free software: you can redistribute it and/or modify
+yamada is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-MatlabAppClassDesigner is distributed in the hope that it will be useful,
+yamada is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with MatlabAppClassDesigner. If not, see <https://www.gnu.org/licenses/>.
+along with yamada. If not, see <https://www.gnu.org/licenses/>.
 %}

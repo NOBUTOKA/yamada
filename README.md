@@ -1,5 +1,4 @@
-# MatlabAppClassDesigner
-
+# yamada - Yet Another MATLAB App Designer Alternative
 `matlab.apps.AppBase` を継承したプログラム形式の MATLAB アプリクラス（`.m`）を新規作成するか、既存ファイルを読み込み、UI コンポーネントをGUI的に確認・配置・編集するためのアプリを開発するプロジェクトです。
 
 このプロジェクト自体も、App Designerの`.mlapp`ではなく、`matlab.apps.AppBase`を継承したMATLABクラスとして実装します。
