@@ -362,17 +362,19 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                     ["cell", "char", "numeric", "string"]);
             end
 
-            % Item-backed selections require a dedicated dependent-value editor.
-            % Keep their heterogeneous contracts readable until that editor exists.
+            % Item-backed selections use Items labels and optionally map to ItemsData.
             for id = ["uidropdown", "uiknob-discrete", "uilistbox", ...
                     "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"]
                 definition = registry.getById(id);
                 property = definition.Properties([definition.Properties.Path] == "Value");
-                testCase.verifyEqual(property.Editor, "readOnly");
-                testCase.verifyEqual(property.AuditDisposition, "readOnly");
+                testCase.verifyEqual(property.Editor, "itemSelection");
+                testCase.verifyEqual(property.AuditDisposition, "editable");
                 testCase.verifyEqual(string(property.ValueSchema.kind), "itemSelection");
                 testCase.verifyEqual(string(property.ValueSchema.matlabClasses), "any");
             end
+            listBox = registry.getById("uilistbox");
+            listValue = listBox.Properties([listBox.Properties.Path] == "Value");
+            testCase.verifyEqual(string(listValue.ValueSchema.multiselectProperty), "Multiselect");
 
             % Fixed vectors and explicit numeric bounds must reach the runtime schema.
             numeric = registry.getById("uieditfield-numeric");

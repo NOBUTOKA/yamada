@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "8bed539511066c515c460cb3e40e0c0341d9f67e32a0749f1a3d86d6db27a8f9",
+  "inputSha256": "8b38af26b2e23bd5864baf5412ee1141624b745de3d9c3a0942542d3dbfb56ee",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -1211,12 +1211,12 @@
       ]
     },
     {
-      "candidateId": "candidate.dropdown.de760e119ebc",
+      "candidateId": "candidate.dropdown.679834ed3e14",
       "categoryId": "dropdown",
       "categoryDisplayName": "Drop-Down",
       "sharingScope": "variantLocal",
       "scopeRationale": "Drop-Down-specific settings.",
-      "capabilitySha256": "de760e119ebcdf058694267f0e88e6bfe89111cdda5d28424b91e8227a233603",
+      "capabilitySha256": "679834ed3e14ba980781957f98db283e1eb422d833efb52f761d77354c8eaa52",
       "propertyPaths": [
         "Value",
         "Items",
@@ -1225,7 +1225,7 @@
         "Placeholder"
       ],
       "propertyCapabilitySha256": [
-        "1ccbfabaf427eb51474f16a92cb40b3f7e260fa166110d794e94c6dbecce5fbb",
+        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
         "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
         "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
@@ -2854,12 +2854,12 @@
       ]
     },
     {
-      "candidateId": "candidate.knob.b16cfb853bde",
+      "candidateId": "candidate.knob.38906b3f170d",
       "categoryId": "knob",
       "categoryDisplayName": "Knob",
       "sharingScope": "familyScoped",
       "scopeRationale": "Knob-style and scale settings.",
-      "capabilitySha256": "b16cfb853bde5036631932d56db43ae40521491565ddb960cc6b46840d4a2fa6",
+      "capabilitySha256": "38906b3f170dd83b23a53d3335ecbb1854e870bd6a7f3fb5754c423ee2eb06cd",
       "propertyPaths": [
         "Value",
         "Items",
@@ -2867,7 +2867,7 @@
         "ValueIndex"
       ],
       "propertyCapabilitySha256": [
-        "1ccbfabaf427eb51474f16a92cb40b3f7e260fa166110d794e94c6dbecce5fbb",
+        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
         "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
         "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb"
@@ -2973,12 +2973,12 @@
       ]
     },
     {
-      "candidateId": "candidate.listbox.c219e517b71d",
+      "candidateId": "candidate.listbox.6c6abc02d058",
       "categoryId": "listbox",
       "categoryDisplayName": "List Box",
       "sharingScope": "variantLocal",
       "scopeRationale": "List Box-specific settings.",
-      "capabilitySha256": "c219e517b71d52e0a6780721924be14934099f35b48e9f08b3c0d34ba978f6cd",
+      "capabilitySha256": "6c6abc02d05848559be2d955f07d8c98c76ff41bd51c30b69cd6ac656c87b707",
       "propertyPaths": [
         "Value",
         "Items",
@@ -2986,7 +2986,7 @@
         "ValueIndex"
       ],
       "propertyCapabilitySha256": [
-        "578bc6af194bd7bfc735bb180750b709602161d5978a58cea7515f7eaec4709e",
+        "26962721a56bf8e5e493d8029ec3a57fd4436ae0a0d529f7f1daae0d3df7617c",
         "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
         "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb"
@@ -4119,12 +4119,12 @@
       ]
     },
     {
-      "candidateId": "candidate.switch.d0467d05aa98",
+      "candidateId": "candidate.switch.1222d00f3c2a",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
       "sharingScope": "familyScoped",
       "scopeRationale": "Switch-style settings.",
-      "capabilitySha256": "d0467d05aa980ab36b7fee882c4586f42369fe85d0c0ddb51f35f68f163ad11d",
+      "capabilitySha256": "1222d00f3c2afa1aa6da443312929937941c63026595587ebc2d74544e9f372a",
       "propertyPaths": [
         "Value",
         "Items",
@@ -4133,7 +4133,7 @@
         "Orientation"
       ],
       "propertyCapabilitySha256": [
-        "1ccbfabaf427eb51474f16a92cb40b3f7e260fa166110d794e94c6dbecce5fbb",
+        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
         "61a48ed368999826c2e45597f1b647e8cbca210a88f12412e884a2d1afcef6a6",
         "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
@@ -4149,12 +4149,12 @@
       ]
     },
     {
-      "candidateId": "candidate.switch.fb839a553c82",
+      "candidateId": "candidate.switch.c6d7c0299e55",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
       "sharingScope": "familyScoped",
       "scopeRationale": "Switch-style settings.",
-      "capabilitySha256": "fb839a553c8213eb5278e9e7e5f671bbb6c83adbc8327a6ed242da94379680e3",
+      "capabilitySha256": "c6d7c0299e55372cf4fe8852a230a182c73fdb08eda4ea957c86a0560d30dc40",
       "propertyPaths": [
         "Value",
         "Items",
@@ -4163,7 +4163,7 @@
         "Orientation"
       ],
       "propertyCapabilitySha256": [
-        "1ccbfabaf427eb51474f16a92cb40b3f7e260fa166110d794e94c6dbecce5fbb",
+        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
         "61a48ed368999826c2e45597f1b647e8cbca210a88f12412e884a2d1afcef6a6",
         "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",

@@ -74,6 +74,9 @@ function Get-PropertyMetadata {
     if ($null -ne $Capability.valueContract.PSObject.Properties["normalization"]) {
         $valueSchema.normalization = [string]$Capability.valueContract.normalization
     }
+    if ($null -ne $Capability.valueContract.PSObject.Properties["multiselectProperty"]) {
+        $valueSchema.multiselectProperty = [string]$Capability.valueContract.multiselectProperty
+    }
     foreach ($name in @("minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "integer", "allowsInfinity")) {
         if ($null -ne $Capability.valueContract.PSObject.Properties[$name]) {
             $valueSchema[$name] = $Capability.valueContract.$name

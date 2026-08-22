@@ -935,10 +935,10 @@ remaining whole-Phase source round-trip and full-suite record belongs to 6.9.10.
 - [x] Preserve unsupported handle expressions, component references, and other
   deferred structured values through the typed read-only adapter.
 - [x] Keep the model-owned `ContextMenu`/component-reference selector, general
-  `numericMatrix` editor, GridLayout track-list editor, and item-backed
-  selection editor deferred to a later phase. Their catalog entries are visible
-  read-only rather than editable fallbacks; omitted table selection values do
-  not create an exception to that boundary.
+  `numericMatrix` editor, and GridLayout track-list editor deferred to a later
+  phase. Their catalog entries are visible read-only rather than editable
+  fallbacks; omitted table selection values do not create an exception to that
+  boundary.
 - [x] Run the focused suites after every editor slice, then the licensed R2024a
   full suite. Run the manual Inspector geometry/dialog/focus procedure only on
   an explicit user request, following `VISUAL_VERIFICATION.md`. Record
@@ -961,7 +961,7 @@ and every implemented editor is selected by metadata rather than component
 conditionals.
 
 **Completion record (2026-08-22):** The licensed R2024a no-plugin full suite
-completed its 160 tests with `assertSuccess`. Focused editor, transaction,
+completed its 163 tests with `assertSuccess`. Focused editor, transaction,
 registry, model, generation, and Safe Preview suites also passed. Modal editors
 retain drafts until Apply, and the model's batch preflight/undo tests prove one
 atomic history mutation; Cancel and close callbacks leave the staged batch
@@ -973,6 +973,15 @@ toolbars from Safe Preview, and `AxesExplorerApp`'s lower Polar/Geographic axes
 are off-canvas in both the fixture runtime and the preview because of the
 fixture's normalized-axes positions. Completion commits include `8b73eaa` and
 `fd5d09e`.
+
+**Follow-up completion record (2026-08-22):** The six item-backed `Value`
+surfaces now use an `itemSelection` editor. Ordinary single-choice controls use
+a native DropDown whose labels follow the effective `Items`; when nonempty,
+length-matched `ItemsData` maps the chosen label back to its corresponding
+literal. `uilistbox` retains its documented `Multiselect` behavior through a
+native List Box. The validator rejects values outside the current item mapping,
+and focused adapter, transaction, registry, and live-inspector tests cover the
+mapping and re-synchronization behavior.
 
 ### 6.10 Complete Preview, validation, generation, and packaging
 
@@ -988,7 +997,7 @@ automated counts and manual evidence recorded before completion.
 
 **Completion record (2026-08-22):** `ModelValidator` now validates explicit
 catalog-editable values through the same effective-property schema and batch
-validator as the Inspector. The 160-test licensed R2024a suite completed with
+validator as the Inspector. The 163-test licensed R2024a suite completed with
 `assertSuccess`. The requested visual comparison used `exportapp` captures of
 the maintained Safe Preview fixtures, their maintained fixture runtimes, and
 the designer shell; captures are kept outside the repository under the local
@@ -1038,8 +1047,9 @@ parser or `checkcode` results alone are not UI verification.
 - [x] Licensed MATLAB R2024a tests and manual visual checks pass.
 
 **Completion record (2026-08-22):** Phase 6 is complete. The final audit makes
-all deferred component-reference, numeric-matrix, GridLayout track-list, and
-item-backed selection contracts visible read-only rather than falsely editable.
-Those editor families are explicitly deferred to a later phase; their source
-state remains preserved. The final R2024a suite and requested fixture/designer
-visual comparison are recorded above.
+all deferred component-reference, numeric-matrix, and GridLayout track-list
+contracts visible read-only rather than falsely editable. Those editor families
+are explicitly deferred to a later phase; their source state remains preserved.
+Item-backed selections were subsequently implemented with native Items-linked
+controls. The final R2024a suite and requested fixture/designer visual
+comparison are recorded above.

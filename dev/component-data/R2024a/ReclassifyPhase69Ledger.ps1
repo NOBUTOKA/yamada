@@ -291,7 +291,9 @@ $slider = Get-Content -Raw $sliderPath | ConvertFrom-Json
 Set-ContractOptions (Set-PropertyMetadata $slider "Step" "number" "editable" @()) ([ordered]@{ minimum = 0; exclusiveMinimum = $true })
 Save-Json $sliderPath $slider
 
-# Value is selected from Items or ItemsData; a numeric scalar editor was unsound.
+# Value is selected from Items and, when supplied, the parallel ItemsData value.
+# A native selection control exposes the Items labels and commits the associated
+# literal without treating the choice as a numeric scalar.
 $itemSelectionComponents = [ordered]@{
     "uidropdown" = $false
     "uiknob-discrete" = $false
@@ -304,7 +306,11 @@ foreach ($componentId in $itemSelectionComponents.Keys) {
     $path = Join-Path $componentDirectory ($componentId + ".json")
     $document = Get-Content -Raw $path | ConvertFrom-Json
     $value = Set-PropertyMetadata $document "Value" "itemSelection" "editable" @()
-    Set-ValueContract $value "itemSelection" @("any") "propertyDependent" $itemSelectionComponents[$componentId] @()
+    $options = [ordered]@{}
+    if ($componentId -eq "uilistbox") {
+        $options.multiselectProperty = "Multiselect"
+    }
+    Set-ValueContract $value "itemSelection" @("any") "propertyDependent" $itemSelectionComponents[$componentId] @() $options
     Save-Json $path $document
 }
 
@@ -326,12 +332,6 @@ foreach ($file in @(Get-ChildItem -LiteralPath $componentDirectory -Filter '*.js
             $property.requiredEditor = 'none'
             $property.disposition.kind = 'readOnly'
             $property.disposition.reasonCodes = @('deferredGridTrackList')
-            $changed = $true
-        }
-        elseif ($kind -eq 'itemSelection') {
-            $property.requiredEditor = 'none'
-            $property.disposition.kind = 'readOnly'
-            $property.disposition.reasonCodes = @('deferredItemSelection')
             $changed = $true
         }
     }

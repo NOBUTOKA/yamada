@@ -77,6 +77,9 @@ function Get-PropertyCapability {
     if ($null -ne $Property.valueContract.PSObject.Properties["normalization"]) {
         $valueContract.normalization = [string]$Property.valueContract.normalization
     }
+    if ($null -ne $Property.valueContract.PSObject.Properties["multiselectProperty"]) {
+        $valueContract.multiselectProperty = [string]$Property.valueContract.multiselectProperty
+    }
     foreach ($name in @("minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "integer", "allowsInfinity")) {
         if ($null -ne $Property.valueContract.PSObject.Properties[$name]) {
             $valueContract[$name] = $Property.valueContract.$name

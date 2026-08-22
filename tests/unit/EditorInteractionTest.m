@@ -112,6 +112,38 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function itemSelectionInspectorCommitsAnItemsChoice(testCase)
+            % itemSelectionInspectorCommitsAnItemsChoice Route a native selection through the live inspector.
+
+            app = MatlabAppClassDesigner();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "MATLAB App Class Designer");
+            figure.Visible = "off";
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Drop Down", 1);
+            palette.DoubleClickedFcn(palette, struct( ...
+                "InteractionInformation", struct("Row", row)));
+            drawnow;
+
+            labels = findall(figure, "Type", "uilabel", ...
+                "Tag", "macd-inspector-property-label");
+            label = labels(string({labels.Text}) == "Value");
+            editor = findall(label.Parent, "Tag", "macd-inspector-item-selection-editor");
+            testCase.verifyClass(editor, "matlab.ui.control.DropDown");
+            testCase.verifyEqual(string(editor.Enable), "on");
+            testCase.verifyGreaterThanOrEqual(numel(editor.Items), 2);
+            selected = string(editor.Items{2});
+            editor.Value = char(selected);
+            editor.ValueChangedFcn(editor, struct());
+            drawnow;
+
+            component = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEqual(string(component.getProperty("Value").LiteralValue), selected);
+            clear cleanup
+        end
+
         function textAreaValueCommitPreservesAllLines(testCase)
             % textAreaValueCommitPreservesAllLines Keep one multiline Value as one transaction change.
 

@@ -40,7 +40,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.switch.d0467d05aa98",
+          "groupId": "exact.switch.1222d00f3c2a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -48,10 +48,10 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 1,
-            "groupId": "exact.switch.d0467d05aa98",
-            "editor": "readOnly",
+            "groupId": "exact.switch.1222d00f3c2a",
+            "editor": "itemSelection",
             "previewPolicy": "apply",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "editable",
             "valueSchema": {
               "kind": "itemSelection",
               "matlabClasses": [
@@ -65,7 +65,7 @@
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.d0467d05aa98",
+          "groupId": "exact.switch.1222d00f3c2a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Items",
@@ -73,7 +73,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 2,
-            "groupId": "exact.switch.d0467d05aa98",
+            "groupId": "exact.switch.1222d00f3c2a",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -94,7 +94,7 @@
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.d0467d05aa98",
+          "groupId": "exact.switch.1222d00f3c2a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ItemsData",
@@ -102,7 +102,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 3,
-            "groupId": "exact.switch.d0467d05aa98",
+            "groupId": "exact.switch.1222d00f3c2a",
             "editor": "structuredData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -124,7 +124,7 @@
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.d0467d05aa98",
+          "groupId": "exact.switch.1222d00f3c2a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ValueIndex",
@@ -132,7 +132,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 4,
-            "groupId": "exact.switch.d0467d05aa98",
+            "groupId": "exact.switch.1222d00f3c2a",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -149,7 +149,7 @@
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.d0467d05aa98",
+          "groupId": "exact.switch.1222d00f3c2a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Orientation",
@@ -157,7 +157,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 5,
-            "groupId": "exact.switch.d0467d05aa98",
+            "groupId": "exact.switch.1222d00f3c2a",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",

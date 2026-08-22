@@ -47,9 +47,9 @@
             "category": "Switch",
             "order": 1,
             "groupId": "local.uiswitch-slider.switch",
-            "editor": "readOnly",
+            "editor": "itemSelection",
             "previewPolicy": "apply",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "editable",
             "valueSchema": {
               "kind": "itemSelection",
               "matlabClasses": [

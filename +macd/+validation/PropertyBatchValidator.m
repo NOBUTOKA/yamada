@@ -75,6 +75,12 @@ classdef PropertyBatchValidator
                 if strlength(message) > 0
                     return
                 end
+            elseif definition.Editor == "itemSelection"
+                message = macd.validation.PropertyBatchValidator.validateItemSelection( ...
+                    schema, value, transaction);
+                if strlength(message) > 0
+                    return
+                end
             elseif isfield(schema, "shape") && string(schema.shape) == "fixedLengthVector" && ...
                     (~isvector(value) || ~isfield(schema, "fixedLength") || ...
                     numel(value) ~= schema.fixedLength)
@@ -236,6 +242,86 @@ classdef PropertyBatchValidator
                         message = "Dates must be a column vector.";
                     end
             end
+        end
+
+        function message = validateItemSelection(schema, value, transaction)
+            % validateItemSelection Require selected literals to come from ItemsData or Items.
+            arguments (Input)
+                schema (1, 1) struct
+                value
+                transaction (1, 1) macd.model.PropertyTransaction
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            message = "";
+            if ~transaction.hasValue("Items")
+                message = "Define Items before choosing a value.";
+                return
+            end
+            items = macd.validation.PropertyBatchValidator.itemSelectionCells( ...
+                transaction.value("Items"));
+            candidates = items;
+            if transaction.hasValue("ItemsData") && ~isempty(transaction.value("ItemsData"))
+                data = macd.validation.PropertyBatchValidator.itemSelectionCells( ...
+                    transaction.value("ItemsData"));
+                if numel(data) ~= numel(items)
+                    message = "ItemsData must have the same number of values as Items.";
+                    return
+                end
+                candidates = data;
+            end
+            if isempty(candidates)
+                message = "Define at least one item before choosing a value.";
+                return
+            end
+            selected = macd.validation.PropertyBatchValidator.itemSelectionCells(value);
+            multiselect = false;
+            if isfield(schema, "multiselectProperty")
+                property = string(schema.multiselectProperty);
+                multiselect = transaction.hasValue(property) && ...
+                    macd.validation.PropertyBatchValidator.isOn(transaction.value(property));
+            end
+            if ~multiselect && numel(selected) ~= 1
+                message = "Choose one item.";
+                return
+            end
+            for index = 1:numel(selected)
+                if ~any(cellfun(@(candidate) isequaln(candidate, selected{index}), candidates))
+                    message = "Choose a value represented by Items.";
+                    return
+                end
+            end
+        end
+
+        function values = itemSelectionCells(value)
+            % itemSelectionCells Split selection-compatible scalar or vector forms into cells.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                values cell
+            end
+
+            if iscell(value)
+                values = reshape(value, 1, []);
+            elseif ischar(value) && isrow(value)
+                values = {value};
+            elseif isstring(value)
+                values = num2cell(reshape(value, 1, []));
+            elseif isvector(value)
+                values = num2cell(reshape(value, 1, []));
+            else
+                values = cell(1, 0);
+            end
+        end
+
+        function result = isOn(value)
+            % isOn Interpret logical and documented on/off values for multi-selection state.
+            result = (islogical(value) && isscalar(value) && value) || ...
+                (((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && ...
+                lower(string(value)) == "on");
         end
 
         function message = validateWithinDateLimits(value, limits)

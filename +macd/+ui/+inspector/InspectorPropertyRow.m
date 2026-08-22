@@ -270,6 +270,10 @@ classdef InspectorPropertyRow < handle
 
             if isstruct(definition) && isfield(definition, "IsComposite") && definition.IsComposite
                 height = 28;
+            elseif definition.Editor == "itemSelection" && ...
+                    isfield(definition.ValueSchema, "multiselectProperty")
+                % Reserve the List Box selection surface for its optional multi-select mode.
+                height = 84;
             elseif definition.Editor == "multilineText"
                 height = 84;
             elseif definition.Editor == "dateTime" && ...

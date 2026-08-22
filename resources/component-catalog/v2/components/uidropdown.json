@@ -47,9 +47,9 @@
             "category": "Drop-Down",
             "order": 1,
             "groupId": "local.uidropdown.dropdown",
-            "editor": "readOnly",
+            "editor": "itemSelection",
             "previewPolicy": "apply",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "editable",
             "valueSchema": {
               "kind": "itemSelection",
               "matlabClasses": [

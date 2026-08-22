@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "8bed539511066c515c460cb3e40e0c0341d9f67e32a0749f1a3d86d6db27a8f9",
+  "inputSha256": "8b38af26b2e23bd5864baf5412ee1141624b745de3d9c3a0942542d3dbfb56ee",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
@@ -1405,12 +1405,12 @@
       ]
     },
     {
-      "candidateId": "candidate.switch.d0467d05aa98",
+      "candidateId": "candidate.switch.1222d00f3c2a",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
       "sharingScope": "familyScoped",
       "scopeRationale": "Switch-style settings.",
-      "capabilitySha256": "d0467d05aa980ab36b7fee882c4586f42369fe85d0c0ddb51f35f68f163ad11d",
+      "capabilitySha256": "1222d00f3c2afa1aa6da443312929937941c63026595587ebc2d74544e9f372a",
       "propertyPaths": [
         "Value",
         "Items",
@@ -1419,7 +1419,7 @@
         "Orientation"
       ],
       "propertyCapabilitySha256": [
-        "1ccbfabaf427eb51474f16a92cb40b3f7e260fa166110d794e94c6dbecce5fbb",
+        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
         "61a48ed368999826c2e45597f1b647e8cbca210a88f12412e884a2d1afcef6a6",
         "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",

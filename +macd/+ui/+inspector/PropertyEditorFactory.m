@@ -62,6 +62,9 @@ classdef PropertyEditorFactory
                     control = uitextarea(parent, "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) ...
                         macd.ui.inspector.PropertyEditorFactory.commitTextArea(source, commitFcn));
+                case "itemSelection"
+                    control = macd.ui.inspector.PropertyEditorFactory.createItemSelection( ...
+                        parent, definition, commitFcn);
                 case "structuredData"
                     if macd.ui.inspector.PropertyEditorFactory.isDayOfWeekSchema(definition)
                         control = uibutton(parent, "Text", "Edit weekdays", ...
@@ -168,7 +171,8 @@ classdef PropertyEditorFactory
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
                 "onOff", "enum", "number", "numericVector", "color", "stringList", ...
-                "multilineText", "url", "asset", "structuredData", "dateTime", "tableData"]);
+                "multilineText", "url", "asset", "structuredData", "dateTime", "tableData", ...
+                "itemSelection"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -249,7 +253,11 @@ classdef PropertyEditorFactory
                 relatedValues struct = struct()
             end
 
-            if isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-item-selection-editor"
+                macd.ui.inspector.PropertyEditorFactory.synchronizeItemSelection( ...
+                    control, rawValue, isEditable, relatedValues);
+                return
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
                 macd.ui.inspector.PropertyEditorFactory.synchronizeDatePicker( ...
                     control, rawValue, isEditable, relatedValues);
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-limits-editor"
@@ -476,6 +484,257 @@ classdef PropertyEditorFactory
     end
 
     methods (Static, Access = private)
+        function control = createItemSelection(parent, definition, commitFcn)
+            % createItemSelection Create an Items-backed native selection control.
+            arguments (Input)
+                parent
+                definition (1, 1) macd.model.PropertyDefinition
+                commitFcn (1, 1) function_handle
+            end
+            arguments (Output)
+                control
+            end
+
+            % List Box is the one audited family whose Value can be multivalued.
+            schema = definition.ValueSchema;
+            if isfield(schema, "multiselectProperty")
+                control = uilistbox(parent, "Tag", "macd-inspector-item-selection-editor", ...
+                    "ValueChangedFcn", @(source, ~) ...
+                    macd.ui.inspector.PropertyEditorFactory.commitItemSelection(source, commitFcn));
+            else
+                control = uidropdown(parent, "Tag", "macd-inspector-item-selection-editor", ...
+                    "ValueChangedFcn", @(source, ~) ...
+                    macd.ui.inspector.PropertyEditorFactory.commitItemSelection(source, commitFcn));
+            end
+            control.UserData = struct("Schema", schema, "Labels", strings(0, 1), ...
+                "Values", {cell(1, 0)}, "HasCandidates", false);
+        end
+
+        function synchronizeItemSelection(control, rawValue, isEditable, relatedValues)
+            % synchronizeItemSelection Load Items labels and optional ItemsData mappings.
+            arguments (Input)
+                control
+                rawValue
+                isEditable (1, 1) logical
+                relatedValues struct = struct()
+            end
+
+            state = macd.ui.inspector.PropertyEditorFactory.itemSelectionState( ...
+                rawValue, control.UserData.Schema, relatedValues);
+            control.Items = cellstr(state.Labels);
+            control.UserData = state;
+            control.Tooltip = state.Message;
+            control.Enable = macd.ui.inspector.PropertyEditorFactory.onOff( ...
+                isEditable && state.HasCandidates);
+
+            if isa(control, "matlab.ui.control.ListBox")
+                control.Multiselect = macd.ui.inspector.PropertyEditorFactory.onOff(state.Multiselect);
+                if isempty(state.SelectedIndices)
+                    control.Value = {};
+                elseif state.Multiselect
+                    control.Value = cellstr(state.Labels(state.SelectedIndices));
+                else
+                    control.Value = char(state.Labels(state.SelectedIndices(1)));
+                end
+            else
+                % DropDown requires one valid selected label, including the empty sentinel.
+                selectedIndex = state.SelectedIndices(1);
+                control.Value = char(state.Labels(selectedIndex));
+            end
+        end
+
+        function commitItemSelection(source, commitFcn)
+            % commitItemSelection Map selected labels back to ItemsData or Items literals.
+            arguments (Input)
+                source
+                commitFcn (1, 1) function_handle
+            end
+
+            state = source.UserData;
+            selectedLabels = string(source.Value);
+            selectedValues = cell(1, numel(selectedLabels));
+            for index = 1:numel(selectedLabels)
+                selectedIndex = find(state.Labels == selectedLabels(index), 1);
+                if isempty(selectedIndex)
+                    return
+                end
+                selectedValues{index} = state.Values{selectedIndex};
+            end
+            value = macd.ui.inspector.PropertyEditorFactory.itemSelectionOutput(selectedValues);
+            if (ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))
+                value = macd.source.LiteralEncoder.encode(value);
+            end
+            commitFcn(value);
+        end
+
+        function state = itemSelectionState(rawValue, schema, relatedValues)
+            % itemSelectionState Build display labels, selected values, and multiselect state.
+            arguments (Input)
+                rawValue
+                schema (1, 1) struct
+                relatedValues struct
+            end
+            arguments (Output)
+                state (1, 1) struct
+            end
+
+            [items, hasItems] = macd.ui.inspector.PropertyEditorFactory.relatedKnownValue( ...
+                relatedValues, "Items", []);
+            [itemsData, hasItemsData] = macd.ui.inspector.PropertyEditorFactory.relatedKnownValue( ...
+                relatedValues, "ItemsData", []);
+            labels = macd.ui.inspector.PropertyEditorFactory.itemSelectionLabels(items);
+            values = macd.ui.inspector.PropertyEditorFactory.itemSelectionCells(items);
+            message = "";
+            hasCandidates = hasItems && ~isempty(labels);
+            if hasItemsData && ~isempty(itemsData)
+                dataValues = macd.ui.inspector.PropertyEditorFactory.itemSelectionCells(itemsData);
+                if numel(dataValues) == numel(labels)
+                    values = dataValues;
+                else
+                    hasCandidates = false;
+                    message = "ItemsData must have the same number of values as Items.";
+                end
+            end
+            multiselect = false;
+            if isfield(schema, "multiselectProperty")
+                property = string(schema.multiselectProperty);
+                [flag, hasFlag] = macd.ui.inspector.PropertyEditorFactory.relatedKnownValue( ...
+                    relatedValues, property, "off");
+                multiselect = hasFlag && macd.ui.inspector.PropertyEditorFactory.isOn(flag);
+            end
+            selectedIndices = macd.ui.inspector.PropertyEditorFactory.itemSelectionIndices( ...
+                rawValue, values, multiselect);
+
+            % Preserve an empty or imported unmatched current value without inventing a choice.
+            if isempty(selectedIndices) && ~(isempty(rawValue) && multiselect)
+                if isempty(rawValue) && isfield(schema, "allowsEmpty") && schema.allowsEmpty
+                    labels = ["<empty>"; labels];
+                    values = [{[]}, values];
+                    selectedIndices = 1;
+                else
+                    labels = ["<current value>"; labels];
+                    values = [{rawValue}, values];
+                    selectedIndices = 1;
+                    if strlength(message) == 0
+                        message = "The current value is not represented by the current Items.";
+                    end
+                end
+            end
+            if isempty(labels)
+                labels = "<set Items first>";
+                values = {[]};
+                selectedIndices = 1;
+            end
+            state = struct("Schema", schema, "Labels", labels, "Values", {values}, ...
+                "HasCandidates", hasCandidates, "Multiselect", multiselect, ...
+                "SelectedIndices", selectedIndices, "Message", message);
+        end
+
+        function labels = itemSelectionLabels(items)
+            % itemSelectionLabels Normalize supported Items text into UI labels.
+            arguments (Input)
+                items
+            end
+            arguments (Output)
+                labels string
+            end
+
+            if isstring(items)
+                labels = reshape(items, [], 1);
+            elseif iscell(items) && all(cellfun(@(item) ischar(item) && isrow(item), items))
+                labels = string(items(:));
+            elseif ischar(items) && isrow(items)
+                labels = string(items);
+            else
+                labels = strings(0, 1);
+            end
+        end
+
+        function values = itemSelectionCells(value)
+            % itemSelectionCells Split a supported Items or ItemsData vector into literal cells.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                values cell
+            end
+
+            if iscell(value)
+                values = reshape(value, 1, []);
+            elseif ischar(value) && isrow(value)
+                values = {value};
+            elseif isstring(value)
+                values = num2cell(reshape(value, 1, []));
+            elseif isvector(value)
+                values = num2cell(reshape(value, 1, []));
+            else
+                values = cell(1, 0);
+            end
+        end
+
+        function indices = itemSelectionIndices(value, candidates, multiselect)
+            % itemSelectionIndices Find selected candidate positions without coercing literals.
+            arguments (Input)
+                value
+                candidates cell
+                multiselect (1, 1) logical
+            end
+            arguments (Output)
+                indices double
+            end
+
+            selected = macd.ui.inspector.PropertyEditorFactory.itemSelectionCells(value);
+            if isempty(selected)
+                indices = zeros(1, 0);
+                return
+            end
+            if ~multiselect && numel(selected) ~= 1
+                indices = zeros(1, 0);
+                return
+            end
+            indices = zeros(1, numel(selected));
+            for index = 1:numel(selected)
+                candidateIndex = find(cellfun(@(candidate) isequaln(candidate, selected{index}), candidates), 1);
+                if isempty(candidateIndex)
+                    indices = zeros(1, 0);
+                    return
+                end
+                indices(index) = candidateIndex;
+            end
+        end
+
+        function value = itemSelectionOutput(values)
+            % itemSelectionOutput Restore a practical MATLAB value shape from selected literals.
+            arguments (Input)
+                values cell
+            end
+            arguments (Output)
+                value
+            end
+
+            if isempty(values)
+                value = [];
+            elseif isscalar(values)
+                value = values{1};
+            elseif all(cellfun(@(item) isnumeric(item) && isscalar(item), values)) || ...
+                    all(cellfun(@(item) islogical(item) && isscalar(item), values))
+                value = cell2mat(values);
+            elseif all(cellfun(@(item) ischar(item) && isrow(item), values))
+                value = reshape(values, 1, []);
+            elseif all(cellfun(@(item) isstring(item) && isscalar(item), values))
+                value = [values{:}];
+            else
+                value = values;
+            end
+        end
+
+        function result = isOn(value)
+            % isOn Interpret the documented logical and on/off representations.
+            result = (islogical(value) && isscalar(value) && value) || ...
+                ((ischar(value) && isrow(value) || (isstring(value) && isscalar(value))) && ...
+                lower(string(value)) == "on");
+        end
+
         function result = isDayOfWeekSchema(definition)
             % isDayOfWeekSchema Identify the catalog contract for the compact weekday editor.
             arguments (Input)

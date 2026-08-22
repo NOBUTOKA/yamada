@@ -366,18 +366,58 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             clear cleanup
         end
 
-        function defersItemSelectionUntilItsDedicatedImplementation(testCase)
-            % defersItemSelectionUntilItsDedicatedImplementation Remove the incorrect numeric editor safely.
+        function itemSelectionDropDownMapsItemsDataAndRefreshesItems(testCase)
+            % itemSelectionDropDownMapsItemsDataAndRefreshesItems Keep labels synchronized with paired values.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
             definition = definition.Properties([definition.Properties.Path] == "Value");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'First'", true, 'First');
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+                @(value) setappdata(figure, "committed", value));
+            related = struct("Paths", ["Items", "ItemsData"], ...
+                "Values", {{["First", "Second"], [10 20]}}, ...
+                "KnownValues", [true true]);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'First'", true, ...
+                'First', related);
             drawnow;
-            testCase.verifyFalse(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyFalse(control.Editable);
+            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyClass(control, "matlab.ui.control.DropDown");
+            testCase.verifyEqual(string(control.Items), ["First", "Second"]);
+            control.Value = "Second";
+            control.ValueChangedFcn(control, struct());
+            testCase.verifyEqual(getappdata(figure, "committed"), 20);
+
+            updated = struct("Paths", ["Items", "ItemsData"], ...
+                "Values", {{["First", "Third"], [10 30]}}, ...
+                "KnownValues", [true true]);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "10", true, 10, updated);
+            testCase.verifyEqual(string(control.Items), ["First", "Third"]);
+            testCase.verifyEqual(string(control.Value), "First");
+            clear cleanup
+        end
+
+        function itemSelectionListBoxSupportsItemsDataMultiSelection(testCase)
+            % itemSelectionListBoxSupportsItemsDataMultiSelection Preserve List Box multiselect semantics.
+
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            definition = macd.model.ComponentRegistry.createDefault().getById("uilistbox");
+            definition = definition.Properties([definition.Properties.Path] == "Value");
+            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+                @(value) setappdata(figure, "committed", value));
+            related = struct("Paths", ["Items", "ItemsData", "Multiselect"], ...
+                "Values", {{["One", "Two", "Three"], [10 20 30], "on"}}, ...
+                "KnownValues", [true true true]);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[10 30]", true, ...
+                [10 30], related);
+            drawnow;
+            testCase.verifyClass(control, "matlab.ui.control.ListBox");
+            testCase.verifyEqual(string(control.Multiselect), "on");
+            testCase.verifyEqual(string(control.Value), ["One", "Three"]);
+            control.Value = {"Two", "Three"};
+            control.ValueChangedFcn(control, struct());
+            testCase.verifyEqual(getappdata(figure, "committed"), [20 30]);
             clear cleanup
         end
 

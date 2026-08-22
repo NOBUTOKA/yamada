@@ -77,16 +77,15 @@
         "constraints": [],
         "matlabClasses": [
           "any"
-        ]
+        ],
+        "multiselectProperty": "Multiselect"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "none",
+      "requiredEditor": "itemSelection",
       "disposition": {
-        "kind": "readOnly",
-        "reasonCodes": [
-          "deferredItemSelection"
-        ]
+        "kind": "editable",
+        "reasonCodes": []
       },
       "runtimeSetAccess": "public"
     },

@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "c4312d2792dd123349cc99697dd010ea416f8de1",
-  "inputSha256": "8bed539511066c515c460cb3e40e0c0341d9f67e32a0749f1a3d86d6db27a8f9",
+  "ledgerBaselineGitCommit": "fd5d09efd4c88f09c01e8f7200709a4863483388",
+  "inputSha256": "8b38af26b2e23bd5864baf5412ee1141624b745de3d9c3a0942542d3dbfb56ee",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -121,7 +121,7 @@
     },
     {
       "path": "components/uidropdown.json",
-      "sha256": "76216a49b6e19e691bcf6bd15ed56e319a86d2a1762d77d08dfc7593597a94e5"
+      "sha256": "c491fd326f1d63458c2687edb018765d767992158fbcfaab6bc87c245ef8640c"
     },
     {
       "path": "components/uieditfield-numeric.json",
@@ -173,7 +173,7 @@
     },
     {
       "path": "components/uiknob-discrete.json",
-      "sha256": "c92eebd6916ae3d36ffb052f93f9cff2287d8a0c5a5d0a305b54896c2c922c5e"
+      "sha256": "681d37366582aa18ecd399e84c4ac7f66b67fadf6befc0e21c1d35713ed41925"
     },
     {
       "path": "components/uilabel.json",
@@ -185,7 +185,7 @@
     },
     {
       "path": "components/uilistbox.json",
-      "sha256": "0b09526b7c9b24d1e8e51a1f3967fcfc651ee7d40f3fd0a9275f6fee4eb5b103"
+      "sha256": "7112ba2756a6cd10b767a94bc04e2ae641bf4ec985e6b1cfc810928eecc07bce"
     },
     {
       "path": "components/uimenu.json",
@@ -217,15 +217,15 @@
     },
     {
       "path": "components/uiswitch-rocker.json",
-      "sha256": "45b6355060f5b4ef29f47aceb5f3ed1a3c35461021afe4c3042b30b1401ddd37"
+      "sha256": "b604894dba856a433b82df3afa4a6e7a9b364b945c1e12809562ccb9fed9613e"
     },
     {
       "path": "components/uiswitch-slider.json",
-      "sha256": "bee3c2d85b5bb2f5649bb950cc6a5739efc00fb3bb9844314e4c8bc4df53a3e8"
+      "sha256": "2788d4c1e6d9364475b6abc001076f45ee01195484a7a077f5fbbbfab5d479cb"
     },
     {
       "path": "components/uiswitch-toggle.json",
-      "sha256": "9b9577d382a20bc424f51f4f9d30f06f3fed964de3c7935d065ad115bd39cab3"
+      "sha256": "3a2981f7639eb769bab99d68498f496821e775a153a910ca55ec1f08980b5552"
     },
     {
       "path": "components/uitab.json",
