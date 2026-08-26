@@ -70,15 +70,15 @@
         "1"
       ],
       "valueContract": {
-        "kind": "number",
+        "kind": "logical",
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": "logical"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "number",
+      "requiredEditor": "logical",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []

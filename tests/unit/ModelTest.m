@@ -276,6 +276,26 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
 
+        function geometryValidationAcceptsGridSpans(testCase)
+            % geometryValidationAcceptsGridSpans Accept positive integer grid ranges.
+
+            % Grid row and column values may span two adjacent tracks.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", ...
+                document.RootComponentId);
+            label = document.insertComponent(registry, "uilabel", grid.Id);
+            label.setProperty("Layout.Row", [1 2]);
+            label.setProperty("Layout.Column", [1 2]);
+            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+
+            % The context schema and geometry check must agree on valid spans.
+            diagnosticCodes = string({diagnostics.Code});
+            testCase.verifyFalse(any(diagnosticCodes == "invalid-catalog-property"));
+            testCase.verifyFalse(any(diagnosticCodes == "invalid-grid-coordinate"));
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+        end
+
         function modelValidationUsesTheInspectorPropertySchema(testCase)
             % modelValidationUsesTheInspectorPropertySchema Reject catalog-invalid values outside the Inspector.
 

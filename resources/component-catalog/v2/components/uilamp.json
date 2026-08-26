@@ -52,6 +52,7 @@
                 "string"
               ],
               "shape": "fixedLengthVector",
+              "fixedLength": 3,
               "allowsEmpty": false,
               "constraints": []
             }

@@ -47,13 +47,13 @@
             "category": "Check Box",
             "order": 1,
             "groupId": "local.uicheckbox.checkbox",
-            "editor": "number",
+            "editor": "logical",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "number",
+              "kind": "logical",
               "matlabClasses": [
-                "double"
+                "logical"
               ],
               "shape": "scalar",
               "allowsEmpty": false,

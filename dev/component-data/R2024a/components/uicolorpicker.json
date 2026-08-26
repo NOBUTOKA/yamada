@@ -76,6 +76,7 @@
       "valueContract": {
         "kind": "color",
         "shape": "fixedLengthVector",
+        "fixedLength": 3,
         "allowsEmpty": false,
         "constraints": [],
         "matlabClasses": [
