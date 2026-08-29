@@ -222,8 +222,7 @@ the existing pale-red/error-tooltip fallback.
    Do not add a row template until its row name, controls, error routing, and
    commit semantics are reviewed.
 8. Run catalog/schema, surface-projection, hidden Inspector construction,
-   atomic history, Preview-refresh-count, and source round-trip tests. Manual
-   visible-window inspection remains opt-in under `VISUAL_VERIFICATION.md`.
+   atomic history, Preview-refresh-count, and source round-trip tests.
 
 ## Acceptance criteria
 

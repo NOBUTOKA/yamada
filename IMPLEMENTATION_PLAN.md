@@ -260,10 +260,6 @@ diagnostics, validation, Save As, and an original-versus-generated source view.
 - [x] Omit native menus and toolbars from Safe Preview while preserving their
   parsed model/source representation; dialog invocation functions remain out of
   scope because they are not persistent AppBase components.
-- [x] Add a manual screenshot-comparison procedure for all fixtures and the
-  editor itself in `VISUAL_VERIFICATION.md` while preview fidelity work remains
-  active.
-
 Dedicated editing and generation semantics for style-specific constructors,
 tree-node/menu/toolbar hierarchy, programmatic-only axes, and full inspector
 property type metadata remain later-phase work. They do not limit the Phase 4.5
@@ -389,7 +385,7 @@ will show an actionable unavailable-state message rather than guessing.
    palette-created components, position edits, grid-layout edits, undo, and
    redo, proving localized source diffs.
 
-#### Tests and visual verification
+#### Tests and verification
 
 1. Add model tests for deterministic default creation, unique names, allowed
    parents, reversible insertion/deletion, property undo/redo, redo-branch
@@ -401,11 +397,11 @@ will show an actionable unavailable-state message rather than guessing.
 3. Add generator tests for localized `Position`, `Layout.Row`, and
    `Layout.Column` replacements plus insertion/deletion after undo/redo. Keep a
    no-edit parsed-source test byte-for-byte identical.
-4. Run the relevant MATLAB tests through the interactive licensed account, then
-   follow `VISUAL_VERIFICATION.md` for new-app absolute and grid examples and
-   for at least one parsed fixture. Confirm selection visibility, no callback
-   execution, source-coordinate geometry, grid span behavior, Delete/Undo/Redo,
-   and an intentional unsupported-component message.
+4. Run the relevant MATLAB tests through the interactive licensed account.
+   Cover new-app absolute and grid examples and at least one parsed fixture.
+   Verify selection state, no callback execution, source-coordinate geometry,
+   grid span behavior, Delete/Undo/Redo, and an intentional
+   unsupported-component message.
 
 #### Delivery sequence
 
@@ -415,8 +411,8 @@ will show an actionable unavailable-state message rather than guessing.
    Preview, with construction/destruction editor tests.
 3. Land absolute geometry editing and its scale-aware tests.
 4. Land grid row/column/span controls and boundary tests.
-5. Finish round-trip coverage, manual visual verification, and an end-to-end
-   MATLAB test run before marking Phase 5 complete.
+5. Finish round-trip coverage and an end-to-end MATLAB test run before marking
+   Phase 5 complete.
 
 #### Phase 5 completion record
 
@@ -456,10 +452,8 @@ will show an actionable unavailable-state message rather than guessing.
 - `EditorInteractionTest` constructs and destroys real editor `uifigure`
   fixtures and verifies the palette, hierarchy, inspector, toolbar, Edit menu,
   and tab-selector interaction route. The licensed MATLAB R2024a full suite
-  passes **47 tests with zero failures**. Manual editor captures and the
-  reported interactive checks verified the toolbar/layout visibility and the
-  resolved overlay behavior. Safe Preview remains registry-only and does not
-  execute input-app callbacks.
+  passes **47 tests with zero failures**. Safe Preview remains registry-only and
+  does not execute input-app callbacks.
 
 The following remain intentionally outside Phase 5: root-figure manipulation,
 native menu/toolbar and tree-node insertion or geometry editing, dedicated
@@ -469,9 +463,7 @@ later phases rather than incomplete Phase 5 work.
 
 ### Phase 6: Typed property editing and component-specific inspector
 
-The detailed execution order, work-package boundaries, required tests, and
-progress checklist are maintained in [`PHASE6_IMPLEMENTATION_PLAN.md`](PHASE6_IMPLEMENTATION_PLAN.md).
-This section remains the phase-level architectural and completion contract.
+This section records the phase-level architectural and completion contract.
 
 #### Objective
 
@@ -496,12 +488,13 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 
 #### JSON catalog architecture
 
-1. Move declarative component and property specifications out of
-   `ComponentRegistry.m` into a strict JSON catalog under
-   `resources/component-catalog/v1`. Keep one component file per factory, shared
-   property-group files for genuinely common capabilities, and a `catalog.json`
-   manifest that fixes the schema version, MATLAB release, component file list,
-   and deterministic load order. Do not discover catalog files implicitly.
+1. Keep declarative component and property specifications out of
+   `ComponentRegistry.m` in the strict versioned JSON catalog under
+   `resources/component-catalog/v2`. Keep one component file per supported
+   variant, shared property-group files for genuinely common capabilities, and
+   a `catalog.json` manifest that fixes the schema version, MATLAB release,
+   component file list, and deterministic load order. Do not discover catalog
+   files implicitly.
 2. Add a dedicated `ComponentCatalogLoader` that reads JSON with MATLAB's
    built-in `fileread` and `jsondecode`, validates it, resolves property groups
    and style overrides, normalizes decoded MATLAB values, and constructs typed
@@ -670,7 +663,7 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
    model/history, geometry is resolved from the direct parent, and the standard
    catalog contains no hard-coded component inventory
    in `ComponentRegistry.m`, packaged resources load successfully, and the
-   licensed MATLAB R2024a suite and visual checks pass.
+   licensed MATLAB R2024a suite passes.
 
 ### Phase 7: Integration hardening
 

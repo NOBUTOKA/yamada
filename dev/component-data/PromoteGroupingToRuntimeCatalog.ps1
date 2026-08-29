@@ -3,11 +3,12 @@
 Promotes one audited grouping design into the runtime component catalog.
 
 .DESCRIPTION
-Builds the version 2 runtime catalog from the release-fixed component ledger
-and its Step 7-11 grouping artifact. The generated catalog contains concrete
-component variants, reusable property groups, official category ordering, and
-the non-executable property capability metadata consumed by the catalog loader.
-It deliberately does not infer editor implementation support.
+Builds the version 2 runtime catalog from the release-fixed component ledger,
+its Step 7-11 grouping artifact, and reviewed runtime construction metadata.
+The generated catalog contains concrete component variants, reusable property
+groups, official category ordering, and the non-executable property capability
+metadata consumed by the catalog loader. It deliberately does not infer editor
+implementation support.
 
 .EXAMPLE
 ./PromoteGroupingToRuntimeCatalog.ps1 -ReleaseDirectory ./R2024a -CatalogRoot ../../resources/component-catalog/v2
@@ -22,8 +23,7 @@ param(
     [string]$CatalogRoot,
 
     [Parameter()]
-    [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
-    [string]$LegacyCatalogRoot = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) "resources/component-catalog/v1")
+    [string]$RuntimeMetadataPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -98,30 +98,51 @@ function Get-PropertyMetadata {
 
 $releasePath = (Resolve-Path -LiteralPath $ReleaseDirectory).Path
 $catalogPath = [IO.Path]::GetFullPath($CatalogRoot)
-$legacyPath = (Resolve-Path -LiteralPath $LegacyCatalogRoot).Path
 $designPath = Join-Path $releasePath "grouping/GROUPING_DESIGN.json"
 $groupingInputPath = Join-Path $releasePath "grouping-design-input.json"
 $componentPath = Join-Path $releasePath "components"
 $inspectorRowsPath = Join-Path $releasePath "inspector-rows.json"
+$parentContextPath = Join-Path $releasePath "parent-context-rules.json"
+if ([string]::IsNullOrWhiteSpace($RuntimeMetadataPath)) {
+    $RuntimeMetadataPath = Join-Path $releasePath "runtime-component-metadata.json"
+}
+$runtimeMetadataPath = [IO.Path]::GetFullPath($RuntimeMetadataPath)
 
-foreach ($path in @($designPath, $groupingInputPath, $componentPath)) {
+foreach ($path in @($designPath, $groupingInputPath, $componentPath,
+        $parentContextPath, $runtimeMetadataPath)) {
     if (-not (Test-Path -LiteralPath $path)) { throw "Required promotion input '$path' does not exist." }
 }
 
 $design = Get-Content -Raw -LiteralPath $designPath | ConvertFrom-Json
 $groupingInput = Get-Content -Raw -LiteralPath $groupingInputPath | ConvertFrom-Json
+$parentContextDocument = Get-Content -Raw -LiteralPath $parentContextPath | ConvertFrom-Json
+$runtimeMetadata = Get-Content -Raw -LiteralPath $runtimeMetadataPath | ConvertFrom-Json
 $documents = @{}
 foreach ($file in @(Get-ChildItem -LiteralPath $componentPath -Filter '*.json' -File)) {
     $document = Get-Content -Raw -LiteralPath $file.FullName | ConvertFrom-Json
     $documents[[string]$document.id] = $document
 }
 
-# Reuse only factory construction and palette capabilities from the current runtime catalog.
-$legacyManifest = Get-Content -Raw -LiteralPath (Join-Path $legacyPath "catalog.json") | ConvertFrom-Json
-$legacyByFactory = @{}
-foreach ($relativePath in @($legacyManifest.componentFiles)) {
-    $document = Get-Content -Raw -LiteralPath (Join-Path $legacyPath $relativePath) | ConvertFrom-Json
-    $legacyByFactory[[string]$document.factory] = $document
+# Validate the release-owned construction and palette metadata before promotion.
+if ([int]$runtimeMetadata.schemaVersion -ne 1 -or
+        [string]$runtimeMetadata.matlabRelease -ne [string]$design.matlabRelease) {
+    throw "Runtime component metadata must use schema version 1 and match the grouping release."
+}
+$metadataByFactory = @{}
+foreach ($entry in @($runtimeMetadata.factories)) {
+    $factory = [string]$entry.factory
+    if ([string]::IsNullOrWhiteSpace($factory)) {
+        throw "Runtime component metadata contains an empty factory."
+    }
+    if ($metadataByFactory.ContainsKey($factory)) {
+        throw "Runtime component metadata contains duplicate factory '$factory'."
+    }
+    foreach ($requiredField in @("allowedParentFactories", "isRoot", "capabilities")) {
+        if ($null -eq $entry.PSObject.Properties[$requiredField]) {
+            throw "Runtime component metadata for '$factory' is missing '$requiredField'."
+        }
+    }
+    $metadataByFactory[$factory] = $entry
 }
 
 if (Test-Path -LiteralPath $catalogPath) {
@@ -175,21 +196,15 @@ $componentFiles = @()
 foreach ($componentId in @($documents.Keys | Sort-Object)) {
     $source = $documents[$componentId]
     $factory = [string]$source.factory
-    if (-not $legacyByFactory.ContainsKey($factory)) {
-        throw "The legacy runtime catalog has no construction definition for '$factory'."
+    if (-not $metadataByFactory.ContainsKey($factory)) {
+        throw "Runtime component metadata has no construction definition for '$factory'."
     }
-    $legacy = $legacyByFactory[$factory]
+    $runtime = $metadataByFactory[$factory]
     $profile = @($design.profileAssignments | Where-Object componentId -eq $componentId)
     if ($profile.Count -ne 1) { throw "Grouping design has no unique profile for '$componentId'." }
     $declaredType = [string]$source.declaredType
-    if ([string]::IsNullOrWhiteSpace($declaredType) -and $source.creationArguments.Count -gt 0 -and $legacy.capabilities.PSObject.Properties.Name -contains "declaredTypesByStyle") {
-        $styleKey = [string]$source.creationArguments[0]
-        if ($legacy.capabilities.declaredTypesByStyle.PSObject.Properties.Name -contains $styleKey) {
-            $declaredType = [string]$legacy.capabilities.declaredTypesByStyle.$styleKey
-        }
-    }
     if ([string]::IsNullOrWhiteSpace($declaredType)) {
-        $declaredType = [string]$legacy.declaredType
+        throw "The audited component '$componentId' has no declared type."
     }
 
     $categories = @()
@@ -228,8 +243,8 @@ foreach ($componentId in @($documents.Keys | Sort-Object)) {
         id = $componentId
         factory = $factory
         declaredType = $declaredType
-        allowedParentFactories = @($legacy.allowedParentFactories | ForEach-Object { [string]$_ })
-        isRoot = [bool]$legacy.isRoot
+        allowedParentFactories = @($runtime.allowedParentFactories | ForEach-Object { [string]$_ })
+        isRoot = [bool]$runtime.isRoot
         creationArguments = @($source.creationArguments)
         profileId = [string]$profile[0].profileId
         profileDelta = [ordered]@{
@@ -239,16 +254,26 @@ foreach ($componentId in @($documents.Keys | Sort-Object)) {
             })
         }
         categories = $categories
-        capabilities = $legacy.capabilities
+        capabilities = $runtime.capabilities
     })
 }
 
 # Position is intrinsic in the audited v2 ledger; absolute parents only suppress grid fields.
-$parentContextRules = @($legacyManifest.parentContextRules | ForEach-Object {
-    $rule = [ordered]@{ parentFactories = @($_.parentFactories | ForEach-Object { [string]$_ }); kind = [string]$_.kind }
-    if ($rule.kind -eq "absolute") { $rule.kind = "absoluteIntrinsic" }
-    $rule
-})
+$contextOrder = @{ grid = 1; absolute = 2; structural = 3 }
+$parentContextRules = @($parentContextDocument.contexts |
+    Sort-Object { $contextOrder[[string]$_.id] } |
+    ForEach-Object {
+        $kind = switch ([string]$_.id) {
+            "grid" { "grid" }
+            "absolute" { "absoluteIntrinsic" }
+            "structural" { "structural" }
+            default { throw "Unsupported parent context '$($_.id)'." }
+        }
+        [ordered]@{
+            parentFactories = @($_.parentFactories | ForEach-Object { [string]$_ })
+            kind = $kind
+        }
+    })
 Write-Utf8JsonFile (Join-Path $catalogPath "catalog.json") ([ordered]@{
     schemaVersion = 2
     matlabRelease = [string]$design.matlabRelease

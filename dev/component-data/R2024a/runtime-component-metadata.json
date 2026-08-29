@@ -1,0 +1,659 @@
+{
+  "$schema": "runtime-component-metadata.schema.json",
+  "schemaVersion": 1,
+  "matlabRelease": "R2024a",
+  "factories": [
+    {
+      "factory": "axes",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Axes",
+        "category": "Axes",
+        "programmaticOnly": true
+      }
+    },
+    {
+      "factory": "geoaxes",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Geographic Axes",
+        "category": "Axes",
+        "programmaticOnly": true
+      }
+    },
+    {
+      "factory": "polaraxes",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Polar Axes",
+        "category": "Axes",
+        "programmaticOnly": true
+      }
+    },
+    {
+      "factory": "uiaxes",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "UI Axes",
+        "category": "Axes",
+        "overlayShape": "axes"
+      }
+    },
+    {
+      "factory": "uibutton",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Button",
+        "category": "Common",
+        "supportedStyles": [
+          "push",
+          "state"
+        ],
+        "defaultStyle": "push",
+        "declaredTypesByStyle": {
+          "push": "matlab.ui.control.Button",
+          "state": "matlab.ui.control.StateButton"
+        },
+        "overlayShape": "roundedRectangle"
+      }
+    },
+    {
+      "factory": "uibuttongroup",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Button Group",
+        "category": "Container"
+      }
+    },
+    {
+      "factory": "uicheckbox",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Check Box",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uicolorpicker",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Color Picker",
+        "category": "Common",
+        "metadata": {
+          "introduced": "R2024a"
+        }
+      }
+    },
+    {
+      "factory": "uicontextmenu",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Context Menu",
+        "category": "FigureTools"
+      }
+    },
+    {
+      "factory": "uidatepicker",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Date Picker",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uidropdown",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Drop-down",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uieditfield",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Edit Field",
+        "category": "Common",
+        "supportedStyles": [
+          "text",
+          "numeric"
+        ],
+        "defaultStyle": "text",
+        "metadata": {
+          "numericProperties": [
+            "Limits",
+            "RoundFractionalValues",
+            "ValueDisplayFormat"
+          ]
+        }
+      }
+    },
+    {
+      "factory": "uifigure",
+      "allowedParentFactories": [],
+      "isRoot": true,
+      "capabilities": {
+        "displayName": "UI Figure",
+        "category": "Figure"
+      }
+    },
+    {
+      "factory": "uigauge",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Gauge",
+        "category": "Instrumentation",
+        "supportedStyles": [
+          "circular",
+          "linear",
+          "ninetydegree",
+          "semicircular"
+        ],
+        "defaultStyle": "circular",
+        "declaredTypesByStyle": {
+          "circular": "matlab.ui.control.Gauge",
+          "linear": "matlab.ui.control.LinearGauge",
+          "ninetydegree": "matlab.ui.control.NinetyDegreeGauge",
+          "semicircular": "matlab.ui.control.SemicircularGauge"
+        },
+        "overlayShapesByStyle": {
+          "circular": "circle",
+          "linear": "rectangle",
+          "ninetydegree": "circle",
+          "semicircular": "circle"
+        },
+        "resizeConstraint": "aspectRatio"
+      }
+    },
+    {
+      "factory": "uigridlayout",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Grid Layout",
+        "category": "Container"
+      }
+    },
+    {
+      "factory": "uihtml",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "HTML",
+        "category": "Extensible"
+      }
+    },
+    {
+      "factory": "uihyperlink",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Hyperlink",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uiimage",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Image",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uiknob",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Knob",
+        "category": "Instrumentation",
+        "supportedStyles": [
+          "continuous",
+          "discrete"
+        ],
+        "defaultStyle": "continuous",
+        "declaredTypesByStyle": {
+          "continuous": "matlab.ui.control.Knob",
+          "discrete": "matlab.ui.control.DiscreteKnob"
+        },
+        "overlayShape": "circle",
+        "resizeConstraint": "aspectRatio"
+      }
+    },
+    {
+      "factory": "uilabel",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Label",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uilamp",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Lamp",
+        "category": "Instrumentation",
+        "overlayShape": "circle",
+        "resizeConstraint": "aspectRatio"
+      }
+    },
+    {
+      "factory": "uilistbox",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "List Box",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uimenu",
+      "allowedParentFactories": [
+        "uifigure",
+        "uimenu"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Menu",
+        "category": "FigureTools",
+        "requiresParentComponent": true
+      }
+    },
+    {
+      "factory": "uipanel",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Panel",
+        "category": "Container"
+      }
+    },
+    {
+      "factory": "uipushtool",
+      "allowedParentFactories": [
+        "uitoolbar"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Push Tool",
+        "category": "FigureTools",
+        "requiresParentComponent": true
+      }
+    },
+    {
+      "factory": "uiradiobutton",
+      "allowedParentFactories": [
+        "uibuttongroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Radio Button",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uislider",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Slider",
+        "category": "Common",
+        "supportedStyles": [
+          "slider",
+          "range"
+        ],
+        "defaultStyle": "slider",
+        "declaredTypesByStyle": {
+          "range": "matlab.ui.control.RangeSlider",
+          "slider": "matlab.ui.control.Slider"
+        },
+        "overlayShape": "slider",
+        "resizeConstraint": "fixedHeight"
+      }
+    },
+    {
+      "factory": "uispinner",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Spinner",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uiswitch",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Switch",
+        "category": "Instrumentation",
+        "supportedStyles": [
+          "slider",
+          "rocker",
+          "toggle"
+        ],
+        "defaultStyle": "slider",
+        "declaredTypesByStyle": {
+          "rocker": "matlab.ui.control.RockerSwitch",
+          "slider": "matlab.ui.control.Switch",
+          "toggle": "matlab.ui.control.ToggleSwitch"
+        },
+        "overlayShape": "switch",
+        "resizeConstraint": "aspectRatio"
+      }
+    },
+    {
+      "factory": "uitab",
+      "allowedParentFactories": [
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Tab",
+        "category": "Container"
+      }
+    },
+    {
+      "factory": "uitabgroup",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Tab Group",
+        "category": "Container"
+      }
+    },
+    {
+      "factory": "uitable",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Table",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uitextarea",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Text Area",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uitogglebutton",
+      "allowedParentFactories": [
+        "uibuttongroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Toggle Button",
+        "category": "Common"
+      }
+    },
+    {
+      "factory": "uitoggletool",
+      "allowedParentFactories": [
+        "uitoolbar"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Toggle Tool",
+        "category": "FigureTools",
+        "requiresParentComponent": true
+      }
+    },
+    {
+      "factory": "uitoolbar",
+      "allowedParentFactories": [
+        "uifigure"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Toolbar",
+        "category": "FigureTools"
+      }
+    },
+    {
+      "factory": "uitree",
+      "allowedParentFactories": [
+        "uifigure",
+        "uipanel",
+        "uigridlayout",
+        "uitab",
+        "uibuttongroup",
+        "uitabgroup"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Tree",
+        "category": "Common",
+        "supportedStyles": [
+          "default",
+          "checkbox"
+        ],
+        "defaultStyle": "default"
+      }
+    },
+    {
+      "factory": "uitreenode",
+      "allowedParentFactories": [
+        "uitree",
+        "uitreenode"
+      ],
+      "isRoot": false,
+      "capabilities": {
+        "displayName": "Tree Node",
+        "category": "Common",
+        "requiresParentComponent": true
+      }
+    }
+  ]
+}

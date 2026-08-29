@@ -1,9 +1,11 @@
 # R2024a component documentation transcript
 
-This directory is a development-only transcript of public MATLAB component
-properties. It is deliberately separate from `resources/component-catalog/v1`:
-the latter controls supported editor behavior, while these files record source
-documentation before a property is audited.
+This directory contains the release-fixed development inputs used to build the
+runtime component catalog. The component transcripts record public MATLAB
+documentation and audited property behavior, while
+[`runtime-component-metadata.json`](runtime-component-metadata.json) records
+construction, palette, overlay, and resize capabilities that do not belong to
+individual documented properties.
 
 The transcript is not a runtime dependency and must not be loaded by
 `ComponentCatalogLoader`. A listed property is not implicitly editable, safe for
@@ -15,9 +17,7 @@ Preview, serializable, or supported by source generation.
 variant has its own stable `id`, documented factory arguments, declared type,
 categories, and complete property surface. For example, `uibutton-push` and
 `uibutton-state` are separate records even though both use `uibutton` as
-their factory. The runtime catalog does not yet support duplicate factories;
-that later implementation work is intentionally outside this documentation-data
-change.
+their factory.
 
 Properties remain a flat list. Each property carries `categoryId` and an order
 within that category, while `documentationCategories` records the source-page
@@ -35,6 +35,9 @@ Variant applicability is implicit in the containing file. Parent-dependent
 geometry is recorded separately in
 [`parent-context-rules.json`](parent-context-rules.json), so `Layout.Row` and
 `Layout.Column` are not duplicated into each child variant.
+The promotion script combines these inputs with the grouping design and
+`runtime-component-metadata.json`; it does not depend on an older runtime
+catalog.
 
 ## Source and verification rules
 

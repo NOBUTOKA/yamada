@@ -11842,9 +11842,9 @@
         {
           "path": "Value",
           "valueContract": {
-            "kind": "number",
+            "kind": "logical",
             "matlabClasses": [
-              "double"
+              "logical"
             ],
             "shape": "scalar",
             "allowsEmpty": false,
@@ -11852,7 +11852,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "number",
+          "requiredEditor": "logical",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -12376,6 +12376,7 @@
               "string"
             ],
             "shape": "fixedLengthVector",
+            "fixedLength": 3,
             "allowsEmpty": false,
             "constraints": []
           },
@@ -21134,6 +21135,7 @@
               "string"
             ],
             "shape": "fixedLengthVector",
+            "fixedLength": 3,
             "allowsEmpty": false,
             "constraints": []
           },

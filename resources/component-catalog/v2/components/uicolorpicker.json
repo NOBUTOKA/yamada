@@ -58,9 +58,9 @@
                 "string"
               ],
               "shape": "fixedLengthVector",
-              "fixedLength": 3,
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "fixedLength": 3
             }
           }
         },
