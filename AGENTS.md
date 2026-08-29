@@ -7,10 +7,6 @@
   runs as `excelsior\codexsandboxoffline`, which cannot communicate with that
   user's MathWorks Service Host and online license. Do not set `MATLAB_PREFDIR`
   to a temporary directory for these verification runs.
-- Do not run a manual Visual Test, take application screenshots, or inspect a
-  visible application window unless the user explicitly requests it for the
-  current change. Hidden programmatic UI construction in automated MATLAB tests
-  remains allowed; the procedure in `VISUAL_VERIFICATION.md` is opt-in.
 - Write comments in MATLAB source files in English.
 - Every project-owned MATLAB function and method, including test methods and
   local test helpers, must have an English docstring comment immediately after
