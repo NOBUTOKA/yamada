@@ -74,6 +74,7 @@ See the [product specification](SPECIFICATION.md) for the current supported beha
 
 - [Product specification](SPECIFICATION.md) - Current scope, input and output contract, and safety limitations
 - [Roadmap](ROADMAP.md) - Independent tasks planned beyond the current supported behavior
+- [Architecture reference](doc/ARCHITECTURE.md) - Implemented layers, data flow, safety boundaries, and extension points
 - [Contributing guide](CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
 
 ## Feedback and Contributions

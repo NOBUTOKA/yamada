@@ -37,7 +37,9 @@ No versioned release or Toolbox package is available yet, so development uses th
 See the [product specification](SPECIFICATION.md) for the public feature set,
 input and output contract, and safety limitations. The [roadmap](ROADMAP.md)
 lists unfinished work as independent contribution candidates. Update the
-specification when a change affects externally visible behavior.
+specification when a change affects externally visible behavior. Use the
+[architecture reference](doc/ARCHITECTURE.md) for current layer responsibilities,
+data flow, and extension boundaries.
 
 ## Repository Layout
 
@@ -51,6 +53,7 @@ specification when a change affects externally visible behavior.
 | `resources/EditorInteractionOverlay.html` | HTML/SVG overlay for canvas selection, movement, and resizing; see below |
 | `resources/component-catalog/R2024a` | Release-specific component catalog currently loaded at runtime; add sibling release directories for future MATLAB versions |
 | `dev/component-data` | R2024a component data and catalog-generation scripts |
+| `doc/ARCHITECTURE.md` | Developer reference for implemented layers, data flow, and extension boundaries |
 | `tests/unit` | MATLAB unit tests |
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
 
