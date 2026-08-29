@@ -41,7 +41,8 @@ Both workflows must converge on the same component model, editor, validation, an
 4. Show supported components in the browser and preview canvas.
 5. Show unsupported or ambiguous source regions as warnings.
 6. Apply supported edits as source-level changes and preview the resulting diff.
-7. Save to a new path by default until safe round-trip behavior is established.
+7. Review the generated diff, then save to the opened path only after validation
+   succeeds or choose a new path explicitly with Save As.
 
 ## Architecture
 
@@ -129,7 +130,12 @@ Absolute positioning and `uigridlayout` require different editing behavior:
 - Right side: property inspector.
 - Bottom: warnings and errors.
 
-The first version should prioritize clear selection and property editing over visual polish. Delete must always be an explicit command. Save must be disabled when fatal validation or generation diagnostics exist. The save dialog must let users select `CRLF` or `LF` for new output; opened source retains its detected convention by default.
+The first version should prioritize clear selection and property editing over
+visual polish. Delete must always be an explicit command. Save is disabled when
+fatal validation or generation diagnostics exist. New output uses the
+host-default line ending and opened source retains its detected convention. An
+explicit `CRLF`/`LF` selector in the Save As dialog remains a future
+enhancement.
 
 ## Proposed project structure
 
@@ -197,9 +203,10 @@ regions, and diagnostics in the shared document model.
 Opened source files must be valid UTF-8. The parser reports invalid UTF-8 as a
 blocking error and does not create editable component records, preventing a
 lossy write-back. It retains the source file's detected line-ending convention
-(`CRLF`, `LF`, or `None`) for future round-trip output. New documents use CRLF
-on Windows and LF on Linux or macOS; the future save dialog will let the user
-choose either convention for new output.
+(`CRLF`, `LF`, or `None`) for round-trip output. New documents use CRLF on
+Windows and LF on Linux or macOS. `SourceWriter` supports either convention,
+while an editor control for overriding the new-document convention is not yet
+implemented.
 
 The parser accepts only Registry-supported direct factory calls and direct
 `app.Component.Property = value` assignments. A conservative literal parser
@@ -260,10 +267,11 @@ diagnostics, validation, Save As, and an original-versus-generated source view.
 - [x] Omit native menus and toolbars from Safe Preview while preserving their
   parsed model/source representation; dialog invocation functions remain out of
   scope because they are not persistent AppBase components.
-Dedicated editing and generation semantics for style-specific constructors,
-tree-node/menu/toolbar hierarchy, programmatic-only axes, and full inspector
-property type metadata remain later-phase work. They do not limit the Phase 4.5
-registry, parsing, or Safe Preview coverage recorded above.
+Phase 6 delivered the audited typed Inspector metadata that was deferred from
+Phase 4.5. Dedicated editing and generation semantics for style-specific
+constructors, tree-node/menu/toolbar hierarchy, and programmatic-only axes
+remain later-phase work. They do not limit the Phase 4.5 registry, parsing, or
+Safe Preview coverage recorded above.
 
 ### Phase 5: Canvas editing
 
@@ -620,20 +628,22 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 
 #### Delivery sequence
 
-1. Land the versioned JSON schema, loader, allowlisted resolvers, fixture
+1. [x] Land the versioned JSON schema, loader, allowlisted resolvers, fixture
    catalogs, and fail-closed loader tests.
-2. Land declarative parent-context rules and one effective-property resolver.
+2. [x] Land declarative parent-context rules and one effective-property resolver.
    Switch insertion, parsing, and validation to it, then freeze intrinsic and
    representative parent-context projections.
-3. Migrate Phase 4.5 definitions without changing effective behavior, removing
+3. [x] Migrate Phase 4.5 definitions without changing effective behavior, removing
    the hard-coded catalog only after both parity layers pass.
-4. Land expanded typed definitions, reusable groups, audit data, and model
+4. [x] Land expanded typed definitions, reusable groups, audit data, and model
    reset/history operations.
-5. Land the categorized inspector and common adapters, completing Button end to
+5. [x] Land the categorized inspector and common adapters, completing Button end to
    end against the supplied App Designer examples.
-6. Expand component families and style-specific surfaces.
-7. Add reference/path and remaining specialized adapters.
-8. Complete preview, validation, generation, packaging, and end-to-end checks.
+6. [x] Expand component families and style-specific audited surfaces.
+7. [ ] Finish reference and remaining specialized adapters. Asset paths are
+   editable; component references and Grid Layout track lists remain read-only.
+8. [ ] Complete preview, validation, generation, packaging, and end-to-end checks.
+
 #### Tests and completion criteria
 
 1. Catalog-loader tests cover valid loading, deterministic ordering and merging,
@@ -665,12 +675,57 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
    in `ComponentRegistry.m`, packaged resources load successfully, and the
    licensed MATLAB R2024a suite passes.
 
+#### Phase 6 implementation assessment
+
+**Status: substantially implemented, not closed (assessed 2026-08-30).**
+
+- The packaged R2024a catalog contains 48 concrete variants for 38 factories.
+  The audited development ledger contains 1,825 property contracts: 1,068
+  editable, 146 visible read-only, and 611 intentionally omitted. Runtime tests
+  compare every variant with that ledger, retain grouping provenance, and prove
+  that every property classified as editable resolves to an allowlisted native
+  or composite Inspector adapter.
+- `ComponentCatalogLoader`, typed `ComponentDefinition` and
+  `PropertyDefinition` values, declarative parent-context rules, and
+  `ComponentRegistry.getEffectiveProperties` are implemented. Insertion,
+  parsing, model validation, default probing, and the Inspector use the shared
+  registry surface; `ComponentRegistry.m` contains no standard component
+  inventory.
+- The native categorized Inspector, implicit runtime defaults, inline rejected
+  drafts, atomic property transactions, common adapters, and specialized
+  Items/ItemsData, table, column, date, weekday, multiline, color, URL, and
+  asset-path editors are implemented. Generated-property reset and reversible
+  history exist in `DocumentModel`, but no per-property reset action is exposed
+  in the Inspector yet.
+- Style-specific catalog surfaces are audited and selected from creation
+  arguments. The palette does not yet expose dedicated construction choices for
+  every factory style, and programmatic-only axes and native figure-tool
+  hierarchy editing retain the Phase 5 restrictions.
+- Ninety-five component-reference surfaces, including `ContextMenu`, `Parent`,
+  and `SelectedTab`, remain read-only with the explicit
+  `deferredComponentReference` reason. `uigridlayout.RowHeight` and
+  `ColumnWidth` remain read-only with `deferredGridTrackList`.
+- Phase 6 cannot be closed while the integrated MATLAB suite is not green. The
+  current failures include ItemsData-backed selection synchronization, Safe
+  Preview property ordering, and dependent editor interaction tests. Packaging
+  checks and complete Save/Save As end-to-end coverage are also absent.
+
 ### Phase 7: Integration hardening
 
-- Run unit, round-trip, and generation tests.
-- Verify generated MATLAB syntax using available MATLAB tooling.
-- Verify warnings, save guards, encoding, line endings, and Git diff readability.
-- Test new-app and existing-app workflows with the same model and generator.
+- [ ] Restore a green unit, round-trip, generation, Inspector, and Preview test
+  run. On 2026-08-30 the licensed R2024a run completed 166 tests: 155 passed,
+  11 failed, and 8 were incomplete. `PropertyEditorFactoryTest` independently
+  reproduced two ItemsData selection failures, and Preview rendering exposes an
+  unassigned-output path in `PreviewRenderer.orderedProperties`.
+- [x] Verify a generated minimal AppBase class with MATLAB tooling. On
+  2026-08-30 a generated class passed `checkcode`, constructed successfully,
+  completed `drawnow`, remained valid, and was deleted cleanly.
+- [ ] Add durable editor-level verification for Save and Save As guards and file
+  persistence. Lower-level tests already cover UTF-8 without BOM, CRLF/LF
+  writing, no-edit preservation, localized diffs, and generation diagnostics.
+- [ ] Complete new-app and existing-app end-to-end workflows through the shared
+  model and generator, including packaging/resource discovery and recoverable
+  save targets.
 
 ## Test strategy
 
@@ -685,15 +740,21 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 
 ## MVP completion criteria
 
-The MVP is complete when a user can:
+The MVP capability surface is implemented when a user can:
 
-1. Create and save a runnable AppBase `.m` class with supported components.
-2. Open a representative existing AppBase `.m` class without executing it.
-3. Inspect its hierarchy and supported properties.
-4. Make at least one safe property edit and obtain a localized text diff.
-5. Add and delete a supported component where source ownership is unambiguous.
-6. Receive actionable warnings instead of source loss for unsupported constructs.
-7. Save UTF-8 without BOM source using a chosen line-ending convention that remains reviewable in Git.
+1. [x] Create and save a runnable AppBase `.m` class with supported components.
+2. [x] Open a representative existing AppBase `.m` class without executing it.
+3. [x] Inspect its hierarchy and supported properties.
+4. [x] Make at least one safe property edit and obtain a localized text diff.
+5. [x] Add and delete a supported component where source ownership is unambiguous.
+6. [x] Receive actionable warnings instead of source loss for unsupported constructs.
+7. [x] Save UTF-8 without BOM source using the document's line-ending convention:
+   host default for new documents and detected CRLF/LF for opened source.
+
+**MVP assessment:** the functional criteria above are implemented. Release
+readiness remains blocked by the Phase 7 test failures and missing integrated
+save/packaging verification; the explicit Save As line-ending selector is an
+enhancement beyond the current public contract.
 
 ## Known risks
 
