@@ -151,6 +151,7 @@ classdef PreviewRenderer < handle
                 orderedEntries macd.model.PropertyEntry
             end
 
+            orderedEntries = entries;
             valueDefinition = definition.getProperty("Value");
             if isempty(obj.Registry)
                 return

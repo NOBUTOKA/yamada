@@ -237,7 +237,7 @@ classdef ComponentRegistry < handle
 
             exact = candidates(arrayfun(@(candidate) isequal( ...
                 candidate.CreationArguments, creationArguments), candidates));
-            if numel(exact) == 1
+            if isscalar(exact)
                 definition = exact;
                 return
             end
@@ -252,14 +252,14 @@ classdef ComponentRegistry < handle
             if ~isempty(prefixMatches)
                 lengths = arrayfun(@(candidate) numel(candidate.CreationArguments), prefixMatches);
                 best = prefixMatches(lengths == max(lengths));
-                if numel(best) == 1
+                if isscalar(best)
                     definition = best;
                     return
                 end
             end
             emptyArguments = candidates(arrayfun(@(candidate) isempty( ...
                 candidate.CreationArguments), candidates));
-            if numel(emptyArguments) == 1
+            if isscalar(emptyArguments)
                 definition = emptyArguments;
                 return
             end

@@ -8,21 +8,6 @@ The [product specification](SPECIFICATION.md) remains authoritative for current
 behavior. A roadmap item becomes part of the supported public contract only after
 its implementation, tests, and user documentation are complete.
 
-## Restore a Green MATLAB Test Suite
-
-The licensed MATLAB R2024a run on 2026-08-30 completed 166 tests: 155 passed, 11
-failed, and 8 were incomplete. The known failure areas are ItemsData-backed
-selection synchronization, Safe Preview property ordering, and dependent editor
-interaction tests.
-
-- Fix the unassigned-output path in `PreviewRenderer.orderedProperties`.
-- Correct Dropdown and List Box `Items`, `ItemsData`, `Multiselect`, and `Value`
-  synchronization without changing source-preservation behavior.
-- Resolve the dependent editor interaction failures, including invalid/deleted UI
-  handles, table transaction state, and Tab Group selector geometry.
-- Run the focused suites first, then require the standard licensed R2024a unit
-  suite to complete without failures or incomplete tests.
-
 ## Add Component-Reference Property Editors
 
 Ninety-five audited component-reference surfaces, including `ContextMenu`,

@@ -378,8 +378,8 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             related = struct("Paths", ["Items", "ItemsData"], ...
                 "Values", {{["First", "Second"], [10 20]}}, ...
                 "KnownValues", [true true]);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'First'", true, ...
-                'First', related);
+            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "10", true, ...
+                10, related);
             drawnow;
             testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
             testCase.verifyClass(control, "matlab.ui.control.DropDown");
@@ -415,7 +415,7 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyClass(control, "matlab.ui.control.ListBox");
             testCase.verifyEqual(string(control.Multiselect), "on");
             testCase.verifyEqual(string(control.Value), ["One", "Three"]);
-            control.Value = {"Two", "Three"};
+            control.Value = {'Two', 'Three'};
             control.ValueChangedFcn(control, struct());
             testCase.verifyEqual(getappdata(figure, "committed"), [20 30]);
             clear cleanup

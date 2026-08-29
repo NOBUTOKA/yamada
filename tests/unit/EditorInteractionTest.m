@@ -122,7 +122,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
-            row = find(string(palette.Data(:, 1)) == "Drop Down", 1);
+            row = find(string(palette.Data(:, 1)) == "Drop-down", 1);
             palette.DoubleClickedFcn(palette, struct( ...
                 "InteractionInformation", struct("Row", row)));
             drawnow;
@@ -154,7 +154,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
-            row = find(string(palette.Data(:, 1)) == "Drop Down", 1);
+            row = find(string(palette.Data(:, 1)) == "Drop-down", 1);
             palette.DoubleClickedFcn(palette, struct( ...
                 "InteractionInformation", struct("Row", row)));
             drawnow;
@@ -211,6 +211,11 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             component = app.Document.getComponent(app.SelectedComponentId);
             entry = component.getProperty("Value");
             testCase.verifyEqual(entry.LiteralValue, {'First', 'Second', 'Third'});
+            labels = findall(figure, "Type", "uilabel", ...
+                "Tag", "macd-inspector-property-label");
+            label = labels(string({labels.Text}) == "Value");
+            editor = findall(label.Parent, "Type", "uitextarea", ...
+                "Tag", "macd-inspector-property-editor");
             testCase.verifyEqual(string(editor.Value), string(lines));
             clear cleanup
         end
@@ -381,9 +386,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             columnEditor.ButtonPushedFcn(columnEditor, struct());
             columnDialog = findall(0, "Tag", "macd-column-settings-dialog");
             columnTable = findall(columnDialog, "Tag", "macd-column-settings-table");
-            columnTable.Data{1, 2} = 'fit';
+            columnTable.Data{1, 2} = true;
             columnTable.Data{1, 3} = true;
-            columnTable.Data{1, 4} = true;
+            columnTable.Data{1, 4} = 'fit';
             columnTable.Data{1, 5} = '''bank''';
             columnApply = findall(columnDialog, "Tag", "macd-column-settings-apply");
             columnApply.ButtonPushedFcn(columnApply, struct());
