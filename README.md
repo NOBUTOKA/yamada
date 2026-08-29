@@ -1,30 +1,31 @@
 # yamada - Yet Another MATLAB App Designer Alternative
 
-`yamada`は、通常のMATLABクラスファイル（`.m`）をソースの正として扱う、`matlab.apps.AppBase`アプリ向けのビジュアルエディターです。新しいアプリを作成するほか、既存のAppBaseクラスを読み込み、UIコンポーネントの構成やプロパティをGUI上で確認・編集できます。
+`yamada` is a visual editor for `matlab.apps.AppBase` applications. It is similar in purpose to MATLAB App Designer, but **instead of using the dedicated binary `.mlapp` format**, it treats ordinary MATLAB class files (`.m`) as source. You can create a new application or open an existing AppBase class and inspect, arrange, and edit its UI components graphically.
 
-> [!IMPORTANT]
-> 現在は開発版です。MATLAB R2024aを基準に開発・検証しており、バージョン付きリリースやToolboxパッケージはまだ提供していません。保存前には生成差分を確認し、対象ファイルをバージョン管理またはバックアップしてください。
+## Important
 
-## 特徴
+`yamada` is under active development. Development and verification currently target MATLAB R2024a, no versioned release is available yet, and some capabilities, including visual Grid Layout editing, remain incomplete. Review the generated diff before saving, and keep the target file under version control or make a backup.
 
-- 空のキャンバスから、実行可能な`matlab.apps.AppBase`継承クラスを作成
-- App Designerに近い構造の既存`.m`クラスを静的に解析して読み込み
-- コンポーネントパレット、階層ブラウザー、編集キャンバス、型付きプロパティインスペクターを提供
-- 絶対配置コンポーネントの移動とサイズ変更、Grid Layout配置の編集に対応
-- コンポーネントの追加・削除、プロパティ変更、Undo／Redoに対応
-- 検証結果と警告を表示し、保存前に元ソースと生成ソースの差分を確認可能
-- 未対応のコードや非リテラル式を可能な限り保持し、入力アプリやコールバックを実行せずにSafe Previewを生成
-- 出力はGitでレビューしやすい通常の`.m`ソース
+## Features
 
-## 必要環境
+- Create a runnable `matlab.apps.AppBase` subclass from an empty canvas
+- Statically parse an existing `.m` class that follows a common App Designer-like structure
+- Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
+- Move and resize absolutely positioned components and edit Grid Layout placement values, with visual Grid Layout editing still under development
+- Add and delete components and edit supported properties
+- View validation diagnostics and compare the original and generated source before saving
+- Preserve unsupported code and nonliteral expressions where possible, and build a Safe Preview without running the input application or its callbacks
+- Produce an ordinary, reviewable text-based `.m` source file **rather than a binary file**
+
+## Supported Environment
 
 - MATLAB R2024a
 
-R2024a以外のリリースとの互換性は、現時点では保証していません。
+Compatibility with MATLAB releases other than R2024a is not currently guaranteed.
 
-## はじめかた
+## Getting Started
 
-リポジトリをクローンするか、GitHubの **Code > Download ZIP** から取得して展開します。MATLABでリポジトリのルートをパスに追加し、`yamada`を起動してください。
+Clone the repository, or download and extract it from **Code > Download ZIP** on GitHub. Add the repository root to the MATLAB path and start `yamada`.
 
 ```matlab
 projectRoot = "/path/to/yamada";
@@ -32,53 +33,52 @@ addpath(projectRoot);
 editor = yamada();
 ```
 
-終了後にアプリオブジェクトが残っている場合は、次のように破棄できます。
+If the application object remains after you close the editor, delete it explicitly:
 
 ```matlab
 delete(editor);
 ```
 
-## 基本的な使い方
+## Basic Usage
 
-### 新しいアプリを作る
+### Create a new application
 
-1. **File > New** を選び、MATLABクラス名を入力します。
-2. 左側のパレットからコンポーネントを追加します。
-3. キャンバスまたは階層ブラウザーでコンポーネントを選択し、右側のインスペクターでプロパティを編集します。
-4. **Tools > Validate** でモデルを検証します。
-5. **Tools > Diff Preview** で生成ソースを確認し、**File > Save As** で`.m`ファイルとして保存します。
+1. Select **File > New** and enter a MATLAB class name.
+2. Add components from the palette on the left.
+3. Select a component on the canvas or in the hierarchy browser, then edit its supported properties in the Property Inspector on the right.
+4. Select **Tools > Validate** to validate the document model.
+5. Select **Tools > Diff Preview** to review the generated source, then use **File > Save As** to save it as a `.m` file.
 
-### 既存のアプリを編集する
+### Edit an existing application
 
-1. **File > Open** から`matlab.apps.AppBase`を継承する`.m`ファイルを選びます。
-2. 解析結果、コンポーネント階層、Safe Preview、診断メッセージを確認します。
-3. 編集可能なプロパティやコンポーネントを変更します。
-4. 検証と差分確認を行い、元ファイルを保持したい場合は別名で保存します。
+1. Select **File > Open** and choose a `.m` file whose class derives from `matlab.apps.AppBase`.
+2. Review the parsed hierarchy, Safe Preview, and diagnostics.
+3. Modify supported components and properties.
+4. Validate the document and review the diff. Save to a new file if you want to preserve the original.
 
-## 対応範囲と制約
+## Scope and Limitations
 
-`yamada`はMATLAB R2024aの標準的な永続UIコンポーネント、コンテナー、Axes、計器、メニュー、ツールバーなどをカタログ化しています。コンポーネントとプロパティの詳しい対象範囲は[製品仕様](SPECIFICATION.md)を参照してください。
+`yamada` catalogs standard persistent MATLAB R2024a UI components, containers, axes, instrumentation controls, menus, and toolbar tools. See the [product specification](SPECIFICATION.md) for the detailed component and property scope.
 
-安全にソースを保持するため、次の境界を設けています。
+The following boundaries protect the input source:
 
-- `.mlapp`の読み書きや内部形式の編集には対応しません。
-- 入力アプリのコンストラクター、コールバック、ヘルパーメソッド、任意の式は実行しません。
-- 動的なコンポーネント生成や曖昧なソース構造など、静的に安全性を判断できない部分は編集を制限し、診断を表示します。
-- カタログに含まれるすべてのコンポーネントやプロパティが、同じ水準でプレビュー・追加・編集できるとは限りません。未対応の値は読み取り専用として保持する場合があります。
-- App Designerとの完全な互換性や、任意のMATLAB構文の完全なラウンドトリップは目標としていません。
+- `.mlapp` files and their internal format are not supported.
+- The input application's constructor, callbacks, helper methods, and arbitrary expressions are never executed.
+- Dynamic component creation and ambiguous source structures are restricted when they cannot be edited safely; diagnostics explain the restriction.
+- Inclusion in the catalog does not mean that every component or property can be previewed, inserted, and edited to the same extent. Unsupported values may remain visible but read-only.
+- Full App Designer compatibility and complete round-tripping of arbitrary MATLAB syntax are not goals.
 
-現在の対応範囲と安全上の境界は[製品仕様](SPECIFICATION.md)に記載しています。
+See the [product specification](SPECIFICATION.md) for the current supported behavior, input and output contract, and safety limitations.
 
-## ドキュメント
+## Documentation
 
-- [製品仕様](SPECIFICATION.md) — 現在の対応範囲、入出力、安全上の境界
-- [コントリビューションガイド](CONTRIBUTING.md) — Issue、開発環境、テスト、Pull Requestの進め方
+- [Product specification](SPECIFICATION.md) - Current scope, input and output contract, and safety limitations
+- [Contributing guide](CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
 
-## フィードバックとコントリビューション
+## Feedback and Contributions
 
-不具合報告、機能提案、ドキュメント改善、コードへの貢献を歓迎します。IssueやPull Requestを作成する前に、[CONTRIBUTING.md](CONTRIBUTING.md)を確認してください。大きな機能や設計変更は、実装を始める前にIssueで相談してください。
+Bug reports, feature proposals, documentation improvements, and code contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request. Please discuss large features and design changes in an issue before starting implementation.
 
-## ライセンス
+## License
 
-本プロジェクトはGNU General Public License version 3 or later（`GPL-3.0-or-later`）で提供します。詳細は[LICENSE](LICENSE)を参照してください。
-
+This project is licensed under the GNU General Public License version 3 or later (`GPL-3.0-or-later`). See [LICENSE](LICENSE) for details.

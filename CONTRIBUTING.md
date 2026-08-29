@@ -1,30 +1,30 @@
 # Contributing to yamada
 
-`yamada`への貢献に関心をお寄せいただき、ありがとうございます。不具合の再現、機能提案、ドキュメント改善、テスト追加、コードやコンポーネントカタログの変更はいずれもプロジェクトへの貢献です。
+Thank you for your interest in contributing to `yamada`. Reproducing bugs, proposing features, improving documentation, adding tests, and changing the code or component catalog are all valuable contributions.
 
-## 貢献を始める前に
+## Before You Start
 
-- 既存のIssueを検索し、同じ問題や提案がないか確認してください。
-- 誤字修正などの小さく明確な変更は、直接Pull Requestを作成できます。
-- 新機能、動作変更、大規模なリファクタリング、対応構文やコンポーネントの拡張は、実装前にIssueで目的と設計を相談してください。
-- 1つのIssueまたはPull Requestには、レビュー可能な1つの目的だけを含めてください。
+- Search existing issues for the same problem or proposal.
+- Small, self-contained changes such as typo fixes may be submitted directly as pull requests.
+- Discuss new features, behavior changes, large refactorings, and expansions of supported syntax or components in an issue before implementation.
+- Keep each issue or pull request focused on one reviewable purpose.
 
-## 不具合を報告する
+## Reporting Bugs
 
-再現可能な不具合報告には、可能な範囲で次の情報を含めてください。
+Include as much of the following information as possible in a reproducible bug report:
 
-- MATLABリリース（`version("-release")`の結果）
-- OSとバージョン
-- 再現手順
-- 期待した結果と実際の結果
-- `yamada`に表示された診断またはMATLABの完全なエラーメッセージ
-- 問題を再現する最小のAppBase `.m`ファイル（公開可能な場合）
+- MATLAB release, as reported by `version("-release")`
+- Operating system and version
+- Reproduction steps
+- Expected and actual behavior
+- Diagnostics shown by `yamada` or the complete MATLAB error message
+- A minimal AppBase `.m` file that reproduces the problem, if it can be shared publicly
 
-入力ソースに秘密情報、個人情報、または再配布できないコードが含まれていないことを、添付前に確認してください。
+Before attaching source, make sure it does not contain secrets, personal information, or code that you are not allowed to redistribute.
 
-## 開発環境
+## Development Environment
 
-現在の開発・検証対象はMATLAB R2024aです。リポジトリをForkしてクローンし、MATLABでリポジトリのルートをパスに追加します。
+Development and verification currently target MATLAB R2024a. Fork and clone the repository, then add its root to the MATLAB path.
 
 ```matlab
 projectRoot = "/path/to/yamada";
@@ -32,62 +32,51 @@ addpath(projectRoot);
 editor = yamada();
 ```
 
-バージョン付きリリースやToolboxパッケージはまだないため、開発時はリポジトリのソースを直接使用します。
+No versioned release or Toolbox package is available yet, so development uses the repository source directly.
 
-利用者に公開している機能、入出力、安全上の境界は[製品仕様](SPECIFICATION.md)を参照してください。外部から見える動作を変更する場合は、この文書も更新してください。
+See the [product specification](SPECIFICATION.md) for the public feature set, input and output contract, and safety limitations. Update it when a change affects externally visible behavior.
 
-## リポジトリ構成
+## Repository Layout
 
-| パス | 内容 |
+| Path | Purpose |
 | --- | --- |
-| `yamada.m` | エディターアプリ本体 |
-| `+macd/+model` | ドキュメントとコンポーネントのモデル |
-| `+macd/+source` | 字句解析、パーサー、ソース生成 |
-| `+macd/+ui` | Safe Previewとプロパティインスペクター |
-| `+macd/+validation` | モデルとプロパティの検証 |
-| `resources/EditorInteractionOverlay.html` | 編集キャンバスの選択・移動・サイズ変更を受け付けるHTML/SVGオーバーレイ |
-| `resources/component-catalog` | 実行時に読み込まれるコンポーネントカタログ |
-| `dev/component-data` | R2024aのコンポーネント資料とカタログ生成用スクリプト |
-| `tests/unit` | MATLABユニットテスト |
-| `tests/fixtures` | 保持・解析・プレビュー用の入力フィクスチャ |
+| `yamada.m` | Main editor application |
+| `+macd/+model` | Document and component models |
+| `+macd/+source` | Lexical analysis, parsing, and source generation |
+| `+macd/+ui` | Safe Preview and Property Inspector |
+| `+macd/+validation` | Document and property validation |
+| `resources/EditorInteractionOverlay.html` | HTML/SVG overlay for canvas selection, movement, and resizing; see below |
+| `resources/component-catalog` | Component catalog loaded at runtime |
+| `dev/component-data` | R2024a component data and catalog-generation scripts |
+| `tests/unit` | MATLAB unit tests |
+| `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
 
-## 編集キャンバスのHTMLオーバーレイ
+## MATLAB Code Conventions
 
-編集キャンバス上のコンポーネント選択、ドラッグ移動、8方向のサイズ変更、Tab Groupのタブ選択には、透明な`uihtml`として読み込まれる`resources/EditorInteractionOverlay.html`を使用しています。ネイティブのPreviewコンポーネント自体が、編集ジェスチャーを直接処理するわけではありません。
+- Project-owned MATLAB source and test files must use UTF-8 without a BOM and CRLF line endings.
+- Write source comments, class help, and function and method docstrings in English.
+- Put a purpose-oriented docstring immediately after every project-owned function or method declaration.
+- Use explicit `arguments (Input)` and `arguments (Output)` blocks when practical validation is possible for the signature.
+- Prefer MATLAB `string` values and double-quoted string literals for text.
+- Put English help comments immediately before public properties and use the narrowest practical access.
+- End each project-owned `.m` file with the same GNU GPL notice used by neighboring files. Do not add the project's GPL notice automatically to saved user applications or preserved input fixtures.
+- Add concise English comments before meaningful operation groups, but avoid comments that merely restate self-explanatory assignments.
 
-- `yamada.m`は、キャンバス寸法、コンポーネントID、表示位置、輪郭形状、選択状態、タブ情報を`InteractionOverlay.Data`としてHTMLへ渡す。
-- HTMLはSVGの輪郭とリサイズハンドルを描画し、DOM座標を左下原点へ変換してから、Pointerイベントの段階、座標、対象ID、ハンドル種別を`sendEventToMATLAB`でMATLABへ返す。
-- MATLAB側はPreviewとソースの表示倍率、コンポーネント固有のサイズ制約、ジェスチャー中の候補位置を処理する。操作完了時にだけ、1回の変更として`DocumentModel`とUndo／Redo履歴へコミットする。
-- HTMLオーバーレイとPreviewハンドルは破棄可能な表示・入力層であり、ドキュメント状態の正として扱わない。
+Follow the formatting of existing code, and do not include unrelated formatting or line-ending changes in a pull request.
 
-オーバーレイの`Data`構造またはイベント形式を変更する場合は、`EditorInteractionOverlay.html`と`yamada.m`の送受信処理を同じ変更単位で更新し、`tests/unit/EditorInteractionTest.m`で選択、移動、サイズ変更、タブ選択の経路を確認してください。
+## Changing the Component Catalog
 
-## MATLABコード規約
+When adding or changing a standard component or property, update the versioned JSON catalog rather than hard-coding declarative specifications in `ComponentRegistry`.
 
-- プロジェクト所有のMATLABソースとテストはUTF-8（BOMなし）、CRLF改行を使用する。
-- ソースコメント、クラスヘルプ、関数・メソッドのdocstringは英語で記述する。
-- プロジェクト所有の関数・メソッドには、宣言の直後に目的を説明するdocstringを置く。
-- 検証が実用的なシグネチャーでは、明示的な`arguments (Input)`／`arguments (Output)`ブロックを使用する。
-- テキストには原則としてMATLABの`string`値とダブルクォート文字列を使用する。
-- 公開プロパティには直前の英語ヘルプコメントを付け、アクセス権は必要最小限にする。
-- プロジェクト所有の`.m`ファイル末尾には、既存ファイルと同一のGNU GPL通知を置く。保存対象のユーザーアプリや既存入力フィクスチャへ、プロジェクトのGPL通知を自動追加しない。
-- 意味のある処理単位には簡潔な英語コメントを置き、自己説明的な代入への過剰なコメントは避ける。
+- Check the official MATLAB R2024a documentation and, when necessary, verify behavior in the R2024a runtime.
+- Review the component data, classifications, and generation scripts under `dev/component-data`.
+- Preserve the boundary that prevents catalog data or identifiers from invoking arbitrary MATLAB code.
+- Add or update the corresponding loader, registry, validation, Inspector, Preview, and generation tests.
+- Do not silently import behavior observed in another MATLAB release into the R2024a catalog.
 
-既存コードの形式を確認し、目的と無関係な整形や改行変更をPull Requestへ含めないでください。
+## Testing
 
-## コンポーネントカタログを変更する場合
-
-標準コンポーネントやプロパティを追加・変更するときは、宣言的な仕様を`ComponentRegistry`へハードコードせず、バージョン付きJSONカタログを更新してください。
-
-- MATLAB R2024aの公式ドキュメントと、必要に応じてR2024aランタイムで確認する。
-- `dev/component-data`の監査・分類資料と生成スクリプトを確認する。
-- カタログから任意のMATLABコードや識別子を実行できない境界を維持する。
-- 対応するローダー、レジストリ、検証、インスペクター、Preview、生成テストを追加または更新する。
-- 別リリースで観察した仕様を、R2024aカタログへ暗黙に取り込まない。
-
-## テスト
-
-変更に直接関係するテストを先に実行し、その後に全ユニットテストを実行してください。MATLABでリポジトリのルートをCurrent Folderにして、次を実行します。
+Run tests directly related to your change first, followed by the full unit test suite. In MATLAB, make the repository root the Current Folder and run:
 
 ```matlab
 addpath(pwd);
@@ -98,34 +87,46 @@ disp(results);
 assertSuccess(results);
 ```
 
-個別のテストファイルだけを実行する例です。
+To run one test file:
 
 ```matlab
 results = runtests("tests/unit/ModelTest.m");
 assertSuccess(results);
 ```
-実行できなかったテストがある場合は、そのテスト名と理由をPull Requestに明記してください。
 
-## Pull Request
+If you could not run a test, name it and explain why in the pull request.
 
-Pull Requestには次の情報を含めてください。
+## HTML Editing Canvas Overlay
 
-- 何を、なぜ変更したか
-- 関連するIssue
-- ソース保全、安全なPreview、対応範囲への影響
-- 実行したテストと結果
-- 実行していない確認と理由
-- UI変更がある場合は、必要に応じて変更前後の画像または再現手順
+Canvas selection, drag movement, eight-direction resizing, and Tab Group selection use `resources/EditorInteractionOverlay.html`, which is loaded as a transparent `uihtml` layer. The native Preview components do not process these editing gestures directly.
 
-提出前のチェックリスト：
+- `yamada.m` sends the canvas dimensions, component IDs, display positions, outline shapes, selection state, and tab information to HTML through `InteractionOverlay.Data`.
+- The HTML renders SVG outlines and resize handles, converts DOM coordinates to a bottom-left origin, and sends the pointer phase, coordinates, target ID, and handle type back to MATLAB through `sendEventToMATLAB`.
+- MATLAB handles the Preview-to-source scale, component-specific resize constraints, and candidate geometry during a gesture. The completed gesture is then committed as one change to `DocumentModel` and the undo/redo history.
+- The HTML overlay and Preview handles are disposable presentation and input state; neither is the authoritative document state.
 
-- [ ] 変更は1つの目的に絞られている
-- [ ] 新しい動作または修正した不具合をテストで覆っている
-- [ ] 関連する製品仕様またはREADMEを必要に応じて更新した
-- [ ] MATLABファイルの文字コード、改行、docstring、GPL通知を確認した
-- [ ] 対象テストが成功し、`git diff --check`に問題がない
-- [ ] 未対応ソースを失わず、入力アプリのコードを実行しない境界を維持している
+If you change the overlay `Data` structure or event format, update the sending and receiving code in `EditorInteractionOverlay.html` and `yamada.m` in the same change. Exercise selection, movement, resizing, and tab-selection paths in `tests/unit/EditorInteractionTest.m`.
 
-## ライセンス
+## Pull Requests
 
-受け入れられたコントリビューションは、本プロジェクトと同じGNU General Public License version 3 or later（`GPL-3.0-or-later`）の下で配布されます。提出する内容をこのライセンスで提供する権利があることを確認してください。
+Include the following in a pull request:
+
+- What changed and why
+- The related issue
+- Effects on source preservation, Safe Preview, and the supported scope
+- Tests run and their results
+- Checks not run and the reason
+- Before-and-after images or reproduction steps when useful for a UI change
+
+Before submitting:
+
+- [ ] The change has one focused purpose
+- [ ] Tests cover the new behavior or fixed bug
+- [ ] The product specification or README is updated when necessary
+- [ ] MATLAB file encoding, line endings, docstrings, and GPL notices are correct
+- [ ] Relevant tests pass and `git diff --check` reports no problems
+- [ ] Unsupported source remains preserved and the input application is never executed
+
+## License
+
+Accepted contributions are distributed under the same GNU General Public License version 3 or later (`GPL-3.0-or-later`) as the project. Make sure you have the right to provide your contribution under this license.

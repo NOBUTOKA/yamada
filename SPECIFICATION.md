@@ -1,100 +1,100 @@
-# yamada 製品仕様
+# yamada Product Specification
 
-この文書は、`yamada`の開発版が外部に提供する現在の機能範囲、入出力、安全上の境界を説明します。将来の実装予定を示すロードマップではありません。
+This document describes the current public feature scope, input and output contract, and safety limitations of the development version of `yamada`. It is not a roadmap for future implementation.
 
-## 目的
+## Purpose
 
-`yamada`は、通常のMATLABクラスファイル（`.m`）をソースの正として扱う、`matlab.apps.AppBase`アプリ向けのビジュアルエディターです。
+`yamada` is a visual editor for `matlab.apps.AppBase` applications that treats ordinary MATLAB class files (`.m`) as the source of truth.
 
-利用者は、空のキャンバスから新しいAppBaseクラスを作成するか、既存のAppBaseクラスを開き、対応しているUIコンポーネントとプロパティをGUI上で確認・編集できます。`.mlapp`の非公開内部形式には依存しません。
+Users can create a new AppBase class from an empty canvas or open an existing AppBase class, then inspect and edit supported UI components and properties graphically. `yamada` does not depend on the private internal format of `.mlapp` files.
 
-## 対応環境
+## Supported Environment
 
-- 開発・検証対象：MATLAB R2024a
-- 入力形式：`matlab.apps.AppBase`を継承するクラスを記述した`.m`ファイル
-- 出力形式：通常のMATLABクラスを記述した`.m`ファイル
+- Development and verification target: MATLAB R2024a
+- Input: A `.m` file defining a class derived from `matlab.apps.AppBase`
+- Output: A `.m` file defining an ordinary MATLAB class
 
-R2024a以外のMATLABリリースとの互換性は保証していません。現在はバージョン付きリリース、MATLAB Toolboxパッケージ、スタンドアロンアプリを提供していません。
+Compatibility with MATLAB releases other than R2024a is not guaranteed. No versioned release, MATLAB Toolbox package, or standalone application is currently available.
 
-## 対応する操作
+## Supported Operations
 
-### 新しいアプリ
+### New applications
 
-- 有効なMATLABクラス名を指定し、ルート`uifigure`を持つ空のAppBaseクラスを作成する。
-- パレットから対応コンポーネントを追加する。
-- コンポーネント階層とSafe Previewを確認する。
-- 対応プロパティを型付きインスペクターで編集する。
-- 絶対配置コンポーネントを移動・サイズ変更する。
-- Grid Layout内の行、列、スパンをインスペクターで編集する。
-- コンポーネントを明示的に削除し、変更をUndo／Redoする。
-- 検証とソース差分の確認後、実行可能なAppBase `.m`ファイルとして保存する。
+- Create an empty AppBase class with a valid MATLAB class name and a root `uifigure`.
+- Add supported components from the palette.
+- Inspect the component hierarchy and Safe Preview.
+- Edit supported properties in the typed Property Inspector.
+- Move and resize absolutely positioned components.
+- Edit Grid Layout row, column, and span values in the Property Inspector.
+- Explicitly delete components and undo or redo changes.
+- Validate the document, review the source diff, and save a runnable AppBase `.m` file.
 
-### 既存のアプリ
+### Existing applications
 
-- App Designerに近い構造または一般的なプログラム形式のAppBase `.m`ファイルを開く。
-- 対応している宣言、生成文、親子関係、直接的なプロパティ代入を静的に解析する。
-- 解析したコンポーネントを階層ブラウザー、Safe Preview、インスペクターに表示する。
-- 安全に所有範囲を特定できるプロパティ代入やコンポーネントを編集する。
-- 元ソースと生成ソースを比較し、別名保存または明示的に確認されたパスへ保存する。
-- 未対応または曖昧な構造について診断を表示する。
+- Open an AppBase `.m` file with a common App Designer-like or programmatic structure.
+- Statically parse supported declarations, creation statements, parent-child relationships, and direct property assignments.
+- Display parsed components in the hierarchy browser, Safe Preview, and Property Inspector.
+- Edit property assignments and components whose source ownership can be determined safely.
+- Compare the original and generated source, then save to a new path or to an explicitly confirmed path.
+- Show diagnostics for unsupported or ambiguous structures.
 
-## 標準コンポーネントカタログ
+## Standard Component Catalog
 
-MATLAB R2024aの次の永続UIコンポーネントと生成形式をカタログに収録しています。
+The catalog includes the following persistent MATLAB R2024a UI components and creation variants:
 
-- 基本コントロール：`uilabel`、`uibutton`、`uicheckbox`、`uicolorpicker`、`uidatepicker`、`uidropdown`、`uieditfield`、`uihyperlink`、`uiimage`、`uilistbox`、`uiradiobutton`、`uislider`、`uispinner`、`uitable`、`uitextarea`、`uitogglebutton`
-- コンテナーとレイアウト：`uifigure`、`uipanel`、`uigridlayout`、`uitabgroup`、`uitab`、`uibuttongroup`
-- ツリー：`uitree`、`uitreenode`
-- Axes：`uiaxes`、`axes`、`geoaxes`、`polaraxes`
-- 計器：`uigauge`、`uiknob`、`uilamp`、`uiswitch`
-- 拡張表示とFigureツール：`uihtml`、`uicontextmenu`、`uimenu`、`uitoolbar`、`uipushtool`、`uitoggletool`
+- Basic controls: `uilabel`, `uibutton`, `uicheckbox`, `uicolorpicker`, `uidatepicker`, `uidropdown`, `uieditfield`, `uihyperlink`, `uiimage`, `uilistbox`, `uiradiobutton`, `uislider`, `uispinner`, `uitable`, `uitextarea`, and `uitogglebutton`
+- Containers and layout: `uifigure`, `uipanel`, `uigridlayout`, `uitabgroup`, `uitab`, and `uibuttongroup`
+- Trees: `uitree` and `uitreenode`
+- Axes: `uiaxes`, `axes`, `geoaxes`, and `polaraxes`
+- Instrumentation: `uigauge`, `uiknob`, `uilamp`, and `uiswitch`
+- Extended display and figure tools: `uihtml`, `uicontextmenu`, `uimenu`, `uitoolbar`, `uipushtool`, and `uitoggletool`
 
-カタログへの収録は、すべての生成形式が同じ水準で追加、Preview、配置、プロパティ編集できることを意味しません。親コンポーネント、生成形式、プロパティ値によって機能が制限される場合があります。未対応の状態は可能な限り読み取り専用で保持され、診断に表示されます。
+Catalog inclusion does not mean that every creation variant supports insertion, Preview, layout, and property editing to the same extent. The parent component, creation variant, or property value may limit available operations. Unsupported state remains read-only where possible and is reported through diagnostics.
 
-`uialert`、`uiconfirm`、`uiprogressdlg`、`uisetcolor`、ファイル選択ダイアログなどの一時的な処理は、ドキュメント内の永続コンポーネントではないため対象外です。
+Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolor`, and file-selection dialogs are out of scope because they are not persistent components in the document.
 
-## 静的解析とSafe Preview
+## Static Parsing and Safe Preview
 
-`yamada`は入力アプリを実行して画面構造を取得しません。
+`yamada` does not execute an input application to discover its UI structure.
 
-- 入力クラスのコンストラクター、コールバック、ヘルパーメソッドを呼び出さない。
-- 任意のMATLAB式を`eval`または同等の方法で評価しない。
-- Safe Previewには、カタログで許可されたコンポーネントと安全に解釈できる値だけを適用する。
-- コールバック、非リテラル式、未対応文は、可能な限り元ソースに保持する。
-- Previewできない状態と、ソースとして保持できない状態を区別して診断する。
+- It does not call the input class constructor, callbacks, or helper methods.
+- It does not evaluate arbitrary MATLAB expressions through `eval` or an equivalent mechanism.
+- Safe Preview applies only catalog-approved components and values that can be interpreted safely.
+- Callbacks, nonliteral expressions, and unsupported statements remain in the original source where possible.
+- Diagnostics distinguish state that cannot be previewed from state that cannot be preserved safely.
 
-この境界により、入力アプリの見た目を完全に再現できない場合があります。Safe Previewは入力アプリを実行した結果の代替ではなく、安全に解析できたモデルの表示です。
+Because of this limitation, Safe Preview may not reproduce the input application's appearance completely. It displays the model that could be parsed safely and is not a substitute for running the input application.
 
-## 編集とソース保持
+## Editing and Source Preservation
 
-- 新規アプリと既存アプリは、同じコンポーネントモデル、検証、Preview、生成処理を使用する。
-- 既存ソースを無編集で生成した場合は、元のテキストを変更しない。
-- 編集では、安全に所有権を特定できる宣言・生成文・代入の範囲だけを局所的に変更する。
-- 追加や削除に必要な挿入位置または所有範囲が曖昧な場合は、変更や保存を拒否して診断する。
-- 対応値の検証に失敗した場合は、Previewまたは保存を安全な範囲で制限する。
-- 削除は明示的な利用者操作でのみ行う。
+- New and existing applications use the same component model, validation, Preview, and generation pipeline.
+- Generating an existing source file without edits does not change its original text.
+- Edits make localized changes only to declarations, creation statements, and assignments whose ownership can be determined safely.
+- If an insertion point or ownership range required for addition or deletion is ambiguous, the edit or save is rejected with a diagnostic.
+- Failed validation of a supported value restricts Preview or saving as necessary for safety.
+- Deletion occurs only after an explicit user action.
 
-`yamada`はソース保持を重視しますが、任意のMATLAB構文に対する完全なラウンドトリップを保証するものではありません。既存ファイルを編集する前に、Gitなどのバージョン管理またはバックアップを使用してください。
+`yamada` prioritizes source preservation, but it does not guarantee complete round-tripping of arbitrary MATLAB syntax. Use version control such as Git or create a backup before editing an existing file.
 
-## 出力
+## Output
 
-- 出力は、レビューや差分確認ができる通常のAppBase `.m`ソースとする。
-- UTF-8で書き込み、BOMを付けない。
-- 新規ファイルには実行に必要なクラス宣言、コンポーネント宣言、生成処理、アプリ登録、破棄処理を含める。
-- 新規ファイルでは実行環境の標準改行を使用し、既存ファイルでは検出したCRLFまたはLFを保持する。
-- 生成コメントとヘルプは英語で記述する。
-- 利用者が作成または読み込んだアプリへ、`yamada`プロジェクトのGPL通知を自動的に追加・置換・削除しない。
+- Output is ordinary AppBase `.m` source that can be reviewed and compared as text.
+- Files are written as UTF-8 without a BOM.
+- A new file includes the class and component declarations, creation method, application registration, and cleanup required for execution.
+- New files use the host platform's standard line ending; existing files preserve the detected CRLF or LF convention.
+- Generated comments and help text are written in English.
+- `yamada` does not automatically add, replace, or remove the project's GPL notice in an application created or opened by the user.
 
-## 対象外
+## Out of Scope
 
-- `.mlapp`ファイルの読み書きまたは内部形式の再現
-- App Designerとの完全な互換性
-- 任意のMATLABコードの意味解析または書き換え
-- 動的に生成されるすべてのコンポーネントの復元
-- 任意のMATLAB構文の完全なラウンドトリップ
-- 入力アプリを実行したPreview
-- アプリ固有の計算ロジックのビジュアル編集
+- Reading, writing, or reproducing the internal format of `.mlapp` files
+- Full compatibility with App Designer
+- Semantic analysis or rewriting of arbitrary MATLAB code
+- Recovery of every dynamically created component
+- Complete round-tripping of arbitrary MATLAB syntax
+- Preview by executing the input application
+- Visual editing of application-specific computational logic
 
-## 変更時の扱い
+## Updating This Specification
 
-外部から見える対応機能、入力条件、出力、安全上の境界を変更する場合は、この文書と[README](README.md)を更新してください。開発への参加方法は[CONTRIBUTING.md](CONTRIBUTING.md)を参照してください。
+Update this document and the [README](README.md) when a change affects externally visible behavior, input requirements, output, or safety limitations. See [CONTRIBUTING.md](CONTRIBUTING.md) for development and contribution guidance.
