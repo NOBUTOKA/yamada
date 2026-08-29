@@ -45,10 +45,22 @@ editor = yamada();
 | `+macd/+source` | 字句解析、パーサー、ソース生成 |
 | `+macd/+ui` | Safe Previewとプロパティインスペクター |
 | `+macd/+validation` | モデルとプロパティの検証 |
+| `resources/EditorInteractionOverlay.html` | 編集キャンバスの選択・移動・サイズ変更を受け付けるHTML/SVGオーバーレイ |
 | `resources/component-catalog` | 実行時に読み込まれるコンポーネントカタログ |
 | `dev/component-data` | R2024aのコンポーネント資料とカタログ生成用スクリプト |
 | `tests/unit` | MATLABユニットテスト |
 | `tests/fixtures` | 保持・解析・プレビュー用の入力フィクスチャ |
+
+## 編集キャンバスのHTMLオーバーレイ
+
+編集キャンバス上のコンポーネント選択、ドラッグ移動、8方向のサイズ変更、Tab Groupのタブ選択には、透明な`uihtml`として読み込まれる`resources/EditorInteractionOverlay.html`を使用しています。ネイティブのPreviewコンポーネント自体が、編集ジェスチャーを直接処理するわけではありません。
+
+- `yamada.m`は、キャンバス寸法、コンポーネントID、表示位置、輪郭形状、選択状態、タブ情報を`InteractionOverlay.Data`としてHTMLへ渡す。
+- HTMLはSVGの輪郭とリサイズハンドルを描画し、DOM座標を左下原点へ変換してから、Pointerイベントの段階、座標、対象ID、ハンドル種別を`sendEventToMATLAB`でMATLABへ返す。
+- MATLAB側はPreviewとソースの表示倍率、コンポーネント固有のサイズ制約、ジェスチャー中の候補位置を処理する。操作完了時にだけ、1回の変更として`DocumentModel`とUndo／Redo履歴へコミットする。
+- HTMLオーバーレイとPreviewハンドルは破棄可能な表示・入力層であり、ドキュメント状態の正として扱わない。
+
+オーバーレイの`Data`構造またはイベント形式を変更する場合は、`EditorInteractionOverlay.html`と`yamada.m`の送受信処理を同じ変更単位で更新し、`tests/unit/EditorInteractionTest.m`で選択、移動、サイズ変更、タブ選択の経路を確認してください。
 
 ## MATLABコード規約
 
