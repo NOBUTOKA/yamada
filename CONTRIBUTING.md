@@ -34,18 +34,7 @@ editor = yamada();
 
 バージョン付きリリースやToolboxパッケージはまだないため、開発時はリポジトリのソースを直接使用します。
 
-## 設計上の重要な境界
-
-変更時は、次の原則を維持してください。
-
-- 通常のAppBase `.m`ソースを永続化形式とし、`.mlapp`を入力、出力、内部形式にしない。
-- 開いたアプリ、コールバック、ヘルパーメソッド、任意の式を解析やSafe Previewのために実行しない。
-- 未対応または曖昧なソースを黙って削除・書き換えず、可能な限り保持して診断を表示する。
-- 既存ファイルでは、所有権が明確なソース範囲だけを局所的に変更し、無編集時の出力を変えない。
-- 編集可能な状態は`DocumentModel`が所有し、プレビューのグラフィックスハンドルやインスペクターのコントロールを正としない。
-- コンポーネントとプロパティの宣言的な仕様は、`resources/component-catalog`のバージョン付きJSONに置く。実行動作と検証は、明示的に許可されたMATLABコードに置く。
-
-詳細は[SPECIFICATION.md](SPECIFICATION.md)、[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)、[PHASE6_IMPLEMENTATION_PLAN.md](PHASE6_IMPLEMENTATION_PLAN.md)を参照してください。
+利用者に公開している機能、入出力、安全上の境界は[製品仕様](SPECIFICATION.md)を参照してください。外部から見える動作を変更する場合は、この文書も更新してください。
 
 ## リポジトリ構成
 
@@ -56,8 +45,8 @@ editor = yamada();
 | `+macd/+source` | 字句解析、パーサー、ソース生成 |
 | `+macd/+ui` | Safe Previewとプロパティインスペクター |
 | `+macd/+validation` | モデルとプロパティの検証 |
-| `resources/component-catalog` | バージョン付きランタイムカタログ |
-| `dev/component-data` | R2024aの監査資料とカタログ生成用スクリプト |
+| `resources/component-catalog` | 実行時に読み込まれるコンポーネントカタログ |
+| `dev/component-data` | R2024aのコンポーネント資料とカタログ生成用スクリプト |
 | `tests/unit` | MATLABユニットテスト |
 | `tests/fixtures` | 保持・解析・プレビュー用の入力フィクスチャ |
 
@@ -103,16 +92,6 @@ assertSuccess(results);
 results = runtests("tests/unit/ModelTest.m");
 assertSuccess(results);
 ```
-
-UIに関係する自動テストは、実際のUIフィクスチャを構築し、`drawnow`後の状態と有効性を確認してから必ず破棄してください。手動の画面確認は自動テストの代わりにはしません。表示品質を変更し、メンテナーから手動確認を求められた場合は、[VISUAL_VERIFICATION.md](VISUAL_VERIFICATION.md)の手順を使用してください。
-
-提出前に、少なくとも次も確認してください。
-
-```text
-git diff --check
-git status --short
-```
-
 実行できなかったテストがある場合は、そのテスト名と理由をPull Requestに明記してください。
 
 ## Pull Request
@@ -130,7 +109,7 @@ Pull Requestには次の情報を含めてください。
 
 - [ ] 変更は1つの目的に絞られている
 - [ ] 新しい動作または修正した不具合をテストで覆っている
-- [ ] 関連する仕様・README・実装計画を必要に応じて更新した
+- [ ] 関連する製品仕様またはREADMEを必要に応じて更新した
 - [ ] MATLABファイルの文字コード、改行、docstring、GPL通知を確認した
 - [ ] 対象テストが成功し、`git diff --check`に問題がない
 - [ ] 未対応ソースを失わず、入力アプリのコードを実行しない境界を維持している

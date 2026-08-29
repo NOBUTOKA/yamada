@@ -1,82 +1,100 @@
-# Specification
+# yamada 製品仕様
 
-## Purpose
+この文書は、`yamada`の開発版が外部に提供する現在の機能範囲、入出力、安全上の境界を説明します。将来の実装予定を示すロードマップではありません。
 
-Create a MATLAB application that can either create a new programmatic MATLAB class derived from `matlab.apps.AppBase` or load an existing one, and let the user inspect and edit its UI components through a graphical interface.
+## 目的
 
-The editor application itself must be a MATLAB `.m` class derived from `matlab.apps.AppBase`. It must not be implemented as an `.mlapp` file.
+`yamada`は、通常のMATLABクラスファイル（`.m`）をソースの正として扱う、`matlab.apps.AppBase`アプリ向けのビジュアルエディターです。
 
-## Project creation and input
+利用者は、空のキャンバスから新しいAppBaseクラスを作成するか、既存のAppBaseクラスを開き、対応しているUIコンポーネントとプロパティをGUI上で確認・編集できます。`.mlapp`の非公開内部形式には依存しません。
 
-- A new app can be created from an empty canvas or a built-in starter template.
-- New-app creation must request a valid MATLAB class name and produce a normal `.m` class derived from `matlab.apps.AppBase`.
-- A MATLAB class source file with the `.m` extension.
-- The class is expected to derive from `matlab.apps.AppBase`.
-- The source may contain App Designer-style public component properties, private helper methods, component initialization code, callbacks, and constructor/destructor methods.
-- For an existing app, the original source should remain available for comparison and rollback.
-- New and loaded apps must use the same component model, editor, validation, and source-generation pipeline after project creation or parsing.
+## 対応環境
 
-## Planned editor capabilities
+- 開発・検証対象：MATLAB R2024a
+- 入力形式：`matlab.apps.AppBase`を継承するクラスを記述した`.m`ファイル
+- 出力形式：通常のMATLABクラスを記述した`.m`ファイル
 
-1. Create a new app from an empty canvas or starter template.
-2. Select and open an existing `.m` file.
-3. Parse the class definition and identify UI component declarations.
-4. Parse component creation statements and relevant property assignments.
-5. Display the component hierarchy in a component browser.
-6. Display the UI layout on an editable canvas.
-7. Select a component and edit supported properties in a property inspector.
-8. Add supported components from a palette.
-9. Move and resize components on the canvas.
-10. Delete components with an explicit user action.
-11. Export the created or edited result as a text-based `.m` class.
-12. Preserve unsupported code and unknown statements whenever the parser can do so safely.
-13. Show parse or generation warnings instead of silently discarding source code.
+R2024a以外のMATLABリリースとの互換性は保証していません。現在はバージョン付きリリース、MATLAB Toolboxパッケージ、スタンドアロンアプリを提供していません。
 
-## Standard component scope
+## 対応する操作
 
-The component registry should cover the MATLAB R2024 standard UI component and
-container factories that can participate in an AppBase application:
+### 新しいアプリ
 
-- Common controls: `uilabel`, `uibutton`, `uicheckbox`, `uicolorpicker`,
-  `uidatepicker`, `uidropdown`, `uieditfield`, `uihyperlink`, `uiimage`,
-  `uilistbox`, `uiradiobutton`, `uislider`, `uispinner`, `uitable`,
-  `uitextarea`, `uitogglebutton`, `uitree`, and `uitreenode`.
-- Containers and layout: `uifigure`, `uipanel`, `uigridlayout`, `uitabgroup`,
-  `uitab`, and `uibuttongroup`.
-- Axes: `uiaxes`, plus the programmatic-only `axes`, `geoaxes`, and `polaraxes`.
-- Instrumentation: `uigauge`, `uiknob`, `uilamp`, and `uiswitch`.
-- Extensible and figure tools: `uihtml`, `uicontextmenu`, `uimenu`,
-  `uitoolbar`, `uipushtool`, and `uitoggletool`.
+- 有効なMATLABクラス名を指定し、ルート`uifigure`を持つ空のAppBaseクラスを作成する。
+- パレットから対応コンポーネントを追加する。
+- コンポーネント階層とSafe Previewを確認する。
+- 対応プロパティを型付きインスペクターで編集する。
+- 絶対配置コンポーネントを移動・サイズ変更する。
+- Grid Layout内の行、列、スパンをインスペクターで編集する。
+- コンポーネントを明示的に削除し、変更をUndo／Redoする。
+- 検証とソース差分の確認後、実行可能なAppBase `.m`ファイルとして保存する。
 
-The component model should be extensible so additional MATLAB UI components can be added later.
+### 既存のアプリ
 
-Dialog functions such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolor`,
-and file-selection dialogs are intentionally out of scope. They are transient
-operations rather than persistent child components in the editor's document model.
+- App Designerに近い構造または一般的なプログラム形式のAppBase `.m`ファイルを開く。
+- 対応している宣言、生成文、親子関係、直接的なプロパティ代入を静的に解析する。
+- 解析したコンポーネントを階層ブラウザー、Safe Preview、インスペクターに表示する。
+- 安全に所有範囲を特定できるプロパティ代入やコンポーネントを編集する。
+- 元ソースと生成ソースを比較し、別名保存または明示的に確認されたパスへ保存する。
+- 未対応または曖昧な構造について診断を表示する。
 
-## Source-generation requirements
+## 標準コンポーネントカタログ
 
-- Generated MATLAB source must be UTF-8 without a BOM.
-- Generated MATLAB source must use CRLF line endings.
-- Comments in generated MATLAB source must be written in English.
-- Generated output must remain a normal `.m` file and should be readable, diffable, and reviewable in Git.
-- The editor must not require `.mlapp` serialization to save or reload a project.
-- A newly created app must include a minimal, runnable AppBase class structure with component declarations, component creation, constructor registration, and cleanup.
+MATLAB R2024aの次の永続UIコンポーネントと生成形式をカタログに収録しています。
 
-## Out of scope for the initial version
+- 基本コントロール：`uilabel`、`uibutton`、`uicheckbox`、`uicolorpicker`、`uidatepicker`、`uidropdown`、`uieditfield`、`uihyperlink`、`uiimage`、`uilistbox`、`uiradiobutton`、`uislider`、`uispinner`、`uitable`、`uitextarea`、`uitogglebutton`
+- コンテナーとレイアウト：`uifigure`、`uipanel`、`uigridlayout`、`uitabgroup`、`uitab`、`uibuttongroup`
+- ツリー：`uitree`、`uitreenode`
+- Axes：`uiaxes`、`axes`、`geoaxes`、`polaraxes`
+- 計器：`uigauge`、`uiknob`、`uilamp`、`uiswitch`
+- 拡張表示とFigureツール：`uihtml`、`uicontextmenu`、`uimenu`、`uitoolbar`、`uipushtool`、`uitoggletool`
 
-- Implementing sorting algorithms.
-- Editing arbitrary MATLAB code semantics.
-- Full App Designer compatibility.
-- Round-tripping every possible MATLAB syntax form.
-- Reproducing App Designer's proprietary internal model.
-- Packaging the editor as a MATLAB toolbox or standalone application.
+カタログへの収録は、すべての生成形式が同じ水準で追加、Preview、配置、プロパティ編集できることを意味しません。親コンポーネント、生成形式、プロパティ値によって機能が制限される場合があります。未対応の状態は可能な限り読み取り専用で保持され、診断に表示されます。
 
-## Design constraints
+`uialert`、`uiconfirm`、`uiprogressdlg`、`uisetcolor`、ファイル選択ダイアログなどの一時的な処理は、ドキュメント内の永続コンポーネントではないため対象外です。
 
-- Treat source parsing and source generation as separate layers from the canvas UI.
-- Keep the original source and generated source distinguishable.
-- Use one shared intermediate component model for both newly created apps and loaded source files.
-- Prefer explicit warnings for unsupported constructs over destructive rewriting.
-- Keep project files text-based wherever practical.
+## 静的解析とSafe Preview
 
+`yamada`は入力アプリを実行して画面構造を取得しません。
+
+- 入力クラスのコンストラクター、コールバック、ヘルパーメソッドを呼び出さない。
+- 任意のMATLAB式を`eval`または同等の方法で評価しない。
+- Safe Previewには、カタログで許可されたコンポーネントと安全に解釈できる値だけを適用する。
+- コールバック、非リテラル式、未対応文は、可能な限り元ソースに保持する。
+- Previewできない状態と、ソースとして保持できない状態を区別して診断する。
+
+この境界により、入力アプリの見た目を完全に再現できない場合があります。Safe Previewは入力アプリを実行した結果の代替ではなく、安全に解析できたモデルの表示です。
+
+## 編集とソース保持
+
+- 新規アプリと既存アプリは、同じコンポーネントモデル、検証、Preview、生成処理を使用する。
+- 既存ソースを無編集で生成した場合は、元のテキストを変更しない。
+- 編集では、安全に所有権を特定できる宣言・生成文・代入の範囲だけを局所的に変更する。
+- 追加や削除に必要な挿入位置または所有範囲が曖昧な場合は、変更や保存を拒否して診断する。
+- 対応値の検証に失敗した場合は、Previewまたは保存を安全な範囲で制限する。
+- 削除は明示的な利用者操作でのみ行う。
+
+`yamada`はソース保持を重視しますが、任意のMATLAB構文に対する完全なラウンドトリップを保証するものではありません。既存ファイルを編集する前に、Gitなどのバージョン管理またはバックアップを使用してください。
+
+## 出力
+
+- 出力は、レビューや差分確認ができる通常のAppBase `.m`ソースとする。
+- UTF-8で書き込み、BOMを付けない。
+- 新規ファイルには実行に必要なクラス宣言、コンポーネント宣言、生成処理、アプリ登録、破棄処理を含める。
+- 新規ファイルでは実行環境の標準改行を使用し、既存ファイルでは検出したCRLFまたはLFを保持する。
+- 生成コメントとヘルプは英語で記述する。
+- 利用者が作成または読み込んだアプリへ、`yamada`プロジェクトのGPL通知を自動的に追加・置換・削除しない。
+
+## 対象外
+
+- `.mlapp`ファイルの読み書きまたは内部形式の再現
+- App Designerとの完全な互換性
+- 任意のMATLABコードの意味解析または書き換え
+- 動的に生成されるすべてのコンポーネントの復元
+- 任意のMATLAB構文の完全なラウンドトリップ
+- 入力アプリを実行したPreview
+- アプリ固有の計算ロジックのビジュアル編集
+
+## 変更時の扱い
+
+外部から見える対応機能、入力条件、出力、安全上の境界を変更する場合は、この文書と[README](README.md)を更新してください。開発への参加方法は[CONTRIBUTING.md](CONTRIBUTING.md)を参照してください。
