@@ -209,7 +209,7 @@ surfaces without capability drift.
 ## Step 13 completion record (2026-08-15)
 
 The reviewed R2024a grouping design was promoted to
-`resources/component-catalog/v2` by
+`resources/component-catalog/R2024a` by
 `PromoteGroupingToRuntimeCatalog.ps1`. The generated runtime catalog contains
 48 concrete variants, 310 reusable property groups, and the five reviewed
 category-order profiles. The v2 loader validates group ownership, concrete

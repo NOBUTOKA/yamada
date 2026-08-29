@@ -11,7 +11,7 @@ metadata consumed by the catalog loader. It deliberately does not infer editor
 implementation support.
 
 .EXAMPLE
-./PromoteGroupingToRuntimeCatalog.ps1 -ReleaseDirectory ./R2024a -CatalogRoot ../../resources/component-catalog/v2
+./PromoteGroupingToRuntimeCatalog.ps1 -ReleaseDirectory ./R2024a -CatalogRoot ../../resources/component-catalog/R2024a
 #>
 [CmdletBinding()]
 param(

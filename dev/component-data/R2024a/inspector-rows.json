@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "runtimeArtifact": "resources/component-catalog/v2/inspector-rows.json",
+  "runtimeArtifact": "resources/component-catalog/R2024a/inspector-rows.json",
   "rows": [
     {
       "id": "tableDataAndNames",

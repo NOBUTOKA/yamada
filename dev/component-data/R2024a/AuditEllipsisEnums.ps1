@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$ReleaseDirectory = $PSScriptRoot,
-    [string]$CatalogRoot = (Join-Path $PSScriptRoot '..\..\..\resources\component-catalog\v2'),
+    [string]$CatalogRoot = (Join-Path $PSScriptRoot '..\..\..\resources\component-catalog\R2024a'),
     [string]$OutputDirectory = $PSScriptRoot
 )
 

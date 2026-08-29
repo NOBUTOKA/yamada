@@ -72,7 +72,7 @@ classdef ComponentCatalogLoader
             % Resolve from this package file so the current folder is irrelevant.
             sourcePath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(sourcePath)));
-            root = string(fullfile(projectRoot, "resources", "component-catalog", "v2"));
+            root = string(fullfile(projectRoot, "resources", "component-catalog", "R2024a"));
         end
     end
 

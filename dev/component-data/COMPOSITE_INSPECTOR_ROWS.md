@@ -97,7 +97,7 @@ weaken those contracts.
 
 Add a versioned development artifact at
 `dev/component-data/R2024a/inspector-rows.json` and generate a runtime artifact
-at `resources/component-catalog/v2/inspector-rows.json`. Add the latter to the
+at `resources/component-catalog/R2024a/inspector-rows.json`. Add the latter to the
 runtime manifest through an `inspectorRowFiles` list. Keeping this artifact
 separate from property grouping prevents a change in Inspector presentation
 from splitting semantic property groups or changing property parity hashes.

@@ -490,7 +490,7 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 
 1. Keep declarative component and property specifications out of
    `ComponentRegistry.m` in the strict versioned JSON catalog under
-   `resources/component-catalog/v2`. Keep one component file per supported
+   `resources/component-catalog/R2024a`. Keep one component file per supported
    variant, shared property-group files for genuinely common capabilities, and
    a `catalog.json` manifest that fixes the schema version, MATLAB release,
    component file list, and deterministic load order. Do not discover catalog
