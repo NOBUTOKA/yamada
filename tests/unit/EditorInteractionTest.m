@@ -1,12 +1,12 @@
 classdef EditorInteractionTest < matlab.unittest.TestCase
-    % EditorInteractionTest Verify the Phase 5 editor interaction surfaces.
+    % EditorInteractionTest Verify the editor interaction surfaces.
     %   These tests construct the real programmatic editor, allow its UI to lay
     %   out, inspect public callback wiring through UI handles, and always delete
     %   the editor fixture. They do not execute any opened application source.
 
     methods (Test)
-        function editorBuildsPhase5Surfaces(testCase)
-            % editorBuildsPhase5Surfaces Verify palette, right pane, and toolbar.
+        function editorBuildsEditingSurfaces(testCase)
+            % editorBuildsEditingSurfaces Verify palette, right pane, and toolbar.
 
             % Construct the editor through its ordinary application entry point.
             app = yamada();
@@ -396,8 +396,8 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
-        function editMenuExposesPhase5Commands(testCase)
-            % editMenuExposesPhase5Commands Verify Delete, Undo, and Redo menu items.
+        function editMenuExposesEditingCommands(testCase)
+            % editMenuExposesEditingCommands Verify Delete, Undo, and Redo menu items.
 
             % Inspect the actual menu hierarchy after editor construction.
             app = yamada();

@@ -2,7 +2,7 @@ param(
     [string]$ReleaseDirectory = $PSScriptRoot
 )
 
-# Reclassify and apply the audited R2024a contracts required by Phase 6.9.
+# Apply the audited R2024a Inspector property contracts.
 $componentDirectory = Join-Path $ReleaseDirectory "components"
 
 function Save-Json($path, $document) {
@@ -347,4 +347,4 @@ $currentPoint = Set-PropertyMetadata $uiaxes "CurrentPoint" "none" "omitted" @("
 Set-ValueContract $currentPoint "opaque" @("unknown") "any" $false @()
 Save-Json $uiaxesPath $uiaxes
 
-Write-Host "Applied audited Phase 6.9 property contracts in $componentDirectory."
+Write-Host "Applied audited Inspector property contracts in $componentDirectory."

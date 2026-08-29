@@ -738,7 +738,7 @@ classdef ComponentCatalogLoader
                 result (1, 1) struct
             end
 
-            % Preserve only the existing Phase 4.5 extension fields in schema v1.
+            % Preserve only the extension fields supported by schema version 1.
             if ~isfield(document, "metadata")
                 return
             end
@@ -778,7 +778,7 @@ classdef ComponentCatalogLoader
                 result (1, 1) struct
             end
 
-            % Store only known style records for Phase 6.4 to consume later.
+            % Store only known style records for typed definition construction.
             if ~isstruct(document) || ~isscalar(document)
                 macd.catalog.ComponentCatalogLoader.fail(context, "Expected one object.");
             end

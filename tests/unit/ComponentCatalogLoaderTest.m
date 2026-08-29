@@ -3,7 +3,7 @@ classdef ComponentCatalogLoaderTest < matlab.unittest.TestCase
     %   These tests create isolated temporary catalogs so loader validation proves
     %   its manifest-relative I/O, ordered group expansion, symbolic behavior
     %   checks, and fail-closed diagnostics without depending on the standard
-    %   catalog migrated in Phase 6.3.
+    %   versioned runtime catalog and its strict validation boundary.
 
     methods (Test)
         function loadsOrderedGroupsAndStyleOverrides(testCase)

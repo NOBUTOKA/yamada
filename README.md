@@ -73,6 +73,7 @@ See the [product specification](SPECIFICATION.md) for the current supported beha
 ## Documentation
 
 - [Product specification](SPECIFICATION.md) - Current scope, input and output contract, and safety limitations
+- [Roadmap](ROADMAP.md) - Independent tasks planned beyond the current supported behavior
 - [Contributing guide](CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
 
 ## Feedback and Contributions

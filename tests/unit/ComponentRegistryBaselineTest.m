@@ -2,7 +2,7 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
     % ComponentRegistryBaselineTest Verify promotion of the R2024a grouping catalog.
     %   This class compares every runtime concrete variant with the audited
     %   development ledger and checks that direct-parent projections remain
-    %   deterministic. It replaces the obsolete Phase 4.5 subset baseline.
+    %   deterministic across the complete audited R2024a catalog.
 
     methods (Test)
         function runtimeRegistryMatchesAuditedR2024aLedger(testCase)
@@ -223,8 +223,8 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual([textCount, tooltipCount, valueCount], [7, 37, 1]);
         end
 
-        function phase69SpecializedEditorContractsAreClassified(testCase)
-            % phase69SpecializedEditorContractsAreClassified Guard the Step 1 ledger decisions.
+        function specializedEditorContractsAreClassified(testCase)
+            % specializedEditorContractsAreClassified Guard audited specialized-editor decisions.
 
             % Keep arbitrary HTML data visible but non-editable in the inspector.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -253,8 +253,8 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             end
         end
 
-        function phase69AuditedValueContractsReachRuntimeCatalog(testCase)
-            % phase69AuditedValueContractsReachRuntimeCatalog Verify exact pending-editor schemas.
+        function auditedValueContractsReachRuntimeCatalog(testCase)
+            % auditedValueContractsReachRuntimeCatalog Verify exact pending-editor schemas.
 
             % Check the three documented date-picker modes independently.
             registry = macd.model.ComponentRegistry.createDefault();

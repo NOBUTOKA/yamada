@@ -3,9 +3,9 @@
 ## Purpose
 
 This document defines how one Inspector row can present and edit multiple
-MATLAB properties without merging their underlying property contracts. It is a
-Phase 6.9 design artifact and is intended to remain applicable when another
-MATLAB release catalog is generated.
+MATLAB properties without merging their underlying property contracts. The
+design is intended to remain applicable when another MATLAB release catalog is
+generated.
 
 ## Selection rule
 
@@ -23,7 +23,7 @@ rows even when the implementation shares validation or transaction logic.
 
 ## Recommended names and candidate inventory
 
-### Initial Phase 6.9 slices
+### Initial composite rows
 
 | Row name | Member properties | Applies to | Intended presentation | Reason |
 | --- | --- | --- | --- | --- |
@@ -147,9 +147,9 @@ The schema rules are:
 - Source-only properties that are absent from the runtime catalog remain
   independent read-only rows.
 
-The first artifact should contain only the four initial Phase 6.9 slices. Add
-follow-up candidates one vertical slice at a time after their concrete editor
-and validation behavior are defined.
+The initial artifact contains only the four initial composite rows. Add follow-up
+candidates one vertical slice at a time after their concrete editor and
+validation behavior are defined.
 
 ## Runtime representation
 

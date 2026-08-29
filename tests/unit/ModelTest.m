@@ -257,7 +257,7 @@ classdef ModelTest < matlab.unittest.TestCase
         end
 
         function geometryValidationRejectsUnsafeLiterals(testCase)
-            % geometryValidationRejectsUnsafeLiterals Verify Phase 5 geometry checks.
+            % geometryValidationRejectsUnsafeLiterals Verify canvas geometry checks.
 
             % Invalid Position and grid coordinates must block generation safely.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -397,7 +397,7 @@ classdef ModelTest < matlab.unittest.TestCase
         function publicPropertiesProvideMetadataHelp(testCase)
             % publicPropertiesProvideMetadataHelp Verify documented public state.
 
-            % Inspect every Phase 1 model class through MATLAB property metadata.
+            % Inspect every public model class through MATLAB property metadata.
             classNames = ["macd.model.ComponentRecord", ...
                 "macd.model.ComponentDefinition", "macd.model.Diagnostic", ...
                 "macd.model.DocumentModel", "macd.model.ParentContextRule", ...

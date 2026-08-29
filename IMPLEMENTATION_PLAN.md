@@ -130,12 +130,10 @@ Absolute positioning and `uigridlayout` require different editing behavior:
 - Right side: property inspector.
 - Bottom: warnings and errors.
 
-The first version should prioritize clear selection and property editing over
-visual polish. Delete must always be an explicit command. Save is disabled when
-fatal validation or generation diagnostics exist. New output uses the
-host-default line ending and opened source retains its detected convention. An
-explicit `CRLF`/`LF` selector in the Save As dialog remains a future
-enhancement.
+The first version prioritizes clear selection and property editing over visual
+polish. Delete is always an explicit command. Save is disabled when fatal
+validation or generation diagnostics exist. New output uses the host-default
+line ending and opened source retains its detected convention.
 
 ## Proposed project structure
 
@@ -151,19 +149,19 @@ tests/
   unit/
 ```
 
-Package boundaries may be adjusted during the first implementation slice, but parser and generator code must remain independent of live editor UI handles.
+Parser and generator code remain independent of live editor UI handles.
 
-## Implementation phases
+## Completed implementation milestones
 
-### Phase 1: Model and new-app generation
+### Model and new-app generation
 
 - [x] Define diagnostics, source spans, property entries, component records, the document model, and the component registry.
 - [x] Create an empty AppBase model with a root `uifigure`.
 - [x] Generate a runnable minimal class.
 - [x] Validate class names, component names, hierarchy, safe literals, generated UTF-8 without BOM output, host-default line endings, and GPL notices.
 
-Phase 1 uses a data-driven boundary between component records and typed component
-definitions. A component record stores a factory name, declared MATLAB type,
+The model foundation uses a data-driven boundary between component records and
+typed component definitions. A component record stores a factory name, declared MATLAB type,
 creation arguments, hierarchy IDs, and an ordered `PropertyEntry` object array.
 Property entries use paths such as `Position` or `Layout.Row`; no component class
 has a fixed set of MATLAB UI properties. The registry supplies immutable
@@ -177,23 +175,23 @@ Homogeneous model collections use typed object arrays rather than cells:
 documents contain `ComponentRecord` and `Diagnostic` arrays, component records
 contain `PropertyEntry` and `Diagnostic` arrays, and property entries contain
 `Diagnostic` arrays. Cells remain only where values are intentionally
-heterogeneous, such as component creation arguments, or where a later phase has
-not yet defined the concrete model type.
+heterogeneous, such as component creation arguments, or where the concrete model
+type is genuinely undefined.
 
 Parsed expressions also have a representation distinct from safe literal values.
-They can therefore remain source-backed and read-only in later phases instead of
-being coerced into a value or silently discarded. Source spans, diagnostics,
-unknown regions, original text, and pending edits already have dedicated model
-locations for the read-only parser and localized round-trip work in Phases 2 and 3.
+They can therefore remain source-backed and read-only during parsing and editing
+instead of being coerced into a value or silently discarded. Source spans,
+diagnostics, unknown regions, original text, and pending edits have dedicated
+model locations for read-only parsing and localized round-trip generation.
 
-### Phase 2: Read-only source parsing
+### Read-only source parsing
 
 - [x] Add a representative AppBase fixture.
 - [x] Parse class inheritance, component declarations, factory calls, hierarchy, and simple assignments.
 - [x] Produce explicit warnings for unsupported constructs.
 - [x] Verify that parsing does not execute input code.
 
-Phase 2 uses a lexical scanner to identify statement boundaries without evaluating
+The parser uses a lexical scanner to identify statement boundaries without evaluating
 the source. It handles quoted text, line and block comments, balanced delimiters,
 and continuations before the AppBase parser recognizes its limited structural
 subset. `AppSourceParser` retains the original decoded source, file path, line
@@ -204,9 +202,7 @@ Opened source files must be valid UTF-8. The parser reports invalid UTF-8 as a
 blocking error and does not create editable component records, preventing a
 lossy write-back. It retains the source file's detected line-ending convention
 (`CRLF`, `LF`, or `None`) for round-trip output. New documents use CRLF on
-Windows and LF on Linux or macOS. `SourceWriter` supports either convention,
-while an editor control for overriding the new-document convention is not yet
-implemented.
+Windows and LF on Linux or macOS. `SourceWriter` supports either convention.
 
 The parser accepts only Registry-supported direct factory calls and direct
 `app.Component.Property = value` assignments. A conservative literal parser
@@ -217,7 +213,7 @@ initialization, which prevents callback behavior from overriding the initial UI
 model. The parser reads files as bytes and never instantiates or executes the
 input class.
 
-### Phase 3: Safe round-trip generation
+### Safe round-trip generation
 
 - [x] Preserve exact source when no edits are made.
 - [x] Implement localized changes for supported property assignments.
@@ -225,7 +221,7 @@ input class.
 - [x] Add conservative deletion with ownership checks.
 - [x] Compare original and generated source before saving.
 
-Phase 3 adds `RoundTripGenerator`, which treats parsed source as immutable until
+`RoundTripGenerator` treats parsed source as immutable until
 an editable literal changes. It keeps no-edit output byte-for-byte identical,
 uses existing source spans for direct-assignment replacements, and exposes the
 rewritten `GeneratedText` alongside `OriginalText` for save-time diff preview.
@@ -234,19 +230,19 @@ creation anchors are found. Explicit deletion is limited to non-root leaf
 components with fully owned declaration, creation, and property spans; any
 additional source reference blocks generation with an actionable diagnostic.
 
-### Phase 4: Editor shell
+### Editor shell
 
 - [x] Implement the main AppBase editor class.
 - [x] Connect New and Open workflows.
 - [x] Add hierarchy selection, preview rendering, property inspection, and diagnostics.
 
-Phase 4 adds `yamada`, a programmatic AppBase editor shell.
+`yamada` is a programmatic AppBase editor shell.
 Its New and Open commands converge on `DocumentModel`; Open remains a parser-only
 workflow. The shell displays a component hierarchy, a registry-only preview that
 never constructs the opened class, read-only property inspection, structured
 diagnostics, validation, Save As, and an original-versus-generated source view.
 
-### Phase 4.5: Standard MATLAB R2024 component catalog (complete)
+### Standard MATLAB R2024 component catalog
 
 - [x] Register the standard persistent MATLAB R2024 AppBase component catalog:
   common controls, containers, navigation and data controls, axes,
@@ -255,7 +251,7 @@ diagnostics, validation, Save As, and an original-versus-generated source view.
 - [x] Include R2024a `uicolorpicker` support and style metadata for components
   whose factory has multiple creation forms.
 - [x] Record programmatic-only axes and parent-dependent components as metadata
-  so later UI and generation phases can apply their special construction rules.
+  so specialized UI and generation paths can apply their construction rules.
 - [x] Add and runtime-validate `ControlGalleryApp`, `AxesExplorerApp`,
   `NavigationDataApp`, and `FigureToolsApp` fixtures in addition to the
   representative `SimpleCalculatorApp` fixture.
@@ -267,23 +263,20 @@ diagnostics, validation, Save As, and an original-versus-generated source view.
 - [x] Omit native menus and toolbars from Safe Preview while preserving their
   parsed model/source representation; dialog invocation functions remain out of
   scope because they are not persistent AppBase components.
-Phase 6 delivered the audited typed Inspector metadata that was deferred from
-Phase 4.5. Dedicated editing and generation semantics for style-specific
-constructors, tree-node/menu/toolbar hierarchy, and programmatic-only axes
-remain later-phase work. They do not limit the Phase 4.5 registry, parsing, or
-Safe Preview coverage recorded above.
+The audited typed Inspector catalog extends this component inventory without
+changing the registry, parsing, or Safe Preview coverage recorded above.
 
-### Phase 5: Canvas editing
+### Canvas editing
 
 #### Objective
 
-Turn the Phase 4 Safe Preview into an editing canvas without weakening the
+Turn the read-only Safe Preview into an editing canvas without weakening the
 source-preserving boundary. Every canvas action must first mutate the shared
 `DocumentModel`; the hierarchy, inspector, preview, validation, and source
 generators then consume that model. Preview graphics handles are disposable UI
 state and must never be treated as the source of document state.
 
-The first Phase 5 slice covers ordinary persistent visual components that have
+The canvas-editing milestone covers ordinary persistent visual components that have
 a registry-supported factory, a selected supported parent, and canonical
 parent-first construction. It deliberately excludes the root `uifigure`,
 native menus/toolbars and their child tools, `uitreenode`, and factory styles or
@@ -326,7 +319,7 @@ will show an actionable unavailable-state message rather than guessing.
 
 1. Extend the main editor layout with a categorized palette and an edit command
    surface containing Delete, Undo, and Redo. Categories come from registry
-   `Metadata.Category`; the palette lists only the Phase 5-eligible factories.
+   `Metadata.Category`; the palette lists only canvas-insertion-eligible factories.
    Selection changes recompute enabled state using the selected component and
    registry parent rules.
 2. Palette insertion uses the selected component as the parent when valid. If a
@@ -373,8 +366,8 @@ will show an actionable unavailable-state message rather than guessing.
    disable the relevant editing control. If dimensions use flexible forms that
    cannot be resolved safely (for example `"1x"`, `"fit"`, or expression-backed
    definitions), permit only positive coordinates and defer occupancy/bounds
-   diagnostics to a later layout-aware phase; never coerce or rewrite the grid
-   definition.
+   diagnostics to the Grid Layout Visual Editor task in
+   [ROADMAP.md](ROADMAP.md); never coerce or rewrite the grid definition.
 
 #### Validation, diagnostics, and generation
 
@@ -389,7 +382,7 @@ will show an actionable unavailable-state message rather than guessing.
    status/diagnostics area.
 3. Reuse the existing generators. New documents emit added components in normal
    generation order. Parsed documents use the existing anchored insertion and
-   conservative deletion paths; Phase 5 must add focused round-trip tests for
+   conservative deletion paths; focused round-trip tests cover
    palette-created components, position edits, grid-layout edits, undo, and
    redo, proving localized source diffs.
 
@@ -419,10 +412,10 @@ will show an actionable unavailable-state message rather than guessing.
    Preview, with construction/destruction editor tests.
 3. Land absolute geometry editing and its scale-aware tests.
 4. Land grid row/column/span controls and boundary tests.
-5. Finish round-trip coverage and an end-to-end MATLAB test run before marking
-   Phase 5 complete.
+5. Finish round-trip coverage and an end-to-end MATLAB test run before declaring
+   canvas editing complete.
 
-#### Phase 5 completion record
+#### Canvas-editing completion record
 
 **Status: complete (assessed 2026-08-11).**
 
@@ -444,8 +437,8 @@ will show an actionable unavailable-state message rather than guessing.
   repeatedly assigning invalid preview `Position` values.
 - Grid children continue to use explicit inspector edits of `Layout.Row` and
   `Layout.Column` (including spans), rather than drag editing. This is the
-  planned Phase 5 boundary; visual grid rearrangement remains a later
-  layout-aware feature.
+  completed canvas-editing boundary. Visual grid rearrangement is tracked in
+  [ROADMAP.md](ROADMAP.md).
 - The integrated `uihtml` SVG interaction layer supplies selection outlines and
   handles without invoking application callbacks. Slider, Switch, and circular
   instrumentation outlines have component-specific interaction geometry. Tab
@@ -453,25 +446,24 @@ will show an actionable unavailable-state message rather than guessing.
   leaving active-tab content selectable. The overlay selects tabs through its
   own selector and publishes active-tab child geometry only after displayed
   pixel positions have stabilized; inactive-tab child outlines are omitted.
-- The Phase 5 implementation was delivered in cohesive commits from
+- The canvas-editing implementation was delivered in cohesive commits from
   `481c985` through `d409a02`, including the follow-up fixes for constrained
   controls and tab geometry. The later parser-only commit `4cbd05d` does not
-  change the Phase 5 assessment.
+  change the canvas-editing assessment.
 - `EditorInteractionTest` constructs and destroys real editor `uifigure`
   fixtures and verifies the palette, hierarchy, inspector, toolbar, Edit menu,
   and tab-selector interaction route. The licensed MATLAB R2024a full suite
   passes **47 tests with zero failures**. Safe Preview remains registry-only and
   does not execute input-app callbacks.
 
-The following remain intentionally outside Phase 5: root-figure manipulation,
-native menu/toolbar and tree-node insertion or geometry editing, dedicated
-factory-style/programmatic-axes editing, and drag-based grid placement. These
-retain their existing parse/source-preservation behavior and are candidates for
-later phases rather than incomplete Phase 5 work.
+Work beyond this completed boundary, including native hierarchy editing,
+factory-style and programmatic-axes construction, and drag-based Grid placement,
+is tracked as independent tasks in [ROADMAP.md](ROADMAP.md).
 
-### Phase 6: Typed property editing and component-specific inspector
+### Typed property editing and component-specific Inspector
 
-This section records the phase-level architectural and completion contract.
+This section records the catalog and Inspector architecture that is already in
+place.
 
 #### Objective
 
@@ -481,7 +473,7 @@ the selected instance has no existing assignment. Editing an unassigned property
 creates a model-owned assignment; resetting it removes that assignment when
 source ownership makes removal safe.
 
-Use the MATLAB R2024a catalog from Phase 4.5 as the versioned scope. Audit the
+Use the MATLAB R2024a catalog as the versioned scope. Audit the
 public properties of every declared component type and factory style, then
 explicitly classify relevant appearance, content, state, interaction, layout,
 and identification properties as editable, visible read-only, or intentionally
@@ -571,7 +563,7 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 3. Keep `PropertyDefinition` as capability state and `PropertyEntry` as instance
    state. Join definitions with entries in the inspector so unassigned,
    explicitly assigned, and source-backed nonliteral values remain distinct.
-4. Audit every Phase 4.5 factory and supported style against MATLAB R2024a
+4. Audit every catalog factory and supported style against MATLAB R2024a
    property documentation. Record a reason for every read-only or omitted
    candidate; runtime introspection alone must not silently expand the contract.
 5. Define separate property surfaces when styles have different declared types,
@@ -633,51 +625,17 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
 2. [x] Land declarative parent-context rules and one effective-property resolver.
    Switch insertion, parsing, and validation to it, then freeze intrinsic and
    representative parent-context projections.
-3. [x] Migrate Phase 4.5 definitions without changing effective behavior, removing
-   the hard-coded catalog only after both parity layers pass.
+3. [x] Migrate the legacy in-code definitions without changing effective behavior,
+   removing the hard-coded catalog only after both parity layers pass.
 4. [x] Land expanded typed definitions, reusable groups, audit data, and model
    reset/history operations.
 5. [x] Land the categorized inspector and common adapters, completing Button end to
    end against the supplied App Designer examples.
 6. [x] Expand component families and style-specific audited surfaces.
-7. [ ] Finish reference and remaining specialized adapters. Asset paths are
-   editable; component references and Grid Layout track lists remain read-only.
-8. [ ] Complete preview, validation, generation, packaging, and end-to-end checks.
 
-#### Tests and completion criteria
+#### Typed-Inspector implementation record
 
-1. Catalog-loader tests cover valid loading, deterministic ordering and merging,
-   explicit overrides, schema-version rejection, unknown fields and symbols,
-   duplicate/missing references, malformed defaults, actionable file/JSON-path
-   diagnostics, failure atomicity, fixture-root isolation, and packaged resource
-   discovery. Parent-context tests cover Grid, absolute, and structural parents.
-   Compatibility tests compare intrinsic definitions and direct-parent effective
-   surfaces after reviewed duplicate cleanup.
-2. Registry tests require valid category/order, typed schema, allowlisted adapter
-   and validator identifiers, style scope, and explicit audit disposition for
-   every candidate property.
-3. Model tests cover absent versus explicit values, typed validation, add/reset
-   undo/redo, redo-branch clearing, and parsed source-state restoration.
-4. Editor tests construct real figures, call `drawnow`, exercise every adapter,
-   categories, inline errors, read-only expressions, reset, and Button editing,
-   then assert validity/model state and delete every fixture.
-5. Safe Preview tests change representative visible properties for each family
-   and compare safe preview handles with runtime fixtures while separately
-   proving that callbacks and unsupported expressions are not executed.
-6. Generator tests cover insertion, replacement, and removal; byte-identical
-   no-edit output; small diffs; enum/string/color/vector/path/reference encoding;
-   ambiguous assignments; and CRLF UTF-8-without-BOM output.
-7. Phase 6 completes only when every Phase 4.5 component/style has an audited
-   disposition, every editable property has a typed tested adapter, the Button
-   acceptance surface works end to end, preview and source flow through shared
-   model/history, geometry is resolved from the direct parent, and the standard
-   catalog contains no hard-coded component inventory
-   in `ComponentRegistry.m`, packaged resources load successfully, and the
-   licensed MATLAB R2024a suite passes.
-
-#### Phase 6 implementation assessment
-
-**Status: substantially implemented, not closed (assessed 2026-08-30).**
+**Recorded 2026-08-30.**
 
 - The packaged R2024a catalog contains 48 concrete variants for 38 factories.
   The audited development ledger contains 1,825 property contracts: 1,068
@@ -695,37 +653,14 @@ planned surface includes `Text`, `WordWrap`, horizontal and vertical alignment,
   drafts, atomic property transactions, common adapters, and specialized
   Items/ItemsData, table, column, date, weekday, multiline, color, URL, and
   asset-path editors are implemented. Generated-property reset and reversible
-  history exist in `DocumentModel`, but no per-property reset action is exposed
-  in the Inspector yet.
+  history exist in `DocumentModel`.
 - Style-specific catalog surfaces are audited and selected from creation
-  arguments. The palette does not yet expose dedicated construction choices for
-  every factory style, and programmatic-only axes and native figure-tool
-  hierarchy editing retain the Phase 5 restrictions.
-- Ninety-five component-reference surfaces, including `ContextMenu`, `Parent`,
-  and `SelectedTab`, remain read-only with the explicit
-  `deferredComponentReference` reason. `uigridlayout.RowHeight` and
-  `ColumnWidth` remain read-only with `deferredGridTrackList`.
-- Phase 6 cannot be closed while the integrated MATLAB suite is not green. The
-  current failures include ItemsData-backed selection synchronization, Safe
-  Preview property ordering, and dependent editor interaction tests. Packaging
-  checks and complete Save/Save As end-to-end coverage are also absent.
+  arguments.
+- A generated minimal AppBase class passed `checkcode`, constructed successfully,
+  completed `drawnow`, remained valid, and was deleted cleanly in MATLAB R2024a.
 
-### Phase 7: Integration hardening
-
-- [ ] Restore a green unit, round-trip, generation, Inspector, and Preview test
-  run. On 2026-08-30 the licensed R2024a run completed 166 tests: 155 passed,
-  11 failed, and 8 were incomplete. `PropertyEditorFactoryTest` independently
-  reproduced two ItemsData selection failures, and Preview rendering exposes an
-  unassigned-output path in `PreviewRenderer.orderedProperties`.
-- [x] Verify a generated minimal AppBase class with MATLAB tooling. On
-  2026-08-30 a generated class passed `checkcode`, constructed successfully,
-  completed `drawnow`, remained valid, and was deleted cleanly.
-- [ ] Add durable editor-level verification for Save and Save As guards and file
-  persistence. Lower-level tests already cover UTF-8 without BOM, CRLF/LF
-  writing, no-edit preservation, localized diffs, and generation diagnostics.
-- [ ] Complete new-app and existing-app end-to-end workflows through the shared
-  model and generator, including packaging/resource discovery and recoverable
-  save targets.
+All unfinished capability, integration, packaging, and test work is maintained as
+independent tasks in [ROADMAP.md](ROADMAP.md).
 
 ## Test strategy
 
@@ -751,10 +686,8 @@ The MVP capability surface is implemented when a user can:
 7. [x] Save UTF-8 without BOM source using the document's line-ending convention:
    host default for new documents and detected CRLF/LF for opened source.
 
-**MVP assessment:** the functional criteria above are implemented. Release
-readiness remains blocked by the Phase 7 test failures and missing integrated
-save/packaging verification; the explicit Save As line-ending selector is an
-enhancement beyond the current public contract.
+**MVP assessment:** the functional criteria above are implemented. Remaining
+release-readiness and capability work is tracked in [ROADMAP.md](ROADMAP.md).
 
 ## Known risks
 

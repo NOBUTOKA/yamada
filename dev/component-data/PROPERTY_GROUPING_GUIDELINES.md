@@ -206,7 +206,7 @@ deterministic inspector category order, every exception is explicit, and the
 grouped representation reconstructs the audited intrinsic and parent-effective
 surfaces without capability drift.
 
-## Step 13 completion record (2026-08-15)
+## R2024a runtime promotion record (2026-08-15)
 
 The reviewed R2024a grouping design was promoted to
 `resources/component-catalog/R2024a` by
@@ -222,5 +222,6 @@ source parsing, and generation use the same variant-aware registry. The
 licensed MATLAB R2024a full unit suite passed 83 tests with zero failures after
 promotion.
 
-This record completes Step 13 only. Phase 6.7 and 6.8 completion status remains
-subject to the separate Phase 6 plan review.
+This record covers catalog grouping and runtime promotion only. Remaining
+Inspector capability and product-integration work is tracked independently in
+the project [`ROADMAP.md`](../../ROADMAP.md).

@@ -68,7 +68,7 @@ classdef RoundTripGeneratorTest < matlab.unittest.TestCase
         end
 
         function documentEditRewritesPositionAndGridAssignment(testCase)
-            % documentEditRewritesPositionAndGridAssignment Verify Phase 5 edits.
+            % documentEditRewritesPositionAndGridAssignment Verify canvas layout edits.
 
             % Route geometry changes through DocumentModel rather than records.
             [document, generator] = RoundTripGeneratorTest.parsedFixture();

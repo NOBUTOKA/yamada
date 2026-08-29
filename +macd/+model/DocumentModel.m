@@ -106,7 +106,7 @@ classdef DocumentModel < handle
                     definition.Category == "FigureTools" || ...
                     definition.RequiresParentComponent
                 error("macd:DocumentModel:UnsupportedInsertion", ...
-                    "Factory ""%s"" is not eligible for Phase 5 insertion.", factory);
+                    "Factory ""%s"" is not eligible for palette insertion.", factory);
             end
             parent = obj.getComponent(parentId);
             if isempty(parent)

@@ -2,8 +2,8 @@ classdef PropertyBehaviorRegistry
     % PropertyBehaviorRegistry Validate symbolic property behavior identifiers.
     %   Catalog JSON names editor, validator, preview, and reset behaviors without
     %   carrying executable code. This class owns the finite allowlists used while
-    %   loading the Phase 6 catalog; later editor work may bind the same names to
-    %   concrete adapters.
+    %   loading the runtime component catalog; editor code may bind the same names
+    %   to concrete adapters.
 
     methods (Static)
         function validateMetadata(metadata, context)
@@ -42,7 +42,7 @@ classdef PropertyBehaviorRegistry
                 context (1, 1) string
             end
 
-            % Leave absent metadata unconstrained until Phase 6.4 supplies it.
+            % Leave optional behavior metadata unconstrained when it is absent.
             key = char(fieldName);
             if ~isfield(metadata, key)
                 return
