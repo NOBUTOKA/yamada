@@ -98,8 +98,32 @@ Implement save safety around an explicit document-dirty state.
   validation, generator, diff, Save, and Save As paths.
 - Verify recoverable save targets, save/reopen behavior, UTF-8 without BOM,
   preserved CRLF/LF conventions, and cleanup of every UI fixture.
-- Add the packaging and end-to-end checks required before publishing a versioned
-  release or MATLAB Toolbox package.
+- Add the end-to-end checks required before publishing a versioned release.
+
+## Package a Public Release as a MATLAB Toolbox
+
+Create a MATLAB Toolbox (`.mltbx`) only after the editor reaches the quality bar
+for a versioned public release and the release-blocking workflows above pass.
+
+- Define stable Toolbox metadata, including its identifier, semantic version,
+  summary, author, license, minimum MATLAB release, and supported platforms.
+- Add a reproducible packaging script based on `matlab.addons.toolbox.ToolboxOptions`
+  and `matlab.addons.toolbox.packageToolbox` rather than relying only on manually
+  saved packaging-project state.
+- Include the runtime MATLAB source, the release-specific component catalog,
+  `EditorInteractionOverlay.html`, the license, and public documentation; exclude
+  repository metadata, development-only catalog tooling, tests, and build output.
+- Decide whether the first package launches through the `yamada()` command only
+  or also exposes an App Gallery entry, and document the supported entry point.
+- Analyze required files and products, then declare only verified MATLAB-release
+  and platform compatibility. Initially treat R2024a as the sole supported
+  release unless additional releases have been tested.
+- Install the built package into an isolated MATLAB environment and verify that
+  the installed copy, rather than the source checkout, launches successfully;
+  discovers its catalog and HTML overlay; completes representative New, Open,
+  Save, and Save As workflows; and uninstalls cleanly.
+- Publish the `.mltbx` and release notes with the corresponding tagged release
+  only after the package artifact and installation smoke tests pass.
 
 ## Build a Grid Layout Visual Editor
 
