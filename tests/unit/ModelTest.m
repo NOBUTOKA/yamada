@@ -145,6 +145,19 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyFalse(document.canRedo());
         end
 
+        function insertionPreservesSelectedComponentVariant(testCase)
+            % insertionPreservesSelectedComponentVariant Create a non-default catalog style.
+
+            % Pass the selected style arguments through the model insertion boundary.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("VariantApp", registry);
+            variant = registry.getById("uibutton-state");
+            component = document.insertComponent(registry, variant.Factory, ...
+                document.RootComponentId, variant.CreationArguments);
+            testCase.verifyEqual(component.CreationArguments, variant.CreationArguments);
+            testCase.verifyEqual(component.DeclaredType, "matlab.ui.control.StateButton");
+        end
+
         function gridInsertionSeedsLayoutCoordinates(testCase)
             % gridInsertionSeedsLayoutCoordinates Verify grid insertion defaults.
 

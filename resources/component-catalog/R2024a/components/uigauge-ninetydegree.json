@@ -1081,7 +1081,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Gauge",
+    "displayName": "90-Degree Gauge",
     "category": "Instrumentation",
     "supportedStyles": [
       "circular",

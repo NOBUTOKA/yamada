@@ -1031,7 +1031,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Edit Field",
+    "displayName": "Numeric Edit Field",
     "category": "Common",
     "supportedStyles": [
       "text",

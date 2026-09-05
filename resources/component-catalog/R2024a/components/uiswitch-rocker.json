@@ -868,7 +868,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Switch",
+    "displayName": "Rocker Switch",
     "category": "Instrumentation",
     "supportedStyles": [
       "slider",

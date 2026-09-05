@@ -38,6 +38,32 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function paletteListsConcreteStyleVariants(testCase)
+            % paletteListsConcreteStyleVariants Expose every catalog-defined style.
+
+            % Inspect the live palette to ensure variants are not collapsed by factory.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figures = findall(0, "Type", "figure", ...
+                "Name", "Yet Another MATLAB App Designer Alternative");
+            tables = findall(figures, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            names = string(palette.Data(:, 1));
+            testCase.verifyTrue(all(ismember(["State Button", "Numeric Edit Field", ...
+                "Linear Gauge", "90-Degree Gauge", "Semicircular Gauge", ...
+                "Discrete Knob", "Range Slider", "Rocker Switch", ...
+                "Toggle Switch", "Check Box Tree"], names)));
+            row = find(names == "State Button", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", row)));
+            component = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEqual(component.DeclaredType, "matlab.ui.control.StateButton");
+            testCase.verifyEqual(component.CreationArguments, {'state'});
+            clear cleanup
+        end
+
         function hierarchySelectionCallbackUpdatesInspector(testCase)
             % hierarchySelectionCallbackUpdatesInspector Verify real tree selection.
 

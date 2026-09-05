@@ -62,8 +62,8 @@ classdef yamada < matlab.apps.AppBase
         DiagnosticsTable matlab.ui.control.Table
         StatusLabel matlab.ui.control.Label
         DiagnosticsExpanded logical = false
-        SelectedPaletteFactory string = ""
-        PaletteFactories string = strings(1, 0)
+        SelectedPaletteId string = ""
+        PaletteVariantIds string = strings(1, 0)
     end
 
     methods
@@ -434,21 +434,20 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % Keep the palette deterministic while retaining registry categories.
-            factories = app.Registry.listFactories();
             rows = cell(0, 2);
-            paletteFactories = strings(1, 0);
-            for index = 1:numel(factories)
-                factory = factories(index);
-                if ~app.isPaletteFactory(factory)
+            paletteIds = strings(1, 0);
+            variantIds = app.Registry.listVariantIds();
+            for index = 1:numel(variantIds)
+                variantId = variantIds(index);
+                definition = app.Registry.getById(variantId);
+                if ~app.isPaletteDefinition(definition)
                     continue
                 end
-                definition = app.Registry.get(factory);
                 category = definition.Category;
-                displayName = app.Registry.displayName(factory);
-                rows(end + 1, :) = {char(displayName), char(category)}; %#ok<AGROW>
-                paletteFactories(end + 1) = factory; %#ok<AGROW>
+                rows(end + 1, :) = {char(definition.DisplayName), char(category)}; %#ok<AGROW>
+                paletteIds(end + 1) = variantId; %#ok<AGROW>
             end
-            app.PaletteFactories = paletteFactories;
+            app.PaletteVariantIds = paletteIds;
             app.PaletteTable.Data = rows;
         end
 
@@ -460,14 +459,14 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % CellSelectionCallback may report an empty selection after refresh.
-            app.SelectedPaletteFactory = "";
+            app.SelectedPaletteId = "";
             if isempty(event.Indices)
                 app.refreshEditCommands();
                 return
             end
             row = event.Indices(1, 1);
             if row <= size(app.PaletteTable.Data, 1)
-                app.SelectedPaletteFactory = app.PaletteFactories(row);
+                app.SelectedPaletteId = app.PaletteVariantIds(row);
             end
             app.refreshEditCommands();
         end
@@ -484,8 +483,8 @@ classdef yamada < matlab.apps.AppBase
             if isempty(row)
                 return
             end
-            if row >= 1 && row <= numel(app.PaletteFactories)
-                app.SelectedPaletteFactory = app.PaletteFactories(row);
+            if row >= 1 && row <= numel(app.PaletteVariantIds)
+                app.SelectedPaletteId = app.PaletteVariantIds(row);
                 app.addComponentButtonPushed();
             end
         end
@@ -496,14 +495,18 @@ classdef yamada < matlab.apps.AppBase
                 app (1, 1) yamada
             end
 
-            parent = app.insertionParent(app.SelectedPaletteFactory);
+            if strlength(app.SelectedPaletteId) == 0
+                return
+            end
+            definition = app.Registry.getById(app.SelectedPaletteId);
+            parent = app.insertionParent(app.SelectedPaletteId);
             if isempty(parent)
                 app.setStatus("Select a compatible parent before adding a component.");
                 return
             end
             try
                 component = app.Document.insertComponent(app.Registry, ...
-                    app.SelectedPaletteFactory, parent.Id);
+                    definition.Factory, parent.Id, definition.CreationArguments);
             catch exception
                 app.setStatus(string(exception.message));
                 app.refreshEditCommands();
@@ -619,23 +622,23 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
-        function parent = insertionParent(app, factory)
-            % insertionParent Find the nearest selected ancestor accepting a factory.
+        function parent = insertionParent(app, variantId)
+            % insertionParent Find the nearest selected ancestor accepting a variant.
             arguments (Input)
                 app (1, 1) yamada
-                factory string
+                variantId string
             end
             arguments (Output)
                 parent
             end
 
             parent = [];
-            if strlength(factory) == 0 || isempty(app.Document)
+            if strlength(variantId) == 0 || isempty(app.Document)
                 return
             end
+            definition = app.Registry.getById(variantId);
             candidate = app.selectedComponent();
             while ~isempty(candidate)
-                definition = app.Registry.get(factory);
                 if any(definition.AllowedParentFactories == candidate.Factory)
                     parent = candidate;
                     return
@@ -647,17 +650,16 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
-        function result = isPaletteFactory(app, factory)
-            % isPaletteFactory Report whether a factory is in the initial edit scope.
+        function result = isPaletteDefinition(~, definition)
+            % isPaletteDefinition Report whether a variant is in the initial edit scope.
             arguments (Input)
-                app (1, 1) yamada
-                factory string
+                ~
+                definition (1, 1) macd.model.ComponentDefinition
             end
             arguments (Output)
                 result (1, 1) logical
             end
 
-            definition = app.Registry.get(factory);
             result = ~definition.IsRoot;
             result = result && ~definition.IsProgrammaticOnly && ...
                 definition.Category ~= "FigureTools" && ...

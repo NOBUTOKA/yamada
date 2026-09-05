@@ -88,20 +88,21 @@ classdef DocumentModel < handle
             end
         end
 
-        function component = insertComponent(obj, registry, factory, parentId)
-            % insertComponent Create and insert one registry-approved component.
+        function component = insertComponent(obj, registry, factory, parentId, creationArguments)
+            % insertComponent Create and insert one registry-approved component variant.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 registry (1, 1) macd.model.ComponentRegistry
                 factory string
                 parentId string
+                creationArguments cell = {}
             end
             arguments (Output)
                 component (1, 1) macd.model.ComponentRecord
             end
 
             % Validate the factory and parent before changing document state.
-            definition = registry.get(factory);
+            definition = registry.get(factory, creationArguments);
             if definition.IsRoot || definition.IsProgrammaticOnly || ...
                     definition.Category == "FigureTools" || ...
                     definition.RequiresParentComponent

@@ -868,7 +868,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Switch",
+    "displayName": "Toggle Switch",
     "category": "Instrumentation",
     "supportedStyles": [
       "slider",
