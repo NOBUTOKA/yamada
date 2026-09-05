@@ -131,10 +131,10 @@ function outline(componentData) {
     return svgElement("circle", withAttributes(common, { cx: x + w / 2, cy: y + h / 2, r: Math.min(w, h) / 2 }));
   }
   if (componentData.shape === "quarterCircle") {
-    return svgElement("path", withAttributes(common, { d: "M " + x + " " + (y + h) + " L " + x + " " + y + " A " + w + " " + h + " 0 0 1 " + (x + w) + " " + (y + h) + " Z" }));
+    return svgElement("path", withAttributes(common, { d: "M " + (x + w) + " " + (y + h) + " L " + (x + w) + " " + y + " A " + w + " " + h + " 0 0 0 " + x + " " + (y + h) + " Z" }));
   }
   if (componentData.shape === "semicircle") {
-    return svgElement("path", withAttributes(common, { d: "M " + x + " " + (y + h) + " A " + (w / 2) + " " + (w / 2) + " 0 0 0 " + (x + w) + " " + (y + h) + " Z" }));
+    return svgElement("path", withAttributes(common, { d: "M " + x + " " + (y + h) + " A " + (w / 2) + " " + (w / 2) + " 0 0 1 " + (x + w) + " " + (y + h) + " Z" }));
   }
   if (componentData.shape === "slider") {
     var group = svgElement("g", common);
