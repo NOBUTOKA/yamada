@@ -62,6 +62,16 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
         end
 
+        function stateButtonValueUsesLogicalContract(testCase)
+            % stateButtonValueUsesLogicalContract Keep State Button state distinct from numeric values.
+
+            definition = macd.model.ComponentRegistry.createDefault().getById("uibutton-state");
+            value = definition.Properties([definition.Properties.Path] == "Value");
+            testCase.verifyEqual(value.Editor, "logical");
+            testCase.verifyEqual(string(value.ValueSchema.kind), "logical");
+            testCase.verifyEqual(string(value.ValueSchema.matlabClasses), "logical");
+        end
+
         function runtimeCatalogLoadsInitialCompositeInspectorRows(testCase)
             % runtimeCatalogLoadsInitialCompositeInspectorRows Keep presentation overlays separate from properties.
 

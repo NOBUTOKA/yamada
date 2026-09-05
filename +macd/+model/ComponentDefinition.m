@@ -48,6 +48,8 @@ classdef ComponentDefinition
         ResizeConstraint string = "free"
         % ResizeConstraintsByStyle - Resize constraint overrides keyed by style.
         ResizeConstraintsByStyle struct = struct()
+        % DefaultSize - Initial pixel width and height for a newly inserted component.
+        DefaultSize double = [100 30]
         % Metadata - Extensible component capability and editor metadata.
         Metadata struct = struct()
     end
@@ -58,7 +60,7 @@ classdef ComponentDefinition
                 propertyDefinitions, displayName, category, isProgrammaticOnly, ...
                 requiresParentComponent, supportedStyles, defaultStyle, ...
                 declaredTypesByStyle, overlayShape, overlayShapesByStyle, ...
-                resizeConstraint, resizeConstraintsByStyle, metadata)
+                resizeConstraint, resizeConstraintsByStyle, defaultSize, metadata)
             % ComponentDefinition Create an immutable component capability record.
             arguments (Input)
                 factory string = ""
@@ -79,6 +81,7 @@ classdef ComponentDefinition
                 overlayShapesByStyle struct = struct()
                 resizeConstraint string = "free"
                 resizeConstraintsByStyle struct = struct()
+                defaultSize (1, 2) double = [100 30]
                 metadata struct = struct()
             end
             arguments (Output)
@@ -103,6 +106,7 @@ classdef ComponentDefinition
             obj.OverlayShapesByStyle = overlayShapesByStyle;
             obj.ResizeConstraint = resizeConstraint;
             obj.ResizeConstraintsByStyle = resizeConstraintsByStyle;
+            obj.DefaultSize = defaultSize;
             obj.Metadata = metadata;
             if isfield(metadata, "id")
                 obj.Id = string(metadata.id);
@@ -232,6 +236,7 @@ classdef ComponentDefinition
                 macd.model.ComponentDefinition.capability(capabilities, "OverlayShapesByStyle", struct()), ...
                 macd.model.ComponentDefinition.capability(capabilities, "ResizeConstraint", "free"), ...
                 macd.model.ComponentDefinition.capability(capabilities, "ResizeConstraintsByStyle", struct()), ...
+                macd.model.ComponentDefinition.capability(capabilities, "DefaultSize", [100 30]), ...
                 macd.model.ComponentDefinition.extensionMetadata(capabilities));
         end
 
@@ -269,7 +274,7 @@ classdef ComponentDefinition
             known = ["DisplayName", "Category", "ProgrammaticOnly", ...
                 "RequiresParentComponent", "SupportedStyles", "DefaultStyle", ...
                 "DeclaredTypesByStyle", "OverlayShape", "OverlayShapesByStyle", ...
-                "ResizeConstraint", "ResizeConstraintsByStyle"];
+                "ResizeConstraint", "ResizeConstraintsByStyle", "DefaultSize"];
             for index = 1:numel(known)
                 key = char(known(index));
                 if isfield(metadata, key)

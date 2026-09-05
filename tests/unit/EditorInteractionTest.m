@@ -541,6 +541,18 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(registry.get("uiknob").OverlayShape, "circle");
             testCase.verifyEqual(registry.get("uislider").OverlayShape, "slider");
             testCase.verifyEqual(registry.get("uiswitch").OverlayShape, "switch");
+            ninetyDegree = registry.getById("uigauge-ninetydegree");
+            semicircular = registry.getById("uigauge-semicircular");
+            rocker = registry.getById("uiswitch-rocker");
+            toggle = registry.getById("uiswitch-toggle");
+            testCase.verifyEqual(ninetyDegree.overlayShapeFor(ninetyDegree.CreationArguments), ...
+                "quarterCircle");
+            testCase.verifyEqual(semicircular.overlayShapeFor(semicircular.CreationArguments), ...
+                "semicircle");
+            testCase.verifyEqual(rocker.overlayShapeFor(rocker.CreationArguments), ...
+                "rockerSwitch");
+            testCase.verifyEqual(toggle.overlayShapeFor(toggle.CreationArguments), ...
+                "toggleSwitch");
         end
     end
 end

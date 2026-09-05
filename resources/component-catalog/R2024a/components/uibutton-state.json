@@ -49,13 +49,13 @@
             "category": "Button",
             "order": 1,
             "groupId": "exact.button.e5f3fed69ac2",
-            "editor": "number",
+            "editor": "logical",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "number",
+              "kind": "logical",
               "matlabClasses": [
-                "double"
+                "logical"
               ],
               "shape": "scalar",
               "allowsEmpty": false,

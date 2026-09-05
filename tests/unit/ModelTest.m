@@ -158,6 +158,20 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyEqual(component.DeclaredType, "matlab.ui.control.StateButton");
         end
 
+        function insertionUsesVariantDefaultSize(testCase)
+            % insertionUsesVariantDefaultSize Preserve a style-specific initial size.
+
+            % Keep vertical switch variants at their documented MATLAB dimensions.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("SwitchApp", registry);
+            variant = registry.getById("uiswitch-rocker");
+            component = document.insertComponent(registry, variant.Factory, ...
+                document.RootComponentId, variant.CreationArguments);
+            testCase.verifyEqual(variant.DefaultSize, [20 45]);
+            testCase.verifyEqual(component.getProperty("Position").LiteralValue, ...
+                [20 20 20 45]);
+        end
+
         function gridInsertionSeedsLayoutCoordinates(testCase)
             % gridInsertionSeedsLayoutCoordinates Verify grid insertion defaults.
 

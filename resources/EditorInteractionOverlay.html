@@ -130,6 +130,12 @@ function outline(componentData) {
   if (componentData.shape === "circle") {
     return svgElement("circle", withAttributes(common, { cx: x + w / 2, cy: y + h / 2, r: Math.min(w, h) / 2 }));
   }
+  if (componentData.shape === "quarterCircle") {
+    return svgElement("path", withAttributes(common, { d: "M " + x + " " + (y + h) + " L " + x + " " + y + " A " + w + " " + h + " 0 0 1 " + (x + w) + " " + (y + h) + " Z" }));
+  }
+  if (componentData.shape === "semicircle") {
+    return svgElement("path", withAttributes(common, { d: "M " + x + " " + (y + h) + " A " + (w / 2) + " " + (w / 2) + " 0 0 0 " + (x + w) + " " + (y + h) + " Z" }));
+  }
   if (componentData.shape === "slider") {
     var group = svgElement("g", common);
     group.appendChild(svgElement("rect", withAttributes(common, { x: x, y: y, width: w, height: h })));
@@ -142,6 +148,18 @@ function outline(componentData) {
     group.appendChild(svgElement("rect", withAttributes(common, { x: x, y: y, width: w, height: h, rx: h * 0.5 })));
     group.appendChild(svgElement("circle", withAttributes(common, { cx: x + w * 0.25, cy: y + h * 0.5, r: h * 0.36 })));
     return group;
+  }
+  if (componentData.shape === "rockerSwitch") {
+    var rocker = svgElement("g", common);
+    rocker.appendChild(svgElement("rect", withAttributes(common, { x: x, y: y, width: w, height: h, rx: w * 0.5 })));
+    rocker.appendChild(svgElement("line", withAttributes(common, { x1: x, y1: y + h / 2, x2: x + w, y2: y + h / 2 })));
+    return rocker;
+  }
+  if (componentData.shape === "toggleSwitch") {
+    var toggle = svgElement("g", common);
+    toggle.appendChild(svgElement("rect", withAttributes(common, { x: x, y: y, width: w, height: h, rx: w * 0.5 })));
+    toggle.appendChild(svgElement("circle", withAttributes(common, { cx: x + w / 2, cy: y + h * 0.25, r: Math.min(w * 0.35, h * 0.2) })));
+    return toggle;
   }
   if (componentData.shape === "axes") {
     var group = svgElement("g", common);

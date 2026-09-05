@@ -699,7 +699,7 @@ classdef ComponentCatalogLoader
             allowed = ["displayName", "category", "programmaticOnly", ...
                 "requiresParentComponent", "supportedStyles", "defaultStyle", ...
                 "declaredTypesByStyle", "overlayShape", "overlayShapesByStyle", ...
-                "resizeConstraint", "resizeConstraintsByStyle", "metadata"];
+                "resizeConstraint", "resizeConstraintsByStyle", "defaultSize", "metadata"];
             macd.catalog.ComponentCatalogLoader.requireFields(document, ["displayName", "category"], context);
             macd.catalog.ComponentCatalogLoader.rejectUnknownFields(document, allowed, context);
             result = struct("DisplayName", macd.catalog.ComponentCatalogLoader.scalarString( ...
@@ -724,6 +724,8 @@ classdef ComponentCatalogLoader
                 "resizeConstraint", "free", context);
             result.ResizeConstraintsByStyle = macd.catalog.ComponentCatalogLoader.optionalStruct(document, ...
                 "resizeConstraintsByStyle", context);
+            result.DefaultSize = macd.catalog.ComponentCatalogLoader.optionalPositiveDoublePair(document, ...
+                "defaultSize", [100 30], context);
             result = macd.catalog.ComponentCatalogLoader.appendMetadata(result, document, context);
         end
 
@@ -995,6 +997,31 @@ classdef ComponentCatalogLoader
                 value = macd.catalog.ComponentCatalogLoader.stringList( ...
                     document.(char(fieldName)), context + "." + fieldName);
             end
+        end
+
+        function value = optionalPositiveDoublePair(document, fieldName, defaultValue, context)
+            % optionalPositiveDoublePair Return one optional finite positive size pair.
+            arguments (Input)
+                document (1, 1) struct
+                fieldName (1, 1) string
+                defaultValue (1, 2) double
+                context (1, 1) string
+            end
+            arguments (Output)
+                value (1, 2) double
+            end
+
+            value = defaultValue;
+            if ~isfield(document, char(fieldName))
+                return
+            end
+            value = document.(char(fieldName));
+            if ~isnumeric(value) || numel(value) ~= 2 || ...
+                    any(~isfinite(value), "all") || any(value <= 0, "all")
+                macd.catalog.ComponentCatalogLoader.fail(context + "." + fieldName, ...
+                    "Expected two finite positive numeric values.");
+            end
+            value = reshape(double(value), 1, 2);
         end
 
         function value = optionalStruct(document, fieldName, context)

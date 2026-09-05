@@ -1099,8 +1099,8 @@
     "overlayShapesByStyle": {
       "circular": "circle",
       "linear": "rectangle",
-      "ninetydegree": "circle",
-      "semicircular": "circle"
+      "ninetydegree": "quarterCircle",
+      "semicircular": "semicircle"
     },
     "resizeConstraint": "aspectRatio"
   }

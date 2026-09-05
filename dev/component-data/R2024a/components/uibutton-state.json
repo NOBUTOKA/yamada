@@ -67,20 +67,21 @@
       "categoryId": "button",
       "order": 1,
       "summary": "Pressed state of button",
-      "documentedDefault": "0",
+  "documentedDefault": "false",
       "documentedAcceptedValues": [
-        "1"
+    "false",
+    "true"
       ],
       "valueContract": {
-        "kind": "number",
+    "kind": "logical",
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+    "matlabClasses": "logical"
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "number",
+  "requiredEditor": "logical",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []

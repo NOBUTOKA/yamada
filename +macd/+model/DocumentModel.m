@@ -135,7 +135,7 @@ classdef DocumentModel < handle
                 component.setProperty("Layout.Column", 1);
             end
             if any(effectivePaths == "Position")
-                component.setProperty("Position", obj.nextAbsolutePosition(parent));
+                component.setProperty("Position", obj.nextAbsolutePosition(parent, definition.DefaultSize));
             end
             obj.addComponentAt(component, parentId, numel(obj.Components) + 1);
             obj.recordHistory(struct("Kind", "insert", "Component", component, ...
@@ -566,9 +566,15 @@ classdef DocumentModel < handle
             name = string(upper(base(1)) + string(base(2:end)));
         end
 
-        function position = nextAbsolutePosition(~, parent)
+        function position = nextAbsolutePosition(~, parent, defaultSize)
             % nextAbsolutePosition Choose a visible nonoverlapping default rectangle.
-            position = [20 20 100 30];
+            arguments (Input)
+                ~
+                parent (1, 1) macd.model.ComponentRecord
+                defaultSize (1, 2) double = [100 30]
+            end
+
+            position = [20 20 defaultSize];
             count = numel(parent.Children);
             position(1:2) = position(1:2) + [20 20] * count;
         end

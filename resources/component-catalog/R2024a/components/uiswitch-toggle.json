@@ -882,6 +882,15 @@
       "toggle": "matlab.ui.control.ToggleSwitch"
     },
     "overlayShape": "switch",
-    "resizeConstraint": "aspectRatio"
+    "overlayShapesByStyle": {
+      "rocker": "rockerSwitch",
+      "slider": "switch",
+      "toggle": "toggleSwitch"
+    },
+    "resizeConstraint": "aspectRatio",
+    "defaultSize": [
+      20,
+      45
+    ]
   }
 }

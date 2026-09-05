@@ -108,6 +108,34 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
             testCase.verifyEmpty(warningMessage);
             clear cleanup
         end
+
+        function styleSpecificSwitchesUseNaturalPreviewSize(testCase)
+            % styleSpecificSwitchesUseNaturalPreviewSize Keep vertical switch variants compact.
+
+            % Render both vertical variants through the catalog-backed insertion path.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("SwitchPreviewApp", registry);
+            rocker = registry.getById("uiswitch-rocker");
+            toggle = registry.getById("uiswitch-toggle");
+            rockerComponent = document.insertComponent(registry, rocker.Factory, ...
+                document.RootComponentId, rocker.CreationArguments);
+            toggleComponent = document.insertComponent(registry, toggle.Factory, ...
+                document.RootComponentId, toggle.CreationArguments);
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 700 500]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+
+            testCase.verifyEmpty(diagnostics);
+            for id = [rockerComponent.Id, toggleComponent.Id]
+                position = double(handles(char(id)).Position);
+                testCase.verifyEqual(position(3) / position(4), 20 / 45, "AbsTol", 1e-10);
+                testCase.verifyLessThan(position(4), 60);
+            end
+            clear cleanup
+        end
+
         function itemSelectionDependenciesRenderBeforeValue(testCase)
             % itemSelectionDependenciesRenderBeforeValue Render mapped and multiselect values.
 
