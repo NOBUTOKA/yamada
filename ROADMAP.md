@@ -90,6 +90,62 @@ Implement save safety around an explicit document-dirty state.
   clean close, canceled close, save-before-close, discard, replacement, and
   failed-write paths without manual UI interaction.
 
+### Implementation Plan
+
+1. Add conservative dirty-state tracking to `DocumentModel`.
+   - Expose a publicly readable, privately writable `IsDirty` flag and retain a
+     private saved-history checkpoint only while its identity remains certain.
+   - Mark a new unsaved document dirty and a successfully parsed file clean.
+   - Mark every recorded edit dirty. After a successful Save or Save As, record
+     the current history index as the saved checkpoint and clear `IsDirty`.
+   - After Undo, clear `IsDirty` only when the resulting history index exactly
+     matches a still-valid saved checkpoint. Undoing past that checkpoint remains
+     dirty. Redo always marks the document dirty, even when it returns to the
+     saved history index.
+   - Adjust the checkpoint only when history trimming preserves its identity.
+     Invalidate it after an ambiguous history truncation or branch replacement so
+     uncertain cases remain dirty. Preview, selection, validation, diagnostics,
+     and Diff Preview must not change dirty state.
+2. Refactor Save and Save As into operations that return whether saving completed.
+   - Route an untitled document through Save As, and update the path, generated
+     source snapshot, saved checkpoint, status, and title only after a successful
+     write.
+   - Ask Replace or Cancel when Save As targets an existing file. Do not ask again
+     for an ordinary Save to the already confirmed current path.
+   - Treat a canceled path dialog, replacement refusal, validation error, or write
+     failure as an unsuccessful save that preserves the current document and its
+     dirty state.
+3. Introduce an injectable document-lifecycle service.
+   - Keep the production implementation on native New/Open/Save As and confirmation
+     dialogs while allowing tests to script dialog answers, selected paths, file
+     existence, and write success or failure.
+   - Use one shared guard for New, Open, and the figure's `CloseRequestFcn`. A clean
+     document continues immediately; a dirty document offers Save, Discard, and
+     Cancel. Continue only after Discard or a successful Save.
+   - Select the requested class name or file before invoking the guard so canceling
+     the initial New/Open dialog has no side effects. Construct or parse the
+     replacement before swapping it into the editor so a failure retains the
+     current document.
+   - Prevent recursive close handling while preserving prompt-free programmatic
+     deletion for application cleanup and automated tests.
+4. Reflect dirty state in a stable editor title.
+   - Format titles as `UntitledApp* - Yet Another MATLAB App Designer Alternative`
+     or `ExampleApp.m* - Yet Another MATLAB App Designer Alternative`, omitting
+     `*` when the document is clean.
+   - Centralize title refresh after New, Open, edits, Undo, Redo, Save, and Save As.
+     Give the editor figure a stable `Tag` and migrate tests away from exact title
+     matching because the visible title will become document-dependent.
+5. Verify the complete lifecycle before removing this roadmap item.
+   - Add model tests for new/open state, edits, successful saves, Undo to the saved
+     checkpoint, Undo past it, Redo through it, branch replacement, and history
+     trimming.
+   - Add UI tests for every Save/Discard/Cancel path across New, Open, and Close;
+     Save As replacement; canceled and failed writes; title-marker transitions;
+     clean close; and prompt-free test cleanup.
+   - Run the complete MATLAB R2024a unit suite with no failed or incomplete tests,
+     update the public behavior and architecture documentation, and then delete
+     this entire roadmap section, including this implementation plan.
+
 ## Verify Packaging and End-to-End Workflows
 
 - Verify catalog and HTML-overlay resource discovery from the distributed layout,
