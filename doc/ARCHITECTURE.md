@@ -47,6 +47,13 @@ The main application class, [`yamada.m`](../yamada.m), coordinates these layers.
 Parsing, model mutation, validation, rendering, and generation remain separate so
 none of them must infer document state from live UI handles.
 
+Save, Save As, New, Open, and editor close pass through the injected
+[`DocumentLifecycleService`](../+macd/+ui/DocumentLifecycleService.m). Its native
+implementation uses MATLAB dialogs and binary UTF-8 output; tests replace its
+dialog, existence, and write callbacks to cover cancellation and write failures.
+Only a successful write updates the file path, generated snapshot, and model save
+checkpoint. The editor title is derived from the document identity and `IsDirty`.
+
 ## Package Responsibilities
 
 | Path | Responsibility |
@@ -71,7 +78,8 @@ state for both new and parsed applications. It owns:
 - exact original text and the latest generated text;
 - the ordered component collection and root component identity;
 - diagnostics, unknown source regions, and pending source edits; and
-- bounded undo/redo history.
+- bounded undo/redo history, including a conservative saved-history checkpoint
+  and public dirty-state flag.
 
 [`ComponentRecord`](../+macd/+model/ComponentRecord.m) represents one component
 instance. It stores stable identity, MATLAB property name, factory, declared type,

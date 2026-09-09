@@ -421,6 +421,64 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyError(@() document.resetProperty(label.Id, "Text"), ...
                 "macd:DocumentModel:ParsedPropertyResetUnsupported");
         end
+
+        function newAndParsedDocumentsHaveExpectedDirtyStates(testCase)
+            % newAndParsedDocumentsHaveExpectedDirtyStates Distinguish unsaved and parsed models.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            newDocument = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            fixturePath = fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
+                "fixtures", "SimpleCalculatorApp.m");
+            parsedDocument = macd.source.AppSourceParser.parseFile(fixturePath, registry);
+
+            testCase.verifyTrue(newDocument.IsDirty);
+            testCase.verifyFalse(parsedDocument.IsDirty);
+        end
+
+        function savedCheckpointControlsUndoAndRedoDirtyState(testCase)
+            % savedCheckpointControlsUndoAndRedoDirtyState Retain only one exact clean history point.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            document.markSaved();
+            document.setProperty(label.Id, "Text", "Ready");
+            testCase.verifyTrue(document.IsDirty);
+            document.undo();
+            testCase.verifyFalse(document.IsDirty);
+            document.undo();
+            testCase.verifyTrue(document.IsDirty);
+            document.redo();
+            testCase.verifyTrue(document.IsDirty);
+        end
+
+        function branchReplacementAndHistoryTrimmingRemainConservativelyDirty(testCase)
+            % branchReplacementAndHistoryTrimmingRemainConservativelyDirty Preserve only certain checkpoints.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            document.HistoryLimit = 2;
+            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            document.markSaved();
+            document.setProperty(label.Id, "Text", "First");
+            document.undo();
+            testCase.verifyFalse(document.IsDirty);
+            document.setProperty(label.Id, "Text", "Replacement");
+            document.undo();
+            testCase.verifyTrue(document.IsDirty);
+
+            trimmed = macd.model.NewAppFactory.createEmpty("TrimmedApp", registry);
+            trimmed.HistoryLimit = 2;
+            trimmedLabel = trimmed.insertComponent(registry, "uilabel", ...
+                trimmed.RootComponentId);
+            trimmed.markSaved();
+            trimmed.setProperty(trimmedLabel.Id, "Text", "Second");
+            trimmed.setProperty(trimmedLabel.Id, "Text", "Third");
+            trimmed.undo();
+            trimmed.undo();
+            testCase.verifyFalse(trimmed.IsDirty);
+        end
+
         function publicPropertiesProvideMetadataHelp(testCase)
             % publicPropertiesProvideMetadataHelp Verify documented public state.
 
@@ -455,6 +513,7 @@ classdef ModelTest < matlab.unittest.TestCase
                 ?macd.model.ComponentRecord, "Id"; ...
                 ?macd.model.ComponentDefinition, "Factory"; ...
                 ?macd.model.Diagnostic, "Code"; ...
+                ?macd.model.DocumentModel, "IsDirty"; ...
                 ?macd.model.PropertyDefinition, "Path"; ...
                 ?macd.model.PropertyEntry, "ValueKind"; ...
                 ?macd.model.SourceSpan, "StartOffset"};

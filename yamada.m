@@ -30,7 +30,9 @@ classdef yamada < matlab.apps.AppBase
         DeleteMenuItem matlab.ui.container.Menu
         EditUndoMenuItem matlab.ui.container.Menu
         EditRedoMenuItem matlab.ui.container.Menu
+        Lifecycle macd.ui.DocumentLifecycleService
         SavePathConfirmed logical = false
+        IsClosingProgrammatically logical = false
         HierarchyPanel matlab.ui.container.Panel
         HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
@@ -67,8 +69,12 @@ classdef yamada < matlab.apps.AppBase
     end
 
     methods
-        function app = yamada()
+        function app = yamada(lifecycle)
             % yamada Create the editor shell and an empty document.
+            arguments (Input)
+                lifecycle (1, 1) macd.ui.DocumentLifecycleService = ...
+                    macd.ui.DocumentLifecycleService()
+            end
             arguments (Output)
                 app (1, 1) yamada
             end
@@ -76,6 +82,7 @@ classdef yamada < matlab.apps.AppBase
             % Keep capability definitions shared by New, Open, preview, and validation.
             app.InspectorViewState = containers.Map("KeyType", "char", "ValueType", "any");
             app.PreviewTabSelections = containers.Map("KeyType", "char", "ValueType", "double");
+            app.Lifecycle = lifecycle;
             app.Registry = macd.model.ComponentRegistry.createDefault();
             app.DefaultValueProvider = macd.ui.inspector.DefaultValueProvider(app.Registry);
             app.PreviewRenderer = macd.ui.PreviewRenderer(app.Registry);
@@ -92,6 +99,7 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % Stop deferred UI work before releasing the editor figure.
+            app.IsClosingProgrammatically = true;
             if ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer)
                 stop(app.TabLayoutTimer);
                 wait(app.TabLayoutTimer);
@@ -117,7 +125,9 @@ classdef yamada < matlab.apps.AppBase
             app.UIFigure = uifigure("Visible", "off", ...
                 "Name", "Yet Another MATLAB App Designer Alternative", ...
                 "Position", [100 100 1280 760], ...
-                "WindowKeyPressFcn", @(~, event) app.editorKeyPressed(event));
+                "WindowKeyPressFcn", @(~, event) app.editorKeyPressed(event), ...
+                "CloseRequestFcn", @(~, ~) app.closeRequest(), ...
+                "Tag", "macd-yamada-editor");
             app.MainGrid = uigridlayout(app.UIFigure, [3 3]);
             app.MainGrid.RowHeight = {38, "1x", 150};
             app.MainGrid.ColumnWidth = {230, "1x", 330};
@@ -230,13 +240,14 @@ classdef yamada < matlab.apps.AppBase
                 app (1, 1) yamada
             end
 
-            % Keep creation in the same model pipeline used by parsed documents.
-            answer = inputdlg("MATLAB class name:", "New App", [1 50], ...
-                {"UntitledApp"});
-            if isempty(answer)
+            % Select and construct the replacement before prompting about unsaved work.
+            [accepted, className] = app.Lifecycle.requestNewClassName();
+            app.focusEditor();
+            if ~accepted
                 return
             end
-            app.newDocument(string(answer{1}));
+            document = macd.model.NewAppFactory.createEmpty(className, app.Registry);
+            app.replaceDocument(document, "Created new document " + className);
         end
 
         function openButtonPushed(app)
@@ -245,67 +256,37 @@ classdef yamada < matlab.apps.AppBase
                 app (1, 1) yamada
             end
 
-            % Parse source only; no constructor, callback, or helper method is run.
-            [fileName, folder] = uigetfile("*.m", "Open AppBase class");
-            if isequal(fileName, 0)
-                app.focusEditor();
+            % Select the path first so canceling the native dialog has no side effects.
+            [accepted, filePath] = app.Lifecycle.requestOpenPath();
+            app.focusEditor();
+            if ~accepted
                 return
             end
-            app.focusEditor();
-            app.openDocument(string(fullfile(folder, fileName)));
+            app.openDocument(filePath);
         end
 
-        function saveAsButtonPushed(app)
+        function completed = saveAsButtonPushed(app)
             % saveAsButtonPushed Generate safely and save source to a selected path.
             arguments (Input)
                 app (1, 1) yamada
             end
+            arguments (Output)
+                completed (1, 1) logical
+            end
 
-            % Require a fresh diagnostic pass before exposing a potentially unsafe save.
-            [source, diagnostics] = app.generateSource();
-            app.refreshDiagnostics(diagnostics);
-            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
-                app.setStatus("Save is blocked by errors.");
-                return
-            end
-            [fileName, folder] = uiputfile("*.m", "Save AppBase class", ...
-                char(app.Document.ClassName + ".m"));
-            if isequal(fileName, 0)
-                return
-            end
-            filePath = string(fullfile(folder, fileName));
-            app.writeUtf8(filePath, source);
-            app.Document.FilePath = filePath;
-            app.SavePathConfirmed = true;
-            app.updateSaveState(diagnostics);
-            app.setStatus("Saved " + filePath);
+            completed = app.saveDocument(true);
         end
 
-        function saveButtonPushed(app)
+        function completed = saveButtonPushed(app)
             % saveButtonPushed Generate and save the current document to its known path.
             arguments (Input)
                 app (1, 1) yamada
             end
+            arguments (Output)
+                completed (1, 1) logical
+            end
 
-            % Require an explicit path from Open or Save As before writing in place.
-            if ~app.SavePathConfirmed || strlength(app.Document.FilePath) == 0
-                app.setStatus("Save is unavailable until a file is selected.");
-                app.updateSaveState(app.Document.Diagnostics);
-                return
-            end
-            [source, diagnostics] = app.generateSource();
-            app.refreshDiagnostics(diagnostics);
-            app.updateSaveState(diagnostics);
-            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
-                app.setStatus("Save is blocked by errors.");
-                return
-            end
-            app.writeUtf8(app.Document.FilePath, source);
-            if strlength(app.Document.OriginalText) > 0
-                app.Document.OriginalText = source;
-            end
-            app.Document.GeneratedText = source;
-            app.setStatus("Saved " + app.Document.FilePath);
+            completed = app.saveDocument(false);
         end
 
         function validateButtonPushed(app)
@@ -336,6 +317,7 @@ classdef yamada < matlab.apps.AppBase
             app.refreshDiagnostics(diagnostics);
             if strlength(source) == 0
                 app.setStatus("Diff preview is unavailable while generation has errors.");
+                app.focusEditor();
                 return
             end
             window = uifigure("Name", "Source Diff Preview", "Position", [180 180 1100 650]);
@@ -359,14 +341,9 @@ classdef yamada < matlab.apps.AppBase
                 className string
             end
 
-            % Factory-owned defaults keep new documents compatible with generation.
-            app.clearInspector();
-            app.Document = macd.model.NewAppFactory.createEmpty(className, app.Registry);
-            app.SelectedComponentId = app.Document.RootComponentId;
-            app.refreshShell();
-            app.setStatus("Created new document " + className);
-            app.SavePathConfirmed = false;
-            app.updateSaveState(app.Document.Diagnostics);
+            % The initial shell document does not need a replacement confirmation.
+            document = macd.model.NewAppFactory.createEmpty(className, app.Registry);
+            app.swapDocument(document, "Created new document " + className);
         end
 
         function openDocument(app, filePath)
@@ -376,8 +353,37 @@ classdef yamada < matlab.apps.AppBase
                 filePath string
             end
 
-            % Preserve parser diagnostics even if a malformed source has no model.
+            % Parse before prompting about replacement so a failure retains this document.
             [document, diagnostics] = macd.source.AppSourceParser.parseFile(filePath, app.Registry);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                app.setStatus("Open failed; the current document is unchanged.");
+                return
+            end
+            app.replaceDocument(document, "Opened " + filePath);
+        end
+
+        function replaceDocument(app, document, status)
+            % replaceDocument Swap to a prepared document after one shared unsaved-change guard.
+            arguments (Input)
+                app (1, 1) yamada
+                document (1, 1) macd.model.DocumentModel
+                status (1, 1) string
+            end
+
+            if ~app.allowDocumentTransition()
+                return
+            end
+            app.swapDocument(document, status);
+        end
+
+        function swapDocument(app, document, status)
+            % swapDocument Display an already prepared document without prompting.
+            arguments (Input)
+                app (1, 1) yamada
+                document (1, 1) macd.model.DocumentModel
+                status (1, 1) string
+            end
+
             app.clearInspector();
             app.Document = document;
             if ~isempty(document.Components)
@@ -386,10 +392,9 @@ classdef yamada < matlab.apps.AppBase
                 app.SelectedComponentId = "";
             end
             app.refreshShell();
-            app.refreshDiagnostics(diagnostics);
-            app.SavePathConfirmed = ~macd.validation.ModelValidator.hasErrors(diagnostics);
-            app.updateSaveState(diagnostics);
-            app.setStatus("Opened " + filePath);
+            app.SavePathConfirmed = strlength(document.FilePath) > 0;
+            app.updateSaveState(document.Diagnostics);
+            app.setStatus(status);
         end
 
         function hierarchySelectionChanged(app, event)
@@ -425,6 +430,7 @@ classdef yamada < matlab.apps.AppBase
             app.refreshPreview();
             app.refreshInspector();
             app.refreshEditCommands();
+            app.refreshTitle();
         end
 
         function refreshPalette(app)
@@ -2120,27 +2126,123 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
-        function writeUtf8(app, filePath, source)
-            % writeUtf8 Write source bytes as UTF-8 without a byte-order mark.
+        function completed = saveDocument(app, forceSaveAs)
+            % saveDocument Generate and write source, returning whether saving completed.
             arguments (Input)
                 app (1, 1) yamada
-                filePath string
-                source string
+                forceSaveAs (1, 1) logical
+            end
+            arguments (Output)
+                completed (1, 1) logical
             end
 
-            % Write bytes directly so the selected document line endings are preserved.
-            if ~isvalid(app.UIFigure)
-                error("macd:yamada:ClosedEditor", ...
-                    "The editor is closed and cannot save source.");
+            completed = false;
+            needsSaveAs = forceSaveAs || ~app.SavePathConfirmed || ...
+                strlength(app.Document.FilePath) == 0;
+            filePath = app.Document.FilePath;
+            if needsSaveAs
+                [accepted, filePath] = app.Lifecycle.requestSavePath( ...
+                    app.Document.ClassName + ".m");
+                app.focusEditor();
+                if ~accepted
+                    app.setStatus("Save canceled.");
+                    return
+                end
+                if app.Lifecycle.fileExists(filePath) && ...
+                        ~app.Lifecycle.confirmReplace(filePath)
+                    app.setStatus("Save canceled; existing file was not replaced.");
+                    return
+                end
             end
-            fileId = fopen(filePath, "wb");
-            if fileId < 0
-                error("macd:yamada:SaveFailed", ...
-                    "Could not open ""%s"" for writing.", filePath);
+
+            % Validate and generate before committing any document metadata changes.
+            [source, diagnostics] = app.generateSource();
+            app.refreshDiagnostics(diagnostics);
+            app.updateSaveState(diagnostics);
+            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
+                app.setStatus("Save is blocked by errors.");
+                return
             end
-            cleanup = onCleanup(@() fclose(fileId));
-            fwrite(fileId, unicode2native(char(source), "UTF-8"), "uint8");
-            clear cleanup
+
+            % Leave the document unchanged if its target cannot be written.
+            try
+                app.Lifecycle.writeSource(filePath, source, app.Document.LineEnding);
+            catch exception
+                app.setStatus("Save failed: " + string(exception.message));
+                return
+            end
+
+            % Commit confirmed metadata only after the complete write succeeds.
+            app.Document.FilePath = filePath;
+            app.Document.GeneratedText = source;
+            app.Document.markSaved();
+            app.SavePathConfirmed = true;
+            app.updateSaveState(diagnostics);
+            app.refreshTitle();
+            app.setStatus("Saved " + filePath);
+            completed = true;
+        end
+
+        function result = allowDocumentTransition(app)
+            % allowDocumentTransition Guard New, Open, and Close against unsaved work.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = true;
+            if isempty(app.Document) || ~app.Document.IsDirty
+                return
+            end
+            switch app.Lifecycle.confirmUnsavedChanges()
+                case "Save"
+                    result = app.saveDocument(false);
+                case "Discard"
+                    result = true;
+                otherwise
+                    result = false;
+            end
+        end
+
+        function closeRequest(app)
+            % closeRequest Close the editor only after the shared transition guard allows it.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+
+            if app.IsClosingProgrammatically
+                if ~isempty(app.UIFigure) && isvalid(app.UIFigure)
+                    delete(app.UIFigure);
+                end
+                return
+            end
+            if app.allowDocumentTransition()
+                app.IsClosingProgrammatically = true;
+                delete(app);
+            end
+        end
+
+        function refreshTitle(app)
+            % refreshTitle Show document identity and the conservative dirty marker.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+
+            if isempty(app.Document) || isempty(app.UIFigure) || ~isvalid(app.UIFigure)
+                return
+            end
+            name = app.Document.ClassName;
+            if strlength(app.Document.FilePath) > 0
+                [~, base, extension] = fileparts(app.Document.FilePath);
+                name = string(base) + string(extension);
+            end
+            marker = "";
+            if app.Document.IsDirty
+                marker = "*";
+            end
+            app.UIFigure.Name = name + marker + " - Yet Another MATLAB App Designer Alternative";
         end
 
         function setStatus(app, message)

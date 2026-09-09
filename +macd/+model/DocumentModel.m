@@ -42,6 +42,16 @@ classdef DocumentModel < handle
         HistoryLimit double = 100
     end
 
+    properties (SetAccess = private)
+        % IsDirty - Whether the document has changes that are not known to be saved.
+        IsDirty logical = true
+    end
+
+    properties (Access = private)
+        SavedHistoryIndex double = NaN
+        HasSavedHistoryCheckpoint logical = false
+    end
+
     methods
         function obj = DocumentModel(className)
             % DocumentModel Create a shared document for new or parsed apps.
@@ -304,6 +314,18 @@ classdef DocumentModel < handle
             obj.recordHistory(struct("Kind", "reset-property", ...
                 "ComponentId", componentId, "Path", path, "OldValue", oldValue));
         end
+
+        function markSaved(obj)
+            % markSaved Record the current history position as a confirmed save point.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+
+            % Saving makes the exact current history position clean until a later edit.
+            obj.SavedHistoryIndex = obj.HistoryIndex;
+            obj.HasSavedHistoryCheckpoint = true;
+            obj.IsDirty = false;
+        end
         function component = getComponent(obj, id)
             % getComponent Find a component by stable identifier, or return empty.
             arguments (Input)
@@ -410,6 +432,8 @@ classdef DocumentModel < handle
             edit = obj.History{obj.HistoryIndex};
             obj.applyHistory(edit, false);
             obj.HistoryIndex = obj.HistoryIndex - 1;
+            obj.IsDirty = ~(obj.HasSavedHistoryCheckpoint && ...
+                obj.HistoryIndex == obj.SavedHistoryIndex);
         end
 
         function redo(obj)
@@ -423,6 +447,8 @@ classdef DocumentModel < handle
             edit = obj.History{obj.HistoryIndex + 1};
             obj.applyHistory(edit, true);
             obj.HistoryIndex = obj.HistoryIndex + 1;
+            % Redo remains conservatively dirty even when it revisits a save point.
+            obj.IsDirty = true;
         end
     end
 
@@ -460,14 +486,26 @@ classdef DocumentModel < handle
         function recordHistory(obj, edit)
             % recordHistory Append an edit and discard any redo branch.
             if obj.HistoryIndex < numel(obj.History)
+                % A replacement branch makes every previous checkpoint uncertain.
                 obj.History = obj.History(1:obj.HistoryIndex);
+                obj.HasSavedHistoryCheckpoint = false;
+                obj.SavedHistoryIndex = NaN;
             end
             obj.History{end + 1} = edit;
             obj.HistoryIndex = numel(obj.History);
             if numel(obj.History) > obj.HistoryLimit
                 obj.History(1) = [];
                 obj.HistoryIndex = obj.HistoryIndex - 1;
+                if obj.HasSavedHistoryCheckpoint
+                    if obj.SavedHistoryIndex == 0
+                        obj.HasSavedHistoryCheckpoint = false;
+                        obj.SavedHistoryIndex = NaN;
+                    else
+                        obj.SavedHistoryIndex = obj.SavedHistoryIndex - 1;
+                    end
+                end
             end
+            obj.IsDirty = true;
         end
 
         function applyHistory(obj, edit, forward)

@@ -279,6 +279,7 @@ classdef AppSourceParser
                 document, registry);
             diagnostics = [diagnostics(:)' validationDiagnostics(:)'];
             document.Diagnostics = diagnostics;
+            document.markSaved();
         end
     end
 

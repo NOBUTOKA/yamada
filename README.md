@@ -14,6 +14,7 @@
 - Move and resize absolutely positioned components and edit Grid Layout placement values, with visual Grid Layout editing still under development
 - Add and delete components and edit supported properties
 - View validation diagnostics and compare the original and generated source before saving
+- Track unsaved edits and guard New, Open, and Close with Save, Discard, or Cancel
 - Preserve unsupported code and nonliteral expressions where possible, and build a Safe Preview without running the input application or its callbacks
 - Produce an ordinary, reviewable text-based `.m` source file **rather than a binary file**
 
@@ -48,6 +49,8 @@ delete(editor);
 3. Select a component on the canvas or in the hierarchy browser, then edit its supported properties in the Property Inspector on the right.
 4. Select **Tools > Validate** to validate the document model.
 5. Select **Tools > Diff Preview** to review the generated source, then use **File > Save As** to save it as a `.m` file.
+   Save As asks before replacing an existing target; after a successful Save As,
+   **File > Save** writes to that confirmed path without another replacement prompt.
 
 ### Edit an existing application
 

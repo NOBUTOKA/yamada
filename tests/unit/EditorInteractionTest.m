@@ -45,8 +45,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figures = findall(0, "Type", "figure", ...
-                "Name", "Yet Another MATLAB App Designer Alternative");
+            figures = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -90,7 +89,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figures = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figures = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -112,7 +111,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -143,7 +142,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -175,7 +174,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -213,7 +212,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % Insert a Text Area, then invoke its native multiline inspector callback.
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -252,7 +251,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % Insert a Date Picker, then invoke the native date editor callback.
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -283,7 +282,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -316,7 +315,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -344,7 +343,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -370,7 +369,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Yet Another MATLAB App Designer Alternative");
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -450,8 +449,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figures = findall(0, "Type", "figure", ...
-                "Name", "Yet Another MATLAB App Designer Alternative");
+            figures = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == ...
                 "Component") && any(string(table.ColumnName) == "Category"), tables));

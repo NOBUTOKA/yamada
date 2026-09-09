@@ -37,6 +37,9 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 - Edit property assignments and components whose source ownership can be determined safely.
 - Compare the original and generated source, then save to a new path or to an explicitly confirmed path.
 - Show diagnostics for unsupported or ambiguous structures.
+- Track unsaved edits in the editor title. New, Open, and closing the editor offer
+  Save, Discard, or Cancel when required; a canceled or failed save leaves the
+  current document open.
 
 ## Standard Component Catalog
 
@@ -84,6 +87,8 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - New files use the host platform's standard line ending; existing files preserve the detected CRLF or LF convention.
 - Generated comments and help text are written in English.
 - `yamada` does not automatically add, replace, or remove the project's GPL notice in an application created or opened by the user.
+- Save As requires explicit replacement approval for an existing target. A normal
+  Save writes only to the current confirmed path and does not repeat that approval.
 
 ## Out of Scope
 
