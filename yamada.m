@@ -881,7 +881,12 @@ classdef yamada < matlab.apps.AppBase
                 event
             end
 
-            if string(event.HTMLEventName) ~= "Pointer"
+            eventName = string(event.HTMLEventName);
+            if eventName == "GridAction"
+                app.gridActionEvent(event.HTMLEventData);
+                return
+            end
+            if eventName ~= "Pointer"
                 return
             end
             data = event.HTMLEventData;
@@ -896,6 +901,59 @@ classdef yamada < matlab.apps.AppBase
                 app.moveOverlayInteraction(point);
             elseif phase == "pointerup" || phase == "pointercancel"
                 app.finishOverlayInteraction();
+            end
+        end
+
+        function gridActionEvent(app, data)
+            % gridActionEvent Validate and commit one semantic grid overlay action.
+            arguments (Input)
+                app (1, 1) yamada
+                data
+            end
+
+            required = ["action", "revision", "activeGridId", "axis", "index", "mode", "value"];
+            if ~isstruct(data) || ~all(isfield(data, required))
+                return
+            end
+            if string(data.action) ~= "set-track" || ~isnumeric(data.revision) || ...
+                    ~isscalar(data.revision) || double(data.revision) ~= app.InteractionOverlayRevision
+                return
+            end
+            gridId = string(data.activeGridId);
+            axis = string(data.axis);
+            if gridId ~= app.ActiveGridId || ~any(axis == ["row", "column"]) || ...
+                    ~isnumeric(data.index) || ~isscalar(data.index) || ...
+                    ~isnumeric(data.value) || ~isscalar(data.value)
+                return
+            end
+            path = "RowHeight";
+            if axis == "column"
+                path = "ColumnWidth";
+            end
+            try
+                grid = app.Document.getComponent(gridId);
+                if isempty(grid) || grid.Factory ~= "uigridlayout" || ...
+                        isempty(app.PreviewHandles) || ~isKey(app.PreviewHandles, char(gridId))
+                    return
+                end
+                entry = grid.getProperty(path);
+                if ~isempty(entry) && (entry.ValueKind ~= "literal" || ~entry.IsEditable)
+                    error("macd:yamada:ReadOnlyGridTrack", ...
+                        "%s is source-backed and cannot be edited safely.", path);
+                end
+                value = app.PreviewHandles(char(gridId)).(char(path));
+                if ~isempty(entry)
+                    value = entry.LiteralValue;
+                end
+                replacement = macd.model.GridTrackList.replace(value, double(data.index), ...
+                    string(data.mode), double(data.value));
+                changes = struct("ComponentId", gridId, "Path", path, "Value", {replacement});
+                app.Document.applyGridLayoutEdit(gridId, changes);
+                app.setStatus("Updated " + path + ".");
+                app.refreshPreview();
+            catch exception
+                app.setStatus(string(exception.message));
+                app.updateInteractionOverlay();
             end
         end
 

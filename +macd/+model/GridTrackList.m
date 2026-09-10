@@ -72,6 +72,49 @@ classdef GridTrackList
                 end
             end
         end
+
+        function result = replace(value, index, kind, amount)
+            % replace Replace one token and return a canonical safe literal container.
+            arguments (Input)
+                value
+                index (1, 1) double
+                kind (1, 1) string
+                amount (1, 1) double = 0
+            end
+            arguments (Output)
+                result
+            end
+
+            descriptions = macd.model.GridTrackList.describe(value);
+            if ~isfinite(index) || index ~= floor(index) || index < 1 || ...
+                    index > numel(descriptions)
+                error("macd:GridTrackList:InvalidIndex", ...
+                    "Track index must identify an existing track.");
+            end
+            if ~any(kind == ["fit", "fixed", "flexible"])
+                error("macd:GridTrackList:InvalidKind", ...
+                    "Track kind must be fit, fixed, or flexible.");
+            end
+            if kind ~= "fit" && (~isfinite(amount) || amount < 0)
+                error("macd:GridTrackList:InvalidAmount", ...
+                    "Fixed sizes and flexible weights must be finite nonnegative numbers.");
+            end
+
+            values = cell(1, numel(descriptions));
+            for itemIndex = 1:numel(descriptions)
+                values{itemIndex} = macd.model.GridTrackList.literalFor( ...
+                    descriptions(itemIndex).kind, descriptions(itemIndex).value);
+            end
+            values{index} = macd.model.GridTrackList.literalFor(kind, amount);
+            if all(cellfun(@isnumeric, values))
+                result = cell2mat(values);
+            elseif all(cellfun(@(item) ischar(item) || ...
+                    (isstring(item) && isscalar(item)), values))
+                result = string(values);
+            else
+                result = values;
+            end
+        end
     end
 
     methods (Static, Access = private)
@@ -137,6 +180,29 @@ classdef GridTrackList
                 end
             end
             message = "Track values must be nonnegative numbers, fit, or nonnegative x weights.";
+        end
+
+        function value = literalFor(kind, amount)
+            % literalFor Encode one normalized token as a source-safe MATLAB literal value.
+            arguments (Input)
+                kind (1, 1) string
+                amount (1, 1) double
+            end
+            arguments (Output)
+                value
+            end
+
+            switch kind
+                case "fixed"
+                    value = amount;
+                case "fit"
+                    value = "fit";
+                case "flexible"
+                    value = string(num2str(amount, 15)) + "x";
+                otherwise
+                    error("macd:GridTrackList:InvalidKind", ...
+                        "Track kind must be fit, fixed, or flexible.");
+            end
         end
     end
 end

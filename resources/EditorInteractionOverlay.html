@@ -24,6 +24,11 @@ svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 .grid-inner-frame { position: absolute; box-sizing: border-box; border: 1px dashed rgba(34, 100, 199, 0.55); }
 .track-header { position: absolute; box-sizing: border-box; min-width: 34px; height: 20px; overflow: hidden; padding: 3px 5px; border: 1px solid #2864c7; border-radius: 3px; background: #f8fbff; color: #124da8; pointer-events: auto; font: 10px Arial; line-height: 12px; white-space: nowrap; text-overflow: ellipsis; }
 .track-header.locked { border-color: #8b8b8b; background: #f4f4f4; color: #666666; }
+.track-popover { position: absolute; z-index: 5; width: 178px; padding: 8px; border: 1px solid #2864c7; border-radius: 4px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); pointer-events: auto; font: 11px Arial; }
+.track-popover label { display: block; margin: 4px 0; }
+.track-popover select, .track-popover input { width: 100%; box-sizing: border-box; margin-top: 2px; }
+.track-popover-actions { display: flex; justify-content: flex-end; gap: 5px; margin-top: 8px; }
+.track-popover-error { min-height: 12px; margin-top: 4px; color: #b00020; font-size: 10px; }
 .grid-status { position: absolute; max-width: 230px; padding: 4px 6px; border-radius: 3px; background: rgba(255, 248, 225, 0.95); color: #6c5500; font: 10px Arial; }
 .silhouette { fill: none; stroke: #2864c7; stroke-width: 1.25; stroke-dasharray: 4 3; pointer-events: all; }
 .tab-group-frame { pointer-events: stroke; }
@@ -120,7 +125,8 @@ function renderGridEditor(data) {
   addBox("grid-frame", outer);
   addBox("grid-inner-frame", inner);
   function addHeader(axis, track) {
-    if (!track.bounds || track.bounds.length !== 4) return;
+    var hasBounds = !!track.bounds && track.bounds.length === 4 &&
+      Number(track.bounds[2]) > 0 && Number(track.bounds[3]) > 0;
     var header = document.createElement("div");
     var editable = !!track.editable && !!data.editable;
     header.className = "track-header" + (editable ? "" : " locked");
@@ -129,14 +135,23 @@ function renderGridEditor(data) {
     header.dataset.index = String(track.index);
     header.title = editable ? "Track editor" : String(data.readOnlyReason || "Track editing is unavailable.");
     header.textContent = (axis === "row" ? "R" : "C") + String(track.index) + "  " + String(track.label);
+    if (editable) {
+      header.addEventListener("pointerdown", function(event) { event.stopPropagation(); });
+      header.addEventListener("click", function(event) {
+        event.stopPropagation();
+        openTrackPopover(header, data, axis, track);
+      });
+    }
     if (axis === "row") {
       header.style.left = Math.max(0, inner[0] - 56) + "px";
-      header.style.top = (currentData.height - track.bounds[1] - track.bounds[3]) + "px";
+      header.style.top = hasBounds ? (currentData.height - track.bounds[1] - track.bounds[3]) + "px" :
+        Math.max(0, currentData.height - outer[1] - 22 * Number(track.index)) + "px";
       header.style.width = "52px";
     } else {
-      header.style.left = track.bounds[0] + "px";
+      header.style.left = hasBounds ? track.bounds[0] + "px" :
+        (outer[0] + 72 * (Number(track.index) - 1)) + "px";
       header.style.top = Math.max(0, currentData.height - inner[1] - inner[3] - 23) + "px";
-      header.style.width = Math.max(34, track.bounds[2]) + "px";
+      header.style.width = hasBounds ? Math.max(34, track.bounds[2]) + "px" : "68px";
     }
     controls.appendChild(header);
   }
@@ -150,6 +165,82 @@ function renderGridEditor(data) {
     status.textContent = String(data.readOnlyReason);
     controls.appendChild(status);
   }
+}
+
+function closeTrackPopover() {
+  var popover = document.getElementById("track-popover");
+  if (popover) popover.remove();
+}
+
+function openTrackPopover(header, data, axis, track) {
+  closeTrackPopover();
+  var popover = document.createElement("div");
+  popover.id = "track-popover";
+  popover.className = "track-popover";
+  popover.style.left = Math.min(currentData.width - 186, header.offsetLeft) + "px";
+  popover.style.top = Math.min(currentData.height - 124, header.offsetTop + header.offsetHeight + 3) + "px";
+  var title = document.createElement("div");
+  title.textContent = (axis === "row" ? "Row " : "Column ") + String(track.index);
+  var modeLabel = document.createElement("label");
+  modeLabel.textContent = "Mode";
+  var mode = document.createElement("select");
+  ["fit", "fixed", "flexible"].forEach(function(kind) {
+    var option = document.createElement("option");
+    option.value = kind;
+    option.textContent = kind === "fit" ? "Fit" : (kind === "fixed" ? "Fixed px" : "Flexible x");
+    option.selected = kind === track.kind;
+    mode.appendChild(option);
+  });
+  modeLabel.appendChild(mode);
+  var valueLabel = document.createElement("label");
+  valueLabel.textContent = "Value";
+  var value = document.createElement("input");
+  value.type = "number";
+  value.min = "0";
+  value.step = "any";
+  value.value = String(track.value || 0);
+  value.disabled = mode.value === "fit";
+  valueLabel.appendChild(value);
+  var error = document.createElement("div");
+  error.className = "track-popover-error";
+  var actions = document.createElement("div");
+  actions.className = "track-popover-actions";
+  var cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.textContent = "Cancel";
+  var apply = document.createElement("button");
+  apply.type = "button";
+  apply.textContent = "Apply";
+  actions.appendChild(cancel);
+  actions.appendChild(apply);
+  popover.appendChild(title);
+  popover.appendChild(modeLabel);
+  popover.appendChild(valueLabel);
+  popover.appendChild(error);
+  popover.appendChild(actions);
+  popover.addEventListener("pointerdown", function(event) { event.stopPropagation(); });
+  mode.addEventListener("change", function() { value.disabled = mode.value === "fit"; });
+  cancel.addEventListener("click", closeTrackPopover);
+  function submit() {
+    var amount = Number(value.value);
+    if (mode.value !== "fit" && (!Number.isFinite(amount) || amount < 0)) {
+      error.textContent = "Enter a finite nonnegative number.";
+      return;
+    }
+    component.sendEventToMATLAB("GridAction", {
+      action: "set-track", revision: data.revision, activeGridId: data.activeGridId,
+      axis: axis, index: Number(track.index), mode: mode.value,
+      value: mode.value === "fit" ? 0 : amount
+    });
+    closeTrackPopover();
+  }
+  apply.addEventListener("click", submit);
+  popover.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") { event.preventDefault(); closeTrackPopover(); }
+    if (event.key === "Enter") { event.preventDefault(); submit(); }
+  });
+  document.getElementById("grid-controls").appendChild(popover);
+  if (!value.disabled) value.focus();
 }
 
 function svgElement(name, attributes) {
@@ -250,6 +341,7 @@ function componentArray(value) {
 
 function render() {
   if (!svg) return;
+  closeTrackPopover();
   svg.innerHTML = "";
   renderTabControls(componentArray(currentData.components));
   renderGridEditor(currentData.gridEditor);

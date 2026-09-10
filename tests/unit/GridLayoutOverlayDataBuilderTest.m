@@ -36,7 +36,8 @@ classdef GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
             builder = macd.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, second.Id, 8);
 
-            testCase.verifyFalse(data.editable);
+            testCase.verifyTrue(data.editable);
+            testCase.verifyFalse(data.geometryAvailable);
             testCase.verifyTrue(contains(data.readOnlyReason, "Fit track boundaries are locked"));
             testCase.verifyEmpty(data.rowBoundaries);
             clear cleanup

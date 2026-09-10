@@ -54,6 +54,19 @@ classdef GridTrackListTest < matlab.unittest.TestCase
             testCase.verifyEqual([tracks.value], [0 80 2.5]);
             testCase.verifyEqual(string({tracks.label}), ["fit", "80", "2.5x"]);
         end
+
+        function replacesTrackTokensWithNaturalLiteralContainers(testCase)
+            % replacesTrackTokensWithNaturalLiteralContainers Keep homogeneous edits compact and safe.
+
+            testCase.verifyEqual(macd.model.GridTrackList.replace([20 30], 2, "fixed", 40), ...
+                [20 40]);
+            testCase.verifyEqual(macd.model.GridTrackList.replace({'1x', 'fit'}, 1, ...
+                "flexible", 2.5), ["2.5x", "fit"]);
+            testCase.verifyEqual(macd.model.GridTrackList.replace([20 30], 1, "fit"), ...
+                {"fit", 30});
+            testCase.verifyError(@() macd.model.GridTrackList.replace([20 30], 3, ...
+                "fixed", 40), "macd:GridTrackList:InvalidIndex");
+        end
     end
 end
 

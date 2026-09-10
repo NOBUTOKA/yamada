@@ -112,6 +112,40 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function gridOverlayTrackActionCommitsOneValidatedTrackChange(testCase)
+            % gridOverlayTrackActionCommitsOneValidatedTrackChange Route a header action through atomic model editing.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            gridRow = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            gridData = overlays.Data.gridEditor;
+            historyIndex = app.Document.HistoryIndex;
+
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "set-track", ...
+                "revision", gridData.revision, "activeGridId", gridData.activeGridId, ...
+                "axis", "row", "index", 1, "mode", "fixed", "value", 40)));
+            drawnow;
+
+            grid = app.Document.getComponent(app.ActiveGridId);
+            rowHeight = grid.getProperty("RowHeight").LiteralValue;
+            testCase.verifyEqual(rowHeight{1}, 40);
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 1);
+            app.Document.undo();
+            testCase.verifyEmpty(grid.getProperty("RowHeight"));
+            clear cleanup
+        end
+
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
             % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
 
