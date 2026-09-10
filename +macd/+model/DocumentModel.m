@@ -246,6 +246,80 @@ classdef DocumentModel < handle
                 "ComponentId", componentId, "Changes", historyChanges));
         end
 
+        function entries = applyGridLayoutEdit(obj, gridId, changes)
+            % applyGridLayoutEdit Atomically apply one grid and direct-child layout change set.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                gridId (1, 1) string
+                changes (1, :) struct
+            end
+            arguments (Output)
+                entries macd.model.PropertyEntry
+            end
+
+            % Preflight every grid-owned and direct-child target before mutation.
+            grid = obj.getComponent(gridId);
+            if isempty(grid) || grid.Factory ~= "uigridlayout"
+                error("macd:DocumentModel:InvalidGridLayoutEdit", ...
+                    "Grid layout ID ""%s"" does not identify a Grid Layout.", gridId);
+            end
+            if ~grid.IsEditable || isempty(changes) || ...
+                    ~isfield(changes, "ComponentId") || ~isfield(changes, "Path") || ...
+                    ~isfield(changes, "Value")
+                error("macd:DocumentModel:InvalidGridLayoutEdit", ...
+                    "A grid layout edit requires editable ComponentId, Path, and Value changes.");
+            end
+            componentIds = string({changes.ComponentId});
+            paths = string({changes.Path});
+            keys = componentIds + char(0) + paths;
+            if any(strlength(componentIds) == 0) || any(strlength(paths) == 0) || ...
+                    numel(unique(keys)) ~= numel(keys)
+                error("macd:DocumentModel:InvalidGridLayoutEdit", ...
+                    "Grid layout edit targets must be nonempty and unique.");
+            end
+
+            historyChanges = repmat(struct("ComponentId", "", "Path", "", ...
+                "HadOldValue", false, "OldValue", [], "NewValue", []), 1, numel(changes));
+            for index = 1:numel(changes)
+                component = obj.getComponent(componentIds(index));
+                if isempty(component) || ~component.IsEditable
+                    error("macd:DocumentModel:InvalidGridLayoutEdit", ...
+                        "Every grid layout edit target must be an editable component.");
+                end
+                obj.validateGridLayoutTarget(grid, component, paths(index), changes(index).Value);
+                entry = component.getProperty(paths(index));
+                if ~isempty(entry) && ~entry.IsEditable
+                    error("macd:DocumentModel:ReadOnlyProperty", ...
+                        "Property ""%s"" is source-backed and read-only.", paths(index));
+                end
+                historyChanges(index).ComponentId = componentIds(index);
+                historyChanges(index).Path = paths(index);
+                historyChanges(index).HadOldValue = ~isempty(entry);
+                if ~isempty(entry)
+                    historyChanges(index).OldValue = entry.LiteralValue;
+                end
+                historyChanges(index).NewValue = changes(index).Value;
+            end
+
+            % Commit once, and restore every prior entry if any future setter fails.
+            entries = macd.model.PropertyEntry.empty;
+            try
+                for index = 1:numel(historyChanges)
+                    component = obj.getComponent(historyChanges(index).ComponentId);
+                    entries(end + 1) = component.setProperty( ...
+                        historyChanges(index).Path, historyChanges(index).NewValue); %#ok<AGROW>
+                end
+            catch exception
+                for rollbackIndex = index - 1:-1:1
+                    component = obj.getComponent(historyChanges(rollbackIndex).ComponentId);
+                    obj.restoreBatchValue(component, historyChanges(rollbackIndex));
+                end
+                rethrow(exception)
+            end
+            obj.recordHistory(struct("Kind", "grid-layout-edit", ...
+                "GridId", gridId, "Changes", historyChanges));
+        end
+
         function states = getEffectivePropertyStates(obj, registry, componentId)
             % getEffectivePropertyStates Join effective definitions with explicit entries only.
             arguments (Input)
@@ -544,6 +618,16 @@ classdef DocumentModel < handle
                             obj.restoreBatchValue(component, change);
                         end
                     end
+                case "grid-layout-edit"
+                    for index = 1:numel(edit.Changes)
+                        change = edit.Changes(index);
+                        component = obj.getComponent(change.ComponentId);
+                        if forward
+                            component.setProperty(change.Path, change.NewValue);
+                        else
+                            obj.restoreBatchValue(component, change);
+                        end
+                    end
                 case "reset-property"
                     component = obj.getComponent(edit.ComponentId);
                     if forward
@@ -579,6 +663,40 @@ classdef DocumentModel < handle
                 component.setProperty(change.Path, change.OldValue);
             else
                 component.removeProperty(change.Path);
+            end
+        end
+
+        function validateGridLayoutTarget(~, grid, component, path, value)
+            % validateGridLayoutTarget Restrict a grid change set to its owned layout surface.
+            arguments (Input)
+                ~
+                grid (1, 1) macd.model.ComponentRecord
+                component (1, 1) macd.model.ComponentRecord
+                path (1, 1) string
+                value
+            end
+
+            if component == grid
+                if ~any(path == ["RowHeight", "ColumnWidth"])
+                    error("macd:DocumentModel:InvalidGridLayoutEdit", ...
+                        "Grid layout edits may change only RowHeight or ColumnWidth on the grid.");
+                end
+                message = macd.model.GridTrackList.validate(value);
+                if strlength(message) > 0
+                    error("macd:DocumentModel:InvalidGridLayoutEdit", "%s", message);
+                end
+                return
+            end
+            if component.ParentId ~= grid.Id || ...
+                    ~any(path == ["Layout.Row", "Layout.Column"])
+                error("macd:DocumentModel:InvalidGridLayoutEdit", ...
+                    "Grid layout edits may change only direct-child Layout.Row or Layout.Column values.");
+            end
+            if ~isnumeric(value) || ~isvector(value) || isempty(value) || ...
+                    numel(value) > 2 || any(~isfinite(value)) || any(value < 1) || ...
+                    any(value ~= floor(value))
+                error("macd:DocumentModel:InvalidGridLayoutEdit", ...
+                    "Grid row and column values must be positive integer scalars or spans.");
             end
         end
 

@@ -323,6 +323,77 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
 
+        function geometryValidationRejectsInvalidGridTrackLists(testCase)
+            % geometryValidationRejectsInvalidGridTrackLists Reject literals the public GridLayout setter rejects.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            grid.setProperty("RowHeight", {'auto'});
+
+            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+
+            testCase.verifyTrue(any([diagnostics.Code] == "invalid-grid-track-list"));
+            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+        end
+
+        function gridLayoutEditsAreAtomicAndUndoable(testCase)
+            % gridLayoutEditsAreAtomicAndUndoable Keep track and direct-child changes in one history step.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            nestedGrid = document.insertComponent(registry, "uigridlayout", grid.Id);
+            label = document.insertComponent(registry, "uilabel", grid.Id);
+            document.markSaved();
+            changes = struct( ...
+                "ComponentId", {grid.Id, grid.Id, nestedGrid.Id, nestedGrid.Id, label.Id, label.Id}, ...
+                "Path", {"RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column", ...
+                "Layout.Row", "Layout.Column"}, ...
+                "Value", {{'fit', 80}, {'1x', '2x'}, 2, [1 2], [1 2], 2});
+
+            document.applyGridLayoutEdit(grid.Id, changes);
+
+            testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, {'fit', 80});
+            testCase.verifyEqual(grid.getProperty("ColumnWidth").LiteralValue, {'1x', '2x'});
+            testCase.verifyEqual(nestedGrid.getProperty("Layout.Row").LiteralValue, 2);
+            testCase.verifyEqual(nestedGrid.getProperty("Layout.Column").LiteralValue, [1 2]);
+            testCase.verifyTrue(document.IsDirty);
+            document.undo();
+            testCase.verifyEmpty(grid.getProperty("RowHeight"));
+            testCase.verifyEmpty(grid.getProperty("ColumnWidth"));
+            testCase.verifyEqual(nestedGrid.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(nestedGrid.getProperty("Layout.Column").LiteralValue, 1);
+            testCase.verifyEqual(label.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(label.getProperty("Layout.Column").LiteralValue, 1);
+            testCase.verifyFalse(document.IsDirty);
+            document.redo();
+            testCase.verifyEqual(label.getProperty("Layout.Row").LiteralValue, [1 2]);
+            testCase.verifyEqual(label.getProperty("Layout.Column").LiteralValue, 2);
+        end
+
+        function gridLayoutEditsRejectReadOnlyTargetsBeforeMutation(testCase)
+            % gridLayoutEditsRejectReadOnlyTargetsBeforeMutation Avoid partial changes around source expressions.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            label = document.insertComponent(registry, "uilabel", grid.Id);
+            readOnly = label.getProperty("Layout.Row");
+            readOnly.setSourceExpression("currentRow");
+            historyIndex = document.HistoryIndex;
+            changes = struct( ...
+                "ComponentId", {grid.Id, label.Id}, ...
+                "Path", {"RowHeight", "Layout.Row"}, ...
+                "Value", {{'fit', 80}, 2});
+
+            testCase.verifyError(@() document.applyGridLayoutEdit(grid.Id, changes), ...
+                "macd:DocumentModel:ReadOnlyProperty");
+            testCase.verifyEmpty(grid.getProperty("RowHeight"));
+            testCase.verifyEqual(label.getProperty("Layout.Row").SourceExpression, "currentRow");
+            testCase.verifyEqual(document.HistoryIndex, historyIndex);
+        end
+
         function modelValidationUsesTheInspectorPropertySchema(testCase)
             % modelValidationUsesTheInspectorPropertySchema Reject catalog-invalid values outside the Inspector.
 
