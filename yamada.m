@@ -12,12 +12,15 @@ classdef yamada < matlab.apps.AppBase
         Document macd.model.DocumentModel = macd.model.DocumentModel.empty
         % SelectedComponentId - Stable identity selected in the hierarchy browser.
         SelectedComponentId string = ""
+        % ActiveGridId - Nearest Grid Layout context used only by the canvas overlay.
+        ActiveGridId string = ""
     end
 
     properties (Access = private)
         Registry macd.model.ComponentRegistry
         DefaultValueProvider macd.ui.inspector.DefaultValueProvider
         PreviewRenderer macd.ui.PreviewRenderer
+        GridLayoutOverlayDataBuilder macd.ui.GridLayoutOverlayDataBuilder
         UIFigure matlab.ui.Figure
         MainGrid matlab.ui.container.GridLayout
         CommandGrid matlab.ui.container.GridLayout
@@ -51,6 +54,7 @@ classdef yamada < matlab.apps.AppBase
         TabLayoutStableCount double = 0
         TabLayoutPollCount double = 0
         InteractionOverlay matlab.ui.control.HTML
+        InteractionOverlayRevision double = 0
         InteractionComponentId string = ""
         InteractionKind string = ""
         InteractionStartPoint double = [0 0]
@@ -86,6 +90,7 @@ classdef yamada < matlab.apps.AppBase
             app.Registry = macd.model.ComponentRegistry.createDefault();
             app.DefaultValueProvider = macd.ui.inspector.DefaultValueProvider(app.Registry);
             app.PreviewRenderer = macd.ui.PreviewRenderer(app.Registry);
+            app.GridLayoutOverlayDataBuilder = macd.ui.GridLayoutOverlayDataBuilder();
             app.createComponents();
             app.createMenus();
             app.newDocument("UntitledApp");
@@ -857,9 +862,16 @@ classdef yamada < matlab.apps.AppBase
                     "tabGroup", component.Factory == "uitabgroup", ...
                     "tabTitles", tabTitles, "tabSelected", tabSelected); %#ok<AGROW>
             end
+            app.ActiveGridId = macd.model.ActiveGridResolver.resolve( ...
+                app.Document, app.SelectedComponentId);
+            app.InteractionOverlayRevision = app.InteractionOverlayRevision + 1;
+            gridEditor = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
+                app.PreviewHandles, app.PreviewPanel, app.ActiveGridId, ...
+                app.SelectedComponentId, app.InteractionOverlayRevision);
             innerPosition = double(app.PreviewPanel.InnerPosition);
             app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
-                "height", innerPosition(4), "components", components);
+                "height", innerPosition(4), "components", components, ...
+                "gridEditor", gridEditor);
         end
 
         function interactionOverlayEvent(app, event)
@@ -977,12 +989,13 @@ classdef yamada < matlab.apps.AppBase
         end
 
         function scheduleOverlayRefresh(app)
-            % scheduleOverlayRefresh Refresh tab-child geometry after layout completion.
+            % scheduleOverlayRefresh Refresh tab and active-grid geometry after layout completion.
             arguments (Input)
                 app (1, 1) yamada
             end
 
-            if isempty(app.Document) || ~any([app.Document.Components.Factory] == "uitabgroup")
+            if isempty(app.Document) || (~any([app.Document.Components.Factory] == "uitabgroup") && ...
+                    strlength(app.ActiveGridId) == 0)
                 return
             end
             if isempty(app.TabLayoutTimer) || ~isvalid(app.TabLayoutTimer)
@@ -1001,7 +1014,7 @@ classdef yamada < matlab.apps.AppBase
         end
 
         function refreshOverlayAfterTabLayout(app, timerObject)
-            % refreshOverlayAfterTabLayout Update geometry after deferred tab layout.
+            % refreshOverlayAfterTabLayout Update geometry after deferred tab or grid layout.
             arguments (Input)
                 app (1, 1) yamada
                 timerObject timer
@@ -1035,7 +1048,7 @@ classdef yamada < matlab.apps.AppBase
         end
 
         function signature = activeTabGeometrySignature(app)
-            % activeTabGeometrySignature Summarize visible preview geometry for polling.
+            % activeTabGeometrySignature Summarize visible tab and active-grid geometry for polling.
             arguments (Input)
                 app (1, 1) yamada
             end
@@ -1053,6 +1066,13 @@ classdef yamada < matlab.apps.AppBase
                 end
                 preview = app.PreviewHandles(char(component.Id));
                 if ~isvalid(preview)
+                    continue
+                end
+                if component.Id == app.ActiveGridId && component.Factory == "uigridlayout"
+                    rectangle = app.previewDisplayPosition(preview);
+                    inner = double(preview.InnerPosition);
+                    parts(end + 1) = component.Id + ":" + ...
+                        strjoin(string(round([rectangle inner])), ","); %#ok<AGROW>
                     continue
                 end
                 position = component.getProperty("Position");

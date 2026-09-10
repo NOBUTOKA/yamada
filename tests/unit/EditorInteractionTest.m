@@ -83,6 +83,35 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function gridOverlayUsesOnlyTheNearestNestedGrid(testCase)
+            % gridOverlayUsesOnlyTheNearestNestedGrid Keep nested grid contexts separate on canvas.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            gridRow = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            labelRow = find(string(palette.Data(:, 1)) == "Label", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            outerGridId = app.SelectedComponentId;
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            innerGridId = app.SelectedComponentId;
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", labelRow)));
+            drawnow;
+
+            overlays = findall(figure, "Type", "uihtml");
+            testCase.verifyNotEqual(outerGridId, innerGridId);
+            testCase.verifyEqual(app.ActiveGridId, innerGridId);
+            testCase.verifyEqual(string(overlays.Data.gridEditor.activeGridId), innerGridId);
+            clear cleanup
+        end
+
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
             % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
 
