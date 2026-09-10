@@ -118,6 +118,10 @@ safe fallback. The visual editor will add direct manipulation of the selected
 `uigridlayout` and take ownership of the deferred `RowHeight` and `ColumnWidth`
 track-list properties.
 
+See the [Grid Layout Visual Editor implementation plan](GRID_LAYOUT_VISUAL_EDITOR_IMPLEMENTATION_PLAN.md)
+for the agreed UI behavior, the MATLAB UI and HTML overlay responsibility split,
+the atomic model changes, implementation milestones, and verification matrix.
+
 - Show an editor-owned overlay with row and column boundaries, track labels, child
   occupancy, and selected-child spans. Nested grids must edit only the selected
   grid's immediate tracks and children.
