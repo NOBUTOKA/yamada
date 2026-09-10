@@ -426,6 +426,22 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyFalse(any(tabPaths == "Position"));
             testCase.verifyFalse(any(tabPaths == "Layout.Row"));
         end
+
+        function activeGridResolutionKeepsNestedGridContextsSeparate(testCase)
+            % activeGridResolutionKeepsNestedGridContextsSeparate Resolve only the nearest Grid Layout.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            inner = document.insertComponent(registry, "uigridlayout", outer.Id);
+            label = document.insertComponent(registry, "uilabel", inner.Id);
+
+            testCase.verifyEqual(macd.model.ActiveGridResolver.resolve(document, outer.Id), outer.Id);
+            testCase.verifyEqual(macd.model.ActiveGridResolver.resolve(document, inner.Id), inner.Id);
+            testCase.verifyEqual(macd.model.ActiveGridResolver.resolve(document, label.Id), inner.Id);
+            testCase.verifyEqual(macd.model.ActiveGridResolver.resolve( ...
+                document, document.RootComponentId), "");
+        end
         function propertyDefinitionExposesTypedBehavior(testCase)
             % propertyDefinitionExposesTypedBehavior Project validated metadata into typed fields.
 

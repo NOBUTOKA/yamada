@@ -44,6 +44,16 @@ classdef GridTrackListTest < matlab.unittest.TestCase
                 definition, transaction), ...
                 "Track values must be nonnegative numbers, fit, or nonnegative x weights.");
         end
+
+        function describesTrackTokensWithoutChangingTheirLiteralContainer(testCase)
+            % describesTrackTokens Normalize tokens for a canvas without source evaluation.
+
+            tracks = macd.model.GridTrackList.describe({'fit', 80, '2.5x'});
+
+            testCase.verifyEqual(string({tracks.kind}), ["fit", "fixed", "flexible"]);
+            testCase.verifyEqual([tracks.value], [0 80 2.5]);
+            testCase.verifyEqual(string({tracks.label}), ["fit", "80", "2.5x"]);
+        end
     end
 end
 

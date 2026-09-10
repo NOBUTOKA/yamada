@@ -45,6 +45,33 @@ classdef GridTrackList
                 error("macd:GridTrackList:InvalidValue", "%s", message);
             end
         end
+
+        function tracks = describe(value)
+            % describe Normalize a valid track list into display-independent typed tokens.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                tracks (1, :) struct
+            end
+
+            values = macd.model.GridTrackList.items(value);
+            tracks = repmat(struct("kind", "", "value", 0, "label", ""), 1, numel(values));
+            for index = 1:numel(values)
+                item = values{index};
+                tracks(index).label = string(item);
+                if isnumeric(item)
+                    tracks(index).kind = "fixed";
+                    tracks(index).value = double(item);
+                elseif lower(string(item)) == "fit"
+                    tracks(index).kind = "fit";
+                    tracks(index).value = 0;
+                else
+                    tracks(index).kind = "flexible";
+                    tracks(index).value = str2double(extractBefore(lower(string(item)), "x"));
+                end
+            end
+        end
     end
 
     methods (Static, Access = private)
