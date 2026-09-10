@@ -1,37 +1,9 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "8b38af26b2e23bd5864baf5412ee1141624b745de3d9c3a0942542d3dbfb56ee",
+  "inputSha256": "42d807016b7a50f5d1298cc60725f26e83d7f7917f4d75a462de9abbf606a7e8",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
-    {
-      "candidateId": "candidate.button.e5f3fed69ac2",
-      "categoryId": "button",
-      "categoryDisplayName": "Button",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Button-like control content and state.",
-      "capabilitySha256": "e5f3fed69ac2e183b8e73176187e1cb9f2c5a19739a37f310f2a3252b4656d82",
-      "propertyPaths": [
-        "Value",
-        "Text",
-        "WordWrap",
-        "Icon"
-      ],
-      "propertyCapabilitySha256": [
-        "b01172adf1d12228ea2bb43dc2650f961dbeec6eba4142619c3e29e031e5a87a",
-        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
-        "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c",
-        "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
-      ],
-      "memberVariantIds": [
-        "uibutton-state",
-        "uitogglebutton"
-      ],
-      "reuseCount": 2,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
     {
       "candidateId": "candidate.callbackexecutioncontrol.80f13c4d8ca8",
       "categoryId": "callbackexecutioncontrol",

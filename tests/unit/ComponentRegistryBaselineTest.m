@@ -56,7 +56,7 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             testCase.verifyEqual(manifest.schemaVersion, 2);
             testCase.verifyEqual(string(manifest.matlabRelease), "R2024a");
             testCase.verifyEqual(string(manifest.sourceGroupingSha256), string(groups.inputSha256));
-            testCase.verifyEqual(numel(groups.groups), 314);
+            testCase.verifyEqual(numel(groups.groups), 315);
             testCase.verifyEqual(sort(string(manifest.orderProfileFiles)), "order-profiles.json");
             testCase.verifyEqual(sort(string({profiles.profiles.id})), ...
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
@@ -353,7 +353,7 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
                 testCase.verifyTrue(property.ValueSchema.allowsEmpty);
             end
 
-            % Record heterogeneous day choices and defer grid-track editing safely.
+            % Record heterogeneous day choices and reserve grid tracks for canvas editing.
             datePicker = registry.getById("uidatepicker");
             disabledDays = datePicker.Properties( ...
                 [datePicker.Properties.Path] == "DisabledDaysOfWeek");
@@ -365,8 +365,8 @@ classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
             grid = registry.getById("uigridlayout");
             for path = ["ColumnWidth", "RowHeight"]
                 property = grid.Properties([grid.Properties.Path] == path);
-                testCase.verifyEqual(property.Editor, "readOnly");
-                testCase.verifyEqual(property.AuditDisposition, "readOnly");
+                testCase.verifyEqual(property.Editor, "gridTrackList");
+                testCase.verifyEqual(property.AuditDisposition, "editable");
                 testCase.verifyEqual(string(property.ValueSchema.kind), "gridTrackList");
                 testCase.verifyEqual(string(property.ValueSchema.matlabClasses(:))', ...
                     ["cell", "char", "numeric", "string"]);

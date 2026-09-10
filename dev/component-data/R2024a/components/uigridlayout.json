@@ -85,12 +85,10 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "none",
+      "requiredEditor": "gridTrackList",
       "disposition": {
-        "kind": "readOnly",
-        "reasonCodes": [
-          "deferredGridTrackList"
-        ]
+        "kind": "editable",
+        "reasonCodes": []
       },
       "runtimeSetAccess": "public"
     },
@@ -119,12 +117,10 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
-      "requiredEditor": "none",
+      "requiredEditor": "gridTrackList",
       "disposition": {
-        "kind": "readOnly",
-        "reasonCodes": [
-          "deferredGridTrackList"
-        ]
+        "kind": "editable",
+        "reasonCodes": []
       },
       "runtimeSetAccess": "public"
     },

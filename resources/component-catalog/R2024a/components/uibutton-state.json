@@ -40,7 +40,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.button.e5f3fed69ac2",
+          "groupId": "local.uibutton-state.button",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -48,7 +48,7 @@
             "categoryId": "button",
             "category": "Button",
             "order": 1,
-            "groupId": "exact.button.e5f3fed69ac2",
+            "groupId": "local.uibutton-state.button",
             "editor": "logical",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -65,7 +65,7 @@
         },
         {
           "path": "Text",
-          "groupId": "exact.button.e5f3fed69ac2",
+          "groupId": "local.uibutton-state.button",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Text",
@@ -73,7 +73,7 @@
             "categoryId": "button",
             "category": "Button",
             "order": 2,
-            "groupId": "exact.button.e5f3fed69ac2",
+            "groupId": "local.uibutton-state.button",
             "editor": "multilineText",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -93,7 +93,7 @@
         },
         {
           "path": "WordWrap",
-          "groupId": "exact.button.e5f3fed69ac2",
+          "groupId": "local.uibutton-state.button",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WordWrap",
@@ -101,7 +101,7 @@
             "categoryId": "button",
             "category": "Button",
             "order": 3,
-            "groupId": "exact.button.e5f3fed69ac2",
+            "groupId": "local.uibutton-state.button",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -120,7 +120,7 @@
         },
         {
           "path": "Icon",
-          "groupId": "exact.button.e5f3fed69ac2",
+          "groupId": "local.uibutton-state.button",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Icon",
@@ -128,7 +128,7 @@
             "categoryId": "button",
             "category": "Button",
             "order": 4,
-            "groupId": "exact.button.e5f3fed69ac2",
+            "groupId": "local.uibutton-state.button",
             "editor": "asset",
             "previewPolicy": "skip",
             "auditDisposition": "editable",
@@ -960,7 +960,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "State Button",
+    "displayName": "Button",
     "category": "Common",
     "supportedStyles": [
       "push",

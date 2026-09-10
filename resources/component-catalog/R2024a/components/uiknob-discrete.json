@@ -837,7 +837,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Discrete Knob",
+    "displayName": "Knob",
     "category": "Instrumentation",
     "supportedStyles": [
       "continuous",

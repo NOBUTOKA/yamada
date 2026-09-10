@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "fd5d09efd4c88f09c01e8f7200709a4863483388",
-  "inputSha256": "8b38af26b2e23bd5864baf5412ee1141624b745de3d9c3a0942542d3dbfb56ee",
+  "ledgerBaselineGitCommit": "8d7c2fff80d305b0423f726617cdb5b367e24c07",
+  "inputSha256": "42d807016b7a50f5d1298cc60725f26e83d7f7917f4d75a462de9abbf606a7e8",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -97,7 +97,7 @@
     },
     {
       "path": "components/uibutton-state.json",
-      "sha256": "2b4b3d0e76f0627f31fd13ebb97af469296deb9fc214710c8ba4ce1e3a7df61d"
+      "sha256": "306a1fe9ec4a24b1c3d21bf451c803a0209a33dcae15c4046444883a1fc8993d"
     },
     {
       "path": "components/uibuttongroup.json",
@@ -105,11 +105,11 @@
     },
     {
       "path": "components/uicheckbox.json",
-      "sha256": "99600382dcb96858442bfcaaaaa855794936bc96852523e4d580639396d888d6"
+      "sha256": "70c8026a7584b1d5116de5547fe8568f82382b564df7cf50ea5427f1d12aa53b"
     },
     {
       "path": "components/uicolorpicker.json",
-      "sha256": "f96d0ac27596b8c95ced8aaad6313e4111fe8b6d2be791ae708fe8942d92906f"
+      "sha256": "d0091f5be6acbef22c7eb847857b4a0c486d194d2576b7bf1f76b86b48e87462"
     },
     {
       "path": "components/uicontextmenu.json",
@@ -153,7 +153,7 @@
     },
     {
       "path": "components/uigridlayout.json",
-      "sha256": "c849e233f445664dd514052958c742663b65a77eca276985574385b7d64b20c2"
+      "sha256": "cb26c150a0e652f83d8ca11203e6e9b54bf68c85e4ba21319ae815a5b0d8dd3f"
     },
     {
       "path": "components/uihtml.json",
@@ -181,7 +181,7 @@
     },
     {
       "path": "components/uilamp.json",
-      "sha256": "f63987e75ba98447c1fddd1b95231488b77ebb8c96fe158d8f4ed0e7f0c8e8f2"
+      "sha256": "c1a3ad234d8701f55de5f2fe5ffef27fd3f49e47deb7c5f3ac531d7bed18e7bc"
     },
     {
       "path": "components/uilistbox.json",
@@ -273,7 +273,7 @@
     },
     {
       "path": "schema.json",
-      "sha256": "29189446a1ad8b4f6668d972bbe0a53dd08bf77177f6ddbf04422715a11c37f8"
+      "sha256": "b9305a13516cc5aa60432a85e23888a1e5685ea48e216d19576effa294575eca"
     }
   ],
   "validation": {

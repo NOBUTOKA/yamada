@@ -1049,7 +1049,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Linear Gauge",
+    "displayName": "Gauge",
     "category": "Instrumentation",
     "supportedStyles": [
       "circular",
@@ -1067,8 +1067,8 @@
     "overlayShapesByStyle": {
       "circular": "circle",
       "linear": "rectangle",
-      "ninetydegree": "quarterCircle",
-      "semicircular": "semicircle"
+      "ninetydegree": "circle",
+      "semicircular": "circle"
     },
     "resizeConstraint": "aspectRatio"
   }

@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "8b38af26b2e23bd5864baf5412ee1141624b745de3d9c3a0942542d3dbfb56ee",
+  "inputSha256": "42d807016b7a50f5d1298cc60725f26e83d7f7917f4d75a462de9abbf606a7e8",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -1458,7 +1458,7 @@
       ],
       "sharingScope": "familyScoped",
       "scopeRationale": "Button-like control content and state.",
-      "surfaceCount": 3,
+      "surfaceCount": 4,
       "affectedVariantIds": [
         "uibutton-push",
         "uibutton-state",
@@ -1519,6 +1519,33 @@
           ]
         },
         {
+          "candidateId": "candidate.button.930439676192",
+          "categoryId": "button",
+          "categoryDisplayName": "Button",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Button-like control content and state.",
+          "capabilitySha256": "930439676192e822285438f80ea0eb31afcd3c59c8624be077854a49752462ea",
+          "propertyPaths": [
+            "Value",
+            "Text",
+            "WordWrap",
+            "Icon"
+          ],
+          "propertyCapabilitySha256": [
+            "2739c8a432beb598c85e52ebc7e3fa6f880935e484f7bce5ab7c17b7b4ffbd77",
+            "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
+            "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c",
+            "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
+          ],
+          "memberVariantIds": [
+            "uibutton-state"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            1
+          ]
+        },
+        {
           "candidateId": "candidate.button.e5f3fed69ac2",
           "categoryId": "button",
           "categoryDisplayName": "Button",
@@ -1538,10 +1565,9 @@
             "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
           ],
           "memberVariantIds": [
-            "uibutton-state",
             "uitogglebutton"
           ],
-          "reuseCount": 2,
+          "reuseCount": 1,
           "documentedCategoryOrders": [
             1
           ]
@@ -1550,9 +1576,10 @@
       "pathCoverage": [
         {
           "path": "Icon",
-          "presentInSurfaceCount": 2,
+          "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
             "candidate.button.68d3a39843e6",
+            "candidate.button.930439676192",
             "candidate.button.e5f3fed69ac2"
           ]
         },
@@ -1565,27 +1592,30 @@
         },
         {
           "path": "Text",
-          "presentInSurfaceCount": 3,
+          "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
             "candidate.button.3e1509a94792",
             "candidate.button.68d3a39843e6",
+            "candidate.button.930439676192",
             "candidate.button.e5f3fed69ac2"
           ]
         },
         {
           "path": "Value",
-          "presentInSurfaceCount": 2,
+          "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
             "candidate.button.3e1509a94792",
+            "candidate.button.930439676192",
             "candidate.button.e5f3fed69ac2"
           ]
         },
         {
           "path": "WordWrap",
-          "presentInSurfaceCount": 3,
+          "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
             "candidate.button.3e1509a94792",
             "candidate.button.68d3a39843e6",
+            "candidate.button.930439676192",
             "candidate.button.e5f3fed69ac2"
           ]
         }
@@ -2528,17 +2558,17 @@
           ]
         },
         {
-          "candidateId": "candidate.color.6fd52dc1c107",
+          "candidateId": "candidate.color.e9489ad3dee2",
           "categoryId": "color",
           "categoryDisplayName": "Color",
           "sharingScope": "familyScoped",
           "scopeRationale": "The same heading names unrelated Color Picker, lamp, image, and layout surfaces.",
-          "capabilitySha256": "6fd52dc1c107ca7b3b1a363298874ac9f935e106aa4d194db9f86addc52158ef",
+          "capabilitySha256": "e9489ad3dee2e21c50d4bc5bc23ce0ca95d4e713ca80b525855e8e2fe3504285",
           "propertyPaths": [
             "Color"
           ],
           "propertyCapabilitySha256": [
-            "6fd52dc1c107ca7b3b1a363298874ac9f935e106aa4d194db9f86addc52158ef"
+            "e9489ad3dee2e21c50d4bc5bc23ce0ca95d4e713ca80b525855e8e2fe3504285"
           ],
           "memberVariantIds": [
             "uilamp"
@@ -2561,7 +2591,7 @@
           "path": "Color",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.color.6fd52dc1c107"
+            "candidate.color.e9489ad3dee2"
           ]
         }
       ],
@@ -10266,12 +10296,11 @@
         "uibutton-push"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.button.e5f3fed69ac2",
+      "extendedCandidateId": "candidate.button.930439676192",
       "extendedVariantIds": [
-        "uibutton-state",
-        "uitogglebutton"
+        "uibutton-state"
       ],
-      "extendedReuseCount": 2,
+      "extendedReuseCount": 1,
       "extensionPropertyPaths": [
         "Value"
       ],
@@ -10282,7 +10311,33 @@
           "insertedAfterPath": null
         }
       ],
-      "reviewPriority": "medium",
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "button",
+      "sharingScope": "familyScoped",
+      "baseCandidateId": "candidate.button.68d3a39843e6",
+      "baseVariantIds": [
+        "uibutton-push"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.button.e5f3fed69ac2",
+      "extendedVariantIds": [
+        "uitogglebutton"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Value"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Value",
+          "insertedAfterPath": null
+        }
+      ],
+      "reviewPriority": "informational",
       "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
     },
     {

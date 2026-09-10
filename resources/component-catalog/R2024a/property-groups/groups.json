@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "128484ca175709974afb57d66b5518b39c132f738ff87c34bcfe5de7e093bd88",
+  "inputSha256": "08c21ad63fb31a6a7ac60a85b29055ae0afd9a8a551ace7d7849a56189d81185",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -158,96 +158,6 @@
             "reasonCodes": [
               "documentedReadOnly"
             ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "exact.button.e5f3fed69ac2",
-      "kind": "exactCategory",
-      "categoryId": "button",
-      "entries": [
-        {
-          "path": "Value",
-          "valueContract": {
-            "kind": "number",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "number",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Text",
-          "valueContract": {
-            "kind": "multilineText",
-            "matlabClasses": [
-              "categorical",
-              "cell",
-              "char",
-              "string"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "multilineText",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "WordWrap",
-          "valueContract": {
-            "kind": "onOff",
-            "matlabClasses": [
-              "char",
-              "logical",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "onOff",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Icon",
-          "valueContract": {
-            "kind": "filePath",
-            "matlabClasses": [
-              "char",
-              "double",
-              "string"
-            ],
-            "shape": "any",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "skip",
-          "requiredEditor": "asset",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
           }
         }
       ]
@@ -10594,6 +10504,96 @@
       ]
     },
     {
+      "id": "local.uibutton-state.button",
+      "kind": "variantLocal",
+      "categoryId": "button",
+      "entries": [
+        {
+          "path": "Value",
+          "valueContract": {
+            "kind": "logical",
+            "matlabClasses": [
+              "logical"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "logical",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Text",
+          "valueContract": {
+            "kind": "multilineText",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "multilineText",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "WordWrap",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Icon",
+          "valueContract": {
+            "kind": "filePath",
+            "matlabClasses": [
+              "char",
+              "double",
+              "string"
+            ],
+            "shape": "any",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "asset",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uibutton-state.callbacks",
       "kind": "variantLocal",
       "categoryId": "callbacks",
@@ -12015,9 +12015,9 @@
               "string"
             ],
             "shape": "fixedLengthVector",
-            "fixedLength": 3,
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -17192,12 +17192,10 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "none",
+          "requiredEditor": "gridTrackList",
           "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "deferredGridTrackList"
-            ]
+            "kind": "editable",
+            "reasonCodes": []
           }
         },
         {
@@ -17216,12 +17214,10 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
-          "requiredEditor": "none",
+          "requiredEditor": "gridTrackList",
           "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "deferredGridTrackList"
-            ]
+            "kind": "editable",
+            "reasonCodes": []
           }
         },
         {
@@ -20462,9 +20458,9 @@
               "string"
             ],
             "shape": "fixedLengthVector",
-            "fixedLength": 3,
             "allowsEmpty": false,
-            "constraints": []
+            "constraints": [],
+            "fixedLength": 3
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -27585,6 +27581,96 @@
           "affectsDisplay": true,
           "previewPolicy": "apply",
           "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uitogglebutton.button",
+      "kind": "variantLocal",
+      "categoryId": "button",
+      "entries": [
+        {
+          "path": "Value",
+          "valueContract": {
+            "kind": "number",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "number",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Text",
+          "valueContract": {
+            "kind": "multilineText",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "multilineText",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "WordWrap",
+          "valueContract": {
+            "kind": "onOff",
+            "matlabClasses": [
+              "char",
+              "logical",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "onOff",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Icon",
+          "valueContract": {
+            "kind": "filePath",
+            "matlabClasses": [
+              "char",
+              "double",
+              "string"
+            ],
+            "shape": "any",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "asset",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []

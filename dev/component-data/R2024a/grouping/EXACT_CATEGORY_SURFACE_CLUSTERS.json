@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "8b38af26b2e23bd5864baf5412ee1141624b745de3d9c3a0942542d3dbfb56ee",
+  "inputSha256": "42d807016b7a50f5d1298cc60725f26e83d7f7917f4d75a462de9abbf606a7e8",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -176,6 +176,33 @@
       ]
     },
     {
+      "candidateId": "candidate.button.930439676192",
+      "categoryId": "button",
+      "categoryDisplayName": "Button",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Button-like control content and state.",
+      "capabilitySha256": "930439676192e822285438f80ea0eb31afcd3c59c8624be077854a49752462ea",
+      "propertyPaths": [
+        "Value",
+        "Text",
+        "WordWrap",
+        "Icon"
+      ],
+      "propertyCapabilitySha256": [
+        "2739c8a432beb598c85e52ebc7e3fa6f880935e484f7bce5ab7c17b7b4ffbd77",
+        "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
+        "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c",
+        "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
+      ],
+      "memberVariantIds": [
+        "uibutton-state"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
       "candidateId": "candidate.button.e5f3fed69ac2",
       "categoryId": "button",
       "categoryDisplayName": "Button",
@@ -195,10 +222,9 @@
         "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
       ],
       "memberVariantIds": [
-        "uibutton-state",
         "uitogglebutton"
       ],
-      "reuseCount": 2,
+      "reuseCount": 1,
       "documentedCategoryOrders": [
         1
       ]
@@ -969,19 +995,19 @@
       ]
     },
     {
-      "candidateId": "candidate.checkbox.865af91a9d32",
+      "candidateId": "candidate.checkbox.88c552f6a16f",
       "categoryId": "checkbox",
       "categoryDisplayName": "Check Box",
       "sharingScope": "variantLocal",
       "scopeRationale": "Check Box-specific settings.",
-      "capabilitySha256": "865af91a9d32d7ce22724d28d31425832eb2d7d14f07fd308a690b0effb45282",
+      "capabilitySha256": "88c552f6a16f185cac14df58722e6d8c157f5c95a0ef240f389e3458c3a0e4c8",
       "propertyPaths": [
         "Value",
         "Text",
         "WordWrap"
       ],
       "propertyCapabilitySha256": [
-        "b01172adf1d12228ea2bb43dc2650f961dbeec6eba4142619c3e29e031e5a87a",
+        "2739c8a432beb598c85e52ebc7e3fa6f880935e484f7bce5ab7c17b7b4ffbd77",
         "b615b5931538a112b7f7665e4ddfcb1d055b42c878964aa71cd680b83a995894",
         "6c24447c099c81c48aa9da715c893e019c07813cd8aa05ea56fa15f44034fa4c"
       ],
@@ -1111,17 +1137,17 @@
       ]
     },
     {
-      "candidateId": "candidate.color.6fd52dc1c107",
+      "candidateId": "candidate.color.e9489ad3dee2",
       "categoryId": "color",
       "categoryDisplayName": "Color",
       "sharingScope": "familyScoped",
       "scopeRationale": "The same heading names unrelated Color Picker, lamp, image, and layout surfaces.",
-      "capabilitySha256": "6fd52dc1c107ca7b3b1a363298874ac9f935e106aa4d194db9f86addc52158ef",
+      "capabilitySha256": "e9489ad3dee2e21c50d4bc5bc23ce0ca95d4e713ca80b525855e8e2fe3504285",
       "propertyPaths": [
         "Color"
       ],
       "propertyCapabilitySha256": [
-        "6fd52dc1c107ca7b3b1a363298874ac9f935e106aa4d194db9f86addc52158ef"
+        "e9489ad3dee2e21c50d4bc5bc23ce0ca95d4e713ca80b525855e8e2fe3504285"
       ],
       "memberVariantIds": [
         "uilamp"
@@ -1132,18 +1158,18 @@
       ]
     },
     {
-      "candidateId": "candidate.colorpicker.b49fd8fdcedd",
+      "candidateId": "candidate.colorpicker.6d41e74c0433",
       "categoryId": "colorpicker",
       "categoryDisplayName": "Color Picker",
       "sharingScope": "variantLocal",
       "scopeRationale": "Color Picker-specific settings.",
-      "capabilitySha256": "b49fd8fdcedd2a3b320f64f06fb8fef5e8098a1446d511e5722b6b67f7741860",
+      "capabilitySha256": "6d41e74c04338ce84392eaa255c9d9cd4e6adaaebd9bd9769aabd8bd85224bc9",
       "propertyPaths": [
         "Value",
         "Icon"
       ],
       "propertyCapabilitySha256": [
-        "2efebeae3cf8489e6e0dabf56887947f94b86286b8a57061b707f9db89192114",
+        "c29032d15591d0d2a45a9a2eeb8fec4d0fff89472a5ab1b24df23226775297b1",
         "2613c3984dddd4823fd23535c44bf92fd2bf37513b7dffe6cbbbd268a7d05db1"
       ],
       "memberVariantIds": [
@@ -1774,12 +1800,12 @@
       ]
     },
     {
-      "candidateId": "candidate.grid.5be487862e22",
+      "candidateId": "candidate.grid.7a39f839f916",
       "categoryId": "grid",
       "categoryDisplayName": "Grid",
       "sharingScope": "variantLocal",
       "scopeRationale": "Grid Layout-specific settings.",
-      "capabilitySha256": "5be487862e2236b0ac234a530980cab2d50aa7a15621719d1e640f5eab5564e8",
+      "capabilitySha256": "7a39f839f916508aacce257cdb14a1f4fe40e0c66864c8a30350978dcfa75674",
       "propertyPaths": [
         "ColumnWidth",
         "RowHeight",
@@ -1788,8 +1814,8 @@
         "Padding"
       ],
       "propertyCapabilitySha256": [
-        "823baf0ea4fcb9348a8573dd230cb67f400e6fa67141c907d28a140a676b99bb",
-        "eda7d660c6e0e8126f48d1e98b3fd88e91237d11b571af3dd958fed9de02bc64",
+        "35ff511cc03689f4561c63739a35d2dc432bd00032408bd420b812a9945f03c1",
+        "ddb64694a3943c6e5f3fb6bdead4282389b9b7f44b90c3ab0da4491faaf07209",
         "e68fbfd9c5c6d05ee488c2967b5f9d953e37afe37d099c6f3c0e8c7a2f7d69f8",
         "b5a3ac121c2c484613d65839140112c3eb0dc7498977c9da114353a3984778bb",
         "ed05ea4860075109965b0aed79b774d82ebe23e77f2f8047ad19483bf5613e9b"

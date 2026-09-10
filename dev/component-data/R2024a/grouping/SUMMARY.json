@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "8b38af26b2e23bd5864baf5412ee1141624b745de3d9c3a0942542d3dbfb56ee",
+  "inputSha256": "42d807016b7a50f5d1298cc60725f26e83d7f7917f4d75a462de9abbf606a7e8",
   "componentDocumentCount": 48,
   "propertyEntryCount": 1825.0,
   "categoryOccurrenceCount": 415,
@@ -19,12 +19,12 @@
       "categoryCount": 26
     }
   ],
-  "exactClusterCount": 157,
-  "initialGroupCandidateCount": 43,
+  "exactClusterCount": 158,
+  "initialGroupCandidateCount": 42,
   "allSameNameConflictCount": 26,
   "step4CrossCuttingConflictCount": 2,
   "familyScopedDifferenceCount": 24,
-  "allCoreExtensionCandidateCount": 120,
+  "allCoreExtensionCandidateCount": 121,
   "step6CrossCuttingCandidateCount": 67,
-  "familyScopedCoreExtensionCandidateCount": 53
+  "familyScopedCoreExtensionCandidateCount": 54
 }

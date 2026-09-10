@@ -1076,7 +1076,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Range Slider",
+    "displayName": "Slider",
     "category": "Common",
     "supportedStyles": [
       "slider",

@@ -46,9 +46,9 @@
             "category": "Grid",
             "order": 1,
             "groupId": "local.uigridlayout.grid",
-            "editor": "readOnly",
+            "editor": "gridTrackList",
             "previewPolicy": "apply",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "editable",
             "valueSchema": {
               "kind": "gridTrackList",
               "matlabClasses": [
@@ -74,9 +74,9 @@
             "category": "Grid",
             "order": 2,
             "groupId": "local.uigridlayout.grid",
-            "editor": "readOnly",
+            "editor": "gridTrackList",
             "previewPolicy": "apply",
-            "auditDisposition": "readOnly",
+            "auditDisposition": "editable",
             "valueSchema": {
               "kind": "gridTrackList",
               "matlabClasses": [
