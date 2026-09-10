@@ -394,6 +394,33 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyEqual(document.HistoryIndex, historyIndex);
         end
 
+        function gridStructuralPlannerRemapsExplicitChildrenDeterministically(testCase)
+            % gridStructuralPlannerRemapsExplicitChildrenDeterministically Plan safe insert and delete effects.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            first = document.insertComponent(registry, "uilabel", grid.Id);
+            second = document.insertComponent(registry, "uilabel", grid.Id);
+            document.setProperty(first.Id, "Layout.Row", [1 2]);
+            document.setProperty(second.Id, "Layout.Row", 3);
+
+            changes = macd.model.GridLayoutStructuralEditPlanner.insert( ...
+                document, grid.Id, "row", 2, [20 30 40]);
+            document.applyGridLayoutEdit(grid.Id, changes);
+            testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, ...
+                {20, "1x", 30, 40});
+            testCase.verifyEqual(first.getProperty("Layout.Row").LiteralValue, [1 3]);
+            testCase.verifyEqual(second.getProperty("Layout.Row").LiteralValue, 4);
+            document.undo();
+            changes = macd.model.GridLayoutStructuralEditPlanner.delete( ...
+                document, grid.Id, "row", 2, [20 30 40]);
+            document.applyGridLayoutEdit(grid.Id, changes);
+            testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, [20 40]);
+            testCase.verifyEqual(first.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(second.getProperty("Layout.Row").LiteralValue, 2);
+        end
+
         function modelValidationUsesTheInspectorPropertySchema(testCase)
             % modelValidationUsesTheInspectorPropertySchema Reject catalog-invalid values outside the Inspector.
 
