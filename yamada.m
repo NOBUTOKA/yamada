@@ -1565,7 +1565,11 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             definition = app.inspectorDefinition(component, path);
-            if any(definition.Editor == ["url", "asset"])
+            allowsEmpty = isfield(definition.ValueSchema, "allowsEmpty") && ...
+                definition.ValueSchema.allowsEmpty;
+            % Honor the catalog contract before adapter-specific shape checks.
+            isAllowedEmpty = isempty(value) && allowsEmpty;
+            if ~isAllowedEmpty && any(definition.Editor == ["url", "asset"])
                 if ~(ischar(value) && isrow(value)) && ~(isstring(value) && isscalar(value))
                     message = "Enter one path or URL as text.";
                     app.setStatus(message);
@@ -1576,13 +1580,13 @@ classdef yamada < matlab.apps.AppBase
                     app.setStatus(message);
                     return
                 end
-            elseif definition.Editor == "text"
+            elseif ~isAllowedEmpty && definition.Editor == "text"
                 if ~(ischar(value) && isrow(value)) && ~(isstring(value) && isscalar(value))
                     message = "Enter one text value.";
                     app.setStatus(message);
                     return
                 end
-            elseif ischar(value) || (isstring(value) && isscalar(value))
+            elseif ~isAllowedEmpty && (ischar(value) || (isstring(value) && isscalar(value)))
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(value));
                 if ~isLiteral
                     message = "Enter a supported MATLAB literal.";
