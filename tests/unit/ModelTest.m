@@ -421,6 +421,29 @@ classdef ModelTest < matlab.unittest.TestCase
             testCase.verifyEqual(second.getProperty("Layout.Row").LiteralValue, 2);
         end
 
+        function gridChildPlacementPlannerPreservesSpanAndRejectsOverlap(testCase)
+            % gridChildPlacementPlannerPreservesSpanAndRejectsOverlap Keep direct-child movement bounded and nonoverlapping.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            moving = document.insertComponent(registry, "uilabel", grid.Id);
+            occupied = document.insertComponent(registry, "uilabel", grid.Id);
+            document.setProperty(moving.Id, "Layout.Row", [1 2]);
+            document.setProperty(moving.Id, "Layout.Column", [1 2]);
+            document.setProperty(occupied.Id, "Layout.Row", 4);
+            document.setProperty(occupied.Id, "Layout.Column", 4);
+
+            changes = macd.model.GridChildPlacementPlanner.move( ...
+                document, grid.Id, moving.Id, 2, 2, 4, 4);
+            document.applyGridLayoutEdit(grid.Id, changes);
+            testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [2 3]);
+            testCase.verifyEqual(moving.getProperty("Layout.Column").LiteralValue, [2 3]);
+            testCase.verifyError(@() macd.model.GridChildPlacementPlanner.move( ...
+                document, grid.Id, moving.Id, 3, 3, 4, 4), ...
+                "macd:GridChildPlacementPlanner:Overlap");
+        end
+
         function modelValidationUsesTheInspectorPropertySchema(testCase)
             % modelValidationUsesTheInspectorPropertySchema Reject catalog-invalid values outside the Inspector.
 
