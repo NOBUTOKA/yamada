@@ -83,6 +83,26 @@ classdef RoundTripGeneratorTest < matlab.unittest.TestCase
             testCase.verifySubstring(source, "app.ResultLabel.Layout.Row = 4;");
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
+
+        function gridLayoutEditRewritesTracksAndChildPlacement(testCase)
+            % gridLayoutEditRewritesTracksAndChildPlacement Keep a grid edit localized to owned literals.
+
+            [document, generator] = RoundTripGeneratorTest.parsedFixture();
+            grid = document.getComponentByName("GridLayout");
+            button = document.getComponentByName("CalculateButton");
+            changes = struct("ComponentId", {grid.Id, grid.Id, button.Id, button.Id}, ...
+                "Path", {"RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column"}, ...
+                "Value", {{'fit', 42, '1x', 'fit', 'fit'}, {'2x', '1x'}, [3 4], [1 2]});
+            document.applyGridLayoutEdit(grid.Id, changes);
+            [source, diagnostics] = generator.generate(document);
+
+            testCase.verifySubstring(source, ...
+                "app.GridLayout.RowHeight = {'fit', 42, '1x', 'fit', 'fit'};");
+            testCase.verifySubstring(source, "app.GridLayout.ColumnWidth = {'2x', '1x'};");
+            testCase.verifySubstring(source, "app.CalculateButton.Layout.Row = [3 4];");
+            testCase.verifySubstring(source, "app.CalculateButton.Layout.Column = [1 2];");
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+        end
     end
 
     methods (Static, Access = private)

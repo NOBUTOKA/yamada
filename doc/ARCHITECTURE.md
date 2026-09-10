@@ -170,8 +170,12 @@ the hierarchy, palette, diagnostics, Safe Preview, Inspector, and command state.
 Insertion eligibility is determined from catalog metadata and the selected or
 nearest eligible parent. Deletion is explicit and model-validated. Absolute
 canvas gestures keep a temporary candidate rectangle in editor state and commit
-one `Position` change on pointer release. Grid children currently use explicit
-Inspector changes to `Layout.Row` and `Layout.Column`.
+one `Position` change on pointer release. A selected Grid Layout child instead
+uses the active-grid overlay: its cell-snapped draft is owned by HTML and a
+release sends a declarative move or span candidate for MATLAB-side validation.
+`GridChildPlacementPlanner` accepts only an editable literal placement of an
+immediate child, rejects new overlap and out-of-range targets, and returns one
+change set for `DocumentModel.applyGridLayoutEdit`.
 
 The model, not the Preview, owns source-coordinate geometry. The editor converts
 between the fitted Preview scale and source pixels and applies the catalog's
@@ -196,6 +200,12 @@ projects atomic property states into deterministic singleton or declarative
 composite rows. Composite rows change presentation only; underlying property
 contracts remain independent.
 
+`RowHeight` and `ColumnWidth` have the `gridTrackList` editor capability, which
+marks them for the canvas overlay rather than a native Inspector row. The normal
+Grid Layout Inspector retains `RowSpacing`, `ColumnSpacing`, `Padding`,
+`BackgroundColor`, `Visible`, and `Scrollable`; the child Inspector retains
+`Layout.Row` and `Layout.Column` as the exact-value fallback.
+
 [`PropertyEditorFactory`](../+macd/+ui/+inspector/PropertyEditorFactory.m) maps an
 allowlisted editor ID to a native control or project-owned dialog. Editors submit
 one or more changes through `PropertyTransaction`. The editor validates the
@@ -217,9 +227,14 @@ The renderer returns a map from stable component IDs to disposable Preview
 handles. `yamada` uses this map to build the transparent
 [`EditorInteractionOverlay.html`](../resources/EditorInteractionOverlay.html)
 `uihtml` layer. MATLAB sends source-derived component outlines, selection state,
-and Tab Group information to the overlay. The HTML/SVG layer owns pointer capture,
-outlines, resize handles, and tab-selection hit targets, then sends pointer data
-back to MATLAB. It never mutates the document directly.
+and Tab Group information to the overlay. For the nearest selected Grid Layout,
+`GridLayoutOverlayDataBuilder` also publishes versioned public Preview geometry,
+track headers, immediate-child occupancy, and editability. The HTML/SVG layer
+owns pointer capture, outlines, resize handles, tab-selection hit targets, and
+temporary grid drafts, then sends declarative pointer or grid actions back to
+MATLAB. It never mutates the document directly. MATLAB rejects actions with a
+stale revision, a mismatched active grid, unsupported source ownership, or an
+invalid final placement.
 
 Tab content geometry is published only after observed layout values stabilize.
 Inactive-tab child outlines are omitted, and the active tab selection remains

@@ -4,14 +4,14 @@
 
 ## Important
 
-`yamada` is under active development. Development and verification currently target MATLAB R2024a, no versioned release is available yet, and some capabilities, including visual Grid Layout editing, remain incomplete. Review the generated diff before saving, and keep the target file under version control or make a backup.
+`yamada` is under active development. Development and verification currently target MATLAB R2024a, and no versioned release is available yet. Review the generated diff before saving, and keep the target file under version control or make a backup.
 
 ## Features
 
 - Create a runnable `matlab.apps.AppBase` subclass from an empty canvas
 - Statically parse an existing `.m` class that follows a common App Designer-like structure
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
-- Move and resize absolutely positioned components and edit Grid Layout placement values, with visual Grid Layout editing still under development
+- Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
 - Add and delete components and edit supported properties
 - View validation diagnostics and compare the original and generated source before saving
 - Track unsaved edits and guard New, Open, and Close with Save, Discard, or Cancel
@@ -54,6 +54,27 @@ delete(editor);
 
 An untouched empty document starts clean. The title gains an asterisk after the
 first edit that has not been saved.
+
+### Edit a Grid Layout
+
+Select a Grid Layout or one of its children. The canvas activates the nearest
+Grid Layout and shows its immediate rows, columns, and child occupancy without
+changing the selected component in the Inspector.
+
+- Click an `R` or `C` header to choose **Fit**, a fixed pixel value, or a
+  flexible `x` weight. The same popover inserts, deletes, and reorders tracks.
+- Drag the selected child to move its occupied cells. Drag one of its edge or
+  corner handles to change its row or column span. The candidate is cell-snapped
+  and commits only when released.
+- Use the Inspector for `RowSpacing`, `ColumnSpacing`, `Padding` (in MATLAB
+  order `[left bottom right top]`), `BackgroundColor`, `Visible`, and
+  `Scrollable`. It also remains the exact-value fallback for a child's
+  `Layout.Row` and `Layout.Column`.
+
+Grid actions are available only for supported literal, source-owned values with
+unambiguous realized geometry. Expression-backed values, implicit placements,
+unsafe structural changes, stale canvas actions, and newly overlapping child
+placements are rejected rather than rewritten.
 
 ### Edit an existing application
 

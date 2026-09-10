@@ -26,7 +26,15 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 - Inspect the component hierarchy and Safe Preview.
 - Edit supported properties in the typed Property Inspector.
 - Move and resize absolutely positioned components.
-- Edit Grid Layout row, column, and span values in the Property Inspector.
+- Edit a Grid Layout's tracks from its Safe Preview headers: select `fit`, a
+  fixed pixel size, or a flexible `x` weight; insert, delete, or reorder tracks
+  when every affected direct-child placement has a deterministic result.
+- Drag a selected direct Grid Layout child to another cell or resize its row and
+  column span. The Property Inspector remains the exact-value fallback for
+  `Layout.Row` and `Layout.Column`.
+- Continue to edit `RowSpacing`, `ColumnSpacing`, `Padding`, `BackgroundColor`,
+  `Visible`, and `Scrollable` through the Property Inspector. `Padding` uses the
+  documented MATLAB vector order `[left bottom right top]`.
 - Explicitly delete components and undo or redo changes.
 - Validate the document, review the source diff, and save a runnable AppBase `.m` file.
 
@@ -77,6 +85,10 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - If an insertion point or ownership range required for addition or deletion is ambiguous, the edit or save is rejected with a diagnostic.
 - Failed validation of a supported value restricts Preview or saving as necessary for safety.
 - Deletion occurs only after an explicit user action.
+- Visual Grid Layout editing accepts only supported literal, source-owned track
+  and placement values. Expression-backed tracks or placements, implicit
+  placements, stale overlay actions, ambiguous geometry, and a newly introduced
+  child overlap are rejected without a partial document update.
 
 `yamada` prioritizes source preservation, but it does not guarantee complete round-tripping of arbitrary MATLAB syntax. Use version control such as Git or create a backup before editing an existing file.
 
