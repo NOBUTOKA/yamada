@@ -2,6 +2,20 @@ classdef InspectorSurfaceBuilderTest < matlab.unittest.TestCase
     % InspectorSurfaceBuilderTest Verify declarative composite row projection.
 
     methods (Test)
+        function omitsDedicatedGridTrackEditors(testCase)
+            % omitsDedicatedGridTrackEditors Keep grid track edits off the component Inspector.
+
+            track = macd.model.PropertyDefinition("RowHeight", [], false, true, ...
+                struct("editor", "gridTrackList", "auditDisposition", "editable"));
+            spacing = macd.model.PropertyDefinition("RowSpacing", [], false, true, ...
+                struct("editor", "number", "auditDisposition", "editable"));
+            states = [struct("Definition", track), struct("Definition", spacing)];
+
+            rows = macd.ui.inspector.InspectorSurfaceBuilder.build("grid", "", states);
+
+            testCase.verifyEqual(string({rows.MemberPaths}), "RowSpacing");
+        end
+
         function projectsCompleteCompositeAndSingletonFallback(testCase)
             % projectsCompleteCompositeAndSingletonFallback Replace only complete member sets.
 

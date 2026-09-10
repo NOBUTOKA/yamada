@@ -64,6 +64,10 @@ classdef InspectorSurfaceBuilder
                     continue
                 end
                 definition = states(index).Definition;
+                if definition.Editor == "gridTrackList"
+                    % Grid tracks are edited by the active-grid canvas surface.
+                    continue
+                end
                 row = macd.ui.inspector.InspectorSurfaceBuilder.emptyRow();
                 row.Id = "property:" + definition.Path;
                 row.DisplayName = definition.DisplayName;
