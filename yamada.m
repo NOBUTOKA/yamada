@@ -916,7 +916,7 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             action = string(data.action);
-            if ~any(action == ["set-track", "insert-track", "delete-track"]) || ...
+            if ~any(action == ["set-track", "insert-track", "delete-track", "move-track"]) || ...
                     ~isnumeric(data.revision) || ...
                     ~isscalar(data.revision) || double(data.revision) ~= app.InteractionOverlayRevision
                 return
@@ -954,9 +954,22 @@ classdef yamada < matlab.apps.AppBase
                 elseif action == "insert-track"
                     changes = macd.model.GridLayoutStructuralEditPlanner.insert( ...
                         app.Document, gridId, axis, double(data.index), value);
-                else
+                elseif action == "delete-track"
                     changes = macd.model.GridLayoutStructuralEditPlanner.delete( ...
                         app.Document, gridId, axis, double(data.index), value);
+                else
+                    if ~isfield(data, "fromIndex") || ~isnumeric(data.fromIndex) || ...
+                            ~isscalar(data.fromIndex)
+                        return
+                    end
+                    sourceIndex = double(data.fromIndex);
+                    if sourceIndex < 1 || sourceIndex > numel(macd.model.GridTrackList.items(value))
+                        return
+                    end
+                    destinationIndex = sourceIndex;
+                    destinationIndex = double(data.index);
+                    changes = macd.model.GridLayoutStructuralEditPlanner.move( ...
+                        app.Document, gridId, axis, sourceIndex, destinationIndex, value);
                 end
                 app.Document.applyGridLayoutEdit(gridId, changes);
                 app.setStatus("Updated " + path + ".");

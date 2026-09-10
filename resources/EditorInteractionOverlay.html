@@ -228,6 +228,13 @@ function openTrackPopover(header, data, axis, track) {
   var remove = document.createElement("button");
   remove.type = "button";
   remove.textContent = "Delete";
+  var moveBefore = document.createElement("button");
+  moveBefore.type = "button";
+  moveBefore.textContent = "Move Earlier";
+  moveBefore.disabled = Number(track.index) <= 1;
+  var moveAfter = document.createElement("button");
+  moveAfter.type = "button";
+  moveAfter.textContent = "Move Later";
   var cancel = document.createElement("button");
   cancel.type = "button";
   cancel.textContent = "Cancel";
@@ -237,6 +244,8 @@ function openTrackPopover(header, data, axis, track) {
   actions.appendChild(insertBefore);
   actions.appendChild(insertAfter);
   actions.appendChild(remove);
+  actions.appendChild(moveBefore);
+  actions.appendChild(moveAfter);
   actions.appendChild(cancel);
   actions.appendChild(apply);
   popover.appendChild(title);
@@ -250,13 +259,15 @@ function openTrackPopover(header, data, axis, track) {
   function structural(action, targetIndex) {
     component.sendEventToMATLAB("GridAction", {
       action: action, revision: data.revision, activeGridId: data.activeGridId,
-      axis: axis, index: targetIndex, mode: "fit", value: 0
+      axis: axis, index: targetIndex, fromIndex: Number(track.index), mode: "fit", value: 0
     });
     closeTrackPopover();
   }
   insertBefore.addEventListener("click", function() { structural("insert-track", Number(track.index)); });
   insertAfter.addEventListener("click", function() { structural("insert-track", Number(track.index) + 1); });
   remove.addEventListener("click", function() { structural("delete-track", Number(track.index)); });
+  moveBefore.addEventListener("click", function() { structural("move-track", Number(track.index) - 1); });
+  moveAfter.addEventListener("click", function() { structural("move-track", Number(track.index) + 1); });
   function submit() {
     var amount = Number(value.value);
     if (mode.value !== "fit" && (!Number.isFinite(amount) || amount < 0)) {
