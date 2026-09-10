@@ -70,6 +70,11 @@ classdef PropertyBatchValidator
                 if strlength(message) > 0
                     return
                 end
+            elseif definition.Editor == "gridTrackList"
+                message = macd.model.GridTrackList.validate(value);
+                if strlength(message) > 0
+                    return
+                end
             elseif definition.Editor == "dateTime"
                 message = macd.validation.PropertyBatchValidator.validateDateTime(schema, value);
                 if strlength(message) > 0
