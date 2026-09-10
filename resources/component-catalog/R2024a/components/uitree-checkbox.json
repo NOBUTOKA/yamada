@@ -1045,7 +1045,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Tree",
+    "displayName": "Check Box Tree",
     "category": "Common",
     "supportedStyles": [
       "default",

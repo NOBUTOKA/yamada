@@ -1081,7 +1081,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Gauge",
+    "displayName": "Semicircular Gauge",
     "category": "Instrumentation",
     "supportedStyles": [
       "circular",
@@ -1100,7 +1100,7 @@
       "circular": "circle",
       "linear": "rectangle",
       "ninetydegree": "circle",
-      "semicircular": "circle"
+      "semicircular": "semicircle"
     },
     "resizeConstraint": "aspectRatio"
   }

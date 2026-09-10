@@ -106,6 +106,21 @@ $parentContextPath = Join-Path $releasePath "parent-context-rules.json"
 if ([string]::IsNullOrWhiteSpace($RuntimeMetadataPath)) {
     $RuntimeMetadataPath = Join-Path $releasePath "runtime-component-metadata.json"
 }
+
+function Merge-Capabilities {
+    param([object]$Base, [object]$Override)
+
+    $result = [ordered]@{}
+    foreach ($property in @($Base.PSObject.Properties)) {
+        $result[$property.Name] = $property.Value
+    }
+    if ($null -ne $Override) {
+        foreach ($property in @($Override.PSObject.Properties)) {
+            $result[$property.Name] = $property.Value
+        }
+    }
+    return $result
+}
 $runtimeMetadataPath = [IO.Path]::GetFullPath($RuntimeMetadataPath)
 
 foreach ($path in @($designPath, $groupingInputPath, $componentPath,
@@ -200,6 +215,13 @@ foreach ($componentId in @($documents.Keys | Sort-Object)) {
         throw "Runtime component metadata has no construction definition for '$factory'."
     }
     $runtime = $metadataByFactory[$factory]
+    $capabilities = Merge-Capabilities $runtime.capabilities $null
+    if ($null -ne $runtime.PSObject.Properties["variantCapabilities"]) {
+        $variantOverride = $runtime.variantCapabilities.PSObject.Properties[$componentId]
+        if ($null -ne $variantOverride) {
+            $capabilities = Merge-Capabilities $runtime.capabilities $variantOverride.Value
+        }
+    }
     $profile = @($design.profileAssignments | Where-Object componentId -eq $componentId)
     if ($profile.Count -ne 1) { throw "Grouping design has no unique profile for '$componentId'." }
     $declaredType = [string]$source.declaredType
@@ -254,7 +276,7 @@ foreach ($componentId in @($documents.Keys | Sort-Object)) {
             })
         }
         categories = $categories
-        capabilities = $runtime.capabilities
+        capabilities = $capabilities
     })
 }
 

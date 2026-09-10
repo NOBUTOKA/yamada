@@ -960,7 +960,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Button",
+    "displayName": "State Button",
     "category": "Common",
     "supportedStyles": [
       "push",

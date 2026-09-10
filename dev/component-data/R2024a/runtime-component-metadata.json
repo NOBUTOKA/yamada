@@ -82,6 +82,11 @@
         "uitabgroup"
       ],
       "isRoot": false,
+      "variantCapabilities": {
+        "uibutton-state": {
+          "displayName": "State Button"
+        }
+      },
       "capabilities": {
         "displayName": "Button",
         "category": "Common",
@@ -204,6 +209,11 @@
         "uitabgroup"
       ],
       "isRoot": false,
+      "variantCapabilities": {
+        "uieditfield-numeric": {
+          "displayName": "Numeric Edit Field"
+        }
+      },
       "capabilities": {
         "displayName": "Edit Field",
         "category": "Common",
@@ -241,6 +251,19 @@
         "uitabgroup"
       ],
       "isRoot": false,
+      "variantCapabilities": {
+        "uigauge-ninetydegree": {
+          "displayName": "90-Degree Gauge",
+          "overlayShape": "quarterCircle"
+        },
+        "uigauge-semicircular": {
+          "displayName": "Semicircular Gauge",
+          "overlayShape": "semicircle"
+        },
+        "uigauge-linear": {
+          "displayName": "Linear Gauge"
+        }
+      },
       "capabilities": {
         "displayName": "Gauge",
         "category": "Instrumentation",
@@ -340,6 +363,11 @@
         "uitabgroup"
       ],
       "isRoot": false,
+      "variantCapabilities": {
+        "uiknob-discrete": {
+          "displayName": "Discrete Knob"
+        }
+      },
       "capabilities": {
         "displayName": "Knob",
         "category": "Instrumentation",
@@ -468,6 +496,11 @@
         "uitabgroup"
       ],
       "isRoot": false,
+      "variantCapabilities": {
+        "uislider-range": {
+          "displayName": "Range Slider"
+        }
+      },
       "capabilities": {
         "displayName": "Slider",
         "category": "Common",
@@ -511,6 +544,24 @@
         "uitabgroup"
       ],
       "isRoot": false,
+      "variantCapabilities": {
+        "uiswitch-rocker": {
+          "displayName": "Rocker Switch",
+          "overlayShape": "rockerSwitch",
+          "defaultSize": [
+            20,
+            45
+          ]
+        },
+        "uiswitch-toggle": {
+          "displayName": "Toggle Switch",
+          "overlayShape": "toggleSwitch",
+          "defaultSize": [
+            20,
+            45
+          ]
+        }
+      },
       "capabilities": {
         "displayName": "Switch",
         "category": "Instrumentation",
@@ -632,6 +683,11 @@
         "uitabgroup"
       ],
       "isRoot": false,
+      "variantCapabilities": {
+        "uitree-checkbox": {
+          "displayName": "Check Box Tree"
+        }
+      },
       "capabilities": {
         "displayName": "Tree",
         "category": "Common",

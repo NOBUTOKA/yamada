@@ -868,7 +868,7 @@
     }
   ],
   "capabilities": {
-    "displayName": "Switch",
+    "displayName": "Rocker Switch",
     "category": "Instrumentation",
     "supportedStyles": [
       "slider",
@@ -881,7 +881,8 @@
       "slider": "matlab.ui.control.Switch",
       "toggle": "matlab.ui.control.ToggleSwitch"
     },
-    "overlayShape": "switch",
-    "resizeConstraint": "aspectRatio"
+    "overlayShape": "rockerSwitch",
+    "resizeConstraint": "aspectRatio",
+    "defaultSize": [20, 45]
   }
 }
