@@ -21,6 +21,7 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 ### New applications
 
 - Create an empty AppBase class with a valid MATLAB class name and a root `uifigure`.
+- Start an untouched new document clean; the first edit marks it as having unsaved changes.
 - Add supported components from the palette.
 - Inspect the component hierarchy and Safe Preview.
 - Edit supported properties in the typed Property Inspector.

@@ -122,7 +122,7 @@ classdef DocumentLifecycleService < handle
     methods (Static, Access = private)
         function [accepted, className] = requestNativeClassName()
             % requestNativeClassName Show the native New-document class-name dialog.
-            answer = inputdlg("MATLAB class name:", "New App", [1 50], {"UntitledApp"});
+            answer = inputdlg("MATLAB class name:", "New App", [1 50], {'UntitledApp'});
             accepted = ~isempty(answer);
             className = "";
             if accepted

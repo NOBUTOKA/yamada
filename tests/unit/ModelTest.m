@@ -423,7 +423,7 @@ classdef ModelTest < matlab.unittest.TestCase
         end
 
         function newAndParsedDocumentsHaveExpectedDirtyStates(testCase)
-            % newAndParsedDocumentsHaveExpectedDirtyStates Distinguish unsaved and parsed models.
+            % newAndParsedDocumentsHaveExpectedDirtyStates Start factory and parsed models clean.
 
             registry = macd.model.ComponentRegistry.createDefault();
             newDocument = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
@@ -431,7 +431,7 @@ classdef ModelTest < matlab.unittest.TestCase
                 "fixtures", "SimpleCalculatorApp.m");
             parsedDocument = macd.source.AppSourceParser.parseFile(fixturePath, registry);
 
-            testCase.verifyTrue(newDocument.IsDirty);
+            testCase.verifyFalse(newDocument.IsDirty);
             testCase.verifyFalse(parsedDocument.IsDirty);
         end
 

@@ -52,6 +52,9 @@ delete(editor);
    Save As asks before replacing an existing target; after a successful Save As,
    **File > Save** writes to that confirmed path without another replacement prompt.
 
+An untouched empty document starts clean. The title gains an asterisk after the
+first edit that has not been saved.
+
 ### Edit an existing application
 
 1. Select **File > Open** and choose a `.m` file whose class derives from `matlab.apps.AppBase`.

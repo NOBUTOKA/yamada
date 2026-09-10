@@ -37,6 +37,8 @@ classdef NewAppFactory
             root.setProperty("Name", className);
             root.setProperty("Visible", "on");
             document.addComponent(root);
+            % Treat the editor-provided empty canvas as clean until the user edits it.
+            document.markSaved();
         end
     end
 

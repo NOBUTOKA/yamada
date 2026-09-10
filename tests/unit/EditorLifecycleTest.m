@@ -14,6 +14,7 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
                 "SaveAccepted", true, "FileExists", true, "ReplaceAccepted", false));
             app = yamada(refused);
             appCleanup = onCleanup(@() deleteIfValid(app));
+            addPaletteComponent("Button");
 
             invokeEditorMenu("Save As...");
             testCase.verifyTrue(app.Document.IsDirty);
@@ -26,7 +27,7 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
             app = yamada(service);
             appCleanup = onCleanup(@() deleteIfValid(app));
             testCase.verifyEqual(string(editorFigure().Name), ...
-                "UntitledApp* - Yet Another MATLAB App Designer Alternative");
+                "UntitledApp - Yet Another MATLAB App Designer Alternative");
             invokeEditorMenu("Save As...");
             testCase.verifyFalse(app.Document.IsDirty);
             testCase.verifyEqual(app.Document.FilePath, target);
@@ -50,6 +51,7 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
             canceled = lifecycleForTest(struct("SaveAccepted", false));
             app = yamada(canceled);
             cleanup = onCleanup(@() deleteIfValid(app));
+            addPaletteComponent("Button");
             invokeEditorMenu("Save As...");
             testCase.verifyTrue(app.Document.IsDirty);
             testCase.verifyEqual(app.Document.FilePath, "");
@@ -62,6 +64,7 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
                 "SaveAccepted", true, "WriteSucceeds", false));
             app = yamada(failed);
             cleanup = onCleanup(@() deleteIfValid(app));
+            addPaletteComponent("Button");
             invokeEditorMenu("Save As...");
             testCase.verifyTrue(app.Document.IsDirty);
             testCase.verifyEqual(app.Document.FilePath, "");
@@ -94,6 +97,7 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
                 "OpenPath", fixture, "UnsavedChoice", "Cancel"));
             app = yamada(canceled);
             cleanup = onCleanup(@() deleteIfValid(app));
+            addPaletteComponent("Button");
             invokeEditorMenu("New");
             testCase.verifyEqual(app.Document.ClassName, "UntitledApp");
             invokeEditorMenu("Open...");
@@ -105,8 +109,10 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
                 "OpenPath", fixture, "UnsavedChoice", "Discard"));
             app = yamada(discarded);
             cleanup = onCleanup(@() deleteIfValid(app));
+            addPaletteComponent("Button");
             invokeEditorMenu("New");
             testCase.verifyEqual(app.Document.ClassName, "NextApp");
+            addPaletteComponent("Button");
             invokeEditorMenu("Open...");
             testCase.verifyEqual(app.Document.ClassName, "SimpleCalculatorApp");
             testCase.verifyFalse(app.Document.IsDirty);
@@ -118,6 +124,7 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
 
             canceled = lifecycleForTest(struct("UnsavedChoice", "Cancel"));
             app = yamada(canceled);
+            addPaletteComponent("Button");
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
             testCase.verifyTrue(isvalid(app));
@@ -128,6 +135,7 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
             saved = lifecycleForTest(struct("UnsavedChoice", "Save", ...
                 "SavePath", target, "SaveAccepted", true));
             app = yamada(saved);
+            addPaletteComponent("Button");
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
             testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "macd-yamada-editor"));
@@ -135,6 +143,7 @@ classdef EditorLifecycleTest < matlab.unittest.TestCase
 
             discarded = lifecycleForTest(struct("UnsavedChoice", "Discard"));
             app = yamada(discarded);
+            addPaletteComponent("Button");
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
             testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "macd-yamada-editor"));
