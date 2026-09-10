@@ -205,12 +205,24 @@ function openTrackPopover(header, data, axis, track) {
   error.className = "track-popover-error";
   var actions = document.createElement("div");
   actions.className = "track-popover-actions";
+  var insertBefore = document.createElement("button");
+  insertBefore.type = "button";
+  insertBefore.textContent = "Insert Before";
+  var insertAfter = document.createElement("button");
+  insertAfter.type = "button";
+  insertAfter.textContent = "Insert After";
+  var remove = document.createElement("button");
+  remove.type = "button";
+  remove.textContent = "Delete";
   var cancel = document.createElement("button");
   cancel.type = "button";
   cancel.textContent = "Cancel";
   var apply = document.createElement("button");
   apply.type = "button";
   apply.textContent = "Apply";
+  actions.appendChild(insertBefore);
+  actions.appendChild(insertAfter);
+  actions.appendChild(remove);
   actions.appendChild(cancel);
   actions.appendChild(apply);
   popover.appendChild(title);
@@ -221,6 +233,16 @@ function openTrackPopover(header, data, axis, track) {
   popover.addEventListener("pointerdown", function(event) { event.stopPropagation(); });
   mode.addEventListener("change", function() { value.disabled = mode.value === "fit"; });
   cancel.addEventListener("click", closeTrackPopover);
+  function structural(action, targetIndex) {
+    component.sendEventToMATLAB("GridAction", {
+      action: action, revision: data.revision, activeGridId: data.activeGridId,
+      axis: axis, index: targetIndex, mode: "fit", value: 0
+    });
+    closeTrackPopover();
+  }
+  insertBefore.addEventListener("click", function() { structural("insert-track", Number(track.index)); });
+  insertAfter.addEventListener("click", function() { structural("insert-track", Number(track.index) + 1); });
+  remove.addEventListener("click", function() { structural("delete-track", Number(track.index)); });
   function submit() {
     var amount = Number(value.value);
     if (mode.value !== "fit" && (!Number.isFinite(amount) || amount < 0)) {

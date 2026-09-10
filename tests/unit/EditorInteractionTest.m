@@ -141,8 +141,24 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             rowHeight = grid.getProperty("RowHeight").LiteralValue;
             testCase.verifyEqual(rowHeight{1}, 40);
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 1);
-            app.Document.undo();
-            testCase.verifyEmpty(grid.getProperty("RowHeight"));
+            overlays = findall(figure, "Type", "uihtml");
+            refreshed = overlays.Data.gridEditor;
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "insert-track", ...
+                "revision", refreshed.revision, "activeGridId", refreshed.activeGridId, ...
+                "axis", "row", "index", 2, "mode", "fit", "value", 0)));
+            drawnow;
+            testCase.verifyEqual(numel(grid.getProperty("RowHeight").LiteralValue), 3);
+            overlays = findall(figure, "Type", "uihtml");
+            refreshed = overlays.Data.gridEditor;
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "delete-track", ...
+                "revision", refreshed.revision, "activeGridId", refreshed.activeGridId, ...
+                "axis", "row", "index", 2, "mode", "fit", "value", 0)));
+            drawnow;
+            testCase.verifyEqual(numel(grid.getProperty("RowHeight").LiteralValue), 2);
             clear cleanup
         end
 
