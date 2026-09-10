@@ -30,6 +30,8 @@ svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 .track-popover-actions { display: flex; justify-content: flex-end; gap: 5px; margin-top: 8px; }
 .track-popover-error { min-height: 12px; margin-top: 4px; color: #b00020; font-size: 10px; }
 .grid-status { position: absolute; max-width: 230px; padding: 4px 6px; border-radius: 3px; background: rgba(255, 248, 225, 0.95); color: #6c5500; font: 10px Arial; }
+.grid-child { position: absolute; box-sizing: border-box; border: 1px solid rgba(18, 77, 168, 0.75); background: rgba(18, 77, 168, 0.08); pointer-events: none; }
+.grid-child.selected { border-width: 2px; background: rgba(18, 77, 168, 0.16); }
 .silhouette { fill: none; stroke: #2864c7; stroke-width: 1.25; stroke-dasharray: 4 3; pointer-events: all; }
 .tab-group-frame { pointer-events: stroke; }
 .tab-group-header { fill: rgba(0, 0, 0, 0.001); stroke: transparent; pointer-events: all; }
@@ -157,6 +159,18 @@ function renderGridEditor(data) {
   }
   componentArray(data.rowTracks).forEach(function(track) { addHeader("row", track); });
   componentArray(data.columnTracks).forEach(function(track) { addHeader("column", track); });
+  componentArray(data.children).forEach(function(child) {
+    if (!child.bounds || child.bounds.length !== 4 || child.bounds[2] <= 0 || child.bounds[3] <= 0) return;
+    var childBox = document.createElement("div");
+    childBox.className = "grid-child" + (child.selected ? " selected" : "");
+    childBox.style.left = child.bounds[0] + "px";
+    childBox.style.top = (currentData.height - child.bounds[1] - child.bounds[3]) + "px";
+    childBox.style.width = child.bounds[2] + "px";
+    childBox.style.height = child.bounds[3] + "px";
+    childBox.title = String(child.placementMode || "implicit") + " R" +
+      String(child.rowStart || "?") + " C" + String(child.columnStart || "?");
+    controls.appendChild(childBox);
+  });
   if (data.readOnlyReason) {
     var status = document.createElement("div");
     status.className = "grid-status";
