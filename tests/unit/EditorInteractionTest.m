@@ -162,6 +162,36 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function staleGridOverlayActionsDoNotMutateTheDocument(testCase)
+            % staleGridOverlayActionsDoNotMutateTheDocument Reject canvas events from obsolete preview data.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            gridRow = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            gridData = overlays.Data.gridEditor;
+            historyIndex = app.Document.HistoryIndex;
+
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "set-track", ...
+                "revision", gridData.revision - 1, "activeGridId", gridData.activeGridId, ...
+                "axis", "row", "index", 1, "mode", "fixed", "value", 40)));
+
+            grid = app.Document.getComponent(app.ActiveGridId);
+            testCase.verifyEmpty(grid.getProperty("RowHeight"));
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
+            clear cleanup
+        end
+
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
             % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
 
