@@ -90,6 +90,10 @@ classdef yamada < matlab.apps.AppBase
             app.createMenus();
             app.newDocument("UntitledApp");
             app.UIFigure.Visible = "on";
+
+            if nargout == 0
+                clear app
+            end
         end
 
         function delete(app)
