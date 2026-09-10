@@ -1,7 +1,7 @@
 classdef GridChildPlacementPlanner
-    % GridChildPlacementPlanner Plan safe immediate-child Grid Layout relocation.
-    %   This utility preserves the selected child's existing row and column spans,
-    %   rejects out-of-range targets and new overlaps, and returns one atomic
+    % GridChildPlacementPlanner Plan safe immediate-child Grid Layout placement changes.
+    %   This utility relocates or resizes explicit child placements, rejects
+    %   out-of-range targets and new overlaps, and returns one atomic
     %   DocumentModel grid-edit change set without mutating the document.
 
     methods (Static)
@@ -17,6 +17,33 @@ classdef GridChildPlacementPlanner
                 columnCount (1, 1) double
             end
 
+            child = document.getComponent(childId);
+            if isempty(child)
+                error("macd:GridChildPlacementPlanner:InvalidChild", ...
+                    "Child must be an immediate component of the active Grid Layout.");
+            end
+            [oldRows, oldColumns] = macd.model.GridChildPlacementPlanner.placement(child);
+            rowEnd = rowStart + oldRows(end) - oldRows(1);
+            columnEnd = columnStart + oldColumns(end) - oldColumns(1);
+            changes = macd.model.GridChildPlacementPlanner.resize(document, gridId, childId, ...
+                rowStart, rowEnd, columnStart, columnEnd, rowCount, columnCount);
+        end
+
+        function changes = resize(document, gridId, childId, rowStart, rowEnd, ...
+                columnStart, columnEnd, rowCount, columnCount)
+            % resize Change one explicit child span while preventing new overlap.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                gridId (1, 1) string
+                childId (1, 1) string
+                rowStart (1, 1) double
+                rowEnd (1, 1) double
+                columnStart (1, 1) double
+                columnEnd (1, 1) double
+                rowCount (1, 1) double
+                columnCount (1, 1) double
+            end
+
             grid = document.getComponent(gridId);
             child = document.getComponent(childId);
             if isempty(grid) || grid.Factory ~= "uigridlayout" || isempty(child) || ...
@@ -24,20 +51,17 @@ classdef GridChildPlacementPlanner
                 error("macd:GridChildPlacementPlanner:InvalidChild", ...
                     "Child must be an immediate component of the active Grid Layout.");
             end
-            [oldRows, oldColumns] = macd.model.GridChildPlacementPlanner.placement(child);
-            if any(~isfinite([rowStart columnStart rowCount columnCount])) || ...
-                    any([rowStart columnStart rowCount columnCount] ~= ...
-                    floor([rowStart columnStart rowCount columnCount])) || ...
-                    any([rowStart columnStart] < 1) || rowCount < oldRows(end) - oldRows(1) + 1 || ...
-                    columnCount < oldColumns(end) - oldColumns(1) + 1
+            macd.model.GridChildPlacementPlanner.placement(child);
+            target = [rowStart rowEnd columnStart columnEnd rowCount columnCount];
+            if any(~isfinite(target)) || any(target ~= floor(target)) || ...
+                    any([rowStart columnStart rowCount columnCount] < 1) || ...
+                    rowEnd < rowStart || columnEnd < columnStart
                 error("macd:GridChildPlacementPlanner:InvalidTarget", ...
                     "Target cell and grid track counts must be positive integers.");
             end
-            rowEnd = rowStart + oldRows(end) - oldRows(1);
-            columnEnd = columnStart + oldColumns(end) - oldColumns(1);
             if rowEnd > rowCount || columnEnd > columnCount
                 error("macd:GridChildPlacementPlanner:OutOfBounds", ...
-                    "The preserved child span does not fit within the Grid Layout.");
+                    "The child span does not fit within the Grid Layout.");
             end
             for siblingId = grid.Children
                 if siblingId == childId, continue, end

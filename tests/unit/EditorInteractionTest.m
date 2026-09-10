@@ -192,6 +192,64 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function gridOverlayChildActionsCommitOnlyForTheSelectedChild(testCase)
+            % gridOverlayChildActionsCommitOnlyForTheSelectedChild Route child gestures through safe placement planning.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            gridRow = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            labelRow = find(string(palette.Data(:, 1)) == "Label", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", labelRow)));
+            app.Document.setProperty(app.SelectedComponentId, "Layout.Row", 1);
+            app.Document.setProperty(app.SelectedComponentId, "Layout.Column", 1);
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            gridData = overlays.Data.gridEditor;
+            historyIndex = app.Document.HistoryIndex;
+
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "move-child", ...
+                "revision", gridData.revision, "activeGridId", gridData.activeGridId, ...
+                "childId", app.SelectedComponentId, "rowStart", 2, "rowEnd", 2, ...
+                "columnStart", 2, "columnEnd", 2)));
+            drawnow;
+
+            child = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 2);
+            testCase.verifyEqual(child.getProperty("Layout.Column").LiteralValue, 2);
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 1);
+            overlays = findall(figure, "Type", "uihtml");
+            refreshed = overlays.Data.gridEditor;
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "resize-span", ...
+                "revision", refreshed.revision, "activeGridId", refreshed.activeGridId, ...
+                "childId", app.SelectedComponentId, "rowStart", 1, "rowEnd", 2, ...
+                "columnStart", 2, "columnEnd", 2)));
+            drawnow;
+            testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, [1 2]);
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 2);
+            overlays = findall(figure, "Type", "uihtml");
+            refreshed = overlays.Data.gridEditor;
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "move-child", ...
+                "revision", refreshed.revision - 1, "activeGridId", refreshed.activeGridId, ...
+                "childId", app.SelectedComponentId, "rowStart", 2, "rowEnd", 3, ...
+                "columnStart", 1, "columnEnd", 1)));
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 2);
+            clear cleanup
+        end
+
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
             % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
 

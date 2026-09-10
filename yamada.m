@@ -911,21 +911,32 @@ classdef yamada < matlab.apps.AppBase
                 data
             end
 
-            required = ["action", "revision", "activeGridId", "axis", "index", "mode", "value"];
+            required = ["action", "revision", "activeGridId"];
             if ~isstruct(data) || ~all(isfield(data, required))
                 return
             end
             action = string(data.action);
-            if ~any(action == ["set-track", "insert-track", "delete-track", "move-track"]) || ...
+            if ~any(action == ["set-track", "insert-track", "delete-track", "move-track", ...
+                    "move-child", "resize-span"]) || ...
                     ~isnumeric(data.revision) || ...
                     ~isscalar(data.revision) || double(data.revision) ~= app.InteractionOverlayRevision
                 return
             end
             gridId = string(data.activeGridId);
+            if gridId ~= app.ActiveGridId
+                return
+            end
+            if any(action == ["move-child", "resize-span"])
+                app.gridChildActionEvent(action, gridId, data);
+                return
+            end
+            trackRequired = ["axis", "index", "mode", "value"];
+            if ~all(isfield(data, trackRequired))
+                return
+            end
             axis = string(data.axis);
-            if gridId ~= app.ActiveGridId || ~any(axis == ["row", "column"]) || ...
-                    ~isnumeric(data.index) || ~isscalar(data.index) || ...
-                    ~isnumeric(data.value) || ~isscalar(data.value)
+            if ~any(axis == ["row", "column"]) || ~isnumeric(data.index) || ...
+                    ~isscalar(data.index) || ~isnumeric(data.value) || ~isscalar(data.value)
                 return
             end
             path = "RowHeight";
@@ -966,13 +977,74 @@ classdef yamada < matlab.apps.AppBase
                     if sourceIndex < 1 || sourceIndex > numel(macd.model.GridTrackList.items(value))
                         return
                     end
-                    destinationIndex = sourceIndex;
                     destinationIndex = double(data.index);
                     changes = macd.model.GridLayoutStructuralEditPlanner.move( ...
                         app.Document, gridId, axis, sourceIndex, destinationIndex, value);
                 end
                 app.Document.applyGridLayoutEdit(gridId, changes);
                 app.setStatus("Updated " + path + ".");
+                app.refreshPreview();
+            catch exception
+                app.setStatus(string(exception.message));
+                app.updateInteractionOverlay();
+            end
+        end
+
+        function gridChildActionEvent(app, action, gridId, data)
+            % gridChildActionEvent Validate and commit one selected-child placement action.
+            arguments (Input)
+                app (1, 1) yamada
+                action (1, 1) string
+                gridId (1, 1) string
+                data (1, 1) struct
+            end
+
+            required = ["childId", "rowStart", "rowEnd", "columnStart", "columnEnd"];
+            if ~all(isfield(data, required))
+                return
+            end
+            valueFields = {data.rowStart, data.rowEnd, data.columnStart, data.columnEnd};
+            if ~all(cellfun(@(value) isnumeric(value) && isscalar(value), valueFields))
+                return
+            end
+            values = [valueFields{:}];
+            childId = string(data.childId);
+            if childId ~= app.SelectedComponentId || numel(values) ~= 4 || ...
+                    any(~isfinite(double(values))) || ...
+                    any(double(values) ~= floor(double(values)))
+                return
+            end
+            try
+                overlay = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
+                    app.PreviewHandles, app.PreviewPanel, gridId, childId, ...
+                    app.InteractionOverlayRevision);
+                if ~overlay.geometryAvailable || ~overlay.editable
+                    return
+                end
+                childIndex = find(string({overlay.children.id}) == childId, 1);
+                if isempty(childIndex) || ~overlay.children(childIndex).editable
+                    return
+                end
+                current = overlay.children(childIndex);
+                if isequal(double(values), [current.rowStart current.rowEnd ...
+                        current.columnStart current.columnEnd])
+                    return
+                end
+                rowCount = numel(overlay.rowTracks);
+                columnCount = numel(overlay.columnTracks);
+                if action == "move-child"
+                    changes = macd.model.GridChildPlacementPlanner.move(app.Document, ...
+                        gridId, childId, double(values(1)), double(values(3)), ...
+                        rowCount, columnCount);
+                    message = "Moved grid child.";
+                else
+                    changes = macd.model.GridChildPlacementPlanner.resize(app.Document, ...
+                        gridId, childId, double(values(1)), double(values(2)), ...
+                        double(values(3)), double(values(4)), rowCount, columnCount);
+                    message = "Resized grid child span.";
+                end
+                app.Document.applyGridLayoutEdit(gridId, changes);
+                app.setStatus(message);
                 app.refreshPreview();
             catch exception
                 app.setStatus(string(exception.message));

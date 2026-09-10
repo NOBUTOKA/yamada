@@ -32,6 +32,17 @@ svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 .grid-status { position: absolute; max-width: 230px; padding: 4px 6px; border-radius: 3px; background: rgba(255, 248, 225, 0.95); color: #6c5500; font: 10px Arial; }
 .grid-child { position: absolute; box-sizing: border-box; border: 1px solid rgba(18, 77, 168, 0.75); background: rgba(18, 77, 168, 0.08); pointer-events: none; }
 .grid-child.selected { border-width: 2px; background: rgba(18, 77, 168, 0.16); }
+.grid-child.selected.editable { pointer-events: auto; cursor: move; }
+.grid-span-handle { position: absolute; z-index: 2; width: 8px; height: 8px; box-sizing: border-box; border: 1px solid #ffffff; border-radius: 2px; background: #2864c7; pointer-events: auto; }
+.grid-span-handle.top { left: 50%; top: -5px; margin-left: -4px; cursor: n-resize; }
+.grid-span-handle.bottom { left: 50%; bottom: -5px; margin-left: -4px; cursor: s-resize; }
+.grid-span-handle.left { left: -5px; top: 50%; margin-top: -4px; cursor: w-resize; }
+.grid-span-handle.right { right: -5px; top: 50%; margin-top: -4px; cursor: e-resize; }
+.grid-span-handle.top-left { left: -5px; top: -5px; cursor: nw-resize; }
+.grid-span-handle.top-right { right: -5px; top: -5px; cursor: ne-resize; }
+.grid-span-handle.bottom-left { left: -5px; bottom: -5px; cursor: sw-resize; }
+.grid-span-handle.bottom-right { right: -5px; bottom: -5px; cursor: se-resize; }
+.grid-child-draft { position: absolute; z-index: 1; box-sizing: border-box; border: 2px dashed #2864c7; background: rgba(40, 100, 199, 0.10); pointer-events: none; }
 .silhouette { fill: none; stroke: #2864c7; stroke-width: 1.25; stroke-dasharray: 4 3; pointer-events: all; }
 .tab-group-frame { pointer-events: stroke; }
 .tab-group-header { fill: rgba(0, 0, 0, 0.001); stroke: transparent; pointer-events: all; }
@@ -42,6 +53,7 @@ svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 var component;
 var svg;
 var currentData = { width: 1, height: 1, components: [] };
+var gridGesture = null;
 
 function setup(htmlComponent) {
   component = htmlComponent;
@@ -162,13 +174,29 @@ function renderGridEditor(data) {
   componentArray(data.children).forEach(function(child) {
     if (!child.bounds || child.bounds.length !== 4 || child.bounds[2] <= 0 || child.bounds[3] <= 0) return;
     var childBox = document.createElement("div");
-    childBox.className = "grid-child" + (child.selected ? " selected" : "");
+    var childEditable = !!child.selected && !!child.editable && !!data.editable;
+    childBox.className = "grid-child" + (child.selected ? " selected" : "") +
+      (childEditable ? " editable" : "");
     childBox.style.left = child.bounds[0] + "px";
     childBox.style.top = (currentData.height - child.bounds[1] - child.bounds[3]) + "px";
     childBox.style.width = child.bounds[2] + "px";
     childBox.style.height = child.bounds[3] + "px";
     childBox.title = String(child.placementMode || "implicit") + " R" +
       String(child.rowStart || "?") + " C" + String(child.columnStart || "?");
+    if (childEditable) {
+      childBox.addEventListener("pointerdown", function(event) {
+        beginGridChildGesture(event, data, child, "move");
+      });
+      ["top", "bottom", "left", "right", "top-left", "top-right", "bottom-left", "bottom-right"].forEach(function(kind) {
+        var handle = document.createElement("div");
+        handle.className = "grid-span-handle " + kind;
+        handle.title = "Resize grid span";
+        handle.addEventListener("pointerdown", function(event) {
+          beginGridChildGesture(event, data, child, kind);
+        });
+        childBox.appendChild(handle);
+      });
+    }
     controls.appendChild(childBox);
   });
   if (data.readOnlyReason) {
@@ -179,6 +207,151 @@ function renderGridEditor(data) {
     status.textContent = String(data.readOnlyReason);
     controls.appendChild(status);
   }
+}
+
+function gridPoint(event) {
+  var rect = document.getElementById("overlay").getBoundingClientRect();
+  return { x: event.clientX - rect.left, y: rect.height - (event.clientY - rect.top) };
+}
+
+function gridCellAt(data, point) {
+  var row = 0;
+  var column = 0;
+  componentArray(data.rowTracks).some(function(track) {
+    var bounds = track.bounds || [];
+    if (bounds.length === 4 && point.y >= bounds[1] && point.y <= bounds[1] + bounds[3]) {
+      row = Number(track.index);
+      return true;
+    }
+    return false;
+  });
+  componentArray(data.columnTracks).some(function(track) {
+    var bounds = track.bounds || [];
+    if (bounds.length === 4 && point.x >= bounds[0] && point.x <= bounds[0] + bounds[2]) {
+      column = Number(track.index);
+      return true;
+    }
+    return false;
+  });
+  return row > 0 && column > 0 ? { row: row, column: column } : null;
+}
+
+function gridSpanBounds(data, candidate) {
+  var rows = componentArray(data.rowTracks);
+  var columns = componentArray(data.columnTracks);
+  var firstRow = rows[candidate.rowStart - 1];
+  var lastRow = rows[candidate.rowEnd - 1];
+  var firstColumn = columns[candidate.columnStart - 1];
+  var lastColumn = columns[candidate.columnEnd - 1];
+  if (!firstRow || !lastRow || !firstColumn || !lastColumn) return null;
+  var left = firstColumn.bounds[0];
+  var right = lastColumn.bounds[0] + lastColumn.bounds[2];
+  var bottom = lastRow.bounds[1];
+  var top = firstRow.bounds[1] + firstRow.bounds[3];
+  return [left, bottom, right - left, top - bottom];
+}
+
+function sameGridSpan(first, second) {
+  return first.rowStart === second.rowStart && first.rowEnd === second.rowEnd &&
+    first.columnStart === second.columnStart && first.columnEnd === second.columnEnd;
+}
+
+function candidateGridSpan(gesture, point) {
+  var target = gridCellAt(gesture.data, point);
+  if (!target) return null;
+  var candidate = {
+    rowStart: Number(gesture.child.rowStart), rowEnd: Number(gesture.child.rowEnd),
+    columnStart: Number(gesture.child.columnStart), columnEnd: Number(gesture.child.columnEnd)
+  };
+  if (gesture.kind === "move") {
+    candidate.rowStart += target.row - gesture.startCell.row;
+    candidate.rowEnd += target.row - gesture.startCell.row;
+    candidate.columnStart += target.column - gesture.startCell.column;
+    candidate.columnEnd += target.column - gesture.startCell.column;
+  } else {
+    if (gesture.kind.indexOf("top") >= 0) candidate.rowStart = target.row;
+    if (gesture.kind.indexOf("bottom") >= 0) candidate.rowEnd = target.row;
+    if (gesture.kind.indexOf("left") >= 0) candidate.columnStart = target.column;
+    if (gesture.kind.indexOf("right") >= 0) candidate.columnEnd = target.column;
+  }
+  if (candidate.rowStart < 1 || candidate.columnStart < 1 ||
+      candidate.rowEnd < candidate.rowStart || candidate.columnEnd < candidate.columnStart ||
+      candidate.rowEnd > componentArray(gesture.data.rowTracks).length ||
+      candidate.columnEnd > componentArray(gesture.data.columnTracks).length) return null;
+  return candidate;
+}
+
+function updateGridChildDraft() {
+  if (!gridGesture || !gridGesture.candidate) return;
+  var bounds = gridSpanBounds(gridGesture.data, gridGesture.candidate);
+  if (!bounds) return;
+  var draft = gridGesture.draft;
+  draft.style.left = bounds[0] + "px";
+  draft.style.top = (currentData.height - bounds[1] - bounds[3]) + "px";
+  draft.style.width = bounds[2] + "px";
+  draft.style.height = bounds[3] + "px";
+}
+
+function finishGridChildGesture(commit) {
+  if (!gridGesture) return;
+  var gesture = gridGesture;
+  gridGesture = null;
+  document.removeEventListener("pointermove", moveGridChildGesture);
+  document.removeEventListener("pointerup", finishGridChildPointer);
+  document.removeEventListener("pointercancel", cancelGridChildGesture);
+  document.removeEventListener("keydown", cancelGridChildKey);
+  if (gesture.draft.parentNode) gesture.draft.remove();
+  if (!commit || !gesture.candidate || sameGridSpan(gesture.child, gesture.candidate)) return;
+  component.sendEventToMATLAB("GridAction", {
+    action: gesture.kind === "move" ? "move-child" : "resize-span",
+    revision: gesture.data.revision, activeGridId: gesture.data.activeGridId,
+    childId: gesture.child.id, rowStart: gesture.candidate.rowStart,
+    rowEnd: gesture.candidate.rowEnd, columnStart: gesture.candidate.columnStart,
+    columnEnd: gesture.candidate.columnEnd
+  });
+}
+
+function moveGridChildGesture(event) {
+  if (!gridGesture) return;
+  var candidate = candidateGridSpan(gridGesture, gridPoint(event));
+  if (!candidate) return;
+  gridGesture.candidate = candidate;
+  updateGridChildDraft();
+}
+
+function finishGridChildPointer(event) {
+  if (gridGesture) {
+    moveGridChildGesture(event);
+    finishGridChildGesture(true);
+  }
+}
+
+function cancelGridChildGesture() { finishGridChildGesture(false); }
+
+function cancelGridChildKey(event) {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    finishGridChildGesture(false);
+  }
+}
+
+function beginGridChildGesture(event, data, child, kind) {
+  event.preventDefault();
+  event.stopPropagation();
+  if (gridGesture || !data.geometryAvailable || !child.editable || !data.editable) return;
+  var startCell = gridCellAt(data, gridPoint(event));
+  if (!startCell) return;
+  var draft = document.createElement("div");
+  draft.className = "grid-child-draft";
+  document.getElementById("grid-controls").appendChild(draft);
+  gridGesture = { data: data, child: child, kind: kind, startCell: startCell, draft: draft,
+    candidate: { rowStart: Number(child.rowStart), rowEnd: Number(child.rowEnd),
+      columnStart: Number(child.columnStart), columnEnd: Number(child.columnEnd) } };
+  updateGridChildDraft();
+  document.addEventListener("pointermove", moveGridChildGesture);
+  document.addEventListener("pointerup", finishGridChildPointer);
+  document.addEventListener("pointercancel", cancelGridChildGesture);
+  document.addEventListener("keydown", cancelGridChildKey);
 }
 
 function closeTrackPopover() {
