@@ -464,3 +464,142 @@ current test harness does not directly drive the HTML DOM.
 - Silently deleting, clipping, moving, or overlapping children.
 - Editing the Grid Layouts used internally by the `yamada` application shell.
 - Full compatibility with releases other than MATLAB R2024a.
+
+## Correction Plan — 2026-09-11
+
+The initial Grid Layout implementation was reviewed against an R2024a Safe
+Preview of `SimpleCalculatorApp`. The feature remains incomplete. This section
+supersedes the earlier references to track reordering and establishes the
+acceptance conditions required before this plan and its ROADMAP item may be
+removed.
+
+### Confirmed defects and boundaries
+
+- `fit` tracks currently cause MATLAB-side boundary reconstruction to stop, but
+  the HTML layer still draws headers at invented fixed offsets. Those headers
+  do not identify the realized rows and columns and must not be shown as
+  positional controls.
+- The track popover has a fixed narrow width and one unwrapped action row. Its
+  buttons can extend outside both the popover and the Safe Preview.
+- The grid frame and child overlays use translucent fills that obscure the
+  preview. The ordinary view needs only lightweight row and column separators.
+- Grid Layout children are excluded from the ordinary absolute-position
+  silhouette layer. Their HTML boxes accept pointer input only after they are
+  selected, so an unselected child cannot be selected on the canvas.
+- Track reordering (`Move Earlier`, `Move Later`, and `move-track`) is outside
+  the intended feature. Remove the UI, event contract, controller route,
+  planner support, tests, and documentation for it. Insertion and deletion
+  remain supported.
+
+### 1. Derive and publish only realized track geometry
+
+#### MATLAB and model work
+
+- Extend `GridLayoutOverlayDataBuilder` with an R2024a-tested reconstruction
+  path that combines the grid interior, Padding, RowSpacing or ColumnSpacing,
+  normalized track literals, immediate-child realized bounds, and explicit
+  `Layout.Row` and `Layout.Column` spans.
+- First add a focused geometry spike and tests for fixed, `fit`, flexible,
+  mixed, padded, spaced, single-cell, and spanning layouts. Confirm which
+  equations public R2024a geometry makes available before making the solver a
+  supported path.
+- Solve and validate row and column boundaries against the realized child
+  rectangles and total interior extent. Publish bounds only when the result is
+  finite, ordered, and unambiguous.
+- Keep children in the payload even when a track boundary is unavailable;
+  child selection must not depend on track editing geometry.
+- When an empty or otherwise ambiguous `fit` track cannot be resolved, publish
+  a locked reason and disable geometry-dependent movement. Do not publish a
+  fabricated header position.
+- Centralize the MATLAB bottom-origin to HTML top-origin conversion in the
+  payload contract, including header anchors and separator coordinates, so the
+  HTML layer has no fallback positioning policy.
+
+#### HTML work
+
+- Render a row or column header only from a MATLAB-provided realized anchor.
+  Column headers align with their actual columns and row headers align with
+  their actual rows, including R1 at the top of the grid.
+- Remove the current 72-pixel column and 22-pixel row fallback offsets.
+- Use the supplied separators and track bounds for cell hit testing and draft
+  spans; never estimate a track from header position.
+
+### 2. Simplify the grid overlay and constrain the popover
+
+#### HTML work
+
+- Replace blue translucent grid and child fills with 1-pixel dotted or dashed
+  internal row and column separators. Retain at most a restrained outer
+  selection outline.
+- Display a selected child through its outline and span handles only. Keep a
+  transient drag draft visually distinct without tinting the ordinary canvas.
+- Remove `Move Earlier` and `Move Later` from the popover.
+- Make the popover use `box-sizing: border-box`, a bounded responsive width,
+  and grid or wrapping action rows: structural actions separately from
+  `Cancel` and `Apply`.
+- Position it from the header's bounding rectangle, clamped to the Safe
+  Preview. Choose above/below and left/right according to available room so no
+  element can cross into the palette or outside the preview host.
+
+#### MATLAB UI work
+
+- Keep the popover in `EditorInteractionOverlay.html` hosted by the existing
+  `uihtml` overlay. Do not add a native MATLAB side panel or change the
+  component-focused Property Inspector.
+- Continue to leave `ColumnSpacing`, `RowSpacing`, and the ordinary four-value
+  `Padding` array in the native Inspector.
+
+### 3. Restore direct child selection in a Grid Layout
+
+#### HTML work
+
+- Give every realized immediate child a transparent, explicit selection hit
+  target. The first pointer interaction on an unselected child sends a
+  selection action rather than attempting a move.
+- Enable move and span gestures only for the already selected child and only
+  when realized track geometry is available. Preserve Escape and cancellation
+  behavior for a draft gesture.
+- Keep noninteractive frames and separators out of the hit-test path.
+
+#### MATLAB controller work
+
+- Add a versioned `select-child` GridAction. Validate its revision, active-grid
+  ID, child ID, direct-parent relationship, visibility, and Safe Preview
+  handle before changing selection.
+- Update `SelectedComponentId`, hierarchy selection, Inspector, and overlay
+  after a valid selection. Do not mutate the document, create an Undo entry, or
+  set Dirty for selection alone.
+- Selecting a nested Grid Layout remains the explicit transition into that
+  layout: the subsequent overlay refresh makes that nested grid active and
+  shows only its immediate tracks and children.
+
+### 4. Remove track reordering end to end
+
+- Delete the two popover buttons and all HTML emission of `move-track`.
+- Remove `move-track` from `yamada.gridActionEvent` validation and dispatch.
+- Remove `GridLayoutStructuralEditPlanner.move` and its focused tests after
+  confirming it has no remaining callers.
+- Delete or amend every user-facing planning, ROADMAP, specification, and test
+  reference that claims tracks can be reordered. Insert and delete semantics
+  remain subject to the existing atomic validation rules.
+
+### 5. Required verification and completion gate
+
+- Add deterministic builder tests that verify R1 through Rn and C1 through Cn
+  align with realized R2024a bounds for fixed, `fit`, flexible, mixed, padded,
+  spaced, spanning, and nested layouts.
+- Add controller tests for valid child selection, stale/mismatched selection
+  rejection, hierarchy and Inspector synchronization, and unchanged history
+  and Dirty state after selection.
+- Add regression coverage showing `move-track` is rejected and has no exposed
+  HTML route.
+- Perform an R2024a manual visual check with `SimpleCalculatorApp` at the
+  supplied window size and a narrower Preview. Confirm that headers align,
+  the popover remains inside Safe Preview, dotted separators do not obscure
+  content, and each Grid Layout child can be selected by one click.
+- Run focused tests, Code Analyzer on all changed MATLAB files, `git diff
+  --check`, encoding/line-ending checks, and the full `runtests('tests/unit')`
+  suite with zero Failed and zero Incomplete results.
+- Keep this implementation plan and the ROADMAP item until all of these
+  acceptance conditions have passed. Do not repeat the premature removal that
+  was reverted.
