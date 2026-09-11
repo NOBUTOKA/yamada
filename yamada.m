@@ -811,6 +811,8 @@ classdef yamada < matlab.apps.AppBase
             components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
                 "height", {}, "shape", {}, "selected", {}, "tabGroup", {}, ...
                 "tabTitles", {}, "tabSelected", {});
+            gridSelectionTargets = struct("id", {}, "gridId", {}, "x", {}, ...
+                "y", {}, "width", {}, "height", {});
             keys = app.PreviewHandles.keys();
             for index = 1:numel(keys)
                 componentId = string(keys{index});
@@ -822,7 +824,17 @@ classdef yamada < matlab.apps.AppBase
                 end
                 parent = app.Document.getComponent(component.ParentId);
                 position = component.getProperty("Position");
-                if isempty(parent) || parent.Factory == "uigridlayout" || ...
+                if ~isempty(parent) && parent.Factory == "uigridlayout"
+                    rectangle = app.previewDisplayPosition(app.PreviewHandles(keys{index}));
+                    if all(isfinite(rectangle)) && all(rectangle(3:4) > 0)
+                        gridSelectionTargets(end + 1) = struct( ...
+                            "id", char(component.Id), "gridId", char(parent.Id), ...
+                            "x", rectangle(1), "y", rectangle(2), ...
+                            "width", rectangle(3), "height", rectangle(4)); %#ok<AGROW>
+                    end
+                    continue
+                end
+                if isempty(parent) || ...
                         isempty(position) || position.ValueKind ~= "literal" || ...
                         ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
                     continue
@@ -871,7 +883,7 @@ classdef yamada < matlab.apps.AppBase
             innerPosition = double(app.PreviewPanel.InnerPosition);
             app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
                 "height", innerPosition(4), "components", components, ...
-                "gridEditor", gridEditor);
+                "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor);
         end
 
         function interactionOverlayEvent(app, event)
@@ -923,11 +935,11 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             gridId = string(data.activeGridId);
-            if gridId ~= app.ActiveGridId
-                return
-            end
             if action == "select-child"
                 app.gridChildSelectionActionEvent(gridId, data);
+                return
+            end
+            if gridId ~= app.ActiveGridId
                 return
             end
             if any(action == ["move-child", "resize-span"])
@@ -954,7 +966,7 @@ classdef yamada < matlab.apps.AppBase
                     return
                 end
                 entry = grid.getProperty(path);
-                if ~isempty(entry) && (entry.ValueKind ~= "literal" || ~entry.IsEditable)
+                if ~isempty(entry) && entry.ValueKind ~= "literal"
                     error("macd:yamada:ReadOnlyGridTrack", ...
                         "%s is source-backed and cannot be edited safely.", path);
                 end

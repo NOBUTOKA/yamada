@@ -293,6 +293,50 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function gridOverlaySelectsChildBeforeAnyGridIsActive(testCase)
+            % gridOverlaySelectsChildBeforeAnyGridIsActive Expose grid-child selection after returning to the root.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            gridRow = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            labelRow = find(string(palette.Data(:, 1)) == "Label", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", labelRow)));
+            drawnow;
+
+            tree = findall(figure, "Type", "uitree");
+            rootNode = tree.Children(1);
+            tree.SelectedNodes = rootNode;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", rootNode));
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            payload = overlays.Data;
+            target = payload.gridSelectionTargets(1);
+            app.Document.markSaved();
+            historyIndex = app.Document.HistoryIndex;
+
+            testCase.verifyEqual(string(payload.gridEditor.activeGridId), "");
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "select-child", ...
+                "revision", payload.gridEditor.revision, "activeGridId", ...
+                string(target.gridId), "childId", string(target.id))));
+            drawnow;
+
+            testCase.verifyEqual(app.SelectedComponentId, string(target.id));
+            testCase.verifyEqual(app.ActiveGridId, string(target.gridId));
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
+            testCase.verifyFalse(app.Document.IsDirty);
+            clear cleanup
+        end
+
         function gridOverlayRejectsStaleChildSelection(testCase)
             % gridOverlayRejectsStaleChildSelection Ignore an obsolete child-selection event.
 
@@ -348,6 +392,12 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyFalse(contains(html, "22 * Number(track.index)"));
             testCase.verifyTrue(contains(html, "grid-separator"));
             testCase.verifyTrue(contains(html, "placeTrackPopover"));
+            testCase.verifyTrue(contains(html, "gridSelectionTargets"));
+            testCase.verifyTrue(contains(html, "track-settings"));
+            testCase.verifyTrue(contains(html, "Insert Row Above"));
+            testCase.verifyTrue(contains(html, "Insert Column Left"));
+            testCase.verifyFalse(contains(html, "Insert Before"));
+            testCase.verifyTrue(contains(html, "grid-drop-band"));
         end
 
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)

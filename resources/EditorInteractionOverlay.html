@@ -16,25 +16,27 @@ the Free Software Foundation, either version 3 of the License, or
 <style>
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; }
 body { position: relative; }
-svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
-#tab-controls { position: absolute; inset: 0; pointer-events: none; }
-#grid-controls { position: absolute; inset: 0; pointer-events: none; }
+svg { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+#tab-controls { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+#grid-controls { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .tab-selector { position: absolute; box-sizing: border-box; height: 22px; pointer-events: auto; font: 11px Arial; }
 .grid-frame { position: absolute; box-sizing: border-box; border: 1px solid rgba(34, 100, 199, 0.55); pointer-events: none; }
 .grid-separator { position: absolute; box-sizing: border-box; z-index: 1; border-color: rgba(34, 100, 199, 0.60); border-style: dotted; pointer-events: none; }
 .grid-separator.horizontal { border-top-width: 1px; }
 .grid-separator.vertical { border-left-width: 1px; }
-.track-header { position: absolute; box-sizing: border-box; min-width: 0; height: 20px; overflow: hidden; padding: 3px 5px; border: 1px solid #2864c7; border-radius: 3px; background: #f8fbff; color: #124da8; pointer-events: auto; font: 10px Arial; line-height: 12px; white-space: nowrap; text-overflow: ellipsis; }
-.track-header.locked { border-color: #8b8b8b; background: #f4f4f4; color: #666666; }
+.track-settings { position: absolute; z-index: 4; box-sizing: border-box; width: 18px; height: 18px; padding: 0; border: 1px solid rgba(40, 100, 199, 0.70); border-radius: 3px; background: rgba(248, 251, 255, 0.88); color: #124da8; pointer-events: auto; font: 12px Arial; line-height: 16px; }
+.track-settings.locked { border-color: #8b8b8b; background: rgba(244, 244, 244, 0.88); color: #666666; }
 .track-popover { position: absolute; z-index: 5; box-sizing: border-box; width: min(244px, calc(100% - 8px)); max-width: 244px; padding: 8px; border: 1px solid #2864c7; border-radius: 4px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); pointer-events: auto; font: 11px Arial; }
 .track-popover label { display: block; margin: 4px 0; }
 .track-popover select, .track-popover input { width: 100%; box-sizing: border-box; margin-top: 2px; }
-.track-popover-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 8px; }
+.track-popover-actions { display: grid; grid-template-columns: 1fr; gap: 5px; margin-top: 8px; }
 .track-popover-footer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; margin-top: 5px; }
-.track-popover-actions button, .track-popover-footer button { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track-popover-actions button, .track-popover-footer button { min-width: 0; white-space: normal; }
 .track-popover-error { min-height: 12px; margin-top: 4px; color: #b00020; font-size: 10px; }
 .grid-status { position: absolute; max-width: 230px; padding: 4px 6px; border-radius: 3px; background: rgba(255, 248, 225, 0.95); color: #6c5500; font: 10px Arial; }
 .grid-child { position: absolute; z-index: 2; box-sizing: border-box; border: 1px solid transparent; background: transparent; pointer-events: auto; }
+.grid-selection-target { position: absolute; z-index: 1; box-sizing: border-box; background: transparent; pointer-events: auto; }
+.grid-drop-band { position: absolute; z-index: 1; box-sizing: border-box; border: 1px dashed rgba(18, 77, 168, 0.7); background: rgba(18, 77, 168, 0.06); pointer-events: none; }
 .grid-child.selected { border: 2px solid rgba(18, 77, 168, 0.85); }
 .grid-child.selected.editable { pointer-events: auto; cursor: move; }
 .grid-span-handle { position: absolute; z-index: 3; width: 8px; height: 8px; box-sizing: border-box; border: 1px solid #ffffff; border-radius: 2px; background: #2864c7; pointer-events: auto; }
@@ -56,7 +58,7 @@ svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 <script>
 var component;
 var svg;
-var currentData = { width: 1, height: 1, components: [] };
+var currentData = { width: 1, height: 1, components: [], gridSelectionTargets: [] };
 var gridGesture = null;
 
 function setup(htmlComponent) {
@@ -124,9 +126,34 @@ function renderTabControls(components) {
   });
 }
 
+function renderGridSelectionTargets(targets, gridData) {
+  var controls = document.getElementById("grid-controls");
+  targets.forEach(function(target) {
+    if (!target || !target.id || !target.gridId ||
+        (gridData && String(gridData.activeGridId || "") === String(target.gridId))) return;
+    if (!Number.isFinite(Number(target.x)) || !Number.isFinite(Number(target.y)) ||
+        Number(target.width) <= 0 || Number(target.height) <= 0) return;
+    var hitTarget = document.createElement("div");
+    hitTarget.className = "grid-selection-target";
+    hitTarget.style.left = Number(target.x) + "px";
+    hitTarget.style.top = (currentData.height - Number(target.y) - Number(target.height)) + "px";
+    hitTarget.style.width = Number(target.width) + "px";
+    hitTarget.style.height = Number(target.height) + "px";
+    hitTarget.title = "Select grid child";
+    hitTarget.addEventListener("pointerdown", function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      component.sendEventToMATLAB("GridAction", {
+        action: "select-child", revision: Number(gridData ? gridData.revision : currentData.revision),
+        activeGridId: target.gridId, childId: target.id
+      });
+    });
+    controls.appendChild(hitTarget);
+  });
+}
+
 function renderGridEditor(data) {
   var controls = document.getElementById("grid-controls");
-  controls.innerHTML = "";
   if (!data || !data.activeGridId || !data.outerBounds || data.outerBounds.length !== 4) return;
   var outer = data.outerBounds;
   var inner = data.innerBounds;
@@ -156,18 +183,36 @@ function renderGridEditor(data) {
   componentArray(data.columnBoundaries).slice(0, -1).forEach(function(bounds) {
     addSeparator("vertical", bounds[0] + bounds[2], currentData.height - inner[1] - inner[3], 1, inner[3]);
   });
+  function collapsedBand(axis, track, tracks) {
+    var extent = axis === "row" ? Number(track.bounds[3]) : Number(track.bounds[2]);
+    var anchor = axis === "row" ? Number(track.bounds[1]) : Number(track.bounds[0]);
+    if (extent > 0.5) return null;
+    var matching = componentArray(tracks).filter(function(candidate) {
+      var candidateExtent = axis === "row" ? Number(candidate.bounds[3]) : Number(candidate.bounds[2]);
+      var candidateAnchor = axis === "row" ? Number(candidate.bounds[1]) : Number(candidate.bounds[0]);
+      return candidateExtent <= 0.5 && Math.abs(candidateAnchor - anchor) <= 0.5;
+    });
+    var order = matching.findIndex(function(candidate) { return Number(candidate.index) === Number(track.index); });
+    var size = 8;
+    var center = anchor + (order - (matching.length - 1) / 2) * size;
+    return { start: center - size / 2, end: center + size / 2 };
+  }
   function addHeader(axis, track) {
     var hasBounds = !!track.bounds && track.bounds.length === 4 &&
-      Number(track.bounds[2]) > 0 && Number(track.bounds[3]) > 0;
+      Number.isFinite(Number(track.bounds[0])) && Number.isFinite(Number(track.bounds[1])) &&
+      Number(track.bounds[2]) >= 0 && Number(track.bounds[3]) >= 0;
     if (!hasBounds) return;
-    var header = document.createElement("div");
+    var header = document.createElement("button");
+    header.type = "button";
     var editable = !!track.editable && !!data.editable;
-    header.className = "track-header" + (editable ? "" : " locked");
+    header.className = "track-settings" + (editable ? "" : " locked");
     header.dataset.gridId = data.activeGridId;
     header.dataset.axis = axis;
     header.dataset.index = String(track.index);
-    header.title = editable ? "Track editor" : String(data.readOnlyReason || "Track editing is unavailable.");
-    header.textContent = (axis === "row" ? "R" : "C") + String(track.index) + "  " + String(track.label);
+    var trackName = (axis === "row" ? "row " : "column ") + String(track.index);
+    header.title = editable ? "Edit " + trackName : String(data.readOnlyReason || "Track editing is unavailable.");
+    header.setAttribute("aria-label", editable ? "Edit " + trackName : "Track editing is unavailable.");
+    header.textContent = "\u2699";
     if (editable) {
       header.addEventListener("pointerdown", function(event) { event.stopPropagation(); });
       header.addEventListener("click", function(event) {
@@ -176,14 +221,20 @@ function renderGridEditor(data) {
       });
     }
     if (axis === "row") {
-      header.style.left = Math.max(0, inner[0] - 56) + "px";
-      header.style.top = Math.max(0, currentData.height - track.bounds[1] - track.bounds[3] +
-        Math.max(0, (track.bounds[3] - 20) / 2)) + "px";
-      header.style.width = "52px";
+      var rowBand = collapsedBand(axis, track, data.rowTracks);
+      var rowCenter = rowBand ? (rowBand.start + rowBand.end) / 2 :
+        Number(track.bounds[1]) + Number(track.bounds[3]) / 2;
+      header.style.left = Math.max(inner[0] + 2, outer[0] + 2) + "px";
+      header.style.top = Math.max(outer[1] + 2, Math.min(currentData.height - 20,
+        currentData.height - rowCenter - 9)) + "px";
     } else {
-      header.style.left = track.bounds[0] + "px";
-      header.style.top = Math.max(0, currentData.height - inner[1] - inner[3] - 23) + "px";
-      header.style.width = Math.max(1, track.bounds[2]) + "px";
+      var columnBand = collapsedBand(axis, track, data.columnTracks);
+      var columnCenter = columnBand ? (columnBand.start + columnBand.end) / 2 :
+        Number(track.bounds[0]) + Number(track.bounds[2]) / 2;
+      header.style.left = Math.max(outer[0] + 2, Math.min(currentData.width - 20,
+        columnCenter - 9)) + "px";
+      header.style.top = Math.max(outer[1] + 2,
+        currentData.height - inner[1] - inner[3] + 2) + "px";
     }
     controls.appendChild(header);
   }
@@ -236,26 +287,71 @@ function gridPoint(event) {
   return { x: event.clientX - rect.left, y: rect.height - (event.clientY - rect.top) };
 }
 
+function collapsedTrackBand(axis, track, tracks) {
+  var bounds = track.bounds || [];
+  var extent = axis === "row" ? Number(bounds[3]) : Number(bounds[2]);
+  var anchor = axis === "row" ? Number(bounds[1]) : Number(bounds[0]);
+  if (bounds.length !== 4 || extent > 0.5 || !Number.isFinite(anchor)) return null;
+  var matching = componentArray(tracks).filter(function(candidate) {
+    var candidateBounds = candidate.bounds || [];
+    var candidateExtent = axis === "row" ? Number(candidateBounds[3]) : Number(candidateBounds[2]);
+    var candidateAnchor = axis === "row" ? Number(candidateBounds[1]) : Number(candidateBounds[0]);
+    return candidateBounds.length === 4 && candidateExtent <= 0.5 &&
+      Math.abs(candidateAnchor - anchor) <= 0.5;
+  });
+  var order = matching.findIndex(function(candidate) { return Number(candidate.index) === Number(track.index); });
+  var size = 8;
+  var center = anchor + (order - (matching.length - 1) / 2) * size;
+  return { start: center - size / 2, end: center + size / 2 };
+}
+
+function axisTrackAt(tracks, value, axis) {
+  var collapsed = componentArray(tracks).find(function(track) {
+    var band = collapsedTrackBand(axis, track, tracks);
+    return band && value >= band.start && value <= band.end;
+  });
+  if (collapsed) return Number(collapsed.index);
+  var positive = componentArray(tracks).find(function(track) {
+    var bounds = track.bounds || [];
+    var start = axis === "row" ? Number(bounds[1]) : Number(bounds[0]);
+    var extent = axis === "row" ? Number(bounds[3]) : Number(bounds[2]);
+    return bounds.length === 4 && extent > 0.5 && value >= start && value <= start + extent;
+  });
+  return positive ? Number(positive.index) : 0;
+}
+
 function gridCellAt(data, point) {
-  var row = 0;
-  var column = 0;
-  componentArray(data.rowTracks).some(function(track) {
-    var bounds = track.bounds || [];
-    if (bounds.length === 4 && point.y >= bounds[1] && point.y <= bounds[1] + bounds[3]) {
-      row = Number(track.index);
-      return true;
-    }
-    return false;
-  });
-  componentArray(data.columnTracks).some(function(track) {
-    var bounds = track.bounds || [];
-    if (bounds.length === 4 && point.x >= bounds[0] && point.x <= bounds[0] + bounds[2]) {
-      column = Number(track.index);
-      return true;
-    }
-    return false;
-  });
+  var row = axisTrackAt(data.rowTracks, point.y, "row");
+  var column = axisTrackAt(data.columnTracks, point.x, "column");
   return row > 0 && column > 0 ? { row: row, column: column } : null;
+}
+
+function showCollapsedDropBands(data) {
+  var controls = document.getElementById("grid-controls");
+  componentArray(data.rowTracks).forEach(function(track) {
+    var band = collapsedTrackBand("row", track, data.rowTracks);
+    if (!band) return;
+    var element = document.createElement("div");
+    element.className = "grid-drop-band";
+    element.style.left = Number(data.innerBounds[0]) + "px";
+    element.style.top = (currentData.height - band.end) + "px";
+    element.style.width = Number(data.innerBounds[2]) + "px";
+    element.style.height = (band.end - band.start) + "px";
+    element.title = "Drop in row " + String(track.index);
+    controls.appendChild(element);
+  });
+  componentArray(data.columnTracks).forEach(function(track) {
+    var band = collapsedTrackBand("column", track, data.columnTracks);
+    if (!band) return;
+    var element = document.createElement("div");
+    element.className = "grid-drop-band";
+    element.style.left = band.start + "px";
+    element.style.top = (currentData.height - Number(data.innerBounds[1]) - Number(data.innerBounds[3])) + "px";
+    element.style.width = (band.end - band.start) + "px";
+    element.style.height = Number(data.innerBounds[3]) + "px";
+    element.title = "Drop in column " + String(track.index);
+    controls.appendChild(element);
+  });
 }
 
 function gridSpanBounds(data, candidate) {
@@ -308,10 +404,12 @@ function updateGridChildDraft() {
   var bounds = gridSpanBounds(gridGesture.data, gridGesture.candidate);
   if (!bounds) return;
   var draft = gridGesture.draft;
-  draft.style.left = bounds[0] + "px";
-  draft.style.top = (currentData.height - bounds[1] - bounds[3]) + "px";
-  draft.style.width = bounds[2] + "px";
-  draft.style.height = bounds[3] + "px";
+  var width = Math.max(2, bounds[2]);
+  var height = Math.max(2, bounds[3]);
+  draft.style.left = (bounds[0] - (width - bounds[2]) / 2) + "px";
+  draft.style.top = (currentData.height - bounds[1] - bounds[3] - (height - bounds[3]) / 2) + "px";
+  draft.style.width = width + "px";
+  draft.style.height = height + "px";
 }
 
 function finishGridChildGesture(commit) {
@@ -323,6 +421,7 @@ function finishGridChildGesture(commit) {
   document.removeEventListener("pointercancel", cancelGridChildGesture);
   document.removeEventListener("keydown", cancelGridChildKey);
   if (gesture.draft.parentNode) gesture.draft.remove();
+  document.querySelectorAll(".grid-drop-band").forEach(function(element) { element.remove(); });
   if (!commit || !gesture.candidate || sameGridSpan(gesture.child, gesture.candidate)) return;
   component.sendEventToMATLAB("GridAction", {
     action: gesture.kind === "move" ? "move-child" : "resize-span",
@@ -369,6 +468,7 @@ function beginGridChildGesture(event, data, child, kind) {
   gridGesture = { data: data, child: child, kind: kind, startCell: startCell, draft: draft,
     candidate: { rowStart: Number(child.rowStart), rowEnd: Number(child.rowEnd),
       columnStart: Number(child.columnStart), columnEnd: Number(child.columnEnd) } };
+  showCollapsedDropBands(data);
   updateGridChildDraft();
   document.addEventListener("pointermove", moveGridChildGesture);
   document.addEventListener("pointerup", finishGridChildPointer);
@@ -423,13 +523,13 @@ function openTrackPopover(header, data, axis, track) {
   actions.className = "track-popover-actions";
   var insertBefore = document.createElement("button");
   insertBefore.type = "button";
-  insertBefore.textContent = "Insert Before";
+  insertBefore.textContent = axis === "row" ? "Insert Row Above" : "Insert Column Left";
   var insertAfter = document.createElement("button");
   insertAfter.type = "button";
-  insertAfter.textContent = "Insert After";
+  insertAfter.textContent = axis === "row" ? "Insert Row Below" : "Insert Column Right";
   var remove = document.createElement("button");
   remove.type = "button";
-  remove.textContent = "Delete";
+  remove.textContent = axis === "row" ? "Delete Row" : "Delete Column";
   var cancel = document.createElement("button");
   cancel.type = "button";
   cancel.textContent = "Cancel";
@@ -601,7 +701,9 @@ function render() {
   if (!svg) return;
   closeTrackPopover();
   svg.innerHTML = "";
+  document.getElementById("grid-controls").innerHTML = "";
   renderTabControls(componentArray(currentData.components));
+  renderGridSelectionTargets(componentArray(currentData.gridSelectionTargets), currentData.gridEditor);
   renderGridEditor(currentData.gridEditor);
   svg.setAttribute("viewBox", "0 0 " + (currentData.width || 1) + " " + (currentData.height || 1));
   var components = componentArray(currentData.components);

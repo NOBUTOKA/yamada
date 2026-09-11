@@ -61,7 +61,8 @@ classdef GridLayoutOverlayDataBuilder
                 rowTracks, rowEditable);
             data.columnTracks = macd.ui.GridLayoutOverlayDataBuilder.decorateTracks( ...
                 columnTracks, columnEditable);
-            data.editable = grid.IsEditable && rowEditable && columnEditable;
+            % Track read-only state belongs to each header; child placement remains independent.
+            data.editable = grid.IsEditable;
 
             % Publish child rectangles even when track boundaries cannot be resolved.
             data.children = macd.ui.GridLayoutOverlayDataBuilder.children( ...
@@ -156,7 +157,7 @@ classdef GridLayoutOverlayDataBuilder
             reason = "";
             entry = grid.getProperty(path);
             if ~isempty(entry)
-                if entry.ValueKind ~= "literal" || ~entry.IsEditable
+                if entry.ValueKind ~= "literal"
                     editable = false;
                     reason = path + " is source-backed and cannot be edited safely.";
                     return
@@ -185,7 +186,7 @@ classdef GridLayoutOverlayDataBuilder
         end
 
         function [bounds, message] = trackBounds(tracks, innerBounds, spacing, rows, children)
-            % trackBounds Reconstruct track rectangles from public grid and child geometry.
+            % trackBounds Reconstruct track rectangles from public Safe Preview measurements.
             bounds = zeros(0, 4);
             message = "";
             if ~isfinite(spacing) || spacing < 0
@@ -236,18 +237,37 @@ classdef GridLayoutOverlayDataBuilder
                 values(end + 1, 1) = 0; %#ok<AGROW>
             end
 
-            % A flexible track consumes the remaining interior after fixed and fit tracks.
+            % Flexible tracks consume the remaining realized interior.
             if ~isempty(flexible)
                 equations(end + 1, :) = ones(1, count);
                 values(end + 1, 1) = available - spacing * max(count - 1, 0);
             end
 
-            % Explicit child spans provide realized public-geometry equations, including fit tracks.
+            % Combine same-track child rectangles before creating one fit observation.
+            [observed, extents, occupied, implicit] = ...
+                macd.ui.GridLayoutOverlayDataBuilder.measuredTrackExtents(children, count, rows);
+            for index = 1:count
+                if tracks(index).kind ~= "fit"
+                    continue
+                end
+                equation = zeros(1, count);
+                equation(index) = 1;
+                if observed(index)
+                    equations(end + 1, :) = equation; %#ok<AGROW>
+                    values(end + 1, 1) = extents(index); %#ok<AGROW>
+                elseif ~occupied(index) && ~implicit
+                    % An explicitly empty R2024a fit track has a collapsed extent.
+                    equations(end + 1, :) = equation; %#ok<AGROW>
+                    values(end + 1, 1) = 0; %#ok<AGROW>
+                end
+            end
+
+            % Spanning children constrain only their aggregate measured extent.
             for index = 1:numel(children)
                 child = children(index);
                 [start, finish, extent] = macd.ui.GridLayoutOverlayDataBuilder.axisSpan( ...
                     child, rows);
-                if start < 1 || finish < start || finish > count || ~isfinite(extent)
+                if start < 1 || finish <= start || finish > count || ~isfinite(extent)
                     continue
                 end
                 equation = zeros(1, count);
@@ -272,6 +292,42 @@ classdef GridLayoutOverlayDataBuilder
 
             bounds = macd.ui.GridLayoutOverlayDataBuilder.trackRectangles( ...
                 sizes, innerBounds, spacing, rows);
+        end
+
+        function [observed, extents, occupied, implicit] = measuredTrackExtents(children, trackCount, rows)
+            % measuredTrackExtents Group nonspanning realized child rectangles by track.
+            extents = zeros(1, trackCount);
+            occupied = false(1, trackCount);
+            implicit = false;
+            lower = inf(1, trackCount);
+            upper = -inf(1, trackCount);
+            for index = 1:numel(children)
+                child = children(index);
+                [start, finish, ~] = macd.ui.GridLayoutOverlayDataBuilder.axisSpan(child, rows);
+                if start < 1 || finish < start || finish > trackCount
+                    implicit = true;
+                    continue
+                end
+                occupied(start:finish) = true;
+                if start ~= finish
+                    continue
+                end
+                if rows
+                    childLower = child.bounds(2);
+                    childUpper = child.bounds(2) + child.bounds(4);
+                else
+                    childLower = child.bounds(1);
+                    childUpper = child.bounds(1) + child.bounds(3);
+                end
+                if ~isfinite(childLower) || ~isfinite(childUpper) || childUpper < childLower
+                    implicit = true;
+                    continue
+                end
+                lower(start) = min(lower(start), childLower);
+                upper(start) = max(upper(start), childUpper);
+            end
+            observed = isfinite(lower) & isfinite(upper);
+            extents(observed) = upper(observed) - lower(observed);
         end
 
         function [sizes, message] = nonFitTrackSizes(tracks, available, spacing)

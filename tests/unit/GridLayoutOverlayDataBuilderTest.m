@@ -80,6 +80,75 @@ classdef GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
                 "AbsTol", 1);
             clear cleanup
         end
+
+        function reconstructsParsedControlGalleryFitTracks(testCase)
+            % reconstructsParsedControlGalleryFitTracks Aggregate mixed-control fit rows from Safe Preview bounds.
+
+            testPath = mfilename("fullpath");
+            projectRoot = fileparts(fileparts(fileparts(testPath)));
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
+                "tests", "fixtures", "ControlGalleryApp.m"), registry);
+            grid = document.getComponentByName("FormGrid");
+            selected = document.getComponentByName("DueDatePicker");
+            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 760 560]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+            testCase.verifyEmpty(diagnostics);
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            data = builder.build(document, handles, panel, grid.Id, selected.Id, 10);
+
+            testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
+            testCase.verifyTrue(data.editable, data.readOnlyReason);
+            testCase.verifyEqual(numel(data.rowTracks), 8);
+            testCase.verifyEqual(string({data.rowTracks.kind}), repmat("fit", 1, 8));
+            for row = [6 7]
+                rowChildren = data.children([data.children.rowStart] == row & ...
+                    [data.children.rowEnd] == row);
+                lower = min(arrayfun(@(child) child.bounds(2), rowChildren));
+                upper = max(arrayfun(@(child) child.bounds(2) + child.bounds(4), rowChildren));
+                testCase.verifyEqual(data.rowTracks(row).bounds(4), upper - lower, "AbsTol", 1);
+            end
+            clear cleanup
+        end
+
+        function publishesCollapsedEmptyFitTrack(testCase)
+            % publishesCollapsedEmptyFitTrack Keep an explicitly empty fit row addressable at zero height.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CollapsedFitGridApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            document.setProperty(grid.Id, "RowHeight", {"fit", "1x"});
+            document.setProperty(grid.Id, "ColumnWidth", {"1x"});
+            child = document.insertComponent(registry, "uilabel", grid.Id);
+            document.setProperty(child.Id, "Layout.Row", 2);
+            document.setProperty(child.Id, "Layout.Column", 1);
+
+            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 760 560]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+            testCase.verifyEmpty(diagnostics);
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            data = builder.build(document, handles, panel, grid.Id, child.Id, 11);
+
+            testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
+            testCase.verifyEqual(data.rowTracks(1).bounds(4), 0, "AbsTol", 1);
+            testCase.verifyEqual(data.rowTracks(1).bounds(2), ...
+                data.innerBounds(2) + data.innerBounds(4), "AbsTol", 1);
+            changes = macd.model.GridChildPlacementPlanner.move( ...
+                document, grid.Id, child.Id, 1, 1, 2, 1);
+            document.applyGridLayoutEdit(grid.Id, changes);
+            testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
+            clear cleanup
+        end
     end
 
     methods (Access = private)

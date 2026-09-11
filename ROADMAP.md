@@ -113,11 +113,12 @@ for a versioned public release and the release-blocking workflows above pass.
 
 ## Build a Grid Layout Visual Editor
 
-This item remains active and incomplete. The first implementation and correction
-pass are present, but open-file selection, compact track controls, zero-size
-`fit` tracks, and mixed-control `fit` geometry still require correction. Keep
-this roadmap item and its plan until the user explicitly approves completion;
-passing tests alone must not remove or complete it.
+This item remains active and incomplete. The first implementation and the
+follow-up corrections for open-file selection, compact track controls,
+zero-size `fit` tracks, and mixed-control `fit` geometry are present. Expanded
+regression coverage, final manual review, and explicit user approval remain;
+keep this roadmap item and its plan until the user explicitly approves
+completion. Passing tests alone must not remove or complete it.
 
 See the [Grid Layout Visual Editor implementation plan](GRID_LAYOUT_VISUAL_EDITOR_IMPLEMENTATION_PLAN.md)
 for completed work, confirmed causes, the MATLAB-versus-HTML responsibility

@@ -10,9 +10,10 @@ authorization to mark the feature complete or remove either document.
 
 ## Implementation Status
 
-The first implementation and the first correction pass are present in the
-current source. The feature remains open because the follow-up defects recorded
-below are not resolved and final completion requires explicit user approval.
+The initial implementation and the follow-up corrections below are present in
+the current source. The feature remains open for expanded regression coverage,
+final manual review, and the user's explicit approval; this status is not a
+request to remove this plan or its ROADMAP item.
 
 - [x] Add typed `RowHeight` and `ColumnWidth` editing for fixed, `fit`, and
   weighted tracks through atomic model changes and Undo/Redo.
@@ -25,18 +26,20 @@ below are not resolved and final completion requires explicit user approval.
   track reordering from the UI, event contract, planner, tests, and docs.
 - [x] Align track controls for the covered `SimpleCalculatorApp` geometry and
   clamp its popover to the Safe Preview in the first correction pass (`03d929f`).
-- [ ] Allow Grid Layout descendants to be selected immediately after opening an
+- [x] Allow Grid Layout descendants to be selected immediately after opening an
   existing file, without first selecting the grid in the hierarchy.
-- [ ] Replace labeled row/column headers with compact in-grid settings buttons
+- [x] Replace labeled row/column headers with compact in-grid settings buttons
   that remain reachable for zero-size tracks.
-- [ ] Make insertion controls state the axis and insertion side without
+- [x] Make insertion controls state the axis and insertion side without
   truncation.
-- [ ] Support empty `fit` tracks whose realized size is zero without disabling
+- [x] Support empty `fit` tracks whose realized size is zero without disabling
   the rest of the grid editor, including using a collapsed track as a move
   destination.
-- [ ] Resolve mixed-control `fit` geometry in `ControlGalleryApp`.
-- [ ] Complete focused and full verification, manual visual review, and obtain
-  the user's explicit approval before marking this roadmap item complete.
+- [x] Resolve mixed-control `fit` geometry in `ControlGalleryApp`.
+- [x] Complete focused and full automated verification, Code Analyzer, and a
+  rendered MATLAB visual inspection of the compact settings controls.
+- [ ] Complete the remaining narrow-preview and nested-grid manual review, then
+  obtain the user's explicit approval before marking this roadmap item complete.
 
 ## Goal
 
@@ -164,8 +167,8 @@ editing stays on the canvas.
 
 `EditorInteractionOverlay.html` owns only disposable canvas interaction state:
 
-- render the active grid frame, inner bounds, row/column boundaries, headers,
-  track labels, occupancy, and selected-child span;
+- render the active grid frame, inner bounds, row/column boundaries, compact
+  settings buttons, occupancy, and selected-child span;
 - open, position, validate basic field completeness for, and close the anchored
   track popover;
 - capture pointer and keyboard gestures for headers, component cell moves, and
@@ -229,7 +232,6 @@ Keep the existing `Pointer` event for absolute positioning. Add a separate
 - `set-track`;
 - `insert-track`;
 - `delete-track`;
-- `move-track`;
 - `move-child`; and
 - `resize-span`.
 
@@ -498,26 +500,28 @@ current test harness does not directly drive the HTML DOM.
 - Editing the Grid Layouts used internally by the `yamada` application shell.
 - Full compatibility with releases other than MATLAB R2024a.
 
-## Correction Plan — 2026-09-11
+## Correction Plan — 2026-09-11 (implemented)
 
 The initial Grid Layout implementation was reviewed against an R2024a Safe
-Preview of `SimpleCalculatorApp`. The feature remains incomplete. This section
-supersedes the earlier references to track reordering and establishes the
-acceptance conditions for the first correction pass. Even after those conditions
-pass, this plan and its ROADMAP item remain until the user explicitly approves
-completion and removal.
+Preview of `SimpleCalculatorApp`. The listed correction work is implemented;
+the remaining feature-level gate is expanded verification, manual review, and
+explicit user approval. This plan and its ROADMAP item remain until that
+approval is given.
+
+The following subsections retain the delivered design and cause record; they
+are not pending implementation instructions.
 
 ### Confirmed defects and boundaries
 
-- `fit` tracks currently cause MATLAB-side boundary reconstruction to stop, but
+- `fit` tracks originally caused MATLAB-side boundary reconstruction to stop, but
   the HTML layer still draws headers at invented fixed offsets. Those headers
   do not identify the realized rows and columns and must not be shown as
   positional controls.
-- The track popover has a fixed narrow width and one unwrapped action row. Its
+- The track popover originally had a fixed narrow width and one unwrapped action row. Its
   buttons can extend outside both the popover and the Safe Preview.
-- The grid frame and child overlays use translucent fills that obscure the
+- The grid frame and child overlays originally used translucent fills that obscure the
   preview. The ordinary view needs only lightweight row and column separators.
-- Grid Layout children are excluded from the ordinary absolute-position
+- Grid Layout children were excluded from the ordinary absolute-position
   silhouette layer. Their HTML boxes accept pointer input only after they are
   selected, so an unselected child cannot be selected on the canvas.
 - Track reordering (`Move Earlier`, `Move Later`, and `move-track`) is outside
@@ -525,7 +529,7 @@ completion and removal.
   planner support, tests, and documentation for it. Insertion and deletion
   remain supported.
 
-### 1. Derive and publish only realized track geometry
+### 1. Derive and publish only realized track geometry [implemented]
 
 #### MATLAB and model work
 
@@ -558,7 +562,7 @@ completion and removal.
 - Use the supplied separators and track bounds for cell hit testing and draft
   spans; never estimate a track from header position.
 
-### 2. Simplify the grid overlay and constrain the popover
+### 2. Simplify the grid overlay and constrain the popover [implemented]
 
 #### HTML work
 
@@ -583,7 +587,7 @@ completion and removal.
 - Continue to leave `ColumnSpacing`, `RowSpacing`, and the ordinary four-value
   `Padding` array in the native Inspector.
 
-### 3. Restore direct child selection in a Grid Layout
+### 3. Restore direct child selection in a Grid Layout [implemented]
 
 #### HTML work
 
@@ -607,7 +611,7 @@ completion and removal.
   layout: the subsequent overlay refresh makes that nested grid active and
   shows only its immediate tracks and children.
 
-### 4. Remove track reordering end to end
+### 4. Remove track reordering end to end [implemented]
 
 - Delete the two popover buttons and all HTML emission of `move-track`.
 - Remove `move-track` from `yamada.gridActionEvent` validation and dispatch.
@@ -617,7 +621,7 @@ completion and removal.
   reference that claims tracks can be reordered. Insert and delete semantics
   remain subject to the existing atomic validation rules.
 
-### 5. Required verification and completion gate
+### 5. Required verification and completion gate [partially complete]
 
 - Add deterministic builder tests that verify R1 through Rn and C1 through Cn
   align with realized R2024a bounds for fixed, `fit`, flexible, mixed, padded,
@@ -638,7 +642,7 @@ completion and removal.
   conditions pass. Do not remove them or call the feature complete until the
   user explicitly instructs that completion may be recorded.
 
-## Follow-up Investigation and Correction Plan — 2026-09-11
+## Follow-up Investigation and Correction Plan — 2026-09-11 (implemented)
 
 This follow-up is based on the supplied `SimpleCalculatorApp` and
 `ControlGalleryApp` screenshots, the current MATLAB/HTML event paths, and a
@@ -646,7 +650,11 @@ read-only R2024a geometry probe. It supersedes any earlier UI wording that calls
 the track controls labeled headers or assumes every nonempty child rectangle is
 equal to its complete grid cell.
 
-### 1. Make canvas selection independent of active-grid selection
+The five implementation sections below are complete. Their remaining checklist
+records the deliberately broader regression and approval gates that still keep
+the feature active.
+
+### 1. Make canvas selection independent of active-grid selection [implemented]
 
 #### Confirmed cause
 
@@ -682,7 +690,7 @@ equal to its complete grid cell.
   or span gestures only after the selected component and active-grid payload
   agree and usable track geometry is present.
 
-### 2. Replace labeled headers with compact in-grid settings buttons
+### 2. Replace labeled headers with compact in-grid settings buttons [implemented]
 
 #### Confirmed cause
 
@@ -710,7 +718,7 @@ equal to its complete grid cell.
 - Publish stable boundary/anchor coordinates and an axis/index accessible label;
   do not make HTML reconstruct an anchor from the track's display text.
 
-### 3. Preserve insertion direction in every button label
+### 3. Preserve insertion direction in every button label [implemented]
 
 #### Confirmed cause
 
@@ -730,7 +738,7 @@ equal to its complete grid cell.
 - Keep Cancel and Apply in a separate footer and rerun focus-order, Enter,
   Escape, and clamping checks at normal and narrow Preview widths.
 
-### 4. Represent an empty zero-height `fit` row as an editable boundary
+### 4. Represent an empty zero-height `fit` row as an editable boundary [implemented]
 
 #### Confirmed cause
 
@@ -774,7 +782,7 @@ equal to its complete grid cell.
 - Remove the positive-width-and-height prerequisite from track-button creation;
   validate finite ordered boundaries instead.
 
-### 5. Replace ControlGallery's conflicting fit-track equalities
+### 5. Replace ControlGallery's conflicting fit-track equalities [implemented]
 
 #### Confirmed cause
 
