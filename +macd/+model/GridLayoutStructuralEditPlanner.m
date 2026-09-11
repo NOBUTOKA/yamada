@@ -40,50 +40,6 @@ classdef GridLayoutStructuralEditPlanner
                 document, gridId, childPath, index, "delete")];
         end
 
-        function changes = move(document, gridId, axis, fromIndex, toIndex, trackValue)
-            % move Reorder one track when every direct-child span remains contiguous.
-            [path, childPath, tracks] = macd.model.GridLayoutStructuralEditPlanner.prepare( ...
-                document, gridId, axis, trackValue);
-            count = numel(tracks);
-            if ~all(isfinite([fromIndex toIndex])) || any([fromIndex toIndex] ~= floor([fromIndex toIndex])) || ...
-                    any([fromIndex toIndex] < 1) || any([fromIndex toIndex] > count)
-                error("macd:GridLayoutStructuralEditPlanner:InvalidIndex", ...
-                    "Move indices must identify existing tracks.");
-            end
-            values = macd.model.GridTrackList.items(trackValue);
-            moving = values{fromIndex};
-            values(fromIndex) = [];
-            values = [values(1:toIndex - 1), {moving}, values(toIndex:end)];
-            changes = macd.model.GridLayoutStructuralEditPlanner.trackChange(gridId, path, values);
-            grid = document.getComponent(gridId);
-            order = 1:count;
-            moved = order(fromIndex);
-            order(fromIndex) = [];
-            order = [order(1:toIndex - 1), moved, order(toIndex:end)];
-            inverse = zeros(1, count);
-            inverse(order) = 1:count;
-            for childId = grid.Children
-                child = document.getComponent(childId);
-                entry = child.getProperty(childPath);
-                if isempty(entry) || entry.ValueKind ~= "literal" || ~entry.IsEditable || ...
-                        ~isnumeric(entry.LiteralValue) || ~isvector(entry.LiteralValue)
-                    error("macd:GridLayoutStructuralEditPlanner:ImplicitPlacement", ...
-                        "Every reordered child placement must be an editable literal.");
-                end
-                old = entry.LiteralValue;
-                mapped = sort(inverse(old(1):old(end)));
-                if ~isequal(mapped, mapped(1):mapped(end))
-                    error("macd:GridLayoutStructuralEditPlanner:SplitSpan", ...
-                        "Reordering would split a child span.");
-                end
-                newValue = mapped(1);
-                if numel(mapped) > 1, newValue = [mapped(1) mapped(end)]; end
-                if ~isequal(old, newValue)
-                    changes(end + 1) = struct("ComponentId", child.Id, ...
-                        "Path", childPath, "Value", newValue); %#ok<AGROW>
-                end
-            end
-        end
     end
 
     methods (Static, Access = private)

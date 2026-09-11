@@ -111,36 +111,6 @@ for a versioned public release and the release-blocking workflows above pass.
 - Publish the `.mltbx` and release notes with the corresponding tagged release
   only after the package artifact and installation smoke tests pass.
 
-## Build a Grid Layout Visual Editor
-
-Inspector editing of a grid child's `Layout.Row` and `Layout.Column` remains the
-safe fallback. The visual editor will add direct manipulation of the selected
-`uigridlayout` and take ownership of the deferred `RowHeight` and `ColumnWidth`
-track-list properties.
-
-See the [Grid Layout Visual Editor implementation plan](GRID_LAYOUT_VISUAL_EDITOR_IMPLEMENTATION_PLAN.md)
-for the agreed UI behavior, the MATLAB UI and HTML overlay responsibility split,
-the atomic model changes, implementation milestones, and verification matrix.
-
-- Show an editor-owned overlay with row and column boundaries, track labels, child
-  occupancy, and selected-child spans. Nested grids must edit only the selected
-  grid's immediate tracks and children.
-- Support fixed numeric sizes, `"fit"`, weighted values such as `"1x"`, and mixed
-  R2024a track lists while preserving order and source representation.
-- Add, remove, resize, and reorder tracks through one validated, atomic, undoable
-  transaction that includes any required child-placement adjustments.
-- Support dragging a child between cells and resizing its occupied span while
-  continuing to store placement through `Layout.Row` and `Layout.Column`.
-- Reject destructive or ambiguous changes instead of silently moving, clipping,
-  or deleting children.
-- Keep expression-backed or otherwise unsupported track definitions read-only;
-  never evaluate, coerce, or rewrite them.
-- Reuse the existing model, validation, Safe Preview, source-span generation,
-  selection overlay, and history boundaries without interacting with the editor's
-  own internal Grid Layouts.
-- Test fixed, `"fit"`, weighted, mixed, nested, spanned, and expression-backed
-  grids, including failed-edit atomicity and byte-identical no-edit output.
-
 ## Offer an Explicit Save As Line-Ending Choice
 
 New documents currently use the host-default line ending, while opened documents

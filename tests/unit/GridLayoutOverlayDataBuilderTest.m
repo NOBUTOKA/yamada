@@ -7,6 +7,7 @@ classdef GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
 
             [document, handles, panel, grid, first, second, cleanup] = ...
                 testCase.renderGrid([40 50], [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
             builder = macd.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, second.Id, 7);
 
@@ -25,21 +26,58 @@ classdef GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
                 data.rowTracks(1).bounds([2 4]), "AbsTol", 1);
             testCase.verifyEqual(data.children(secondIndex).bounds([1 3]), ...
                 data.columnTracks(2).bounds([1 3]), "AbsTol", 1);
-            clear cleanup
         end
 
-        function locksFitTrackGeometryUntilItCanBeProved(testCase)
-            % locksFitTrackGeometryUntilItCanBeProved Avoid misleading boundary interactions.
+        function reconstructsFitTrackGeometryFromRealizedChildren(testCase)
+            % reconstructsFitTrackGeometryFromRealizedChildren Align fit tracks with public child bounds.
 
             [document, handles, panel, grid, ~, second, cleanup] = ...
                 testCase.renderGrid({'fit', '1x'}, {'1x', '1x'});
+            testCase.addTeardown(@() delete(cleanup));
             builder = macd.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, second.Id, 8);
 
             testCase.verifyTrue(data.editable);
-            testCase.verifyFalse(data.geometryAvailable);
-            testCase.verifyTrue(contains(data.readOnlyReason, "Fit track boundaries are locked"));
-            testCase.verifyEmpty(data.rowBoundaries);
+            testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
+            testCase.verifyEqual(data.readOnlyReason, "");
+            secondIndex = find(string({data.children.id}) == second.Id, 1);
+            testCase.verifyEqual(data.children(secondIndex).bounds([2 4]), ...
+                data.rowTracks(2).bounds([2 4]), "AbsTol", 1);
+            testCase.verifyEqual(data.rowTracks(1).bounds(2) + ...
+                data.rowTracks(1).bounds(4), data.innerBounds(2) + data.innerBounds(4), ...
+                "AbsTol", 1);
+        end
+
+        function reconstructsParsedCalculatorFitTracks(testCase)
+            % reconstructsParsedCalculatorFitTracks Align parsed fit tracks with Safe Preview cells.
+
+            testPath = mfilename("fullpath");
+            projectRoot = fileparts(fileparts(fileparts(testPath)));
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
+                "tests", "fixtures", "SimpleCalculatorApp.m"), registry);
+            grid = document.getComponentByName("GridLayout");
+            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 760 560]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+            testCase.verifyEmpty(diagnostics);
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            data = builder.build(document, handles, panel, grid.Id, grid.Id, 9);
+            testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
+            testCase.verifyEqual(numel(data.rowTracks), 5);
+            testCase.verifyEqual(numel(data.columnTracks), 2);
+            testCase.verifyEqual(data.rowTracks(1).bounds(2) + ...
+                data.rowTracks(1).bounds(4), data.innerBounds(2) + data.innerBounds(4), ...
+                "AbsTol", 1);
+            testCase.verifyEqual(data.columnTracks(1).bounds(1), data.innerBounds(1), ...
+                "AbsTol", 1);
+            testCase.verifyEqual(data.columnTracks(end).bounds(1) + ...
+                data.columnTracks(end).bounds(3), data.innerBounds(1) + data.innerBounds(3), ...
+                "AbsTol", 1);
             clear cleanup
         end
     end

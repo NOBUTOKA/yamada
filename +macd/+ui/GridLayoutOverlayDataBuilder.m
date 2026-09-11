@@ -63,10 +63,14 @@ classdef GridLayoutOverlayDataBuilder
                 columnTracks, columnEditable);
             data.editable = grid.IsEditable && rowEditable && columnEditable;
 
+            % Publish child rectangles even when track boundaries cannot be resolved.
+            data.children = macd.ui.GridLayoutOverlayDataBuilder.children( ...
+                document, previewHandles, previewPanel, grid, selectedComponentId);
+
             [rowBounds, rowMessage] = macd.ui.GridLayoutOverlayDataBuilder.trackBounds( ...
-                rowTracks, innerBounds, double(preview.RowSpacing), true);
+                rowTracks, innerBounds, double(preview.RowSpacing), true, data.children);
             [columnBounds, columnMessage] = macd.ui.GridLayoutOverlayDataBuilder.trackBounds( ...
-                columnTracks, innerBounds, double(preview.ColumnSpacing), false);
+                columnTracks, innerBounds, double(preview.ColumnSpacing), false, data.children);
             if strlength(rowMessage) > 0 || strlength(columnMessage) > 0
                 data.readOnlyReason = macd.ui.GridLayoutOverlayDataBuilder.joinMessages( ...
                     [rowMessage columnMessage]);
@@ -81,8 +85,6 @@ classdef GridLayoutOverlayDataBuilder
                 data.columnTracks(index).bounds = columnBounds(index, :);
             end
             data.geometryAvailable = true;
-            data.children = macd.ui.GridLayoutOverlayDataBuilder.children( ...
-                document, previewHandles, previewPanel, grid, selectedComponentId);
         end
     end
 
@@ -182,16 +184,16 @@ classdef GridLayoutOverlayDataBuilder
             end
         end
 
-        function [bounds, message] = trackBounds(tracks, innerBounds, spacing, rows)
-            % trackBounds Reconstruct fixed and weighted track rectangles from public geometry.
+        function [bounds, message] = trackBounds(tracks, innerBounds, spacing, rows, children)
+            % trackBounds Reconstruct track rectangles from public grid and child geometry.
             bounds = zeros(0, 4);
             message = "";
             if ~isfinite(spacing) || spacing < 0
                 message = "Grid spacing is not available for boundary reconstruction.";
                 return
             end
-            if any(string({tracks.kind}) == "fit")
-                message = "Fit track boundaries are locked until their realized geometry is unambiguous.";
+            if isempty(tracks)
+                message = "The grid has no tracks.";
                 return
             end
             if rows
@@ -199,7 +201,83 @@ classdef GridLayoutOverlayDataBuilder
             else
                 available = innerBounds(3);
             end
+            count = numel(tracks);
+            if ~any(string({tracks.kind}) == "fit")
+                [sizes, message] = macd.ui.GridLayoutOverlayDataBuilder.nonFitTrackSizes( ...
+                    tracks, available, spacing);
+                if strlength(message) == 0
+                    bounds = macd.ui.GridLayoutOverlayDataBuilder.trackRectangles( ...
+                        sizes, innerBounds, spacing, rows);
+                end
+                return
+            end
+            equations = zeros(0, count);
+            values = zeros(0, 1);
+
+            % Fixed literals are direct equations for their realized track sizes.
+            for index = 1:numel(tracks)
+                if tracks(index).kind == "fixed"
+                    equation = zeros(1, count);
+                    equation(index) = 1;
+                    equations(end + 1, :) = equation; %#ok<AGROW>
+                    values(end + 1, 1) = tracks(index).value; %#ok<AGROW>
+                end
+            end
+
+            % Flexible literals share a common realized pixels-per-weight ratio.
+            flexible = find(string({tracks.kind}) == "flexible");
+            for index = 2:numel(flexible)
+                first = flexible(1);
+                current = flexible(index);
+                equation = zeros(1, count);
+                equation(first) = tracks(current).value;
+                equation(current) = -tracks(first).value;
+                equations(end + 1, :) = equation; %#ok<AGROW>
+                values(end + 1, 1) = 0; %#ok<AGROW>
+            end
+
+            % A flexible track consumes the remaining interior after fixed and fit tracks.
+            if ~isempty(flexible)
+                equations(end + 1, :) = ones(1, count);
+                values(end + 1, 1) = available - spacing * max(count - 1, 0);
+            end
+
+            % Explicit child spans provide realized public-geometry equations, including fit tracks.
+            for index = 1:numel(children)
+                child = children(index);
+                [start, finish, extent] = macd.ui.GridLayoutOverlayDataBuilder.axisSpan( ...
+                    child, rows);
+                if start < 1 || finish < start || finish > count || ~isfinite(extent)
+                    continue
+                end
+                equation = zeros(1, count);
+                equation(start:finish) = 1;
+                equations(end + 1, :) = equation; %#ok<AGROW>
+                values(end + 1, 1) = extent - spacing * (finish - start); %#ok<AGROW>
+            end
+
+            if rank(equations) < count
+                message = "Track boundaries are unavailable because realized geometry is ambiguous.";
+                return
+            end
+
+            sizes = equations \ values;
+            tolerance = max(1.5, 1e-8 * max([available; abs(values); 1]));
+            if any(~isfinite(sizes)) || any(sizes <= tolerance * -1) || ...
+                    norm(equations * sizes - values, inf) > tolerance
+                message = "Track boundaries do not agree with realized grid geometry.";
+                return
+            end
+            sizes = max(sizes, 0).';
+
+            bounds = macd.ui.GridLayoutOverlayDataBuilder.trackRectangles( ...
+                sizes, innerBounds, spacing, rows);
+        end
+
+        function [sizes, message] = nonFitTrackSizes(tracks, available, spacing)
+            % nonFitTrackSizes Reconstruct fixed and flexible tracks without control-size inference.
             sizes = zeros(1, numel(tracks));
+            message = "";
             fixed = 0;
             weights = 0;
             for index = 1:numel(tracks)
@@ -215,31 +293,46 @@ classdef GridLayoutOverlayDataBuilder
                 message = "Track sizes exceed the realized grid interior.";
                 return
             end
-            if weights > 0
-                for index = 1:numel(tracks)
-                    if tracks(index).kind == "flexible"
-                        sizes(index) = max(remaining, 0) * tracks(index).value / weights;
-                    end
-                end
-            elseif any(string({tracks.kind}) == "flexible")
+            if any(string({tracks.kind}) == "flexible") && weights <= 0
                 message = "Flexible track boundaries are ambiguous because their total weight is zero.";
                 return
             end
+            for index = 1:numel(tracks)
+                if tracks(index).kind == "flexible"
+                    sizes(index) = max(remaining, 0) * tracks(index).value / weights;
+                end
+            end
+        end
 
-            bounds = zeros(numel(tracks), 4);
+        function bounds = trackRectangles(sizes, innerBounds, spacing, rows)
+            % trackRectangles Convert ordered track sizes into preview-panel rectangles.
+            bounds = zeros(numel(sizes), 4);
             if rows
                 top = innerBounds(2) + innerBounds(4);
-                for index = 1:numel(tracks)
+                for index = 1:numel(sizes)
                     top = top - sizes(index);
                     bounds(index, :) = [innerBounds(1), top, innerBounds(3), sizes(index)];
                     top = top - spacing;
                 end
             else
                 left = innerBounds(1);
-                for index = 1:numel(tracks)
+                for index = 1:numel(sizes)
                     bounds(index, :) = [left, innerBounds(2), sizes(index), innerBounds(4)];
                     left = left + sizes(index) + spacing;
                 end
+            end
+        end
+
+        function [start, finish, extent] = axisSpan(child, rows)
+            % axisSpan Return one explicit child span and its realized axis extent.
+            if rows
+                start = child.rowStart;
+                finish = child.rowEnd;
+                extent = child.bounds(4);
+            else
+                start = child.columnStart;
+                finish = child.columnEnd;
+                extent = child.bounds(3);
             end
         end
 

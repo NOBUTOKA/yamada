@@ -62,7 +62,7 @@ Grid Layout and shows its immediate rows, columns, and child occupancy without
 changing the selected component in the Inspector.
 
 - Click an `R` or `C` header to choose **Fit**, a fixed pixel value, or a
-  flexible `x` weight. The same popover inserts, deletes, and reorders tracks.
+  flexible `x` weight. The same popover inserts and deletes tracks.
 - Drag the selected child to move its occupied cells. Drag one of its edge or
   corner handles to change its row or column span. The candidate is cell-snapped
   and commits only when released.

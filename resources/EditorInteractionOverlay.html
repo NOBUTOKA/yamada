@@ -20,20 +20,24 @@ svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 #tab-controls { position: absolute; inset: 0; pointer-events: none; }
 #grid-controls { position: absolute; inset: 0; pointer-events: none; }
 .tab-selector { position: absolute; box-sizing: border-box; height: 22px; pointer-events: auto; font: 11px Arial; }
-.grid-frame { position: absolute; box-sizing: border-box; border: 1px solid rgba(34, 100, 199, 0.75); background: rgba(34, 100, 199, 0.04); }
-.grid-inner-frame { position: absolute; box-sizing: border-box; border: 1px dashed rgba(34, 100, 199, 0.55); }
-.track-header { position: absolute; box-sizing: border-box; min-width: 34px; height: 20px; overflow: hidden; padding: 3px 5px; border: 1px solid #2864c7; border-radius: 3px; background: #f8fbff; color: #124da8; pointer-events: auto; font: 10px Arial; line-height: 12px; white-space: nowrap; text-overflow: ellipsis; }
+.grid-frame { position: absolute; box-sizing: border-box; border: 1px solid rgba(34, 100, 199, 0.55); pointer-events: none; }
+.grid-separator { position: absolute; box-sizing: border-box; z-index: 1; border-color: rgba(34, 100, 199, 0.60); border-style: dotted; pointer-events: none; }
+.grid-separator.horizontal { border-top-width: 1px; }
+.grid-separator.vertical { border-left-width: 1px; }
+.track-header { position: absolute; box-sizing: border-box; min-width: 0; height: 20px; overflow: hidden; padding: 3px 5px; border: 1px solid #2864c7; border-radius: 3px; background: #f8fbff; color: #124da8; pointer-events: auto; font: 10px Arial; line-height: 12px; white-space: nowrap; text-overflow: ellipsis; }
 .track-header.locked { border-color: #8b8b8b; background: #f4f4f4; color: #666666; }
-.track-popover { position: absolute; z-index: 5; width: 178px; padding: 8px; border: 1px solid #2864c7; border-radius: 4px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); pointer-events: auto; font: 11px Arial; }
+.track-popover { position: absolute; z-index: 5; box-sizing: border-box; width: min(244px, calc(100% - 8px)); max-width: 244px; padding: 8px; border: 1px solid #2864c7; border-radius: 4px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); pointer-events: auto; font: 11px Arial; }
 .track-popover label { display: block; margin: 4px 0; }
 .track-popover select, .track-popover input { width: 100%; box-sizing: border-box; margin-top: 2px; }
-.track-popover-actions { display: flex; justify-content: flex-end; gap: 5px; margin-top: 8px; }
+.track-popover-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 8px; }
+.track-popover-footer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; margin-top: 5px; }
+.track-popover-actions button, .track-popover-footer button { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .track-popover-error { min-height: 12px; margin-top: 4px; color: #b00020; font-size: 10px; }
 .grid-status { position: absolute; max-width: 230px; padding: 4px 6px; border-radius: 3px; background: rgba(255, 248, 225, 0.95); color: #6c5500; font: 10px Arial; }
-.grid-child { position: absolute; box-sizing: border-box; border: 1px solid rgba(18, 77, 168, 0.75); background: rgba(18, 77, 168, 0.08); pointer-events: none; }
-.grid-child.selected { border-width: 2px; background: rgba(18, 77, 168, 0.16); }
+.grid-child { position: absolute; z-index: 2; box-sizing: border-box; border: 1px solid transparent; background: transparent; pointer-events: auto; }
+.grid-child.selected { border: 2px solid rgba(18, 77, 168, 0.85); }
 .grid-child.selected.editable { pointer-events: auto; cursor: move; }
-.grid-span-handle { position: absolute; z-index: 2; width: 8px; height: 8px; box-sizing: border-box; border: 1px solid #ffffff; border-radius: 2px; background: #2864c7; pointer-events: auto; }
+.grid-span-handle { position: absolute; z-index: 3; width: 8px; height: 8px; box-sizing: border-box; border: 1px solid #ffffff; border-radius: 2px; background: #2864c7; pointer-events: auto; }
 .grid-span-handle.top { left: 50%; top: -5px; margin-left: -4px; cursor: n-resize; }
 .grid-span-handle.bottom { left: 50%; bottom: -5px; margin-left: -4px; cursor: s-resize; }
 .grid-span-handle.left { left: -5px; top: 50%; margin-top: -4px; cursor: w-resize; }
@@ -42,7 +46,7 @@ svg { width: 100%; height: 100%; overflow: hidden; background: transparent; }
 .grid-span-handle.top-right { right: -5px; top: -5px; cursor: ne-resize; }
 .grid-span-handle.bottom-left { left: -5px; bottom: -5px; cursor: sw-resize; }
 .grid-span-handle.bottom-right { right: -5px; bottom: -5px; cursor: se-resize; }
-.grid-child-draft { position: absolute; z-index: 1; box-sizing: border-box; border: 2px dashed #2864c7; background: rgba(40, 100, 199, 0.10); pointer-events: none; }
+.grid-child-draft { position: absolute; z-index: 3; box-sizing: border-box; border: 2px dashed #2864c7; background: transparent; pointer-events: none; }
 .silhouette { fill: none; stroke: #2864c7; stroke-width: 1.25; stroke-dasharray: 4 3; pointer-events: all; }
 .tab-group-frame { pointer-events: stroke; }
 .tab-group-header { fill: rgba(0, 0, 0, 0.001); stroke: transparent; pointer-events: all; }
@@ -137,10 +141,25 @@ function renderGridEditor(data) {
     controls.appendChild(box);
   }
   addBox("grid-frame", outer);
-  addBox("grid-inner-frame", inner);
+  function addSeparator(className, left, top, width, height) {
+    var separator = document.createElement("div");
+    separator.className = "grid-separator " + className;
+    separator.style.left = left + "px";
+    separator.style.top = top + "px";
+    separator.style.width = width + "px";
+    separator.style.height = height + "px";
+    controls.appendChild(separator);
+  }
+  componentArray(data.rowBoundaries).slice(0, -1).forEach(function(bounds) {
+    addSeparator("horizontal", inner[0], currentData.height - bounds[1], inner[2], 1);
+  });
+  componentArray(data.columnBoundaries).slice(0, -1).forEach(function(bounds) {
+    addSeparator("vertical", bounds[0] + bounds[2], currentData.height - inner[1] - inner[3], 1, inner[3]);
+  });
   function addHeader(axis, track) {
     var hasBounds = !!track.bounds && track.bounds.length === 4 &&
       Number(track.bounds[2]) > 0 && Number(track.bounds[3]) > 0;
+    if (!hasBounds) return;
     var header = document.createElement("div");
     var editable = !!track.editable && !!data.editable;
     header.className = "track-header" + (editable ? "" : " locked");
@@ -158,14 +177,13 @@ function renderGridEditor(data) {
     }
     if (axis === "row") {
       header.style.left = Math.max(0, inner[0] - 56) + "px";
-      header.style.top = hasBounds ? (currentData.height - track.bounds[1] - track.bounds[3]) + "px" :
-        Math.max(0, currentData.height - outer[1] - 22 * Number(track.index)) + "px";
+      header.style.top = Math.max(0, currentData.height - track.bounds[1] - track.bounds[3] +
+        Math.max(0, (track.bounds[3] - 20) / 2)) + "px";
       header.style.width = "52px";
     } else {
-      header.style.left = hasBounds ? track.bounds[0] + "px" :
-        (outer[0] + 72 * (Number(track.index) - 1)) + "px";
+      header.style.left = track.bounds[0] + "px";
       header.style.top = Math.max(0, currentData.height - inner[1] - inner[3] - 23) + "px";
-      header.style.width = hasBounds ? Math.max(34, track.bounds[2]) + "px" : "68px";
+      header.style.width = Math.max(1, track.bounds[2]) + "px";
     }
     controls.appendChild(header);
   }
@@ -183,10 +201,14 @@ function renderGridEditor(data) {
     childBox.style.height = child.bounds[3] + "px";
     childBox.title = String(child.placementMode || "implicit") + " R" +
       String(child.rowStart || "?") + " C" + String(child.columnStart || "?");
-    if (childEditable) {
-      childBox.addEventListener("pointerdown", function(event) {
+    childBox.addEventListener("pointerdown", function(event) {
+      if (!child.selected) {
+        selectGridChild(event, data, child);
+      } else if (childEditable) {
         beginGridChildGesture(event, data, child, "move");
-      });
+      }
+    });
+    if (childEditable) {
       ["top", "bottom", "left", "right", "top-left", "top-right", "bottom-left", "bottom-right"].forEach(function(kind) {
         var handle = document.createElement("div");
         handle.className = "grid-span-handle " + kind;
@@ -354,6 +376,15 @@ function beginGridChildGesture(event, data, child, kind) {
   document.addEventListener("keydown", cancelGridChildKey);
 }
 
+function selectGridChild(event, data, child) {
+  event.preventDefault();
+  event.stopPropagation();
+  component.sendEventToMATLAB("GridAction", {
+    action: "select-child", revision: data.revision, activeGridId: data.activeGridId,
+    childId: child.id
+  });
+}
+
 function closeTrackPopover() {
   var popover = document.getElementById("track-popover");
   if (popover) popover.remove();
@@ -364,8 +395,6 @@ function openTrackPopover(header, data, axis, track) {
   var popover = document.createElement("div");
   popover.id = "track-popover";
   popover.className = "track-popover";
-  popover.style.left = Math.min(currentData.width - 186, header.offsetLeft) + "px";
-  popover.style.top = Math.min(currentData.height - 124, header.offsetTop + header.offsetHeight + 3) + "px";
   var title = document.createElement("div");
   title.textContent = (axis === "row" ? "Row " : "Column ") + String(track.index);
   var modeLabel = document.createElement("label");
@@ -401,13 +430,6 @@ function openTrackPopover(header, data, axis, track) {
   var remove = document.createElement("button");
   remove.type = "button";
   remove.textContent = "Delete";
-  var moveBefore = document.createElement("button");
-  moveBefore.type = "button";
-  moveBefore.textContent = "Move Earlier";
-  moveBefore.disabled = Number(track.index) <= 1;
-  var moveAfter = document.createElement("button");
-  moveAfter.type = "button";
-  moveAfter.textContent = "Move Later";
   var cancel = document.createElement("button");
   cancel.type = "button";
   cancel.textContent = "Cancel";
@@ -417,15 +439,16 @@ function openTrackPopover(header, data, axis, track) {
   actions.appendChild(insertBefore);
   actions.appendChild(insertAfter);
   actions.appendChild(remove);
-  actions.appendChild(moveBefore);
-  actions.appendChild(moveAfter);
-  actions.appendChild(cancel);
-  actions.appendChild(apply);
+  var footer = document.createElement("div");
+  footer.className = "track-popover-footer";
+  footer.appendChild(cancel);
+  footer.appendChild(apply);
   popover.appendChild(title);
   popover.appendChild(modeLabel);
   popover.appendChild(valueLabel);
   popover.appendChild(error);
   popover.appendChild(actions);
+  popover.appendChild(footer);
   popover.addEventListener("pointerdown", function(event) { event.stopPropagation(); });
   mode.addEventListener("change", function() { value.disabled = mode.value === "fit"; });
   cancel.addEventListener("click", closeTrackPopover);
@@ -439,8 +462,6 @@ function openTrackPopover(header, data, axis, track) {
   insertBefore.addEventListener("click", function() { structural("insert-track", Number(track.index)); });
   insertAfter.addEventListener("click", function() { structural("insert-track", Number(track.index) + 1); });
   remove.addEventListener("click", function() { structural("delete-track", Number(track.index)); });
-  moveBefore.addEventListener("click", function() { structural("move-track", Number(track.index) - 1); });
-  moveAfter.addEventListener("click", function() { structural("move-track", Number(track.index) + 1); });
   function submit() {
     var amount = Number(value.value);
     if (mode.value !== "fit" && (!Number.isFinite(amount) || amount < 0)) {
@@ -460,7 +481,24 @@ function openTrackPopover(header, data, axis, track) {
     if (event.key === "Enter") { event.preventDefault(); submit(); }
   });
   document.getElementById("grid-controls").appendChild(popover);
+  placeTrackPopover(header, popover);
   if (!value.disabled) value.focus();
+}
+
+function placeTrackPopover(header, popover) {
+  var controls = document.getElementById("grid-controls");
+  var margin = 4;
+  var width = popover.offsetWidth;
+  var height = popover.offsetHeight;
+  var maxLeft = Math.max(margin, controls.clientWidth - width - margin);
+  var maxTop = Math.max(margin, controls.clientHeight - height - margin);
+  var left = Math.max(margin, Math.min(maxLeft, header.offsetLeft));
+  var below = header.offsetTop + header.offsetHeight + margin;
+  var above = header.offsetTop - height - margin;
+  var top = below + height <= controls.clientHeight - margin ? below : above;
+  top = Math.max(margin, Math.min(maxTop, top));
+  popover.style.left = left + "px";
+  popover.style.top = top + "px";
 }
 
 function svgElement(name, attributes) {

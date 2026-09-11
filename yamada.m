@@ -916,14 +916,18 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             action = string(data.action);
-            if ~any(action == ["set-track", "insert-track", "delete-track", "move-track", ...
-                    "move-child", "resize-span"]) || ...
+            if ~any(action == ["set-track", "insert-track", "delete-track", ...
+                    "select-child", "move-child", "resize-span"]) || ...
                     ~isnumeric(data.revision) || ...
                     ~isscalar(data.revision) || double(data.revision) ~= app.InteractionOverlayRevision
                 return
             end
             gridId = string(data.activeGridId);
             if gridId ~= app.ActiveGridId
+                return
+            end
+            if action == "select-child"
+                app.gridChildSelectionActionEvent(gridId, data);
                 return
             end
             if any(action == ["move-child", "resize-span"])
@@ -965,21 +969,9 @@ classdef yamada < matlab.apps.AppBase
                 elseif action == "insert-track"
                     changes = macd.model.GridLayoutStructuralEditPlanner.insert( ...
                         app.Document, gridId, axis, double(data.index), value);
-                elseif action == "delete-track"
+                else
                     changes = macd.model.GridLayoutStructuralEditPlanner.delete( ...
                         app.Document, gridId, axis, double(data.index), value);
-                else
-                    if ~isfield(data, "fromIndex") || ~isnumeric(data.fromIndex) || ...
-                            ~isscalar(data.fromIndex)
-                        return
-                    end
-                    sourceIndex = double(data.fromIndex);
-                    if sourceIndex < 1 || sourceIndex > numel(macd.model.GridTrackList.items(value))
-                        return
-                    end
-                    destinationIndex = double(data.index);
-                    changes = macd.model.GridLayoutStructuralEditPlanner.move( ...
-                        app.Document, gridId, axis, sourceIndex, destinationIndex, value);
                 end
                 app.Document.applyGridLayoutEdit(gridId, changes);
                 app.setStatus("Updated " + path + ".");
@@ -988,6 +980,40 @@ classdef yamada < matlab.apps.AppBase
                 app.setStatus(string(exception.message));
                 app.updateInteractionOverlay();
             end
+        end
+
+        function gridChildSelectionActionEvent(app, gridId, data)
+            % gridChildSelectionActionEvent Select one visible immediate grid child without mutation.
+            arguments (Input)
+                app (1, 1) yamada
+                gridId (1, 1) string
+                data (1, 1) struct
+            end
+
+            if ~isfield(data, "childId")
+                return
+            end
+            childId = string(data.childId);
+            if ~isscalar(childId) || strlength(childId) == 0 || ...
+                    isempty(app.PreviewHandles) || ~isKey(app.PreviewHandles, char(childId))
+                return
+            end
+            grid = app.Document.getComponent(gridId);
+            child = app.Document.getComponent(childId);
+            if isempty(grid) || grid.Factory ~= "uigridlayout" || isempty(child) || ...
+                    child.ParentId ~= gridId || ~app.isVisibleInSelectedTab(childId)
+                return
+            end
+            preview = app.PreviewHandles(char(childId));
+            if ~isvalid(preview)
+                return
+            end
+
+            % Selection is disposable UI state and must not create an edit history entry.
+            app.SelectedComponentId = childId;
+            app.refreshHierarchy();
+            app.refreshInspector();
+            app.updateInteractionOverlay();
         end
 
         function gridChildActionEvent(app, action, gridId, data)

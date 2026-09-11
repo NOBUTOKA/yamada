@@ -250,6 +250,106 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function gridOverlaySelectsAnImmediateChildWithoutEditingTheDocument(testCase)
+            % gridOverlaySelectsAnImmediateChildWithoutEditingTheDocument Route one canvas selection safely.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            gridRow = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            labelRow = find(string(palette.Data(:, 1)) == "Label", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", labelRow)));
+            drawnow;
+
+            % Re-select the grid so its immediate label is an unselected canvas target.
+            tree = findall(figure, "Type", "uitree");
+            gridNode = tree.Children(1).Children(1);
+            tree.SelectedNodes = gridNode;
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            gridData = overlays.Data.gridEditor;
+            childId = string(gridData.children(1).id);
+            app.Document.markSaved();
+            historyIndex = app.Document.HistoryIndex;
+
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "select-child", ...
+                "revision", gridData.revision, "activeGridId", gridData.activeGridId, ...
+                "childId", childId)));
+            drawnow;
+
+            testCase.verifyEqual(app.SelectedComponentId, childId);
+            testCase.verifyEqual(string(tree.SelectedNodes.NodeData), childId);
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
+            testCase.verifyFalse(app.Document.IsDirty);
+            clear cleanup
+        end
+
+        function gridOverlayRejectsStaleChildSelection(testCase)
+            % gridOverlayRejectsStaleChildSelection Ignore an obsolete child-selection event.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            gridRow = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            labelRow = find(string(palette.Data(:, 1)) == "Label", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", labelRow)));
+            drawnow;
+
+            tree = findall(figure, "Type", "uitree");
+            gridNode = tree.Children(1).Children(1);
+            tree.SelectedNodes = gridNode;
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            gridData = overlays.Data.gridEditor;
+            expectedSelection = app.SelectedComponentId;
+
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "select-child", ...
+                "revision", gridData.revision - 1, "activeGridId", gridData.activeGridId, ...
+                "childId", string(gridData.children(1).id))));
+            testCase.verifyEqual(app.SelectedComponentId, expectedSelection);
+
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "select-child", ...
+                "revision", gridData.revision, "activeGridId", gridData.activeGridId, ...
+                "childId", app.Document.RootComponentId)));
+            testCase.verifyEqual(app.SelectedComponentId, expectedSelection);
+            clear cleanup
+        end
+
+        function gridOverlayHtmlOmitsTrackReordering(testCase)
+            % gridOverlayHtmlOmitsTrackReordering Keep unsupported reordering out of the browser contract.
+
+            projectRoot = fileparts(which("yamada"));
+            html = fileread(fullfile(projectRoot, "resources", "EditorInteractionOverlay.html"));
+            testCase.verifyFalse(contains(html, "move-track"));
+            testCase.verifyFalse(contains(html, "Move Earlier"));
+            testCase.verifyFalse(contains(html, "Move Later"));
+            testCase.verifyTrue(contains(html, "select-child"));
+            testCase.verifyFalse(contains(html, "72 * (Number(track.index) - 1)"));
+            testCase.verifyFalse(contains(html, "22 * Number(track.index)"));
+            testCase.verifyTrue(contains(html, "grid-separator"));
+            testCase.verifyTrue(contains(html, "placeTrackPopover"));
+        end
+
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
             % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
 

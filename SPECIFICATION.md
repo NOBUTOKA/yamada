@@ -27,7 +27,7 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 - Edit supported properties in the typed Property Inspector.
 - Move and resize absolutely positioned components.
 - Edit a Grid Layout's tracks from its Safe Preview headers: select `fit`, a
-  fixed pixel size, or a flexible `x` weight; insert, delete, or reorder tracks
+  fixed pixel size, or a flexible `x` weight; insert or delete tracks
   when every affected direct-child placement has a deterministic result.
 - Drag a selected direct Grid Layout child to another cell or resize its row and
   column span. The Property Inspector remains the exact-value fallback for
