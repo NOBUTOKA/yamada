@@ -111,6 +111,32 @@ for a versioned public release and the release-blocking workflows above pass.
 - Publish the `.mltbx` and release notes with the corresponding tagged release
   only after the package artifact and installation smoke tests pass.
 
+## Build a Grid Layout Visual Editor
+
+This item remains active and incomplete. The first implementation and correction
+pass are present, but open-file selection, compact track controls, zero-size
+`fit` tracks, and mixed-control `fit` geometry still require correction. Keep
+this roadmap item and its plan until the user explicitly approves completion;
+passing tests alone must not remove or complete it.
+
+See the [Grid Layout Visual Editor implementation plan](GRID_LAYOUT_VISUAL_EDITOR_IMPLEMENTATION_PLAN.md)
+for completed work, confirmed causes, the MATLAB-versus-HTML responsibility
+split, the current correction plan, and the verification gates.
+
+- Keep the Property Inspector component-focused. Edit `RowHeight` and
+  `ColumnWidth` from compact in-grid settings buttons, while leaving spacing,
+  padding, color, visibility, and scrolling in the Inspector.
+- Make canvas selection of Grid Layout descendants available immediately after
+  opening an existing file, independently of which grid is active.
+- Show lightweight row and column separators and keep controls reachable for
+  zero-height or zero-width tracks without fabricating positive geometry.
+- Support fixed, `fit`, weighted, mixed, nested, spanning, empty, and
+  expression-backed cases conservatively and source-safely.
+- Keep insert and delete atomic and undoable; track reordering is not part of
+  this feature.
+- Validate `SimpleCalculatorApp` and `ControlGalleryApp`, including nested grids,
+  followed by manual R2024a review and the full unit suite.
+
 ## Offer an Explicit Save As Line-Ending Choice
 
 New documents currently use the host-default line ending, while opened documents
