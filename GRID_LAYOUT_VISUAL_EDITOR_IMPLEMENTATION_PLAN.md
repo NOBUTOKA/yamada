@@ -32,7 +32,8 @@ below are not resolved and final completion requires explicit user approval.
 - [ ] Make insertion controls state the axis and insertion side without
   truncation.
 - [ ] Support empty `fit` tracks whose realized size is zero without disabling
-  the rest of the grid editor.
+  the rest of the grid editor, including using a collapsed track as a move
+  destination.
 - [ ] Resolve mixed-control `fit` geometry in `ControlGalleryApp`.
 - [ ] Complete focused and full verification, manual visual review, and obtain
   the user's explicit approval before marking this roadmap item complete.
@@ -750,8 +751,10 @@ equal to its complete grid cell.
   extent. Zero is a valid extent. Do not fail an entire grid merely because one
   track is collapsed; return per-axis/per-track availability and a localized
   reason only for genuinely unresolved geometry.
-- Keep zero-size rows editable for `set-track`, insert, and delete. They are not
-  cell-move drop targets until given positive size.
+- Keep zero-size rows editable for `set-track`, insert, and delete, and keep them
+  available as child-move drop targets. Dropping a child into an empty `fit` row
+  assigns that logical row; the next Safe Preview layout then expands the row to
+  the moved child's realized requirement.
 
 #### HTML-layer work
 
@@ -761,6 +764,13 @@ equal to its complete grid cell.
 - When multiple adjacent zero-size tracks share a boundary, offset or stack
   their buttons deterministically while keeping every track addressable by
   tooltip, keyboard focus, and click.
+- During a child drag, give every collapsed track a temporary minimum-size drop
+  band centered on its actual zero-size boundary. The band is an editor-only hit
+  target and must not change the displayed track extent or generated source.
+  For adjacent collapsed tracks, lay out separate ordered drop bands so the
+  intended row or column can be selected unambiguously. On hover, identify the
+  logical destination; on drop, send its actual axis/index rather than a pixel
+  coordinate.
 - Remove the positive-width-and-height prerequisite from track-button creation;
   validate finite ordered boundaries instead.
 
@@ -783,15 +793,35 @@ equal to its complete grid cell.
 
 #### MATLAB geometry work
 
-- Separate trustworthy track constraints from component intrinsic bounds. Fixed
-  literals and flexible ratios remain equalities. For `fit`, group observations
-  by track and treat child extents according to verified R2024a layout semantics
-  instead of adding one unconditional equality per child.
-- For a nonspanning occupied `fit` track, infer the track extent from the
-  controlling maximum requirement after accounting for component type and
-  realized layout behavior. Treat spanning children as aggregate bounds or
-  validation constraints, not automatically as exact equations for every track
-  in the span.
+- R2024a does not expose computed per-track rectangles as a public
+  `uigridlayout` property. Safe Preview can directly provide the grid rectangle
+  and each rendered child's rectangle, but an empty cell has no rectangle of its
+  own. Therefore this is a measurement-and-reconstruction path, not a single
+  direct read of every row and column boundary.
+- Make stabilized Safe Preview measurements the primary geometry source. After
+  `drawnow`, wait until the public grid and child pixel bounds stop changing,
+  then read the grid outer/inner rectangles and every immediate child's actual
+  rectangle with `getpixelposition`. Do not maintain component-type preferred
+  sizes or reproduce MATLAB's internal Grid Layout sizing rules in yamada.
+- Separate trustworthy literal constraints from measured rectangles. Fixed
+  literals and flexible ratios remain exact constraints. For `fit`, group the
+  measured child rectangles by logical row or column and use their actual union
+  envelope, rather than adding one equality for every child. Treat that envelope
+  first as an observed minimum extent, then promote it to an exact track extent
+  only when the measured neighboring positions, total inner extent, literals,
+  and spacing corroborate it. Thus row 6 of `ControlGalleryApp` uses one measured
+  envelope containing both the gauge and knob instead of contradictory
+  `height = 40` and `height = 60` equations.
+- Treat spanning children as measured aggregate bounds or validation
+  constraints, not automatically as exact equations for every track in the
+  span. Resolve a span only when the surrounding measured boundaries, literals,
+  spacing, and padding make the result unique; do not insert a
+  component-specific estimate.
+- Confirm the R2024a empty-`fit` result with focused Safe Preview measurements.
+  When a literal `fit` track has no occupant and the measured surrounding
+  boundaries identify a collapsed interval, publish its equal start/end
+  boundary and logical index. If the public measurements do not uniquely locate
+  it, report that track as unresolved instead of inventing a positive height.
 - Build a solver result that reports which axis or tracks are resolved. A
   conflicting or insufficient observation must not suppress child selection or
   the independently resolved axis.
@@ -807,7 +837,12 @@ equal to its complete grid cell.
 - [ ] Add DOM/payload tests for compact in-grid buttons, complete axis-specific
   insertion labels, narrow-width popover layout, and keyboard access.
 - [ ] Add fixed, flexible, occupied `fit`, empty zero-size `fit`, adjacent
-  zero-size, spanning, padded, and spaced geometry tests.
+  zero-size, spanning, padded, and spaced geometry tests based on stabilized
+  Safe Preview pixel measurements, with no component-type sizing table.
+- [ ] Add move tests proving a collapsed empty `fit` row and column appear as
+  distinct logical drop targets, accept a child, and expand after the resulting
+  Safe Preview refresh. Include adjacent collapsed tracks and stale-index
+  rejection.
 - [ ] Parse and render both `SimpleCalculatorApp.m` and
   `ControlGalleryApp.m`; require editable row/column payloads and child selection
   for their nested grids without the geometry warning shown in the screenshots.

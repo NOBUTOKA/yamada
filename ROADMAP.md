@@ -128,8 +128,9 @@ split, the current correction plan, and the verification gates.
   padding, color, visibility, and scrolling in the Inspector.
 - Make canvas selection of Grid Layout descendants available immediately after
   opening an existing file, independently of which grid is active.
-- Show lightweight row and column separators and keep controls reachable for
-  zero-height or zero-width tracks without fabricating positive geometry.
+- Show lightweight row and column separators and keep controls and move drop
+  targets reachable for zero-height or zero-width tracks without fabricating
+  positive geometry.
 - Support fixed, `fit`, weighted, mixed, nested, spanning, empty, and
   expression-backed cases conservatively and source-safely.
 - Keep insert and delete atomic and undoable; track reordering is not part of
