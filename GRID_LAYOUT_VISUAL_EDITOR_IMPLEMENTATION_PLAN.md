@@ -39,6 +39,14 @@ request to remove this plan or its ROADMAP item.
 - [x] Complete focused and full automated verification, Code Analyzer, and a
   rendered MATLAB visual inspection of the compact settings controls.
 - [x] Complete the remaining narrow-preview and nested-grid manual review.
+- [x] Move compact track settings controls onto an external Safe Preview rail so
+  they never cover a Grid Layout child.
+- [x] Draw separators only at the realized edges of the published Safe Preview
+  track rectangles, and reduce their visual weight to a one-pixel dotted guide.
+- [x] Give nested Grid Layout child hit targets a depth order so a click selects
+  the innermost direct-grid child under the pointer.
+- [x] Re-run focused, full, and rendered visual verification for this
+  post-review correction pass.
 - [ ] Obtain the user's explicit approval before marking this roadmap item complete.
 
 ## Goal

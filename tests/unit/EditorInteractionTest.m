@@ -501,6 +501,11 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             targetIndex = find(string({payload.gridSelectionTargets.id}) == child.Id, 1);
             testCase.verifyNotEmpty(targetIndex);
             target = payload.gridSelectionTargets(targetIndex);
+            outerChild = app.Document.getComponentByName("FormPanel");
+            outerTargetIndex = find(string({payload.gridSelectionTargets.id}) == outerChild.Id, 1);
+            testCase.verifyNotEmpty(outerTargetIndex);
+            testCase.verifyGreaterThan(target.depth, ...
+                payload.gridSelectionTargets(outerTargetIndex).depth);
 
             overlays.HTMLEventReceivedFcn(overlays, struct( ...
                 "HTMLEventName", "GridAction", ...
@@ -614,6 +619,14 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(contains(html, "placeTrackPopover"));
             testCase.verifyTrue(contains(html, "gridSelectionTargets"));
             testCase.verifyTrue(contains(html, "track-settings"));
+            testCase.verifyTrue(contains(html, "componentArray(targets).sort"));
+            testCase.verifyTrue(contains(html, "addTrackDividers"));
+            testCase.verifyFalse(contains(html, "data.rowBoundaries"));
+            testCase.verifyTrue(contains(html, "rgba(34, 100, 199, 0.20)"));
+            testCase.verifyTrue(contains(html, "rowRail"));
+            testCase.verifyTrue(contains(html, "columnRail"));
+            testCase.verifyTrue(contains(html, "var buttonSize = 12"));
+            testCase.verifyTrue(contains(html, "var railGap = 0"));
             testCase.verifyTrue(contains(html, "Insert Row Above"));
             testCase.verifyTrue(contains(html, "Insert Column Left"));
             testCase.verifyFalse(contains(html, "Insert Before"));

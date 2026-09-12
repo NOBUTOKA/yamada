@@ -812,7 +812,7 @@ classdef yamada < matlab.apps.AppBase
                 "height", {}, "shape", {}, "selected", {}, "tabGroup", {}, ...
                 "tabTitles", {}, "tabSelected", {});
             gridSelectionTargets = struct("id", {}, "gridId", {}, "x", {}, ...
-                "y", {}, "width", {}, "height", {});
+                "y", {}, "width", {}, "height", {}, "depth", {});
             keys = app.PreviewHandles.keys();
             for index = 1:numel(keys)
                 componentId = string(keys{index});
@@ -830,7 +830,8 @@ classdef yamada < matlab.apps.AppBase
                         gridSelectionTargets(end + 1) = struct( ...
                             "id", char(component.Id), "gridId", char(parent.Id), ...
                             "x", rectangle(1), "y", rectangle(2), ...
-                            "width", rectangle(3), "height", rectangle(4)); %#ok<AGROW>
+                            "width", rectangle(3), "height", rectangle(4), ...
+                            "depth", app.componentNestingDepth(component.Id)); %#ok<AGROW>
                     end
                     continue
                 end
@@ -1175,6 +1176,24 @@ classdef yamada < matlab.apps.AppBase
                         return
                     end
                 end
+                component = app.Document.getComponent(component.ParentId);
+            end
+        end
+
+        function depth = componentNestingDepth(app, componentId)
+            % componentNestingDepth Return the component's ancestor depth for overlay hit testing.
+            arguments (Input)
+                app (1, 1) yamada
+                componentId (1, 1) string
+            end
+            arguments (Output)
+                depth (1, 1) double
+            end
+
+            depth = 0;
+            component = app.Document.getComponent(componentId);
+            while ~isempty(component) && strlength(component.ParentId) > 0
+                depth = depth + 1;
                 component = app.Document.getComponent(component.ParentId);
             end
         end
