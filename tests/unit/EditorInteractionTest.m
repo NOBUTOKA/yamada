@@ -573,6 +573,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(contains(html, "Insert Column Left"));
             testCase.verifyFalse(contains(html, "Insert Before"));
             testCase.verifyTrue(contains(html, "grid-drop-band"));
+            testCase.verifyTrue(contains(html, "width: min(244px, calc(100% - 8px))"));
+            testCase.verifyTrue(contains(html, "grid-template-columns: 1fr"));
+            testCase.verifyTrue(contains(html, "white-space: normal"));
+            testCase.verifyTrue(contains(html, "aria-label"));
         end
 
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
