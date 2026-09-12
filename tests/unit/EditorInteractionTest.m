@@ -473,6 +473,51 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function gridOverlaySelectsOpenedControlGalleryNestedGridChild(testCase)
+            % gridOverlaySelectsOpenedControlGalleryNestedGridChild Select a parsed nested-grid child from the root view.
+
+            testPath = mfilename("fullpath");
+            projectRoot = fileparts(fileparts(fileparts(testPath)));
+            fixture = string(fullfile(projectRoot, "tests", "fixtures", "ControlGalleryApp.m"));
+            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
+            testCase.verifyEqual(numel(openMenu), 1);
+            openMenu.MenuSelectedFcn(openMenu, struct());
+            drawnow;
+
+            child = app.Document.getComponentByName("DueDatePicker");
+            tree = findall(figure, "Type", "uitree");
+            rootNode = tree.Children(1);
+            tree.SelectedNodes = rootNode;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", rootNode));
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            payload = overlays.Data;
+            targetIndex = find(string({payload.gridSelectionTargets.id}) == child.Id, 1);
+            testCase.verifyNotEmpty(targetIndex);
+            target = payload.gridSelectionTargets(targetIndex);
+
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "select-child", ...
+                "revision", payload.gridEditor.revision, "activeGridId", ...
+                string(target.gridId), "childId", string(target.id))));
+            drawnow;
+
+            refreshed = overlays.Data.gridEditor;
+            testCase.verifyEqual(app.SelectedComponentId, child.Id);
+            testCase.verifyEqual(app.ActiveGridId, string(target.gridId));
+            testCase.verifyTrue(refreshed.geometryAvailable, refreshed.readOnlyReason);
+            testCase.verifyTrue(refreshed.editable, refreshed.readOnlyReason);
+            testCase.verifyEqual(string(refreshed.activeGridId), string(target.gridId));
+            clear cleanup
+        end
+
         function gridOverlayMovesChildIntoCollapsedFitTrack(testCase)
             % gridOverlayMovesChildIntoCollapsedFitTrack Treat a zero-height fit row as a move destination.
 

@@ -854,7 +854,7 @@ the feature active.
   distinct logical drop targets, accept a child, and expand after the resulting
   Safe Preview refresh. Include adjacent collapsed tracks and stale-index
   rejection.
-- [ ] Parse and render both `SimpleCalculatorApp.m` and
+- [x] Parse and render both `SimpleCalculatorApp.m` and
   `ControlGalleryApp.m`; require editable row/column payloads and child selection
   for their nested grids without the geometry warning shown in the screenshots.
 - [ ] Perform a manual R2024a visual check at the supplied window dimensions and
