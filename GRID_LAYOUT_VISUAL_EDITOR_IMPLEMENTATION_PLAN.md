@@ -861,6 +861,6 @@ the feature active.
   a narrower Preview, then run Code Analyzer, focused suites, `git diff --check`,
   encoding/line-ending checks, and the full `tests/unit` suite with zero Failed
   and zero Incomplete results.
-- [ ] Keep this document and the ROADMAP item after all automated and manual
-  checks pass. Mark the feature complete or remove either document only after
-  the user gives an explicit instruction to do so.
+- Keep this document and the ROADMAP item after all automated and manual checks
+  pass. Mark the feature complete or remove either document only after the user
+  gives an explicit instruction to do so.
