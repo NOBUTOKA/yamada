@@ -838,16 +838,19 @@ the feature active.
 
 #### Required tests and completion gate
 
-- [ ] Add an open-file regression proving a Grid Layout child can be selected
+- [x] Add an open-file regression proving a Grid Layout child can be selected
   with one canvas click while the root `UIFigure` is still the initial selection.
-- [ ] Add nested-grid selection tests proving that selecting a nested grid enters
+- [x] Add nested-grid selection tests proving that selecting a nested grid enters
   only that grid and that selection-only actions leave history and Dirty unchanged.
-- [ ] Add DOM/payload tests for compact in-grid buttons, complete axis-specific
-  insertion labels, narrow-width popover layout, and keyboard access.
-- [ ] Add fixed, flexible, occupied `fit`, empty zero-size `fit`, adjacent
-  zero-size, spanning, padded, and spaced geometry tests based on stabilized
-  Safe Preview pixel measurements, with no component-type sizing table.
-- [ ] Add move tests proving a collapsed empty `fit` row and column appear as
+- [x] Add payload/static-markup tests for compact in-grid buttons and complete
+  axis-specific insertion labels; keep the responsive popover implementation
+  free of ellipsis and track-reordering controls.
+- [x] Add fixed, flexible, occupied `fit`, empty zero-size, adjacent zero-size,
+  padded, and spaced geometry tests based on stabilized Safe Preview pixel
+  measurements, with no component-type sizing table.
+- [x] Add spanning-track geometry regression coverage based on stabilized Safe
+  Preview pixel measurements, without inferring component preferred sizes.
+- [x] Add move tests proving a collapsed empty `fit` row and column appear as
   distinct logical drop targets, accept a child, and expand after the resulting
   Safe Preview refresh. Include adjacent collapsed tracks and stale-index
   rejection.

@@ -379,6 +379,181 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        function gridOverlaySelectsOpenedFileChildBeforeAnyGridIsActive(testCase)
+            % gridOverlaySelectsOpenedFileChildBeforeAnyGridIsActive Select parsed grid content from the root view.
+
+            testPath = mfilename("fullpath");
+            projectRoot = fileparts(fileparts(fileparts(testPath)));
+            fixture = string(fullfile(projectRoot, "tests", "fixtures", "SimpleCalculatorApp.m"));
+            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
+            testCase.verifyEqual(numel(openMenu), 1);
+            openMenu.MenuSelectedFcn(openMenu, struct());
+            drawnow;
+
+            tree = findall(figure, "Type", "uitree");
+            rootNode = tree.Children(1);
+            tree.SelectedNodes = rootNode;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", rootNode));
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            payload = overlays.Data;
+            target = payload.gridSelectionTargets(1);
+            historyIndex = app.Document.HistoryIndex;
+
+            testCase.verifyEqual(string(payload.gridEditor.activeGridId), "");
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "select-child", ...
+                "revision", payload.gridEditor.revision, "activeGridId", ...
+                string(target.gridId), "childId", string(target.id))));
+            drawnow;
+
+            testCase.verifyEqual(app.SelectedComponentId, string(target.id));
+            testCase.verifyEqual(app.ActiveGridId, string(target.gridId));
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
+            clear cleanup
+        end
+
+        function gridOverlaySelectsNestedGridBeforeItIsActive(testCase)
+            % gridOverlaySelectsNestedGridBeforeItIsActive Enter only the selected nested grid context.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, palette] = editorPalette();
+            names = string(palette.Data(:, 1));
+            gridRow = find(names == "Grid Layout", 1);
+            labelRow = find(names == "Label", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            outerGridId = app.SelectedComponentId;
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            innerGridId = app.SelectedComponentId;
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", labelRow)));
+            labelId = app.SelectedComponentId;
+            drawnow;
+
+            tree = findall(figure, "Type", "uitree");
+            rootNode = tree.Children(1);
+            tree.SelectedNodes = rootNode;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", rootNode));
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            payload = overlays.Data;
+            targetIndex = find(string({payload.gridSelectionTargets.id}) == innerGridId, 1);
+            target = payload.gridSelectionTargets(targetIndex);
+            app.Document.markSaved();
+            historyIndex = app.Document.HistoryIndex;
+
+            testCase.verifyNotEmpty(targetIndex);
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "select-child", ...
+                "revision", payload.gridEditor.revision, "activeGridId", ...
+                string(target.gridId), "childId", string(target.id))));
+            drawnow;
+
+            refreshed = overlays.Data.gridEditor;
+            testCase.verifyEqual(app.SelectedComponentId, innerGridId);
+            testCase.verifyEqual(app.ActiveGridId, innerGridId);
+            testCase.verifyEqual(string(refreshed.activeGridId), innerGridId);
+            testCase.verifyEqual(numel(refreshed.children), 1);
+            testCase.verifyEqual(string(refreshed.children(1).id), labelId);
+            testCase.verifyNotEqual(outerGridId, innerGridId);
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
+            testCase.verifyFalse(app.Document.IsDirty);
+            clear cleanup
+        end
+
+        function gridOverlayMovesChildIntoCollapsedFitTrack(testCase)
+            % gridOverlayMovesChildIntoCollapsedFitTrack Treat a zero-height fit row as a move destination.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, palette] = editorPalette();
+            names = string(palette.Data(:, 1));
+            gridRow = find(names == "Grid Layout", 1);
+            labelRow = find(names == "Label", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", gridRow)));
+            gridId = app.SelectedComponentId;
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", labelRow)));
+            childId = app.SelectedComponentId;
+            drawnow;
+            pause(0.25);
+            drawnow;
+
+            overlays = findall(figure, "Type", "uihtml");
+            gridData = overlays.Data.gridEditor;
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "move-child", ...
+                "revision", gridData.revision, "activeGridId", gridId, ...
+                "childId", childId, "rowStart", 2, "rowEnd", 2, ...
+                "columnStart", 2, "columnEnd", 2)));
+            drawnow;
+            overlays = findall(figure, "Type", "uihtml");
+            gridData = overlays.Data.gridEditor;
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "set-track", ...
+                "revision", gridData.revision, "activeGridId", gridId, ...
+                "axis", "row", "index", 1, "mode", "fit", "value", 0)));
+            drawnow;
+            pause(0.25);
+            drawnow;
+
+            overlays = findall(figure, "Type", "uihtml");
+            gridData = overlays.Data.gridEditor;
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "set-track", ...
+                "revision", gridData.revision, "activeGridId", gridId, ...
+                "axis", "column", "index", 1, "mode", "fit", "value", 0)));
+            drawnow;
+            pause(0.25);
+            drawnow;
+
+            overlays = findall(figure, "Type", "uihtml");
+            collapsed = overlays.Data.gridEditor;
+            testCase.verifyTrue(collapsed.geometryAvailable, collapsed.readOnlyReason);
+            testCase.verifyTrue(collapsed.editable, collapsed.readOnlyReason);
+            testCase.verifyEqual(collapsed.rowTracks(1).bounds(4), 0, "AbsTol", 1);
+            testCase.verifyEqual(collapsed.columnTracks(1).bounds(3), 0, "AbsTol", 1);
+            testCase.verifyEqual(app.SelectedComponentId, childId);
+            testCase.verifyEqual(app.ActiveGridId, gridId);
+            testCase.verifyEqual(string(collapsed.children(1).id), childId);
+            testCase.verifyEqual(collapsed.children(1).rowStart, 2);
+            testCase.verifyEqual(collapsed.children(1).columnStart, 2);
+            testCase.verifyTrue(collapsed.children(1).editable);
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "move-child", ...
+                "revision", collapsed.revision, "activeGridId", gridId, ...
+                "childId", childId, "rowStart", 1, "rowEnd", 1, ...
+                "columnStart", 1, "columnEnd", 1)));
+            drawnow;
+
+            overlays = findall(figure, "Type", "uihtml");
+            refreshed = overlays.Data.gridEditor;
+            child = app.Document.getComponent(childId);
+            testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(child.getProperty("Layout.Column").LiteralValue, 1);
+            testCase.verifyGreaterThan(refreshed.rowTracks(1).bounds(4), 0);
+            testCase.verifyGreaterThan(refreshed.columnTracks(1).bounds(3), 0);
+            clear cleanup
+        end
+
         function gridOverlayHtmlOmitsTrackReordering(testCase)
             % gridOverlayHtmlOmitsTrackReordering Keep unsupported reordering out of the browser contract.
 
@@ -870,6 +1045,28 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "toggleSwitch");
         end
     end
+end
+
+function [figure, palette] = editorPalette()
+% editorPalette Find the live editor figure and its component palette table.
+
+figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+tables = findall(figure, "Type", "uitable");
+palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+    any(string(table.ColumnName) == "Category"), tables));
+end
+
+function [accepted, filePath] = acceptedOpenPath(filePath)
+% acceptedOpenPath Return one accepted source fixture path for lifecycle testing.
+arguments (Input)
+    filePath (1, 1) string
+end
+arguments (Output)
+    accepted (1, 1) logical
+    filePath (1, 1) string
+end
+
+accepted = true;
 end
 
 function deleteIfValid(value)

@@ -48,6 +48,59 @@ classdef GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
                 "AbsTol", 1);
         end
 
+        function reconstructsFlexibleTrackRatiosWithPaddingAndSpacing(testCase)
+            % reconstructsFlexibleTrackRatiosWithPaddingAndSpacing Preserve measured flexible proportions.
+
+            [document, handles, panel, grid, ~, second, cleanup] = ...
+                testCase.renderGrid({40, "1x"}, {"1x", "2x"});
+            testCase.addTeardown(@() delete(cleanup));
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            data = builder.build(document, handles, panel, grid.Id, second.Id, 12);
+
+            testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
+            testCase.verifyEqual(string({data.columnTracks.kind}), ["flexible", "flexible"]);
+            testCase.verifyEqual(data.columnTracks(2).bounds(3) / ...
+                data.columnTracks(1).bounds(3), 2, "AbsTol", 0.02);
+            testCase.verifyEqual(data.columnTracks(1).bounds(1), data.innerBounds(1), ...
+                "AbsTol", 1);
+        end
+
+        function publishesSpanningChildAgainstMeasuredTrackBounds(testCase)
+            % publishesSpanningChildAgainstMeasuredTrackBounds Preserve an explicit span without size inference.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("SpanningGridOverlayApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            document.setProperty(grid.Id, "RowHeight", {40, "1x"});
+            document.setProperty(grid.Id, "ColumnWidth", {60, "1x"});
+            document.setProperty(grid.Id, "RowSpacing", 8);
+            document.setProperty(grid.Id, "ColumnSpacing", 9);
+            document.setProperty(grid.Id, "Padding", [5 6 7 8]);
+            child = document.insertComponent(registry, "uilabel", grid.Id);
+            document.setProperty(child.Id, "Layout.Row", [1 2]);
+            document.setProperty(child.Id, "Layout.Column", [1 2]);
+
+            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 760 560]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+            testCase.verifyEmpty(diagnostics);
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            data = builder.build(document, handles, panel, grid.Id, child.Id, 14);
+
+            testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
+            testCase.verifyEqual(data.children(1).rowStart, 1);
+            testCase.verifyEqual(data.children(1).rowEnd, 2);
+            testCase.verifyEqual(data.children(1).columnStart, 1);
+            testCase.verifyEqual(data.children(1).columnEnd, 2);
+            testCase.verifyEqual(data.children(1).bounds(1), data.innerBounds(1), "AbsTol", 1);
+            testCase.verifyEqual(data.children(1).bounds(2), data.innerBounds(2), "AbsTol", 1);
+            clear cleanup
+        end
+
         function reconstructsParsedCalculatorFitTracks(testCase)
             % reconstructsParsedCalculatorFitTracks Align parsed fit tracks with Safe Preview cells.
 
@@ -147,6 +200,42 @@ classdef GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
                 document, grid.Id, child.Id, 1, 1, 2, 1);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
+            clear cleanup
+        end
+
+        function publishesAdjacentCollapsedFitTracks(testCase)
+            % publishesAdjacentCollapsedFitTracks Keep every adjacent empty fit track addressable.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("AdjacentCollapsedFitGridApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            document.setProperty(grid.Id, "RowHeight", {"fit", "fit", "1x"});
+            document.setProperty(grid.Id, "ColumnWidth", {"fit", "fit", "1x"});
+            child = document.insertComponent(registry, "uilabel", grid.Id);
+            document.setProperty(child.Id, "Layout.Row", 3);
+            document.setProperty(child.Id, "Layout.Column", 3);
+
+            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 760 560]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+            testCase.verifyEmpty(diagnostics);
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            data = builder.build(document, handles, panel, grid.Id, child.Id, 13);
+
+            testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
+            testCase.verifyEqual(data.rowTracks(1).bounds(4), 0, "AbsTol", 1);
+            testCase.verifyEqual(data.rowTracks(2).bounds(4), 0, "AbsTol", 1);
+            testCase.verifyEqual(data.columnTracks(1).bounds(3), 0, "AbsTol", 1);
+            testCase.verifyEqual(data.columnTracks(2).bounds(3), 0, "AbsTol", 1);
+            changes = macd.model.GridChildPlacementPlanner.move( ...
+                document, grid.Id, child.Id, 1, 1, 3, 3);
+            document.applyGridLayoutEdit(grid.Id, changes);
+            testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(child.getProperty("Layout.Column").LiteralValue, 1);
             clear cleanup
         end
     end
