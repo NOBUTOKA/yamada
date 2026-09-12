@@ -38,8 +38,8 @@ request to remove this plan or its ROADMAP item.
 - [x] Resolve mixed-control `fit` geometry in `ControlGalleryApp`.
 - [x] Complete focused and full automated verification, Code Analyzer, and a
   rendered MATLAB visual inspection of the compact settings controls.
-- [ ] Complete the remaining narrow-preview and nested-grid manual review, then
-  obtain the user's explicit approval before marking this roadmap item complete.
+- [x] Complete the remaining narrow-preview and nested-grid manual review.
+- [ ] Obtain the user's explicit approval before marking this roadmap item complete.
 
 ## Goal
 
@@ -857,7 +857,7 @@ the feature active.
 - [x] Parse and render both `SimpleCalculatorApp.m` and
   `ControlGalleryApp.m`; require editable row/column payloads and child selection
   for their nested grids without the geometry warning shown in the screenshots.
-- [ ] Perform a manual R2024a visual check at the supplied window dimensions and
+- [x] Perform a manual R2024a visual check at the supplied window dimensions and
   a narrower Preview, then run Code Analyzer, focused suites, `git diff --check`,
   encoding/line-ending checks, and the full `tests/unit` suite with zero Failed
   and zero Incomplete results.
