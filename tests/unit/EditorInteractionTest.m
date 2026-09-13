@@ -396,11 +396,6 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             openMenu.MenuSelectedFcn(openMenu, struct());
             drawnow;
 
-            tree = findall(figure, "Type", "uitree");
-            rootNode = tree.Children(1);
-            tree.SelectedNodes = rootNode;
-            tree.SelectionChangedFcn(tree, struct("SelectedNodes", rootNode));
-            drawnow;
             overlays = findall(figure, "Type", "uihtml");
             payload = overlays.Data;
             target = payload.gridSelectionTargets(1);
@@ -491,16 +486,21 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             child = app.Document.getComponentByName("DueDatePicker");
-            tree = findall(figure, "Type", "uitree");
-            rootNode = tree.Children(1);
-            tree.SelectedNodes = rootNode;
-            tree.SelectionChangedFcn(tree, struct("SelectedNodes", rootNode));
-            drawnow;
             overlays = findall(figure, "Type", "uihtml");
             payload = overlays.Data;
             targetIndex = find(string({payload.gridSelectionTargets.id}) == child.Id, 1);
             testCase.verifyNotEmpty(targetIndex);
             target = payload.gridSelectionTargets(targetIndex);
+            datePicker = findall(figure, "Type", "uidatepicker");
+            panels = findall(figure, "Type", "uipanel");
+            previewPanel = panels(string({panels.Title}) == "Safe preview: UIFigure");
+            testCase.verifyEqual(numel(datePicker), 1);
+            testCase.verifyEqual(numel(previewPanel), 1);
+            datePosition = double(getpixelposition(datePicker, true));
+            panelPosition = double(getpixelposition(previewPanel, true));
+            datePosition(1:2) = datePosition(1:2) - panelPosition(1:2);
+            testCase.verifyEqual([target.x target.y target.width target.height], ...
+                datePosition, "AbsTol", 1);
             outerChild = app.Document.getComponentByName("FormPanel");
             outerTargetIndex = find(string({payload.gridSelectionTargets.id}) == outerChild.Id, 1);
             testCase.verifyNotEmpty(outerTargetIndex);

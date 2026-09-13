@@ -27,8 +27,10 @@ or its ROADMAP item.
   track reordering from the UI, event contract, planner, tests, and docs.
 - [x] Align track controls for the covered `SimpleCalculatorApp` geometry and
   clamp its popover to the Safe Preview in the first correction pass (`03d929f`).
-- [ ] Stabilize and republish Grid Layout descendant hit targets immediately
-  after opening an existing file, without requiring a hierarchy selection.
+- [x] Stabilize and republish Grid Layout descendant hit targets immediately
+  after opening an existing file, without requiring a hierarchy selection
+  (`2026-09-14`; synchronous post-`drawnow` overlay publication, with the
+  deferred signature extended to Grid Layouts and their direct children).
 - [x] Replace labeled row/column headers with compact settings buttons
   that remain reachable for zero-size tracks.
 - [x] Make insertion controls state the axis and insertion side without
@@ -876,7 +878,26 @@ the feature active.
   pass. Mark the feature complete or remove either document only after the user
   gives an explicit instruction to do so.
 
-## Reopened Geometry and Open-Time Selection Plan — 2026-09-13 (pending)
+## Reopened Geometry and Open-Time Selection Plan — historical geometry option, selection partially complete
+
+### 2026-09-14 implementation update
+
+- [x] The first-open selection defect is fixed. `refreshPreview` now publishes
+  the overlay again after MATLAB completes an initial `drawnow`; deferred
+  stabilization is also scheduled for any document containing a Grid Layout,
+  and its signature includes every visible Grid Layout and direct grid child.
+  The SimpleCalculator and ControlGallery regressions open the fixture without
+  invoking a hierarchy callback; ControlGallery additionally compares the Due
+  Date Picker target to its realized Safe Preview rectangle.
+- [x] The direct child-probe implementation was evaluated and removed. In an
+  already populated R2024a `uigridlayout`, adding a nested GridLayout probe
+  changes the native layout and the probe remains at its default `100x100`
+  rectangle instead of its requested cell. It is therefore not a non-invasive
+  geometry source and must not be used as a fallback.
+- [ ] Track-boundary alignment remains open. Select and validate a measurement
+  method that does not add, reparent, hide, or otherwise change children of the
+  Grid Layout being measured; retain the existing solver until a replacement
+  has that evidence.
 
 This plan supersedes the earlier claim that a union of rendered child bounds is
 the realized size of every occupied `fit` track. It also supersedes the earlier
@@ -929,12 +950,13 @@ styling remain in scope and do not need redesign.
   session. The selection validator and depth ordering are not the first-open
   cause.
 
-### Revised geometry source: editor-owned cell probes
+### Rejected geometry source: directly overlaid editor-owned cell probes
 
 MATLAB R2024a does not expose realized row and column rectangles as a public
-`uigridlayout` property. The replacement measurement path will use only public
-Safe Preview APIs while allowing MATLAB's own layout engine to provide the
-answer:
+`uigridlayout` property. This proposed replacement was rejected on 2026-09-14:
+adding the nested probes after the target grid has real children changes its
+layout and does not yield the requested cell rectangle. The following details
+are retained only as the rejected experiment record, not as implementation work.
 
 1. Create one empty, invisible, editor-owned nested `uigridlayout` probe for
    each logical row and column of the preview grid. Give each probe zero padding
@@ -960,7 +982,7 @@ The R2024a spike added probes to every ControlGallery row and column with
 delta `[0, 0, 0, 0]`, while the probes returned the complete eight row heights:
 `[16.766, 22.766, 22.766, 39.766, 65.062, 118.594, 86.531, 23.000]`.
 
-### Responsibility split for the correction
+### Responsibility split for the rejected experiment (obsolete)
 
 #### MATLAB Safe Preview/UI layer
 
@@ -998,7 +1020,7 @@ delta `[0, 0, 0, 0]`, while the probes returned the complete eight row heights:
   required. Probes are preview instrumentation only and must never appear in
   generated AppBase source or affect Dirty state.
 
-### Implementation sequence
+### Implementation sequence for the rejected experiment (obsolete)
 
 1. Add the probe registry and focused R2024a tests for fixed, flexible,
    decorated-control `fit`, spanning, empty zero-size, adjacent zero-size, and
@@ -1024,15 +1046,15 @@ delta `[0, 0, 0, 0]`, while the probes returned the complete eight row heights:
    interaction suites, `git diff --check`, encoding/line-ending checks, and the
    full `runtests('tests/unit')` suite with zero Failed and zero Incomplete.
 
-### Pending acceptance checklist
+### Pending acceptance checklist for the rejected experiment (obsolete)
 
 - [ ] Probe creation is non-invasive for ControlGallery and the focused layout
   matrix.
 - [ ] Every published track rectangle comes from a stable Safe Preview probe;
   the child-envelope solver is no longer a geometry fallback.
 - [ ] ControlGallery separators align with all eight rows and both columns.
-- [ ] Grid-managed children are selectable immediately after Open without any
-  hierarchy callback or prior component selection.
+- [x] Grid-managed children are selectable immediately after Open without any
+  hierarchy callback or prior component selection (verified 2026-09-14).
 - [ ] Empty and adjacent zero-size `fit` tracks remain editable and valid move
   destinations.
 - [ ] Focused tests, the full unit suite, Code Analyzer, file-format checks, and

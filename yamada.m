@@ -752,6 +752,9 @@ classdef yamada < matlab.apps.AppBase
             app.createInteractionOverlay();
             app.updateInteractionOverlay();
             app.scheduleOverlayRefresh();
+            % Publish hit targets once more after MATLAB finishes initial layout.
+            drawnow;
+            app.updateInteractionOverlay();
             if ~isempty(diagnostics)
                 app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
                 app.refreshDiagnostics(app.Document.Diagnostics);
@@ -1205,7 +1208,7 @@ classdef yamada < matlab.apps.AppBase
             end
 
             if isempty(app.Document) || (~any([app.Document.Components.Factory] == "uitabgroup") && ...
-                    strlength(app.ActiveGridId) == 0)
+                    ~any([app.Document.Components.Factory] == "uigridlayout"))
                 return
             end
             if isempty(app.TabLayoutTimer) || ~isvalid(app.TabLayoutTimer)
@@ -1278,11 +1281,18 @@ classdef yamada < matlab.apps.AppBase
                 if ~isvalid(preview)
                     continue
                 end
-                if component.Id == app.ActiveGridId && component.Factory == "uigridlayout"
+                parent = app.Document.getComponent(component.ParentId);
+                if component.Factory == "uigridlayout"
                     rectangle = app.previewDisplayPosition(preview);
                     inner = double(preview.InnerPosition);
                     parts(end + 1) = component.Id + ":" + ...
                         strjoin(string(round([rectangle inner])), ","); %#ok<AGROW>
+                    continue
+                end
+                if ~isempty(parent) && parent.Factory == "uigridlayout"
+                    rectangle = app.previewDisplayPosition(preview);
+                    parts(end + 1) = component.Id + ":" + ...
+                        strjoin(string(round(rectangle)), ","); %#ok<AGROW>
                     continue
                 end
                 position = component.getProperty("Position");
