@@ -10,10 +10,11 @@ authorization to mark the feature complete or remove either document.
 
 ## Implementation Status
 
-The initial implementation and the follow-up corrections below are present in
-the current source. The feature remains open for expanded regression coverage,
-final manual review, and the user's explicit approval; this status is not a
-request to remove this plan or its ROADMAP item.
+The initial implementation is present, but the 2026-09-13 ControlGallery review
+reopened geometry measurement and open-time selection. The feature remains open
+for the corrective work below, regression coverage, final manual review, and
+the user's explicit approval. This status is not a request to remove this plan
+or its ROADMAP item.
 
 - [x] Add typed `RowHeight` and `ColumnWidth` editing for fixed, `fit`, and
   weighted tracks through atomic model changes and Undo/Redo.
@@ -26,27 +27,29 @@ request to remove this plan or its ROADMAP item.
   track reordering from the UI, event contract, planner, tests, and docs.
 - [x] Align track controls for the covered `SimpleCalculatorApp` geometry and
   clamp its popover to the Safe Preview in the first correction pass (`03d929f`).
-- [x] Allow Grid Layout descendants to be selected immediately after opening an
-  existing file, without first selecting the grid in the hierarchy.
-- [x] Replace labeled row/column headers with compact in-grid settings buttons
+- [ ] Stabilize and republish Grid Layout descendant hit targets immediately
+  after opening an existing file, without requiring a hierarchy selection.
+- [x] Replace labeled row/column headers with compact settings buttons
   that remain reachable for zero-size tracks.
 - [x] Make insertion controls state the axis and insertion side without
   truncation.
 - [x] Support empty `fit` tracks whose realized size is zero without disabling
   the rest of the grid editor, including using a collapsed track as a move
   destination.
-- [x] Resolve mixed-control `fit` geometry in `ControlGalleryApp`.
-- [x] Complete focused and full automated verification, Code Analyzer, and a
-  rendered MATLAB visual inspection of the compact settings controls.
-- [x] Complete the remaining narrow-preview and nested-grid manual review.
+- [ ] Replace mixed-control `fit` reconstruction with direct, non-invasive
+  Safe Preview cell measurement in `ControlGalleryApp` and other grids.
+- [x] Complete the prior focused and full automated verification, Code Analyzer,
+  and rendered MATLAB visual inspection of the compact settings controls.
+- [x] Complete the prior narrow-preview and nested-grid review; the separate
+  ControlGallery geometry review is reopened below.
 - [x] Move compact track settings controls onto an external Safe Preview rail so
   they never cover a Grid Layout child.
-- [x] Draw separators only at the realized edges of the published Safe Preview
-  track rectangles, and reduce their visual weight to a one-pixel dotted guide.
+- [ ] Republish separators from directly measured Safe Preview cell rectangles;
+  retain the completed one-pixel low-contrast dotted styling.
 - [x] Give nested Grid Layout child hit targets a depth order so a click selects
   the innermost direct-grid child under the pointer.
-- [x] Re-run focused, full, and rendered visual verification for this
-  post-review correction pass.
+- [ ] Re-run focused, full, and rendered `ControlGalleryApp` verification for
+  the reopened correction pass.
 - [ ] Obtain the user's explicit approval before marking this roadmap item complete.
 
 ## Goal
@@ -872,3 +875,166 @@ the feature active.
 - Keep this document and the ROADMAP item after all automated and manual checks
   pass. Mark the feature complete or remove either document only after the user
   gives an explicit instruction to do so.
+
+## Reopened Geometry and Open-Time Selection Plan — 2026-09-13 (pending)
+
+This plan supersedes the earlier claim that a union of rendered child bounds is
+the realized size of every occupied `fit` track. It also supersedes the earlier
+open-file selection test as sufficient evidence: that test explicitly invoked
+the hierarchy callback before reading the overlay payload and therefore hid the
+actual first-open failure. The completed popover, external control rail,
+insertion labels, collapsed-track editing semantics, and low-contrast separator
+styling remain in scope and do not need redesign.
+
+### Confirmed causes
+
+#### ControlGallery separator drift
+
+- `GridLayoutOverlayDataBuilder.trackBounds` currently treats the union of
+  nonspanning child `Position` rectangles as the exact size of an occupied
+  `fit` track. That assumption is false for controls whose public `Position`
+  describes only their control body rather than all decorations that determine
+  the Grid Layout's fit requirement.
+- In the rendered `ControlGalleryApp`, row 4 contains a Range Slider. Its public
+  rectangle reports a height of `3.000` pixels, while a non-invasive cell probe
+  reports the actual row rectangle as `39.766` pixels. The missing `36.766`
+  pixels shift every separator below row 4 even though rows 1 through 3 happen
+  to align.
+- The all-`fit` solver has an additional validation gap: it adds a total-inner-
+  extent equation only when flexible tracks exist. Eight child-derived
+  equalities can therefore have full rank and be accepted even when their
+  heights plus spacing do not cover the realized grid interior.
+- The HTML layer is rendering the bounds it receives. Moving the line or adding
+  another CSS correction cannot fix this defect; the MATLAB payload itself is
+  wrong.
+
+#### Initial open-time selection failure
+
+- Immediately after `ControlGalleryApp` opens, the Due Date Picker hit target is
+  published as `[132, 169.655, 150, 22]`. After the preview has settled and the
+  overlay is explicitly refreshed, the same public control is
+  `[344, 477.048, 300, 22.766]`. Waiting one second does not change the first
+  payload because no refresh is scheduled.
+- `scheduleOverlayRefresh` currently returns when there is no Tab Group and
+  `ActiveGridId` is empty. An opened document initially selects the root
+  `UIFigure`, so `ControlGalleryApp` satisfies both sides of that early-return
+  condition even though it contains nested Grid Layouts whose child hit targets
+  require deferred geometry.
+- Even if the timer were started, `activeTabGeometrySignature` currently omits
+  nonactive Grid Layouts and their children unless they have an ordinary
+  literal `Position`. The signature can therefore look stable before the grid-
+  managed controls reach their final positions.
+- A later hierarchy selection calls `updateInteractionOverlay` after layout has
+  settled, which explains why canvas selection works for the remainder of the
+  session. The selection validator and depth ordering are not the first-open
+  cause.
+
+### Revised geometry source: editor-owned cell probes
+
+MATLAB R2024a does not expose realized row and column rectangles as a public
+`uigridlayout` property. The replacement measurement path will use only public
+Safe Preview APIs while allowing MATLAB's own layout engine to provide the
+answer:
+
+1. Create one empty, invisible, editor-owned nested `uigridlayout` probe for
+   each logical row and column of the preview grid. Give each probe zero padding
+   and spacing and an explicit `Layout.Row`/`Layout.Column`; row probes span the
+   columns and column probes span the rows where practical.
+2. Keep probes outside `DocumentModel`, `PreviewHandles`, hierarchy, Inspector,
+   selection, serialization, and source generation. Their lifecycle belongs to
+   the disposable Safe Preview and ends when that preview is rebuilt.
+3. After layout stabilization, read each probe with
+   `getpixelposition(..., true)`, convert it once into Preview-panel coordinates,
+   and publish its measured axis interval directly as the corresponding track
+   bounds.
+4. Accept zero width or height as a valid measured interval. R2024a testing
+   confirmed that adjacent empty `fit` rows and columns return distinct logical
+   probes with zero extents without expanding the grid.
+5. Validate count, finiteness, ordering, containment in `InnerPosition`, and
+   measured gaps against `RowSpacing`/`ColumnSpacing`. If the probe snapshot is
+   not stable or consistent, withhold geometry-dependent editing and retry the
+   deferred measurement; do not fall back to child-size inference.
+
+The R2024a spike added probes to every ControlGallery row and column with
+`Visible="off"`. The Range Slider rectangle before and after probe creation had
+delta `[0, 0, 0, 0]`, while the probes returned the complete eight row heights:
+`[16.766, 22.766, 22.766, 39.766, 65.062, 118.594, 86.531, 23.000]`.
+
+### Responsibility split for the correction
+
+#### MATLAB Safe Preview/UI layer
+
+- Introduce an editor-owned probe registry associated with the current preview
+  generation. It creates, caches, validates, and disposes probe handles without
+  adding them to the document's component map.
+- Have `GridLayoutOverlayDataBuilder` consume a stable probe snapshot rather
+  than create UI controls or run `drawnow` itself. Remove the child-envelope
+  solver and its fixed/flexible/spanning equation helpers from the track-bound
+  publication path once no callers remain.
+- Preserve model track kinds, values, editability, and logical indices in the
+  payload, but take every displayed rectangle and drop interval from measured
+  probes. Source-backed values remain read-only under the existing rules.
+- Start deferred overlay stabilization whenever the rendered document contains
+  a Grid Layout or Tab Group, regardless of `ActiveGridId`.
+- Extend the stabilization signature to include every visible Grid Layout's
+  outer/inner rectangle and every visible direct grid child's public rectangle.
+  Republish selection targets and active-grid geometry only from the stable
+  snapshot.
+
+#### HTML overlay layer
+
+- Continue to render separators, settings-button anchors, collapsed drop bands,
+  and child outlines from the versioned MATLAB payload. Do not infer row height
+  from a component type or compensate for the Range Slider in JavaScript.
+- Keep the existing one-pixel, low-opacity dotted style and external settings
+  rails. Once the payload uses probe rectangles, place each separator at the
+  midpoint of the measured spacing interval between adjacent probes.
+- Retain depth-prioritized selection targets. No new Inspector or native MATLAB
+  property panel is introduced.
+
+#### Model and source layers
+
+- No document, parser, generator, Undo/Redo, or track-edit semantic change is
+  required. Probes are preview instrumentation only and must never appear in
+  generated AppBase source or affect Dirty state.
+
+### Implementation sequence
+
+1. Add the probe registry and focused R2024a tests for fixed, flexible,
+   decorated-control `fit`, spanning, empty zero-size, adjacent zero-size, and
+   nested grids. Prove that adding all probes leaves every pre-existing child
+   rectangle unchanged within tolerance.
+2. Replace `GridLayoutOverlayDataBuilder`'s track reconstruction input with the
+   validated probe snapshot. Remove or quarantine the old child-envelope solver
+   so it cannot silently become a fallback.
+3. Broaden the deferred layout trigger and geometry signature, then publish one
+   new overlay revision only after the opened preview stabilizes.
+4. Correct the existing open-file regression test by removing its synthetic
+   root hierarchy callback. Compare the first stable hit target with the actual
+   Safe Preview control rectangle and select it through the overlay event while
+   `UIFigure` is still the untouched initial selection.
+5. Add a ControlGallery regression that compares all eight published row bounds
+   and both column bounds with independent probe rectangles, specifically
+   asserting that row 4 is not the Range Slider's three-pixel body height.
+6. Perform an actual R2024a visual review of `ControlGalleryApp` immediately
+   after Open and after selecting children in rows 1, 4, 5, 6, and 8. Verify
+   separator alignment, one-click selection, nested-grid precedence, settings
+   rails, zero-size tracks, and absence of geometry jumps.
+7. Run Code Analyzer for every changed MATLAB file, focused geometry and
+   interaction suites, `git diff --check`, encoding/line-ending checks, and the
+   full `runtests('tests/unit')` suite with zero Failed and zero Incomplete.
+
+### Pending acceptance checklist
+
+- [ ] Probe creation is non-invasive for ControlGallery and the focused layout
+  matrix.
+- [ ] Every published track rectangle comes from a stable Safe Preview probe;
+  the child-envelope solver is no longer a geometry fallback.
+- [ ] ControlGallery separators align with all eight rows and both columns.
+- [ ] Grid-managed children are selectable immediately after Open without any
+  hierarchy callback or prior component selection.
+- [ ] Empty and adjacent zero-size `fit` tracks remain editable and valid move
+  destinations.
+- [ ] Focused tests, the full unit suite, Code Analyzer, file-format checks, and
+  the manual R2024a review pass.
+- [ ] The user explicitly approves marking the roadmap feature complete.
