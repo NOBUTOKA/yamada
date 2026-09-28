@@ -137,7 +137,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
         end
 
         function reconstructsParsedControlGalleryFitTracks(testCase)
-            % reconstructsParsedControlGalleryFitTracks Aggregate mixed-control fit rows from Safe Preview bounds.
+            % reconstructsParsedControlGalleryFitTracks Include decorated control bounds in fit rows.
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
@@ -161,6 +161,12 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.verifyTrue(data.editable, data.readOnlyReason);
             testCase.verifyEqual(numel(data.rowTracks), 8);
             testCase.verifyEqual(string({data.rowTracks.kind}), repmat("fit", 1, 8));
+            slider = document.getComponentByName("IntensitySlider");
+            sliderPreview = handles(char(slider.Id));
+            testCase.verifyGreaterThan(data.rowTracks(4).bounds(4), ...
+                double(sliderPreview.Position(4)) + 20);
+            testCase.verifyEqual(data.rowTracks(4).bounds(4), ...
+                double(sliderPreview.OuterPosition(4)), "AbsTol", 1);
             for row = [6 7]
                 rowChildren = data.children([data.children.rowStart] == row & ...
                     [data.children.rowEnd] == row);

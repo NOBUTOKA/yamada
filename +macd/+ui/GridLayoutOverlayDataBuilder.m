@@ -67,11 +67,13 @@ classdef GridLayoutOverlayDataBuilder
             % Publish child rectangles even when track boundaries cannot be resolved.
             data.children = macd.ui.GridLayoutOverlayDataBuilder.children( ...
                 document, previewHandles, previewPanel, grid, selectedComponentId);
+            measurementChildren = macd.ui.GridLayoutOverlayDataBuilder.outerMeasurementChildren( ...
+                data.children, previewHandles, previewPanel);
 
             [rowBounds, rowMessage] = macd.ui.GridLayoutOverlayDataBuilder.trackBounds( ...
-                rowTracks, innerBounds, double(preview.RowSpacing), true, data.children);
+                rowTracks, innerBounds, double(preview.RowSpacing), true, measurementChildren);
             [columnBounds, columnMessage] = macd.ui.GridLayoutOverlayDataBuilder.trackBounds( ...
-                columnTracks, innerBounds, double(preview.ColumnSpacing), false, data.children);
+                columnTracks, innerBounds, double(preview.ColumnSpacing), false, measurementChildren);
             if strlength(rowMessage) > 0 || strlength(columnMessage) > 0
                 data.readOnlyReason = macd.ui.GridLayoutOverlayDataBuilder.joinMessages( ...
                     [rowMessage columnMessage]);
@@ -328,6 +330,34 @@ classdef GridLayoutOverlayDataBuilder
             end
             observed = isfinite(lower) & isfinite(upper);
             extents(observed) = upper(observed) - lower(observed);
+        end
+
+        function measured = outerMeasurementChildren(children, previewHandles, previewPanel)
+            % outerMeasurementChildren Use decorated control bounds only for fit measurements.
+            measured = children;
+            panelPosition = double(getpixelposition(previewPanel, true));
+            for index = 1:numel(measured)
+                id = measured(index).id;
+                if ~isKey(previewHandles, id)
+                    continue
+                end
+                preview = previewHandles(id);
+                if ~isvalid(preview) || ~isprop(preview, "OuterPosition")
+                    continue
+                end
+                try
+                    rectangle = double(preview.OuterPosition);
+                    parentPosition = double(getpixelposition(preview.Parent, true));
+                    rectangle(1:2) = rectangle(1:2) + ...
+                        parentPosition(1:2) - panelPosition(1:2);
+                    if numel(rectangle) == 4 && all(isfinite(rectangle)) && ...
+                            all(rectangle(3:4) > 0)
+                        measured(index).bounds = rectangle;
+                    end
+                catch
+                    % Retain the ordinary control rectangle if outer geometry is unavailable.
+                end
+            end
         end
 
         function [sizes, message] = nonFitTrackSizes(tracks, available, spacing)

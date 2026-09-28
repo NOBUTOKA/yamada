@@ -38,20 +38,21 @@ or its ROADMAP item.
 - [x] Support empty `fit` tracks whose realized size is zero without disabling
   the rest of the grid editor, including using a collapsed track as a move
   destination.
-- [ ] Replace mixed-control `fit` reconstruction with direct, non-invasive
-  Safe Preview cell measurement in `ControlGalleryApp` and other grids.
+- [x] Use each rendered child's `OuterPosition` (falling back to `Position`) for
+  `fit` track reconstruction, without modifying Safe Preview children. This is
+  a pragmatic alignment correction, not direct cell measurement.
 - [x] Complete the prior focused and full automated verification, Code Analyzer,
   and rendered MATLAB visual inspection of the compact settings controls.
 - [x] Complete the prior narrow-preview and nested-grid review; the separate
   ControlGallery geometry review is reopened below.
 - [x] Move compact track settings controls onto an external Safe Preview rail so
   they never cover a Grid Layout child.
-- [ ] Republish separators from directly measured Safe Preview cell rectangles;
+- [x] Republish separators using decorated-control measurements where available;
   retain the completed one-pixel low-contrast dotted styling.
 - [x] Give nested Grid Layout child hit targets a depth order so a click selects
   the innermost direct-grid child under the pointer.
-- [ ] Re-run focused, full, and rendered `ControlGalleryApp` verification for
-  the reopened correction pass.
+- [ ] Finish verification of the `OuterPosition` correction and remaining visual
+  review; exact cell-rectangle agreement is not claimed.
 - [ ] Obtain the user's explicit approval before marking this roadmap item complete.
 
 ## Goal
@@ -898,10 +899,9 @@ the feature active.
   changes the native layout and the probe remains at its default `100x100`
   rectangle instead of its requested cell. It is therefore not a non-invasive
   geometry source and must not be used as a fallback.
-- [ ] Track-boundary alignment remains open. Select and validate a measurement
-  method that does not add, reparent, hide, or otherwise change children of the
-  Grid Layout being measured; retain the existing solver until a replacement
-  has that evidence.
+- [x] The narrow `OuterPosition` correction was selected on 2026-09-29; see
+  the decision log below. It retains the existing solver and does not change
+  children of the Grid Layout being measured.
 
 This plan supersedes the earlier claim that a union of rendered child bounds is
 the realized size of every occupied `fit` track. It also supersedes the earlier
@@ -1064,3 +1064,34 @@ delta `[0, 0, 0, 0]`, while the probes returned the complete eight row heights:
 - [ ] Focused tests, the full unit suite, Code Analyzer, file-format checks, and
   the manual R2024a review pass.
 - [ ] The user explicitly approves marking the roadmap feature complete.
+
+## 2026-09-29 Decision Log: `OuterPosition` Alignment Correction
+
+The user accepted the small `OuterPosition` correction as the current solution
+and asked us not to add a more elaborate measurement system now. The historical
+probe design and its acceptance checklist above are superseded, not pending
+implementation. The Grid Layout Visual Editor itself remains active and
+incomplete until the user explicitly says otherwise; retain this plan and its
+ROADMAP entry.
+
+- In the MATLAB Safe Preview layer, `GridLayoutOverlayDataBuilder` reads a
+  rendered direct child's `OuterPosition` for track measurement, translates it
+  into preview-panel coordinates, and uses its `Position` only if outer geometry
+  is unavailable or invalid. The ordinary `Position` child bounds remain the
+  selection hit targets. The existing track solver is otherwise unchanged.
+- The HTML layer, Inspector, document model, source generation, and Undo/Redo
+  require no change for this correction. No probe is created, and no rendered
+  child is added, hidden, reparented, or resized for measurement.
+- The R2024a ControlGallery trial changed the Range Slider row's inferred
+  height from its three-pixel control body to approximately 36 pixels. The
+  downstream separator offset fell from approximately 36.8 pixels to 3.8
+  pixels; the user judged the resulting screenshot sufficiently aligned.
+  `OuterPosition` is still a control rectangle, not a direct grid-cell API, so
+  pixel-perfect alignment for every layout is not claimed.
+- A focused ControlGallery regression checks that row 4 reflects the Range
+  Slider's outer height. Keep broader visual review and the user's explicit
+  completion decision separate from this narrow correction.
+- Verification on 2026-09-29: focused geometry tests 8 Passed; the full
+  `tests/unit` suite 214 Passed, 0 Failed, 0 Incomplete; Code Analyzer found
+  zero issues in the changed MATLAB source and test. The full-suite runner
+  requires both the project root and `tests` folder on the MATLAB path.
