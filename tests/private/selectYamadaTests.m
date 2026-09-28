@@ -13,7 +13,8 @@ arguments (Output)
 end
 
 % Discover tests from the project root rather than the caller's folder.
-projectRoot = fileparts(mfilename("fullpath"));
+privateFolder = fileparts(mfilename("fullpath"));
+projectRoot = fileparts(fileparts(privateFolder));
 testRoot = fullfile(projectRoot, "tests", "unit");
 
 switch profile

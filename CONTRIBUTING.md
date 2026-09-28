@@ -56,7 +56,7 @@ data flow, and extension boundaries.
 | `doc/ARCHITECTURE.md` | Developer reference for implemented layers, data flow, and extension boundaries |
 | `tests/unit` | MATLAB unit tests |
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
-| `runYamadaTests.m` | Documented quick, area, and full test-profile runner |
+| `tests/runYamadaTests.m` | Developer-only quick, area, and full test-profile runner |
 
 ## MATLAB Code Conventions
 
@@ -91,7 +91,7 @@ Make the repository root the Current Folder before running tests. The normal dev
 
 The quick profile contains every non-UI test plus a bounded UI smoke set. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, and `lifecycle`.
 ```matlab
-addpath(pwd);
+addpath(fullfile(pwd, "tests"));
 clear classes;
 rehash path;
 
@@ -105,7 +105,7 @@ affectedResults = runYamadaTests("area", ["inspector", "dialog"]);
 Run the complete release gate as follows:
 
 ```matlab
-addpath(pwd);
+addpath(fullfile(pwd, "tests"));
 clear classes;
 rehash path;
 fullResults = runYamadaTests("full");

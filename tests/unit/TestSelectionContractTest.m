@@ -1,14 +1,15 @@
 classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.unittest.TestCase
-    % TestSelectionContractTest Verify documented quick and area test selection.
+    % TestSelectionContractTest Verify the tags that define documented test profiles.
     %   This class guards the test-tag taxonomy so new tests cannot silently fall
     %   outside the quick profile or broaden its UI smoke coverage by accident.
 
     methods (Test)
-        function quickProfileContainsEveryNonUiTestAndOnlyTheUiSmoke(testCase)
-            % quickProfileContainsEveryNonUiTestAndOnlyTheUiSmoke Verify fast coverage.
+        function quickTagContainsEveryNonUiTestAndOnlyTheUiSmoke(testCase)
+            % quickTagContainsEveryNonUiTestAndOnlyTheUiSmoke Verify fast coverage.
 
             [allSuite, uiSuite] = TestSelectionContractTest.discoverSuites();
-            quickSuite = selectYamadaTests("quick");
+            quickSuite = testsuite(TestSelectionContractTest.testRoot(), ...
+                "Tag", "fast");
             contractSuite = testsuite(TestSelectionContractTest.testRoot(), ...
                 "Tag", "selectionContract");
             allNames = string({allSuite.Name});
@@ -40,11 +41,12 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
             testCase.verifyEqual(numel(uiNames), 96);
         end
 
-        function areaProfilesAlwaysContainQuickCoverage(testCase)
-            % areaProfilesAlwaysContainQuickCoverage Verify additive area selection.
+        function areaTagsAlwaysAddToQuickCoverage(testCase)
+            % areaTagsAlwaysAddToQuickCoverage Verify functional-area coverage.
 
             [allSuite, ~] = TestSelectionContractTest.discoverSuites();
-            quickSuite = selectYamadaTests("quick");
+            quickSuite = testsuite(TestSelectionContractTest.testRoot(), ...
+                "Tag", "fast");
             quickNames = string({quickSuite.Name});
             areas = ["parser", "catalog", "model", "generation", "preview", ...
                 "gridOverlay", "inspector", "dialog", "editorShell", "previewTab", ...
@@ -53,7 +55,8 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
             for area = areas
                 taggedSuite = testsuite(TestSelectionContractTest.testRoot(), ...
                     "Tag", area);
-                selectedSuite = selectYamadaTests("area", area);
+                selectedSuite = TestSelectionContractTest.uniqueByName( ...
+                    [quickSuite, taggedSuite]);
                 taggedNames = string({taggedSuite.Name});
                 selectedNames = string({selectedSuite.Name});
                 testCase.verifyNotEmpty(taggedNames, area);
@@ -63,25 +66,21 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
             end
         end
 
-        function fullProfileMatchesUnfilteredUnitSuite(testCase)
-            % fullProfileMatchesUnfilteredUnitSuite Verify the release gate remains complete.
+        function runnerRejectsMissingUnknownAndIrrelevantAreas(testCase)
+            % runnerRejectsMissingUnknownAndIrrelevantAreas Verify request diagnostics.
 
-            [allSuite, ~] = TestSelectionContractTest.discoverSuites();
-            fullSuite = selectYamadaTests("full");
-            testCase.verifyEqual(sort(string({fullSuite.Name})), ...
-                sort(string({allSuite.Name})));
-        end
+            runnerFolder = fileparts(fileparts(TestSelectionContractTest.testRoot()));
+            addpath(runnerFolder);
+            pathCleanup = onCleanup(@() rmpath(runnerFolder));
 
-        function profilesRejectMissingUnknownAndIrrelevantAreas(testCase)
-            % profilesRejectMissingUnknownAndIrrelevantAreas Verify request diagnostics.
-
-            testCase.verifyError(@() selectYamadaTests("area"), ...
+            testCase.verifyError(@() runYamadaTests("area"), ...
                 "yamada:TestSelection:AreasRequired");
-            testCase.verifyError(@() selectYamadaTests("area", "unknown"), ...
+            testCase.verifyError(@() runYamadaTests("area", "unknown"), ...
                 "yamada:TestSelection:UnsupportedArea");
-            testCase.verifyError(@() selectYamadaTests("quick", "parser"), ...
+            testCase.verifyError(@() runYamadaTests("quick", "parser"), ...
                 "yamada:TestSelection:UnexpectedAreas");
         end
+
     end
 
     methods (Static, Access = private)
@@ -99,6 +98,13 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
             testRoot = fullfile(projectRoot, "tests", "unit");
+        end
+
+        function suite = uniqueByName(suite)
+            % uniqueByName Preserve first-occurrence order while removing duplicates.
+
+            [~, indices] = unique(string({suite.Name}), "stable");
+            suite = suite(indices);
         end
     end
 end

@@ -3,6 +3,8 @@ function results = runYamadaTests(profile, areas)
 %   RESULTS = runYamadaTests(PROFILE) runs the quick or full profile.
 %   RESULTS = runYamadaTests("area", AREAS) runs quick coverage together
 %   with tests for the requested functional areas.
+%   This developer-only entry point is kept with the test suite; add the
+%   tests folder to the MATLAB path before calling it.
 
 arguments (Input)
     profile (1, 1) string {mustBeMember(profile, ["quick", "area", "full"])}
