@@ -132,8 +132,7 @@ function renderGridSelectionTargets(targets, gridData) {
     return Number(first.depth || 0) - Number(second.depth || 0);
   }).forEach(function(target) {
     if (!target || !target.id || !target.gridId ||
-        (gridData && (String(gridData.activeGridId || "") === String(target.gridId) ||
-          String(gridData.activeGridId || "") === String(target.id))) return;
+        (gridData && String(gridData.activeGridId || "") === String(target.gridId))) return;
     if (!Number.isFinite(Number(target.x)) || !Number.isFinite(Number(target.y)) ||
         Number(target.width) <= 0 || Number(target.height) <= 0) return;
     var hitTarget = document.createElement("div");
@@ -142,7 +141,6 @@ function renderGridSelectionTargets(targets, gridData) {
     hitTarget.style.top = (currentData.height - Number(target.y) - Number(target.height)) + "px";
     hitTarget.style.width = Number(target.width) + "px";
     hitTarget.style.height = Number(target.height) + "px";
-    hitTarget.style.zIndex = String(1 + Number(target.depth || 0));
     hitTarget.title = "Select grid child";
     hitTarget.addEventListener("pointerdown", function(event) {
       event.preventDefault();
