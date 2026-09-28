@@ -1,4 +1,4 @@
-classdef ComponentRegistryBaselineTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab.unittest.TestCase
     % ComponentRegistryBaselineTest Verify promotion of the R2024a grouping catalog.
     %   This class compares every runtime concrete variant with the audited
     %   development ledger and checks that direct-parent projections remain

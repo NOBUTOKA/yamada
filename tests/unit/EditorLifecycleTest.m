@@ -1,4 +1,4 @@
-classdef EditorLifecycleTest < matlab.unittest.TestCase
+classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.TestCase
     % EditorLifecycleTest Verify injectable Save, Save As, and editor-close decisions.
     %   These tests use the real editor menu and close callbacks while replacing
     %   only native dialogs and filesystem decisions through the lifecycle service.

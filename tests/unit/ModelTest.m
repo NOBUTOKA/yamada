@@ -1,4 +1,4 @@
-classdef ModelTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unittest.TestCase
     % ModelTest Verify the shared intermediate model and registry contracts.
     %   This test class covers model editing, generic property paths, registry
     %   extensibility, and conservative storage of source expressions. It does not

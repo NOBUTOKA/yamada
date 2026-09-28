@@ -1,4 +1,4 @@
-classdef AppSourceParserTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.TestCase
     % AppSourceParserTest Verify conservative read-only AppBase source parsing.
     %   This test class parses fixtures without running their constructors and
     %   verifies component hierarchy, literals, source expressions, diagnostics,

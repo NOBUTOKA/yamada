@@ -1,4 +1,4 @@
-classdef InspectorSurfaceBuilderTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'inspector'}) InspectorSurfaceBuilderTest < matlab.unittest.TestCase
     % InspectorSurfaceBuilderTest Verify declarative composite row projection.
 
     methods (Test)

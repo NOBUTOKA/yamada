@@ -1,4 +1,4 @@
-classdef DateListEditorDialogTest < matlab.unittest.TestCase
+classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < matlab.unittest.TestCase
     % DateListEditorDialogTest Verify disabled-date drafts use one delayed atomic commit.
     %   These tests construct the dialog hidden and invoke its bound callbacks,
     %   without opening a visible application window.

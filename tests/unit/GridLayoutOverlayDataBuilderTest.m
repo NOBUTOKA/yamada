@@ -1,7 +1,7 @@
-classdef GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
+classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
     % GridLayoutOverlayDataBuilderTest Verify public-geometry grid overlay payloads.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function publishesFixedTrackBoundsAndImmediateChildren(testCase)
             % publishesFixedTrackBoundsAndImmediateChildren Match fixed tracks to realized child bounds.
 
@@ -27,7 +27,9 @@ classdef GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
             testCase.verifyEqual(data.children(secondIndex).bounds([1 3]), ...
                 data.columnTracks(2).bounds([1 3]), "AbsTol", 1);
         end
+    end
 
+    methods (Test)
         function reconstructsFitTrackGeometryFromRealizedChildren(testCase)
             % reconstructsFitTrackGeometryFromRealizedChildren Align fit tracks with public child bounds.
 

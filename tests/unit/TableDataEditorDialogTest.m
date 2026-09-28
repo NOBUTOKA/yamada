@@ -1,7 +1,7 @@
-classdef TableDataEditorDialogTest < matlab.unittest.TestCase
+classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < matlab.unittest.TestCase
     % TableDataEditorDialogTest Verify typed table drafts use nearby structural actions and one batch.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function addDeleteAndApplyCommitOneTableBatch(testCase)
             % addDeleteAndApplyCommitOneTableBatch Retain all row and column edits until Apply.
 
@@ -36,7 +36,9 @@ classdef TableDataEditorDialogTest < matlab.unittest.TestCase
             deleteIfValid(dialog);
             clear cleanup
         end
+    end
 
+    methods (Test)
         function presentsNamesInsideTheGrayLeadingTableCells(testCase)
             % presentsNamesInsideTheGrayLeadingTableCells Avoid standalone header edit fields.
 

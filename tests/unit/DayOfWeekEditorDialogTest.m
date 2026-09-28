@@ -1,4 +1,4 @@
-classdef DayOfWeekEditorDialogTest < matlab.unittest.TestCase
+classdef (TestTags = {'dialog', 'inspector', 'ui'}) DayOfWeekEditorDialogTest < matlab.unittest.TestCase
     % DayOfWeekEditorDialogTest Verify weekday drafts are readable and delayed until Apply.
 
     methods (Test)

@@ -56,6 +56,7 @@ data flow, and extension boundaries.
 | `doc/ARCHITECTURE.md` | Developer reference for implemented layers, data flow, and extension boundaries |
 | `tests/unit` | MATLAB unit tests |
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
+| `runYamadaTests.m` | Documented quick, area, and full test-profile runner |
 
 ## MATLAB Code Conventions
 
@@ -82,15 +83,32 @@ When adding or changing a standard component or property, update the versioned J
 
 ## Testing
 
-Run tests directly related to your change first, followed by the full unit test suite. In MATLAB, make the repository root the Current Folder and run:
+Make the repository root the Current Folder before running tests. The normal development path has three stages:
+
+1. While editing, run the test file or method directly related to the change.
+2. Before a cohesive commit, run the quick profile and then each affected area.
+3. Before a pull request, release, ROADMAP completion, or a cross-cutting change, run the full suite.
+
+The quick profile contains every non-UI test plus a bounded UI smoke set. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, and `lifecycle`.
+```matlab
+addpath(pwd);
+clear classes;
+rehash path;
+
+% Run on every cohesive change.
+quickResults = runYamadaTests("quick");
+
+% Add all Inspector and dialog tests after an Inspector-related change.
+affectedResults = runYamadaTests("area", ["inspector", "dialog"]);
+```
+
+Run the complete release gate as follows:
 
 ```matlab
 addpath(pwd);
 clear classes;
 rehash path;
-results = runtests("tests/unit");
-disp(results);
-assertSuccess(results);
+fullResults = runYamadaTests("full");
 ```
 
 To run one test file:
@@ -99,6 +117,9 @@ To run one test file:
 results = runtests("tests/unit/ModelTest.m");
 assertSuccess(results);
 ```
+
+Use the full suite instead of an area profile when changing `yamada.m`, catalog JSON, `ComponentRegistry`, `DocumentModel`, shared validation, or test
+selection infrastructure. Unknown or cross-cutting changes must also fall back to the full suite.
 
 If you could not run a test, name it and explain why in the pull request.
 

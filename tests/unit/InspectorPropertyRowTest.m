@@ -1,9 +1,9 @@
-classdef InspectorPropertyRowTest < matlab.unittest.TestCase
+classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unittest.TestCase
     % InspectorPropertyRowTest Verify native property-row draft and error behavior.
     %   These tests use the real controls and prove a rejected edit stays in the
     %   editor while the model callback reports an inline error.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function retainsRejectedTextAndShowsInlineError(testCase)
             % retainsRejectedTextAndShowsInlineError Keep an invalid draft out of the model callback.
 
@@ -23,7 +23,9 @@ classdef InspectorPropertyRowTest < matlab.unittest.TestCase
             testCase.verifyEqual(editor.BackgroundColor, [1 0.9 0.9], "AbsTol", 1e-12);
             clear cleanup
         end
+    end
 
+    methods (Test)
         function restoresRejectedDraftAcrossRowReplacement(testCase)
             % restoresRejectedDraftAcrossRowReplacement Restore view-only invalid text.
 

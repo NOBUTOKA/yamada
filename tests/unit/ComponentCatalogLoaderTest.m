@@ -1,4 +1,4 @@
-classdef ComponentCatalogLoaderTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.unittest.TestCase
     % ComponentCatalogLoaderTest Verify strict JSON catalog loading and rejection.
     %   These tests create isolated temporary catalogs so loader validation proves
     %   its manifest-relative I/O, ordered group expansion, symbolic behavior

@@ -1,4 +1,4 @@
-classdef LexicalParsingTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'parser'}) LexicalParsingTest < matlab.unittest.TestCase
     % LexicalParsingTest Verify non-evaluating source scanning and literals.
     %   This test class covers statement boundaries around quoted text, comments,
     %   continuations, and the conservative literal subset used by source parsing.

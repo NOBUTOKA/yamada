@@ -1,4 +1,4 @@
-classdef ColumnSettingsEditorDialogTest < matlab.unittest.TestCase
+classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTest < matlab.unittest.TestCase
     % ColumnSettingsEditorDialogTest Verify staged UITable column-setting edits.
 
     methods (Test)

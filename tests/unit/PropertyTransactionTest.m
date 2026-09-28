@@ -1,4 +1,4 @@
-classdef PropertyTransactionTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < matlab.unittest.TestCase
     % PropertyTransactionTest Verify staged property candidates and typed-cell parsing.
     %   These tests cover the nonvisual transaction primitives shared by modal
     %   editors. They do not construct a visible application window or mutate a

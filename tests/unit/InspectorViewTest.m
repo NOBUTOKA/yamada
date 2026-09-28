@@ -1,9 +1,9 @@
-classdef InspectorViewTest < matlab.unittest.TestCase
+classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.TestCase
     % InspectorViewTest Verify native inspector scroll-container lifecycle.
     %   These tests construct the real R2024a UI controls and delete every
     %   fixture, without requiring a document model or editor application.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function createsScrollableNativeGrid(testCase)
             % createsScrollableNativeGrid Construct a view with public scrolling enabled.
 
@@ -22,7 +22,9 @@ classdef InspectorViewTest < matlab.unittest.TestCase
             testCase.verifyLessThan(view.contentPixelWidth(), view.viewportPixelWidth());
             clear cleanup
         end
+    end
 
+    methods (Test)
         function clearDeletesOnlyOwnedChildren(testCase)
             % clearDeletesOnlyOwnedChildren Remove view children without deleting the host.
 

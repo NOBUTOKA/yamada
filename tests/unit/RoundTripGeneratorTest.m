@@ -1,4 +1,4 @@
-classdef RoundTripGeneratorTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.unittest.TestCase
     % RoundTripGeneratorTest Verify conservative source-preserving rewrites.
 
     methods (Test)

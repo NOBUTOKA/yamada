@@ -1,4 +1,4 @@
-classdef InspectorValueFormatterTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'inspector'}) InspectorValueFormatterTest < matlab.unittest.TestCase
     % InspectorValueFormatterTest Verify safe display text for property inspector values.
     %   These tests ensure unsupported literals remain visible without being
     %   evaluated or passed through the source generator's literal subset.

@@ -1,4 +1,4 @@
-classdef DialogTransactionTest < matlab.unittest.TestCase
+classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matlab.unittest.TestCase
     % DialogTransactionTest Verify existing modal editors use staged property batches.
     %   These tests construct hidden native dialogs, invoke their owned callbacks,
     %   and prove that Apply alone emits one typed batch. They do not inspect a
@@ -55,7 +55,9 @@ classdef DialogTransactionTest < matlab.unittest.TestCase
             testCase.verifyFalse(isvalid(dialog));
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'fast'})
         function structuredDataApplyEmitsOneTypedBatch(testCase)
             % structuredDataApplyEmitsOneTypedBatch Route a finite literal through the shared transaction.
 
@@ -77,7 +79,9 @@ classdef DialogTransactionTest < matlab.unittest.TestCase
             testCase.verifyFalse(isvalid(dialog));
             clear cleanup
         end
+    end
 
+    methods (Test)
         function stringListCancelEmitsNoBatch(testCase)
             % stringListCancelEmitsNoBatch Discard local text when the dialog is cancelled.
 

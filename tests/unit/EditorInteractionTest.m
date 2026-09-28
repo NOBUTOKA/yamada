@@ -4,7 +4,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     %   out, inspect public callback wiring through UI handles, and always delete
     %   the editor fixture. They do not execute any opened application source.
 
-    methods (Test)
+    methods (Test, TestTags = {'editorShell', 'fast', 'ui'})
         function editorBuildsEditingSurfaces(testCase)
             % editorBuildsEditingSurfaces Verify palette, right pane, and toolbar.
 
@@ -37,7 +37,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyNotEmpty(overlays.HTMLEventReceivedFcn);
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'editorShell', 'ui'})
         function paletteListsConcreteStyleVariants(testCase)
             % paletteListsConcreteStyleVariants Expose every catalog-defined style.
 
@@ -62,7 +64,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(component.CreationArguments, {'state'});
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'editorShell', 'fast', 'ui'})
         function hierarchySelectionCallbackUpdatesInspector(testCase)
             % hierarchySelectionCallbackUpdatesInspector Verify real tree selection.
 
@@ -82,7 +86,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyGreaterThan(numel(editors), 0);
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'gridOverlay', 'ui'})
         function gridOverlayUsesOnlyTheNearestNestedGrid(testCase)
             % gridOverlayUsesOnlyTheNearestNestedGrid Keep nested grid contexts separate on canvas.
 
@@ -111,7 +117,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(overlays.Data.gridEditor.activeGridId), innerGridId);
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'gridOverlay', 'fast', 'ui'})
         function gridOverlayTrackActionCommitsOneValidatedTrackChange(testCase)
             % gridOverlayTrackActionCommitsOneValidatedTrackChange Route a header action through atomic model editing.
 
@@ -161,7 +169,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(numel(grid.getProperty("RowHeight").LiteralValue), 2);
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'gridOverlay', 'ui'})
         function staleGridOverlayActionsDoNotMutateTheDocument(testCase)
             % staleGridOverlayActionsDoNotMutateTheDocument Reject canvas events from obsolete preview data.
 
@@ -603,7 +613,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyGreaterThan(refreshed.columnTracks(1).bounds(3), 0);
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'fast', 'gridOverlay'})
         function gridOverlayHtmlOmitsTrackReordering(testCase)
             % gridOverlayHtmlOmitsTrackReordering Keep unsupported reordering out of the browser contract.
 
@@ -636,7 +648,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(contains(html, "white-space: normal"));
             testCase.verifyTrue(contains(html, "aria-label"));
         end
+    end
 
+    methods (Test, TestTags = {'inspector', 'ui'})
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
             % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
 
@@ -657,7 +671,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEmpty(selected.getProperty("Visible"));
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'inspector', 'fast', 'ui'})
         function fontStyleButtonCommitsCatalogChoice(testCase)
             % fontStyleButtonCommitsCatalogChoice Commit a typographic style toggle through the live inspector.
 
@@ -690,7 +706,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(entry.LiteralValue), "bold");
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'inspector', 'ui'})
         function itemSelectionInspectorCommitsAnItemsChoice(testCase)
             % itemSelectionInspectorCommitsAnItemsChoice Route a native selection through the live inspector.
 
@@ -979,7 +997,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(component.getProperty("ColumnFormat").LiteralValue, {'bank'});
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'editorShell', 'ui'})
         function editMenuExposesEditingCommands(testCase)
             % editMenuExposesEditingCommands Verify Delete, Undo, and Redo menu items.
 
@@ -995,7 +1015,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(any(contains(menuText, "Redo")));
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'editorShell', 'previewTab', 'ui'})
         function tabSelectorEventChangesPreviewTab(testCase)
             % tabSelectorEventChangesPreviewTab Verify the overlay tab selector route.
 
@@ -1076,7 +1098,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(groups.SelectedTab, groups.Children(2));
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'catalog', 'fast'})
         function registryCarriesResizePolicies(testCase)
             % registryCarriesResizePolicies Verify constrained controls are explicit.
             registry = macd.model.ComponentRegistry.createDefault();

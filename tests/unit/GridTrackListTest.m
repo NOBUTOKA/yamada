@@ -1,4 +1,4 @@
-classdef GridTrackListTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'gridOverlay', 'model'}) GridTrackListTest < matlab.unittest.TestCase
     % GridTrackListTest Verify literal validation for R2024a GridLayout tracks.
 
     methods (Test)

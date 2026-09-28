@@ -1,4 +1,4 @@
-classdef ProjectConventionsTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'testInfrastructure'}) ProjectConventionsTest < matlab.unittest.TestCase
     % ProjectConventionsTest Verify invariant MATLAB project file conventions.
     %   This test class checks encoding, line endings, and required GPL notices in
     %   project-owned MATLAB source and test files. It does not inspect user output.
@@ -28,7 +28,7 @@ classdef ProjectConventionsTest < matlab.unittest.TestCase
                 filePath = fullfile(files(index).folder, files(index).name);
                 text = string(native2unicode( ...
                     ProjectConventionsTest.readBytes(filePath), "UTF-8"));
-                startsWithDeclaration = startsWith(text, "classdef ") || ...
+                startsWithDeclaration = startsWith(text, "classdef") || ...
                     startsWith(text, "function ");
                 testCase.verifyTrue(startsWithDeclaration, filePath);
                 testCase.verifySubstring(text, ...

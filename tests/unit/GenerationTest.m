@@ -1,4 +1,4 @@
-classdef GenerationTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.TestCase
     % GenerationTest Verify canonical new-app generation and source writing.
     %   This test class covers generated AppBase structure, safe literal output,
     %   blocking diagnostics, UTF-8 encoding, CRLF lines, and license isolation.

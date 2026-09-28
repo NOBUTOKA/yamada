@@ -1,4 +1,4 @@
-classdef DefaultValueProviderTest < matlab.unittest.TestCase
+classdef (TestTags = {'inspector', 'ui'}) DefaultValueProviderTest < matlab.unittest.TestCase
     % DefaultValueProviderTest Verify runtime default probes remain model-free.
 
     methods (Test)
@@ -20,7 +20,9 @@ classdef DefaultValueProviderTest < matlab.unittest.TestCase
             testCase.verifyEqual(provider.cacheEntryCount(), count);
             testCase.verifyEmpty(label.getProperty("Visible"));
         end
+    end
 
+    methods (Test, TestTags = {'fast'})
         function probesOneFixtureForOneSurface(testCase)
             % probesOneFixtureForOneSurface Read multiple defaults from one hidden component.
 

@@ -1,11 +1,11 @@
-classdef PreviewRendererTest < matlab.unittest.TestCase
+classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.TestCase
     % PreviewRendererTest Compare safe previews against trusted fixture applications.
     %   This data-driven test parses each explicitly trusted fixture, renders its
     %   model without executing source, then compares every supported editable
     %   literal property with a separate runtime instance of that known fixture.
     %   It never permits the editor to execute arbitrary opened source.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function safePreviewMatchesTrustedFixtureProperties(testCase)
             % safePreviewMatchesTrustedFixtureProperties Compare every trusted fixture.
 
@@ -16,7 +16,9 @@ classdef PreviewRendererTest < matlab.unittest.TestCase
                 testCase.compareFixture(string(fixture.Path));
             end
         end
+    end
 
+    methods (Test)
         function safePreviewRendersExtendedFixtureSemantics(testCase)
             % safePreviewRendersExtendedFixtureSemantics Cover string lists, axes, and tools.
 

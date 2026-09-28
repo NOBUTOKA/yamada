@@ -1,9 +1,9 @@
-classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
+classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < matlab.unittest.TestCase
     % PropertyEditorFactoryTest Verify native allowlisted inspector editor creation.
     %   These tests construct real controls and ensure unsupported editor kinds
     %   remain visible but cannot become accidentally editable.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function createsOnOffCheckBox(testCase)
             % createsOnOffCheckBox Map onOff metadata to a native CheckBox.
 
@@ -36,7 +36,9 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(control.Items), ["horizontal", "vertical"]);
             clear cleanup
         end
+    end
 
+    methods (Test)
         function enablesCatalogEnumDropDown(testCase)
             % enablesCatalogEnumDropDown Use audited finite choices in an editable native DropDown.
 
@@ -169,7 +171,9 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
                 "{'Line one', 'Line two', 'Line three'}");
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'fast'})
         function createsNativeDateTimeEditors(testCase)
             % createsNativeDateTimeEditors Route scalar, bounds, and date lists by schema shape.
 
@@ -208,7 +212,9 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(listControl.Enable), "on");
             clear cleanup
         end
+    end
 
+    methods (Test)
         function defersItemsDataAsReadOnly(testCase)
             % defersItemsDataAsReadOnly Keep arbitrary list-associated data out of the string editor.
 
@@ -365,7 +371,9 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyFalse(control.Editable);
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'fast'})
         function itemSelectionDropDownMapsItemsDataAndRefreshesItems(testCase)
             % itemSelectionDropDownMapsItemsDataAndRefreshesItems Keep labels synchronized with paired values.
 
@@ -396,7 +404,9 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(control.Value), "First");
             clear cleanup
         end
+    end
 
+    methods (Test)
         function itemSelectionListBoxSupportsItemsDataMultiSelection(testCase)
             % itemSelectionListBoxSupportsItemsDataMultiSelection Preserve List Box multiselect semantics.
 
@@ -464,7 +474,9 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyEqual(changes.Value, [1 2 3]);
             clear cleanup
         end
+    end
 
+    methods (Test, TestTags = {'fast'})
         function tableDataRowsShareOneTypedTableEditor(testCase)
             % tableDataRowsShareOneTypedTableEditor Route Data and heading rows through one atomic table batch.
 
@@ -499,7 +511,9 @@ classdef PropertyEditorFactoryTest < matlab.unittest.TestCase
             testCase.verifyEqual(changes.Value, [3 4]);
             clear cleanup
         end
+    end
 
+    methods (Test)
         function synchronizesDatePickerRestrictionsFromRelatedValues(testCase)
             % synchronizesDatePickerRestrictions Apply the effective date contracts to the native picker.
 
