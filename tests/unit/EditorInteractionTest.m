@@ -630,6 +630,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(contains(html, "grid-separator"));
             testCase.verifyTrue(contains(html, "placeTrackPopover"));
             testCase.verifyTrue(contains(html, "gridSelectionTargets"));
+            testCase.verifyTrue(contains(html, ...
+                "String(gridData.activeGridId ||"));
+            testCase.verifyTrue(contains(html, "String(target.id))) return;"));
             testCase.verifyTrue(contains(html, "track-settings"));
             testCase.verifyTrue(contains(html, "componentArray(targets).sort"));
             testCase.verifyTrue(contains(html, "addTrackDividers"));

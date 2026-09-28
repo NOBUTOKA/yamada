@@ -889,6 +889,10 @@ the feature active.
   The SimpleCalculator and ControlGallery regressions open the fixture without
   invoking a hierarchy callback; ControlGallery additionally compares the Due
   Date Picker target to its realized Safe Preview rectangle.
+- [x] While a nested Grid Layout is active, omit its own outer-grid selection
+  target from the HTML layer. This prevents the ancestor-sized transparent target
+  from covering sibling or descendant targets, so one click can select another
+  child of the active nested grid (`2026-09-29`).
 - [x] The direct child-probe implementation was evaluated and removed. In an
   already populated R2024a `uigridlayout`, adding a nested GridLayout probe
   changes the native layout and the probe remains at its default `100x100`

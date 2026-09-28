@@ -132,7 +132,8 @@ function renderGridSelectionTargets(targets, gridData) {
     return Number(first.depth || 0) - Number(second.depth || 0);
   }).forEach(function(target) {
     if (!target || !target.id || !target.gridId ||
-        (gridData && String(gridData.activeGridId || "") === String(target.gridId))) return;
+        (gridData && (String(gridData.activeGridId || "") === String(target.gridId) ||
+          String(gridData.activeGridId || "") === String(target.id))) return;
     if (!Number.isFinite(Number(target.x)) || !Number.isFinite(Number(target.y)) ||
         Number(target.width) <= 0 || Number(target.height) <= 0) return;
     var hitTarget = document.createElement("div");
