@@ -206,6 +206,55 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyGreaterThan(numel(editors), 0);
             clear cleanup
         end
+
+        function deletingTreeLeafSelectsParentWithoutRebuildingBranches(testCase)
+            % deletingTreeLeafSelectsParentWithoutRebuildingBranches Preserve the open hierarchy after deletion.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, palette] = editorPalette();
+            names = string(palette.Data(:, 1));
+            groupRow = find(names == "Button Group", 1);
+            buttonRow = find(names == "Button", 1);
+            labelRow = find(names == "Label", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", groupRow)));
+            groupId = app.SelectedComponentId;
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", buttonRow)));
+            buttonId = app.SelectedComponentId;
+            tree = findall(figure, "Type", "uitree");
+            tree.SelectedNodes = tree.Children(1);
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", tree.Children(1)));
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", labelRow)));
+            labelId = app.SelectedComponentId;
+            drawnow;
+
+            rootNode = tree.Children(1);
+            groupNode = rootNode.Children(string({rootNode.Children.NodeData}) == groupId);
+            siblingNode = rootNode.Children(string({rootNode.Children.NodeData}) == labelId);
+            buttonNode = groupNode.Children(1);
+            expand(rootNode);
+            expand(groupNode);
+            tree.SelectedNodes = buttonNode;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", buttonNode));
+            testCase.verifyEqual(app.SelectedComponentId, buttonId);
+
+            menus = findall(figure, "Type", "uimenu");
+            deleteMenu = menus(erase(string({menus.Text}), "&") == "Delete");
+            deleteMenu.MenuSelectedFcn(deleteMenu, struct());
+            drawnow;
+
+            testCase.verifyEqual(app.SelectedComponentId, groupId);
+            testCase.verifyEqual(tree.SelectedNodes, groupNode);
+            testCase.verifyEqual(tree.Children(1), rootNode);
+            testCase.verifyTrue(isvalid(groupNode));
+            testCase.verifyTrue(isvalid(siblingNode));
+            testCase.verifyEmpty(groupNode.Children);
+            testCase.verifyFalse(isvalid(buttonNode));
+            clear cleanup
+        end
     end
 
     methods (Test, TestTags = {'gridOverlay', 'ui'})

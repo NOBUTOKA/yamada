@@ -425,14 +425,17 @@ classdef yamada < matlab.apps.AppBase
             app.updateInteractionOverlay();
         end
 
-        function refreshShell(app)
-            % refreshShell Rebuild all document-derived editor surfaces.
+        function refreshShell(app, retainHierarchy)
+            % refreshShell Rebuild document surfaces, optionally retaining the current tree.
             arguments (Input)
                 app (1, 1) yamada
+                retainHierarchy (1, 1) logical = false
             end
 
             % Set the drawer state before measuring the preview panel geometry.
-            app.refreshHierarchy();
+            if ~retainHierarchy
+                app.refreshHierarchy();
+            end
             app.refreshPalette();
             app.refreshDiagnostics(app.Document.Diagnostics);
             drawnow;
@@ -543,6 +546,10 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             parentId = component.ParentId;
+            selectedNode = app.HierarchyTree.SelectedNodes;
+            retainHierarchy = isscalar(selectedNode) && isvalid(selectedNode) && ...
+                string(selectedNode.NodeData) == component.Id && ...
+                isa(selectedNode.Parent, "matlab.ui.container.TreeNode");
             try
                 app.Document.removeComponent(component.Id);
             catch exception
@@ -551,7 +558,16 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             app.SelectedComponentId = parentId;
-            app.refreshShell();
+            if retainHierarchy
+                % Keep unaffected branches expanded and move selection to the parent.
+                parentNode = selectedNode.Parent;
+                delete(selectedNode);
+                app.HierarchyTree.SelectedNodes = parentNode;
+            end
+            app.refreshShell(retainHierarchy);
+            if retainHierarchy
+                focus(app.HierarchyTree);
+            end
             app.setStatus("Deleted " + component.Name);
         end
 
