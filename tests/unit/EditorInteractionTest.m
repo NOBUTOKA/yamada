@@ -64,6 +64,126 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(component.CreationArguments, {'state'});
             clear cleanup
         end
+
+        function buttonInsideButtonGroupCanBeSelectedMovedAndResized(testCase)
+            % buttonInsideButtonGroupCanBeSelectedMovedAndResized Keep nested controls above their parent on the canvas.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            names = string(palette.Data(:, 1));
+            groupRow = find(names == "Button Group", 1);
+            buttonRow = find(names == "Button", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", groupRow)));
+            groupId = app.SelectedComponentId;
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", buttonRow)));
+            buttonId = app.SelectedComponentId;
+            drawnow;
+
+            % The child outline must be painted after its containing group.
+            button = app.Document.getComponent(buttonId);
+            testCase.verifyEqual(button.ParentId, groupId);
+            overlay = findall(figure, "Type", "uihtml");
+            components = overlay.Data.components;
+            groupIndex = find(string({components.id}) == groupId, 1);
+            buttonIndex = find(string({components.id}) == buttonId, 1);
+            testCase.assertNotEmpty(groupIndex);
+            testCase.assertNotEmpty(buttonIndex);
+            testCase.verifyLessThan(groupIndex, buttonIndex);
+
+            % Exercise the same pointer events used by selection, move, and resize.
+            startPosition = button.getProperty("Position").LiteralValue;
+            point = [components(buttonIndex).x + 5, components(buttonIndex).y + 5];
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointerdown", "x", point(1), ...
+                "y", point(2), "componentId", buttonId, "handle", "")));
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointermove", "x", point(1) + 12, ...
+                "y", point(2) + 12, "componentId", "", "handle", "")));
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointerup", "x", point(1) + 12, ...
+                "y", point(2) + 12, "componentId", "", "handle", "")));
+            movedPosition = button.getProperty("Position").LiteralValue;
+            testCase.verifyEqual(app.SelectedComponentId, buttonId);
+            testCase.verifyNotEqual(movedPosition(1:2), startPosition(1:2));
+
+            overlay = findall(figure, "Type", "uihtml");
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointerdown", "x", point(1), ...
+                "y", point(2), "componentId", buttonId, "handle", "ne")));
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointermove", "x", point(1) + 12, ...
+                "y", point(2) + 12, "componentId", "", "handle", "")));
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointerup", "x", point(1) + 12, ...
+                "y", point(2) + 12, "componentId", "", "handle", "")));
+            resizedPosition = button.getProperty("Position").LiteralValue;
+            testCase.verifyGreaterThan(resizedPosition(3), movedPosition(3));
+            testCase.verifyGreaterThan(resizedPosition(4), movedPosition(4));
+            clear cleanup
+        end
+
+        function buttonInsideGridButtonGroupHasEditableOverlayTarget(testCase)
+            % buttonInsideGridButtonGroupHasEditableOverlayTarget Expose nested absolute controls above grid gestures.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, palette] = editorPalette();
+            names = string(palette.Data(:, 1));
+            for name = ["Grid Layout", "Button Group", "Button"]
+                row = find(names == name, 1);
+                palette.DoubleClickedFcn(palette, ...
+                    struct("InteractionInformation", struct("Row", row)));
+            end
+            buttonId = app.SelectedComponentId;
+            button = app.Document.getComponent(buttonId);
+            group = app.Document.getComponent(button.ParentId);
+            testCase.verifyEqual(group.Factory, "uibuttongroup");
+            testCase.verifyEqual(app.Document.getComponent(group.ParentId).Factory, "uigridlayout");
+            drawnow;
+
+            overlay = findall(figure, "Type", "uihtml");
+            components = overlay.Data.components;
+            buttonIndex = find(string({components.id}) == buttonId, 1);
+            testCase.assertNotEmpty(buttonIndex);
+            testCase.verifyTrue(components(buttonIndex).inGrid);
+            testCase.verifyEqual(string(overlay.Data.gridEditor.activeGridId), group.ParentId);
+
+            % Move and resize the nested button through the ordinary Pointer route.
+            point = [components(buttonIndex).x + 5, components(buttonIndex).y + 5];
+            startPosition = button.getProperty("Position").LiteralValue;
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointerdown", "x", point(1), ...
+                "y", point(2), "componentId", buttonId, "handle", "")));
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointermove", "x", point(1) + 12, ...
+                "y", point(2) + 12, "componentId", "", "handle", "")));
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointerup", "x", point(1) + 12, ...
+                "y", point(2) + 12, "componentId", "", "handle", "")));
+            movedPosition = button.getProperty("Position").LiteralValue;
+            testCase.verifyNotEqual(movedPosition(1:2), startPosition(1:2));
+
+            overlay = findall(figure, "Type", "uihtml");
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointerdown", "x", point(1), ...
+                "y", point(2), "componentId", buttonId, "handle", "ne")));
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointermove", "x", point(1) + 12, ...
+                "y", point(2) + 12, "componentId", "", "handle", "")));
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+                "HTMLEventData", struct("phase", "pointerup", "x", point(1) + 12, ...
+                "y", point(2) + 12, "componentId", "", "handle", "")));
+            resizedPosition = button.getProperty("Position").LiteralValue;
+            testCase.verifyGreaterThan(resizedPosition(3), movedPosition(3));
+            testCase.verifyGreaterThan(resizedPosition(4), movedPosition(4));
+            clear cleanup
+        end
     end
 
     methods (Test, TestTags = {'editorShell', 'fast', 'ui'})

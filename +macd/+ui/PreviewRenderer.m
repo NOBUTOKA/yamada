@@ -89,7 +89,7 @@ classdef PreviewRenderer < handle
             try
                 preview = obj.createPreviewComponent(component, parent);
                 handles(char(component.Id)) = preview;
-                obj.applyProperties(preview, component);
+                obj.applyProperties(preview, component, document);
                 for index = 1:numel(component.Children)
                     obj.renderComponent(document, component.Children(index), preview, handles);
                 end
@@ -101,12 +101,13 @@ classdef PreviewRenderer < handle
             end
         end
 
-        function applyProperties(obj, preview, component)
+        function applyProperties(obj, preview, component, document)
             % applyProperties Assign editable literal properties without source evaluation.
             arguments (Input)
                 obj (1, 1) macd.ui.PreviewRenderer
                 preview
                 component (1, 1) macd.model.ComponentRecord
+                document (1, 1) macd.model.DocumentModel
             end
 
             % Isolate unsupported preview assignments as nonblocking diagnostics.
@@ -118,7 +119,9 @@ classdef PreviewRenderer < handle
                     continue
                 end
                 property = definition.getProperty(entry.Path);
-                if ~isempty(property) && any(property.PreviewPolicy == ["skip", "notRendered"])
+                imageSource = component.Factory == "uiimage" && entry.Path == "ImageSource";
+                if ~imageSource && ~isempty(property) && ...
+                        any(property.PreviewPolicy == ["skip", "notRendered"])
                     continue
                 end
                 if entry.Path == "Position" && ...
@@ -127,7 +130,14 @@ classdef PreviewRenderer < handle
                     continue
                 end
                 try
-                    obj.setProperty(preview, entry.Path, entry.LiteralValue, component);
+                    value = entry.LiteralValue;
+                    if imageSource
+                        value = obj.resolveImageSource(value, document);
+                        if strlength(value) == 0
+                            continue
+                        end
+                    end
+                    obj.setProperty(preview, entry.Path, value, component);
                 catch exception
                     obj.Diagnostics(end + 1) = macd.model.Diagnostic( ...
                         "preview-property-failed", "warning", ...
@@ -135,6 +145,39 @@ classdef PreviewRenderer < handle
                         component.Name + ": " + string(exception.message), ...
                         component.Id);
                 end
+            end
+        end
+
+        function path = resolveImageSource(obj, value, document)
+            % resolveImageSource Resolve a local image path relative to its app source.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer %#ok<INUSA>
+                value
+                document (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                path (1, 1) string
+            end
+
+            path = "";
+            if ~(ischar(value) || (isstring(value) && isscalar(value)))
+                return
+            end
+            requested = string(value);
+            if strlength(requested) == 0
+                return
+            end
+
+            % Opened apps interpret relative assets beside their source file.
+            if strlength(document.FilePath) > 0
+                sourceRelative = fullfile(fileparts(document.FilePath), requested);
+                if isfile(sourceRelative)
+                    path = string(sourceRelative);
+                    return
+                end
+            end
+            if isfile(requested)
+                path = requested;
             end
         end
         function orderedEntries = orderedProperties(obj, entries, definition)

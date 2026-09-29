@@ -813,7 +813,7 @@ classdef yamada < matlab.apps.AppBase
             end
             components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
                 "height", {}, "shape", {}, "selected", {}, "tabGroup", {}, ...
-                "tabTitles", {}, "tabSelected", {});
+                "tabTitles", {}, "tabSelected", {}, "depth", {}, "inGrid", {});
             gridSelectionTargets = struct("id", {}, "gridId", {}, "x", {}, ...
                 "y", {}, "width", {}, "height", {}, "depth", {});
             keys = app.PreviewHandles.keys();
@@ -876,7 +876,14 @@ classdef yamada < matlab.apps.AppBase
                     "shape", char(definition.overlayShapeFor(component.CreationArguments)), ...
                     "selected", component.Id == app.SelectedComponentId, ...
                     "tabGroup", component.Factory == "uitabgroup", ...
-                    "tabTitles", tabTitles, "tabSelected", tabSelected); %#ok<AGROW>
+                    "tabTitles", tabTitles, "tabSelected", tabSelected, ...
+                    "depth", app.componentNestingDepth(component.Id), ...
+                    "inGrid", app.hasGridAncestor(component.Id)); %#ok<AGROW>
+            end
+            % Paint ancestor silhouettes first so nested controls receive pointer events.
+            if ~isempty(components)
+                [~, paintOrder] = sort([components.depth]);
+                components = components(paintOrder);
             end
             app.ActiveGridId = macd.model.ActiveGridResolver.resolve( ...
                 app.Document, app.SelectedComponentId);
@@ -1206,6 +1213,27 @@ classdef yamada < matlab.apps.AppBase
             while ~isempty(component) && strlength(component.ParentId) > 0
                 depth = depth + 1;
                 component = app.Document.getComponent(component.ParentId);
+            end
+        end
+
+        function result = hasGridAncestor(app, componentId)
+            % hasGridAncestor Identify absolute-position controls nested inside a grid child.
+            arguments (Input)
+                app (1, 1) yamada
+                componentId (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = false;
+            component = app.Document.getComponent(componentId);
+            while ~isempty(component) && strlength(component.ParentId) > 0
+                component = app.Document.getComponent(component.ParentId);
+                if ~isempty(component) && component.Factory == "uigridlayout"
+                    result = true;
+                    return
+                end
             end
         end
 

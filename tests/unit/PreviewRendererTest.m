@@ -166,6 +166,30 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             testCase.verifyEqual(handles(char(listBox.Id)).Value, [10 30]);
             clear cleanup
         end
+
+        function imageSourceRendersFromOpenedAppFolder(testCase)
+            % imageSourceRendersFromOpenedAppFolder Resolve a relative image beside the app source.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ImagePreviewApp", registry);
+            imageComponent = document.insertComponent(registry, "uiimage", ...
+                document.RootComponentId);
+            imagePath = string(tempname) + ".png";
+            imageCleanup = onCleanup(@() delete(imagePath));
+            imwrite(uint8([255 0; 0 255]), imagePath);
+            [folder, name, extension] = fileparts(imagePath);
+            document.FilePath = fullfile(folder, "ImagePreviewApp.m");
+            document.setProperty(imageComponent.Id, "ImageSource", name + extension);
+
+            figure = uifigure("Visible", "off");
+            figureCleanup = onCleanup(@() deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [1 1 700 500]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+
+            testCase.verifyEmpty(diagnostics);
+            testCase.verifyEqual(string(handles(char(imageComponent.Id)).ImageSource), imagePath);
+            clear figureCleanup imageCleanup
+        end
     end
 
     methods (Access = private)
