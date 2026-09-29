@@ -240,7 +240,18 @@ Tab content geometry is published only after observed layout values stabilize.
 Inactive-tab child outlines are omitted, and the active tab selection remains
 disposable Preview state unless a supported model property is explicitly edited.
 
-### Grid Layout editing boundaries
+### Grid Layout Visual Editor
+
+The editor follows one model-to-canvas-to-model flow. `DocumentModel` holds
+track values and child placements. `PreviewRenderer` draws disposable MATLAB
+controls from that model. `GridLayoutOverlayDataBuilder` combines model values
+with the controls' realized geometry into a versioned payload. The HTML overlay
+draws the grid UI and sends a proposed action to `yamada`, which validates it
+and commits one model change before rebuilding the Preview. The Inspector edits
+ordinary component properties alongside this canvas workflow. Preview and HTML
+are disposable views of the document state.
+
+#### Selection and editing context
 
 `SelectedComponentId` drives the hierarchy and Inspector; the nearest selected
 Grid Layout (`ActiveGridId`) drives track controls. Selection targets for visible
@@ -251,6 +262,8 @@ tracks and children. Transparent targets are painted from outer to inner grids
 in one background layer so descendants win hit testing without covering active
 child controls or track settings. Selecting a child changes view state only.
 
+#### Track and child edits
+
 The Inspector remains focused on the selected component. `RowHeight` and
 `ColumnWidth` use the compact canvas settings controls; spacing and padding stay
 in the ordinary Inspector. Track editing uses explicit Fit, Fixed, and Flexible
@@ -260,12 +273,15 @@ draft. MATLAB validates the submitted action and `DocumentModel.applyGridLayoutE
 commits a structural edit with all affected child placements as one Undo step.
 Expression-backed tracks or placements remain locked when source ownership
 cannot be proved.
+
 Inserting or deleting a track remaps explicit immediate-child placements in
 the same transaction. Deleting a track occupied by a single-track child is
 rejected rather than moving or deleting that child implicitly. Existing
 overlaps are preserved, while a canvas drop that would create a new overlap
 is rejected; exact Inspector placement remains available for intentional
 overlap.
+
+#### Geometry and interaction
 
 R2024a exposes the grid and rendered controls' public geometry, but not the
 realized rectangle of every track. `GridLayoutOverlayDataBuilder` reconstructs
@@ -288,6 +304,8 @@ band during a child move; that band changes neither the Preview grid nor source.
 Span-handle drags begin from the handle even when it overlaps spacing or
 padding. The moving edge snaps at the midpoint between valid track edges in
 either direction, independently of the perpendicular axis.
+
+#### Preview updates and Tab visibility
 
 Preview geometry may change after an initial Open or Tab switch. The editor
 publishes an initial overlay and schedules a bounded refresh after visible grid
