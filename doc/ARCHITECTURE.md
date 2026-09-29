@@ -240,6 +240,62 @@ Tab content geometry is published only after observed layout values stabilize.
 Inactive-tab child outlines are omitted, and the active tab selection remains
 disposable Preview state unless a supported model property is explicitly edited.
 
+### Grid Layout editing boundaries
+
+`SelectedComponentId` drives the hierarchy and Inspector; the nearest selected
+Grid Layout (`ActiveGridId`) drives track controls. Selection targets for visible
+grid-managed children are published independently of the active grid. Otherwise
+an opened document, which initially selects `UIFigure`, could not select a grid
+child from the canvas. Selecting a nested Grid Layout enters that grid's immediate
+tracks and children. Transparent targets are painted from outer to inner grids
+in one background layer so descendants win hit testing without covering active
+child controls or track settings. Selecting a child changes view state only.
+
+The Inspector remains focused on the selected component. `RowHeight` and
+`ColumnWidth` use the compact canvas settings controls; spacing and padding stay
+in the ordinary Inspector. Track editing uses explicit Fit, Fixed, and Flexible
+modes instead of dragging a boundary, because a pixel drag would silently
+convert a fit or weighted track to a fixed size. The HTML popover owns only the
+draft. MATLAB validates the submitted action and `DocumentModel.applyGridLayoutEdit`
+commits a structural edit with all affected child placements as one Undo step.
+Expression-backed tracks or placements remain locked when source ownership
+cannot be proved.
+Inserting or deleting a track remaps explicit immediate-child placements in
+the same transaction. Deleting a track occupied by a single-track child is
+rejected rather than moving or deleting that child implicitly. Existing
+overlaps are preserved, while a canvas drop that would create a new overlap
+is rejected; exact Inspector placement remains available for intentional
+overlap.
+
+R2024a exposes the grid and rendered controls' public geometry, but not the
+realized rectangle of every track. `GridLayoutOverlayDataBuilder` reconstructs
+track boundaries from literals, spacing, and settled Safe Preview measurements.
+For `fit` measurements it prefers a direct child's `OuterPosition`, which can
+include decorations omitted from its control-body `Position`; selection hit
+targets still use the visible child's ordinary bounds. This distinction matters
+for controls such as Range Slider, whose narrow body understates the height
+required by its row. `OuterPosition` is still not a grid-cell measurement, so
+this reconstruction is not guaranteed to align every separator exactly. When
+geometry is ambiguous, the builder withholds geometry-dependent editing instead
+of publishing a plausible but incorrect boundary. Adding invisible nested
+`uigridlayout` controls as cell probes was tested and rejected: in a populated
+R2024a grid they changed the native layout and did not reliably occupy the
+requested cell.
+
+An unoccupied `fit` track can have zero extent without losing its logical index.
+The overlay keeps its settings control addressable and supplies a temporary drop
+band during a child move; that band changes neither the Preview grid nor source.
+Span-handle drags begin from the handle even when it overlaps spacing or
+padding. The moving edge snaps at the midpoint between valid track edges in
+either direction, independently of the perpendicular axis.
+
+Preview geometry may change after an initial Open or Tab switch. The editor
+publishes an initial overlay and schedules a bounded refresh after visible grid
+and child rectangles stabilize, including when no grid is selected. On a Tab
+switch it immediately removes controls belonging to the hidden Tab, then
+refreshes settled geometry. Visibility must be checked through every enclosing
+Tab Group; a selected grid on a hidden Tab does not remain active on the canvas.
+
 ## Validation and Diagnostics
 
 `ModelValidator` checks document-wide invariants: valid and unique identifiers,
