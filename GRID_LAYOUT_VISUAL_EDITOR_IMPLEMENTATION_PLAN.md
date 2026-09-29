@@ -383,6 +383,11 @@ editing and can be reconsidered separately.
 
 ## Child Move and Span Gestures
 
+- [x] Hide the active Grid Layout overlay when any containing Tab is inactive.
+  Refresh immediately after a Tab switch, then refresh settled geometry. Returning
+  to the original Tab restores the selected grid context without document edits.
+  Covered by `EditorInteractionTest/tabSwitchClearsHiddenGridEditor`.
+
 For an immediate child with editable literal placement:
 
 - dragging the body previews a cell-snapped move while preserving its current

@@ -1021,6 +1021,55 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'previewTab', 'ui'})
+        function tabSwitchClearsHiddenGridEditor(testCase)
+            % tabSwitchClearsHiddenGridEditor Hide grid tools immediately and restore them on return.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, palette] = editorPalette();
+            for name = ["Tab Group", "Tab", "Tab", "Grid Layout", "Label"]
+                row = find(string(palette.Data(:, 1)) == name, 1);
+                palette.DoubleClickedFcn(palette, struct( ...
+                    "InteractionInformation", struct("Row", row)));
+                drawnow;
+            end
+            overlay = findall(figure, "Type", "uihtml");
+            group = findall(figure, "Type", "uitabgroup");
+            group.Position = [20 20 400 300];
+            drawnow;
+            items = overlay.Data.components;
+            groupData = items([items.tabGroup]);
+            selectedId = app.SelectedComponentId;
+            historyIndex = app.Document.HistoryIndex;
+            for index = [2 1 2]
+                overlay.HTMLEventReceivedFcn(overlay, struct( ...
+                    "HTMLEventName", "Pointer", "HTMLEventData", struct( ...
+                    "phase", "tabselect", "componentId", groupData.id, ...
+                    "tabIndex", index, "x", 0, "y", 0)));
+                testCase.verifyEqual(group.SelectedTab, group.Children(index));
+                if index == 1
+                    testCase.verifyEqual(app.ActiveGridId, "");
+                    testCase.verifyEmpty(overlay.Data.gridEditor.children);
+                    testCase.verifyEmpty(overlay.Data.gridSelectionTargets);
+                else
+                    testCase.verifyNotEqual(app.ActiveGridId, "");
+                    % Visible-tab geometry is published after the native layout settles.
+                    for attempt = 1:40
+                        drawnow;
+                        pause(0.05);
+                        if ~isempty(overlay.Data.gridEditor.children)
+                            break
+                        end
+                    end
+                    testCase.verifyNotEmpty(overlay.Data.gridEditor.children, ...
+                        string(overlay.Data.gridEditor.readOnlyReason));
+                end
+                testCase.verifyEqual(app.SelectedComponentId, selectedId);
+                testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
+            end
+            clear cleanup
+        end
+
         function tabSelectorEventChangesPreviewTab(testCase)
             % tabSelectorEventChangesPreviewTab Verify the overlay tab selector route.
 

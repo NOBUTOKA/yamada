@@ -880,6 +880,10 @@ classdef yamada < matlab.apps.AppBase
             end
             app.ActiveGridId = macd.model.ActiveGridResolver.resolve( ...
                 app.Document, app.SelectedComponentId);
+            if strlength(app.ActiveGridId) > 0 && ...
+                    ~app.isVisibleInSelectedTab(app.ActiveGridId)
+                app.ActiveGridId = "";
+            end
             app.InteractionOverlayRevision = app.InteractionOverlayRevision + 1;
             gridEditor = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewPanel, app.ActiveGridId, ...
@@ -1149,6 +1153,8 @@ classdef yamada < matlab.apps.AppBase
             try
                 group.SelectedTab = group.Children(tabIndex);
                 app.PreviewTabSelections(char(componentId)) = tabIndex;
+                % Remove hidden-tab controls before waiting for settled geometry.
+                app.updateInteractionOverlay();
                 app.scheduleOverlayRefresh();
             catch exception
                 app.setStatus(string(exception.message));
@@ -1176,7 +1182,9 @@ classdef yamada < matlab.apps.AppBase
                         groupPreview = app.PreviewHandles(char(group.Id));
                         tabPreview = app.PreviewHandles(char(component.Id));
                         visible = isequal(groupPreview.SelectedTab, tabPreview);
-                        return
+                        if ~visible
+                            return
+                        end
                     end
                 end
                 component = app.Document.getComponent(component.ParentId);
