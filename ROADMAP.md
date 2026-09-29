@@ -154,6 +154,36 @@ split, the current correction plan, and the verification gates.
 - Validate `SimpleCalculatorApp` and `ControlGalleryApp`, including nested grids,
   followed by manual R2024a review and the full unit suite.
 
+## Show Safe Preview at the UIFigure's Actual Pixel Size
+
+Safe Preview currently fits the root `UIFigure.Position(3:4)` into the editor
+panel and scales pixel-positioned children. Replace this fitted view with a
+one-to-one pixel canvas; resizing the editor window must not change the edited
+root figure size or scale its preview components.
+
+- Put a canvas with the root UIFigure's client-area width and height inside a
+  dark scrollable Preview host. Keep a visible boundary between the canvas and
+  the area outside the figure. Center the canvas when it fits; provide horizontal
+  and vertical scrolling when it extends beyond the host.
+- Render supported components at their model pixel positions without a fit
+  scale. Keep the Safe Preview boundary: do not execute opened app code or imply
+  that unsupported runtime behavior is reproduced.
+- Move the interaction overlay, component hit targets, resize handles, and Grid
+  Layout geometry to a consistent canvas coordinate system so scrolling and
+  editor-window resizing do not offset interactions.
+- Add handles for changing the root UIFigure width and height. Commit supported
+  literal `Position` edits through the document model, preserving its screen
+  origin and providing Undo/Redo and generated-source updates. Disable the
+  handles with a clear reason when the root size is not safely editable.
+- Add a small UI fixture (for example, 320 x 240 pixels) that fits inside the
+  normal Preview viewport and a large UI fixture (for example, 1200 x 900
+  pixels) that overflows it in both directions. Give each fixture identifiable
+  controls near its edges; include a layout-managed child to exercise geometry.
+- Use both fixtures to verify one-to-one canvas dimensions, dark outside area,
+  scroll reachability, selection and dragging after scrolling, root resize,
+  Undo/Redo, generation, and reopen behavior. Also check narrow and enlarged
+  editor windows, then run focused UI tests and the full R2024a unit suite.
+
 ## Offer an Explicit Save As Line-Ending Choice
 
 New documents currently use the host-default line ending, while opened documents
