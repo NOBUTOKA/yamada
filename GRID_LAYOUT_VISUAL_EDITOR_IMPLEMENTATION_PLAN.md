@@ -389,6 +389,12 @@ For an immediate child with editable literal placement:
   row and column span;
 - dragging a side changes one span axis;
 - dragging a corner changes both span axes;
+- [x] Resize handles accept presses in spacing and padding, including the
+  outward part of a handle. Geometry must be available before handles appear.
+- [x] Resize uses displacement from the initial press and snaps the moving edge
+  to its nearest valid track edge. Expansion and contraction switch at the
+  midpoint between edges; the perpendicular axis does not block side resizing.
+  Verified by `node tests/gridResizeGesture.test.cjs`.
 - pointer movement changes HTML draft state only;
 - pointer release sends one candidate `GridAction`;
 - Escape or pointer cancellation discards the draft; and

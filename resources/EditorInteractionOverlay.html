@@ -271,7 +271,7 @@ function renderGridEditor(data) {
   componentArray(data.children).forEach(function(child) {
     if (!child.bounds || child.bounds.length !== 4 || child.bounds[2] <= 0 || child.bounds[3] <= 0) return;
     var childBox = document.createElement("div");
-    var childEditable = !!child.selected && !!child.editable && !!data.editable;
+    var childEditable = !!child.selected && !!child.editable && !!data.editable && !!data.geometryAvailable;
     childBox.className = "grid-child" + (child.selected ? " selected" : "") +
       (childEditable ? " editable" : "");
     childBox.style.left = child.bounds[0] + "px";
@@ -402,23 +402,51 @@ function sameGridSpan(first, second) {
     first.columnStart === second.columnStart && first.columnEnd === second.columnEnd;
 }
 
+function nearestResizeTrack(tracks, initial, delta, axis, endEdge, minimum, maximum) {
+  var list = componentArray(tracks);
+  function edge(track) {
+    var bounds = track.bounds;
+    return axis === "row" ? Number(bounds[1]) + (endEdge ? 0 : Number(bounds[3])) :
+      Number(bounds[0]) + (endEdge ? Number(bounds[2]) : 0);
+  }
+  var position = edge(list[initial - 1]) + delta;
+  var best = initial;
+  var distance = Math.abs(delta);
+  for (var index = minimum; index <= maximum; index += 1) {
+    var nextDistance = Math.abs(edge(list[index - 1]) - position);
+    if (nextDistance < distance) {
+      best = index;
+      distance = nextDistance;
+    }
+  }
+  return best;
+}
+
 function candidateGridSpan(gesture, point) {
-  var target = gridCellAt(gesture.data, point);
-  if (!target) return null;
   var candidate = {
     rowStart: Number(gesture.child.rowStart), rowEnd: Number(gesture.child.rowEnd),
     columnStart: Number(gesture.child.columnStart), columnEnd: Number(gesture.child.columnEnd)
   };
   if (gesture.kind === "move") {
+    var target = gridCellAt(gesture.data, point);
+    if (!target) return null;
     candidate.rowStart += target.row - gesture.startCell.row;
     candidate.rowEnd += target.row - gesture.startCell.row;
     candidate.columnStart += target.column - gesture.startCell.column;
     candidate.columnEnd += target.column - gesture.startCell.column;
   } else {
-    if (gesture.kind.indexOf("top") >= 0) candidate.rowStart = target.row;
-    if (gesture.kind.indexOf("bottom") >= 0) candidate.rowEnd = target.row;
-    if (gesture.kind.indexOf("left") >= 0) candidate.columnStart = target.column;
-    if (gesture.kind.indexOf("right") >= 0) candidate.columnEnd = target.column;
+    var dx = point.x - gesture.startPoint.x;
+    var dy = point.y - gesture.startPoint.y;
+    if (gesture.kind.indexOf("top") >= 0) candidate.rowStart = nearestResizeTrack(
+      gesture.data.rowTracks, candidate.rowStart, dy, "row", false, 1, candidate.rowEnd);
+    if (gesture.kind.indexOf("bottom") >= 0) candidate.rowEnd = nearestResizeTrack(
+      gesture.data.rowTracks, candidate.rowEnd, dy, "row", true, candidate.rowStart,
+      componentArray(gesture.data.rowTracks).length);
+    if (gesture.kind.indexOf("left") >= 0) candidate.columnStart = nearestResizeTrack(
+      gesture.data.columnTracks, candidate.columnStart, dx, "column", false, 1, candidate.columnEnd);
+    if (gesture.kind.indexOf("right") >= 0) candidate.columnEnd = nearestResizeTrack(
+      gesture.data.columnTracks, candidate.columnEnd, dx, "column", true, candidate.columnStart,
+      componentArray(gesture.data.columnTracks).length);
   }
   if (candidate.rowStart < 1 || candidate.columnStart < 1 ||
       candidate.rowEnd < candidate.rowStart || candidate.columnEnd < candidate.columnStart ||
@@ -488,12 +516,14 @@ function beginGridChildGesture(event, data, child, kind) {
   event.preventDefault();
   event.stopPropagation();
   if (gridGesture || !data.geometryAvailable || !child.editable || !data.editable) return;
-  var startCell = gridCellAt(data, gridPoint(event));
-  if (!startCell) return;
+  var startPoint = gridPoint(event);
+  var startCell = gridCellAt(data, startPoint);
+  if (kind === "move" && !startCell) return;
   var draft = document.createElement("div");
   draft.className = "grid-child-draft";
   document.getElementById("grid-controls").appendChild(draft);
-  gridGesture = { data: data, child: child, kind: kind, startCell: startCell, draft: draft,
+  gridGesture = { data: data, child: child, kind: kind, startCell: startCell,
+    startPoint: startPoint, draft: draft,
     candidate: { rowStart: Number(child.rowStart), rowEnd: Number(child.rowEnd),
       columnStart: Number(child.columnStart), columnEnd: Number(child.columnEnd) } };
   showCollapsedDropBands(data);
