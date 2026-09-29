@@ -76,6 +76,43 @@ do not yet have complete insertion and hierarchy-editing workflows.
 - Verify undo/redo, diagnostics, generation, and no-edit source preservation for
   each hierarchy family.
 
+## Edit Application Menu Bars and Context Menus
+
+Provide a dedicated editing workflow for menu bars, submenus, context menus,
+toolbars, and their items in the application being edited. This builds on the
+native hierarchy operations above; it does not change the editor's own menus.
+
+- Present a hierarchy-focused editor for adding and arranging menu and toolbar
+  items, editing supported labels and other literal properties, and choosing
+  which components own a context menu.
+- Define the supported menu and tool properties, parent rules, and component
+  references in the catalog and model before enabling each editing control.
+- Keep callbacks, expressions, and source whose ownership is ambiguous visible
+  but read-only. Do not execute the opened application or its callbacks.
+- Route edits through validated, atomic document transactions so Undo/Redo,
+  Safe Preview limitations, diagnostics, and source generation stay consistent.
+- Test new and opened applications with nested menus, context-menu assignment,
+  toolbar items, unsupported source, and no-edit round trips.
+
+## Add Range and Multiple Selection
+
+The editor currently tracks one selected component ID. Establish a selection
+model that can represent several components before adding group edit commands.
+
+- Support a drag-selection rectangle in Safe Preview and Shift-based range
+  selection in the hierarchy view. Define Ctrl/Command selection toggling and
+  a stable anchor for repeated range extensions.
+- Keep selected component IDs, the active component, hierarchy highlighting,
+  and Preview/HTML-overlay highlighting synchronized. Selection alone must not
+  modify the document or mark it dirty.
+- Define how nested components, overlapping bounds, hidden tabs, scrolling,
+  and clicks on empty space affect selection. Avoid selecting a descendant twice
+  when an ancestor is selected for a later group operation.
+- Keep the existing Inspector and single-component geometry tools tied to the
+  active component until group editing has its own validated behavior.
+- Test mouse and keyboard selection in both views, selection after hierarchy
+  refresh and document replacement, and interaction with Grid Layout overlays.
+
 ## Add Component Copy, Cut, and Paste
 
 - Provide Copy, Cut, and Paste through the Edit menu, keyboard shortcuts, and
