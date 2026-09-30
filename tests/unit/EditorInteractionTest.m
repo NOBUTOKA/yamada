@@ -1376,19 +1376,34 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % The oversized canvas keeps source pixels and exposes native scrolling.
             previewPanel = findall(figure, "Type", "uipanel", ...
                 "Title", "Safe preview: UIFigure");
+            scrollPanel = findall(previewPanel, "Type", "uipanel", ...
+                "Tag", "macd-preview-scroll-host");
             canvas = findall(previewPanel, "Type", "uipanel", ...
                 "Tag", "macd-preview-canvas");
             testCase.assertEqual(numel(canvas), 1);
+            testCase.assertEqual(numel(scrollPanel), 1);
             testCase.verifyEqual(canvas.Position, [1 1 1200 900]);
-            testCase.verifyEqual(string(previewPanel.Scrollable), "on");
-            testCase.verifyGreaterThan(canvas.Parent.Position(3), ...
-                previewPanel.InnerPosition(3));
-            testCase.verifyGreaterThan(canvas.Parent.Position(4), ...
-                previewPanel.InnerPosition(4));
+            testCase.verifyEqual(string(scrollPanel.Scrollable), "on");
+            content = canvas.Parent.Parent;
+            testCase.verifyGreaterThanOrEqual(content.Position(3:4) - ...
+                canvas.Parent.Position(3:4), [24 24]);
+            testCase.verifyGreaterThan(content.Position(3), ...
+                scrollPanel.InnerPosition(3));
+            testCase.verifyGreaterThan(content.Position(4), ...
+                scrollPanel.InnerPosition(4));
+            verticalDivider = findall(previewPanel, "Type", "uipanel", ...
+                "Tag", "macd-preview-vertical-scroll-divider");
+            horizontalDivider = findall(previewPanel, "Type", "uipanel", ...
+                "Tag", "macd-preview-horizontal-scroll-divider");
+            testCase.verifyEqual(string(verticalDivider.Visible), "on");
+            testCase.verifyEqual(string(horizontalDivider.Visible), "on");
+            testCase.verifyEqual(verticalDivider.Position(1), ...
+                scrollPanel.Position(3) - 17);
+            testCase.verifyEqual(horizontalDivider.Position(2), 17);
             button = findall(canvas, "Type", "uibutton", "Text", "Bottom right");
             testCase.assertEqual(numel(button), 1);
-            scroll(previewPanel, "right");
-            scroll(previewPanel, "bottom");
+            scroll(scrollPanel, "right");
+            scroll(scrollPanel, "bottom");
             drawnow;
             overlay = findall(canvas, "Type", "uihtml");
             components = overlay.Data.components;

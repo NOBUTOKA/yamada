@@ -223,10 +223,14 @@ registered factories, applies editable literal values permitted by each
 construction or assignment failures as non-executing diagnostics. Native menu and
 toolbar families are currently not rendered on the Preview canvas.
 
-The Preview host has a dark gray background and native scrolling. The renderer
-places an unscaled panel at the root `UIFigure.Position(3:4)` client-area size,
-uses the figure's supported `Color`, and centers the panel only when it fits in
-the viewport. The HTML overlay is a child of this canvas, so it scrolls with the
+The outer Preview panel keeps a light native heading; its child is a dark-gray
+scroll host. The renderer adds a padded dark content panel so all four edges of
+the figure remain distinct from the scroll bars at their limits. Two fixed dark
+dividers mark the viewport boundary next to visible native scroll tracks while
+the canvas extends beyond the viewport. The renderer places an unscaled canvas
+at the root `UIFigure.Position(3:4)` client-area size, uses the figure's
+supported `Color`, and centers it when it fits in the viewport. The HTML overlay
+is a child of this canvas, so it scrolls with the
 MATLAB controls. All hit targets and Grid Layout measurements use canvas-local
 pixels. Editor window resizing repositions the fixed-size canvas without
 changing the document. Root resize handles submit literal width and height edits

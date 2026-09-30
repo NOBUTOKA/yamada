@@ -42,6 +42,12 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 testCase.verifyEmpty(diagnostics);
                 testCase.verifyEqual(canvas.Position, [1 1 cases{index, 2}]);
                 testCase.verifyEqual(canvas.Parent.Position(3:4), cases{index, 2} + 2);
+                content = canvas.Parent.Parent;
+                frameSize = canvas.Parent.Position(3:4);
+                testCase.verifyEqual(content.Position(3:4), ...
+                    max(double(panel.InnerPosition(3:4)), frameSize + 24));
+                testCase.verifyEqual(canvas.Parent.Position(1:2), ...
+                    floor((content.Position(3:4) - frameSize) ./ 2) + 1);
                 if index == 1
                     testCase.verifyEqual(canvas.BackgroundColor, [0.88 0.92 0.96]);
                 end

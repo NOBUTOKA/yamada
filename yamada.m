@@ -40,6 +40,9 @@ classdef yamada < matlab.apps.AppBase
         HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
         PreviewPanel matlab.ui.container.Panel
+        PreviewScrollPanel matlab.ui.container.Panel
+        PreviewVerticalDivider matlab.ui.container.Panel
+        PreviewHorizontalDivider matlab.ui.container.Panel
         PreviewCanvas matlab.ui.container.Panel
         InspectorPanel matlab.ui.container.Panel
         InspectorGrid matlab.ui.container.GridLayout
@@ -169,12 +172,26 @@ classdef yamada < matlab.apps.AppBase
             app.PaletteTable.Layout.Column = 1;
 
             app.PreviewPanel = uipanel(app.MainGrid, "Title", "Safe preview", ...
-                "Scrollable", "on", "AutoResizeChildren", "off", ...
-                "BackgroundColor", [0.35 0.36 0.38], ...
-                "ForegroundColor", [0.96 0.96 0.96], ...
+                "AutoResizeChildren", "off", ...
                 "SizeChangedFcn", @(~, ~) app.layoutPreviewCanvas());
             app.PreviewPanel.Layout.Row = 2;
             app.PreviewPanel.Layout.Column = 2;
+            innerSize = double(app.PreviewPanel.InnerPosition(3:4));
+            app.PreviewScrollPanel = uipanel(app.PreviewPanel, ...
+                "BorderType", "none", "Scrollable", "on", ...
+                "AutoResizeChildren", "off", ...
+                "BackgroundColor", [0.35 0.36 0.38], ...
+                "Position", [1 1 innerSize], ...
+                "Tag", "macd-preview-scroll-host", ...
+                "SizeChangedFcn", @(~, ~) app.layoutPreviewCanvas());
+            app.PreviewVerticalDivider = uipanel(app.PreviewPanel, ...
+                "BorderType", "none", "BackgroundColor", [0.35 0.36 0.38], ...
+                "Position", [1 1 2 1], "Visible", "off", ...
+                "Tag", "macd-preview-vertical-scroll-divider");
+            app.PreviewHorizontalDivider = uipanel(app.PreviewPanel, ...
+                "BorderType", "none", "BackgroundColor", [0.35 0.36 0.38], ...
+                "Position", [1 1 1 2], "Visible", "off", ...
+                "Tag", "macd-preview-horizontal-scroll-divider");
 
             app.RightGrid = uigridlayout(app.MainGrid, [2 1]);
             app.RightGrid.RowHeight = {"1x", "1x"};
@@ -759,14 +776,15 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % The preview is disposable editor state and never shares opened handles.
-            delete(app.PreviewPanel.Children);
+            delete(app.PreviewScrollPanel.Children);
             if isempty(app.Document) || strlength(app.Document.RootComponentId) == 0
                 return
             end
             root = app.Document.getComponent(app.Document.RootComponentId);
             app.PreviewPanel.Title = "Safe preview: " + root.Name;
             [app.PreviewHandles, diagnostics, app.PreviewCanvas] = app.PreviewRenderer.render( ...
-                app.Document, app.PreviewPanel);
+                app.Document, app.PreviewScrollPanel);
+            app.layoutPreviewCanvas();
             app.restorePreviewTabSelections();
             app.createInteractionOverlay();
             app.updateInteractionOverlay();
@@ -781,19 +799,47 @@ classdef yamada < matlab.apps.AppBase
         end
 
         function layoutPreviewCanvas(app)
-            % layoutPreviewCanvas Center the fixed-size canvas when it fits.
+            % layoutPreviewCanvas Size the scroll host and center its padded canvas.
             arguments (Input)
                 app (1, 1) yamada
             end
 
+            if isempty(app.PreviewScrollPanel) || ~isvalid(app.PreviewScrollPanel)
+                return
+            end
+            innerSize = double(app.PreviewPanel.InnerPosition(3:4));
+            if any(double(app.PreviewScrollPanel.Position(3:4)) ~= innerSize)
+                app.PreviewScrollPanel.Position(3:4) = innerSize;
+            end
             if isempty(app.PreviewCanvas) || ~isvalid(app.PreviewCanvas)
                 return
             end
             frame = app.PreviewCanvas.Parent;
-            viewport = double(app.PreviewPanel.InnerPosition(3:4));
+            content = frame.Parent;
+            viewport = double(app.PreviewScrollPanel.InnerPosition(3:4));
             frameSize = double(frame.Position(3:4));
-            origin = max([12 12], floor((viewport - frameSize) ./ 2));
+            % Keep scrollable content larger than the figure on all four sides.
+            contentSize = max(viewport, frameSize + 24);
+            content.Position(3:4) = contentSize;
+            origin = floor((contentSize - frameSize) ./ 2) + 1;
             frame.Position(1:2) = origin;
+
+            % Mark the fixed viewport boundary before the native scroll tracks.
+            scrollbarWidth = 17; % Native R2024a Windows scroll track width.
+            if contentSize(2) > viewport(2)
+                app.PreviewVerticalDivider.Position = [max(1, innerSize(1) - ...
+                    scrollbarWidth) 1 2 max(1, innerSize(2) - scrollbarWidth)];
+                app.PreviewVerticalDivider.Visible = "on";
+            else
+                app.PreviewVerticalDivider.Visible = "off";
+            end
+            if contentSize(1) > viewport(1)
+                app.PreviewHorizontalDivider.Position = [1 scrollbarWidth ...
+                    max(1, innerSize(1) - scrollbarWidth) 2];
+                app.PreviewHorizontalDivider.Visible = "on";
+            else
+                app.PreviewHorizontalDivider.Visible = "off";
+            end
         end
 
         function createInteractionOverlay(app)

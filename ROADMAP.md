@@ -172,8 +172,10 @@ Resizing the editor window must not change the edited root figure size or scale
 its preview components.
 
 - Put a canvas with the root UIFigure's client-area width, height, and Color
-  inside a scrollable Preview host with a dark-gray background. Keep a visible
-  but subdued boundary between the canvas and the area outside the figure.
+  inside a scrollable Preview host with a dark-gray background and a light
+  native heading. Keep a visible but subdued boundary between the canvas and
+  the area outside the figure, including beside scroll bars during scrolling
+  and at the far scroll limits.
   Center the canvas when it fits; provide horizontal and vertical scrolling
   when it extends beyond the host.
 - Render supported components at their model pixel positions without a fit
@@ -203,6 +205,14 @@ generation, and reopen. The R2024a full suite passed 221/221 tests, and the
 HTML overlay tests passed 3/3. A final interactive window-resize visual check
 remains for review; MATLAB batch-mode screenshots do not exercise native window
 layout updates reliably.
+
+Follow-up visual check (2026-10-01): the large fixture shows fixed dark
+separators between the still-visible UIFigure and both native scroll tracks
+before reaching the far edges. Dark padding remains visible at the far scroll
+limits. The small fixture keeps the separators hidden, and the heading uses
+the native light background with dark text. The R2024a full suite passed
+221/221 tests. One nonfatal MATLAB internal scroll callback warning appeared
+once during an existing Grid interaction test; it did not affect the results.
 
 ## Offer an Explicit Save As Line-Ending Choice
 
