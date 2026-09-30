@@ -56,6 +56,12 @@ svg { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overf
 .tab-group-header { fill: rgba(0, 0, 0, 0.001); stroke: transparent; pointer-events: all; }
 .selected { stroke: #124da8; stroke-width: 2; }
 .handle { fill: #2864c7; stroke: #ffffff; stroke-width: 1; pointer-events: all; }
+.root-handle { fill: #f2b84b; stroke: #654000; stroke-width: 1; pointer-events: all; }
+.root-handle[data-handle="root-n"] { cursor: n-resize; }
+.root-handle[data-handle="root-e"] { cursor: e-resize; }
+.root-handle[data-handle="root-ne"] { cursor: ne-resize; }
+.root-handle.locked { fill: #9a9a9a; cursor: not-allowed; }
+.root-size-label { fill: #684500; stroke: #ffffff; stroke-width: 2px; paint-order: stroke; font: 12px Arial; pointer-events: none; }
 .handle[data-handle="n"], .nested-grid-handle[data-handle="n"] { cursor: n-resize; }
 .handle[data-handle="s"], .nested-grid-handle[data-handle="s"] { cursor: s-resize; }
 .handle[data-handle="e"], .nested-grid-handle[data-handle="e"] { cursor: e-resize; }
@@ -95,6 +101,7 @@ function setup(htmlComponent) {
 function sendPointerEvent(event) {
   var rect = svg.getBoundingClientRect();
   var target = event.target;
+  if (target.classList && target.classList.contains("locked")) return;
   var x = event.clientX - rect.left;
   var y = event.clientY - rect.top;
   if (event.type === "pointerdown") {
@@ -804,6 +811,31 @@ function addHandles(componentData) {
   }
 }
 
+function addRootHandles() {
+  if (!currentData.rootSelected || !currentData.rootId) return;
+  var width = Number(currentData.width);
+  var height = Number(currentData.height);
+  var points = { "root-n": [width / 2, 7], "root-e": [width - 7, height / 2],
+    "root-ne": [width - 7, 7] };
+  Object.keys(points).forEach(function(kind) {
+    var point = points[kind];
+    var handle = svgElement("rect", { class: "root-handle" +
+      (currentData.rootEditable ? "" : " locked"), x: point[0] - 6,
+      y: point[1] - 6, width: 12, height: 12,
+      "data-component-id": currentData.rootId, "data-handle": kind });
+    var title = svgElement("title", {});
+    title.textContent = currentData.rootEditable ? "Resize UIFigure" :
+      "UIFigure Position cannot be edited safely";
+    handle.appendChild(title);
+    svg.appendChild(handle);
+  });
+  var size = currentData.rootSize || [width, height];
+  var label = svgElement("text", { class: "root-size-label", x: width - 20,
+    y: 26, "text-anchor": "end" });
+  label.textContent = Math.round(size[0]) + " × " + Math.round(size[1]);
+  svg.appendChild(label);
+}
+
 function componentArray(value) {
   if (!value) return [];
   if (Array.isArray(value)) return value;
@@ -823,6 +855,7 @@ function render() {
   var components = componentArray(currentData.components);
   components.forEach(function(componentData) { svg.appendChild(outline(componentData)); });
   components.forEach(function(componentData) { addHandles(componentData); });
+  addRootHandles();
 }
 </script>
 </head>

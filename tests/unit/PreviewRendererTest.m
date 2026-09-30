@@ -19,6 +19,42 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
     end
 
     methods (Test)
+        function actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled(testCase)
+            % actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled Cover fit and overflow.
+            registry = macd.model.ComponentRegistry.createDefault();
+            testPath = mfilename("fullpath");
+            fixtureFolder = fullfile(fileparts(fileparts(fileparts(testPath))), ...
+                "tests", "fixtures");
+            figure = uifigure("Visible", "off", "Position", [100 100 750 550]);
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            cases = {"SmallPreviewFixtureApp", [320 240], [220 10 90 26]; ...
+                "LargePreviewFixtureApp", [1200 900], [1070 12 116 28]};
+
+            for index = 1:size(cases, 1)
+                document = macd.source.AppSourceParser.parseFile( ...
+                    fullfile(fixtureFolder, cases{index, 1} + ".m"), registry);
+                testCase.verifyEmpty(document.Diagnostics);
+                panel = uipanel(figure, "Position", [1 1 700 500], ...
+                    "Scrollable", "on", "AutoResizeChildren", "off");
+                panelCleanup = onCleanup(@() deleteIfValid(panel));
+                renderer = macd.ui.PreviewRenderer(registry);
+                [handles, diagnostics, canvas] = renderer.render(document, panel);
+                testCase.verifyEmpty(diagnostics);
+                testCase.verifyEqual(canvas.Position, [1 1 cases{index, 2}]);
+                testCase.verifyEqual(canvas.Parent.Position(3:4), cases{index, 2} + 2);
+                if index == 1
+                    testCase.verifyEqual(canvas.BackgroundColor, [0.88 0.92 0.96]);
+                end
+                testCase.verifyEqual(handles("parsed-BottomRightButton").Position, ...
+                    cases{index, 3});
+                testCase.verifyEqual(handles("parsed-CenterPanel").Parent, canvas);
+                testCase.verifyEqual(handles("parsed-CenterGrid").Parent, ...
+                    handles("parsed-CenterPanel"));
+                clear panelCleanup
+            end
+            clear cleanup
+        end
+
         function safePreviewRendersExtendedFixtureSemantics(testCase)
             % safePreviewRendersExtendedFixtureSemantics Cover string lists, axes, and tools.
 
@@ -47,23 +83,18 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 ["Manual", "Auto"]);
             previewSurface = controlHandles("parsed-MainGrid").Parent;
             sourceSize = [580 460];
-            previewMargin = 12;
-            usableSize = controlPanel.InnerPosition(3:4) - 2 * previewMargin;
-            scale = min(usableSize ./ sourceSize);
-            testCase.verifyEqual(previewSurface.Position, ...
-                [previewMargin + (usableSize - sourceSize .* scale) ./ 2, ...
-                sourceSize .* scale], "AbsTol", 1e-10);
+            testCase.verifyEqual(previewSurface.Position, [1 1 sourceSize]);
+            testCase.verifyEqual(previewSurface.Parent.Position(3:4), sourceSize + 2);
             clear controlCleanup
 
-            % Keep pixel axes proportional to the fitted figure surface.
+            % Keep pixel axes at their source dimensions on the actual-size canvas.
             [axesDocument, axesHandles, axesDiagnostics, axesPanel] = ...
                 testCase.renderFixture(registry, fixtureFolder, "AxesExplorerApp", previewFigure);
             axesCleanup = onCleanup(@() deleteIfValid(axesPanel));
             testCase.verifyEmpty(axesDocument.Diagnostics);
             testCase.verifyEmpty(axesDiagnostics);
-            scale = axesHandles("parsed-UIAxes").Position(3) / 340;
             testCase.verifyEqual(axesHandles("parsed-UIAxes").Position, ...
-                [20 230 340 180] .* scale, "AbsTol", 1e-10);
+                [20 230 340 180]);
             testCase.verifyEqual(axesHandles("parsed-StandardAxes").Position, ...
                 [0.55 0.55 0.35 0.35]);
             clear axesCleanup

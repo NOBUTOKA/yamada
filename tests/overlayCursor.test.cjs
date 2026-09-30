@@ -12,7 +12,8 @@ const handles = [];
 context.currentData.height = 400;
 context.document = {
   createElementNS: (_, name) => ({name, attributes: {},
-    setAttribute(key, value) { this.attributes[key] = value; }})
+    children: [], setAttribute(key, value) { this.attributes[key] = value; },
+    appendChild(child) { this.children.push(child); }})
 };
 context.svg = {appendChild(handle) { handles.push(handle); }};
 
@@ -29,4 +30,21 @@ assert.ok(handles.every(handle => handle.attributes['data-resize-constraint'] ==
 assert.match(html, /\.silhouette \{[^}]*cursor: move;/);
 assert.match(html, /\.handle\[data-handle="ne"\][^{]*\{ cursor: ne-resize; \}/);
 assert.match(html, /data-resize-constraint="fixedHeight"\]\[data-handle="ne"\][\s\S]*\{ cursor: ew-resize; \}/);
+handles.length = 0;
+context.currentData = {width: 320, height: 240, rootId: 'root',
+  rootSelected: true, rootEditable: true, rootSize: [340, 260]};
+context.addRootHandles();
+assert.deepEqual(handles.filter(handle => handle.attributes['data-handle'])
+  .map(handle => handle.attributes['data-handle']).sort(),
+['root-e', 'root-n', 'root-ne']);
+assert.ok(handles.some(handle => handle.textContent === '340 × 260'));
+const sent = [];
+context.component = {sendEventToMATLAB(name, data) { sent.push({name, data}); }};
+context.svg.getBoundingClientRect = () => ({left: 0, top: 0, height: 240});
+context.svg.setPointerCapture = () => {};
+context.sendPointerEvent({type: 'pointerdown', pointerId: 1, clientX: 313,
+  clientY: 7, target: {dataset: {componentId: 'root', handle: 'root-ne'}}});
+assert.equal(sent[0].name, 'Pointer');
+assert.equal(sent[0].data.componentId, 'root');
+assert.equal(sent[0].data.handle, 'root-ne');
 console.log('Absolute overlay move and resize cursors passed.');

@@ -11,7 +11,6 @@ classdef PreviewRenderer < handle
     properties (Access = private)
         Registry macd.model.ComponentRegistry
         PreviewSurface
-        RenderScale double = 1
         PreviewMargin double = 12
     end
 
@@ -30,7 +29,7 @@ classdef PreviewRenderer < handle
             obj.Registry = registry;
         end
 
-        function [handles, diagnostics] = render(obj, document, parent)
+        function [handles, diagnostics, surface] = render(obj, document, parent)
             % render Rebuild a safe preview and return handles by component identity.
             arguments (Input)
                 obj (1, 1) macd.ui.PreviewRenderer
@@ -40,20 +39,23 @@ classdef PreviewRenderer < handle
             arguments (Output)
                 handles containers.Map
                 diagnostics macd.model.Diagnostic
+                surface
             end
 
             % Dispose stale editor-owned controls before constructing the new tree.
             delete(parent.Children);
             handles = containers.Map("KeyType", "char", "ValueType", "any");
             diagnostics = macd.model.Diagnostic.empty;
+            surface = [];
             obj.Diagnostics = macd.model.Diagnostic.empty;
             root = document.getComponent(document.RootComponentId);
             if isempty(root)
                 return
             end
 
-            % Recreate the source figure as an aspect-preserving editor-owned surface.
+            % Recreate the source figure at its actual client-area pixel size.
             obj.createPreviewSurface(root, parent);
+            surface = obj.PreviewSurface;
             for index = 1:numel(root.Children)
                 obj.renderComponent(document, root.Children(index), obj.PreviewSurface, handles);
             end
@@ -222,7 +224,7 @@ classdef PreviewRenderer < handle
 
 
         function createPreviewSurface(obj, root, parent)
-            % createPreviewSurface Fit the parsed figure client area inside the editor panel.
+            % createPreviewSurface Place an actual-size client area in the scroll host.
             arguments (Input)
                 obj (1, 1) macd.ui.PreviewRenderer
                 root (1, 1) macd.model.ComponentRecord
@@ -239,13 +241,27 @@ classdef PreviewRenderer < handle
                 sourceSize = positionEntry.LiteralValue(3:4);
             end
             availablePosition = obj.parentInnerPosition(parent);
-            usableSize = max(availablePosition(3:4) - 2 * obj.PreviewMargin, [1 1]);
-            obj.RenderScale = min(usableSize ./ sourceSize);
-            surfaceSize = sourceSize .* obj.RenderScale;
-            surfacePosition = [obj.PreviewMargin + (usableSize - surfaceSize) ./ 2, ...
-                surfaceSize];
-            obj.PreviewSurface = uipanel(parent, "BorderType", "line", ...
-                "Position", surfacePosition);
+            frameSize = double(sourceSize) + 2;
+            frameOrigin = max([obj.PreviewMargin obj.PreviewMargin], ...
+                floor((availablePosition(3:4) - frameSize) ./ 2));
+            frame = uipanel(parent, "BorderType", "none", ...
+                "AutoResizeChildren", "off", ...
+                "BackgroundColor", [0.53 0.54 0.55], ...
+                "Position", [frameOrigin frameSize], ...
+                "Tag", "macd-preview-frame");
+            obj.PreviewSurface = uipanel(frame, "BorderType", "none", ...
+                "AutoResizeChildren", "off", ...
+                "BackgroundColor", [0.94 0.94 0.94], ...
+                "Position", [1 1 double(sourceSize)], ...
+                "Tag", "macd-preview-canvas");
+            colorEntry = root.getProperty("Color");
+            if ~isempty(colorEntry) && colorEntry.ValueKind == "literal"
+                try
+                    obj.PreviewSurface.BackgroundColor = colorEntry.LiteralValue;
+                catch
+                    % Keep the R2024a UIFigure default for unsupported colors.
+                end
+            end
         end
 
         function preview = createPreviewComponent(obj, component, parent)
@@ -281,7 +297,6 @@ classdef PreviewRenderer < handle
             end
             if path == "Position" && isnumeric(value) && numel(value) == 4 && ...
                 obj.usesPixelPosition(target)
-                value = value .* obj.RenderScale;
                 definition = obj.Registry.get(component.Factory, component.CreationArguments);
                 constraint = definition.resizeConstraintFor(component.CreationArguments);
                 if constraint == "fixedHeight"

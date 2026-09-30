@@ -86,6 +86,14 @@ classdef PropertyBatchValidator
                 if strlength(message) > 0
                     return
                 end
+            elseif definition.Editor == "color"
+                % Colors accept an RGB triplet or one MATLAB color name or code.
+                try
+                    validatecolor(value);
+                catch
+                    message = "Enter a valid color.";
+                    return
+                end
             elseif isfield(schema, "shape") && string(schema.shape) == "fixedLengthVector" && ...
                     (~isvector(value) || ~isfield(schema, "fixedLength") || ...
                     numel(value) ~= schema.fixedLength)

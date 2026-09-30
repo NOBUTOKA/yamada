@@ -223,6 +223,15 @@ registered factories, applies editable literal values permitted by each
 construction or assignment failures as non-executing diagnostics. Native menu and
 toolbar families are currently not rendered on the Preview canvas.
 
+The Preview host has a dark gray background and native scrolling. The renderer
+places an unscaled panel at the root `UIFigure.Position(3:4)` client-area size,
+uses the figure's supported `Color`, and centers the panel only when it fits in
+the viewport. The HTML overlay is a child of this canvas, so it scrolls with the
+MATLAB controls. All hit targets and Grid Layout measurements use canvas-local
+pixels. Editor window resizing repositions the fixed-size canvas without
+changing the document. Root resize handles submit literal width and height edits
+through the model; source-backed positions remain noneditable.
+
 The renderer returns a map from stable component IDs to disposable Preview
 handles. `yamada` uses this map to build the transparent
 [`EditorInteractionOverlay.html`](../resources/EditorInteractionOverlay.html)

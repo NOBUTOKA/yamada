@@ -40,6 +40,7 @@ classdef yamada < matlab.apps.AppBase
         HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
         PreviewPanel matlab.ui.container.Panel
+        PreviewCanvas matlab.ui.container.Panel
         InspectorPanel matlab.ui.container.Panel
         InspectorGrid matlab.ui.container.GridLayout
         InspectorView macd.ui.inspector.InspectorView
@@ -60,7 +61,6 @@ classdef yamada < matlab.apps.AppBase
         InteractionStartPoint double = [0 0]
         InteractionStartPosition double = [0 0 0 0]
         InteractionPosition double = [0 0 0 0]
-        PreviewScale double = 1
         DiagnosticsDrawer matlab.ui.container.Panel
         DiagnosticsGrid matlab.ui.container.GridLayout
         DiagnosticsSummaryLabel matlab.ui.control.Label
@@ -168,7 +168,11 @@ classdef yamada < matlab.apps.AppBase
             app.PaletteTable.Layout.Row = 2;
             app.PaletteTable.Layout.Column = 1;
 
-            app.PreviewPanel = uipanel(app.MainGrid, "Title", "Safe preview");
+            app.PreviewPanel = uipanel(app.MainGrid, "Title", "Safe preview", ...
+                "Scrollable", "on", "AutoResizeChildren", "off", ...
+                "BackgroundColor", [0.35 0.36 0.38], ...
+                "ForegroundColor", [0.96 0.96 0.96], ...
+                "SizeChangedFcn", @(~, ~) app.layoutPreviewCanvas());
             app.PreviewPanel.Layout.Row = 2;
             app.PreviewPanel.Layout.Column = 2;
 
@@ -761,10 +765,9 @@ classdef yamada < matlab.apps.AppBase
             end
             root = app.Document.getComponent(app.Document.RootComponentId);
             app.PreviewPanel.Title = "Safe preview: " + root.Name;
-            [app.PreviewHandles, diagnostics] = app.PreviewRenderer.render( ...
+            [app.PreviewHandles, diagnostics, app.PreviewCanvas] = app.PreviewRenderer.render( ...
                 app.Document, app.PreviewPanel);
             app.restorePreviewTabSelections();
-            app.updatePreviewScale(root);
             app.createInteractionOverlay();
             app.updateInteractionOverlay();
             app.scheduleOverlayRefresh();
@@ -777,27 +780,20 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
-        function updatePreviewScale(app, root)
-            % updatePreviewScale Recover source-to-preview pixel scale.
+        function layoutPreviewCanvas(app)
+            % layoutPreviewCanvas Center the fixed-size canvas when it fits.
             arguments (Input)
                 app (1, 1) yamada
-                root (1, 1) macd.model.ComponentRecord
             end
 
-            % The renderer fits the source figure into its editor-owned surface.
-            app.PreviewScale = 1;
-            position = root.getProperty("Position");
-            surfaces = app.PreviewPanel.Children;
-            if isempty(position) || position.ValueKind ~= "literal" || ...
-                    numel(position.LiteralValue) ~= 4 || isempty(surfaces)
+            if isempty(app.PreviewCanvas) || ~isvalid(app.PreviewCanvas)
                 return
             end
-            sourceSize = double(position.LiteralValue(3:4));
-            surface = surfaces(1);
-            if sourceSize(1) > 0 && sourceSize(2) > 0 && ...
-                    isprop(surface, "Position")
-                app.PreviewScale = double(surface.Position(3)) / sourceSize(1);
-            end
+            frame = app.PreviewCanvas.Parent;
+            viewport = double(app.PreviewPanel.InnerPosition(3:4));
+            frameSize = double(frame.Position(3:4));
+            origin = max([12 12], floor((viewport - frameSize) ./ 2));
+            frame.Position(1:2) = origin;
         end
 
         function createInteractionOverlay(app)
@@ -809,11 +805,11 @@ classdef yamada < matlab.apps.AppBase
             % The overlay owns pointer capture and never changes preview controls.
             overlayPath = fullfile(fileparts(mfilename("fullpath")), ...
                 "resources", "EditorInteractionOverlay.html");
-            app.InteractionOverlay = uihtml(app.PreviewPanel, ...
+            app.InteractionOverlay = uihtml(app.PreviewCanvas, ...
                 "HTMLSource", overlayPath, ...
                 "HTMLEventReceivedFcn", @(~, event) ...
                 app.interactionOverlayEvent(event));
-            innerPosition = double(app.PreviewPanel.InnerPosition);
+            innerPosition = double(app.PreviewCanvas.InnerPosition);
             app.InteractionOverlay.Position = [0 0 innerPosition(3:4)];
         end
 
@@ -912,12 +908,24 @@ classdef yamada < matlab.apps.AppBase
             end
             app.InteractionOverlayRevision = app.InteractionOverlayRevision + 1;
             gridEditor = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
-                app.PreviewHandles, app.PreviewPanel, app.ActiveGridId, ...
+                app.PreviewHandles, app.PreviewCanvas, app.ActiveGridId, ...
                 app.SelectedComponentId, app.InteractionOverlayRevision);
-            innerPosition = double(app.PreviewPanel.InnerPosition);
+            innerPosition = double(app.PreviewCanvas.InnerPosition);
+            root = app.Document.getComponent(app.Document.RootComponentId);
+            rootPosition = root.getProperty("Position");
+            rootEditable = root.IsEditable && ~isempty(rootPosition) && ...
+                rootPosition.IsEditable && rootPosition.ValueKind == "literal" && ...
+                isnumeric(rootPosition.LiteralValue) && numel(rootPosition.LiteralValue) == 4;
+            rootSize = innerPosition(3:4);
+            if app.InteractionComponentId == root.Id && ...
+                    startsWith(app.InteractionKind, "root-")
+                rootSize = app.InteractionPosition(3:4);
+            end
             app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
                 "height", innerPosition(4), "components", components, ...
-                "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor);
+                "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor, ...
+                "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
+                "rootEditable", rootEditable, "rootSize", rootSize);
         end
 
         function interactionOverlayEvent(app, event)
@@ -1088,7 +1096,7 @@ classdef yamada < matlab.apps.AppBase
             end
             try
                 overlay = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
-                    app.PreviewHandles, app.PreviewPanel, gridId, childId, ...
+                    app.PreviewHandles, app.PreviewCanvas, gridId, childId, ...
                     app.InteractionOverlayRevision);
                 if ~overlay.geometryAvailable || ~overlay.editable
                     return
@@ -1140,6 +1148,14 @@ classdef yamada < matlab.apps.AppBase
             position = component.getProperty("Position");
             if isempty(position) || position.ValueKind ~= "literal" || ...
                     ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
+                return
+            end
+            if componentId == app.Document.RootComponentId
+                if ~startsWith(handle, "root-") || ~component.IsEditable || ...
+                        ~position.IsEditable
+                    return
+                end
+            elseif startsWith(handle, "root-")
                 return
             end
             app.SelectedComponentId = componentId;
@@ -1398,8 +1414,18 @@ classdef yamada < matlab.apps.AppBase
             if strlength(app.InteractionComponentId) == 0
                 return
             end
-            delta = (point - app.InteractionStartPoint) / max(app.PreviewScale, eps);
-            if app.InteractionKind == "move"
+            delta = point - app.InteractionStartPoint;
+            if startsWith(app.InteractionKind, "root-")
+                app.InteractionPosition = app.InteractionStartPosition;
+                if contains(app.InteractionKind, "e")
+                    app.InteractionPosition(3) = max(80, ...
+                        round(app.InteractionStartPosition(3) + delta(1)));
+                end
+                if contains(app.InteractionKind, "n")
+                    app.InteractionPosition(4) = max(60, ...
+                        round(app.InteractionStartPosition(4) + delta(2)));
+                end
+            elseif app.InteractionKind == "move"
                 app.InteractionPosition = app.movedPosition( ...
                     app.InteractionComponentId, app.InteractionStartPosition, delta);
             else
@@ -1451,9 +1477,9 @@ classdef yamada < matlab.apps.AppBase
             preview = app.PreviewHandles(char(componentId));
             parent = preview.Parent;
             if isprop(parent, "InnerPosition")
-                bounds = double(parent.InnerPosition(3:4)) / max(app.PreviewScale, eps);
+                bounds = double(parent.InnerPosition(3:4));
             else
-                bounds = double(parent.Position(3:4)) / max(app.PreviewScale, eps);
+                bounds = double(parent.Position(3:4));
             end
             position = startPosition;
             position(1:2) = round(startPosition(1:2) + delta);
@@ -1478,12 +1504,12 @@ classdef yamada < matlab.apps.AppBase
             rectangle = actual;
             if app.InteractionKind == "move"
                 delta = app.InteractionPosition(1:2) - app.InteractionStartPosition(1:2);
-                rectangle(1:2) = actual(1:2) + delta .* app.PreviewScale;
+                rectangle(1:2) = actual(1:2) + delta;
                 return
             end
             rectangle(1:2) = actual(1:2) + ...
-                (app.InteractionPosition(1:2) - app.InteractionStartPosition(1:2)) .* app.PreviewScale;
-            rectangle(3:4) = app.InteractionPosition(3:4) .* app.PreviewScale;
+                (app.InteractionPosition(1:2) - app.InteractionStartPosition(1:2));
+            rectangle(3:4) = app.InteractionPosition(3:4);
             component = app.Document.getComponent(componentId);
             definition = app.Registry.get(component.Factory, component.CreationArguments);
             constraint = definition.resizeConstraintFor(component.CreationArguments);
@@ -1546,7 +1572,7 @@ classdef yamada < matlab.apps.AppBase
             kinds = ["sw", "s", "se", "w", "e", "nw", "n", "ne"];
             for index = 1:numel(kinds)
                 point = app.resizeHandlePosition(displayPosition, kinds(index));
-                handle = uipanel(app.PreviewPanel, "Position", [point 8 8], ...
+                handle = uipanel(app.PreviewCanvas, "Position", [point 8 8], ...
                     "BorderType", "line", "BackgroundColor", [0.2 0.4 0.9], ...
                     "ButtonDownFcn", @(~, ~) ...
                     app.resizeHandleButtonDown(kinds(index)));
@@ -1566,7 +1592,7 @@ classdef yamada < matlab.apps.AppBase
 
             % Use MATLAB's pixel conversion so nested panels and borders are included.
             position = double(getpixelposition(preview, true));
-            parentPosition = double(getpixelposition(app.PreviewPanel, true));
+            parentPosition = double(getpixelposition(app.PreviewCanvas, true));
             position(1:2) = position(1:2) - parentPosition(1:2);
         end
 
@@ -1634,12 +1660,11 @@ classdef yamada < matlab.apps.AppBase
             if ~isKey(app.PreviewHandles, key)
                 return
             end
-            delta = (double(app.UIFigure.CurrentPoint) - app.ResizeStartPoint) / ...
-                max(app.PreviewScale, eps);
+            delta = double(app.UIFigure.CurrentPoint) - app.ResizeStartPoint;
             position = app.resizedPosition(app.ResizeStartPosition, delta, app.ResizeKind);
             position = app.applyResizePolicy(position, app.ResizeStartPosition, app.ResizeKind);
             preview = app.PreviewHandles(key);
-            displayPosition = position .* app.PreviewScale;
+            displayPosition = position;
             % Set the size pair together; constrained controls otherwise emit
             % aspect-ratio warnings when Position is replaced.
             preview.Position(1:2) = displayPosition(1:2);
@@ -1657,7 +1682,7 @@ classdef yamada < matlab.apps.AppBase
             end
             componentId = app.ResizeTargetId;
             preview = app.PreviewHandles(char(componentId));
-            position = round(double(preview.Position) / max(app.PreviewScale, eps));
+            position = round(double(preview.Position));
             app.UIFigure.WindowButtonMotionFcn = [];
             app.UIFigure.WindowButtonUpFcn = [];
             app.ResizeTargetId = "";
@@ -1804,8 +1829,7 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             preview = app.PreviewHandles(key);
-            delta = (double(app.UIFigure.CurrentPoint) - app.DragStartPoint) / ...
-                max(app.PreviewScale, eps);
+            delta = double(app.UIFigure.CurrentPoint) - app.DragStartPoint;
             position = app.DragStartPosition;
             position(1:2) = round(position(1:2) + delta(1:2));
             parent = preview.Parent;
@@ -1816,8 +1840,7 @@ classdef yamada < matlab.apps.AppBase
             end
             position(1) = max(0, min(position(1), bounds(3) - position(3)));
             position(2) = max(0, min(position(2), bounds(4) - position(4)));
-            preview.Position = position .* [app.PreviewScale app.PreviewScale ...
-                app.PreviewScale app.PreviewScale];
+            preview.Position = position;
         end
 
         function previewDragFinished(app)
@@ -1831,7 +1854,7 @@ classdef yamada < matlab.apps.AppBase
             end
             componentId = app.DragComponentId;
             preview = app.PreviewHandles(char(componentId));
-            sourcePosition = double(preview.Position) / max(app.PreviewScale, eps);
+            sourcePosition = double(preview.Position);
             sourcePosition = round(sourcePosition);
             app.UIFigure.WindowButtonMotionFcn = [];
             app.UIFigure.WindowButtonUpFcn = [];

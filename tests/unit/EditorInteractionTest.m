@@ -676,8 +676,11 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(numel(datePicker), 1);
             testCase.verifyEqual(numel(previewPanel), 1);
             datePosition = double(getpixelposition(datePicker, true));
-            panelPosition = double(getpixelposition(previewPanel, true));
-            datePosition(1:2) = datePosition(1:2) - panelPosition(1:2);
+            canvas = findall(previewPanel, "Type", "uipanel", ...
+                "Tag", "macd-preview-canvas");
+            testCase.verifyEqual(numel(canvas), 1);
+            canvasPosition = double(getpixelposition(canvas, true));
+            datePosition(1:2) = datePosition(1:2) - canvasPosition(1:2);
             testCase.verifyEqual([target.x target.y target.width target.height], ...
                 datePosition, "AbsTol", 1);
             outerChild = app.Document.getComponentByName("FormPanel");
@@ -1350,6 +1353,97 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "rockerSwitch");
             testCase.verifyEqual(toggle.overlayShapeFor(toggle.CreationArguments), ...
                 "toggleSwitch");
+        end
+    end
+
+    methods (Test, TestTags = {'editorShell', 'ui'})
+        function largeActualSizeFixtureScrollsAndRootResizeIsUndoable(testCase)
+            % largeActualSizeFixtureScrollsAndRootResizeIsUndoable Exercise real editor geometry.
+            testPath = mfilename("fullpath");
+            projectRoot = fileparts(fileparts(fileparts(testPath)));
+            fixture = string(fullfile(projectRoot, "tests", "fixtures", ...
+                "LargePreviewFixtureApp.m"));
+            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
+            openMenu.MenuSelectedFcn(openMenu, struct());
+            drawnow;
+
+            % The oversized canvas keeps source pixels and exposes native scrolling.
+            previewPanel = findall(figure, "Type", "uipanel", ...
+                "Title", "Safe preview: UIFigure");
+            canvas = findall(previewPanel, "Type", "uipanel", ...
+                "Tag", "macd-preview-canvas");
+            testCase.assertEqual(numel(canvas), 1);
+            testCase.verifyEqual(canvas.Position, [1 1 1200 900]);
+            testCase.verifyEqual(string(previewPanel.Scrollable), "on");
+            testCase.verifyGreaterThan(canvas.Parent.Position(3), ...
+                previewPanel.InnerPosition(3));
+            testCase.verifyGreaterThan(canvas.Parent.Position(4), ...
+                previewPanel.InnerPosition(4));
+            button = findall(canvas, "Type", "uibutton", "Text", "Bottom right");
+            testCase.assertEqual(numel(button), 1);
+            scroll(previewPanel, "right");
+            scroll(previewPanel, "bottom");
+            drawnow;
+            overlay = findall(canvas, "Type", "uihtml");
+            components = overlay.Data.components;
+            buttonId = app.Document.getComponentByName("BottomRightButton").Id;
+            target = components(string({components.id}) == buttonId);
+            testCase.assertEqual(numel(target), 1);
+            buttonPosition = double(getpixelposition(button, true));
+            canvasPosition = double(getpixelposition(canvas, true));
+            buttonPosition(1:2) = buttonPosition(1:2) - canvasPosition(1:2);
+            testCase.verifyEqual([target.x target.y target.width target.height], ...
+                buttonPosition, "AbsTol", 1);
+
+            % The root handle changes only width and height through one model edit.
+            rootId = app.Document.RootComponentId;
+            testCase.verifyTrue(overlay.Data.rootEditable);
+            for phase = ["pointerdown", "pointermove", "pointerup"]
+                point = [1190 890];
+                handle = "root-ne";
+                if phase ~= "pointerdown"
+                    point = [1230 920];
+                    handle = "";
+                end
+                overlay.HTMLEventReceivedFcn(overlay, struct( ...
+                    "HTMLEventName", "Pointer", ...
+                    "HTMLEventData", struct("phase", phase, ...
+                    "x", point(1), "y", point(2), ...
+                    "componentId", rootId, "handle", handle)));
+            end
+            root = app.Document.getComponent(rootId);
+            testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
+                [100 100 1240 930]);
+            [source, diagnostics] = macd.source.RoundTripGenerator().generate(app.Document);
+            testCase.verifyEmpty(diagnostics);
+            testCase.verifyTrue(contains(source, ...
+                "app.UIFigure.Position = [100 100 1240 930];"));
+            reopened = macd.source.AppSourceParser.parseText(source, ...
+                macd.model.ComponentRegistry.createDefault(), fixture);
+            reopenedRoot = reopened.getComponent(reopened.RootComponentId);
+            testCase.verifyEqual(reopenedRoot.getProperty("Position").LiteralValue, ...
+                [100 100 1240 930]);
+
+            undoMenu = menus(erase(string({menus.Text}), "&") == "Undo");
+            undoMenu.MenuSelectedFcn(undoMenu, struct());
+            testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
+                [100 100 1200 900]);
+            redoMenu = menus(erase(string({menus.Text}), "&") == "Redo");
+            redoMenu.MenuSelectedFcn(redoMenu, struct());
+            testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
+                [100 100 1240 930]);
+            canvas = findall(figure, "Type", "uipanel", ...
+                "Tag", "macd-preview-canvas");
+            figure.Position(3:4) = [1100 700];
+            drawnow;
+            testCase.verifyEqual(canvas.Position(3:4), [1240 930]);
+            clear cleanup
         end
     end
 end

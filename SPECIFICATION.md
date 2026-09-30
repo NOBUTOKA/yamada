@@ -72,6 +72,12 @@ Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolo
 - It does not call the input class constructor, callbacks, or helper methods.
 - It does not evaluate arbitrary MATLAB expressions through `eval` or an equivalent mechanism.
 - Safe Preview applies only catalog-approved components and values that can be interpreted safely.
+- Safe Preview draws the root UIFigure client area at its model pixel width and
+  height, using its supported Color value. A dark gray area marks the space
+  outside the figure, and scroll bars expose parts larger than the editor pane.
+- Resizing the editor window changes only the viewport. Root UIFigure resize
+  handles change editable literal width and height through one undoable model
+  edit while preserving the figure's screen position.
 - Callbacks, nonliteral expressions, and unsupported statements remain in the original source where possible.
 - Diagnostics distinguish state that cannot be previewed from state that cannot be preserved safely.
 

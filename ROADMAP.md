@@ -165,15 +165,17 @@ for a versioned public release and the release-blocking workflows above pass.
 
 ## Show Safe Preview at the UIFigure's Actual Pixel Size
 
-Safe Preview currently fits the root `UIFigure.Position(3:4)` into the editor
-panel and scales pixel-positioned children. Replace this fitted view with a
-one-to-one pixel canvas; resizing the editor window must not change the edited
-root figure size or scale its preview components.
+The implementation uses a one-to-one pixel canvas instead of fitting the root
+`UIFigure.Position(3:4)` into the editor panel. Keep this acceptance checklist
+until the actual-size behavior has been reviewed and the item is closed out.
+Resizing the editor window must not change the edited root figure size or scale
+its preview components.
 
-- Put a canvas with the root UIFigure's client-area width and height inside a
-  dark scrollable Preview host. Keep a visible boundary between the canvas and
-  the area outside the figure. Center the canvas when it fits; provide horizontal
-  and vertical scrolling when it extends beyond the host.
+- Put a canvas with the root UIFigure's client-area width, height, and Color
+  inside a scrollable Preview host with a dark-gray background. Keep a visible
+  but subdued boundary between the canvas and the area outside the figure.
+  Center the canvas when it fits; provide horizontal and vertical scrolling
+  when it extends beyond the host.
 - Render supported components at their model pixel positions without a fit
   scale. Keep the Safe Preview boundary: do not execute opened app code or imply
   that unsupported runtime behavior is reproduced.
@@ -192,6 +194,15 @@ root figure size or scale its preview components.
   scroll reachability, selection and dragging after scrolling, root resize,
   Undo/Redo, generation, and reopen behavior. Also check narrow and enlarged
   editor windows, then run focused UI tests and the full R2024a unit suite.
+
+Implementation evidence (2026-10-01): the 320 x 240 and 1200 x 900 fixtures
+render at their model sizes; screenshots show the figure Color, subdued dark-gray
+surround, root handles, and both scroll bars on the large fixture. Automated
+checks cover canvas-local geometry after scrolling, root resize, Undo/Redo,
+generation, and reopen. The R2024a full suite passed 221/221 tests, and the
+HTML overlay tests passed 3/3. A final interactive window-resize visual check
+remains for review; MATLAB batch-mode screenshots do not exercise native window
+layout updates reliably.
 
 ## Offer an Explicit Save As Line-Ending Choice
 
