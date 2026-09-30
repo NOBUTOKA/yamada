@@ -61,8 +61,9 @@ Select a Grid Layout or one of its children. The canvas activates the nearest
 Grid Layout and shows its immediate rows, columns, and child occupancy without
 changing the selected component in the Inspector.
 
-- Click an `R` or `C` header to choose **Fit**, a fixed pixel value, or a
-  flexible `x` weight. The same popover inserts and deletes tracks.
+- Click a row or column settings button beside the grid to choose **Fit**, a
+  fixed pixel value, or a flexible `x` weight. The same popover inserts and
+  deletes tracks.
 - Drag the selected child to move its occupied cells. Drag one of its edge or
   corner handles to change its row or column span. The candidate is cell-snapped
   and commits only when released.
@@ -71,10 +72,13 @@ changing the selected component in the Inspector.
   `Scrollable`. It also remains the exact-value fallback for a child's
   `Layout.Row` and `Layout.Column`.
 
-Grid actions are available only for supported literal, source-owned values with
-unambiguous realized geometry. Expression-backed values, implicit placements,
-unsafe structural changes, stale canvas actions, and newly overlapping child
-placements are rejected rather than rewritten.
+Track editing accepts supported literal values and Preview defaults; a
+source-backed track list remains read-only. Moving or resizing a child
+requires editable, explicit `Layout.Row` and `Layout.Column` values and
+unambiguous realized geometry. Track insertion or deletion is rejected when an
+affected child has an implicit or expression-backed placement, or the change
+would leave a child without a valid track. Stale canvas actions and moves that
+introduce a new overlap are also rejected. Source-backed values are preserved.
 
 ### Edit an existing application
 
