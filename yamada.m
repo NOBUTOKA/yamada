@@ -2591,10 +2591,11 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
-        function [source, diagnostics] = generateSource(app)
-            % generateSource Select the canonical or round-trip generator for the document.
+        function [source, diagnostics] = generateSource(app, targetClassName)
+            % generateSource Generate source with the requested class identity.
             arguments (Input)
                 app (1, 1) yamada
+                targetClassName (1, 1) string = ""
             end
             arguments (Output)
                 source string
@@ -2602,7 +2603,18 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % RoundTripGenerator delegates new documents to the canonical generator.
+            if strlength(targetClassName) == 0
+                targetClassName = app.Document.ClassName;
+            end
             [source, diagnostics] = macd.source.RoundTripGenerator(app.Registry).generate(app.Document);
+            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
+                return
+            end
+            [source, renameDiagnostics] = macd.source.AppClassIdentityRewriter.rewrite( ...
+                source, targetClassName);
+            diagnostics = [diagnostics renameDiagnostics];
+            app.Document.GeneratedText = source;
+            app.Document.Diagnostics = diagnostics;
         end
 
         function component = selectedComponent(app)
@@ -2635,12 +2647,20 @@ classdef yamada < matlab.apps.AppBase
             needsSaveAs = forceSaveAs || ~app.SavePathConfirmed || ...
                 strlength(app.Document.FilePath) == 0;
             filePath = app.Document.FilePath;
+            targetClassName = app.Document.ClassName;
             if needsSaveAs
                 [accepted, filePath] = app.Lifecycle.requestSavePath( ...
                     app.Document.ClassName + ".m");
                 app.focusEditor();
                 if ~accepted
                     app.setStatus("Save canceled.");
+                    return
+                end
+                [~, baseName, extension] = fileparts(filePath);
+                targetClassName = string(baseName);
+                if ~strcmpi(extension, ".m") || ...
+                        ~isvarname(targetClassName) || iskeyword(targetClassName)
+                    app.setStatus("Save As requires a .m filename with a valid MATLAB class name.");
                     return
                 end
                 if app.Lifecycle.fileExists(filePath) && ...
@@ -2651,7 +2671,7 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % Validate and generate before committing any document metadata changes.
-            [source, diagnostics] = app.generateSource();
+            [source, diagnostics] = app.generateSource(targetClassName);
             app.refreshDiagnostics(diagnostics);
             app.updateSaveState(diagnostics);
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
@@ -2668,6 +2688,7 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % Commit confirmed metadata only after the complete write succeeds.
+            app.Document.ClassName = targetClassName;
             app.Document.FilePath = filePath;
             app.Document.GeneratedText = source;
             app.Document.markSaved();

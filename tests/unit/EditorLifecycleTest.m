@@ -33,6 +33,13 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyEqual(app.Document.FilePath, target);
             figure = editorFigure();
             [~, base, extension] = fileparts(target);
+            testCase.verifyEqual(app.Document.ClassName, string(base));
+            savedSource = string(fileread(target));
+            testCase.verifySubstring(savedSource, "classdef " + string(base) + ...
+                " < matlab.apps.AppBase");
+            testCase.verifySubstring(savedSource, "function app = " + string(base));
+            testCase.verifySubstring(savedSource, "app (1, 1) " + string(base));
+            testCase.verifyFalse(contains(savedSource, "app (1, 1) UntitledApp"));
             testCase.verifyEqual(string(figure.Name), string(base) + string(extension) + ...
                 " - Yet Another MATLAB App Designer Alternative");
 
@@ -42,7 +49,40 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 string(extension) + "* - Yet Another MATLAB App Designer Alternative");
             invokeEditorMenu("Save");
             testCase.verifyFalse(app.Document.IsDirty);
+            testCase.verifySubstring(string(fileread(target)), ...
+                "classdef " + string(base) + " < matlab.apps.AppBase");
             clear appCleanup
+        end
+
+        function saveAsRenamesOpenedClassAndLaterSaveKeepsItsIdentity(testCase)
+            % saveAsRenamesOpenedClassAndLaterSaveKeepsItsIdentity Preserve parsed source edits across saves.
+            fixture = string(fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
+                "fixtures", "SimpleCalculatorApp.m"));
+            target = string(tempname) + ".m";
+            cleanupFile = onCleanup(@() deleteTemporaryFile(target));
+            service = lifecycleForTest(struct("OpenPath", fixture, "SavePath", target));
+            app = yamada(service);
+            cleanupApp = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            testCase.verifyEqual(app.Document.ClassName, "SimpleCalculatorApp");
+
+            invokeEditorMenu("Save As...");
+            [~, baseName] = fileparts(target);
+            testCase.verifyEqual(app.Document.ClassName, string(baseName));
+            source = string(fileread(target));
+            testCase.verifySubstring(source, "classdef " + string(baseName) + ...
+                " < matlab.apps.AppBase");
+            testCase.verifySubstring(source, "function app = " + string(baseName));
+            testCase.verifyFalse(contains(source, "function app = SimpleCalculatorApp"));
+
+            label = app.Document.getComponentByName("LeftValueLabel");
+            app.Document.setProperty(label.Id, "Text", "Changed after Save As");
+            invokeEditorMenu("Save");
+            source = string(fileread(target));
+            testCase.verifySubstring(source, "classdef " + string(baseName) + ...
+                " < matlab.apps.AppBase");
+            testCase.verifySubstring(source, "Changed after Save As");
+            clear cleanupApp cleanupFile
         end
 
         function canceledAndFailedSavesKeepTheDocumentDirty(testCase)
@@ -55,6 +95,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Save As...");
             testCase.verifyTrue(app.Document.IsDirty);
             testCase.verifyEqual(app.Document.FilePath, "");
+            testCase.verifyEqual(app.Document.ClassName, "UntitledApp");
             clear cleanup
             delete(app);
 
@@ -68,6 +109,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Save As...");
             testCase.verifyTrue(app.Document.IsDirty);
             testCase.verifyEqual(app.Document.FilePath, "");
+            testCase.verifyEqual(app.Document.ClassName, "UntitledApp");
             testCase.verifyFalse(isfile(target));
             clear cleanup
             delete(app);
@@ -86,6 +128,21 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             clear cleanup
             delete(app);
             clear cleanupFile
+        end
+
+        function invalidSaveAsFilenameDoesNotChangeDocument(testCase)
+            % invalidSaveAsFilenameDoesNotChangeDocument Require a valid MATLAB class file name.
+            target = string(tempname) + " invalid.m";
+            service = lifecycleForTest(struct("SavePath", target));
+            app = yamada(service);
+            cleanup = onCleanup(@() deleteIfValid(app));
+
+            invokeEditorMenu("Save As...");
+
+            testCase.verifyEqual(app.Document.ClassName, "UntitledApp");
+            testCase.verifyEqual(app.Document.FilePath, "");
+            testCase.verifyFalse(isfile(target));
+            clear cleanup
         end
 
         function newAndOpenUseOneDiscardOrCancelGuard(testCase)
