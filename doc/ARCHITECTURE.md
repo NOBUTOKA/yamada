@@ -237,7 +237,9 @@ changing the document. The frame gives the canvas a one-pixel border on each
 side. Eight root resize handles remain available when the root has an editable
 literal Position, including an empty document. West and south drags also update
 the screen origin to anchor the opposite edge; source-backed positions remain
-noneditable.
+noneditable. A disposable HTML guide is placed in the scroll content during a
+root drag, so its dashed proposed bounds can extend beyond the current canvas.
+The guide disappears when the gesture ends; the overlay shows no size label.
 
 The renderer returns a map from stable component IDs to disposable Preview
 handles. `yamada` uses this map to build the transparent

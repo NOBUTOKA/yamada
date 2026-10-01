@@ -1454,7 +1454,16 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                     "HTMLEventData", struct("phase", phase, ...
                     "x", point(1), "y", point(2), ...
                     "componentId", rootId, "handle", handle)));
+                if phase == "pointermove"
+                    guide = findall(content, "Type", "uihtml", ...
+                        "Tag", "macd-root-resize-guide");
+                    testCase.assertEqual(numel(guide), 1);
+                    testCase.verifyEqual(string(guide.Visible), "on");
+                    testCase.verifyEqual(guide.Position(3:4), [1240 930]);
+                end
             end
+            testCase.verifyEmpty(findall(content, "Type", "uihtml", ...
+                "Tag", "macd-root-resize-guide"));
             root = app.Document.getComponent(rootId);
             testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
                 [100 100 1240 930]);
@@ -1491,6 +1500,12 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                     "HTMLEventData", struct("phase", phase, ...
                     "x", point(1), "y", point(2), ...
                     "componentId", rootId, "handle", handle)));
+                if phase == "pointermove"
+                    guide = findall(canvas.Parent.Parent, "Type", "uihtml", ...
+                        "Tag", "macd-root-resize-guide");
+                    testCase.assertEqual(numel(guide), 1);
+                    testCase.verifyEqual(guide.Position(3:4), [1260 945]);
+                end
             end
             testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
                 [80 85 1260 945]);

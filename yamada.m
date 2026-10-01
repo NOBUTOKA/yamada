@@ -58,6 +58,7 @@ classdef yamada < matlab.apps.AppBase
         TabLayoutStableCount double = 0
         TabLayoutPollCount double = 0
         InteractionOverlay matlab.ui.control.HTML
+        RootResizeGuide matlab.ui.control.HTML
         InteractionOverlayRevision double = 0
         InteractionComponentId string = ""
         InteractionKind string = ""
@@ -859,6 +860,49 @@ classdef yamada < matlab.apps.AppBase
             app.InteractionOverlay.Position = [0 0 innerPosition(3:4)];
         end
 
+        function createRootResizeGuide(app)
+            % createRootResizeGuide Add a disposable draft above the scroll content.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+
+            if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide)
+                delete(app.RootResizeGuide);
+            end
+            content = app.PreviewCanvas.Parent.Parent;
+            guidePath = fullfile(fileparts(mfilename("fullpath")), ...
+                "resources", "RootResizeGuide.html");
+            app.RootResizeGuide = uihtml(content, "HTMLSource", guidePath, ...
+                "Position", [1 1 1 1], "Visible", "off", ...
+                "Tag", "macd-root-resize-guide");
+        end
+
+        function updateRootResizeGuide(app)
+            % updateRootResizeGuide Position the draft at the proposed UIFigure bounds.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+
+            if isempty(app.RootResizeGuide) || ~isvalid(app.RootResizeGuide)
+                return
+            end
+            if isequal(app.InteractionPosition, app.InteractionStartPosition)
+                app.RootResizeGuide.Visible = "off";
+                return
+            end
+
+            % Both positions use the scroll content's coordinate system.
+            content = app.PreviewCanvas.Parent.Parent;
+            canvasPosition = double(getpixelposition(app.PreviewCanvas, true));
+            contentPosition = double(getpixelposition(content, true));
+            canvasOrigin = canvasPosition(1:2) - contentPosition(1:2);
+            originDelta = app.InteractionPosition(1:2) - ...
+                app.InteractionStartPosition(1:2);
+            app.RootResizeGuide.Position = [canvasOrigin + originDelta ...
+                app.InteractionPosition(3:4)];
+            app.RootResizeGuide.Visible = "on";
+        end
+
         function updateInteractionOverlay(app)
             % updateInteractionOverlay Send component silhouettes to the SVG layer.
             arguments (Input)
@@ -962,16 +1006,11 @@ classdef yamada < matlab.apps.AppBase
             rootEditable = root.IsEditable && ~isempty(rootPosition) && ...
                 rootPosition.IsEditable && rootPosition.ValueKind == "literal" && ...
                 isnumeric(rootPosition.LiteralValue) && numel(rootPosition.LiteralValue) == 4;
-            rootSize = innerPosition(3:4);
-            if app.InteractionComponentId == root.Id && ...
-                    startsWith(app.InteractionKind, "root-")
-                rootSize = app.InteractionPosition(3:4);
-            end
             app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
                 "height", innerPosition(4), "components", components, ...
                 "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor, ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
-                "rootEditable", rootEditable, "rootSize", rootSize);
+                "rootEditable", rootEditable);
         end
 
         function interactionOverlayEvent(app, event)
@@ -1213,6 +1252,9 @@ classdef yamada < matlab.apps.AppBase
             app.InteractionStartPoint = point;
             app.InteractionStartPosition = double(position.LiteralValue);
             app.InteractionPosition = app.InteractionStartPosition;
+            if startsWith(handle, "root-")
+                app.createRootResizeGuide();
+            end
             app.refreshHierarchy();
             app.refreshInspector();
             app.updateInteractionOverlay();
@@ -1464,6 +1506,7 @@ classdef yamada < matlab.apps.AppBase
             if startsWith(app.InteractionKind, "root-")
                 app.InteractionPosition = app.resizedRootPosition( ...
                     app.InteractionStartPosition, delta, app.InteractionKind);
+                app.updateRootResizeGuide();
             elseif app.InteractionKind == "move"
                 app.InteractionPosition = app.movedPosition( ...
                     app.InteractionComponentId, app.InteractionStartPosition, delta);
@@ -1488,6 +1531,9 @@ classdef yamada < matlab.apps.AppBase
             componentId = app.InteractionComponentId;
             position = app.InteractionPosition;
             startPosition = app.InteractionStartPosition;
+            if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide)
+                delete(app.RootResizeGuide);
+            end
             app.InteractionComponentId = "";
             app.InteractionKind = "";
             if ~isequal(position, startPosition)

@@ -66,7 +66,6 @@ svg { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overf
 .root-handle[data-handle="root-s"] { cursor: s-resize; }
 .root-handle[data-handle="root-se"] { cursor: se-resize; }
 .root-handle.locked { fill: #9a9a9a; cursor: not-allowed; }
-.root-size-label { fill: #684500; stroke: #ffffff; stroke-width: 2px; paint-order: stroke; font: 12px Arial; pointer-events: none; }
 .handle[data-handle="n"], .nested-grid-handle[data-handle="n"] { cursor: n-resize; }
 .handle[data-handle="s"], .nested-grid-handle[data-handle="s"] { cursor: s-resize; }
 .handle[data-handle="e"], .nested-grid-handle[data-handle="e"] { cursor: e-resize; }
@@ -837,11 +836,6 @@ function addRootHandles() {
     handle.appendChild(title);
     svg.appendChild(handle);
   });
-  var size = currentData.rootSize || [width, height];
-  var label = svgElement("text", { class: "root-size-label", x: width - 20,
-    y: 26, "text-anchor": "end" });
-  label.textContent = Math.round(size[0]) + " × " + Math.round(size[1]);
-  svg.appendChild(label);
 }
 
 function componentArray(value) {

@@ -81,9 +81,10 @@ Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolo
 - Resizing the editor window changes only the viewport. Root UIFigure resize
   handles appear on all eight directions for an editable literal Position, even
   in an empty new document or when a child is selected. Each drag is one
-  undoable model edit. Left and bottom drags update the screen origin to keep
-  the opposite edge fixed; right and top drags retain the origin. A thin gray
-  frame marks all four edges of the figure.
+  undoable model edit. A dashed outline previews the proposed figure bounds
+  during the drag without a numeric size label. Left and bottom drags update
+  the screen origin to keep the opposite edge fixed; right and top drags retain
+  the origin. A thin gray frame marks all four edges of the figure.
 - Callbacks, nonliteral expressions, and unsupported statements remain in the original source where possible.
 - Diagnostics distinguish state that cannot be previewed from state that cannot be preserved safely.
 

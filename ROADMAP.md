@@ -188,7 +188,8 @@ its preview components.
   an empty new figure and while a child is selected. Commit supported literal
   `Position` edits through the document model, anchoring the opposite edge when
   resizing from the left or bottom and providing Undo/Redo and generated-source
-  updates. Disable the handles with a clear reason when the root size is not
+  updates. Show a dashed guide for the proposed bounds during each drag,
+  without a numeric size label. Disable the handles when the root size is not
   safely editable.
 - Add a small UI fixture (for example, 320 x 240 pixels) that fits inside the
   normal Preview viewport and a large UI fixture (for example, 1200 x 900
@@ -223,6 +224,12 @@ and southwest drags update the root origin and size while anchoring the
 opposite edges; Undo restores the previous Position. The R2024a full suite
 passed 221/221 tests, and the three HTML overlay tests passed. The earlier
 internal scroll callback warning did not recur in this run.
+
+Root drag guide check (2026-10-01): the small fixture screenshot shows a
+dashed candidate boundary across the canvas and dark surrounding area, with
+no numeric label. The large fixture interaction test confirms that the guide
+is present during northeast and southwest drags and removed afterward. The
+R2024a full suite passed 221/221 tests; the three HTML overlay tests passed.
 
 ## Offer an Explicit Save As Line-Ending Choice
 
