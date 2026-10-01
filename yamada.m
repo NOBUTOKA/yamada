@@ -44,6 +44,7 @@ classdef yamada < matlab.apps.AppBase
         PreviewVerticalDivider matlab.ui.container.Panel
         PreviewHorizontalDivider matlab.ui.container.Panel
         PreviewCanvas matlab.ui.container.Panel
+        PreviewEditingBounds double = [0 0 1 1]
         InspectorPanel matlab.ui.container.Panel
         InspectorGrid matlab.ui.container.GridLayout
         InspectorView macd.ui.inspector.InspectorView
@@ -465,6 +466,9 @@ classdef yamada < matlab.apps.AppBase
             app.refreshInspector();
             app.refreshEditCommands();
             app.refreshTitle();
+            % Publish geometry after every shell surface has finished native layout.
+            drawnow;
+            app.updateInteractionOverlay();
         end
 
         function refreshPalette(app)
@@ -818,12 +822,31 @@ classdef yamada < matlab.apps.AppBase
             frame = app.PreviewCanvas.Parent;
             content = frame.Parent;
             viewport = double(app.PreviewScrollPanel.InnerPosition(3:4));
-            frameSize = double(frame.Position(3:4));
-            % Keep scrollable content larger than the figure on all four sides.
-            contentSize = max(viewport, frameSize + 24);
-            content.Position(3:4) = contentSize;
-            origin = floor((contentSize - frameSize) ./ 2) + 1;
-            frame.Position(1:2) = origin;
+            app.PreviewEditingBounds = app.calculatePreviewEditingBounds();
+            canvasSize = double(app.PreviewCanvas.Position(3:4));
+            workspaceStart = min([-1 -1], app.PreviewEditingBounds(1:2));
+            workspaceEnd = max(canvasSize + 1, ...
+                app.PreviewEditingBounds(1:2) + app.PreviewEditingBounds(3:4));
+            workspaceSize = workspaceEnd - workspaceStart;
+            % Include stranded component outlines while preserving the actual figure size.
+            contentSize = max(viewport, workspaceSize + 24);
+            if ~isequal(double(content.Position(3:4)), contentSize)
+                content.Position(3:4) = contentSize;
+            end
+            origin = floor((contentSize - workspaceSize) ./ 2) + 1;
+            frameOrigin = origin - workspaceStart - 1;
+            if ~isequal(double(frame.Position(1:2)), frameOrigin)
+                frame.Position(1:2) = frameOrigin;
+            end
+            if ~isempty(app.InteractionOverlay) && isvalid(app.InteractionOverlay)
+                canvasOrigin = frame.Position(1:2) + app.PreviewCanvas.Position(1:2) - 1;
+                overlayPosition = [ ...
+                    canvasOrigin + app.PreviewEditingBounds(1:2) ...
+                    app.PreviewEditingBounds(3:4)];
+                if ~isequal(double(app.InteractionOverlay.Position), overlayPosition)
+                    app.InteractionOverlay.Position = overlayPosition;
+                end
+            end
 
             % Mark the fixed viewport boundary before the native scroll tracks.
             scrollbarWidth = 17; % Native R2024a Windows scroll track width.
@@ -843,6 +866,37 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
+        function bounds = calculatePreviewEditingBounds(app)
+            % calculatePreviewEditingBounds Include visible components beyond the root figure.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            arguments (Output)
+                bounds (1, 4) double
+            end
+
+            minimum = [0 0];
+            maximum = double(app.PreviewCanvas.Position(3:4));
+            if isa(app.PreviewHandles, "containers.Map")
+                keys = app.PreviewHandles.keys();
+                for index = 1:numel(keys)
+                    preview = app.PreviewHandles(keys{index});
+                    if ~isvalid(preview) || ~isprop(preview, "Position") || ...
+                            ~app.isVisibleInSelectedTab(string(keys{index}))
+                        continue
+                    end
+                    rectangle = app.previewDisplayPosition(preview);
+                    if any(~isfinite(rectangle)) || any(rectangle(3:4) <= 0)
+                        continue
+                    end
+                    % Leave room for component outlines and their resize handles.
+                    minimum = min(minimum, floor(rectangle(1:2)) - 6);
+                    maximum = max(maximum, ceil(rectangle(1:2) + rectangle(3:4)) + 6);
+                end
+            end
+            bounds = [minimum maximum - minimum];
+        end
+
         function createInteractionOverlay(app)
             % createInteractionOverlay Add the transparent SVG editing surface.
             arguments (Input)
@@ -852,12 +906,12 @@ classdef yamada < matlab.apps.AppBase
             % The overlay owns pointer capture and never changes preview controls.
             overlayPath = fullfile(fileparts(mfilename("fullpath")), ...
                 "resources", "EditorInteractionOverlay.html");
-            app.InteractionOverlay = uihtml(app.PreviewCanvas, ...
+            app.InteractionOverlay = uihtml(app.PreviewCanvas.Parent.Parent, ...
                 "HTMLSource", overlayPath, ...
+                "Tag", "macd-interaction-overlay", ...
                 "HTMLEventReceivedFcn", @(~, event) ...
                 app.interactionOverlayEvent(event));
-            innerPosition = double(app.PreviewCanvas.InnerPosition);
-            app.InteractionOverlay.Position = [0 0 innerPosition(3:4)];
+            app.layoutPreviewCanvas();
         end
 
         function createRootResizeGuide(app)
@@ -913,6 +967,7 @@ classdef yamada < matlab.apps.AppBase
                     ~isa(app.PreviewHandles, "containers.Map")
                 return
             end
+            app.layoutPreviewCanvas();
             components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
                 "height", {}, "shape", {}, "selected", {}, "tabGroup", {}, ...
                 "tabTitles", {}, "tabSelected", {}, "depth", {}, "inGrid", {}, ...
@@ -1007,7 +1062,8 @@ classdef yamada < matlab.apps.AppBase
                 rootPosition.IsEditable && rootPosition.ValueKind == "literal" && ...
                 isnumeric(rootPosition.LiteralValue) && numel(rootPosition.LiteralValue) == 4;
             app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
-                "height", innerPosition(4), "components", components, ...
+                "height", innerPosition(4), "surfaceBounds", app.PreviewEditingBounds, ...
+                "components", components, ...
                 "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor, ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);

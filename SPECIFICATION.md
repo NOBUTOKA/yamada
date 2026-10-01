@@ -85,6 +85,10 @@ Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolo
   during the drag without a numeric size label. Left and bottom drags update
   the screen origin to keep the opposite edge fixed; right and top drags retain
   the origin. A thin gray frame marks all four edges of the figure.
+- The scrollable editing area also includes visible component bounds outside
+  the UIFigure. After shrinking the figure, stranded components remain
+  accessible as selectable outlines on the dark background and can be dragged
+  back into the figure. The figure canvas keeps its actual model size.
 - Callbacks, nonliteral expressions, and unsupported statements remain in the original source where possible.
 - Diagnostics distinguish state that cannot be previewed from state that cannot be preserved safely.
 

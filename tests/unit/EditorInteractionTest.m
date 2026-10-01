@@ -1428,7 +1428,8 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             scroll(scrollPanel, "right");
             scroll(scrollPanel, "bottom");
             drawnow;
-            overlay = findall(canvas, "Type", "uihtml");
+            overlay = findall(canvas.Parent.Parent, "Type", "uihtml", ...
+                "Tag", "macd-interaction-overlay");
             components = overlay.Data.components;
             buttonId = app.Document.getComponentByName("BottomRightButton").Id;
             target = components(string({components.id}) == buttonId);
@@ -1487,7 +1488,8 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 [100 100 1240 930]);
             canvas = findall(figure, "Type", "uipanel", ...
                 "Tag", "macd-preview-canvas");
-            overlay = findall(canvas, "Type", "uihtml");
+            overlay = findall(canvas.Parent.Parent, "Type", "uihtml", ...
+                "Tag", "macd-interaction-overlay");
             for phase = ["pointerdown", "pointermove", "pointerup"]
                 point = [7 7];
                 handle = "root-sw";
@@ -1519,6 +1521,68 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(canvas.Position(3:4), [1240 930]);
             clear cleanup
         end
+        function shrinkingFigureKeepsStrandedComponentsReachable(testCase)
+            % shrinkingFigureKeepsStrandedComponentsReachable Recover components outside the root.
+            projectRoot = fileparts(which("yamada"));
+            fixture = string(fullfile(projectRoot, "tests", "fixtures", ...
+                "LargePreviewFixtureApp.m"));
+            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
+            openMenu.MenuSelectedFcn(openMenu, struct());
+            drawnow;
+
+            % Shrink the actual figure without moving its existing components.
+            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            sendOverlayGesture(overlay, app.Document.RootComponentId, ...
+                "root-ne", [1190 890], [310 230]);
+            canvas = findall(figure, "Type", "uipanel", "Tag", "macd-preview-canvas");
+            scrollPanel = findall(figure, "Type", "uipanel", "Tag", "macd-preview-scroll-host");
+            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            testCase.verifyEqual(canvas.Position(3:4), [320 240]);
+            testCase.verifyEqual([overlay.Data.width overlay.Data.height], [320 240]);
+            testCase.verifyGreaterThan(overlay.Data.surfaceBounds(3:4), [1186 886]);
+            testCase.verifyEqual(overlay.Parent, canvas.Parent.Parent);
+            scroll(scrollPanel, "right");
+            scroll(scrollPanel, "bottom");
+            drawnow;
+
+            % Retrieve stranded controls through canvas-local gestures after scrolling.
+            names = ["BottomRightButton", "CenterPanel", "TopLeftLabel"];
+            destinations = [50 60; 0 50; 12 212];
+            for index = 1:numel(names)
+                overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+                component = app.Document.getComponentByName(names(index));
+                target = overlay.Data.components(string({overlay.Data.components.id}) == component.Id);
+                testCase.assertEqual(numel(target), 1);
+                testCase.verifyGreaterThanOrEqual(overlay.Data.surfaceBounds(1:2) + ...
+                    overlay.Data.surfaceBounds(3:4), [target.x + target.width target.y + target.height]);
+                startPoint = component.getProperty("Position").LiteralValue(1:2) + 4;
+                sendOverlayGesture(overlay, component.Id, "", ...
+                    startPoint, destinations(index, :) + 4);
+                testCase.verifyEqual(component.getProperty("Position").LiteralValue(1:2), ...
+                    destinations(index, :));
+            end
+            canvas = findall(figure, "Type", "uipanel", "Tag", "macd-preview-canvas");
+            content = canvas.Parent.Parent;
+            testCase.verifyEqual(canvas.Position(3:4), [320 240]);
+            testCase.verifyEqual(content.Position(3:4), scrollPanel.InnerPosition(3:4));
+
+            % Undo restores the stranded outline and its range; Redo removes it.
+            undoMenu = menus(erase(string({menus.Text}), "&") == "Undo");
+            redoMenu = menus(erase(string({menus.Text}), "&") == "Redo");
+            undoMenu.MenuSelectedFcn(undoMenu, struct());
+            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            testCase.verifyGreaterThan(overlay.Data.surfaceBounds(4), 886);
+            redoMenu.MenuSelectedFcn(redoMenu, struct());
+            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            testCase.verifyLessThanOrEqual(overlay.Data.surfaceBounds(4), 246);
+            clear cleanup
+        end
     end
 end
 
@@ -1529,6 +1593,30 @@ figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
 tables = findall(figure, "Type", "uitable");
 palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
     any(string(table.ColumnName) == "Category"), tables));
+end
+
+function sendOverlayGesture(overlay, componentId, kind, startPoint, endPoint)
+% sendOverlayGesture Dispatch one complete canvas-local editing gesture.
+arguments (Input)
+    overlay (1, 1) matlab.ui.control.HTML
+    componentId (1, 1) string
+    kind (1, 1) string
+    startPoint (1, 2) double
+    endPoint (1, 2) double
+end
+
+% Pointer capture keeps the target identity until the model commits on release.
+for phase = ["pointerdown", "pointermove", "pointerup"]
+    point = startPoint;
+    handle = kind;
+    if phase ~= "pointerdown"
+        point = endPoint;
+        handle = "";
+    end
+    overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", ...
+        "HTMLEventData", struct("phase", phase, "x", point(1), "y", point(2), ...
+        "componentId", componentId, "handle", handle)));
+end
 end
 
 function [accepted, filePath] = acceptedOpenPath(filePath)

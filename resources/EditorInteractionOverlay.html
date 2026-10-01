@@ -106,8 +106,7 @@ function sendPointerEvent(event) {
   var rect = svg.getBoundingClientRect();
   var target = event.target;
   if (target.classList && target.classList.contains("locked")) return;
-  var x = event.clientX - rect.left;
-  var y = event.clientY - rect.top;
+  var point = surfacePoint(event, rect);
   if (event.type === "pointerdown") {
     svg.setPointerCapture(event.pointerId);
   }
@@ -118,8 +117,8 @@ function sendPointerEvent(event) {
   }
   component.sendEventToMATLAB("Pointer", {
     phase: event.type,
-    x: x,
-    y: rect.height - y,
+    x: point.x,
+    y: point.y,
     componentId: target.dataset.componentId || "",
     handle: target.dataset.handle || "",
     tabIndex: 0
@@ -377,7 +376,13 @@ function renderGridEditor(data) {
 
 function gridPoint(event) {
   var rect = document.getElementById("overlay").getBoundingClientRect();
-  return { x: event.clientX - rect.left, y: rect.height - (event.clientY - rect.top) };
+  return surfacePoint(event, rect);
+}
+
+function surfacePoint(event, rect) {
+  var bounds = currentData.surfaceBounds || [0, 0, currentData.width, currentData.height];
+  return { x: Number(bounds[0]) + event.clientX - rect.left,
+    y: Number(bounds[1]) + rect.height - (event.clientY - rect.top) };
 }
 
 function collapsedTrackBand(axis, track, tracks) {
@@ -846,6 +851,14 @@ function componentArray(value) {
 
 function render() {
   if (!svg) return;
+  var bounds = currentData.surfaceBounds || [0, 0, currentData.width || 1, currentData.height || 1];
+  var top = currentData.height - Number(bounds[1]) - Number(bounds[3]);
+  ["tab-controls", "grid-controls"].forEach(function(id) {
+    var layer = document.getElementById(id);
+    layer.style.width = currentData.width + "px";
+    layer.style.height = currentData.height + "px";
+    layer.style.transform = "translate(" + (-Number(bounds[0])) + "px," + (-top) + "px)";
+  });
   closeTrackPopover();
   svg.innerHTML = "";
   document.getElementById("grid-controls").innerHTML = "";
@@ -853,7 +866,7 @@ function render() {
   renderGridSelectionTargets(componentArray(currentData.gridSelectionTargets), currentData.gridEditor);
   renderGridEditor(currentData.gridEditor);
   renderNestedGridComponents(componentArray(currentData.components));
-  svg.setAttribute("viewBox", "0 0 " + (currentData.width || 1) + " " + (currentData.height || 1));
+  svg.setAttribute("viewBox", bounds[0] + " " + top + " " + bounds[2] + " " + bounds[3]);
   var components = componentArray(currentData.components);
   components.forEach(function(componentData) { svg.appendChild(outline(componentData)); });
   components.forEach(function(componentData) { addHandles(componentData); });

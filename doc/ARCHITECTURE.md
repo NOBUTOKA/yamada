@@ -229,9 +229,14 @@ the figure remain distinct from the scroll bars at their limits. Two fixed dark
 dividers mark the viewport boundary next to visible native scroll tracks while
 the canvas extends beyond the viewport. The renderer places an unscaled canvas
 at the root `UIFigure.Position(3:4)` client-area size, uses the figure's
-supported `Color`, and centers it when it fits in the viewport. The HTML overlay
-is a child of this canvas, so it scrolls with the
-MATLAB controls. All hit targets and Grid Layout measurements use canvas-local
+supported `Color`. The scroll content encompasses the figure and visible
+component bounds, with room for resize handles. The transparent HTML overlay
+is a sibling of the figure frame in that content, so component outlines remain
+selectable outside a shrunken figure. The canvas itself continues to clip native
+controls at the actual UIFigure boundary. The overlay's `surfaceBounds` describes
+its extent in canvas pixels; SVG viewBox and HTML layer offsets preserve those
+coordinates when the editing area extends beyond the canvas. All pointer events,
+hit targets, and Grid Layout measurements use canvas-local
 pixels. Editor window resizing repositions the fixed-size canvas without
 changing the document. The frame gives the canvas a one-pixel border on each
 side. Eight root resize handles remain available when the root has an editable

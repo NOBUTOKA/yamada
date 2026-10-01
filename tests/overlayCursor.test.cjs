@@ -55,4 +55,15 @@ context.sendPointerEvent({type: 'pointerdown', pointerId: 1, clientX: 313,
 assert.equal(sent[0].name, 'Pointer');
 assert.equal(sent[0].data.componentId, 'root');
 assert.equal(sent[0].data.handle, 'root-ne');
+// Enlarged editing surfaces still send root-canvas coordinates, including negative origins.
+context.currentData.surfaceBounds = [-12, -8, 1200, 900];
+context.svg.getBoundingClientRect = () => ({left: 100, top: 50, height: 900});
+context.sendPointerEvent({type: 'pointerdown', pointerId: 2, clientX: 1186,
+  clientY: 926, target: {dataset: {componentId: 'stranded', handle: ''}}});
+assert.equal(sent[1].data.x, 1074);
+assert.equal(sent[1].data.y, 16);
+context.document.getElementById = () => context.svg;
+const gridPoint = context.gridPoint({clientX: 1186, clientY: 926});
+assert.equal(gridPoint.x, 1074);
+assert.equal(gridPoint.y, 16);
 console.log('Absolute overlay move and resize cursors passed.');

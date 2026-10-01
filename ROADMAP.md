@@ -176,8 +176,12 @@ its preview components.
   native heading. Keep a visible but subdued boundary between the canvas and
   the area outside the figure, including beside scroll bars during scrolling
   and at the far scroll limits.
-  Center the canvas when it fits; provide horizontal and vertical scrolling
-  when it extends beyond the host.
+  Center the editing area when it fits; provide horizontal and vertical
+  scrolling when it extends beyond the host.
+- Include visible component bounds in the scrollable editing area after a
+  figure shrink. Draw selectable outlines outside the actual-size canvas so
+  stranded components can be dragged back into the figure; recompute the
+  editing area after moves and Undo/Redo.
 - Render supported components at their model pixel positions without a fit
   scale. Keep the Safe Preview boundary: do not execute opened app code or imply
   that unsupported runtime behavior is reproduced.
@@ -230,6 +234,15 @@ dashed candidate boundary across the canvas and dark surrounding area, with
 no numeric label. The large fixture interaction test confirms that the guide
 is present during northeast and southwest drags and removed afterward. The
 R2024a full suite passed 221/221 tests; the three HTML overlay tests passed.
+
+Oversized-figure shrink check (2026-10-01): shrinking the large fixture from
+1200 x 900 to 320 x 240 keeps stranded component outlines reachable by
+scrolling on the dark surround. The button, panel, and label can be dragged
+back inside the actual-size figure; the editing extent shrinks afterward.
+Undo/Redo restores both component positions and the corresponding extent.
+Screenshots were checked before the full suite. Geometry is also republished
+after shell construction so opened Grid Layout children use settled positions.
+The R2024a full suite passed 222/222 tests; the three HTML overlay tests passed.
 
 ## Offer an Explicit Save As Line-Ending Choice
 
