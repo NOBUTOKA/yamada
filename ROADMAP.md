@@ -184,10 +184,12 @@ its preview components.
 - Move the interaction overlay, component hit targets, resize handles, and Grid
   Layout geometry to a consistent canvas coordinate system so scrolling and
   editor-window resizing do not offset interactions.
-- Add handles for changing the root UIFigure width and height. Commit supported
-  literal `Position` edits through the document model, preserving its screen
-  origin and providing Undo/Redo and generated-source updates. Disable the
-  handles with a clear reason when the root size is not safely editable.
+- Add eight handles for changing the root UIFigure width and height, including
+  an empty new figure and while a child is selected. Commit supported literal
+  `Position` edits through the document model, anchoring the opposite edge when
+  resizing from the left or bottom and providing Undo/Redo and generated-source
+  updates. Disable the handles with a clear reason when the root size is not
+  safely editable.
 - Add a small UI fixture (for example, 320 x 240 pixels) that fits inside the
   normal Preview viewport and a large UI fixture (for example, 1200 x 900
   pixels) that overflows it in both directions. Give each fixture identifiable
@@ -213,6 +215,14 @@ limits. The small fixture keeps the separators hidden, and the heading uses
 the native light background with dark text. The R2024a full suite passed
 221/221 tests. One nonfatal MATLAB internal scroll callback warning appeared
 once during an existing Grid interaction test; it did not affect the results.
+
+Further visual and interaction check (2026-10-01): an empty new figure now
+publishes root overlay data, and all eight orange handles remain visible with
+a child selected. The canvas has a one-pixel gray frame on every side. South
+and southwest drags update the root origin and size while anchoring the
+opposite edges; Undo restores the previous Position. The R2024a full suite
+passed 221/221 tests, and the three HTML overlay tests passed. The earlier
+internal scroll callback warning did not recur in this run.
 
 ## Offer an Explicit Save As Line-Ending Choice
 

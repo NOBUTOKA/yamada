@@ -32,12 +32,20 @@ assert.match(html, /\.handle\[data-handle="ne"\][^{]*\{ cursor: ne-resize; \}/);
 assert.match(html, /data-resize-constraint="fixedHeight"\]\[data-handle="ne"\][\s\S]*\{ cursor: ew-resize; \}/);
 handles.length = 0;
 context.currentData = {width: 320, height: 240, rootId: 'root',
-  rootSelected: true, rootEditable: true, rootSize: [340, 260]};
+  rootSelected: false, rootEditable: true, rootSize: [340, 260]};
 context.addRootHandles();
 assert.deepEqual(handles.filter(handle => handle.attributes['data-handle'])
   .map(handle => handle.attributes['data-handle']).sort(),
-['root-e', 'root-n', 'root-ne']);
+['root-e', 'root-n', 'root-ne', 'root-nw', 'root-s', 'root-se', 'root-sw', 'root-w']);
 assert.ok(handles.some(handle => handle.textContent === '340 × 260'));
+handles.length = 0;
+context.currentData.rootEditable = false;
+context.addRootHandles();
+assert.equal(handles.length, 0);
+context.currentData.rootSelected = true;
+context.addRootHandles();
+assert.equal(handles.filter(handle => handle.attributes['data-handle']).length, 8);
+handles.length = 0;
 const sent = [];
 context.component = {sendEventToMATLAB(name, data) { sent.push({name, data}); }};
 context.svg.getBoundingClientRect = () => ({left: 0, top: 0, height: 240});

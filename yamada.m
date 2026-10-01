@@ -866,7 +866,7 @@ classdef yamada < matlab.apps.AppBase
             end
 
             if isempty(app.InteractionOverlay) || ~isvalid(app.InteractionOverlay) || ...
-                    isempty(app.PreviewHandles)
+                    ~isa(app.PreviewHandles, "containers.Map")
                 return
             end
             components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
@@ -1462,15 +1462,8 @@ classdef yamada < matlab.apps.AppBase
             end
             delta = point - app.InteractionStartPoint;
             if startsWith(app.InteractionKind, "root-")
-                app.InteractionPosition = app.InteractionStartPosition;
-                if contains(app.InteractionKind, "e")
-                    app.InteractionPosition(3) = max(80, ...
-                        round(app.InteractionStartPosition(3) + delta(1)));
-                end
-                if contains(app.InteractionKind, "n")
-                    app.InteractionPosition(4) = max(60, ...
-                        round(app.InteractionStartPosition(4) + delta(2)));
-                end
+                app.InteractionPosition = app.resizedRootPosition( ...
+                    app.InteractionStartPosition, delta, app.InteractionKind);
             elseif app.InteractionKind == "move"
                 app.InteractionPosition = app.movedPosition( ...
                     app.InteractionComponentId, app.InteractionStartPosition, delta);
@@ -1737,6 +1730,34 @@ classdef yamada < matlab.apps.AppBase
                 app.Document.setProperty(componentId, "Position", position);
             end
             app.refreshShell();
+        end
+
+        function position = resizedRootPosition(~, startPosition, delta, kind)
+            % resizedRootPosition Resize the figure while anchoring opposite edges.
+            arguments (Input)
+                ~
+                startPosition (1, 4) double
+                delta (1, 2) double
+                kind (1, 1) string
+            end
+            arguments (Output)
+                position (1, 4) double
+            end
+
+            direction = erase(kind, "root-");
+            position = startPosition;
+            if contains(direction, "w")
+                position(3) = max(80, round(startPosition(3) - delta(1)));
+                position(1) = startPosition(1) + startPosition(3) - position(3);
+            elseif contains(direction, "e")
+                position(3) = max(80, round(startPosition(3) + delta(1)));
+            end
+            if contains(direction, "s")
+                position(4) = max(60, round(startPosition(4) - delta(2)));
+                position(2) = startPosition(2) + startPosition(4) - position(4);
+            elseif contains(direction, "n")
+                position(4) = max(60, round(startPosition(4) + delta(2)));
+            end
         end
 
         function position = resizedPosition(~, startPosition, delta, kind)

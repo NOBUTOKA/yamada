@@ -233,8 +233,11 @@ supported `Color`, and centers it when it fits in the viewport. The HTML overlay
 is a child of this canvas, so it scrolls with the
 MATLAB controls. All hit targets and Grid Layout measurements use canvas-local
 pixels. Editor window resizing repositions the fixed-size canvas without
-changing the document. Root resize handles submit literal width and height edits
-through the model; source-backed positions remain noneditable.
+changing the document. The frame gives the canvas a one-pixel border on each
+side. Eight root resize handles remain available when the root has an editable
+literal Position, including an empty document. West and south drags also update
+the screen origin to anchor the opposite edge; source-backed positions remain
+noneditable.
 
 The renderer returns a map from stable component IDs to disposable Preview
 handles. `yamada` uses this map to build the transparent

@@ -40,7 +40,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 renderer = macd.ui.PreviewRenderer(registry);
                 [handles, diagnostics, canvas] = renderer.render(document, panel);
                 testCase.verifyEmpty(diagnostics);
-                testCase.verifyEqual(canvas.Position, [1 1 cases{index, 2}]);
+                testCase.verifyEqual(canvas.Position, [2 2 cases{index, 2}]);
                 testCase.verifyEqual(canvas.Parent.Position(3:4), cases{index, 2} + 2);
                 content = canvas.Parent.Parent;
                 frameSize = canvas.Parent.Position(3:4);
@@ -89,7 +89,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 ["Manual", "Auto"]);
             previewSurface = controlHandles("parsed-MainGrid").Parent;
             sourceSize = [580 460];
-            testCase.verifyEqual(previewSurface.Position, [1 1 sourceSize]);
+            testCase.verifyEqual(previewSurface.Position, [2 2 sourceSize]);
             testCase.verifyEqual(previewSurface.Parent.Position(3:4), sourceSize + 2);
             clear controlCleanup
 

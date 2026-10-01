@@ -35,6 +35,27 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             overlays = findall(0, "Type", "uihtml");
             testCase.verifyEqual(numel(overlays), 1);
             testCase.verifyNotEmpty(overlays.HTMLEventReceivedFcn);
+            testCase.verifyTrue(isstruct(overlays.Data));
+            testCase.verifyEqual(string(overlays.Data.rootId), ...
+                app.Document.RootComponentId);
+            testCase.verifyTrue(overlays.Data.rootEditable);
+            rootId = app.Document.RootComponentId;
+            for phase = ["pointerdown", "pointermove", "pointerup"]
+                point = [320 7];
+                handle = "root-s";
+                if phase ~= "pointerdown"
+                    point = [320 -13];
+                    handle = "";
+                end
+                overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                    "HTMLEventName", "Pointer", ...
+                    "HTMLEventData", struct("phase", phase, ...
+                    "x", point(1), "y", point(2), ...
+                    "componentId", rootId, "handle", handle)));
+            end
+            root = app.Document.getComponent(rootId);
+            testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
+                [100 80 640 500]);
             clear cleanup
         end
     end
@@ -90,6 +111,8 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(button.ParentId, groupId);
             overlay = findall(figure, "Type", "uihtml");
             components = overlay.Data.components;
+            testCase.verifyFalse(overlay.Data.rootSelected);
+            testCase.verifyTrue(overlay.Data.rootEditable);
             groupIndex = find(string({components.id}) == groupId, 1);
             buttonIndex = find(string({components.id}) == buttonId, 1);
             testCase.assertNotEmpty(groupIndex);
@@ -1382,7 +1405,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "Tag", "macd-preview-canvas");
             testCase.assertEqual(numel(canvas), 1);
             testCase.assertEqual(numel(scrollPanel), 1);
-            testCase.verifyEqual(canvas.Position, [1 1 1200 900]);
+            testCase.verifyEqual(canvas.Position, [2 2 1200 900]);
             testCase.verifyEqual(string(scrollPanel.Scrollable), "on");
             content = canvas.Parent.Parent;
             testCase.verifyGreaterThanOrEqual(content.Position(3:4) - ...
@@ -1451,6 +1474,27 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 [100 100 1200 900]);
             redoMenu = menus(erase(string({menus.Text}), "&") == "Redo");
             redoMenu.MenuSelectedFcn(redoMenu, struct());
+            testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
+                [100 100 1240 930]);
+            canvas = findall(figure, "Type", "uipanel", ...
+                "Tag", "macd-preview-canvas");
+            overlay = findall(canvas, "Type", "uihtml");
+            for phase = ["pointerdown", "pointermove", "pointerup"]
+                point = [7 7];
+                handle = "root-sw";
+                if phase ~= "pointerdown"
+                    point = [-13 -8];
+                    handle = "";
+                end
+                overlay.HTMLEventReceivedFcn(overlay, struct( ...
+                    "HTMLEventName", "Pointer", ...
+                    "HTMLEventData", struct("phase", phase, ...
+                    "x", point(1), "y", point(2), ...
+                    "componentId", rootId, "handle", handle)));
+            end
+            testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
+                [80 85 1260 945]);
+            undoMenu.MenuSelectedFcn(undoMenu, struct());
             testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
                 [100 100 1240 930]);
             canvas = findall(figure, "Type", "uipanel", ...

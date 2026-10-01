@@ -79,8 +79,11 @@ Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolo
   Scroll bars expose parts larger than the editor pane. The preview heading retains
   the editor's light panel background and dark text.
 - Resizing the editor window changes only the viewport. Root UIFigure resize
-  handles change editable literal width and height through one undoable model
-  edit while preserving the figure's screen position.
+  handles appear on all eight directions for an editable literal Position, even
+  in an empty new document or when a child is selected. Each drag is one
+  undoable model edit. Left and bottom drags update the screen origin to keep
+  the opposite edge fixed; right and top drags retain the origin. A thin gray
+  frame marks all four edges of the figure.
 - Callbacks, nonliteral expressions, and unsupported statements remain in the original source where possible.
 - Diagnostics distinguish state that cannot be previewed from state that cannot be preserved safely.
 
