@@ -207,6 +207,16 @@ Checkpoint: test Add/Delete, collisions, shared methods, invalid/stale targets,
 rollback, saved checkpoints and complete Undo/Redo restoration. One click produces
 one history entry; rejected edits leave model, history and dirty state unchanged.
 
+Stage 4 progress: DocumentModel.applyCallbackAction now prepares immutable typed
+CallbackEdit intentions and records before/after snapshots as one history step.
+Generated names avoid source tokens, pending handlers and reserved names. Delete
+retains the original binding/method spans and source snapshot; Delete/Add and
+Undo/Redo preserve complete original bodies without mutating OriginalText.
+Unsupported, shared, stale and repeated requests are rejected before mutation.
+Generation currently rejects pending intentions explicitly rather than silently
+omitting them. The popup action seam remains disconnected until Stage 5 can
+preflight and generate complete source, then cross-surface refresh will be wired.
+
 ### Stage 5: Extend callback parsing and source generation
 
 - Extend NewAppGenerator and RoundTripGenerator to emit owned callback bindings

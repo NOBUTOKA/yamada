@@ -43,6 +43,30 @@ classdef CallbackSourceAnalyzer
                 if strlength(source) > 0
                     [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = ...
                         macd.source.CallbackSourceAnalyzer.classify(component, name, statements, layout);
+                else
+                    entry = component.getProperty(name);
+                    if ~isempty(entry) && (entry.ValueKind ~= "literal" || ~isempty(entry.LiteralValue))
+                        state = "unsupported";
+                        reason = "The generated callback has no proven method ownership.";
+                    end
+                end
+                % Pending atomic intentions override availability without changing original source spans.
+                pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == componentId & ...
+                    string({document.CallbackEdits.Name}) == name);
+                if ~isempty(pending)
+                    edit = pending(end);
+                    state = "absent";
+                    if edit.Action == "Add", state = "editable"; end
+                    reason = "";
+                    handler = edit.HandlerName;
+                    bindingSpan = edit.BindingSpan;
+                    methodSpan = edit.MethodSpan;
+                    bindingAnchor = edit.BindingAnchor;
+                    methodAnchor = edit.MethodAnchor;
+                    if edit.OriginalSource ~= source
+                        state = "unsupported";
+                        reason = "The callback source snapshot changed; reload or undo before editing.";
+                    end
                 end
                 states(end + 1) = macd.model.CallbackState(name, state, reason, handler, ...
                     bindingSpan, methodSpan, bindingAnchor, methodAnchor); %#ok<AGROW>

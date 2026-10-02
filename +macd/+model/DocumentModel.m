@@ -43,6 +43,8 @@ classdef DocumentModel < handle
     end
 
     properties (SetAccess = private)
+        % CallbackEdits - Source-owned callback intentions grouped by component and property.
+        CallbackEdits macd.model.CallbackEdit = macd.model.CallbackEdit.empty
         % IsDirty - Whether the document has changes that are not known to be saved.
         IsDirty logical = true
     end
@@ -495,6 +497,66 @@ classdef DocumentModel < handle
             result = obj.HistoryIndex < numel(obj.History);
         end
 
+        function applyCallbackAction(obj, componentId, name, action, registry)
+            % applyCallbackAction Preflight and record a binding-plus-method edit as one history step.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+                name (1, 1) string
+                action (1, 1) string {mustBeMember(action, ["Add", "Delete"])}
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+
+            % Validate current availability before changing any document or history state.
+            states = macd.source.CallbackSourceAnalyzer.analyze(obj, componentId, registry);
+            state = states(string({states.Name}) == name);
+            if numel(state) ~= 1 || ...
+                    ~(action == "Add" && state.State == "absent" || action == "Delete" && state.State == "editable")
+                error("macd:DocumentModel:UnsafeCallbackEdit", "The callback action is unavailable or unsafe.");
+            end
+            component = obj.getComponent(componentId);
+            before = obj.CallbackEdits;
+            after = before;
+            existing = find(string({before.ComponentId}) == componentId & string({before.Name}) == name);
+            original = state;
+            if ~isempty(existing)
+                prior = before(existing);
+                original = macd.model.CallbackState(name, state.State, "", "", ...
+                    prior.BindingSpan, prior.MethodSpan, prior.BindingAnchor, prior.MethodAnchor);
+                after(existing) = [];
+            end
+            handler = "";
+            method = "";
+            if action == "Add"
+                % Avoid all source tokens, component names, and pending generated method names.
+                stem = string(matlab.lang.makeValidName(component.Name + erase(name, "Fcn")));
+                stem = extractBefore(stem, min(strlength(stem) + 1, namelengthmax - 8));
+                handler = stem;
+                suffix = 1;
+                used = [string({obj.Components.Name}), string({after.HandlerName}), obj.ClassName, "createComponents", "delete"];
+                while any(used == handler) || ~isempty(regexp(obj.OriginalText, ...
+                        '(?<!\w)' + handler + '(?!\w)', 'once'))
+                    suffix = suffix + 1;
+                    handler = stem + "_" + suffix;
+                end
+                lines = ["        function " + handler + "(app, event)"; ...
+                    "            % " + handler + " Handle the " + name + " callback."; ...
+                    "            arguments (Input)"; "                app (1, 1) " + obj.ClassName; ...
+                    "                event"; "            end"; ""; ...
+                    "            % Add callback behavior here."; "        end"];
+                ending = string(newline);
+                if obj.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
+                method = strjoin(lines, ending);
+            end
+            if action == "Add" || ~isempty(original.BindingSpan) || ~isempty(original.MethodSpan)
+                after(end + 1) = macd.model.CallbackEdit(componentId, name, action, handler, method, original, obj.OriginalText);
+            end
+
+            % Commit only the fully prepared intention snapshot; bodies remain intact in OriginalText.
+            obj.CallbackEdits = after;
+            obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after));
+        end
+
         function undo(obj)
             % undo Reverse the most recent document edit.
             arguments (Input)
@@ -585,6 +647,8 @@ classdef DocumentModel < handle
         function applyHistory(obj, edit, forward)
             % applyHistory Apply or reverse one history record without recording it.
             switch edit.Kind
+                case "callback"
+                    if forward, obj.CallbackEdits = edit.After; else, obj.CallbackEdits = edit.Before; end
                 case "insert"
                     if forward
                         obj.addComponentAt(edit.Component, edit.ParentId, edit.Index);

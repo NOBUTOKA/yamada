@@ -44,6 +44,10 @@ classdef NewAppGenerator
             diagnostics = macd.validation.ModelValidator.validate( ...
                 document, obj.Registry);
             source = "";
+            if ~isempty(document.CallbackEdits)
+                diagnostics(end + 1) = macd.model.Diagnostic("callback-generation-pending", "error", ...
+                    "Callback source generation is not integrated yet.");
+            end
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 return
             end
