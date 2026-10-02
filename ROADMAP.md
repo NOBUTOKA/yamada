@@ -94,6 +94,123 @@ native hierarchy operations above; it does not change the editor's own menus.
 - Test new and opened applications with nested menus, context-menu assignment,
   toolbar items, unsupported source, and no-edit round trips.
 
+## Add Hierarchy Context Menus and Callback Management
+
+Use the editor's Hierarchy context menu as the initial entry point for a separate
+callback-management popup. Do not add special action rows to the catalog-driven
+Properties construction path. This menu belongs to the editor; editing context
+menus in the opened application remains the separate task above.
+
+Keep entry points thin: resolve a component ID and invoke a shared command. The
+popup owns transient controls, DocumentModel owns validated edits and history,
+and the source layer owns parsing and localized rewrites. Safe Preview must never
+execute the opened application's callbacks. Review each stage at its checkpoint
+before proceeding. This entry delivers planning only.
+
+### Stage 1: Define callback discovery and editing contracts
+
+- Derive callback names from effective catalog metadata for the concrete component
+  style and parent context; exclude callback execution-control properties. Inspect
+  the loader/registry projection and add a narrow discovery API if needed, without
+  a parallel hard-coded callback list or changes to literal property editing.
+- Define absent/empty, safely editable, and preserved unsupported/ambiguous binding
+  states, with explicit reasons for unavailable operations.
+- Define Add as generating a uniquely named empty handler method and its binding
+  in one edit. Define Delete as detaching the binding while retaining the handler
+  body, including shared handlers and user code. Method-body editing and automatic
+  unused-method deletion remain outside this task.
+- Define supported binding forms, source spans, and method/assignment insertion
+  anchors. Read existing expressions without evaluation; refuse ambiguous ownership.
+
+Checkpoint: review discovery and Add/Delete semantics using new components, direct
+assignments, createCallbackFcn bindings, empty assignments, constructor bindings,
+anonymous functions, shared handlers, and repeated/conditional assignments.
+Confirm unsupported forms have diagnostics and no-edit source remains exact.
+
+### Stage 2: Add the editor Hierarchy context menu
+
+- Add a native menu with Manage Callbacks... as its first command. Provide a shared
+  command/availability seam for future entries without implementing deferred
+  copy/cut/paste operations in this feature.
+- Right-click selects the clicked node through the existing selection path, then
+  targets its component ID. Empty space must not reuse the previously selected
+  target. Disable the command for missing targets or callback-free components.
+- Account for node reconstruction, deletion, document replacement, and cleanup.
+  Keep editor menu handles out of ComponentRecord and generated application source.
+
+Checkpoint: test selected/unselected, root/nested, callback-free, and empty-space
+clicks; verify selection and Inspector synchronization, target identity and menu
+availability after rebuild/Open/New, and cleanup. Menu access must not dirty the
+document or create history. Validate native hit targeting before building on it.
+
+### Stage 3: Build the independent callback popup
+
+- Follow existing modal-dialog lifecycle conventions. Show the target name and a
+  scrolling list of callback name, Add, and Delete, with keyboard navigation.
+- Enable Add for absent bindings and Delete for safely removable bindings. Disable
+  mutation of preserved unsupported bindings and explain why; existence alone
+  must not enable deletion.
+- Route actions through narrow shared commands and refresh from authoritative
+  model state after success. Each Add/Delete applies immediately as one undoable
+  operation; Close only closes the popup. Failures must not partially update rows.
+- Reuse/focus an existing popup and close it when its document or target expires.
+
+Checkpoint: hidden-dialog tests verify catalog coverage/order across variants,
+button states, unsupported explanations, long lists, focus, repeated opening,
+closing and failure display. Verify the lifecycle independently of source editing.
+
+### Stage 4: Implement atomic callback model operations
+
+- Add dedicated DocumentModel operations rather than bypassing read-only checks in
+  setProperty/resetProperty. Preflight target identity, supported callback, binding
+  ownership, safe anchors, and handler-name collisions before any mutation.
+- Record binding and generated-handler changes as one transaction. Preserve exact
+  prior entries and source metadata for Undo/Redo, not only literal values.
+- Delete only the owned binding and retain handler methods and other bindings.
+  Reject stale/repeated requests safely. Coordinate dirty state, diagnostics,
+  source preview, and refresh through yamada without unnecessary tree rebuilding.
+
+Checkpoint: test Add/Delete, collisions, shared methods, invalid/stale targets,
+rollback, saved checkpoints and complete Undo/Redo restoration. One click produces
+one history entry; rejected edits leave model, history and dirty state unchanged.
+
+### Stage 5: Extend callback parsing and source generation
+
+- Extend NewAppGenerator and RoundTripGenerator to emit owned callback bindings
+  and generated stubs; the existing literal-only rewrite path is insufficient.
+- Add English method help and practical arguments blocks to generated stubs using
+  the supported handler signature contract. Do not add the editor's GPL notice
+  to user output.
+- Preserve unrelated methods, bodies, comments and unsupported source. Remove only
+  the owned parsed binding on Delete. Validate nonoverlapping edits and safe
+  insertion anchors before committing; preflight failure must roll back model edits.
+- Coordinate pending additions/removals across repeated generation and Save/reparse
+  so assignments and methods are not duplicated. Keep Safe Preview inert.
+
+Checkpoint: verify new-app generation and opened-source round trips for supported
+forms, multiline assignments, collisions, shared handlers, Add/Delete/Undo/Redo,
+and Save/reopen. Confirm exact no-edit preservation and unchanged unrelated source.
+Use a callback with a sentinel side effect to confirm parsing, editing, generation
+and Safe Preview never execute it.
+
+### Stage 6: Integrate and validate the complete workflow
+
+- Use small and large fixtures: a minimal button application and a nested mixed-
+  component application with shared handlers, unsupported forms, and a sufficiently
+  long callback list to exercise scrolling.
+- Test selection, component deletion, Open/New, Undo/Redo outside the popup, and
+  repeated cleanup without stale menu/dialog handles. Update UI test-selection
+  contracts when adding tests.
+- Update specification and user documentation after implementation, including
+  Add/Delete semantics and unsupported cases. Any future Properties shortcut must
+  invoke the shared command outside catalog-driven property-row construction.
+
+Checkpoint: run relevant parser/model/generator/dialog/editor suites, then the full
+MATLAB suite through the escalated interactive-account verification path. Review
+Passed/Failed/Incomplete results and perform a visible right-click/popup usability
+check. Commit cohesive passing implementation units separately as they complete.
+
+
 ## Add Range and Multiple Selection
 
 The editor currently tracks one selected component ID. Establish a selection
