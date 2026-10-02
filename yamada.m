@@ -462,6 +462,10 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % Set the drawer state before measuring the preview panel geometry.
+            if ~isempty(app.Document.CallbackEdits) || ...
+                    any(cellfun(@(edit) edit.Kind == "callback", app.Document.History))
+                app.generateSource();
+            end
             if ~retainHierarchy
                 app.refreshHierarchy();
             end
@@ -797,7 +801,7 @@ classdef yamada < matlab.apps.AppBase
         end
 
         function message = callbackActionRequested(app, componentId, name, action)
-            % callbackActionRequested Report the pending model-operation integration seam.
+            % callbackActionRequested Apply one source-preflighted callback transaction and refresh availability.
             arguments (Input)
                 app (1, 1) yamada
                 componentId (1, 1) string
@@ -807,7 +811,13 @@ classdef yamada < matlab.apps.AppBase
             arguments (Output)
                 message (1, 1) string
             end
-            message = "Callback model operations are not available yet.";
+            message = "";
+            try
+                app.Document.applyCallbackAction(componentId, name, action, app.Registry);
+                app.refreshShell(true);
+            catch exception
+                message = string(exception.message);
+            end
         end
 
         function node = addHierarchyNode(app, parentNode, componentId)

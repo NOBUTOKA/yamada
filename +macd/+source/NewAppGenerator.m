@@ -44,10 +44,6 @@ classdef NewAppGenerator
             diagnostics = macd.validation.ModelValidator.validate( ...
                 document, obj.Registry);
             source = "";
-            if ~isempty(document.CallbackEdits)
-                diagnostics(end + 1) = macd.model.Diagnostic("callback-generation-pending", "error", ...
-                    "Callback source generation is not integrated yet.");
-            end
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 return
             end
@@ -107,6 +103,9 @@ classdef NewAppGenerator
                 end
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
+                    pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id & ...
+                        string({document.CallbackEdits.Name}) == entry.Path);
+                    if ~isempty(pending), continue, end
                     if component.Id == document.RootComponentId && ...
                             entry.Path == "Visible"
                         continue
@@ -134,6 +133,14 @@ classdef NewAppGenerator
                     lines(end + 1) = compose("            app.%s.%s = %s;", ...
                         component.Name, entry.Path, valueText); %#ok<AGROW>
                 end
+                % Emit managed callbacks without exposing executable expressions to Safe Preview.
+                pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
+                for callback = pending(:)'
+                    if callback.Action == "Add"
+                        lines(end + 1) = "            app." + component.Name + "." + callback.Name + ...
+                            " = createCallbackFcn(app, @" + callback.HandlerName + ", true);"; %#ok<AGROW>
+                    end
+                end
                 % Separate component blocks for readable generated diffs.
                 lines(end + 1) = ""; %#ok<AGROW>
             end
@@ -147,8 +154,20 @@ classdef NewAppGenerator
                     root.Name, visibleText);
             end
 
+            % Add callback methods in a separate private block before constructor generation.
+            pending = document.CallbackEdits;
+            methods = strings(1, 0);
+            for callback = pending(:)'
+                if callback.Action == "Add" && ~isempty(document.getComponent(callback.ComponentId))
+                    methods(end + 1) = macd.source.CallbackSourceEdits.methodText(callback, document.ClassName); %#ok<AGROW>
+                end
+            end
+            lines = [lines, "        end", "    end", ""];
+            if ~isempty(methods)
+                lines = [lines, "    methods (Access = private)", methods, "    end", ""];
+            end
             % Finish the constructor, registration, and destructor skeleton.
-            lines = [lines, "        end", "    end", "", ...
+            lines = [lines, ...
                 "    methods (Access = public)", "", ...
                 compose("        function app = %s", document.ClassName), ...
                 compose("            %% %s Construct and register the application.", ...

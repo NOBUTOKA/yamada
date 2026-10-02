@@ -106,6 +106,33 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             testCase.verifyEqual(item.Enable, matlab.lang.OnOffSwitchState.off);
             testCase.verifyFalse(isvalid(root));
         end
+
+        function popupActionsCommitAndUndoCompleteCallbacks(testCase)
+            % popupActionsCommitAndUndoCompleteCallbacks Exercise real Add/Delete and editor history callbacks.
+            app = yamada();
+            cleanup = onCleanup(@() delete(app));
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            tree = findall(figure, "Type", "uitree");
+            menu = tree.ContextMenu;
+            item = findall(menu, "Tag", "macd-manage-callbacks");
+            menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", tree.Children(1))));
+            item.MenuSelectedFcn(item, []);
+            popup = findall(0, "Tag", "macd-callback-manager");
+            add = findall(popup, "Tag", "macd-callback-add", "UserData", "SizeChangedFcn");
+            add.ButtonPushedFcn(add, []);
+            testCase.verifyEqual(app.Document.HistoryIndex, 1);
+            testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn");
+            remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "SizeChangedFcn");
+            testCase.verifyEqual(string(remove.Enable), "on");
+            remove.ButtonPushedFcn(remove, []);
+            testCase.verifyEqual(app.Document.HistoryIndex, 2);
+            testCase.verifyFalse(contains(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn"));
+            undo = findall(figure, "Type", "uimenu", "Text", "&Undo");
+            undo.MenuSelectedFcn(undo, []);
+            testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn");
+            remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "SizeChangedFcn");
+            testCase.verifyEqual(string(remove.Enable), "on");
+        end
     end
 
     methods (Access = private)

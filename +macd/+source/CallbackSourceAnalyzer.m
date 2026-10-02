@@ -41,8 +41,13 @@ classdef CallbackSourceAnalyzer
                 bindingAnchor = 0;
                 methodAnchor = 0;
                 if strlength(source) > 0
-                    [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = ...
+                    if component.Origin == "generated" && ...
+                            macd.source.CallbackSourceAnalyzer.canInsertGenerated(document, statements, layout)
+                        methodAnchor = layout.MethodAnchor;
+                    else
+                        [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = ...
                         macd.source.CallbackSourceAnalyzer.classify(component, name, statements, layout);
+                    end
                 else
                     entry = component.getProperty(name);
                     if ~isempty(entry) && (entry.ValueKind ~= "literal" || ~isempty(entry.LiteralValue))
@@ -75,6 +80,29 @@ classdef CallbackSourceAnalyzer
     end
 
     methods (Static, Access = private)
+        function result = canInsertGenerated(document, statements, layout)
+            % canInsertGenerated Require direct initialization anchors for generated component bindings.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                statements macd.source.SourceStatement
+                layout (1, 1) struct
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = layout.Valid && layout.MethodAnchor > 0;
+            if ~result, return, end
+            % Component insertion uses the latest parsed creation anchor, so all must be direct.
+            parsed = document.Components([document.Components.Origin] == "parsed");
+            result = ~isempty(parsed);
+            for component = parsed(:)'
+                span = component.SourceSpans.Creation;
+                if isempty(span), result = false; return, end
+                index = find(arrayfun(@(statement) statement.Span.StartOffset == span.StartOffset, statements));
+                if numel(index) ~= 1 || ~layout.Direct(index), result = false; return, end
+            end
+        end
+
         function layout = layout(statements)
             % layout Track explicit block scopes and complete instance method spans.
             arguments (Input)

@@ -37,10 +37,6 @@ classdef RoundTripGenerator
             end
             source = document.OriginalText;
             diagnostics = macd.validation.ModelValidator.validate(document, obj.Registry);
-            if ~isempty(document.CallbackEdits)
-                diagnostics(end + 1) = macd.model.Diagnostic("callback-generation-pending", "error", ...
-                    "Callback source generation is not integrated yet.");
-            end
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 return
             end
@@ -66,6 +62,9 @@ classdef RoundTripGenerator
                 component = document.Components(index);
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
+                    pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id & ...
+                        string({document.CallbackEdits.Name}) == entry.Path);
+                    if ~isempty(pending), continue, end
                     if entry.ValueKind ~= "literal"
                         continue
                     end
@@ -96,6 +95,9 @@ classdef RoundTripGenerator
                     edits = [edits additionEdits];
                 end
             end
+            [callbackEdits, callbackDiagnostics] = macd.source.CallbackSourceEdits.build(document);
+            diagnostics = [diagnostics(:)' callbackDiagnostics(:)'];
+            edits = macd.source.CallbackSourceEdits.combineInsertions([edits callbackEdits]);
             if macd.validation.ModelValidator.hasErrors(diagnostics) || ...
                     ~obj.nonOverlapping(edits)
                 if ~obj.nonOverlapping(edits)
@@ -200,6 +202,13 @@ classdef RoundTripGenerator
                 end
                 creationText = creationText + eol + obj.indent(source, creationOffset) + ...
                     "app." + component.Name + " = " + component.Factory + "(" + arguments + ");";
+                pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
+                for callback = pending(:)'
+                    if callback.Action == "Add"
+                        creationText = creationText + eol + "            app." + component.Name + "." + callback.Name + ...
+                            " = createCallbackFcn(app, @" + callback.HandlerName + ", true);";
+                    end
+                end
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
                     if entry.ValueKind ~= "literal"

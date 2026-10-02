@@ -552,8 +552,23 @@ classdef DocumentModel < handle
                 after(end + 1) = macd.model.CallbackEdit(componentId, name, action, handler, method, original, obj.OriginalText);
             end
 
-            % Commit only the fully prepared intention snapshot; bodies remain intact in OriginalText.
+            % Preflight the complete generated result, restoring every temporary state on failure.
+            previousText = obj.GeneratedText;
+            previousDiagnostics = obj.Diagnostics;
             obj.CallbackEdits = after;
+            try
+                [~, diagnostics] = macd.source.RoundTripGenerator(registry).generate(obj);
+                if macd.validation.ModelValidator.hasErrors(diagnostics)
+                    error("macd:DocumentModel:UnsafeCallbackSource", "%s", ...
+                        strjoin(string({diagnostics.Message}), newline));
+                end
+            catch exception
+                obj.CallbackEdits = before;
+                obj.GeneratedText = previousText;
+                obj.Diagnostics = previousDiagnostics;
+                rethrow(exception)
+            end
+            % Commit only a fully generated intention snapshot; original bodies remain untouched.
             obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after));
         end
 

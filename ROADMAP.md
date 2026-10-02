@@ -161,8 +161,8 @@ node from ContextMenuOpeningFcn.InteractionInformation.Node without touching
 selection. Command dispatch validates the captured document and component again;
 empty space, reset/rebuild, deleted targets and replaced documents invalidate it.
 Native chooseContextMenu tests prove unselected-node and root targeting preserves
-selection. The editor command seam currently reports callback availability; Stage
-3 will connect it to the independent popup. UI inventory is updated to 110 tests.
+selection. The editor command now opens the independent popup without changing
+the active Inspector target. Subsequent UI additions bring the inventory to 114.
 
 ### Stage 3: Build the independent callback popup
 
@@ -186,9 +186,8 @@ catalog-ordered callback rows with mutually exclusive Add/Delete availability an
 unsupported-reason tooltips. Commands revalidate state, refresh after success,
 and report failures without optimistic changes. The editor reuses the popup for
 the same target, closes it on document replacement/cleanup, and refreshes or closes
-it when the target expires. Hidden-dialog and real editor-menu tests pass; model
-mutation is still the Stage 4 integration seam and currently reports unavailable.
-The UI test inventory is 113.
+it when the target expires. Hidden-dialog and real editor-menu tests pass. Actions
+now invoke source-preflighted model transactions; the UI test inventory is 114.
 
 ### Stage 4: Implement atomic callback model operations
 
@@ -213,9 +212,9 @@ Generated names avoid source tokens, pending handlers and reserved names. Delete
 retains the original binding/method spans and source snapshot; Delete/Add and
 Undo/Redo preserve complete original bodies without mutating OriginalText.
 Unsupported, shared, stale and repeated requests are rejected before mutation.
-Generation currently rejects pending intentions explicitly rather than silently
-omitting them. The popup action seam remains disconnected until Stage 5 can
-preflight and generate complete source, then cross-surface refresh will be wired.
+Complete generation is preflighted before recording history; failures restore
+intentions, diagnostics and source preview. Popup actions are connected, and
+callback history refreshes generated source on Undo/Redo without changing selection.
 
 ### Stage 5: Extend callback parsing and source generation
 
@@ -236,6 +235,15 @@ forms, multiline assignments, collisions, shared handlers, Add/Delete/Undo/Redo,
 and Save/reopen. Confirm exact no-edit preservation and unchanged unrelated source.
 Use a callback with a sentinel side effect to confirm parsing, editing, generation
 and Safe Preview never execute it.
+
+Stage 5 progress: canonical and round-trip generators now emit managed bindings
+and complete method stubs, remove original binding/method spans, and combine shared
+insertion anchors. Newly inserted components in opened apps receive bindings beside
+their initialization. Generated app argument types follow the current class name.
+Tests cover repeated generation, new and opened source, multiple callbacks, complete
+body deletion, saved externally edited bodies, side-effect nonexecution, rollback,
+and full-source Undo restoration. Real popup Add/Delete/Undo tests also pass.
+Full-suite and visible workflow verification remain Stage 6 work.
 
 ### Stage 6: Integrate and validate the complete workflow
 

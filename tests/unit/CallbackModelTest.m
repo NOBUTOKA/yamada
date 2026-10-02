@@ -48,8 +48,8 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             testCase.verifyEqual(document.History, history);
         end
 
-        function rejectsSharedMethodsAndBlocksPendingGeneration(testCase)
-            % rejectsSharedMethodsAndBlocksPendingGeneration Protect both unsafe source and staged generation.
+        function rejectsSharedMethodsAndGeneratesPendingCallbacks(testCase)
+            % rejectsSharedMethodsAndGeneratesPendingCallbacks Protect unsafe source while generating validated operations.
             registry = macd.model.ComponentRegistry.createDefault();
             path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
             source = string(fileread(path));
@@ -67,7 +67,7 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             fresh = macd.model.NewAppFactory.createEmpty("CallbackApp", registry);
             fresh.applyCallbackAction(fresh.RootComponentId, "SizeChangedFcn", "Add", registry);
             [~, diagnostics] = macd.source.NewAppGenerator(registry).generate(fresh);
-            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function generatedNamesAvoidSourceAndPendingCollisions(testCase)
