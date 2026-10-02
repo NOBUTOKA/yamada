@@ -108,6 +108,22 @@ execute the opened application's callbacks. Review each stage at its checkpoint
 before proceeding. The progress notes below identify implemented internal seams;
 the user-facing workflow is not complete until all stages pass.
 
+### Agreed interaction contract and implementation order
+
+- Keep right-click targeting independent of selection: opening the menu for an
+  unselected component must leave Hierarchy selection, Properties and Safe Preview
+  unchanged. The popup operates on that explicit context target.
+- Add creates a binding and an empty method together. Delete removes the binding
+  and the full method body together. Disable both actions when either operation
+  cannot be proven safe; show the reason in the popup.
+- Implement callback-management Stages 1-5, then the three Reload Source stages
+  below. Finish callback-management Stage 6 with the combined external-edit/reload
+  workflow. Review each checkpoint before advancing; a passing callback-only
+  workflow does not establish that source reload is complete.
+- Keep Properties catalog construction unchanged. The menu and popup resolve
+  commands; DocumentModel owns transactions; source analysis/generation owns
+  binding and method spans; document lifecycle owns reload and replacement.
+
 ### Stage 1: Define callback discovery and editing contracts
 
 - Derive callback names from effective catalog metadata for the concrete component
@@ -253,6 +269,10 @@ Full-suite and visible workflow verification remain Stage 6 work.
 - Test selection, component deletion, Open/New, Undo/Redo outside the popup, and
   repeated cleanup without stale menu/dialog handles. Update UI test-selection
   contracts when adding tests.
+- Verify toolbar Refresh, Edit-menu Reload Source and F5 after externally saving
+  a callback body in MATLAB. Confirm refreshed ownership, Add/Delete availability,
+  complete body deletion, clean history, and popup invalidation; include dirty/disk
+  conflict cancellation and failed reload without losing the current document.
 - Update specification and user documentation after implementation, including
   Add/Delete semantics and unsupported cases. Any future Properties shortcut must
   invoke the shared command outside catalog-driven property-row construction.
