@@ -21,7 +21,8 @@ macd.source.SourceWriter.write(path, source, "CRLF");
 service = macd.ui.DocumentLifecycleService(struct( ...
     "RequestOpenPathFcn", @() deal(true, path), ...
     "RequestNewClassNameFcn", @() deal(true, "WorkflowReplacement"), ...
-    "ConfirmUnsavedChangesFcn", @() "Discard"));
+    "ConfirmUnsavedChangesFcn", @() "Discard", ...
+    "ConfirmReloadConflictFcn", @() "Discard"));
 app = yamada(service);
 appCleanup = onCleanup(@() delete(app));
 window = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
@@ -87,6 +88,22 @@ redo = findall(window, "Type", "uimenu", "Text", "&Redo");
 redo.MenuSelectedFcn(redo, []);
 assert(~contains(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn"));
 
+% Reload externally saved method bodies through F5 while the modal popup has focus.
+clickAction(popup, "Add", "SizeChangedFcn");
+saved = replace(app.Document.GeneratedText, "% Add callback behavior here.", ...
+    "disp('macdReloadedBody');");
+macd.source.SourceWriter.write(path, saved, "CRLF");
+popup.WindowKeyPressFcn(popup, struct("Key", "f5", "Modifier", {{}}));
+assert(~isvalid(popup));
+assert(contains(app.Document.OriginalText, "macdReloadedBody"));
+assert(~app.Document.canUndo() && ~app.Document.IsDirty);
+tree = findall(window, "Type", "uitree");
+popup = openPopup(test, tree, app.Document.RootComponentId);
+clickAction(popup, "Delete", "SizeChangedFcn");
+assert(~contains(app.Document.GeneratedText, "macdReloadedBody"));
+undo.MenuSelectedFcn(undo, []);
+assert(contains(app.Document.GeneratedText, "macdReloadedBody"));
+
 % Open and New must dispose popup targets; repeated opens must not accumulate dialogs.
 open.MenuSelectedFcn(open, []);
 assert(~isvalid(popup));
@@ -107,7 +124,7 @@ evidence = struct("SharedComponent", leftName, "SecondSharedComponent", rightNam
     "RootCallbackCount", numel(rows), "NativeSelectionPreserved", true, ...
     "SourceHistoryVerified", true, "LifecycleVerified", true, ...
     "AnonymousBindingBlocked", true, "TargetDeletionVerified", true, ...
-    "SafePreviewCallbacksInert", true);
+    "SafePreviewCallbacksInert", true, "ExternalBodyReloadVerified", true);
 disp(evidence);
 end
 

@@ -29,12 +29,16 @@ classdef yamada < matlab.apps.AppBase
         EditorToolbar matlab.ui.container.Toolbar
         UndoTool matlab.ui.container.toolbar.PushTool
         RedoTool matlab.ui.container.toolbar.PushTool
+        RefreshTool matlab.ui.container.toolbar.PushTool
+        ReloadMenuItem matlab.ui.container.Menu
         SaveMenuItem matlab.ui.container.Menu
         DeleteMenuItem matlab.ui.container.Menu
         EditUndoMenuItem matlab.ui.container.Menu
         EditRedoMenuItem matlab.ui.container.Menu
         Lifecycle macd.ui.DocumentLifecycleService
         SavePathConfirmed logical = false
+        SavedSourceText string = ""
+        IsReloading logical = false
         IsClosingProgrammatically logical = false
         HierarchyPanel matlab.ui.container.Panel
         HierarchyGrid matlab.ui.container.GridLayout
@@ -167,6 +171,10 @@ classdef yamada < matlab.apps.AppBase
             app.RedoTool = uipushtool(app.EditorToolbar, ...
                 "CData", redoData.redoCData, "Tooltip", "Redo (Ctrl+R)", ...
                 "ClickedCallback", @(~, ~) app.redoButtonPushed());
+            app.RefreshTool = uipushtool(app.EditorToolbar, ...
+                "CData", app.refreshToolIcon(), ...
+                "Tooltip", "Refresh saved source (F5)", "Tag", "macd-refresh-source", ...
+                "ClickedCallback", @(~, ~) app.reloadSourceRequested());
 
             app.PaletteTable = uitable(app.MainGrid, ...
                 "ColumnName", {"Component", "Category"}, ...
@@ -263,6 +271,9 @@ classdef yamada < matlab.apps.AppBase
             app.EditRedoMenuItem = uimenu(editMenu, "Text", "&Redo", ...
                 "Accelerator", "R", ...
                 "MenuSelectedFcn", @(~, ~) app.redoButtonPushed());
+            app.ReloadMenuItem = uimenu(editMenu, "Text", "Reload Source (F5)", ...
+                "Separator", "on", "Tag", "macd-reload-source", ...
+                "MenuSelectedFcn", @(~, ~) app.reloadSourceRequested());
 
             toolsMenu = uimenu(app.UIFigure, "Text", "&Tools");
             uimenu(toolsMenu, "Text", "&Validate", ...
@@ -424,6 +435,7 @@ classdef yamada < matlab.apps.AppBase
             app.closeCallbackDialog();
             app.clearInspector();
             app.Document = document;
+            app.SavedSourceText = document.OriginalText;
             if ~isempty(document.Components)
                 app.SelectedComponentId = document.RootComponentId;
             else
@@ -653,7 +665,9 @@ classdef yamada < matlab.apps.AppBase
 
             modifiers = string(event.Modifier);
             hasControl = any(modifiers == "control") || any(modifiers == "command");
-            if strcmpi(event.Key, "delete") && ~hasControl
+            if strcmpi(event.Key, "f5") && isempty(modifiers)
+                app.reloadSourceRequested();
+            elseif strcmpi(event.Key, "delete") && ~hasControl
                 app.deleteComponentButtonPushed();
             elseif hasControl && strcmpi(event.Key, "z")
                 app.undoButtonPushed();
@@ -671,6 +685,12 @@ classdef yamada < matlab.apps.AppBase
             if isempty(app.Document)
                 return
             end
+            reloadEnabled = "off";
+            if strlength(app.Document.FilePath) > 0 && ~app.IsReloading
+                reloadEnabled = "on";
+            end
+            app.RefreshTool.Enable = reloadEnabled;
+            app.ReloadMenuItem.Enable = reloadEnabled;
             component = app.selectedComponent();
             canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
                 isempty(component.Children) && component.IsEditable;
@@ -787,7 +807,8 @@ classdef yamada < matlab.apps.AppBase
             app.CallbackDialog = macd.ui.CallbackManagerDialog(component.Name, ...
                 @() macd.source.CallbackSourceAnalyzer.analyze(document, componentId, app.Registry), ...
                 @(name, action) app.callbackActionRequested(componentId, name, action), ...
-                @() app.Document == document && ~isempty(document.getComponent(componentId)));
+                @() app.Document == document && ~isempty(document.getComponent(componentId)), ...
+                true, @() app.reloadSourceRequested());
         end
 
         function closeCallbackDialog(app)
@@ -2706,11 +2727,12 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
-        function completed = saveDocument(app, forceSaveAs)
+        function completed = saveDocument(app, forceSaveAs, protectedPath)
             % saveDocument Generate and write source, returning whether saving completed.
             arguments (Input)
                 app (1, 1) yamada
                 forceSaveAs (1, 1) logical
+                protectedPath (1, 1) string = ""
             end
             arguments (Output)
                 completed (1, 1) logical
@@ -2727,6 +2749,12 @@ classdef yamada < matlab.apps.AppBase
                 app.focusEditor();
                 if ~accepted
                     app.setStatus("Save canceled.");
+                    return
+                end
+                if strlength(protectedPath) > 0 && ...
+                        strcmpi(string(java.io.File(char(filePath)).getCanonicalPath()), ...
+                        string(java.io.File(char(protectedPath)).getCanonicalPath()))
+                    app.setStatus("Reload canceled; Save As must use a different file to protect external edits.");
                     return
                 end
                 [~, baseName, extension] = fileparts(filePath);
@@ -2765,11 +2793,127 @@ classdef yamada < matlab.apps.AppBase
             app.Document.FilePath = filePath;
             app.Document.GeneratedText = source;
             app.Document.markSaved();
+            app.SavedSourceText = source;
             app.SavePathConfirmed = true;
             app.updateSaveState(diagnostics);
             app.refreshTitle();
             app.setStatus("Saved " + filePath);
             completed = true;
+        end
+
+        function icon = refreshToolIcon(~)
+            % refreshToolIcon Build a small circular-arrow image with a transparent background.
+            arguments (Input)
+                ~
+            end
+            arguments (Output)
+                icon double
+            end
+            [x, y] = meshgrid(1:16);
+            radius = hypot(x - 8.5, y - 8.5);
+            ring = radius >= 4.5 & radius <= 6.5 & ~(x >= 10 & y <= 7);
+            arrow = y >= 3 & y <= 8 & x >= 11 & x <= 16 - (8 - y);
+            mask = ring | arrow;
+            icon = NaN(16, 16, 3);
+            color = [0.2 0.45 0.65];
+            for channel = 1:3
+                layer = icon(:, :, channel);
+                layer(mask) = color(channel);
+                icon(:, :, channel) = layer;
+            end
+        end
+
+        function reloadSourceRequested(app)
+            % reloadSourceRequested Resolve local changes and atomically install freshly parsed disk source.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            if app.IsReloading || isempty(app.Document) || strlength(app.Document.FilePath) == 0
+                return
+            end
+            app.IsReloading = true;
+            cleanup = onCleanup(@() app.finishReload());
+            app.refreshEditCommands();
+            targetPath = app.Document.FilePath;
+            selected = app.selectedComponent();
+            selectedName = "";
+            if ~isempty(selected), selectedName = selected.Name; end
+
+            % Resolve conflicting edits before parsing the snapshot to be installed.
+            try
+                before = app.Lifecycle.readSourceBytes(targetPath);
+                source = app.reloadText(before);
+                if app.Document.IsDirty
+                    if source ~= app.SavedSourceText
+                        choice = app.Lifecycle.confirmReloadConflict();
+                    else
+                        choice = app.Lifecycle.confirmUnsavedChanges();
+                    end
+                    app.focusEditor();
+                    if choice == "Save"
+                        if ~isequal(before, app.Lifecycle.readSourceBytes(targetPath))
+                            app.setStatus("Reload canceled; the saved file changed during confirmation. Retry to review the conflict.");
+                            return
+                        end
+                        if ~app.saveDocument(false), return, end
+                    elseif choice == "Save As"
+                        if ~app.saveDocument(true, targetPath), return, end
+                    elseif choice ~= "Discard"
+                        app.setStatus("Reload canceled.");
+                        return
+                    end
+                end
+
+                % Detect concurrent file changes across parsing without executing source.
+                before = app.Lifecycle.readSourceBytes(targetPath);
+                [document, diagnostics] = macd.source.AppSourceParser.parseFile(targetPath, app.Registry);
+                after = app.Lifecycle.readSourceBytes(targetPath);
+                if ~isequal(before, after) || document.OriginalText ~= app.reloadText(before)
+                    app.setStatus("Reload failed; the file changed while it was being read. Retry.");
+                    return
+                end
+                if macd.validation.ModelValidator.hasErrors(diagnostics)
+                    app.setStatus("Reload failed; source has parse errors. The current document is retained.");
+                    return
+                end
+            catch exception
+                app.setStatus("Reload failed: " + string(exception.message));
+                return
+            end
+
+            % Install new history and source spans, retaining selection only by unique name.
+            app.swapDocument(document, "Reloaded " + targetPath);
+            matches = document.Components([document.Components.Name] == selectedName);
+            if isscalar(matches)
+                app.SelectedComponentId = matches.Id;
+                app.refreshShell();
+            end
+        end
+
+        function source = reloadText(~, bytes)
+            % reloadText Decode bytes for snapshot comparisons while leaving validation to the parser.
+            arguments (Input)
+                ~
+                bytes uint8
+            end
+            arguments (Output)
+                source (1, 1) string
+            end
+            if numel(bytes) >= 3 && isequal(bytes(1:3), uint8([239 187 191]))
+                bytes = bytes(4:end);
+            end
+            source = string(native2unicode(bytes, "UTF-8"));
+        end
+
+        function finishReload(app)
+            % finishReload Release the reentrancy guard and restore command availability.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            if isvalid(app)
+                app.IsReloading = false;
+                app.refreshEditCommands();
+            end
         end
 
         function result = allowDocumentTransition(app)

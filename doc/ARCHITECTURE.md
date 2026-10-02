@@ -94,7 +94,13 @@ which combines common insertion anchors and rejects overlapping source claims.
 The original input is never run; preserved expressions do not reach Safe Preview.
 Saving retains the original snapshot and intentions, so repeated generation does
 not reapply patches to already patched text. Reopening reparses the saved file and
-creates fresh ownership spans. Dedicated source reload remains a roadmap task.
+creates fresh ownership spans. Source reload uses the same replacement boundary:
+the shell first resolves dirty/external-change policy through DocumentLifecycleService,
+then captures fresh bytes, parses without execution and verifies an unchanged
+snapshot before swapping documents. A separate saved-source snapshot tracks the
+last successful Open/Reload/Save without changing the model's original rewrite
+basis. The reload target remains the original file even if conflict handling saves
+local changes to a different file. All three entry points share one reentrancy guard.
 
 ## Shared Document Model
 

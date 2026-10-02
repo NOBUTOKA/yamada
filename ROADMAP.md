@@ -178,7 +178,7 @@ selection. Command dispatch validates the captured document and component again;
 empty space, reset/rebuild, deleted targets and replaced documents invalidate it.
 Native chooseContextMenu tests prove unselected-node and root targeting preserves
 selection. The editor command now opens the independent popup without changing
-the active Inspector target. Subsequent UI additions bring the inventory to 114.
+the active Inspector target. Subsequent UI additions bring the inventory to 119.
 
 ### Stage 3: Build the independent callback popup
 
@@ -203,7 +203,7 @@ unsupported-reason tooltips. Commands revalidate state, refresh after success,
 and report failures without optimistic changes. The editor reuses the popup for
 the same target, closes it on document replacement/cleanup, and refreshes or closes
 it when the target expires. Hidden-dialog and real editor-menu tests pass. Actions
-now invoke source-preflighted model transactions; the UI test inventory is 114.
+now invoke source-preflighted model transactions; the UI test inventory is 119.
 
 ### Stage 4: Implement atomic callback model operations
 
@@ -283,15 +283,17 @@ Passed/Failed/Incomplete results and perform a visible right-click/popup usabili
 check. Commit cohesive passing implementation units separately as they complete.
 
 
-Stage 6 progress: the full MATLAB R2024a suite passes with 251 Passed, 0 Failed,
+Stage 6 progress: before source reload changes, the full MATLAB R2024a suite
+passed with 251 Passed, 0 Failed,
 0 Incomplete. tests/verifyCallbackWorkflow.m additionally exercises native
 right-click targeting on nested controls, shared and anonymous binding safety,
 a 13-callback root list, immediate Add/Delete, source Undo/Redo, target deletion,
 Open/New and repeated popup cleanup. A source-side sentinel confirms the real
 Safe Preview workflow does not execute handlers. Project convention checks pass.
 README, specification and architecture documentation describe the implemented
-callback behavior. Source reload, combined workflow verification, keyboard/focus
-verification and final visual review remain required before completing Stage 6.
+callback behavior. Source reload and the combined external-body workflow are now implemented and
+verified. Updated full-suite verification, keyboard/focus verification and final
+visual review remain required before completing Stage 6.
 
 ## Reload Source Edited Outside yamada
 
@@ -325,6 +327,14 @@ Save As, missing/unreadable files, parse errors and changes during reload. Confi
 no external edits are silently overwritten, failures retain current state, and
 fresh method bodies and spans are visible after a successful reload.
 
+Stage 1 progress: reload resolves local dirty state before parsing the replacement.
+External changes require Save As to a different canonical path, Discard or Cancel.
+Fresh byte snapshots around parsing reject concurrent changes. Failed reads,
+parse failures, canceled decisions and failed saves retain the current document.
+Successful reload installs clean history, closes stale popup targets and restores
+selection by a unique component name. Related lifecycle/UI/convention/selection
+checks pass: 24 Passed, 0 Failed, 0 Incomplete.
+
 ### Stage 2: Add the three Reload entry points
 
 - Add a Refresh button alongside Undo/Redo in the existing toolbar, a Reload Source
@@ -336,6 +346,11 @@ fresh method bodies and spans are visible after a successful reload.
 Checkpoint: invoke toolbar, menu and F5 through real UI bindings; verify identical
 results and availability for unsaved/new, saved and missing-file documents. Check
 keyboard behavior with focus in the hierarchy, Inspector and callback popup.
+
+Stage 2 progress: toolbar Refresh, Edit > Reload Source (F5), and unmodified F5
+share one guarded command and availability policy. Callback-popup F5 forwards
+to that same command. Binding-level tests cover all three entries; focused native
+keyboard/focus and combined external-body verification remain Stage 3 work.
 
 ### Stage 3: Verify the external MATLAB editing workflow
 
@@ -350,6 +365,12 @@ keyboard behavior with focus in the hierarchy, Inspector and callback popup.
 Checkpoint: run lifecycle, interaction, parser and round-trip suites, followed by
 full escalated MATLAB verification and a visible MATLAB/yamada editing check.
 Record Passed/Failed/Incomplete results and commit passing feature units separately.
+
+Stage 3 progress: the native hierarchy/popup workflow now saves an externally
+edited method body, invokes popup F5, verifies fresh clean history and popup
+invalidation, then Deletes and Undoes the current method body. Safe Preview
+nonexecution and lifecycle cleanup still pass. Updated full-suite and focused
+keyboard/focus/visual review remain pending.
 
 
 ## Add Range and Multiple Selection

@@ -73,8 +73,14 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 - The popup refreshes after edits and history changes, reuses an existing instance
   for the same target, and closes when its target or document expires.
 - Source parsing, source generation and Safe Preview never execute handlers.
-  MATLAB remains the editor for handler bodies; source reload is a separate
-  roadmap feature.
+  MATLAB remains the editor for handler bodies. Refresh / Edit > Reload Source /
+  F5 read saved disk source and atomically replace the document after successful
+  parsing. Reload clears history and stale callback spans, closes the popup and
+  preserves selection by a unique component name where possible. Local dirty
+  changes require Save/Discard/Cancel; concurrent external edits require a
+  different Save As target, Discard, or Cancel. Unreadable, invalid or changing
+  files do not replace the current document. Unsaved MATLAB buffers are outside
+  the reload operation.
 
 ## Standard Component Catalog
 

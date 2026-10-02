@@ -106,8 +106,14 @@ variant.
   to read the reason.
 
 Review the source diff before saving. To edit a handler body in MATLAB, first save
-in yamada, edit and save the `.m` file in MATLAB, then reopen that file while yamada
-has no unsaved edits. The separate Reload Source/F5 workflow is still planned.
+in yamada, edit and save the `.m` file in MATLAB, then use the toolbar **Refresh**
+button, **Edit > Reload Source (F5)**, or **F5**. Reload reads the saved file; it
+cannot read unsaved MATLAB editor buffers. New documents need to be saved first.
+Local unsaved changes prompt Save/Discard/Cancel. If the file also changed outside
+yamada, Save As must use a different file so external edits remain intact.
+Successful reload resets Undo/Redo, closes the callback popup and retains the
+selected component by a unique name where possible. Failed reload keeps the
+current document.
 The opened application's callbacks are never run by the editor or Safe Preview.
 
 ## Scope and Limitations

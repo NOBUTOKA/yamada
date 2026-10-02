@@ -13,7 +13,7 @@ classdef CallbackManagerDialog < handle
     end
 
     methods
-        function obj = CallbackManagerDialog(targetName, stateFcn, actionFcn, validFcn, visible)
+        function obj = CallbackManagerDialog(targetName, stateFcn, actionFcn, validFcn, visible, reloadFcn)
             % CallbackManagerDialog Create a modal callback list with a fixed command layout.
             arguments (Input)
                 targetName (1, 1) string
@@ -21,6 +21,7 @@ classdef CallbackManagerDialog < handle
                 actionFcn (1, 1) function_handle
                 validFcn (1, 1) function_handle
                 visible (1, 1) logical = true
+                reloadFcn (1, 1) function_handle = @() []
             end
             arguments (Output)
                 obj (1, 1) macd.ui.CallbackManagerDialog
@@ -33,6 +34,7 @@ classdef CallbackManagerDialog < handle
             obj.Figure = uifigure("Name", "Callbacks: " + targetName, "Visible", "off", ...
                 "WindowStyle", "modal", "Position", [300 300 520 420], ...
                 "Tag", "macd-callback-manager", "CloseRequestFcn", @(~, ~) delete(obj));
+            obj.Figure.WindowKeyPressFcn = @(~, event) obj.keyPressed(event, reloadFcn);
             grid = uigridlayout(obj.Figure, [3 1], "RowHeight", {"1x", 52, 30});
             obj.Rows = uigridlayout(grid, [1 3], "ColumnWidth", {"1x", 64, 64}, ...
                 "Scrollable", "on", "Padding", [0 0 0 0]);
@@ -102,6 +104,18 @@ classdef CallbackManagerDialog < handle
     end
 
     methods (Access = private)
+        function keyPressed(~, event, reloadFcn)
+            % keyPressed Forward an unmodified F5 to the shared saved-source reload command.
+            arguments (Input)
+                ~
+                event
+                reloadFcn (1, 1) function_handle
+            end
+            if strcmpi(event.Key, "f5") && isempty(event.Modifier)
+                reloadFcn();
+            end
+        end
+
         function invoke(obj, name, action)
             % invoke Revalidate availability and dispatch one atomic action request.
             arguments (Input)

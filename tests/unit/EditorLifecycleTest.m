@@ -4,6 +4,125 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     %   only native dialogs and filesystem decisions through the lifecycle service.
 
     methods (Test)
+        function reloadDirtySaveAndDiscardResetToFreshHistory(testCase)
+            % reloadDirtySaveAndDiscardResetToFreshHistory Resolve dirty changes before reading the replacement.
+            for choice = ["Save", "Discard"]
+                [target, ~] = reloadFixture();
+                fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+                app = yamada(lifecycleForTest(struct("OpenPath", target, "UnsavedChoice", choice)));
+                appCleanup = onCleanup(@() deleteIfValid(app));
+                invokeEditorMenu("Open...");
+                addPaletteComponent("Button");
+                invokeEditorMenu("Reload Source (F5)");
+                testCase.verifyFalse(app.Document.IsDirty);
+                testCase.verifyFalse(app.Document.canUndo());
+                if choice == "Save"
+                    testCase.verifyEqual(numel(app.Document.Components), 3);
+                else
+                    testCase.verifyEqual(numel(app.Document.Components), 2);
+                end
+                clear appCleanup fileCleanup
+            end
+        end
+
+        function reloadChangedReadAndSaveFailureRetainCurrentState(testCase)
+            % reloadChangedReadAndSaveFailureRetainCurrentState Reject changing snapshots and failed saves atomically.
+            [target, ~] = reloadFixture();
+            fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+            service = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() deal(true, target), "ReadSourceBytesFcn", changingReader(target)));
+            app = yamada(service);
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            tool = findall(editorFigure(), "Tag", "macd-refresh-source");
+            testCase.verifyEqual(string(tool.Enable), "off");
+            invokeEditorMenu("Open...");
+            original = app.Document;
+            invokeEditorMenu("Reload Source (F5)");
+            testCase.verifyTrue(app.Document == original);
+            testCase.verifyEqual(string(tool.Enable), "on");
+            clear appCleanup
+            app = yamada(lifecycleForTest(struct("OpenPath", target, "UnsavedChoice", "Save", "WriteSucceeds", false)));
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            original = app.Document;
+            addPaletteComponent("Button");
+            invokeEditorMenu("Reload Source (F5)");
+            testCase.verifyTrue(app.Document == original);
+            testCase.verifyTrue(app.Document.IsDirty);
+        end
+
+        function reloadEntriesReadFreshSourceAndResetHistory(testCase)
+            % reloadEntriesReadFreshSourceAndResetHistory Exercise menu, toolbar and F5 dispatch.
+            [target, source] = reloadFixture();
+            fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            for entry = 1:3
+                macd.source.SourceWriter.write(target, source + "% Revision " + entry + newline, "CRLF");
+                if entry == 1
+                    invokeEditorMenu("Reload Source (F5)");
+                elseif entry == 2
+                    tool = findall(editorFigure(), "Tag", "macd-refresh-source");
+                    tool.ClickedCallback(tool, []);
+                else
+                    figure = editorFigure();
+                    figure.WindowKeyPressFcn(figure, struct("Key", "f5", "Modifier", {{}}));
+                end
+                testCase.verifySubstring(app.Document.OriginalText, "% Revision " + entry);
+                testCase.verifyFalse(app.Document.IsDirty);
+                testCase.verifyFalse(app.Document.canUndo());
+            end
+        end
+
+        function reloadFailuresRetainDocument(testCase)
+            % reloadFailuresRetainDocument Preserve model and history on unsuccessful reloads.
+            [target, ~] = reloadFixture();
+            fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            original = app.Document;
+            macd.source.SourceWriter.write(target, "not an AppBase class", "CRLF");
+            invokeEditorMenu("Reload Source (F5)");
+            testCase.verifyTrue(app.Document == original);
+            addPaletteComponent("Button");
+            invokeEditorMenu("Reload Source (F5)");
+            testCase.verifyTrue(app.Document == original);
+            delete(target);
+            invokeEditorMenu("Reload Source (F5)");
+            testCase.verifyTrue(app.Document == original);
+            testCase.verifyTrue(app.Document.canUndo());
+        end
+
+        function reloadConflictProtectsExternalFileDuringSaveAs(testCase)
+            % reloadConflictProtectsExternalFileDuringSaveAs Reject same-path saving and retain the original reload target.
+            [target, source] = reloadFixture();
+            fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+            separate = string(fullfile(tempdir, "ReloadSavedLocalApp.m"));
+            separateCleanup = onCleanup(@() deleteTemporaryFile(separate));
+            for saveTarget = [target, separate]
+                service = lifecycleForTest(struct("OpenPath", target, "SavePath", saveTarget, "ReloadChoice", "Save As"));
+                app = yamada(service);
+                appCleanup = onCleanup(@() deleteIfValid(app));
+                invokeEditorMenu("Open...");
+                addPaletteComponent("Button");
+                macd.source.SourceWriter.write(target, source + "% External edit" + newline, "CRLF");
+                invokeEditorMenu("Reload Source (F5)");
+                testCase.verifySubstring(string(fileread(target)), "% External edit");
+                if saveTarget == target
+                    testCase.verifyTrue(app.Document.IsDirty);
+                else
+                    testCase.verifyTrue(isfile(separate));
+                    testCase.verifyEqual(app.Document.FilePath, target);
+                    testCase.verifyFalse(app.Document.IsDirty);
+                    testCase.verifySubstring(app.Document.OriginalText, "% External edit");
+                end
+                clear appCleanup
+                macd.source.SourceWriter.write(target, source, "CRLF");
+            end
+        end
+
         function saveAsReplacementAndNormalSaveFollowTheirSeparatePolicies(testCase)
             % saveAsReplacementAndNormalSaveFollowTheirSeparatePolicies Verify replacement prompts occur once.
 
@@ -217,6 +336,38 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     end
 end
 
+function reader = changingReader(target)
+% changingReader Return a reader whose third snapshot differs from the parsed file.
+arguments (Input)
+    target (1, 1) string
+end
+arguments (Output)
+    reader (1, 1) function_handle
+end
+count = 0;
+reader = @read;
+    function bytes = read(~)
+        % read Supply deterministic byte snapshots to exercise concurrent change detection.
+        count = count + 1;
+        bytes = unicode2native(fileread(target), "UTF-8");
+        if count == 3, bytes(end + 1) = uint8(32); end
+    end
+end
+
+function [target, source] = reloadFixture()
+% reloadFixture Write a source-only application for lifecycle verification.
+arguments (Output)
+    target (1, 1) string
+    source (1, 1) string
+end
+registry = macd.model.ComponentRegistry.createDefault();
+document = macd.model.NewAppFactory.createEmpty("ReloadFixture", registry);
+document.insertComponent(registry, "uibutton", document.RootComponentId);
+source = macd.source.RoundTripGenerator(registry).generate(document);
+target = string(tempname) + ".m";
+macd.source.SourceWriter.write(target, source, "CRLF");
+end
+
 function service = lifecycleForTest(options)
 % lifecycleForTest Create deterministic lifecycle callbacks from one options structure.
 arguments (Input)
@@ -226,7 +377,7 @@ end
 defaults = struct("NewClassName", "NextApp", "OpenPath", "", ...
     "SavePath", "", "SaveAccepted", true, "UnsavedChoice", "Cancel", ...
     "FileExists", false, "ReplaceAccepted", true, "WriteSucceeds", true, ...
-    "ConfirmMustNotRun", false);
+    "ConfirmMustNotRun", false, "ReloadChoice", "Cancel");
 names = string(fieldnames(defaults));
 for index = 1:numel(names)
     name = names(index);
@@ -239,6 +390,7 @@ callbacks = struct( ...
     "RequestOpenPathFcn", @() selectedText(options.OpenPath), ...
     "RequestSavePathFcn", @(~) selectedPath(options.SavePath, options.SaveAccepted), ...
     "ConfirmUnsavedChangesFcn", @() unsavedChoice(options), ...
+    "ConfirmReloadConflictFcn", @() options.ReloadChoice, ...
     "ConfirmReplaceFcn", @(~) options.ReplaceAccepted, ...
     "FileExistsFcn", @(~) options.FileExists, ...
     "WriteSourceFcn", @(path, source, lineEnding) writeForTest( ...

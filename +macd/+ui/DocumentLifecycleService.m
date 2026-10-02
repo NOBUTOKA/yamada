@@ -15,6 +15,8 @@ classdef DocumentLifecycleService < handle
         ConfirmReplaceFcn function_handle
         FileExistsFcn function_handle
         WriteSourceFcn function_handle
+        ReadSourceBytesFcn function_handle
+        ConfirmReloadConflictFcn function_handle
     end
 
     methods
@@ -32,6 +34,8 @@ classdef DocumentLifecycleService < handle
             obj.ConfirmReplaceFcn = @macd.ui.DocumentLifecycleService.confirmNativeReplace;
             obj.FileExistsFcn = @isfile;
             obj.WriteSourceFcn = @macd.source.SourceWriter.write;
+            obj.ReadSourceBytesFcn = @macd.ui.DocumentLifecycleService.readNativeSourceBytes;
+            obj.ConfirmReloadConflictFcn = @macd.ui.DocumentLifecycleService.confirmNativeReloadConflict;
             obj.installCallbacks(callbacks);
         end
 
@@ -86,6 +90,30 @@ classdef DocumentLifecycleService < handle
             result = logical(obj.FileExistsFcn(filePath));
         end
 
+        function bytes = readSourceBytes(obj, filePath)
+            % readSourceBytes Capture saved bytes without executing the application.
+            arguments (Input)
+                obj (1, 1) macd.ui.DocumentLifecycleService
+                filePath (1, 1) string
+            end
+            arguments (Output)
+                bytes uint8
+            end
+            bytes = obj.ReadSourceBytesFcn(filePath);
+            bytes = bytes(:)';
+        end
+
+        function choice = confirmReloadConflict(obj)
+            % confirmReloadConflict Resolve local edits when the saved source also changed.
+            arguments (Input)
+                obj (1, 1) macd.ui.DocumentLifecycleService
+            end
+            arguments (Output)
+                choice (1, 1) string
+            end
+            choice = string(obj.ConfirmReloadConflictFcn());
+        end
+
         function writeSource(obj, filePath, source, lineEnding)
             % writeSource Write generated text through the configured filesystem seam.
             arguments (Input)
@@ -104,7 +132,8 @@ classdef DocumentLifecycleService < handle
             % installCallbacks Replace documented callback seams supplied by a test.
             names = ["RequestNewClassNameFcn", "RequestOpenPathFcn", ...
                 "RequestSavePathFcn", "ConfirmUnsavedChangesFcn", ...
-                "ConfirmReplaceFcn", "FileExistsFcn", "WriteSourceFcn"];
+                "ConfirmReplaceFcn", "FileExistsFcn", "WriteSourceFcn", ...
+                "ReadSourceBytesFcn", "ConfirmReloadConflictFcn"];
             for index = 1:numel(names)
                 name = names(index);
                 if isfield(callbacks, name)
@@ -120,6 +149,33 @@ classdef DocumentLifecycleService < handle
     end
 
     methods (Static, Access = private)
+        function bytes = readNativeSourceBytes(filePath)
+            % readNativeSourceBytes Read one file completely and close its handle on failure.
+            arguments (Input)
+                filePath (1, 1) string
+            end
+            arguments (Output)
+                bytes uint8
+            end
+            [file, message] = fopen(filePath, "rb");
+            if file < 0
+                error("macd:DocumentLifecycleService:ReadFailed", "%s", message);
+            end
+            cleanup = onCleanup(@() fclose(file));
+            bytes = fread(file, Inf, "*uint8")';
+            [message, number] = ferror(file);
+            if number ~= 0 && ~feof(file)
+                error("macd:DocumentLifecycleService:ReadFailed", "%s", message);
+            end
+        end
+
+        function choice = confirmNativeReloadConflict()
+            % confirmNativeReloadConflict Protect externally saved edits from same-path saving.
+            choice = string(questdlg( ...
+                "The saved file changed outside yamada. Save local changes to a different file, discard them and reload, or cancel?", ...
+                "Reload Source Conflict", "Save As", "Discard", "Cancel", "Cancel"));
+        end
+
         function [accepted, className] = requestNativeClassName()
             % requestNativeClassName Show the native New-document class-name dialog.
             answer = inputdlg("MATLAB class name:", "New App", [1 50], {'UntitledApp'});
