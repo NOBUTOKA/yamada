@@ -29,7 +29,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             toolbars = findall(0, "Type", "uitoolbar");
             testCase.verifyEqual(numel(toolbars), 1);
-            testCase.verifyEqual(numel(toolbars.Children), 2);
+            testCase.verifyEqual(numel(toolbars.Children), 3);
+            refresh = findall(toolbars, "Tag", "macd-refresh-source");
+            testCase.verifyEqual(numel(refresh), 1);
+            testCase.verifyEqual(string(refresh.Enable), "off");
             testCase.verifyTrue(all(arrayfun(@(tool) ...
                 ~isempty(tool.ClickedCallback), toolbars.Children)));
             overlays = findall(0, "Type", "uihtml");

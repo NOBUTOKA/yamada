@@ -292,8 +292,12 @@ Open/New and repeated popup cleanup. A source-side sentinel confirms the real
 Safe Preview workflow does not execute handlers. Project convention checks pass.
 README, specification and architecture documentation describe the implemented
 callback behavior. Source reload and the combined external-body workflow are now implemented and
-verified. Updated full-suite verification, keyboard/focus verification and final
-visual review remain required before completing Stage 6.
+verified. Native Tab navigation, Enter actions and popup F5 pass in
+tests/verifyCallbackKeyboard.m, guarded by ownership of window keyboard focus.
+Visible popup images confirm labels, button states and scrolling. The first
+updated full run yielded 255 Passed, 1 Failed, 0 Incomplete: an old two-button
+toolbar assertion. The corrected three-button contract passes its focused check;
+a fresh full-suite run remains required before completing Stage 6.
 
 ## Reload Source Edited Outside yamada
 
@@ -370,7 +374,7 @@ Stage 3 progress: the native hierarchy/popup workflow now saves an externally
 edited method body, invokes popup F5, verifies fresh clean history and popup
 invalidation, then Deletes and Undoes the current method body. Safe Preview
 nonexecution and lifecycle cleanup still pass. Updated full-suite and focused
-keyboard/focus/visual review remain pending.
+full-suite review remains pending; native Tab/Enter/F5 and popup visual checks pass.
 
 
 ## Add Range and Multiple Selection
