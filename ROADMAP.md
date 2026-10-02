@@ -96,6 +96,9 @@ native hierarchy operations above; it does not change the editor's own menus.
 
 ## Add Hierarchy Context Menus and Callback Management
 
+Status: completed and verified on MATLAB R2024a, 2026-10-02. All six stages and
+the integrated source-reload workflow below have passed their checkpoints.
+
 Use the editor's Hierarchy context menu as the initial entry point for a separate
 callback-management popup. Do not add special action rows to the catalog-driven
 Properties construction path. This menu belongs to the editor; editing context
@@ -106,7 +109,7 @@ popup owns transient controls, DocumentModel owns validated edits and history,
 and the source layer owns parsing and localized rewrites. Safe Preview must never
 execute the opened application's callbacks. Review each stage at its checkpoint
 before proceeding. The progress notes below identify implemented internal seams;
-the user-facing workflow is not complete until all stages pass.
+all stage checkpoints are now verified in the completion evidence below.
 
 ### Agreed interaction contract and implementation order
 
@@ -151,7 +154,7 @@ using createCallbackFcn(app, @Method, true) or @app.Method, explicit empty bindi
 and whole instance-method spans with nested blocks. Conditional/repeated/constructor
 bindings, arbitrary anonymous functions, shared/missing handlers, indirect access,
 dynamic dispatch, and unproven block structures return unsupported with a reason.
-Add/Delete semantics remain binding-plus-method transactions for subsequent stages.
+Add/Delete binding-plus-method transactions are implemented and verified in Stages 4-5.
 Tests cover the state table, multiline source, no-edit generation, and a sentinel
 side effect proving that parsing/analysis/generation do not run the callback.
 
@@ -259,7 +262,7 @@ their initialization. Generated app argument types follow the current class name
 Tests cover repeated generation, new and opened source, multiple callbacks, complete
 body deletion, saved externally edited bodies, side-effect nonexecution, rollback,
 and full-source Undo restoration. Real popup Add/Delete/Undo tests also pass.
-Full-suite and visible workflow verification remain Stage 6 work.
+Full-suite and visible workflow verification are complete in Stage 6.
 
 ### Stage 6: Integrate and validate the complete workflow
 
@@ -283,23 +286,32 @@ Passed/Failed/Incomplete results and perform a visible right-click/popup usabili
 check. Commit cohesive passing implementation units separately as they complete.
 
 
-Stage 6 progress: before source reload changes, the full MATLAB R2024a suite
-passed with 251 Passed, 0 Failed,
-0 Incomplete. tests/verifyCallbackWorkflow.m additionally exercises native
-right-click targeting on nested controls, shared and anonymous binding safety,
-a 13-callback root list, immediate Add/Delete, source Undo/Redo, target deletion,
-Open/New and repeated popup cleanup. A source-side sentinel confirms the real
-Safe Preview workflow does not execute handlers. Project convention checks pass.
-README, specification and architecture documentation describe the implemented
-callback behavior. Source reload and the combined external-body workflow are now implemented and
-verified. Native Tab navigation, Enter actions and popup F5 pass in
-tests/verifyCallbackKeyboard.m, guarded by ownership of window keyboard focus.
-Visible popup images confirm labels, button states and scrolling. The first
-updated full run yielded 255 Passed, 1 Failed, 0 Incomplete: an old two-button
-toolbar assertion. The corrected three-button contract passes its focused check;
-a fresh full-suite run remains required before completing Stage 6.
+Stage 6 completion evidence:
+
+| Stage | Verified behavior | Evidence |
+| --- | --- | --- |
+| 1 | All catalog variants/parents, supported bindings and explicit unsafe states | CallbackDiscoveryTest, CallbackSourceAnalyzerTest |
+| 2 | Native hit targeting, unchanged selection/Inspector, empty/stale/deleted targets and rebuilds | HierarchyContextMenuTest |
+| 3 | Modal catalog-ordered rows, availability/reasons, failures, long lists, cleanup and keyboard navigation | CallbackManagerDialogTest, verifyCallbackKeyboard |
+| 4 | One atomic history entry, handler collision avoidance, rollback and complete Undo/Redo | CallbackModelTest, CallbackGenerationTest |
+| 5 | New/opened generation, complete method deletion, exact preservation, saved bodies and nonexecution | CallbackGenerationTest, source/model suites |
+| 6 | Nested mixed fixture, 13-callback scrolling, external editing/reload, selection/lifecycle and visible UI | verifyCallbackWorkflow and full suite |
+
+The final full suite reports 256 Passed, 0 Failed, 0 Incomplete (496.433 seconds).
+The final visible workflow also passes actual F5 with Hierarchy and Inspector
+focus, external method-body Delete/Undo, unique-name selection preservation,
+renamed/deleted targets, newly shared handlers, 2,000 added source-comment lines,
+repeated reloads and post-reload Save/reopen. A sentinel proves Safe Preview never
+runs handlers. Native Tab/Enter/popup-F5 checks pass separately. Exported root and
+shared-handler popup images were reviewed after confirming rendered label text.
+README, SPECIFICATION and architecture documentation match the implementation.
+The developer verification uses a Windows-only exact-title foreground helper;
+it is not an application runtime dependency. Project conventions and updated
+UI-selection/three-button toolbar contracts pass.
 
 ## Reload Source Edited Outside yamada
+
+Status: completed and verified with the callback-management workflow above.
 
 Support editing callback bodies in MATLAB while the application remains open in
 yamada. Reload reads the saved file on disk; unsaved MATLAB editor buffers are not
@@ -353,8 +365,8 @@ keyboard behavior with focus in the hierarchy, Inspector and callback popup.
 
 Stage 2 progress: toolbar Refresh, Edit > Reload Source (F5), and unmodified F5
 share one guarded command and availability policy. Callback-popup F5 forwards
-to that same command. Binding-level tests cover all three entries; focused native
-keyboard/focus and combined external-body verification remain Stage 3 work.
+to that same command. Binding-level tests cover all three entries; native
+Hierarchy/Inspector F5, popup F5 and external-body verification also pass.
 
 ### Stage 3: Verify the external MATLAB editing workflow
 
@@ -373,8 +385,10 @@ Record Passed/Failed/Incomplete results and commit passing feature units separat
 Stage 3 progress: the native hierarchy/popup workflow now saves an externally
 edited method body, invokes popup F5, verifies fresh clean history and popup
 invalidation, then Deletes and Undoes the current method body. Safe Preview
-nonexecution and lifecycle cleanup still pass. Updated full-suite and focused
-full-suite review remains pending; native Tab/Enter/F5 and popup visual checks pass.
+nonexecution and lifecycle cleanup pass. Selection preservation, renamed/deleted
+components, externally introduced sharing, long-source/repeated reload and further
+Save/reopen pass. All 256 full-suite tests, native Tab/Enter/F5 and popup visual
+checks pass; the completion evidence is recorded above.
 
 
 ## Add Range and Multiple Selection

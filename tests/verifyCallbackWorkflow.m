@@ -32,6 +32,15 @@ tree = findall(window, "Type", "uitree");
 nodes = findall(tree, "Type", "uitreenode");
 for node = nodes(:)', expand(node); end
 drawnow;
+% Actual F5 works with both Hierarchy and Inspector focus.
+nativeReload(app, window, findall(window, "Type", "uitree"));
+fields = findall(window, "Type", "uieditfield");
+assert(~isempty(fields));
+nativeReload(app, window, fields(1));
+
+tree = findall(window, "Type", "uitree");
+nodes = findall(tree, "Type", "uitreenode");
+for node = nodes(:)', expand(node); end
 test = matlab.uitest.TestCase.forInteractiveUse;
 selected = app.SelectedComponentId;
 
@@ -104,6 +113,53 @@ assert(~contains(app.Document.GeneratedText, "macdReloadedBody"));
 undo.MenuSelectedFcn(undo, []);
 assert(contains(app.Document.GeneratedText, "macdReloadedBody"));
 
+% Preserve selection through unrelated external changes and block newly shared handlers.
+close(popup);
+selectComponent(window, app.Document.getComponentByName(leftName).Id);
+states = macd.source.CallbackSourceAnalyzer.analyze(app.Document, app.Document.RootComponentId, registry);
+handler = states([states.Name] == "SizeChangedFcn").HandlerName;
+saved = app.Document.GeneratedText;
+saved = replace(saved, 'app.UIFigure.Visible = "on";', ...
+    "app.UIFigure.WindowKeyPressFcn = createCallbackFcn(app, @" + handler + ", true);" + newline + ...
+    '        app.UIFigure.Visible = "on";');
+saved = saved + join(repmat("% External long-source verification", 2000, 1), newline) + newline;
+macd.source.SourceWriter.write(path, saved, "CRLF");
+reload = findall(window, "Tag", "macd-reload-source");
+reload.MenuSelectedFcn(reload, []);
+assert(app.Document.getComponent(app.SelectedComponentId).Name == leftName);
+states = macd.source.CallbackSourceAnalyzer.analyze(app.Document, app.Document.RootComponentId, registry);
+assert(states([states.Name] == "SizeChangedFcn").State == "unsupported");
+assert(contains(app.Document.OriginalText, "macdReloadedBody"));
+
+% Renaming the active component externally falls back to the root and clears old spans/history.
+saved = regexprep(saved, "(?<!\w)" + leftName + "(?!\w)", "ExternallyRenamedButton");
+macd.source.SourceWriter.write(path, saved, "CRLF");
+reload.MenuSelectedFcn(reload, []);
+assert(app.SelectedComponentId == app.Document.RootComponentId);
+assert(isempty(app.Document.getComponentByName(leftName)));
+assert(~isempty(app.Document.getComponentByName("ExternallyRenamedButton")));
+assert(~app.Document.canUndo());
+
+% Removing the selected component externally and repeated reloads must leave no stale target.
+selectComponent(window, app.Document.getComponentByName("ExternallyRenamedButton").Id);
+replacement = macd.model.NewAppFactory.createEmpty("MixedCallbackFixture", registry);
+saved = macd.source.RoundTripGenerator(registry).generate(replacement);
+macd.source.SourceWriter.write(path, saved, "CRLF");
+for repetition = 1:3
+    reload.MenuSelectedFcn(reload, []);
+    assert(app.SelectedComponentId == app.Document.RootComponentId);
+    assert(isscalar(app.Document.Components) && ~app.Document.canUndo());
+end
+
+% Further callback changes can be saved and reopened after source replacement.
+tree = findall(window, "Type", "uitree");
+popup = openPopup(test, tree, app.Document.RootComponentId);
+clickAction(popup, "Add", "SizeChangedFcn");
+save = findall(window, "Type", "uimenu", "Text", "&Save");
+save.MenuSelectedFcn(save, []);
+assert(~app.Document.IsDirty);
+assert(contains(string(fileread(path)), "SizeChangedFcn = createCallbackFcn"));
+
 % Open and New must dispose popup targets; repeated opens must not accumulate dialogs.
 open.MenuSelectedFcn(open, []);
 assert(~isvalid(popup));
@@ -124,8 +180,62 @@ evidence = struct("SharedComponent", leftName, "SecondSharedComponent", rightNam
     "RootCallbackCount", numel(rows), "NativeSelectionPreserved", true, ...
     "SourceHistoryVerified", true, "LifecycleVerified", true, ...
     "AnonymousBindingBlocked", true, "TargetDeletionVerified", true, ...
-    "SafePreviewCallbacksInert", true, "ExternalBodyReloadVerified", true);
+    "SafePreviewCallbacksInert", true, "ExternalBodyReloadVerified", true, ...
+    "ReloadSelectionVerified", true, "ExternalSharingBlocked", true, ...
+    "LongSourceAndRepeatedReloadVerified", true, "PostReloadSaveReopenVerified", true, ...
+    "HierarchyAndInspectorNativeF5Verified", true);
 disp(evidence);
+end
+
+function nativeReload(app, window, target)
+% nativeReload Verify an actual F5 while a selected editor control owns keyboard focus.
+arguments (Input)
+    app (1, 1) yamada
+    window (1, 1) matlab.ui.Figure
+    target
+end
+previous = app.Document;
+focus(window);
+focus(target);
+drawnow;
+windows = matlab.internal.webwindowmanager.instance.findAllWebwindows();
+owned = windows(arrayfun(@(candidate) string(candidate.Title) == string(window.Name), windows));
+assert(isscalar(owned));
+owned.bringToFront();
+titlePath = string(tempname) + ".txt";
+titleCleanup = onCleanup(@() delete(titlePath));
+macd.source.SourceWriter.write(titlePath, string(window.Name), "LF");
+helper = fullfile(fileparts(mfilename("fullpath")), "focusVerificationWindow.ps1");
+[status, message] = system("powershell.exe -NoProfile -ExecutionPolicy Bypass -File """ + ...
+    helper + """ -TitleFile """ + titlePath + """ -OwnerProcessId " + feature("getpid"));
+assert(status == 0, "macd:CallbackWorkflow:ActivateFailed", "%s", message);
+focus(window);
+focus(target);
+started = tic;
+while ~(owned.isFocused && owned.isWindowActive) && toc(started) < 10, drawnow; end
+assert(owned.isFocused && owned.isWindowActive, ...
+    "macd:CallbackWorkflow:FocusUnavailable", ...
+    "Expected active editor: focused=%d, active=%d.", owned.isFocused, owned.isWindowActive);
+robot = javaObject("java.awt.Robot");
+robot.keyPress(116);
+robot.keyRelease(116);
+started = tic;
+while app.Document == previous && toc(started) < 10, drawnow; end
+assert(app.Document ~= previous && ~app.Document.IsDirty && ~app.Document.canUndo());
+end
+
+function selectComponent(window, componentId)
+% selectComponent Select a live hierarchy node through the editor selection binding.
+arguments (Input)
+    window (1, 1) matlab.ui.Figure
+    componentId (1, 1) string
+end
+tree = findall(window, "Type", "uitree");
+nodes = findall(tree, "Type", "uitreenode");
+node = nodes(arrayfun(@(candidate) string(candidate.NodeData) == componentId, nodes));
+tree.SelectedNodes = node;
+tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+drawnow;
 end
 
 function [source, leftName, rightName] = mixedFixture(registry)
@@ -178,6 +288,34 @@ item = findall(tree.ContextMenu, "Tag", "macd-manage-callbacks");
 test.chooseContextMenu(node, item);
 popup = findall(0, "Tag", "macd-callback-manager");
 drawnow;
+test.hover(popup, [10 10]);
+windows = matlab.internal.webwindowmanager.instance.findAllWebwindows();
+owned = windows(arrayfun(@(candidate) string(candidate.Title) == string(popup.Name), windows));
+labels = findall(popup, "Type", "uilabel");
+labels = labels(arrayfun(@(label) label.Parent == gridsForRows(popup) && label.Layout.Row <= 3, labels));
+started = tic;
+ready = false;
+while ~ready && toc(started) < 10
+    drawnow;
+    rendered = string(jsondecode(owned.executeJS("document.body.innerText")));
+    ready = true;
+    for label = labels(:)'
+        ready = ready && contains(rendered, string(label.Text));
+    end
+end
+assert(ready, "macd:CallbackWorkflow:LabelsNotReady", "Callback names must be visibly rendered before capture.");
+end
+
+function grid = gridsForRows(popup)
+% gridsForRows Return the scrollable callback-row grid for visible-label verification.
+arguments (Input)
+    popup (1, 1) matlab.ui.Figure
+end
+arguments (Output)
+    grid (1, 1) matlab.ui.container.GridLayout
+end
+grids = findall(popup, "Type", "uigridlayout");
+grid = grids(arrayfun(@(candidate) string(candidate.Scrollable) == "on", grids));
 end
 
 function clickAction(popup, action, name)
