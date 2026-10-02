@@ -39,6 +39,7 @@ classdef yamada < matlab.apps.AppBase
         HierarchyPanel matlab.ui.container.Panel
         HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
+        HierarchyContextMenu macd.ui.HierarchyContextMenu = macd.ui.HierarchyContextMenu.empty
         PreviewPanel matlab.ui.container.Panel
         PreviewScrollPanel matlab.ui.container.Panel
         PreviewVerticalDivider matlab.ui.container.Panel
@@ -114,6 +115,7 @@ classdef yamada < matlab.apps.AppBase
 
             % Stop deferred UI work before releasing the editor figure.
             app.IsClosingProgrammatically = true;
+            if ~isempty(app.HierarchyContextMenu), delete(app.HierarchyContextMenu), end
             if ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer)
                 stop(app.TabLayoutTimer);
                 wait(app.TabLayoutTimer);
@@ -740,11 +742,31 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % Delete old nodes so the browser cannot retain stale model identities.
+            if isempty(app.HierarchyContextMenu)
+                app.HierarchyContextMenu = macd.ui.HierarchyContextMenu(app.UIFigure, ...
+                    app.HierarchyTree, app.Registry, @() app.Document, ...
+                    @(id) app.manageCallbacksRequested(id));
+            end
+            app.HierarchyContextMenu.reset();
             delete(app.HierarchyTree.Children);
             if isempty(app.Document) || strlength(app.Document.RootComponentId) == 0
                 return
             end
             app.addHierarchyNode([], app.Document.RootComponentId);
+        end
+
+        function manageCallbacksRequested(app, componentId)
+            % manageCallbacksRequested Resolve callback availability for the explicit context target.
+            arguments (Input)
+                app (1, 1) yamada
+                componentId (1, 1) string
+            end
+
+            % Keep command routing independent of the active Inspector selection.
+            component = app.Document.getComponent(componentId);
+            if isempty(component), return, end
+            states = macd.source.CallbackSourceAnalyzer.analyze(app.Document, componentId, app.Registry);
+            app.setStatus(component.Name + ": " + numel(states) + " callback bindings available.");
         end
 
         function node = addHierarchyNode(app, parentNode, componentId)

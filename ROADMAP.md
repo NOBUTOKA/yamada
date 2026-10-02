@@ -156,6 +156,14 @@ clicks; verify unchanged selection/Inspector/Preview, context-target identity an
 availability after rebuild/Open/New, and cleanup. Menu access must not dirty the
 document or create history. Validate native hit targeting before building on it.
 
+Stage 2 progress: a shared native HierarchyContextMenu adapter captures the clicked
+node from ContextMenuOpeningFcn.InteractionInformation.Node without touching
+selection. Command dispatch validates the captured document and component again;
+empty space, reset/rebuild, deleted targets and replaced documents invalidate it.
+Native chooseContextMenu tests prove unselected-node and root targeting preserves
+selection. The editor command seam currently reports callback availability; Stage
+3 will connect it to the independent popup. UI inventory is updated to 110 tests.
+
 ### Stage 3: Build the independent callback popup
 
 - Follow existing modal-dialog lifecycle conventions. Show the target name and a
