@@ -105,7 +105,8 @@ Keep entry points thin: resolve a component ID and invoke a shared command. The
 popup owns transient controls, DocumentModel owns validated edits and history,
 and the source layer owns parsing and localized rewrites. Safe Preview must never
 execute the opened application's callbacks. Review each stage at its checkpoint
-before proceeding. This entry delivers planning only.
+before proceeding. The progress notes below identify implemented internal seams;
+the user-facing workflow is not complete until all stages pass.
 
 ### Stage 1: Define callback discovery and editing contracts
 
@@ -127,6 +128,16 @@ Checkpoint: review discovery and Add/Delete semantics using new components, dire
 assignments, createCallbackFcn bindings, empty assignments, constructor bindings,
 anonymous functions, shared handlers, and repeated/conditional assignments.
 Confirm unsupported forms have diagnostics and no-edit source remains exact.
+
+Stage 1 progress: effective callback discovery and immutable CallbackState results
+are implemented. CallbackSourceAnalyzer recognizes direct createComponents bindings
+using createCallbackFcn(app, @Method, true) or @app.Method, explicit empty bindings,
+and whole instance-method spans with nested blocks. Conditional/repeated/constructor
+bindings, arbitrary anonymous functions, shared/missing handlers, indirect access,
+dynamic dispatch, and unproven block structures return unsupported with a reason.
+Add/Delete semantics remain binding-plus-method transactions for subsequent stages.
+Tests cover the state table, multiline source, no-edit generation, and a sentinel
+side effect proving that parsing/analysis/generation do not run the callback.
 
 ### Stage 2: Add the editor Hierarchy context menu
 
