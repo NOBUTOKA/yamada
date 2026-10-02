@@ -116,9 +116,10 @@ before proceeding. This entry delivers planning only.
 - Define absent/empty, safely editable, and preserved unsupported/ambiguous binding
   states, with explicit reasons for unavailable operations.
 - Define Add as generating a uniquely named empty handler method and its binding
-  in one edit. Define Delete as detaching the binding while retaining the handler
-  body, including shared handlers and user code. Method-body editing and automatic
-  unused-method deletion remain outside this task.
+  in one edit. Define Delete as removing both the binding and the complete handler
+  method in one edit. Prove method ownership and absence of other references before
+  enabling deletion; shared handlers or ambiguous references are unsafe. Editing
+  method bodies inside yamada remains outside this task.
 - Define supported binding forms, source spans, and method/assignment insertion
   anchors. Read existing expressions without evaluation; refuse ambiguous ownership.
 
@@ -132,14 +133,15 @@ Confirm unsupported forms have diagnostics and no-edit source remains exact.
 - Add a native menu with Manage Callbacks... as its first command. Provide a shared
   command/availability seam for future entries without implementing deferred
   copy/cut/paste operations in this feature.
-- Right-click selects the clicked node through the existing selection path, then
-  targets its component ID. Empty space must not reuse the previously selected
-  target. Disable the command for missing targets or callback-free components.
+- Right-click targets the clicked node's component ID without changing selection.
+  Keep the context target separate from SelectedComponentId and do not refresh the
+  Inspector or Preview selection. Empty space must not reuse a stale target.
+  Disable the command for missing targets or callback-free components.
 - Account for node reconstruction, deletion, document replacement, and cleanup.
   Keep editor menu handles out of ComponentRecord and generated application source.
 
 Checkpoint: test selected/unselected, root/nested, callback-free, and empty-space
-clicks; verify selection and Inspector synchronization, target identity and menu
+clicks; verify unchanged selection/Inspector/Preview, context-target identity and menu
 availability after rebuild/Open/New, and cleanup. Menu access must not dirty the
 document or create history. Validate native hit targeting before building on it.
 
@@ -147,9 +149,10 @@ document or create history. Validate native hit targeting before building on it.
 
 - Follow existing modal-dialog lifecycle conventions. Show the target name and a
   scrolling list of callback name, Add, and Delete, with keyboard navigation.
-- Enable Add for absent bindings and Delete for safely removable bindings. Disable
-  mutation of preserved unsupported bindings and explain why; existence alone
-  must not enable deletion.
+- Enable Add only when creating both binding and method is safe; enable Delete only
+  when removing both binding and method is safe. Disable both buttons for any
+  callback that cannot be edited safely and explain why, including shared methods
+  or uncertain references. Existence alone must not imply safe deletion.
 - Route actions through narrow shared commands and refresh from authoritative
   model state after success. Each Add/Delete applies immediately as one undoable
   operation; Close only closes the popup. Failures must not partially update rows.
@@ -165,8 +168,10 @@ closing and failure display. Verify the lifecycle independently of source editin
   setProperty/resetProperty. Preflight target identity, supported callback, binding
   ownership, safe anchors, and handler-name collisions before any mutation.
 - Record binding and generated-handler changes as one transaction. Preserve exact
-  prior entries and source metadata for Undo/Redo, not only literal values.
-- Delete only the owned binding and retain handler methods and other bindings.
+  prior entries, full method text and source metadata for Undo/Redo, not only values.
+- Delete the owned binding and complete handler method atomically, including its
+  body and owned help. Preserve other bindings/methods; block both actions when
+  sharing, indirect references, or ambiguous source prevent proving safety.
   Reject stale/repeated requests safely. Coordinate dirty state, diagnostics,
   source preview, and refresh through yamada without unnecessary tree rebuilding.
 
@@ -181,8 +186,9 @@ one history entry; rejected edits leave model, history and dirty state unchanged
 - Add English method help and practical arguments blocks to generated stubs using
   the supported handler signature contract. Do not add the editor's GPL notice
   to user output.
-- Preserve unrelated methods, bodies, comments and unsupported source. Remove only
-  the owned parsed binding on Delete. Validate nonoverlapping edits and safe
+- Preserve unrelated methods, bodies, comments and unsupported source. Delete both
+  the owned parsed binding and its complete method using validated spans, with no
+  partial deletion when either is unsafe. Validate nonoverlapping edits and safe
   insertion anchors before committing; preflight failure must roll back model edits.
 - Coordinate pending additions/removals across repeated generation and Save/reparse
   so assignments and methods are not duplicated. Keep Safe Preview inert.
@@ -209,6 +215,65 @@ Checkpoint: run relevant parser/model/generator/dialog/editor suites, then the f
 MATLAB suite through the escalated interactive-account verification path. Review
 Passed/Failed/Incomplete results and perform a visible right-click/popup usability
 check. Commit cohesive passing implementation units separately as they complete.
+
+
+## Reload Source Edited Outside yamada
+
+Support editing callback bodies in MATLAB while the application remains open in
+yamada. Reload reads the saved file on disk; unsaved MATLAB editor buffers are not
+part of this operation. Implement this as an independent lifecycle feature and
+include it in callback-workflow integration verification.
+
+### Stage 1: Define safe reload and external-change handling
+
+- Reload the current document's FilePath without an Open dialog. Disable the
+  command when no saved path exists; report missing/unreadable files and parse
+  failures without replacing the current document or history.
+- Reuse DocumentLifecycleService policy seams, but do not blindly call the current
+  Open/replace sequence: it parses before a guard that may save over the same file.
+- Compare the on-disk source with the loaded/saved snapshot. For local dirty state,
+  request Save/Discard/Cancel; when disk also changed, do not offer an ordinary
+  same-path Save that would silently overwrite the external edit. Offer a clearly
+  explained separate-file save, discard-and-reload, or cancel, and define how the
+  original reload target is retained if Save As changes the document path.
+- Resolve the user's choice before preparing the final reload snapshot. After any
+  save, read and parse fresh source rather than installing an earlier parsed copy.
+  Detect a file changed again during the operation and abort/retry safely.
+- Atomically replace only after successful parsing. Start clean history with no
+  Undo into the old source snapshot; invalidate source spans, drafts and popup
+  targets. Preserve selection by unique component identity/name where possible,
+  falling back to the root if the component disappeared.
+
+Checkpoint: test clean/dirty documents, disk changes, cancellation, Save failure,
+Save As, missing/unreadable files, parse errors and changes during reload. Confirm
+no external edits are silently overwritten, failures retain current state, and
+fresh method bodies and spans are visible after a successful reload.
+
+### Stage 2: Add the three Reload entry points
+
+- Add a Refresh button alongside Undo/Redo in the existing toolbar, a Reload Source
+  command in the Edit menu, and F5 handling through the editor keyboard dispatcher.
+  Show the shortcut and a tooltip explaining that saved source is reloaded.
+- Route all three entries through one command and identical availability rules;
+  avoid duplicate execution, reentrant reloads and conflicts with focused controls.
+
+Checkpoint: invoke toolbar, menu and F5 through real UI bindings; verify identical
+results and availability for unsaved/new, saved and missing-file documents. Check
+keyboard behavior with focus in the hierarchy, Inspector and callback popup.
+
+### Stage 3: Verify the external MATLAB editing workflow
+
+- Save an app with generated callbacks, edit and save a handler externally, reload
+  in yamada, and perform further Add/Delete and Save/reopen operations. Verify the
+  edited body survives unrelated changes and Delete removes the current body.
+- Test renamed/deleted components, shared methods introduced externally, long
+  source files, repeated reloads, popup cleanup and reset Undo/Redo availability.
+- Document disk-versus-editor-buffer behavior, dirty-state choices, history reset
+  and the Refresh/Edit/F5 entry points. Update test-selection contracts as needed.
+
+Checkpoint: run lifecycle, interaction, parser and round-trip suites, followed by
+full escalated MATLAB verification and a visible MATLAB/yamada editing check.
+Record Passed/Failed/Incomplete results and commit passing feature units separately.
 
 
 ## Add Range and Multiple Selection
