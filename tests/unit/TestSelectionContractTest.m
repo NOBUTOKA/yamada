@@ -39,7 +39,7 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
             testCase.verifyEqual(sort(quickNames), sort([ ...
                 setdiff(allNames, [uiNames, contractNames]), expectedUiSmoke]));
             testCase.verifyEqual(sort(intersect(quickNames, uiNames)), sort(expectedUiSmoke));
-            testCase.verifyEqual(numel(uiNames), 110);
+            testCase.verifyEqual(numel(uiNames), 113);
         end
 
         function areaTagsAlwaysAddToQuickCoverage(testCase)

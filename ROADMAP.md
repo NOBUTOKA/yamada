@@ -181,6 +181,15 @@ Checkpoint: hidden-dialog tests verify catalog coverage/order across variants,
 button states, unsupported explanations, long lists, focus, repeated opening,
 closing and failure display. Verify the lifecycle independently of source editing.
 
+Stage 3 progress: CallbackManagerDialog now shows the target name and scrollable
+catalog-ordered callback rows with mutually exclusive Add/Delete availability and
+unsupported-reason tooltips. Commands revalidate state, refresh after success,
+and report failures without optimistic changes. The editor reuses the popup for
+the same target, closes it on document replacement/cleanup, and refreshes or closes
+it when the target expires. Hidden-dialog and real editor-menu tests pass; model
+mutation is still the Stage 4 integration seam and currently reports unavailable.
+The UI test inventory is 113.
+
 ### Stage 4: Implement atomic callback model operations
 
 - Add dedicated DocumentModel operations rather than bypassing read-only checks in

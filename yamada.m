@@ -40,6 +40,8 @@ classdef yamada < matlab.apps.AppBase
         HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
         HierarchyContextMenu macd.ui.HierarchyContextMenu = macd.ui.HierarchyContextMenu.empty
+        CallbackDialog macd.ui.CallbackManagerDialog = macd.ui.CallbackManagerDialog.empty
+        CallbackDialogTargetId string = ""
         PreviewPanel matlab.ui.container.Panel
         PreviewScrollPanel matlab.ui.container.Panel
         PreviewVerticalDivider matlab.ui.container.Panel
@@ -115,6 +117,7 @@ classdef yamada < matlab.apps.AppBase
 
             % Stop deferred UI work before releasing the editor figure.
             app.IsClosingProgrammatically = true;
+            app.closeCallbackDialog();
             if ~isempty(app.HierarchyContextMenu), delete(app.HierarchyContextMenu), end
             if ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer)
                 stop(app.TabLayoutTimer);
@@ -418,6 +421,7 @@ classdef yamada < matlab.apps.AppBase
                 status (1, 1) string
             end
 
+            app.closeCallbackDialog();
             app.clearInspector();
             app.Document = document;
             if ~isempty(document.Components)
@@ -468,6 +472,9 @@ classdef yamada < matlab.apps.AppBase
             app.refreshInspector();
             app.refreshEditCommands();
             app.refreshTitle();
+            if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog)
+                app.CallbackDialog.refresh();
+            end
             % Publish geometry after every shell surface has finished native layout.
             drawnow;
             app.updateInteractionOverlay();
@@ -765,8 +772,42 @@ classdef yamada < matlab.apps.AppBase
             % Keep command routing independent of the active Inspector selection.
             component = app.Document.getComponent(componentId);
             if isempty(component), return, end
-            states = macd.source.CallbackSourceAnalyzer.analyze(app.Document, componentId, app.Registry);
-            app.setStatus(component.Name + ": " + numel(states) + " callback bindings available.");
+            if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog) && ...
+                    app.CallbackDialog.isOpen() && app.CallbackDialogTargetId == componentId
+                app.CallbackDialog.focus();
+                return
+            end
+            app.closeCallbackDialog();
+            document = app.Document;
+            app.CallbackDialogTargetId = componentId;
+            app.CallbackDialog = macd.ui.CallbackManagerDialog(component.Name, ...
+                @() macd.source.CallbackSourceAnalyzer.analyze(document, componentId, app.Registry), ...
+                @(name, action) app.callbackActionRequested(componentId, name, action), ...
+                @() app.Document == document && ~isempty(document.getComponent(componentId)));
+        end
+
+        function closeCallbackDialog(app)
+            % closeCallbackDialog Release transient callback UI before replacing document state.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog), delete(app.CallbackDialog), end
+            app.CallbackDialog = macd.ui.CallbackManagerDialog.empty;
+            app.CallbackDialogTargetId = "";
+        end
+
+        function message = callbackActionRequested(app, componentId, name, action)
+            % callbackActionRequested Report the pending model-operation integration seam.
+            arguments (Input)
+                app (1, 1) yamada
+                componentId (1, 1) string
+                name (1, 1) string
+                action (1, 1) string
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+            message = "Callback model operations are not available yet.";
         end
 
         function node = addHierarchyNode(app, parentNode, componentId)

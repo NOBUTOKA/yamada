@@ -93,9 +93,14 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             inspector = findall(figure, "Tag", "macd-inspector-property-editor");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", root)));
             item.MenuSelectedFcn(item, []);
+            popup = findall(0, "Tag", "macd-callback-manager");
+            testCase.verifyEqual(numel(popup), 1);
+            item.MenuSelectedFcn(item, []);
+            testCase.verifyEqual(findall(0, "Tag", "macd-callback-manager"), popup);
             testCase.verifyEqual(app.SelectedComponentId, selected);
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
             testCase.verifyEqual(findall(figure, "Tag", "macd-inspector-property-editor"), inspector);
+            close(popup);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
             testCase.verifyTrue(isvalid(menu));
             testCase.verifyEqual(item.Enable, matlab.lang.OnOffSwitchState.off);
