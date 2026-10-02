@@ -222,6 +222,30 @@ classdef ComponentRegistry < handle
         end
     end
 
+    methods
+        function callbacks = getEffectiveCallbacks(obj, factory, parentFactory, creationArguments)
+            % getEffectiveCallbacks Return catalog-declared callback bindings for one component.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+                factory (1, 1) string
+                parentFactory (1, 1) string = ""
+                creationArguments cell = {}
+            end
+            arguments (Output)
+                callbacks macd.model.PropertyDefinition
+            end
+
+            % Preserve effective catalog order without exposing execution-control properties.
+            properties = obj.getEffectiveProperties(factory, parentFactory, creationArguments);
+            isCallback = false(size(properties));
+            for index = 1:numel(properties)
+                schema = properties(index).ValueSchema;
+                isCallback(index) = isfield(schema, "kind") && string(schema.kind) == "callback";
+            end
+            callbacks = properties(isCallback);
+        end
+    end
+
     methods (Access = private)
         function definition = selectVariant(obj, candidates, creationArguments, factory)
             % selectVariant Resolve the most specific creation-argument variant.
