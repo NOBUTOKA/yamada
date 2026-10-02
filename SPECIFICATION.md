@@ -50,6 +50,32 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
   Save, Discard, or Cancel when required; a canceled or failed save leaves the
   current document open.
 
+### Callback management
+
+- Right-clicking a Hierarchy node opens an editor-owned context menu for that node
+  without changing the selected component, Inspector, or Preview selection. Empty
+  space and stale/deleted targets cannot reuse a previous command target.
+- Manage Callbacks opens one independent modal popup for the target. Callback rows
+  come from the effective component/style/parent catalog surface, excluding
+  callback execution-control properties. Long lists scroll.
+- Add creates a unique empty instance method and a createCallbackFcn binding.
+  Delete removes both the owned binding and the complete owned method, including
+  its body and immediately following help. Closing the popup retains edits.
+- Each action preflights complete source generation and records one Undo/Redo step.
+  Failure leaves intentions, source preview, diagnostics, history and dirty state
+  unchanged. Undo restores exact original source bodies; unrelated code is kept.
+- Existing direct createComponents assignments using createCallbackFcn(app,
+  @Method, true) or @app.Method can be deleted when the method is unique and has no
+  other detected references. Empty bindings can be replaced safely.
+- Shared/missing methods, arbitrary anonymous functions, constructor bindings,
+  conditional/repeated assignments, indirect/dynamic references, and unproven
+  structural scopes disable both Add and Delete with an explanatory tooltip.
+- The popup refreshes after edits and history changes, reuses an existing instance
+  for the same target, and closes when its target or document expires.
+- Source parsing, source generation and Safe Preview never execute handlers.
+  MATLAB remains the editor for handler bodies; source reload is a separate
+  roadmap feature.
+
 ## Standard Component Catalog
 
 The catalog includes the following persistent MATLAB R2024a UI components and creation variants:
@@ -89,7 +115,7 @@ Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolo
   the UIFigure. After shrinking the figure, stranded components remain
   accessible as selectable outlines on the dark background and can be dragged
   back into the figure. The figure canvas keeps its actual model size.
-- Callbacks, nonliteral expressions, and unsupported statements remain in the original source where possible.
+- Unmanaged callbacks, nonliteral expressions, and unsupported statements remain in the original source where possible; callback management changes only proven binding/method ranges.
 - Diagnostics distinguish state that cannot be previewed from state that cannot be preserved safely.
 
 Because of this limitation, Safe Preview may not reproduce the input application's appearance completely. It displays the model that could be parsed safely and is not a substitute for running the input application.

@@ -69,6 +69,33 @@ checkpoint. The editor title is derived from the document identity and `IsDirty`
 | [`dev/component-data`](../dev/component-data) | Audited source data, design artifacts, and reproducible catalog-generation scripts |
 | [`tests`](../tests) | Unit tests and preserved AppBase input fixtures |
 
+## Callback Management
+
+HierarchyContextMenu owns one shared native menu and a transient context target.
+The hit node comes from ContextMenuOpeningFcn.InteractionInformation.Node; it does
+not modify the editor's SelectedComponentId. Dispatch checks document identity and
+component existence again, and hierarchy rebuilds reset the transient target.
+
+CallbackManagerDialog owns only its modal figure, scrollable rows, explanations,
+and injected state/action/validity functions. It displays immutable CallbackState
+results from CallbackSourceAnalyzer. The effective catalog valueSchema.kind
+identifies callbacks without introducing special Inspector property rows.
+
+DocumentModel.applyCallbackAction stores typed immutable CallbackEdit intentions
+against OriginalText. One history record contains the before/after intention
+arrays. Original binding and method spans and the complete source snapshot remain
+available for Delete/Add, Undo/Redo and stale-source rejection. The full generator
+is preflighted before history is committed; a failure restores intentions,
+diagnostics and generated preview.
+
+NewAppGenerator emits canonical bindings and English-documented stubs.
+CallbackSourceEdits supplies original-offset replacements to RoundTripGenerator,
+which combines common insertion anchors and rejects overlapping source claims.
+The original input is never run; preserved expressions do not reach Safe Preview.
+Saving retains the original snapshot and intentions, so repeated generation does
+not reapply patches to already patched text. Reopening reparses the saved file and
+creates fresh ownership spans. Dedicated source reload remains a roadmap task.
+
 ## Shared Document Model
 
 [`DocumentModel`](../+macd/+model/DocumentModel.m) is the authoritative in-memory

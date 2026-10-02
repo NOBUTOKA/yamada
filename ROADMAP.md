@@ -283,6 +283,16 @@ Passed/Failed/Incomplete results and perform a visible right-click/popup usabili
 check. Commit cohesive passing implementation units separately as they complete.
 
 
+Stage 6 progress: the full MATLAB R2024a suite passes with 251 Passed, 0 Failed,
+0 Incomplete. tests/verifyCallbackWorkflow.m additionally exercises native
+right-click targeting on nested controls, shared and anonymous binding safety,
+a 13-callback root list, immediate Add/Delete, source Undo/Redo, target deletion,
+Open/New and repeated popup cleanup. A source-side sentinel confirms the real
+Safe Preview workflow does not execute handlers. Project convention checks pass.
+README, specification and architecture documentation describe the implemented
+callback behavior. Source reload, combined workflow verification, keyboard/focus
+verification and final visual review remain required before completing Stage 6.
+
 ## Reload Source Edited Outside yamada
 
 Support editing callback bodies in MATLAB while the application remains open in

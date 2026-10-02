@@ -13,6 +13,7 @@
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
 - Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
 - Add and delete components and edit supported properties
+- Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion
 - View validation diagnostics and compare the original and generated source before saving
 - Track unsaved edits and guard New, Open, and Close with Save, Discard, or Cancel
 - Preserve unsupported code and nonliteral expressions where possible, and build a Safe Preview without running the input application or its callbacks
@@ -86,6 +87,28 @@ introduce a new overlap are also rejected. Source-backed values are preserved.
 2. Review the parsed hierarchy, Safe Preview, and diagnostics.
 3. Modify supported components and properties.
 4. Validate the document and review the diff. Save to a new file if you want to preserve the original.
+
+### Manage callbacks
+
+Right-click a component in **Hierarchy** and choose **Manage Callbacks...**.
+Right-clicking an unselected component leaves the current selection, Properties,
+and Preview selection unchanged. The popup title identifies the component being
+managed; its scrollable rows list callbacks supported by that component's catalog
+variant.
+
+- **Add** creates an assignment and a uniquely named empty method together.
+- **Delete** removes the assignment and the entire handler method, including its
+  body. Each action is one Undo/Redo operation and applies immediately; **Close**
+  only closes the popup.
+- Existing shared methods, arbitrary anonymous functions, constructor bindings,
+  conditional/repeated assignments, dynamic references, and source whose ownership
+  cannot be established have both buttons disabled. Hover over the row or buttons
+  to read the reason.
+
+Review the source diff before saving. To edit a handler body in MATLAB, first save
+in yamada, edit and save the `.m` file in MATLAB, then reopen that file while yamada
+has no unsaved edits. The separate Reload Source/F5 workflow is still planned.
+The opened application's callbacks are never run by the editor or Safe Preview.
 
 ## Scope and Limitations
 
