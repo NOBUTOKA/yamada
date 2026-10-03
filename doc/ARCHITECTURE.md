@@ -318,6 +318,12 @@ tracks and children. Transparent targets are painted from outer to inner grids
 in one background layer so descendants win hit testing without covering active
 child controls or track settings. Selecting a child changes view state only.
 
+The editing surface reserves space around the active grid for its row and
+column settings buttons. Headers and their popovers use the editing surface
+bounds, including the dark area outside UIFigure, so full-figure grids and
+stranded grids retain their settings controls. The buttons sit outside the grid
+edges, distinct from the figure resize handles.
+
 #### Track and child edits
 
 The Inspector remains focused on the selected component. `RowHeight` and

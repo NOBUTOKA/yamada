@@ -541,6 +541,14 @@ Screenshots were checked before the full suite. Geometry is also republished
 after shell construction so opened Grid Layout children use settled positions.
 The R2024a full suite passed 222/222 tests; the three HTML overlay tests passed.
 
+Grid settings button repair (2026-10-03): a grid covering the entire UIFigure
+now keeps its row and column settings buttons in the dark editing margin.
+The active grid reserves space for the buttons, and headers and popovers use
+editing-area bounds rather than figure bounds. Screenshots confirm that the
+buttons are visible outside the orange figure handles. The Grid Layout area
+profile passed 168/168 tests; all four HTML overlay tests passed, including
+settings buttons and popup placement for a grid outside a shrunken figure.
+
 ## Offer an Explicit Save As Line-Ending Choice
 
 New documents currently use the host-default line ending, while opened documents

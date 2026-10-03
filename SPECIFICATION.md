@@ -26,9 +26,11 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 - Inspect the component hierarchy and Safe Preview.
 - Edit supported properties in the typed Property Inspector.
 - Move and resize absolutely positioned components.
-- Edit a Grid Layout's tracks from its Safe Preview settings buttons: select
-  `fit`, a fixed pixel size, or a flexible `x` weight; insert or delete tracks
-  when every affected direct-child placement has a deterministic result.
+- Select a Grid Layout or one of its children to show Safe Preview's row and
+  column settings buttons. Buttons along the figure boundary appear in the
+  dark editing margin outside the UIFigure. Choose `fit`, a fixed pixel size,
+  or a flexible `x` weight; insert or delete tracks when every affected
+  direct-child placement has a deterministic result.
 - Drag a selected direct Grid Layout child to another cell or resize its row and
   column span. The Property Inspector remains the exact-value fallback for
   `Layout.Row` and `Layout.Column`.

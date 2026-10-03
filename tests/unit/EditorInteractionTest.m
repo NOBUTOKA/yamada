@@ -333,6 +333,13 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             gridData = overlays.Data.gridEditor;
             historyIndex = app.Document.HistoryIndex;
 
+            % A full-figure grid needs editing space for settings outside every edge.
+            surface = overlays.Data.surfaceBounds;
+            testCase.verifyLessThanOrEqual(surface(1:2), gridData.outerBounds(1:2) - 14);
+            testCase.verifyGreaterThanOrEqual(surface(1:2) + surface(3:4), ...
+                gridData.outerBounds(1:2) + gridData.outerBounds(3:4) + 14);
+            testCase.verifyEqual([overlays.Data.width overlays.Data.height], [640 480]);
+
             overlays.HTMLEventReceivedFcn(overlays, struct( ...
                 "HTMLEventName", "GridAction", ...
                 "HTMLEventData", struct("action", "set-track", ...

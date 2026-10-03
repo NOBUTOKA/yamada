@@ -307,10 +307,15 @@ function renderGridEditor(data) {
     var rightRail = Number(outer[0]) + Number(outer[2]) + railGap;
     var topRail = currentData.height - Number(outer[1]) - Number(outer[3]) - railGap - buttonSize;
     var bottomRail = currentData.height - Number(outer[1]) + railGap;
-    var rowRail = leftRail >= 0 ? leftRail :
-      (rightRail + buttonSize <= currentData.width ? rightRail : null);
-    var columnRail = topRail >= 0 ? topRail :
-      (bottomRail + buttonSize <= currentData.height ? bottomRail : null);
+    var surface = currentData.surfaceBounds || [0, 0, currentData.width, currentData.height];
+    var surfaceLeft = Number(surface[0]);
+    var surfaceRight = surfaceLeft + Number(surface[2]);
+    var surfaceTop = currentData.height - Number(surface[1]) - Number(surface[3]);
+    var surfaceBottom = currentData.height - Number(surface[1]);
+    var rowRail = leftRail >= surfaceLeft ? leftRail :
+      (rightRail + buttonSize <= surfaceRight ? rightRail : null);
+    var columnRail = topRail >= surfaceTop ? topRail :
+      (bottomRail + buttonSize <= surfaceBottom ? bottomRail : null);
     if (axis === "row" && rowRail === null) return;
     if (axis === "column" && columnRail === null) return;
     if (axis === "row") {
@@ -318,13 +323,13 @@ function renderGridEditor(data) {
       var rowCenter = rowBand ? (rowBand.start + rowBand.end) / 2 :
         Number(track.bounds[1]) + Number(track.bounds[3]) / 2;
       header.style.left = rowRail + "px";
-      header.style.top = Math.max(0, Math.min(currentData.height - buttonSize,
+      header.style.top = Math.max(surfaceTop, Math.min(surfaceBottom - buttonSize,
         currentData.height - rowCenter - buttonSize / 2)) + "px";
     } else {
       var columnBand = collapsedBand(axis, track, data.columnTracks);
       var columnCenter = columnBand ? (columnBand.start + columnBand.end) / 2 :
         Number(track.bounds[0]) + Number(track.bounds[2]) / 2;
-      header.style.left = Math.max(0, Math.min(currentData.width - buttonSize,
+      header.style.left = Math.max(surfaceLeft, Math.min(surfaceRight - buttonSize,
         columnCenter - buttonSize / 2)) + "px";
       header.style.top = columnRail + "px";
     }
@@ -718,13 +723,18 @@ function placeTrackPopover(header, popover) {
   var margin = 4;
   var width = popover.offsetWidth;
   var height = popover.offsetHeight;
-  var maxLeft = Math.max(margin, controls.clientWidth - width - margin);
-  var maxTop = Math.max(margin, controls.clientHeight - height - margin);
-  var left = Math.max(margin, Math.min(maxLeft, header.offsetLeft));
+  var surface = currentData.surfaceBounds || [0, 0, controls.clientWidth, controls.clientHeight];
+  var minLeft = Number(surface[0]) + margin;
+  var minTop = currentData.height - Number(surface[1]) - Number(surface[3]) + margin;
+  var right = Number(surface[0]) + Number(surface[2]);
+  var bottom = currentData.height - Number(surface[1]);
+  var maxLeft = Math.max(minLeft, right - width - margin);
+  var maxTop = Math.max(minTop, bottom - height - margin);
+  var left = Math.max(minLeft, Math.min(maxLeft, header.offsetLeft));
   var below = header.offsetTop + header.offsetHeight + margin;
   var above = header.offsetTop - height - margin;
-  var top = below + height <= controls.clientHeight - margin ? below : above;
-  top = Math.max(margin, Math.min(maxTop, top));
+  var top = below + height <= bottom - margin ? below : above;
+  top = Math.max(minTop, Math.min(maxTop, top));
   popover.style.left = left + "px";
   popover.style.top = top + "px";
 }

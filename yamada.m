@@ -971,6 +971,8 @@ classdef yamada < matlab.apps.AppBase
 
             minimum = [0 0];
             maximum = double(app.PreviewCanvas.Position(3:4));
+            activeGridId = macd.model.ActiveGridResolver.resolve( ...
+                app.Document, app.SelectedComponentId);
             if isa(app.PreviewHandles, "containers.Map")
                 keys = app.PreviewHandles.keys();
                 for index = 1:numel(keys)
@@ -983,9 +985,13 @@ classdef yamada < matlab.apps.AppBase
                     if any(~isfinite(rectangle)) || any(rectangle(3:4) <= 0)
                         continue
                     end
-                    % Leave room for component outlines and their resize handles.
-                    minimum = min(minimum, floor(rectangle(1:2)) - 6);
-                    maximum = max(maximum, ceil(rectangle(1:2) + rectangle(3:4)) + 6);
+                    % Keep active-grid settings buttons outside the figure's resize handles.
+                    margin = 6;
+                    if string(keys{index}) == activeGridId
+                        margin = 14;
+                    end
+                    minimum = min(minimum, floor(rectangle(1:2)) - margin);
+                    maximum = max(maximum, ceil(rectangle(1:2) + rectangle(3:4)) + margin);
                 end
             end
             bounds = [minimum maximum - minimum];
