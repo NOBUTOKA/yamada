@@ -41,6 +41,14 @@ svg { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overf
 .grid-drop-band { position: absolute; z-index: 1; box-sizing: border-box; border: 1px dashed rgba(18, 77, 168, 0.7); background: rgba(18, 77, 168, 0.06); pointer-events: none; }
 .grid-child.selected { border: 2px solid rgba(18, 77, 168, 0.85); }
 .grid-child.selected.editable { pointer-events: auto; cursor: move; }
+.grid-child.selected.editable.grid-placement { z-index: 3; pointer-events: none; }
+.grid-move-edge { position: absolute; pointer-events: auto; cursor: move; }
+.grid-move-edge.top, .grid-move-edge.bottom { left: 0; width: 100%; height: 6px; }
+.grid-move-edge.top { top: -3px; }
+.grid-move-edge.bottom { bottom: -3px; }
+.grid-move-edge.left, .grid-move-edge.right { top: 0; height: 100%; width: 6px; }
+.grid-move-edge.left { left: -3px; }
+.grid-move-edge.right { right: -3px; }
 .grid-span-handle { position: absolute; z-index: 3; width: 8px; height: 8px; box-sizing: border-box; border: 1px solid #ffffff; border-radius: 2px; background: #2864c7; pointer-events: auto; }
 .grid-span-handle.top { left: 50%; top: -5px; margin-left: -4px; cursor: n-resize; }
 .grid-span-handle.bottom { left: 50%; bottom: -5px; margin-left: -4px; cursor: s-resize; }
@@ -154,7 +162,7 @@ function renderTabControls(components) {
   });
 }
 
-function renderGridSelectionTargets(targets, gridData) {
+function renderGridSelectionTargets(targets, gridData, placementData) {
   var controls = document.getElementById("grid-controls");
   componentArray(targets).sort(function(first, second) {
     return Number(first.depth || 0) - Number(second.depth || 0);
@@ -169,8 +177,18 @@ function renderGridSelectionTargets(targets, gridData) {
     hitTarget.style.top = (currentData.height - Number(target.y) - Number(target.height)) + "px";
     hitTarget.style.width = Number(target.width) + "px";
     hitTarget.style.height = Number(target.height) + "px";
-    hitTarget.title = "Select grid child";
+    var placementChild = placementData && placementData.editable && placementData.geometryAvailable &&
+      String(placementData.activeGridId) === String(target.gridId) &&
+      componentArray(placementData.children).find(function(child) {
+        return child.selected && child.editable && String(child.id) === String(target.id);
+      });
+    hitTarget.title = placementChild ? "Move selected grid" : "Select grid child";
+    if (placementChild) hitTarget.style.cursor = "move";
     hitTarget.addEventListener("pointerdown", function(event) {
+      if (placementChild) {
+        beginGridChildGesture(event, placementData, placementChild, "move");
+        return;
+      }
       event.preventDefault();
       event.stopPropagation();
       component.sendEventToMATLAB("GridAction", {
@@ -216,6 +234,39 @@ function renderNestedGridComponents(components) {
     }
     controls.appendChild(target);
   });
+}
+
+function renderGridPlacement(data) {
+  if (!data || !data.editable || !data.geometryAvailable) return;
+  var child = componentArray(data.children).find(function(item) { return item.selected && item.editable; });
+  if (!child || !child.bounds || child.bounds.length !== 4 || child.bounds[2] <= 0 || child.bounds[3] <= 0) return;
+  // Keep inner components and track controls clickable while exposing parent placement at the frame.
+  var frame = document.createElement("div");
+  frame.className = "grid-child selected editable grid-placement";
+  frame.dataset.componentId = child.id;
+  frame.style.left = child.bounds[0] + "px";
+  frame.style.top = (currentData.height - child.bounds[1] - child.bounds[3]) + "px";
+  frame.style.width = child.bounds[2] + "px";
+  frame.style.height = child.bounds[3] + "px";
+  ["top", "bottom", "left", "right"].forEach(function(kind) {
+    var edge = document.createElement("div");
+    edge.className = "grid-move-edge " + kind;
+    edge.title = "Move selected grid";
+    edge.addEventListener("pointerdown", function(event) {
+      beginGridChildGesture(event, data, child, "move");
+    });
+    frame.appendChild(edge);
+  });
+  ["top", "bottom", "left", "right", "top-left", "top-right", "bottom-left", "bottom-right"].forEach(function(kind) {
+    var handle = document.createElement("div");
+    handle.className = "grid-span-handle " + kind;
+    handle.title = "Resize grid span";
+    handle.addEventListener("pointerdown", function(event) {
+      beginGridChildGesture(event, data, child, kind);
+    });
+    frame.appendChild(handle);
+  });
+  document.getElementById("grid-controls").appendChild(frame);
 }
 
 function renderGridEditor(data) {
@@ -587,12 +638,32 @@ function cancelGridChildKey(event) {
   }
 }
 
+function nearestChildTrack(tracks, value, axis, start, end) {
+  var best = null;
+  var distance = Infinity;
+  componentArray(tracks).forEach(function(track) {
+    var index = Number(track.index);
+    if (index < Number(start) || index > Number(end)) return;
+    var lower = Number(track.bounds[axis === "row" ? 1 : 0]);
+    var upper = lower + Number(track.bounds[axis === "row" ? 3 : 2]);
+    var nextDistance = Math.max(lower - value, value - upper, 0);
+    if (nextDistance < distance) { best = index; distance = nextDistance; }
+  });
+  return best;
+}
+
 function beginGridChildGesture(event, data, child, kind) {
   event.preventDefault();
   event.stopPropagation();
   if (gridGesture || !data.geometryAvailable || !child.editable || !data.editable) return;
   var startPoint = gridPoint(event);
-  var startCell = gridCellAt(data, startPoint);
+  var startCell = null;
+  // Frame edges can straddle spacing or sit just outside the parent's cell.
+  if (kind === "move") {
+    var row = nearestChildTrack(data.rowTracks, startPoint.y, "row", child.rowStart, child.rowEnd);
+    var column = nearestChildTrack(data.columnTracks, startPoint.x, "column", child.columnStart, child.columnEnd);
+    if (row !== null && column !== null) startCell = { row: row, column: column };
+  }
   if (kind === "move" && !startCell) return;
   var draft = document.createElement("div");
   draft.className = "grid-child-draft";
@@ -873,9 +944,11 @@ function render() {
   svg.innerHTML = "";
   document.getElementById("grid-controls").innerHTML = "";
   renderTabControls(componentArray(currentData.components));
-  renderGridSelectionTargets(componentArray(currentData.gridSelectionTargets), currentData.gridEditor);
+  renderGridSelectionTargets(componentArray(currentData.gridSelectionTargets), currentData.gridEditor,
+    currentData.gridPlacement);
   renderGridEditor(currentData.gridEditor);
   renderNestedGridComponents(componentArray(currentData.components));
+  renderGridPlacement(currentData.gridPlacement);
   svg.setAttribute("viewBox", bounds[0] + " " + top + " " + bounds[2] + " " + bounds[3]);
   var components = componentArray(currentData.components);
   components.forEach(function(componentData) { svg.appendChild(outline(componentData)); });

@@ -138,6 +138,7 @@ classdef GridLayoutOverlayDataBuilder
                 outerPosition = double(getpixelposition(preview, true));
                 panelPosition = double(getpixelposition(previewPanel, true));
                 innerPosition = double(preview.InnerPosition);
+                position = double(preview.Position);
             catch
                 message = "Grid geometry is not available yet.";
                 return
@@ -149,7 +150,9 @@ classdef GridLayoutOverlayDataBuilder
                 message = "Grid geometry is not available yet.";
                 return
             end
-            innerBounds = [outerBounds(1:2) + innerPosition(1:2) - 1, innerPosition(3:4)];
+            % InnerPosition and Position share the parent's coordinate system.
+            innerBounds = [outerBounds(1:2) + innerPosition(1:2) - position(1:2), ...
+                innerPosition(3:4)];
         end
 
         function [value, editable, reason] = trackValue(grid, preview, path)
@@ -349,7 +352,7 @@ classdef GridLayoutOverlayDataBuilder
                     rectangle = double(preview.OuterPosition);
                     parentPosition = double(getpixelposition(preview.Parent, true));
                     rectangle(1:2) = rectangle(1:2) + ...
-                        parentPosition(1:2) - panelPosition(1:2);
+                        parentPosition(1:2) - panelPosition(1:2) - 1;
                     if numel(rectangle) == 4 && all(isfinite(rectangle)) && ...
                             all(rectangle(3:4) > 0)
                         measured(index).bounds = rectangle;

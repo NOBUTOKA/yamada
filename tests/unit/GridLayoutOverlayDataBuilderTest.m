@@ -30,6 +30,53 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
     end
 
     methods (Test)
+        function alignsNestedFitTracksInAnOffsetParentCell(testCase)
+            % alignsNestedFitTracksInAnOffsetParentCell Avoid adding nested grid coordinates twice.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("NestedFitGridApp", registry);
+            outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            document.setProperty(outer.Id, "RowHeight", {180, "1x"});
+            document.setProperty(outer.Id, "ColumnWidth", {230, "1x"});
+            document.setProperty(outer.Id, "Padding", [13 17 19 23]);
+            inner = document.insertComponent(registry, "uigridlayout", outer.Id);
+            document.setProperty(inner.Id, "Layout.Row", 2);
+            document.setProperty(inner.Id, "Layout.Column", 2);
+            document.setProperty(inner.Id, "RowHeight", {"fit", "1x"});
+            document.setProperty(inner.Id, "ColumnWidth", {"fit", "1x"});
+            document.setProperty(inner.Id, "Padding", [5 7 11 13]);
+            label = document.insertComponent(registry, "uilabel", inner.Id);
+            document.setProperty(label.Id, "Text", "Nested fit label");
+            button = document.insertComponent(registry, "uibutton", inner.Id);
+            document.setProperty(button.Id, "Layout.Row", 2);
+            document.setProperty(button.Id, "Layout.Column", 2);
+
+            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
+            panel = uipanel(figure, "Position", [21 31 760 560]);
+            renderer = macd.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document, panel);
+            testCase.verifyEmpty(diagnostics);
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(inner.Id)));
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            data = builder.build( ...
+                document, handles, panel, inner.Id, label.Id, 15);
+
+            testCase.assertTrue(data.geometryAvailable, data.readOnlyReason);
+            % Compare canvas boundaries with independent realized component rectangles.
+            labelBounds = double(getpixelposition(handles(char(label.Id)), true));
+            panelBounds = double(getpixelposition(panel, true));
+            labelBounds(1:2) = labelBounds(1:2) - panelBounds(1:2);
+            testCase.verifyEqual(data.columnTracks(1).bounds([1 3]), ...
+                labelBounds([1 3]), "AbsTol", 1);
+            testCase.verifyEqual(data.rowTracks(1).bounds([2 4]), ...
+                labelBounds([2 4]), "AbsTol", 1);
+            testCase.verifyEqual(data.innerBounds(1), labelBounds(1), "AbsTol", 1);
+            testCase.verifyEqual(data.innerBounds(2) + data.innerBounds(4), ...
+                labelBounds(2) + labelBounds(4), "AbsTol", 1);
+            clear cleanup
+        end
+
         function reconstructsFitTrackGeometryFromRealizedChildren(testCase)
             % reconstructsFitTrackGeometryFromRealizedChildren Align fit tracks with public child bounds.
 

@@ -628,7 +628,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         end
 
         function gridOverlaySelectsNestedGridBeforeItIsActive(testCase)
-            % gridOverlaySelectsNestedGridBeforeItIsActive Enter only the selected nested grid context.
+            % gridOverlaySelectsNestedGridBeforeItIsActive Edit inner tracks and move in the outer grid.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
@@ -677,6 +677,44 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyNotEqual(outerGridId, innerGridId);
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
             testCase.verifyFalse(app.Document.IsDirty);
+
+            % Parent placement remains editable after entering the inner grid context.
+            parentData = overlays.Data.gridPlacement;
+            testCase.verifyEqual(string(parentData.activeGridId), outerGridId);
+            testCase.assertTrue(parentData.geometryAvailable, parentData.readOnlyReason);
+            inner = app.Document.getComponent(innerGridId);
+            originalRow = inner.getProperty("Layout.Row").LiteralValue;
+            originalColumn = inner.getProperty("Layout.Column").LiteralValue;
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "move-child", ...
+                "revision", parentData.revision, "activeGridId", outerGridId, ...
+                "childId", innerGridId, "rowStart", 2, "rowEnd", 2, ...
+                "columnStart", 2, "columnEnd", 2)));
+            drawnow;
+            testCase.verifyEqual(inner.getProperty("Layout.Row").LiteralValue, 2);
+            testCase.verifyEqual(inner.getProperty("Layout.Column").LiteralValue, 2);
+            testCase.verifyEqual(app.ActiveGridId, innerGridId);
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 1);
+
+            % Reacquire the disposable overlay before resizing and checking stale events.
+            overlays = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            parentData = overlays.Data.gridPlacement;
+            action = struct("action", "resize-span", "revision", parentData.revision, ...
+                "activeGridId", outerGridId, "childId", innerGridId, ...
+                "rowStart", 1, "rowEnd", 2, "columnStart", 2, "columnEnd", 2);
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", "HTMLEventData", action));
+            testCase.verifyEqual(inner.getProperty("Layout.Row").LiteralValue, [1 2]);
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 2);
+            overlays = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            overlays.HTMLEventReceivedFcn(overlays, struct( ...
+                "HTMLEventName", "GridAction", "HTMLEventData", action));
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 2);
+            app.Document.undo();
+            app.Document.undo();
+            testCase.verifyEqual(inner.getProperty("Layout.Row").LiteralValue, originalRow);
+            testCase.verifyEqual(inner.getProperty("Layout.Column").LiteralValue, originalColumn);
             clear cleanup
         end
 

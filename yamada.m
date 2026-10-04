@@ -1155,6 +1155,19 @@ classdef yamada < matlab.apps.AppBase
             gridEditor = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, app.ActiveGridId, ...
                 app.SelectedComponentId, app.InteractionOverlayRevision);
+            % A selected nested grid edits its tracks while moving in its parent grid.
+            placementGridId = "";
+            selected = app.Document.getComponent(app.SelectedComponentId);
+            if ~isempty(selected) && selected.Factory == "uigridlayout" && ...
+                    selected.Id == app.ActiveGridId
+                parent = app.Document.getComponent(selected.ParentId);
+                if ~isempty(parent) && parent.Factory == "uigridlayout"
+                    placementGridId = parent.Id;
+                end
+            end
+            gridPlacement = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
+                app.PreviewHandles, app.PreviewCanvas, placementGridId, ...
+                app.SelectedComponentId, app.InteractionOverlayRevision);
             innerPosition = double(app.PreviewCanvas.InnerPosition);
             root = app.Document.getComponent(app.Document.RootComponentId);
             rootPosition = root.getProperty("Position");
@@ -1165,6 +1178,7 @@ classdef yamada < matlab.apps.AppBase
                 "height", innerPosition(4), "surfaceBounds", app.PreviewEditingBounds, ...
                 "components", components, ...
                 "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor, ...
+                "gridPlacement", gridPlacement, ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);
         end
@@ -1222,11 +1236,18 @@ classdef yamada < matlab.apps.AppBase
                 app.gridChildSelectionActionEvent(gridId, data);
                 return
             end
-            if gridId ~= app.ActiveGridId
+            if any(action == ["move-child", "resize-span"])
+                % Parent placement is permitted only for the selected active nested grid.
+                selected = app.Document.getComponent(app.SelectedComponentId);
+                if gridId ~= app.ActiveGridId && (isempty(selected) || ...
+                        selected.Factory ~= "uigridlayout" || ...
+                        selected.Id ~= app.ActiveGridId || selected.ParentId ~= gridId)
+                    return
+                end
+                app.gridChildActionEvent(action, gridId, data);
                 return
             end
-            if any(action == ["move-child", "resize-span"])
-                app.gridChildActionEvent(action, gridId, data);
+            if gridId ~= app.ActiveGridId
                 return
             end
             trackRequired = ["axis", "index", "mode", "value"];

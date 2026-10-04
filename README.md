@@ -68,6 +68,9 @@ changing the selected component in the Inspector.
 - Drag the selected child to move its occupied cells. Drag one of its edge or
   corner handles to change its row or column span. The candidate is cell-snapped
   and commits only when released.
+- For a selected nested Grid Layout, drag its frame or empty background to move
+  it within the parent grid. Its handles change the parent-cell span while its
+  row and column settings continue to edit the inner grid.
 - Use the Inspector for `RowSpacing`, `ColumnSpacing`, `Padding` (in MATLAB
   order `[left bottom right top]`), `BackgroundColor`, `Visible`, and
   `Scrollable`. It also remains the exact-value fallback for a child's
