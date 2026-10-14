@@ -220,6 +220,24 @@ classdef ComponentRegistry < handle
                 break
             end
         end
+
+        function result = isReadOnlyProperty(obj, factory, path, creationArguments)
+            % isReadOnlyProperty Identify known properties whose catalog setter is restricted.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+                factory (1, 1) string
+                path (1, 1) string
+                creationArguments cell = {}
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            % Unknown paths remain source-preserved; known catalog setters govern output.
+            definition = obj.get(factory, creationArguments);
+            property = definition.Properties(string({definition.Properties.Path}) == path);
+            result = ~isempty(property) && ~property.IsEditable;
+        end
     end
 
     methods

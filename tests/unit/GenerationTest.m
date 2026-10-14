@@ -46,8 +46,8 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifyEmpty(regexp(source, "GNU General Public License", "once"));
         end
 
-        function omitsReadOnlyGridPositionFromGeneratedSource(testCase)
-            % omitsReadOnlyGridPositionFromGeneratedSource Keep grid geometry owned by MATLAB.
+        function omitsCatalogReadOnlyPropertiesFromGeneratedSource(testCase)
+            % omitsCatalogReadOnlyPropertiesFromGeneratedSource Honor setter capabilities across components.
 
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.model.NewAppFactory.createEmpty("GridOutputApp", registry);
@@ -59,6 +59,14 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             % Simulate legacy model values created before read-only insertion was fixed.
             outer.setProperty("Position", [1 1 640 480]);
             inner.setProperty("Position", [1 1 300 200]);
+            outer.setProperty("InnerPosition", [1 1 300 200]);
+            outer.setProperty("OuterPosition", [1 1 640 480]);
+            root = document.getComponent(document.RootComponentId);
+            root.setProperty("Number", 1);
+            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            label.setProperty("OuterPosition", [1 1 100 22]);
+            table = document.insertComponent(registry, "uitable", document.RootComponentId);
+            table.setProperty("DisplayData", {});
             document.setProperty(outer.Id, "RowHeight", {"fit", "1x"});
             generator = macd.source.NewAppGenerator(registry);
             [source, diagnostics] = generator.generate(document);
@@ -66,6 +74,8 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyFalse(contains(source, "app." + outer.Name + ".Position ="));
             testCase.verifyFalse(contains(source, "app." + inner.Name + ".Position ="));
+            testCase.verifyEmpty(regexp(source, ...
+                'app\.\w+\.(InnerPosition|OuterPosition|Number|DisplayData)\s*=', "once"));
             testCase.verifySubstring(source, "app.UIFigure.Position =");
             testCase.verifySubstring(source, "app." + outer.Name + ".RowHeight = {""fit"", ""1x""};");
         end

@@ -62,8 +62,8 @@ classdef RoundTripGenerator
                 component = document.Components(index);
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
-                    if component.Factory == "uigridlayout" && entry.Path == "Position"
-                        % Remove owned assignments to MATLAB's read-only grid geometry.
+                    if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
+                        % Remove owned assignments to catalog-declared read-only properties.
                         if obj.isKnownSpan(entry.SourceSpan)
                             edits(end + 1) = obj.edit(entry.SourceSpan, ""); %#ok<AGROW>
                         end
@@ -218,7 +218,7 @@ classdef RoundTripGenerator
                 end
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
-                    if component.Factory == "uigridlayout" && entry.Path == "Position"
+                    if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
                         continue
                     end
                     if entry.ValueKind ~= "literal"

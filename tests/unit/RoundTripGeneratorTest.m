@@ -50,23 +50,31 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             testCase.verifyEmpty(grid.getProperty("Position"));
             grid.setProperty("Position", [1 1 300 200]);
+            grid.setProperty("InnerPosition", [1 1 300 200]);
+            grid.setProperty("OuterPosition", [1 1 300 200]);
             document.setProperty(grid.Id, "RowHeight", {"1x"});
             [source, diagnostics] = generator.generate(document);
 
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(source, "app." + grid.Name + " = uigridlayout(app.UIFigure);");
             testCase.verifyFalse(contains(source, "app." + grid.Name + ".Position ="));
+            testCase.verifyFalse(contains(source, "app." + grid.Name + ".InnerPosition ="));
+            testCase.verifyFalse(contains(source, "app." + grid.Name + ".OuterPosition ="));
             testCase.verifySubstring(source, "app." + grid.Name + ".RowHeight = {""1x""};");
         end
 
-        function removesOwnedGridPositionAssignment(testCase)
-            % removesOwnedGridPositionAssignment Remove invalid geometry assignments from opened source.
+        function removesOwnedCatalogReadOnlyAssignments(testCase)
+            % removesOwnedCatalogReadOnlyAssignments Remove only known restricted setter assignments.
 
             [document, generator] = RoundTripGeneratorTest.parsedFixture();
             original = replace(document.OriginalText, ...
                 "app.GridLayout = uigridlayout(app.UIFigure);", ...
                 "app.GridLayout = uigridlayout(app.UIFigure);" + newline + ...
-                "            app.GridLayout.Position = [1 1 640 480];");
+                "            app.GridLayout.Position = [1 1 640 480];" + newline + ...
+                "            app.GridLayout.InnerPosition = [1 1 620 460];" + newline + ...
+                "            app.GridLayout.OuterPosition = [1 1 640 480];" + newline + ...
+                "            app.UIFigure.Number = 1;" + newline + ...
+                "            app.GridLayout.CustomUnknownProperty = 123;");
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseText(original, registry);
             grid = document.getComponentByName("GridLayout");
@@ -75,6 +83,9 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyFalse(contains(source, "app.GridLayout.Position ="));
+            testCase.verifyEmpty(regexp(source, ...
+                'app\.\w+\.(InnerPosition|OuterPosition|Number)\s*=', "once"));
+            testCase.verifySubstring(source, "app.GridLayout.CustomUnknownProperty = 123;");
             testCase.verifySubstring(source, "app.UIFigure.Position =");
             testCase.verifySubstring(source, "app.CalculateButton.ButtonPushedFcn = createCallbackFcn(");
         end

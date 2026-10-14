@@ -90,7 +90,7 @@ classdef NewAppGenerator
                 % Encode only safe literals while retaining property paths.
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
-                    if component.Factory == "uigridlayout" && entry.Path == "Position"
+                    if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
                         continue
                     end
                     pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id & ...
