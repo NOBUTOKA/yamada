@@ -384,10 +384,10 @@ bodies. Run catalog/loader, callback model/generation, parser and round-trip sui
 then the full escalated MATLAB suite. Any runtime event-type checks use only
 trusted test fixtures, never the user's opened application.
 
-### Follow-up proposal: Avoid duplicated component words in handler names
+### Follow-up: Avoid duplicated component words in handler names (planned)
 
-Status: design recommendation only; no naming implementation changes are included
-in this roadmap update. Review this policy before implementing it.
+Status: agreed naming/data policy, implementation pending. This roadmap update
+does not implement the schema, ledger population or generation changes.
 
 Current code uses ComponentNameRewriter.defaultHandler to concatenate the component
 name and callback name with `Fcn` removed, bound the identifier length, and feed
@@ -402,13 +402,23 @@ must agree on the same naming policy.
 | Reviewed per-variant/per-callback handler suffix in the development ledger, promoted into the catalog | Explicit, reviewable meaning and predictable behavior | Requires schema/promotion support and auditing. Recommended. |
 
 Store the desired final suffix, rather than a string to search for and remove.
-A proposed runtime `handlerSuffix` is independent of `callbackSignature` and
-ValueSchema. The development ledger must clearly identify the suffix as a yamada
-naming-policy decision, not as a claimed MathWorks callback contract. Put it in a
-separate generation-policy field on the audited property record, then promote the
-reviewed value beside the signature metadata. Do not directly hand-edit generated
-runtime JSON. Automatic class-prefix matching may help produce audit candidates,
-but human review determines the promoted policy.
+Place `handlerSuffix` directly on each callback property record in the development
+ledger, alongside `callbackSignature` and `valueContract`. Do not introduce a
+`generationPolicy` wrapper or a naming `reason` field. The suffix is a yamada
+generation choice, independent of the documented event signature and accepted
+binding values. Promote it under the same name into runtime property metadata.
+
+Populate `handlerSuffix` for every callback entry in every concrete ledger variant,
+including inherited callbacks and entries whose resulting names stay unchanged.
+For example, explicitly record `ValueChanged` for ValueChangedFcn, `Create` for
+CreateFcn and `Delete` for DeleteFcn, as well as `Pushed` for ButtonPushedFcn.
+Do not use omitted fields to mean "keep the current name" in the maintained
+ledger. Absent-field fallback to the existing naming rule is only a compatibility
+path for older or external catalogs, not the normal representation of unchanged
+entries. Invalid or empty supplied suffixes must be rejected, not treated as absent.
+
+Do not directly hand-edit generated runtime JSON. Automatic class-prefix matching
+may help produce audit candidates, but review determines the promoted policy.
 
 Proposed examples, scoped to the indicated component/callback pair:
 
@@ -432,10 +442,16 @@ Implementation sequence and checkpoints:
 
 1. Audit the naming policy alongside Stage 7 and extend the relevant ledger/runtime
    schemas and promotion path alongside Stage 8. Accept only nonempty valid suffix
-   identifiers. Missing policy keeps the existing callback-derived naming rule;
-   do not silently introduce a new rule for `Callback`-ending property names.
-   Checkpoint: review the trim/preserve matrix above, arbitrary component names,
-   styles, inherited callbacks and absent/invalid overrides.
+   identifiers. Populate direct `handlerSuffix` fields for all ledger callback
+   entries, including unchanged-name and inherited entries; verify completeness
+   during development-ledger audit/promotion while runtime loading retains the
+   absent-field fallback for older catalogs. Do not silently introduce a new rule
+   for `Callback`-ending property names.
+   Checkpoint: enumerate every callback entry across all variants and confirm a
+   nonempty suffix, exact ledger-to-catalog propagation, no wrapper/reason fields,
+   compatibility fallback for absent fields, and rejection of invalid/empty fields.
+   Review the trim/preserve matrix, arbitrary component names, styles and inherited
+   callbacks. Entries that preserve the old naming result must be explicit too.
 2. Make the shared default-name resolver consume the effective definition's suffix.
    Update both Add and component-rename default-name recognition. Retain existing
    valid-name/length bounds, reserved-name checks and collision numbering (`_2`,
