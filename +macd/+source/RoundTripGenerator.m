@@ -43,6 +43,19 @@ classdef RoundTripGenerator
 
             % Build source edits first, then apply them from the end backwards.
             edits = struct("Start", {}, "End", {}, "Text", {});
+            % Complete subtree ownership includes internal child-parent references.
+            for pendingIndex = 1:numel(document.PendingEdits)
+                pending = document.PendingEdits{pendingIndex};
+                if isstruct(pending) && isfield(pending, "Kind") && pending.Kind == "delete-subtree"
+                    try
+                        removals = macd.source.SubtreeSourceEdits.deletion(source, pending.Components);
+                        edits = [edits removals]; %#ok<AGROW>
+                    catch exception
+                        diagnostics(end + 1) = macd.model.Diagnostic("unsafe-subtree-deletion", ...
+                            "error", string(exception.message)); %#ok<AGROW>
+                    end
+                end
+            end
             deleted = obj.deletedComponents(document);
             for index = 1:numel(deleted)
                 [componentEdits, diagnostic] = obj.deletionEdits(source, deleted(index));

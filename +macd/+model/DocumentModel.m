@@ -572,6 +572,82 @@ classdef DocumentModel < handle
             obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after));
         end
 
+        function candidate = structuralCandidate(obj)
+            % structuralCandidate Clone mutable document data for isolated source preflight.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                candidate (1, 1) macd.model.DocumentModel
+            end
+
+            snapshot = macd.model.SubtreeSnapshot(obj, obj.RootComponentId);
+            candidate = macd.model.DocumentModel(obj.ClassName);
+            candidate.Components = snapshot.materialize();
+            fields = ["FilePath", "OriginalText", "GeneratedText", "RootComponentId", ...
+                "Diagnostics", "UnknownRegions", "Encoding", "LineEnding", "Metadata"];
+            for field = fields, candidate.(field) = obj.(field); end
+            candidate.CallbackEdits = obj.CallbackEdits;
+            if isprop(obj, "RenameEdits"), candidate.("RenameEdits") = obj.("RenameEdits"); end
+            % Pending deletion records are read-only inputs to generation.
+            candidate.PendingEdits = obj.PendingEdits;
+        end
+
+        function removeSubtree(obj, id, registry)
+            % removeSubtree Preflight and delete a complete subtree as one history step.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                id (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
+            end
+
+            if id == obj.RootComponentId
+                error("macd:DocumentModel:RootDeletion", "The root component cannot be deleted.");
+            end
+            snapshot = macd.model.SubtreeSnapshot(obj, id);
+            ids = string({snapshot.Records.Id});
+            removed = obj.Components(ismember(string({obj.Components.Id}), ids));
+            for component = removed
+                if ~component.IsEditable
+                    error("macd:DocumentModel:UnsafeSubtreeEdit", "The subtree contains a read-only component.");
+                end
+                callbacks = macd.source.CallbackSourceAnalyzer.analyze(obj, component.Id, registry);
+                if any(string({callbacks.State}) ~= "absent")
+                    error("macd:DocumentModel:UnsafeSubtreeEdit", "Callback ownership prevents complete subtree deletion.");
+                end
+            end
+            macd.source.SubtreeSourceEdits.deletion(obj.OriginalText, removed);
+
+            % Preflight on independent records before changing document or history.
+            candidate = obj.structuralCandidate();
+            root = obj.getComponent(id);
+            parent = obj.getComponent(root.ParentId);
+            beforeChildren = parent.Children;
+            beforeComponents = obj.Components;
+            beforePending = obj.PendingEdits;
+            afterPending = beforePending;
+            afterPending{end + 1} = struct("Kind", "delete-subtree", "Components", removed);
+            candidate.Components(ismember(string({candidate.Components.Id}), ids)) = [];
+            candidateParent = candidate.getComponent(parent.Id);
+            candidateParent.removeChild(id);
+            candidate.PendingEdits = afterPending;
+            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+
+            % Commit the validated collection and parent order with one history record.
+            obj.Components = obj.Components(~ismember(string({obj.Components.Id}), ids));
+            parent.removeChild(id);
+            obj.PendingEdits = afterPending;
+            obj.GeneratedText = source;
+            obj.Diagnostics = diagnostics;
+            obj.recordHistory(struct("Kind", "subtree-delete", "ParentId", parent.Id, ...
+                "BeforeChildren", beforeChildren, "AfterChildren", parent.Children, ...
+                "BeforeComponents", beforeComponents, "AfterComponents", obj.Components, ...
+                "BeforePending", {beforePending}, "AfterPending", {afterPending}));
+        end
+
         function undo(obj)
             % undo Reverse the most recent document edit.
             arguments (Input)
@@ -662,6 +738,19 @@ classdef DocumentModel < handle
         function applyHistory(obj, edit, forward)
             % applyHistory Apply or reverse one history record without recording it.
             switch edit.Kind
+                case "subtree-delete"
+                    parent = obj.getComponent(edit.ParentId);
+                    if forward
+                        obj.Components = edit.AfterComponents;
+                        obj.PendingEdits = edit.AfterPending;
+                        children = edit.AfterChildren;
+                    else
+                        obj.Components = edit.BeforeComponents;
+                        obj.PendingEdits = edit.BeforePending;
+                        children = edit.BeforeChildren;
+                    end
+                    for child = parent.Children, parent.removeChild(child); end
+                    for child = children, parent.addChild(child); end
                 case "callback"
                     if forward, obj.CallbackEdits = edit.After; else, obj.CallbackEdits = edit.Before; end
                 case "insert"

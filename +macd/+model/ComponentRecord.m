@@ -69,6 +69,30 @@ classdef ComponentRecord < handle
             obj.Origin = origin;
         end
 
+        function restoreProperties(obj, records)
+            % restoreProperties Replace property handles from independent snapshot records.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                records struct
+            end
+
+            % Build the complete replacement before updating the live collection.
+            entries = macd.model.PropertyEntry.empty;
+            for record = records
+                entry = macd.model.PropertyEntry(record.Path, record.LiteralValue, record.Origin);
+                if record.ValueKind == "expression"
+                    entry.setSourceExpression(record.SourceExpression);
+                elseif record.ValueKind ~= "literal"
+                    error("macd:ComponentRecord:InvalidSnapshot", "Unsupported property storage kind.");
+                end
+                entry.SourceSpan = record.SourceSpan;
+                entry.Metadata = record.Metadata;
+                entry.Diagnostics = record.Diagnostics;
+                entries(end + 1) = entry; %#ok<AGROW>
+            end
+            obj.Properties = entries;
+        end
+
         function entry = setProperty(obj, path, value)
             % setProperty Add or update an editable property by its full path.
             arguments (Input)

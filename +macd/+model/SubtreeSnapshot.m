@@ -63,6 +63,35 @@ classdef SubtreeSnapshot
         end
     end
 
+    methods
+        function components = materialize(obj)
+            % materialize Create independent records retaining original identity and source data.
+            arguments (Input)
+                obj (1, 1) macd.model.SubtreeSnapshot
+            end
+            arguments (Output)
+                components macd.model.ComponentRecord
+            end
+
+            % Reconstruct each record without sharing mutable property handles.
+            components = macd.model.ComponentRecord.empty;
+            for index = 1:numel(obj.Records)
+                record = obj.Records(index);
+                component = macd.model.ComponentRecord(record.Id, record.Name, record.Factory, ...
+                    record.DeclaredType, record.Origin);
+                component.ParentId = record.ParentId;
+                component.CreationArguments = record.CreationArguments;
+                component.IsEditable = record.IsEditable;
+                component.SourceSpans = record.SourceSpans;
+                component.Metadata = record.Metadata;
+                component.Diagnostics = record.Diagnostics;
+                for child = record.Children, component.addChild(child); end
+                component.restoreProperties(record.Properties);
+                components(end + 1) = component; %#ok<AGROW>
+            end
+        end
+    end
+
     methods (Static, Access = private)
         function record = capture(component)
             % capture Store all component fields and independent property values.
