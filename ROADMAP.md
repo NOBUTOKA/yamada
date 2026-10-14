@@ -410,13 +410,54 @@ model that can represent several components before adding group edit commands.
 - Test mouse and keyboard selection in both views, selection after hierarchy
   refresh and document replacement, and interaction with Grid Layout overlays.
 
+## Operate on Components with Their Descendants
+
+Removing a component with children is currently rejected. Treat a selected
+container and its entire descendant subtree as one unit when moving, deleting,
+copying, cutting, or pasting it.
+
+- Add model operations that collect descendants in stable hierarchy order and
+  validate the complete subtree before changing any component or source intent.
+- Keep parent-child links, component order, names, internal references, and
+  supported layout properties consistent. Define how references from outside
+  the subtree are handled; reject operations that cannot preserve them safely.
+- Make each subtree move, delete, cut, or paste one atomic Undo/Redo step. A
+  failed operation must leave the document, clipboard, and selection intact.
+- Extend source generation to insert, relocate, or remove only declarations,
+  creation calls, assignments, and other spans whose ownership is proven.
+  Preserve unsupported code and callbacks without executing the input app.
+- Apply these rules to hierarchy commands and the Copy/Cut/Paste task below;
+  test nested containers, mixed generated and opened source, external references,
+  failure rollback, Undo/Redo, and save/reopen round trips.
+
+## Reparent Components Between Containers
+
+Allow a component or complete subtree to move from one valid parent to another,
+including dragging it between two Grid Layouts in Safe Preview.
+
+- Add a validated reparent operation that rejects cycles, the root component,
+  unsupported parent types, ambiguous source ownership, and invalid destinations
+  before changing either parent's child list.
+- Define placement when moving among absolute-positioned containers and Grid
+  Layouts. Update `Position` or `Layout.Row`/`Layout.Column` together with the
+  parent change; do not silently discard unsupported layout or source values.
+- Expose eligible drop targets and a clear insertion preview in Safe Preview and
+  the hierarchy view. Keep existing drag-within-one-parent behavior distinct
+  from reparenting, and reject an invalid drop without moving the component.
+- Commit the parent change and any placement changes as one undoable operation;
+  update selection, Inspector, Safe Preview, diagnostics, and generated source.
+- Test transfers between two Grid Layouts, nested containers, absolute/grid
+  boundaries, invalid and cyclic drops, subtree moves, Undo/Redo, and opened-
+  source round trips without executing the input application.
+
 ## Add Component Copy, Cut, and Paste
 
 - Provide Copy, Cut, and Paste through the Edit menu, keyboard shortcuts, and
   context menus on components in the hierarchy view. All three entry points
   must use the same commands and availability rules.
-- Define how a selected component and its descendants are copied, where they
-  can be pasted, and how unique component names and identities are assigned.
+- Use the complete-subtree rules above when a selected component has children.
+  Define where each subtree can be pasted and how unique component names and
+  identities are assigned.
 - Validate the destination's parent rules and source ownership before changing
   the document. Keep unsupported or ambiguous source structures unchanged.
 - Make each paste or cut one atomic, undoable edit, and update selection, the
