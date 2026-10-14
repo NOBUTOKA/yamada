@@ -13,6 +13,7 @@
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
 - Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
 - Add and delete components and edit supported properties
+- Rename component properties in the hierarchy, including static source references and default callback names
 - Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion
 - View validation diagnostics and compare the original and generated source before saving
 - Track unsaved edits and guard New, Open, and Close with Save, Discard, or Cancel
@@ -91,6 +92,23 @@ Source-backed values are preserved.
 2. Review the parsed hierarchy, Safe Preview, and diagnostics.
 3. Modify supported components and properties.
 4. Validate the document and review the diff. Save to a new file if you want to preserve the original.
+
+### Rename a component
+
+Select a component in **Hierarchy** and press **F2**, click the same selected node
+again, or choose **Edit > Rename Component (F2)**. Edit the name within the
+hierarchy view; **Enter** commits and **Escape** cancels. Invalid or conflicting
+names remain in the editor with an explanation so you can correct them.
+
+Renaming changes the MATLAB property identifier and its static `app.Name`
+references. Component IDs, displayed `Text` or `Title`, and the app class name
+stay unchanged. Exclusively owned callback methods follow only when their names
+match the editor's default generated naming convention; custom or shared handler
+names stay unchanged. Class, property, and method help comments follow renamed
+identifiers, including callback H1 lines and help examples. Ordinary comments and
+code string literals are preserved. Undo and Redo treat the rename as one edit.
+Source using dynamic dispatch or unresolved app aliases is rejected with an
+explanation; references in other files are outside this operation's scope.
 
 ### Manage callbacks
 

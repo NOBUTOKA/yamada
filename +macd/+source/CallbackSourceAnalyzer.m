@@ -46,7 +46,7 @@ classdef CallbackSourceAnalyzer
                         methodAnchor = layout.MethodAnchor;
                     else
                         [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = ...
-                        macd.source.CallbackSourceAnalyzer.classify(component, name, statements, layout);
+                        macd.source.CallbackSourceAnalyzer.classify(component, document.sourceComponentName(componentId), name, statements, layout);
                     end
                 else
                     entry = component.getProperty(name);
@@ -73,6 +73,7 @@ classdef CallbackSourceAnalyzer
                         reason = "The callback source snapshot changed; reload or undo before editing.";
                     end
                 end
+                handler = document.effectiveMemberName(handler);
                 states(end + 1) = macd.model.CallbackState(name, state, reason, handler, ...
                     bindingSpan, methodSpan, bindingAnchor, methodAnchor); %#ok<AGROW>
             end
@@ -137,6 +138,11 @@ classdef CallbackSourceAnalyzer
                     stack(1).Kind == "classdef" && stack(2).Kind == "methods" && ...
                     stack(2).Instance && stack(3).Kind == "function" && ...
                     stack(3).Name == "createComponents";
+                % Class block keywords are also ordinary introspection function names.
+                if any(keyword == ["methods", "properties", "events", "enumeration"]) && ...
+                        ~(isscalar(stack) && stack(1).Kind == "classdef")
+                    continue
+                end
                 if any(keyword == ["classdef", "methods", "properties", "events", "enumeration", ...
                         "function", "arguments", "if", "for", "parfor", "while", "switch", "try", "spmd"])
                     name = "";
@@ -156,10 +162,11 @@ classdef CallbackSourceAnalyzer
             layout.Valid = layout.Valid && isempty(stack);
         end
 
-        function [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = classify(component, name, statements, layout)
+        function [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = classify(component, sourceName, name, statements, layout)
             % classify Validate a direct binding, unique method, and exclusive source references.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
+                sourceName (1, 1) string
                 name (1, 1) string
                 statements macd.source.SourceStatement
                 layout (1, 1) struct
@@ -187,7 +194,7 @@ classdef CallbackSourceAnalyzer
             creationIndex = find(arrayfun(@(statement) statement.Span.StartOffset == creation.StartOffset, statements));
             if numel(creationIndex) ~= 1 || ~layout.Direct(creationIndex), return, end
             bindingAnchor = creation.EndOffset;
-            target = "app\s*\.\s*" + component.Name + "\s*\.\s*" + name;
+            target = "app\s*\.\s*" + sourceName + "\s*\.\s*" + name;
             occurrences = [];
             for index = 1:numel(statements)
                 text = statements(index).Text;
@@ -239,7 +246,8 @@ classdef CallbackSourceAnalyzer
             if numel(methods) ~= 1, return, end
             count = 0;
             for statement = statements(:)'
-                count = count + numel(regexp(statement.Text, '(?<!\w)' + handler + '(?!\w)', 'match'));
+                code = macd.source.ComponentNameRewriter.codeMask(statement.Text);
+                count = count + numel(regexp(code, '(?<!\w)' + handler + '(?!\w)', 'match'));
             end
             if count ~= 2, return, end
             methodSpan = methods.Span;

@@ -64,6 +64,80 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'ui'})
+        function hierarchyRenameOwnsTextKeysAndPreservesNodes(testCase)
+            % hierarchyRenameOwnsTextKeysAndPreservesNodes Commit and cancel inline names with atomic history.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, palette] = editorPalette();
+            row = find(string(palette.Data(:, 1)) == "Button", 1);
+            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
+            tree = findall(figure, "Type", "uitree");
+            node = tree.SelectedNodes;
+            rootNode = tree.Children(1);
+            expand(rootNode);
+            id = app.SelectedComponentId;
+            component = app.Document.getComponent(id);
+            before = app.Document.HistoryIndex;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+            figure.CurrentObject = node;
+            figure.WindowKeyPressFcn(figure, struct("Key", "f2", "Modifier", {{}}));
+            field = findall(figure, "Tag", "macd-hierarchy-rename");
+            testCase.assertEqual(numel(field), 1);
+            testCase.verifyEqual(string(field.Value), component.Name);
+            figure.WindowKeyPressFcn(figure, struct("Key", "delete", "Modifier", {{}}));
+            testCase.verifyEqual(app.Document.getComponent(id), component);
+            field.ValueChangingFcn(field, struct("Value", "RunButton"));
+            figure.WindowKeyPressFcn(figure, struct("Key", "escape", "Modifier", {{}}));
+            testCase.verifyEmpty(findall(figure, "Tag", "macd-hierarchy-rename"));
+            testCase.verifyEqual(component.Name, "Button");
+            testCase.verifyEqual(app.Document.HistoryIndex, before);
+            information = struct("Node", node, "Location", [60 50]);
+            tree.ClickedFcn(tree, struct("InteractionInformation", information));
+            tree.ClickedFcn(tree, struct("InteractionInformation", information));
+            field = findall(figure, "Tag", "macd-hierarchy-rename");
+            testCase.assertEqual(numel(field), 1);
+            field.ValueChangingFcn(field, struct("Value", "RunButton"));
+            figure.WindowKeyPressFcn(figure, struct("Key", "return", "Modifier", {{}}));
+            testCase.verifyEqual(component.Name, "RunButton");
+            testCase.verifyEqual(app.Document.HistoryIndex, before + 1);
+            testCase.verifyTrue(isvalid(node));
+            testCase.verifyEqual(tree.SelectedNodes, node);
+            testCase.verifySubstring(string(node.Text), "RunButton");
+            figure.WindowKeyPressFcn(figure, struct("Key", "z", "Modifier", {{'control'}}));
+            testCase.verifyEqual(component.Name, "Button");
+            testCase.verifyTrue(isvalid(rootNode));
+            testCase.verifyEqual(tree.SelectedNodes, node);
+            figure.WindowKeyPressFcn(figure, struct("Key", "r", "Modifier", {{'control'}}));
+            testCase.verifyEqual(component.Name, "RunButton");
+            testCase.verifyTrue(isvalid(node));
+            clear cleanup
+        end
+
+        function hierarchyRenameRetainsRejectedTextAndMenuUsesSelection(testCase)
+            % hierarchyRenameRetainsRejectedTextAndMenuUsesSelection Correct invalid names without document mutation.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, ~] = editorPalette();
+            tree = findall(figure, "Type", "uitree");
+            node = tree.SelectedNodes;
+            rename = findall(figure, "Tag", "macd-rename-component");
+            rename.MenuSelectedFcn(rename, []);
+            field = findall(figure, "Tag", "macd-hierarchy-rename");
+            field.Value = "bad name";
+            field.ValueChangedFcn(field, struct("Value", "bad name"));
+            testCase.verifyEqual(app.Document.getComponent(app.SelectedComponentId).Name, "UIFigure");
+            testCase.verifyEqual(string(field.Value), "bad name");
+            testCase.verifyNotEmpty(field.Tooltip);
+            field.Value = "MainWindow";
+            field.ValueChangedFcn(field, struct("Value", "MainWindow"));
+            testCase.verifyEmpty(findall(figure, "Tag", "macd-hierarchy-rename"));
+            testCase.verifyEqual(app.Document.getComponent(app.SelectedComponentId).Name, "MainWindow");
+            testCase.verifyEqual(tree.SelectedNodes, node);
+            clear cleanup
+        end
+
         function previewSelectionSynchronizesHierarchyWithoutRebuildingBranches(testCase)
             % previewSelectionSynchronizesHierarchyWithoutRebuildingBranches Reveal nested Preview selections.
 

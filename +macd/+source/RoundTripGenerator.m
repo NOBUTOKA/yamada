@@ -140,6 +140,7 @@ classdef RoundTripGenerator
                 return
             end
             source = obj.applyEdits(source, edits);
+            source = macd.source.ComponentNameRewriter.rewrite(source, document.RenameEdits);
             document.GeneratedText = source;
             document.Diagnostics = diagnostics;
         end
@@ -178,9 +179,13 @@ classdef RoundTripGenerator
                 spans(end + 1) = entry.SourceSpan; %#ok<AGROW>
             end
             statements = macd.source.MatlabLexicalScanner.splitStatements(source);
+            creationText = extractBetween(source, component.SourceSpans.Creation.StartOffset, component.SourceSpans.Creation.EndOffset);
+            originalName = regexp(creationText, 'app\.(\w+)\s*=', 'tokens', 'once');
+            sourceName = component.Name;
+            if ~isempty(originalName), sourceName = string(originalName{1}); end
             for index = 1:numel(statements)
                 statement = statements(index);
-                if contains(statement.Text, "app." + component.Name) && ...
+                if ~isempty(regexp(statement.Text, 'app\s*\.\s*' + sourceName + '(?!\w)', 'once')) && ...
                         ~obj.spanContained(statement.Span, spans)
                     diagnostic = obj.error("ambiguous-component-deletion", component, ...
                         "Component is referenced outside editor-owned statements.");

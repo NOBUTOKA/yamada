@@ -75,7 +75,10 @@ classdef MatlabLexicalScanner
                         index = index + 2;
                         continue
                     end
-                    inCharacterVector = ~inCharacterVector;
+                    % Adjacent expression-ending characters distinguish transpose from text.
+                    isTranspose = ~inCharacterVector && index > 1 && ...
+                        ~isempty(regexp(text(index - 1), '[\w\]\)}."]', 'once'));
+                    if ~isTranspose, inCharacterVector = ~inCharacterVector; end
                 elseif character == '"' && ~inCharacterVector
                     if inString && nextCharacter == '"'
                         buffer = [buffer '""']; %#ok<AGROW>

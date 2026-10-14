@@ -181,6 +181,7 @@ classdef NewAppGenerator
             lineEnding = macd.source.NewAppGenerator.lineEndingText( ...
                 document.LineEnding);
             source = strjoin(lines, lineEnding) + lineEnding;
+            source = macd.source.ComponentNameRewriter.rewrite(source, document.RenameEdits);
             document.GeneratedText = source;
             document.Diagnostics = diagnostics;
         end

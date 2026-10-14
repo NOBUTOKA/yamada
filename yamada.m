@@ -44,6 +44,11 @@ classdef yamada < matlab.apps.AppBase
         HierarchyPanel matlab.ui.container.Panel
         HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
+        HierarchyRenameField matlab.ui.control.EditField = matlab.ui.control.EditField.empty
+        HierarchyRenameId string = ""
+        HierarchyRenameText string = ""
+        HierarchyClickId string = ""
+        HierarchyClickLocation double = [0 0]
         HierarchyContextMenu macd.ui.HierarchyContextMenu = macd.ui.HierarchyContextMenu.empty
         CallbackDialog macd.ui.CallbackManagerDialog = macd.ui.CallbackManagerDialog.empty
         CallbackDialogTargetId string = ""
@@ -219,7 +224,9 @@ classdef yamada < matlab.apps.AppBase
             app.HierarchyGrid = uigridlayout(app.HierarchyPanel, [1 1]);
             app.HierarchyGrid.Padding = [0 0 0 0];
             app.HierarchyTree = uitree(app.HierarchyGrid, ...
-                "SelectionChangedFcn", @(~, event) app.hierarchySelectionChanged(event));
+                "SelectionChangedFcn", @(~, event) app.hierarchySelectionChanged(event), ...
+                "ClickedFcn", @(~, event) app.hierarchyClicked(event), ...
+                "DoubleClickedFcn", @(~, event) app.beginHierarchyRename(event));
 
             app.InspectorPanel = uipanel(app.RightGrid, "Title", "Properties");
             app.InspectorPanel.Layout.Row = 2;
@@ -265,6 +272,9 @@ classdef yamada < matlab.apps.AppBase
                 "MenuSelectedFcn", @(~, ~) app.saveAsButtonPushed());
 
             editMenu = uimenu(app.UIFigure, "Text", "&Edit");
+            uimenu(editMenu, "Text", "Rename Component (F2)", ...
+                "Tag", "macd-rename-component", ...
+                "MenuSelectedFcn", @(~, ~) app.beginHierarchyRename());
             app.DeleteMenuItem = uimenu(editMenu, "Text", "&Delete", ...
                 "MenuSelectedFcn", @(~, ~) app.deleteComponentButtonPushed());
             app.EditUndoMenuItem = uimenu(editMenu, "Text", "&Undo", ...
@@ -479,8 +489,12 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % Set the drawer state before measuring the preview panel geometry.
+            if ~retainHierarchy && strlength(app.HierarchyRenameId) > 0
+                app.endHierarchyRename(false);
+            end
             if ~isempty(app.Document.CallbackEdits) || ...
-                    any(cellfun(@(edit) edit.Kind == "callback", app.Document.History))
+                    ~isempty(app.Document.RenameEdits) || ...
+                    any(cellfun(@(edit) any(edit.Kind == ["callback", "rename"]), app.Document.History))
                 app.generateSource();
             end
             if ~retainHierarchy
@@ -633,6 +647,7 @@ classdef yamada < matlab.apps.AppBase
                 app (1, 1) yamada
             end
 
+            retainHierarchy = app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "rename";
             try
                 app.Document.undo();
             catch exception
@@ -640,7 +655,8 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             app.ensureSelectionExists();
-            app.refreshShell();
+            if retainHierarchy, app.refreshHierarchyLabels(); end
+            app.refreshShell(retainHierarchy);
             app.setStatus("Undid last edit.");
         end
 
@@ -650,6 +666,7 @@ classdef yamada < matlab.apps.AppBase
                 app (1, 1) yamada
             end
 
+            retainHierarchy = app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "rename";
             try
                 app.Document.redo();
             catch exception
@@ -657,7 +674,8 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             app.ensureSelectionExists();
-            app.refreshShell();
+            if retainHierarchy, app.refreshHierarchyLabels(); end
+            app.refreshShell(retainHierarchy);
             app.setStatus("Redid edit.");
         end
 
@@ -670,25 +688,27 @@ classdef yamada < matlab.apps.AppBase
 
             modifiers = string(event.Modifier);
             hasControl = any(modifiers == "control") || any(modifiers == "command");
+            % Text editing owns Delete and local undo until its transaction ends.
+            if strlength(app.HierarchyRenameId) > 0
+                if strcmpi(event.Key, "escape")
+                    app.endHierarchyRename();
+                elseif strcmpi(event.Key, "return") || strcmpi(event.Key, "enter")
+                    app.commitHierarchyRename();
+                end
+                return
+            end
             % CurrentObject tracks clicks, so Tab invalidates its keyboard ownership.
             if strcmpi(event.Key, "tab")
                 app.KeyboardFocusMoved = true;
                 return
             end
-            if strcmpi(event.Key, "f5") && isempty(modifiers)
+            if strcmpi(event.Key, "f2") && isempty(modifiers) && ...
+                    app.hierarchyOwnsKeyboard()
+                app.beginHierarchyRename();
+            elseif strcmpi(event.Key, "f5") && isempty(modifiers)
                 app.reloadSourceRequested();
             elseif strcmpi(event.Key, "delete") && ~hasControl
-                current = app.UIFigure.CurrentObject;
-                if ~app.KeyboardFocusMoved
-                    while ~isempty(current) && isvalid(current)
-                        if isequal(current, app.HierarchyTree)
-                            app.deleteComponentButtonPushed();
-                            break
-                        end
-                        if ~isprop(current, "Parent"), break, end
-                        current = current.Parent;
-                    end
-                end
+                if app.hierarchyOwnsKeyboard(), app.deleteComponentButtonPushed(); end
             elseif hasControl && strcmpi(event.Key, "z")
                 app.undoButtonPushed();
             elseif hasControl && strcmpi(event.Key, "r")
@@ -705,6 +725,148 @@ classdef yamada < matlab.apps.AppBase
             app.KeyboardFocusMoved = false;
         end
 
+        function result = hierarchyOwnsKeyboard(app)
+            % hierarchyOwnsKeyboard Recognize both the tree and its clicked nodes as shortcut owners.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = false;
+            if app.KeyboardFocusMoved, return, end
+            current = app.UIFigure.CurrentObject;
+            while ~isempty(current) && isvalid(current)
+                if isequal(current, app.HierarchyTree)
+                    result = true;
+                    return
+                end
+                if ~isprop(current, "Parent"), return, end
+                current = current.Parent;
+            end
+        end
+
+        function hierarchyClicked(app, event)
+            % hierarchyClicked Start inline editing on a second click of the same selected node.
+            arguments (Input)
+                app (1, 1) yamada
+                event
+            end
+
+            information = event.InteractionInformation;
+            node = information.Node;
+            if isempty(node), app.HierarchyClickId = ""; return, end
+            id = string(node.NodeData);
+            repeated = app.HierarchyClickId == id;
+            app.HierarchyClickId = id;
+            app.HierarchyClickLocation = information.Location;
+            if repeated && app.SelectedComponentId == id
+                app.beginHierarchyRename(event);
+            end
+        end
+
+        function beginHierarchyRename(app, event)
+            % beginHierarchyRename Overlay a name-only text editor within the hierarchy view.
+            arguments (Input)
+                app (1, 1) yamada
+                event = []
+            end
+
+            app.endHierarchyRename(false);
+            component = app.selectedComponent();
+            if isempty(component) || ~component.IsEditable, return, end
+            treePosition = getpixelposition(app.HierarchyTree);
+            point = [16 treePosition(4) - 16];
+            if ~isempty(event)
+                information = event.InteractionInformation;
+                if isempty(information.Node) || string(information.Node.NodeData) ~= component.Id, return, end
+                point = information.Location;
+            elseif app.HierarchyClickId == component.Id
+                point = app.HierarchyClickLocation;
+            end
+            % Keep the editor reachable even after selection through Preview or the keyboard.
+            height = 24;
+            y = max(1, min(treePosition(4) - height, point(2) - height / 2));
+            app.HierarchyRenameId = component.Id;
+            app.HierarchyRenameText = component.Name;
+            app.HierarchyRenameField = uieditfield(app.HierarchyPanel, "text", ...
+                "Position", [treePosition(1) + 20 treePosition(2) + y max(30, treePosition(3) - 24) height], ...
+                "Value", component.Name, "Tag", "macd-hierarchy-rename", ...
+                "ValueChangingFcn", @(~, change) app.hierarchyRenameChanging(change), ...
+                "ValueChangedFcn", @(~, change) app.commitHierarchyRename(change.Value));
+            app.refreshEditCommands();
+            focus(app.HierarchyRenameField);
+        end
+
+        function hierarchyRenameChanging(app, event)
+            % hierarchyRenameChanging Retain live text for Enter before the native value commits.
+            arguments (Input)
+                app (1, 1) yamada
+                event
+            end
+
+            app.HierarchyRenameText = string(event.Value);
+        end
+
+        function commitHierarchyRename(app, name)
+            % commitHierarchyRename Apply one validated model transaction and retain the existing tree.
+            arguments (Input)
+                app (1, 1) yamada
+                name (1, 1) string = app.HierarchyRenameText
+            end
+
+            if strlength(app.HierarchyRenameId) == 0, return, end
+            try
+                app.Document.renameComponent(app.HierarchyRenameId, name, app.Registry);
+            catch exception
+                app.setStatus(string(exception.message));
+                app.HierarchyRenameField.Tooltip = string(exception.message);
+                app.HierarchyRenameField.BackgroundColor = [1 0.88 0.88];
+                focus(app.HierarchyRenameField);
+                return
+            end
+            app.endHierarchyRename();
+            app.refreshHierarchyLabels();
+            app.refreshShell(true);
+            app.setStatus("Renamed component to " + name + ".");
+        end
+
+        function endHierarchyRename(app, restoreFocus)
+            % endHierarchyRename Cancel the text editor without changing document state.
+            arguments (Input)
+                app (1, 1) yamada
+                restoreFocus (1, 1) logical = true
+            end
+
+            app.HierarchyRenameId = "";
+            if ~isempty(app.HierarchyRenameField) && isvalid(app.HierarchyRenameField)
+                delete(app.HierarchyRenameField);
+            end
+            app.HierarchyRenameField = matlab.ui.control.EditField.empty;
+            app.refreshEditCommands();
+            if restoreFocus
+                app.KeyboardFocusMoved = false;
+                app.UIFigure.CurrentObject = app.HierarchyTree;
+                focus(app.HierarchyTree);
+            end
+        end
+
+        function refreshHierarchyLabels(app)
+            % refreshHierarchyLabels Update names without losing expansion, selection or scroll position.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+
+            nodes = findall(app.HierarchyTree, "Type", "uitreenode");
+            for node = nodes(:)'
+                component = app.Document.getComponent(string(node.NodeData));
+                if ~isempty(component)
+                    node.Text = component.Name + " (" + component.Factory + ")";
+                end
+            end
+        end
+
         function refreshEditCommands(app)
             % refreshEditCommands Synchronize palette and edit command enablement.
             arguments (Input)
@@ -712,6 +874,14 @@ classdef yamada < matlab.apps.AppBase
             end
 
             if isempty(app.Document)
+                return
+            end
+            if strlength(app.HierarchyRenameId) > 0
+                app.DeleteMenuItem.Enable = "off";
+                app.EditUndoMenuItem.Enable = "off";
+                app.EditRedoMenuItem.Enable = "off";
+                app.UndoTool.Enable = "off";
+                app.RedoTool.Enable = "off";
                 return
             end
             reloadEnabled = "off";

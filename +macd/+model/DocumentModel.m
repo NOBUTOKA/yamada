@@ -43,6 +43,8 @@ classdef DocumentModel < handle
     end
 
     properties (SetAccess = private)
+        % RenameEdits - Simultaneous source member renames retained across generation.
+        RenameEdits struct = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {})
         % CallbackEdits - Source-owned callback intentions grouped by component and property.
         CallbackEdits macd.model.CallbackEdit = macd.model.CallbackEdit.empty
         % IsDirty - Whether the document has changes that are not known to be saved.
@@ -497,6 +499,127 @@ classdef DocumentModel < handle
             result = obj.HistoryIndex < numel(obj.History);
         end
 
+        function name = sourceComponentName(obj, componentId)
+            % sourceComponentName Return the identifier belonging to original source spans.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+            end
+            arguments (Output)
+                name (1, 1) string
+            end
+
+            component = obj.getComponent(componentId);
+            name = component.Name;
+            mappings = obj.RenameEdits;
+            index = find(string({mappings.ComponentId}) == componentId & string({mappings.Kind}) == "property", 1);
+            if ~isempty(index), name = mappings(index).OldName; end
+        end
+
+        function name = effectiveMemberName(obj, name)
+            % effectiveMemberName Resolve an original handler to its current member name.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                name (1, 1) string
+            end
+            arguments (Output)
+                name (1, 1) string
+            end
+
+            mappings = obj.RenameEdits;
+            index = find(string({mappings.OldName}) == name & string({mappings.Kind}) == "method", 1);
+            if ~isempty(index), name = mappings(index).NewName; end
+        end
+
+        function renameComponent(obj, componentId, newName, registry)
+            % renameComponent Atomically rename a property and its default callback methods.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+                newName (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
+            end
+
+            % Validate the complete current source before changing authoritative state.
+            component = obj.getComponent(componentId);
+            if isempty(component) || ~component.IsEditable
+                error("macd:DocumentModel:UnsafeComponentRename", "This component cannot be renamed safely.");
+            end
+            if component.Origin == "parsed" && ...
+                    (isempty(component.SourceSpans.Declaration) || ~component.SourceSpans.Declaration.isKnown() || ...
+                    isempty(component.SourceSpans.Creation) || ~component.SourceSpans.Creation.isKnown())
+                error("macd:DocumentModel:UnsafeComponentRename", "Component declaration or creation ownership is unknown.");
+            end
+            oldName = component.Name;
+            if oldName == newName, return, end
+            previousText = obj.GeneratedText;
+            previousDiagnostics = obj.Diagnostics;
+            before = obj.RenameEdits;
+            try
+                [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(obj);
+                if macd.validation.ModelValidator.hasErrors(diagnostics)
+                    error("macd:DocumentModel:UnsafeComponentRename", "Resolve source generation errors before renaming.");
+                end
+                macd.source.ComponentNameRewriter.validate(source, oldName, newName);
+                inherited = [string(properties("matlab.apps.AppBase")); string(methods("matlab.apps.AppBase"))];
+                if any(inherited == newName) || newName == obj.ClassName || ...
+                        any(string({obj.Components.Name}) == newName) || ...
+                        any(string({before.OldName}) == newName & ...
+                        (string({before.ComponentId}) ~= componentId | string({before.Kind}) == "method"))
+                    error("macd:DocumentModel:ComponentNameCollision", "The name '%s' is already reserved.", newName);
+                end
+                after = obj.updatedRenameMappings(before, componentId, "property", oldName, newName);
+
+                % Only exclusively owned default handler names follow the component.
+                states = macd.source.CallbackSourceAnalyzer.analyze(obj, componentId, registry);
+                members = macd.source.ComponentNameRewriter.memberNames(source);
+                code = macd.source.ComponentNameRewriter.codeMask(source);
+                identifiers = string(regexp(code, '[A-Za-z]\w*', 'match'));
+                used = [members, identifiers, string({before.OldName}), newName, obj.ClassName, "createComponents", "delete"];
+                for state = states(:)'
+                    handler = state.HandlerName;
+                    if strlength(handler) == 0, continue, end
+                    if state.State ~= "editable"
+                        % Extra static calls may prevent deletion without preventing a rename.
+                        handles = regexp(code, '@(?:app\s*\.\s*)?' + handler + '(?!\w)', 'match');
+                        if ~any(members == handler) || numel(handles) ~= 1 || ...
+                                ~macd.source.ComponentNameRewriter.canRenameHandler(source, handler)
+                            continue
+                        end
+                    end
+                    stem = macd.source.ComponentNameRewriter.defaultHandler(oldName, state.Name);
+                    if handler ~= stem && isempty(regexp(handler, "^" + stem + "_[2-9][0-9]*$|^" + stem + "_1[0-9]+$", 'once'))
+                        continue
+                    end
+                    suffix = extractAfter(handler, strlength(stem));
+                    newStem = macd.source.ComponentNameRewriter.defaultHandler(newName, state.Name);
+                    newHandler = newStem + suffix;
+                    number = 1;
+                    while any(used(used ~= handler) == newHandler) || any(inherited == newHandler)
+                        number = number + 1;
+                        newHandler = newStem + "_" + number;
+                    end
+                    used(used == handler) = newHandler;
+                    after = obj.updatedRenameMappings(after, componentId, "method", handler, newHandler);
+                end
+                component.Name = newName;
+                obj.RenameEdits = after;
+                [renamedSource, diagnostics] = macd.source.RoundTripGenerator(registry).generate(obj);
+                if macd.validation.ModelValidator.hasErrors(diagnostics) || ...
+                        ~any(macd.source.ComponentNameRewriter.memberNames(renamedSource) == newName)
+                    error("macd:DocumentModel:UnsafeComponentRename", "The renamed source could not be generated safely.");
+                end
+            catch exception
+                component.Name = oldName;
+                obj.RenameEdits = before;
+                obj.GeneratedText = previousText;
+                obj.Diagnostics = previousDiagnostics;
+                rethrow(exception)
+            end
+            obj.recordHistory(struct("Kind", "rename", "ComponentId", componentId, ...
+                "OldName", oldName, "NewName", newName, "Before", before, "After", after));
+        end
+
         function applyCallbackAction(obj, componentId, name, action, registry)
             % applyCallbackAction Preflight and record a binding-plus-method edit as one history step.
             arguments (Input)
@@ -529,11 +652,11 @@ classdef DocumentModel < handle
             method = "";
             if action == "Add"
                 % Avoid all source tokens, component names, and pending generated method names.
-                stem = string(matlab.lang.makeValidName(component.Name + erase(name, "Fcn")));
-                stem = extractBefore(stem, min(strlength(stem) + 1, namelengthmax - 8));
+                stem = macd.source.ComponentNameRewriter.defaultHandler(component.Name, name);
                 handler = stem;
                 suffix = 1;
-                used = [string({obj.Components.Name}), string({after.HandlerName}), obj.ClassName, "createComponents", "delete"];
+                used = [string({obj.Components.Name}), string({after.HandlerName}), ...
+                    string({obj.RenameEdits.OldName}), string({obj.RenameEdits.NewName}), obj.ClassName, "createComponents", "delete"];
                 while any(used == handler) || ~isempty(regexp(obj.OriginalText, ...
                         '(?<!\w)' + handler + '(?!\w)', 'once'))
                     suffix = suffix + 1;
@@ -748,6 +871,33 @@ classdef DocumentModel < handle
     end
 
     methods (Access = private)
+        function mappings = updatedRenameMappings(~, mappings, componentId, kind, oldName, newName)
+            % updatedRenameMappings Retarget all historical aliases without cascading source edits.
+            arguments (Input)
+                ~
+                mappings struct
+                componentId (1, 1) string
+                kind (1, 1) string
+                oldName (1, 1) string
+                newName (1, 1) string
+            end
+            arguments (Output)
+                mappings struct
+            end
+
+            for index = 1:numel(mappings)
+                if mappings(index).ComponentId == componentId && mappings(index).Kind == kind && mappings(index).NewName == oldName
+                    mappings(index).NewName = newName;
+                end
+            end
+            existing = find(string({mappings.OldName}) == oldName & string({mappings.Kind}) == kind, 1);
+            if isempty(existing)
+                mappings(end + 1) = struct("ComponentId", componentId, "Kind", kind, "OldName", oldName, "NewName", newName);
+            else
+                mappings(existing).NewName = newName;
+            end
+        end
+
         function addComponentAt(obj, component, parentId, index)
             % addComponentAt Insert one record at a deterministic collection index.
             parent = obj.getComponent(parentId);
@@ -850,6 +1000,15 @@ classdef DocumentModel < handle
                     end
                     for child = parent.Children, parent.removeChild(child); end
                     for child = children, parent.addChild(child); end
+                case "rename"
+                    component = obj.getComponent(edit.ComponentId);
+                    if forward
+                        component.Name = edit.NewName;
+                        obj.RenameEdits = edit.After;
+                    else
+                        component.Name = edit.OldName;
+                        obj.RenameEdits = edit.Before;
+                    end
                 case "callback"
                     if forward, obj.CallbackEdits = edit.After; else, obj.CallbackEdits = edit.Before; end
                 case "insert"
@@ -977,7 +1136,8 @@ classdef DocumentModel < handle
             % uniqueComponentName Make a valid unused MATLAB property name.
             name = string(matlab.lang.makeValidName(char(base)));
             suffix = 1;
-            while ~isempty(obj.getComponentByName(name))
+            reserved = [string({obj.RenameEdits.OldName}), string({obj.RenameEdits.NewName})];
+            while ~isempty(obj.getComponentByName(name)) || any(reserved == name)
                 suffix = suffix + 1;
                 name = string(matlab.lang.makeValidName(char(base + suffix)));
             end
