@@ -648,6 +648,74 @@ classdef DocumentModel < handle
                 "BeforePending", {beforePending}, "AfterPending", {afterPending}));
         end
 
+        function reparentSubtree(obj, id, parentId, registry, measuredPosition)
+            % reparentSubtree Move a complete subtree with stable identities and one history step.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                id (1, 1) string
+                parentId (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
+                measuredPosition double {mustBeFinite} = []
+            end
+
+            % Resolve a side-effect-free placement plan before preparing candidate data.
+            snapshot = macd.model.SubtreeSnapshot(obj, id);
+            ids = string({snapshot.Records.Id});
+            plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ids, measuredPosition);
+            root = obj.getComponent(id);
+            if root.ParentId == parentId, return, end
+            oldParent = obj.getComponent(root.ParentId);
+            newParent = obj.getComponent(parentId);
+            beforeParents = struct("Id", {oldParent.Id, newParent.Id}, ...
+                "Children", {oldParent.Children, newParent.Children});
+            beforeComponents = obj.Components;
+            beforePending = obj.PendingEdits;
+            candidate = obj.structuralCandidate();
+            candidateRoot = candidate.getComponent(id);
+            candidateOldParent = candidate.getComponent(root.ParentId);
+            candidateNewParent = candidate.getComponent(parentId);
+            candidateOldParent.removeChild(id);
+            candidateNewParent.addChild(id);
+            candidateRoot.ParentId = parentId;
+            for change = plan.Changes
+                if change.Remove
+                    candidateRoot.removeProperty(change.Path);
+                else
+                    candidateRoot.setProperty(change.Path, change.Value);
+                end
+            end
+
+            % Derive generation order from the complete changed hierarchy.
+            hierarchy = macd.model.SubtreeSnapshot(candidate, candidate.RootComponentId);
+            orderedIds = string({hierarchy.Records.Id});
+            currentIds = string({candidate.Components.Id});
+            [~, indices] = ismember(orderedIds, currentIds);
+            candidate.Components = candidate.Components(indices);
+            candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", ...
+                "OriginalRecords", snapshot.Records);
+            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+            afterSnapshot = macd.model.SubtreeSnapshot(candidate, id);
+            afterRoot = afterSnapshot.Records(1);
+            afterParents = struct("Id", {oldParent.Id, newParent.Id}, ...
+                "Children", {candidateOldParent.Children, candidateNewParent.Children});
+            currentIds = string({obj.Components.Id});
+            [~, indices] = ismember(orderedIds, currentIds);
+            afterComponents = obj.Components(indices);
+
+            % Apply only validated changes, retaining existing component handles.
+            obj.applySubtreeReparentState(id, afterRoot, afterParents, afterComponents, candidate.PendingEdits);
+            obj.GeneratedText = source;
+            obj.Diagnostics = diagnostics;
+            obj.recordHistory(struct("Kind", "subtree-reparent", "RootId", id, ...
+                "BeforeRoot", snapshot.Records(1), "AfterRoot", afterRoot, ...
+                "BeforeParents", beforeParents, "AfterParents", afterParents, ...
+                "BeforeComponents", beforeComponents, "AfterComponents", afterComponents, ...
+                "BeforePending", {beforePending}, "AfterPending", {candidate.PendingEdits}));
+        end
+
         function undo(obj)
             % undo Reverse the most recent document edit.
             arguments (Input)
@@ -735,9 +803,40 @@ classdef DocumentModel < handle
             obj.IsDirty = true;
         end
 
+        function applySubtreeReparentState(obj, id, rootState, parentStates, components, pending)
+            % applySubtreeReparentState Restore one validated hierarchy and placement state.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                id (1, 1) string
+                rootState (1, 1) struct
+                parentStates struct
+                components macd.model.ComponentRecord
+                pending cell
+            end
+
+            obj.Components = components;
+            root = obj.getComponent(id);
+            root.restoreProperties(rootState.Properties);
+            root.ParentId = rootState.ParentId;
+            for state = parentStates
+                parent = obj.getComponent(state.Id);
+                for child = parent.Children, parent.removeChild(child); end
+                for child = state.Children, parent.addChild(child); end
+            end
+            obj.PendingEdits = pending;
+        end
+
         function applyHistory(obj, edit, forward)
             % applyHistory Apply or reverse one history record without recording it.
             switch edit.Kind
+                case "subtree-reparent"
+                    if forward
+                        obj.applySubtreeReparentState(edit.RootId, edit.AfterRoot, edit.AfterParents, ...
+                            edit.AfterComponents, edit.AfterPending);
+                    else
+                        obj.applySubtreeReparentState(edit.RootId, edit.BeforeRoot, edit.BeforeParents, ...
+                            edit.BeforeComponents, edit.BeforePending);
+                    end
                 case "subtree-delete"
                     parent = obj.getComponent(edit.ParentId);
                     if forward

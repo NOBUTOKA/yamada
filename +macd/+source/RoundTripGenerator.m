@@ -70,9 +70,21 @@ classdef RoundTripGenerator
                 return
             end
 
+            % Relocate source-owned subtree initialization before ordinary property rewrites.
+            movedIds = strings(1, 0);
+            try
+                [relocations, movedIds] = macd.source.SubtreeReparentSourceEdits.build(document, obj.Registry);
+                edits = [edits relocations];
+            catch exception
+                diagnostics(end + 1) = macd.model.Diagnostic("unsafe-subtree-reparent", ...
+                    "error", string(exception.message));
+                document.Diagnostics = diagnostics;
+                return
+            end
             % Rewrite only parsed assignment statements whose literal value changed.
             for index = 1:numel(document.Components)
                 component = document.Components(index);
+                if any(movedIds == component.Id), continue, end
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
                     if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
