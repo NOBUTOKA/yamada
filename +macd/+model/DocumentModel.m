@@ -739,7 +739,17 @@ classdef DocumentModel < handle
                     error("macd:DocumentModel:UnsafeSubtreeEdit", "Callback ownership prevents complete subtree deletion.");
                 end
             end
-            macd.source.SubtreeSourceEdits.deletion(obj.OriginalText, removed);
+            % Source removals retain original ownership even after placement changes.
+            sourceRemoved = removed;
+            if strlength(obj.OriginalText) > 0
+                originalDocument = macd.source.AppSourceParser.parseText(obj.OriginalText, registry);
+                for sourceIndex = 1:numel(sourceRemoved)
+                    originalComponent = originalDocument.getComponent(sourceRemoved(sourceIndex).Id);
+                    if ~isempty(originalComponent), sourceRemoved(sourceIndex) = originalComponent; end
+                end
+            end
+            rewrittenReferences = macd.source.SubtreeSourceEdits.detachedParentReferences(obj, ids);
+            macd.source.SubtreeSourceEdits.deletion(obj.OriginalText, sourceRemoved, rewrittenReferences);
 
             % Preflight on independent records before changing document or history.
             candidate = obj.structuralCandidate();
@@ -749,7 +759,8 @@ classdef DocumentModel < handle
             beforeComponents = obj.Components;
             beforePending = obj.PendingEdits;
             afterPending = beforePending;
-            afterPending{end + 1} = struct("Kind", "delete-subtree", "Components", removed);
+            afterPending{end + 1} = struct("Kind", "delete-subtree", "Components", sourceRemoved, ...
+                "RewrittenReferences", rewrittenReferences);
             candidate.Components(ismember(string({candidate.Components.Id}), ids)) = [];
             candidateParent = candidate.getComponent(parent.Id);
             candidateParent.removeChild(id);

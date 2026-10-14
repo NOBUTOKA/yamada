@@ -4,11 +4,12 @@ classdef SubtreeSourceEdits
     %   rejecting references outside the owned subtree statements.
 
     methods (Static)
-        function edits = deletion(source, components)
+        function edits = deletion(source, components, rewrittenReferences)
             % deletion Return source removals only after proving complete ownership.
             arguments (Input)
                 source (1, 1) string
                 components macd.model.ComponentRecord
+                rewrittenReferences macd.model.SourceSpan = macd.model.SourceSpan.empty
             end
             arguments (Output)
                 edits struct
@@ -50,13 +51,51 @@ classdef SubtreeSourceEdits
             for name = names
                 positions = regexp(code, '(?<!\w)app\s*\.\s*' + name + '(?!\w)', 'start');
                 for position = positions
-                    if ~any([spans.StartOffset] <= position & [spans.EndOffset] >= position)
+                    allowed = [spans rewrittenReferences];
+                    if ~any([allowed.StartOffset] <= position & [allowed.EndOffset] >= position)
                         error("macd:SubtreeSourceEdits:UnsafeDeletion", "The subtree is referenced outside its owned statements.");
                     end
                 end
             end
             for span = spans
                 edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", ""); %#ok<AGROW>
+            end
+        end
+
+        function spans = detachedParentReferences(document, deletedIds)
+            % detachedParentReferences Identify only constructor parent tokens already scheduled for reparenting.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                deletedIds string
+            end
+            arguments (Output)
+                spans macd.model.SourceSpan
+            end
+            spans = macd.model.SourceSpan.empty;
+            visited = strings(1, 0);
+            for index = 1:numel(document.PendingEdits)
+                pending = document.PendingEdits{index};
+                if ~isstruct(pending) || ~isfield(pending, "Kind") || pending.Kind ~= "reparent-subtree", continue, end
+                for record = pending.OriginalRecords
+                    if any(visited == record.Id), continue, end
+                    visited(end + 1) = record.Id; %#ok<AGROW>
+                    component = document.getComponent(record.Id);
+                    if record.Origin ~= "parsed" || isempty(component) || any(deletedIds == record.Id) || ...
+                            ~any(deletedIds == record.ParentId) || component.ParentId == record.ParentId
+                        continue
+                    end
+                    sourceSpan = record.SourceSpans.Creation;
+                    creation = extractBetween(document.OriginalText, sourceSpan.StartOffset, sourceSpan.EndOffset);
+                    pattern = '^app\.\w+\s*=\s*\w+\s*\(\s*(?<reference>app\s*\.\s*\w+)';
+                    token = regexp(creation, pattern, 'names', 'once');
+                    prefix = regexp(creation, pattern, 'match', 'once');
+                    if isempty(token)
+                        error("macd:SubtreeSourceEdits:UnsafeDeletion", "The moved child's constructor parent token is ambiguous.");
+                    end
+                    spans(end + 1) = macd.model.SourceSpan( ...
+                        sourceSpan.StartOffset + strlength(prefix) - strlength(token.reference), ...
+                        sourceSpan.StartOffset + strlength(prefix) - 1); %#ok<AGROW>
+                end
             end
         end
 

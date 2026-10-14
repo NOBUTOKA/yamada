@@ -22,7 +22,7 @@ classdef SubtreeReparentSourceEdits
                 pending = document.PendingEdits{index};
                 if ~isstruct(pending) || ~isfield(pending, "Kind") || pending.Kind ~= "reparent-subtree", continue, end
                 for record = pending.OriginalRecords
-                    if record.Origin ~= "parsed", continue, end
+                    if record.Origin ~= "parsed" || isempty(document.getComponent(record.Id)), continue, end
                     if ~any(movedIds == record.Id)
                         movedIds(end + 1) = record.Id; %#ok<AGROW>
                         if isempty(originals), originals = record; else, originals(end + 1) = record; end %#ok<AGROW>
@@ -87,14 +87,15 @@ classdef SubtreeReparentSourceEdits
 
             % Emit moved initialization in the candidate's parent-before-child order.
             for component = document.Components
+                if component.Origin == "generated"
+                    block = block + macd.source.SubtreeReparentSourceEdits.generatedInitialization(document, component, registry, ending);
+                    continue
+                end
                 if ~any(movedIds == component.Id), continue, end
                 record = originals(string({originals.Id}) == component.Id);
                 parent = document.getComponent(component.ParentId);
                 if isempty(parent)
                     error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Destination parent no longer exists.");
-                end
-                if parent.Origin == "generated" && ~any(movedIds == parent.Id)
-                    error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Generated destination parent requires a combined insertion plan.");
                 end
                 creation = extractBetween(source, record.SourceSpans.Creation.StartOffset, record.SourceSpans.Creation.EndOffset);
                 pattern = '^(app\.\w+\s*=\s*\w+\s*\(\s*)app\.\w+';
@@ -126,6 +127,43 @@ classdef SubtreeReparentSourceEdits
                 edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", ""); %#ok<AGROW>
             end
             edits(end + 1) = struct("Start", anchor + 1, "End", anchor, "Text", block);
+        end
+
+        function text = generatedInitialization(document, component, registry, ending)
+            % generatedInitialization Emit new nodes in the same ordering plan as relocated parsed nodes.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                registry (1, 1) macd.model.ComponentRegistry
+                ending (1, 1) string
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+            parent = document.getComponent(component.ParentId);
+            if isempty(parent)
+                error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Generated initialization has no parent.");
+            end
+            argumentsText = "app." + parent.Name;
+            for index = 1:numel(component.CreationArguments)
+                argumentsText = argumentsText + ", " + macd.source.LiteralEncoder.encode(component.CreationArguments{index});
+            end
+            text = ending + "            app." + component.Name + " = " + component.Factory + "(" + argumentsText + ");";
+            pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
+            for callback = pending(:)'
+                if callback.Action == "Add"
+                    text = text + ending + "            app." + component.Name + "." + callback.Name + ...
+                        " = createCallbackFcn(app, @" + callback.HandlerName + ", true);";
+                end
+            end
+            for entry = component.Properties
+                if registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments), continue, end
+                if entry.ValueKind ~= "literal"
+                    error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Generated properties require a literal representation.");
+                end
+                text = text + ending + "            app." + component.Name + "." + entry.Path + ...
+                    " = " + macd.source.LiteralEncoder.encode(entry.LiteralValue) + ";";
+            end
         end
 
         function [direct, methodSpan] = directScope(statements)

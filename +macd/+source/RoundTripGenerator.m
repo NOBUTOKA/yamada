@@ -48,7 +48,9 @@ classdef RoundTripGenerator
                 pending = document.PendingEdits{pendingIndex};
                 if isstruct(pending) && isfield(pending, "Kind") && pending.Kind == "delete-subtree"
                     try
-                        removals = macd.source.SubtreeSourceEdits.deletion(source, pending.Components);
+                        rewrittenReferences = macd.model.SourceSpan.empty;
+                        if isfield(pending, "RewrittenReferences"), rewrittenReferences = pending.RewrittenReferences; end
+                        removals = macd.source.SubtreeSourceEdits.deletion(source, pending.Components, rewrittenReferences);
                         edits = [edits removals]; %#ok<AGROW>
                     catch exception
                         diagnostics(end + 1) = macd.model.Diagnostic("unsafe-subtree-deletion", ...
@@ -72,9 +74,12 @@ classdef RoundTripGenerator
 
             % Relocate source-owned subtree initialization before ordinary property rewrites.
             movedIds = strings(1, 0);
+            relocationAnchor = 0;
             try
                 [relocations, movedIds] = macd.source.SubtreeReparentSourceEdits.build(document, obj.Registry);
                 edits = [edits relocations];
+                insertion = relocations([relocations.Start] > [relocations.End]);
+                if ~isempty(insertion), relocationAnchor = max([insertion.End]); end
             catch exception
                 diagnostics(end + 1) = macd.model.Diagnostic("unsafe-subtree-reparent", ...
                     "error", string(exception.message));
@@ -120,7 +125,7 @@ classdef RoundTripGenerator
             % Add generated components only beside a parsed declaration/init section.
             generated = document.Components([document.Components.Origin] == "generated");
             if ~isempty(generated)
-                [additionEdits, diagnostic] = obj.additionEdits(source, document, generated);
+                [additionEdits, diagnostic] = obj.additionEdits(source, document, generated, relocationAnchor, ~isempty(movedIds));
                 if ~isempty(diagnostic)
                     diagnostics(end + 1) = diagnostic;
                 else
@@ -197,8 +202,20 @@ classdef RoundTripGenerator
             end
         end
 
-        function [edits, diagnostic] = additionEdits(obj, source, document, components)
+        function [edits, diagnostic] = additionEdits(obj, source, document, components, relocationAnchor, initializationEmitted)
             % additionEdits Append generated declarations and initialization safely.
+            arguments (Input)
+                obj (1, 1) macd.source.RoundTripGenerator
+                source (1, 1) string
+                document (1, 1) macd.model.DocumentModel
+                components macd.model.ComponentRecord
+                relocationAnchor (1, 1) double {mustBeNonnegative, mustBeInteger} = 0
+                initializationEmitted (1, 1) logical = false
+            end
+            arguments (Output)
+                edits struct
+                diagnostic macd.model.Diagnostic
+            end
             edits = struct("Start", {}, "End", {}, "Text", {});
             diagnostic = macd.model.Diagnostic.empty;
             parsed = document.Components([document.Components.Origin] == "parsed");
@@ -217,7 +234,7 @@ classdef RoundTripGenerator
                 return
             end
             declarationOffset = max([declarationSpans.EndOffset]);
-            creationOffset = max([creationSpans.EndOffset]);
+            creationOffset = max([creationSpans.EndOffset relocationAnchor]);
             eol = obj.lineEnding(document);
             declarationsText = "";
             creationText = "";
@@ -232,6 +249,7 @@ classdef RoundTripGenerator
                 end
                 declarationsText = declarationsText + eol + obj.indent(source, declarationOffset) + ...
                     component.Name + " " + component.DeclaredType;
+                if initializationEmitted, continue, end
                 arguments = "app." + parent.Name;
                 for argumentIndex = 1:numel(component.CreationArguments)
                     arguments = arguments + ", " + macd.source.LiteralEncoder.encode( ...
