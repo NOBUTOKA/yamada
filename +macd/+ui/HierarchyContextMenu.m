@@ -46,11 +46,12 @@ classdef HierarchyContextMenu < handle
                 "Tag", "macd-manage-callbacks", "Enable", "off", ...
                 "MenuSelectedFcn", @(~, ~) obj.invoke());
             tree.ContextMenu = obj.Menu;
-            for action = ["Copy", "Cut", "Paste"]
+            for action = ["Copy", "Cut", "Paste", "Reparent"]
                 obj.EditItems(end + 1) = uimenu(obj.Menu, "Text", action, ...
                     "Tag", "macd-context-" + lower(action), "Enable", "off", ...
                     "MenuSelectedFcn", @(~, ~) obj.invokeEdit(action));
             end
+            obj.EditItems(end).Text = "Move to Container...";
         end
 
         function reset(obj)
@@ -107,7 +108,7 @@ classdef HierarchyContextMenu < handle
             obj.TargetId = component.Id;
             obj.TargetDocument = document;
             if ~isempty(callbacks), obj.CallbackItem.Enable = "on"; end
-            actions = ["Copy", "Cut", "Paste"];
+            actions = ["Copy", "Cut", "Paste", "Reparent"];
             for index = 1:numel(actions)
                 state = obj.AvailabilityFcn(actions(index), obj.TargetId);
                 obj.EditItems(index).Enable = state.Enabled;
