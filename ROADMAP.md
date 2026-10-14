@@ -98,6 +98,7 @@ native hierarchy operations above; it does not change the editor's own menus.
 
 Status: completed and verified on MATLAB R2024a, 2026-10-02. All six stages and
 the integrated source-reload workflow below have passed their checkpoints.
+The typed-event and naming follow-ups below are planned and remain unimplemented.
 
 Use the editor's Hierarchy context menu as the initial entry point for a separate
 callback-management popup. Do not add special action rows to the catalog-driven
@@ -109,7 +110,7 @@ popup owns transient controls, DocumentModel owns validated edits and history,
 and the source layer owns parsing and localized rewrites. Safe Preview must never
 execute the opened application's callbacks. Review each stage at its checkpoint
 before proceeding. The progress notes below identify implemented internal seams;
-all stage checkpoints are now verified in the completion evidence below.
+the original six stage checkpoints are verified in the completion evidence below.
 
 ### Agreed interaction contract and implementation order
 
@@ -308,6 +309,148 @@ README, SPECIFICATION and architecture documentation match the implementation.
 The developer verification uses a Windows-only exact-title foreground helper;
 it is not an application runtime dependency. Project conventions and updated
 UI-selection/three-button toolbar contracts pass.
+
+### Follow-up: Generate documented event argument types (planned)
+
+Status: planning only; the completed six-stage workflow above currently generates
+an untyped `event` argument. These follow-ups have not been implemented.
+
+Data flow: release-specific audited callback contracts -> catalog promotion ->
+validated PropertyDefinition/ComponentRegistry projection -> DocumentModel method
+stub construction -> NewAppGenerator/RoundTripGenerator output. The popup remains
+a thin command view; ValueSchema continues to describe callback binding values,
+not the event argument passed to a handler.
+
+#### Stage 7: Audit and define callback signature metadata
+
+- Extend per-property records and `schema.json` under
+  `dev/component-data/R2024a`. Record a distinct `callbackSignature` contract with
+  event representation, verified fully qualified class name where applicable,
+  verified shape if available, audit status and release-specific source evidence.
+  Field names are proposed schema design, not existing runtime fields.
+- Key contracts by concrete component variant/style and callback property; account
+  for effective parent-context projection where applicable. Do not assume that a
+  shared callback name implies the same argument contract across components.
+- Distinguish verified object types, verified non-object/empty event data, and
+  unresolved documentation. Unknown event data remains untyped; do not replace it
+  with a universal `event.EventData` base class or presume every event is scalar.
+- For example, audit `uibutton-push` / `ButtonPushedFcn` against the R2024a official
+  contract and installed public `matlab.ui.eventdata.ButtonPushedData` class.
+  Verify `ValueChangedFcn`, `ValueChangingFcn`, CreateFcn/DeleteFcn and inherited
+  callbacks independently instead of inferring types from property names.
+
+Checkpoint: review the callback/variant inventory and evidence for representative
+Button, state-button, numeric/text edit-field, slider, table, tree and figure
+callbacks. Missing evidence is explicitly unresolved. No opened application or
+user callback may execute during discovery or audit.
+
+#### Stage 8: Promote and validate the new metadata
+
+- Extend the promotion/projection pipeline under `dev/component-data`, including
+  `PromoteGroupingToRuntimeCatalog.ps1`, and any intervening grouping artifacts
+  that otherwise drop the contract. Preserve per-variant overrides when reusable
+  property groups are expanded; do not infer one common signature from group ID.
+- Regenerate `resources/component-catalog/R2024a`; update the catalog schema and
+  strict metadata allowlists/validation in ComponentCatalogLoader. Keep older
+  catalogs with absent optional contracts loadable, and review schema versioning.
+- Expose the validated contract through PropertyDefinition and the existing
+  `getEffectiveCallbacks` projection. Reject malformed qualified type names,
+  unsupported contract shapes and signatures attached to noncallback properties.
+  Treat class names as validated data, never as expressions to evaluate.
+- Keep callback binding editability, Inspector rows and Safe Preview policy
+  unchanged. Documentation evidence stays in the development audit surface;
+  runtime metadata carries only the reviewed generation contract it needs.
+
+Checkpoint: test promotion reproducibility, ledger/catalog parity, concrete styles
+and parent projection, unknown/absent contracts, and malformed-metadata rejection.
+Catalog loading/discovery must not instantiate input apps or execute callbacks.
+
+#### Stage 9: Use the contract in generated method stubs
+
+- Change DocumentModel.applyCallbackAction's stub construction to obtain the
+  effective callback definition and emit the verified `event` type/shape in its
+  arguments block. Keep the current untyped argument for unresolved contracts.
+- Preserve concise English method doc-comments and current app-class validation.
+  Verify CallbackSourceEdits.methodText and both generators retain event validation
+  when the output class name changes through Save As.
+- Apply this only to newly generated methods. Do not add validation to existing
+  user methods on Open/Reload/Save or rewrite their bodies. Preserve atomic edits,
+  collision checks, source preflight, complete method deletion and Undo/Redo.
+
+Checkpoint: generated Button handlers have the audited event type; differing and
+unknown callback contracts produce their respective correct signatures. Test
+Add/Delete/Undo/Redo, source preservation, Save/reparse and Save As with existing
+bodies. Run catalog/loader, callback model/generation, parser and round-trip suites,
+then the full escalated MATLAB suite. Any runtime event-type checks use only
+trusted test fixtures, never the user's opened application.
+
+### Follow-up proposal: Avoid duplicated component words in handler names
+
+Status: design recommendation only; no naming implementation changes are included
+in this roadmap update. Review this policy before implementing it.
+
+Current code uses ComponentNameRewriter.defaultHandler to concatenate the component
+name and callback name with `Fcn` removed, bound the identifier length, and feed
+collision handling. DocumentModel uses this helper both for Add and for identifying
+which default handler names follow an explicit component rename. Both consumers
+must agree on the same naming policy.
+
+| Approach | Benefit | Limitation / decision |
+| --- | --- | --- |
+| Runtime prefix/substring detection from the component name or declared class | Little added data; can suggest candidates | Spelling does not establish event meaning; mutable component names and new variants make outcomes unstable. Do not use as the runtime rule. |
+| A special-case list inside generation code | Small initial implementation | Duplicates declarative inventory and is disconnected from variant contracts. Do not use as the source of truth. |
+| Reviewed per-variant/per-callback handler suffix in the development ledger, promoted into the catalog | Explicit, reviewable meaning and predictable behavior | Requires schema/promotion support and auditing. Recommended. |
+
+Store the desired final suffix, rather than a string to search for and remove.
+A proposed runtime `handlerSuffix` is independent of `callbackSignature` and
+ValueSchema. The development ledger must clearly identify the suffix as a yamada
+naming-policy decision, not as a claimed MathWorks callback contract. Put it in a
+separate generation-policy field on the audited property record, then promote the
+reviewed value beside the signature metadata. Do not directly hand-edit generated
+runtime JSON. Automatic class-prefix matching may help produce audit candidates,
+but human review determines the promoted policy.
+
+Proposed examples, scoped to the indicated component/callback pair:
+
+| Component / callback | Reviewed suffix | Result for the component name shown |
+| --- | --- | --- |
+| Push button / ButtonPushedFcn | Pushed | HogeButton -> HogeButtonPushed; Button2 -> Button2Pushed |
+| Menu / MenuSelectedFcn | Selected | FileMenu -> FileMenuSelected |
+| State button / ValueChangedFcn | ValueChanged | HogeButton -> HogeButtonValueChanged |
+| Figure or axes / ButtonDownFcn | ButtonDown | PlotAxes -> PlotAxesButtonDown |
+| Figure / WindowButtonDownFcn | WindowButtonDown | MainFigure -> MainFigureWindowButtonDown |
+| Figure / SizeChangedFcn | SizeChanged | MainFigure -> MainFigureSizeChanged |
+
+`Button` in ButtonPushedFcn names the component kind; `Button` in an axes/figure
+ButtonDownFcn identifies the mouse button event and must remain. Never delete
+arbitrary matching substrings from a callback name, or inspect the user's chosen
+component name to decide which part is redundant. The popup's callback property
+name and generated binding remain unchanged; only the new handler method name
+uses the reviewed suffix.
+
+Implementation sequence and checkpoints:
+
+1. Audit the naming policy alongside Stage 7 and extend the relevant ledger/runtime
+   schemas and promotion path alongside Stage 8. Accept only nonempty valid suffix
+   identifiers. Missing policy keeps the existing callback-derived naming rule;
+   do not silently introduce a new rule for `Callback`-ending property names.
+   Checkpoint: review the trim/preserve matrix above, arbitrary component names,
+   styles, inherited callbacks and absent/invalid overrides.
+2. Make the shared default-name resolver consume the effective definition's suffix.
+   Update both Add and component-rename default-name recognition. Retain existing
+   valid-name/length bounds, reserved-name checks and collision numbering (`_2`,
+   etc.). Plan conservative recognition of both legacy and new default stems for
+   explicit rename operations, under the existing ownership/reference checks;
+   preserve custom and shared handlers. Never bulk-migrate names on Open/Reload or
+   Save. Checkpoint: Button/HogeButton/Button2 names, menu and mouse-event cases,
+   collisions, maximum-length identifiers, pending edits, legacy/new defaults and
+   custom names remain predictable without changing unrelated source.
+3. Test generation, explicit rename, Add/Delete/Undo/Redo, Save/reopen and callback
+   body preservation. Update source/model/rename expectations for the new default
+   naming convention and document compatibility behavior. Checkpoint: relevant
+   catalog, loader, discovery, callback-generation, ComponentRenameTest and
+   round-trip suites pass, followed by full escalated MATLAB verification when
+   implementation begins.
 
 ## Reload Source Edited Outside yamada
 
