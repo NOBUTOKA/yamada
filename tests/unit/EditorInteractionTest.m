@@ -405,7 +405,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         end
 
         function gridOverlayChildActionsCommitOnlyForTheSelectedChild(testCase)
-            % gridOverlayChildActionsCommitOnlyForTheSelectedChild Route child gestures through safe placement planning.
+            % gridOverlayChildActionsCommitOnlyForTheSelectedChild Commit overlapping gestures for the selected child.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
@@ -418,6 +418,11 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             labelRow = find(string(palette.Data(:, 1)) == "Label", 1);
             palette.DoubleClickedFcn(palette, ...
                 struct("InteractionInformation", struct("Row", gridRow)));
+            % Occupy both destinations before rendering the moving child's overlay.
+            registry = macd.model.ComponentRegistry.createDefault();
+            occupied = app.Document.insertComponent(registry, "uilabel", app.SelectedComponentId);
+            app.Document.setProperty(occupied.Id, "Layout.Row", [1 2]);
+            app.Document.setProperty(occupied.Id, "Layout.Column", 2);
             palette.DoubleClickedFcn(palette, ...
                 struct("InteractionInformation", struct("Row", labelRow)));
             app.Document.setProperty(app.SelectedComponentId, "Layout.Row", 1);
@@ -459,6 +464,13 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "childId", app.SelectedComponentId, "rowStart", 2, "rowEnd", 3, ...
                 "columnStart", 1, "columnEnd", 1)));
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 2);
+            testCase.verifyEqual(occupied.getProperty("Layout.Row").LiteralValue, [1 2]);
+            testCase.verifyEqual(occupied.getProperty("Layout.Column").LiteralValue, 2);
+            app.Document.undo();
+            testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 2);
+            app.Document.undo();
+            testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(child.getProperty("Layout.Column").LiteralValue, 1);
             clear cleanup
         end
 

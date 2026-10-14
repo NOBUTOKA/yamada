@@ -421,12 +421,14 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(second.getProperty("Layout.Row").LiteralValue, 2);
         end
 
-        function gridChildPlacementPlannerPreservesSpanAndRejectsOverlap(testCase)
-            % gridChildPlacementPlannerPreservesSpanAndRejectsOverlap Keep direct-child movement bounded and nonoverlapping.
+        function gridChildPlacementPlannerPreservesSpanAndAllowsOverlap(testCase)
+            % gridChildPlacementPlannerPreservesSpanAndAllowsOverlap Allow overlap while validating grid bounds.
 
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            document.setProperty(grid.Id, "RowHeight", {"1x", "1x", "1x", "1x"});
+            document.setProperty(grid.Id, "ColumnWidth", {"1x", "1x", "1x", "1x"});
             moving = document.insertComponent(registry, "uilabel", grid.Id);
             occupied = document.insertComponent(registry, "uilabel", grid.Id);
             document.setProperty(moving.Id, "Layout.Row", [1 2]);
@@ -439,17 +441,37 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [2 3]);
             testCase.verifyEqual(moving.getProperty("Layout.Column").LiteralValue, [2 3]);
-            testCase.verifyError(@() macd.model.GridChildPlacementPlanner.move( ...
-                document, grid.Id, moving.Id, 3, 3, 4, 4), ...
-                "macd:GridChildPlacementPlanner:Overlap");
+            changes = macd.model.GridChildPlacementPlanner.move( ...
+                document, grid.Id, moving.Id, 3, 3, 4, 4);
+            document.applyGridLayoutEdit(grid.Id, changes);
+            testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [3 4]);
+            testCase.verifyEqual(moving.getProperty("Layout.Column").LiteralValue, [3 4]);
             changes = macd.model.GridChildPlacementPlanner.resize( ...
                 document, grid.Id, moving.Id, 1, 3, 1, 3, 4, 4);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [1 3]);
             testCase.verifyEqual(moving.getProperty("Layout.Column").LiteralValue, [1 3]);
+            changes = macd.model.GridChildPlacementPlanner.resize( ...
+                document, grid.Id, moving.Id, 1, 4, 1, 4, 4, 4);
+            document.applyGridLayoutEdit(grid.Id, changes);
+            testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [1 4]);
+            testCase.verifyEqual(moving.getProperty("Layout.Column").LiteralValue, [1 4]);
+            testCase.verifyEqual(occupied.getProperty("Layout.Row").LiteralValue, 4);
+            testCase.verifyEqual(occupied.getProperty("Layout.Column").LiteralValue, 4);
+
+            % Overlap remains valid source while invalid coordinates remain rejected.
+            generator = macd.source.RoundTripGenerator(registry);
+            [~, diagnostics] = generator.generate(document);
+            testCase.verifyEmpty(diagnostics);
+            testCase.verifyError(@() macd.model.GridChildPlacementPlanner.move( ...
+                document, grid.Id, moving.Id, 2, 1, 4, 4), ...
+                "macd:GridChildPlacementPlanner:OutOfBounds");
             testCase.verifyError(@() macd.model.GridChildPlacementPlanner.resize( ...
-                document, grid.Id, moving.Id, 1, 4, 1, 4, 4, 4), ...
-                "macd:GridChildPlacementPlanner:Overlap");
+                document, grid.Id, moving.Id, 1, 5, 1, 4, 4, 4), ...
+                "macd:GridChildPlacementPlanner:OutOfBounds");
+            testCase.verifyError(@() macd.model.GridChildPlacementPlanner.resize( ...
+                document, grid.Id, moving.Id, NaN, 4, 1, 4, 4, 4), ...
+                "macd:GridChildPlacementPlanner:InvalidTarget");
         end
 
         function modelValidationUsesTheInspectorPropertySchema(testCase)

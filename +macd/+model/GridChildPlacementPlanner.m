@@ -1,12 +1,12 @@
 classdef GridChildPlacementPlanner
     % GridChildPlacementPlanner Plan safe immediate-child Grid Layout placement changes.
     %   This utility relocates or resizes explicit child placements, rejects
-    %   out-of-range targets and new overlaps, and returns one atomic
+    %   out-of-range targets, allows overlapping placements, and returns one atomic
     %   DocumentModel grid-edit change set without mutating the document.
 
     methods (Static)
         function changes = move(document, gridId, childId, rowStart, columnStart, rowCount, columnCount)
-            % move Relocate one explicit child while preserving spans and preventing new overlap.
+            % move Relocate one explicit child while preserving spans within the grid.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 gridId (1, 1) string
@@ -31,7 +31,7 @@ classdef GridChildPlacementPlanner
 
         function changes = resize(document, gridId, childId, rowStart, rowEnd, ...
                 columnStart, columnEnd, rowCount, columnCount)
-            % resize Change one explicit child span while preventing new overlap.
+            % resize Change one explicit child span within the grid, allowing overlap.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 gridId (1, 1) string
@@ -63,20 +63,7 @@ classdef GridChildPlacementPlanner
                 error("macd:GridChildPlacementPlanner:OutOfBounds", ...
                     "The child span does not fit within the Grid Layout.");
             end
-            for siblingId = grid.Children
-                if siblingId == childId, continue, end
-                sibling = document.getComponent(siblingId);
-                try
-                    [siblingRows, siblingColumns] = macd.model.GridChildPlacementPlanner.placement(sibling);
-                catch
-                    continue
-                end
-                if rowStart <= siblingRows(end) && rowEnd >= siblingRows(1) && ...
-                        columnStart <= siblingColumns(end) && columnEnd >= siblingColumns(1)
-                    error("macd:GridChildPlacementPlanner:Overlap", ...
-                        "Moving the child would create a new Grid Layout overlap.");
-                end
-            end
+            % MATLAB permits multiple children to occupy the same grid cells.
             rowValue = rowStart;
             if rowEnd ~= rowStart, rowValue = [rowStart rowEnd]; end
             columnValue = columnStart;

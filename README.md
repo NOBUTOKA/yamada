@@ -81,8 +81,9 @@ source-backed track list remains read-only. Moving or resizing a child
 requires editable, explicit `Layout.Row` and `Layout.Column` values and
 unambiguous realized geometry. Track insertion or deletion is rejected when an
 affected child has an implicit or expression-backed placement, or the change
-would leave a child without a valid track. Stale canvas actions and moves that
-introduce a new overlap are also rejected. Source-backed values are preserved.
+would leave a child without a valid track. Stale canvas actions are also rejected.
+Moving and resizing children may create overlapping placements, as MATLAB allows.
+Source-backed values are preserved.
 
 ### Edit an existing application
 

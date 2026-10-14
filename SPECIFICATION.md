@@ -138,8 +138,9 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - Deletion occurs only after an explicit user action.
 - Visual Grid Layout editing accepts only supported literal, source-owned track
   and placement values. Expression-backed tracks or placements, implicit
-  placements, stale overlay actions, ambiguous geometry, and a newly introduced
-  child overlap are rejected without a partial document update.
+  placements, stale overlay actions, ambiguous geometry, and out-of-range
+  placements are rejected without a partial document update. Moving and resizing
+  children may create overlapping placements, as MATLAB allows.
 
 `yamada` prioritizes source preservation, but it does not guarantee complete round-tripping of arbitrary MATLAB syntax. Use version control such as Git or create a backup before editing an existing file.
 
