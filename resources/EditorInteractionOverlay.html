@@ -96,19 +96,37 @@ var component;
 var svg;
 var currentData = { width: 1, height: 1, components: [], gridSelectionTargets: [] };
 var gridGesture = null;
+var absoluteGesture = null;
+var reparentGuide = null;
 
 function setup(htmlComponent) {
   component = htmlComponent;
   svg = document.getElementById("overlay");
   document.addEventListener("keydown", deleteSelectionKey);
   htmlComponent.addEventListener("DataChanged", function(event) {
-    currentData = event.Data || currentData;
+    currentData = htmlComponent.Data || currentData;
+    if (absoluteGesture && absoluteGesture.modelRevision !== currentData.reparentRevision) {
+      absoluteGesture = null;
+      clearReparentGuide();
+    }
+    if (gridGesture && gridGesture.modelRevision !== currentData.reparentRevision) cancelGridChildGesture();
     render();
+    if (absoluteGesture && absoluteGesture.pendingPoint && currentData.dragSource &&
+        currentData.dragSource.id === absoluteGesture.id) finishAbsoluteDrop(absoluteGesture.pendingPoint);
+  });
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape" && absoluteGesture) {
+      absoluteGesture = null;
+      clearReparentGuide();
+      component.sendEventToMATLAB("Pointer", {phase: "pointercancel", x: 0, y: 0, componentId: "", handle: ""});
+    }
   });
   svg.addEventListener("pointerdown", sendPointerEvent);
   svg.addEventListener("pointermove", sendPointerEvent);
   svg.addEventListener("pointerup", sendPointerEvent);
   svg.addEventListener("pointercancel", sendPointerEvent);
+  currentData = htmlComponent.Data || currentData;
+  render();
 }
 
 function deleteSelectionKey(event) {
@@ -125,6 +143,84 @@ function deleteSelectionKey(event) {
   });
 }
 
+function clearReparentGuide() {
+  if (reparentGuide && reparentGuide.parentNode) reparentGuide.remove();
+  reparentGuide = null;
+}
+
+function dropCandidate(gesture, point) {
+  var source = currentData.dragSource;
+  if (!source || source.id !== gesture.id) return null;
+  var targets = componentArray(currentData.reparentTargets).filter(function(target) {
+    var b = target.bounds;
+    return point.x >= b[0] && point.x <= b[0] + b[2] && point.y >= b[1] && point.y <= b[1] + b[3];
+  }).sort(function(a, b) { return Number(b.depth) - Number(a.depth); });
+  var target = targets[0];
+  if (!target) return source.parentId === currentData.rootId ? null :
+    {enabled: false, reason: "No destination at this point.", bounds: source.bounds, parentId: "", targetCell: [], targetPosition: []};
+  if (target.id === source.parentId) return null;
+  var result = {enabled: Boolean(target.enabled), reason: target.reason || "", parentId: target.id,
+    bounds: target.bounds, targetCell: [], targetPosition: []};
+  if (target.grid && target.grid.geometryAvailable) {
+    var cell = gridCellAt(target.grid, point);
+    if (!cell) { result.enabled = false; result.reason = "Drop inside a grid cell."; return result; }
+    var span = {rowStart: cell.row, rowEnd: cell.row + Number(source.rowSpan) - 1,
+      columnStart: cell.column, columnEnd: cell.column + Number(source.columnSpan) - 1};
+    result.targetCell = [cell.row, cell.column];
+    var bounds = gridSpanBounds(target.grid, span);
+    if (!bounds) { result.enabled = false; result.reason = "The span exceeds the destination grid."; return result; }
+    result.bounds = bounds;
+    if (componentArray(target.grid.children).some(function(child) {
+      return child.id !== source.id && child.rowStart <= span.rowEnd && child.rowEnd >= span.rowStart &&
+        child.columnStart <= span.columnEnd && child.columnEnd >= span.columnStart;
+    })) { result.enabled = false; result.reason = "The destination cells are occupied."; }
+  } else if (target.grid && target.grid.geometryAvailable === false) {
+    result.enabled = false;
+  } else if (!source.fillsParent) {
+    var x = point.x - (gesture.startPoint.x - source.bounds[0]);
+    var y = point.y - (gesture.startPoint.y - source.bounds[1]);
+    result.bounds = [x, y, source.bounds[2], source.bounds[3]];
+    result.targetPosition = [x - target.origin[0], y - target.origin[1], source.bounds[2], source.bounds[3]];
+  }
+  if (result.enabled) result.reason = "Move to " + target.name;
+  return result;
+}
+
+function showReparentGuide(candidate) {
+  clearReparentGuide();
+  if (!candidate) return;
+  var bounds = candidate.bounds;
+  var surface = currentData.surfaceBounds || [0, 0, currentData.width, currentData.height];
+  reparentGuide = document.createElement("div");
+  reparentGuide.style.cssText = "position:absolute;pointer-events:none;z-index:20;box-sizing:border-box;font:11px Arial;white-space:nowrap;";
+  reparentGuide.style.border = "2px dashed " + (candidate.enabled ? "#238636" : "#c22");
+  reparentGuide.style.color = candidate.enabled ? "#154b2b" : "#a11";
+  reparentGuide.style.background = candidate.enabled ? "rgba(35,134,54,0.10)" : "rgba(204,34,34,0.08)";
+  reparentGuide.style.left = (bounds[0] - surface[0]) + "px";
+  reparentGuide.style.top = (surface[1] + surface[3] - bounds[1] - bounds[3]) + "px";
+  reparentGuide.style.width = Math.max(2, bounds[2]) + "px";
+  reparentGuide.style.height = Math.max(2, bounds[3]) + "px";
+  reparentGuide.textContent = candidate.reason;
+  document.body.appendChild(reparentGuide);
+}
+
+function sendReparent(id, candidate, modelRevision) {
+  clearReparentGuide();
+  component.sendEventToMATLAB("Reparent", {componentId: id,
+    parentId: candidate.enabled ? candidate.parentId : "", revision: currentData.gridEditor.revision,
+    modelRevision: modelRevision,
+    targetCell: candidate.targetCell, targetPosition: candidate.targetPosition});
+}
+
+function finishAbsoluteDrop(point) {
+  var gesture = absoluteGesture;
+  absoluteGesture = null;
+  var candidate = dropCandidate(gesture, point);
+  clearReparentGuide();
+  if (candidate) sendReparent(gesture.id, candidate, gesture.modelRevision);
+  else component.sendEventToMATLAB("Pointer", {phase: "pointerup", x: point.x, y: point.y, componentId: "", handle: ""});
+}
+
 function sendPointerEvent(event) {
   var rect = svg.getBoundingClientRect();
   var target = event.target;
@@ -132,6 +228,15 @@ function sendPointerEvent(event) {
   var point = surfacePoint(event, rect);
   if (event.type === "pointerdown") {
     svg.setPointerCapture(event.pointerId);
+    if (target.dataset.componentId && !target.dataset.handle && target.dataset.componentId !== currentData.rootId)
+      absoluteGesture = {id: target.dataset.componentId, startPoint: point, modelRevision: currentData.reparentRevision};
+  }
+  if (event.type === "pointercancel") { absoluteGesture = null; clearReparentGuide(); }
+  if (event.type === "pointermove" && absoluteGesture) showReparentGuide(dropCandidate(absoluteGesture, point));
+  if (event.type === "pointerup" && absoluteGesture) {
+    if (!currentData.dragSource || currentData.dragSource.id !== absoluteGesture.id) absoluteGesture.pendingPoint = point;
+    else finishAbsoluteDrop(point);
+    return;
   }
   if (event.type === "pointerup" || event.type === "pointercancel") {
     if (svg.hasPointerCapture(event.pointerId)) {
@@ -619,6 +724,8 @@ function finishGridChildGesture(commit) {
   document.removeEventListener("keydown", cancelGridChildKey);
   if (gesture.draft.parentNode) gesture.draft.remove();
   document.querySelectorAll(".grid-drop-band").forEach(function(element) { element.remove(); });
+  clearReparentGuide();
+  if (commit && gesture.reparent) { sendReparent(gesture.child.id, gesture.reparent, gesture.modelRevision); return; }
   if (!commit || !gesture.candidate || sameGridSpan(gesture.child, gesture.candidate)) return;
   component.sendEventToMATLAB("GridAction", {
     action: gesture.kind === "move" ? "move-child" : "resize-span",
@@ -631,8 +738,13 @@ function finishGridChildGesture(commit) {
 
 function moveGridChildGesture(event) {
   if (!gridGesture) return;
+  if (gridGesture.kind === "move") {
+    gridGesture.reparent = dropCandidate({id: gridGesture.child.id, startPoint: gridGesture.startPoint}, gridPoint(event));
+    showReparentGuide(gridGesture.reparent);
+    if (gridGesture.reparent) return;
+  }
   var candidate = candidateGridSpan(gridGesture, gridPoint(event));
-  if (!candidate) return;
+  if (!candidate) { gridGesture.candidate = null; return; }
   gridGesture.candidate = candidate;
   updateGridChildDraft();
 }
@@ -684,6 +796,7 @@ function beginGridChildGesture(event, data, child, kind) {
   draft.className = "grid-child-draft";
   document.getElementById("grid-controls").appendChild(draft);
   gridGesture = { data: data, child: child, kind: kind, startCell: startCell,
+    modelRevision: currentData.reparentRevision,
     startPoint: startPoint, draft: draft,
     candidate: { rowStart: Number(child.rowStart), rowEnd: Number(child.rowEnd),
       columnStart: Number(child.columnStart), columnEnd: Number(child.columnEnd) } };

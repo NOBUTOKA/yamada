@@ -91,6 +91,23 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
             testCase.verifyEqual([plan.Changes(1:2).Value], [1 3]);
         end
 
+        function requestedCellNeverFallsBackFromOccupiedRectangle(testCase)
+            % requestedCellNeverFallsBackFromOccupiedRectangle Honor explicit drop cells without choosing another free cell.
+            [document, registry, ~, right, leaf] = SubtreePlacementPlannerTest.fixture();
+            grid = document.insertComponent(registry, "uigridlayout", right.Id);
+            document.insertComponent(registry, "uilabel", grid.Id);
+            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
+            plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id, [], [0 0], [2 2]);
+            testCase.verifyEqual(plan.Changes(1).Value, 2);
+            testCase.verifyEqual(plan.Changes(2).Value, 2);
+            history = document.HistoryIndex;
+            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, ...
+                leaf.Id, [], [0 0], [1 1]), "macd:SubtreePlacementPlanner:NoSpace");
+            testCase.verifyEqual(document.HistoryIndex, history);
+            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, ...
+                leaf.Id, [], [0 0], [3 1]), "macd:SubtreePlacementPlanner:InvalidCell");
+        end
+
         function expressionPlacementRejectsWithoutMutation(testCase)
             % expressionPlacementRejectsWithoutMutation Do not silently discard unevaluated placement.
             [document, registry, left, right, leaf] = SubtreePlacementPlannerTest.fixture();

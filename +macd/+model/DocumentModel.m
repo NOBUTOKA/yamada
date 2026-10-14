@@ -782,7 +782,7 @@ classdef DocumentModel < handle
                 "BeforePending", {beforePending}, "AfterPending", {afterPending}));
         end
 
-        function reparentSubtree(obj, id, parentId, registry, measuredPosition)
+        function reparentSubtree(obj, id, parentId, registry, measuredPosition, targetCell, targetPosition)
             % reparentSubtree Move a complete subtree with stable identities and one history step.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
@@ -790,12 +790,15 @@ classdef DocumentModel < handle
                 parentId (1, 1) string
                 registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
                 measuredPosition double {mustBeFinite} = []
+                targetCell double {mustBeFinite} = []
+                targetPosition double {mustBeFinite} = []
             end
 
             % Resolve a side-effect-free placement plan before preparing candidate data.
             snapshot = macd.model.SubtreeSnapshot(obj, id);
             ids = string({snapshot.Records.Id});
-            plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ids, measuredPosition);
+            plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ids, ...
+                measuredPosition, [0 0], targetCell, targetPosition);
             root = obj.getComponent(id);
             if root.ParentId == parentId, return, end
             oldParent = obj.getComponent(root.ParentId);

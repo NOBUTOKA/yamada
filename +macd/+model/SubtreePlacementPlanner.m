@@ -4,7 +4,7 @@ classdef SubtreePlacementPlanner
     %   grid occupancy, and absolute/grid conversion rules.
 
     methods (Static)
-        function plan = prepare(document, snapshot, parentId, registry, excludedIds, measuredPosition, offset)
+        function plan = prepare(document, snapshot, parentId, registry, excludedIds, measuredPosition, offset, targetCell, targetPosition)
             % prepare Resolve valid root placement under an explicit destination parent.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
@@ -14,6 +14,8 @@ classdef SubtreePlacementPlanner
                 excludedIds string = strings(1, 0)
                 measuredPosition double {mustBeFinite} = []
                 offset (1, 2) double {mustBeFinite} = [0 0]
+                targetCell double {mustBeFinite} = []
+                targetPosition double {mustBeFinite} = []
             end
             arguments (Output)
                 plan (1, 1) struct
@@ -81,8 +83,18 @@ classdef SubtreePlacementPlanner
                     occupied(rows(1):rows(end), columns(1):columns(end)) = true;
                 end
                 found = false;
-                for row = 1:rowCount - height + 1
-                    for column = 1:columnCount - width + 1
+                requestedRows = 1:rowCount - height + 1;
+                requestedColumns = 1:columnCount - width + 1;
+                if ~isempty(targetCell)
+                    if numel(targetCell) ~= 2 || any(targetCell < 1) || any(targetCell ~= floor(targetCell)) || ...
+                            targetCell(1) + height - 1 > rowCount || targetCell(2) + width - 1 > columnCount
+                        error("macd:SubtreePlacementPlanner:InvalidCell", "The requested grid rectangle is outside the destination tracks.");
+                    end
+                    requestedRows = targetCell(1);
+                    requestedColumns = targetCell(2);
+                end
+                for row = requestedRows
+                    for column = requestedColumns
                         if ~any(occupied(row:row + height - 1, column:column + width - 1), 'all')
                             found = true;
                             break
@@ -106,6 +118,7 @@ classdef SubtreePlacementPlanner
                     if wasGrid || hasGridPlacement
                         if ~isempty(measuredPosition), position = measuredPosition; end
                     end
+                    if ~isempty(targetPosition), position = targetPosition; end
                     if numel(position) ~= 4 || ~isnumeric(position) || any(~isfinite(position)) || any(position(3:4) <= 0)
                         error("macd:SubtreePlacementPlanner:MissingGeometry", "A verified position is required for absolute placement.");
                     end

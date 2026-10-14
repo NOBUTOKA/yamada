@@ -40,6 +40,9 @@ classdef yamada < matlab.apps.AppBase
         ReparentMenuItem matlab.ui.container.Menu
         ParentDialog macd.ui.ParentSelectionDialog = macd.ui.ParentSelectionDialog.empty
         ParentDialogTargetId string = ""
+        DropSourceId string = ""
+        DropStates struct = struct([])
+        ReparentRevision double = 0
         Lifecycle macd.ui.DocumentLifecycleService
         SavePathConfirmed logical = false
         SavedSourceText string = ""
@@ -747,10 +750,13 @@ classdef yamada < matlab.apps.AppBase
             states = struct("Id", {}, "Name", {}, "Enabled", {}, "Reason", {});
             source = app.Document.getComponent(id);
             measured = app.clipboardPosition(id);
+            definition = app.Registry.get(source.Factory, source.CreationArguments);
             for parent = app.Document.Components
                 state = struct("Id", parent.Id, "Name", parent.Name, "Enabled", false, "Reason", "");
                 if source.ParentId == parent.Id
                     state.Reason = "Current parent.";
+                elseif ~any(definition.AllowedParentFactories == parent.Factory)
+                    state.Reason = "This component type cannot use that parent.";
                 else
                     try
                         candidate = app.Document.structuralCandidate();
@@ -1303,6 +1309,12 @@ classdef yamada < matlab.apps.AppBase
             arguments (Input)
                 app (1, 1) yamada
             end
+            app.DropSourceId = "";
+            app.DropStates = struct([]);
+            app.ReparentRevision = app.ReparentRevision + 1;
+            app.InteractionComponentId = "";
+            app.InteractionKind = "";
+            if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
 
             % The preview is disposable editor state and never shares opened handles.
             delete(app.PreviewScrollPanel.Children);
@@ -1604,11 +1616,27 @@ classdef yamada < matlab.apps.AppBase
             rootEditable = root.IsEditable && ~isempty(rootPosition) && ...
                 rootPosition.IsEditable && rootPosition.ValueKind == "literal" && ...
                 isnumeric(rootPosition.LiteralValue) && numel(rootPosition.LiteralValue) == 4;
+            if app.DropSourceId ~= app.SelectedComponentId
+                app.DropStates = struct([]);
+                app.DropSourceId = app.SelectedComponentId;
+                if ~isempty(selected) && selected.Id ~= root.Id
+                    try
+                        app.DropStates = app.reparentStates(selected.Id);
+                    catch
+                        app.DropStates = struct([]);
+                    end
+                end
+            end
+            [dragSource, reparentTargets] = macd.ui.ReparentOverlayDataBuilder.build(app.Document, ...
+                app.PreviewHandles, app.PreviewCanvas, app.SelectedComponentId, app.DropStates, ...
+                app.InteractionOverlayRevision, @(id) app.isVisibleInSelectedTab(id));
             app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
                 "height", innerPosition(4), "surfaceBounds", app.PreviewEditingBounds, ...
                 "components", components, ...
                 "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor, ...
                 "gridPlacement", gridPlacement, ...
+                "dragSource", dragSource, "reparentTargets", reparentTargets, ...
+                "reparentRevision", app.ReparentRevision, ...
                 "selectedComponentId", char(app.SelectedComponentId), ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);
@@ -1622,6 +1650,10 @@ classdef yamada < matlab.apps.AppBase
             end
 
             eventName = string(event.HTMLEventName);
+            if eventName == "Reparent"
+                app.reparentDropEvent(event.HTMLEventData);
+                return
+            end
             if eventName == "DeleteSelection"
                 data = event.HTMLEventData;
                 if isstruct(data) && all(isfield(data, ["componentId", "revision"])) && ...
@@ -1648,8 +1680,55 @@ classdef yamada < matlab.apps.AppBase
                     string(data.handle), point);
             elseif phase == "pointermove"
                 app.moveOverlayInteraction(point);
-            elseif phase == "pointerup" || phase == "pointercancel"
+            elseif phase == "pointerup"
                 app.finishOverlayInteraction();
+            elseif phase == "pointercancel"
+                app.cancelOverlayInteraction();
+            end
+        end
+
+        function cancelOverlayInteraction(app)
+            % cancelOverlayInteraction Discard candidate geometry without creating history.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            app.InteractionComponentId = "";
+            app.InteractionKind = "";
+            if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
+            app.updateInteractionOverlay();
+        end
+
+        function reparentDropEvent(app, data)
+            % reparentDropEvent Revalidate one versioned drop and commit its complete placement atomically.
+            arguments (Input)
+                app (1, 1) yamada
+                data
+            end
+            required = ["componentId", "parentId", "modelRevision", "targetCell", "targetPosition"];
+            if ~isstruct(data) || ~all(isfield(data, required)) || ...
+                    ~isnumeric(data.modelRevision) || ~isscalar(data.modelRevision) || ...
+                    data.modelRevision ~= app.ReparentRevision || ...
+                    ~isequal(string(data.componentId), app.SelectedComponentId) || ...
+                    ~isnumeric(data.targetCell) || ~isnumeric(data.targetPosition)
+                return
+            end
+            id = string(data.componentId);
+            parentId = string(data.parentId);
+            if ~isscalar(parentId), return, end
+            app.InteractionComponentId = "";
+            app.InteractionKind = "";
+            try
+                if strlength(parentId) == 0
+                    error("macd:yamada:InvalidDrop", "No valid destination is available at this point.");
+                end
+                app.Document.reparentSubtree(id, parentId, app.Registry, app.clipboardPosition(id), ...
+                    double(data.targetCell), double(data.targetPosition));
+                app.SelectedComponentId = id;
+                app.refreshShell();
+                app.setStatus("Moved component subtree.");
+            catch exception
+                app.setStatus(string(exception.message));
+                app.updateInteractionOverlay();
             end
         end
 
