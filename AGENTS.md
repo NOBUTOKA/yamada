@@ -21,9 +21,10 @@
   its `classdef` line. Include an H1 overview, a short description of the class's
   responsibilities and boundaries, and a concise usage example when it improves
   understanding. Test classes may omit the usage example when it adds no value.
-- Newly generated AppBase class output must follow the same English class and
-  method help conventions, while remaining subject to the separate rule that
-  user output does not receive the editor project's GPL notice automatically.
+- Newly generated AppBase output needs only concise English class and method
+  doc-comment templates. Do not emit long class help, property help, or routine
+  implementation comments. Project-owned source retains the documentation rules
+  above; user output does not receive the editor project's GPL notice automatically.
 - Use explicit `arguments (Input)` and `arguments (Output)` blocks whenever the
   MATLAB function signature and supported value types make validation practical.
   Functions without return values do not need an empty output arguments block.
@@ -55,8 +56,6 @@
   Prefer this form over an end-of-line comment because MATLAB gives the preceding
   comment block precedence and uses it for `help ClassName.PropertyName`, `doc`,
   and property metadata. Private properties do not require property help.
-- Generated AppBase classes must add the same preceding English help comment for
-  every generated public component property.
 - Preserved input fixtures are exempt from the docstring and arguments-block
   rules because their original source structure is test data.
 - This project is a programmatic MATLAB application. Do not convert the application itself to `.mlapp`.
