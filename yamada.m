@@ -35,6 +35,8 @@ classdef yamada < matlab.apps.AppBase
         DeleteMenuItem matlab.ui.container.Menu
         EditUndoMenuItem matlab.ui.container.Menu
         EditRedoMenuItem matlab.ui.container.Menu
+        Clipboard macd.model.ComponentClipboard
+        ClipboardMenuItems matlab.ui.container.Menu = matlab.ui.container.Menu.empty
         Lifecycle macd.ui.DocumentLifecycleService
         SavePathConfirmed logical = false
         SavedSourceText string = ""
@@ -106,6 +108,7 @@ classdef yamada < matlab.apps.AppBase
             app.PreviewTabSelections = containers.Map("KeyType", "char", "ValueType", "double");
             app.Lifecycle = lifecycle;
             app.Registry = macd.model.ComponentRegistry.createDefault();
+            app.Clipboard = macd.model.ComponentClipboard();
             app.DefaultValueProvider = macd.ui.inspector.DefaultValueProvider(app.Registry);
             app.PreviewRenderer = macd.ui.PreviewRenderer(app.Registry);
             app.GridLayoutOverlayDataBuilder = macd.ui.GridLayoutOverlayDataBuilder();
@@ -165,7 +168,7 @@ classdef yamada < matlab.apps.AppBase
             app.CommandGrid = uigridlayout(app.MainGrid, [1 1]);
             app.CommandGrid.Layout.Row = 1;
             app.CommandGrid.Layout.Column = [1 3];
-            app.StatusLabel = uilabel(app.CommandGrid, "Text", "Ready");
+            app.StatusLabel = uilabel(app.CommandGrid, "Text", "Ready", "Tag", "macd-status");
             app.StatusLabel.Layout.Column = 1;
             app.EditorToolbar = uitoolbar(app.UIFigure);
             undoData = load(fullfile(matlabroot, "toolbox", "matlab", ...
@@ -272,6 +275,11 @@ classdef yamada < matlab.apps.AppBase
                 "MenuSelectedFcn", @(~, ~) app.saveAsButtonPushed());
 
             editMenu = uimenu(app.UIFigure, "Text", "&Edit");
+            for action = ["Copy", "Cut", "Paste"]
+                app.ClipboardMenuItems(end + 1) = uimenu(editMenu, "Text", action, ...
+                    "Tag", "macd-edit-" + lower(action), "Enable", "off", ...
+                    "MenuSelectedFcn", @(~, ~) app.clipboardCommand(action, app.SelectedComponentId));
+            end
             uimenu(editMenu, "Text", "Rename Component (F2)", ...
                 "Tag", "macd-rename-component", ...
                 "MenuSelectedFcn", @(~, ~) app.beginHierarchyRename());
@@ -447,6 +455,7 @@ classdef yamada < matlab.apps.AppBase
             app.closeCallbackDialog();
             app.clearInspector();
             app.Document = document;
+            app.Clipboard.clear();
             app.SavedSourceText = document.OriginalText;
             if ~isempty(document.Components)
                 app.SelectedComponentId = document.RootComponentId;
@@ -479,6 +488,7 @@ classdef yamada < matlab.apps.AppBase
                 app.refreshInspector();
             end
             app.updateInteractionOverlay();
+            app.refreshEditCommands();
         end
 
         function refreshShell(app, retainHierarchy)
@@ -606,7 +616,7 @@ classdef yamada < matlab.apps.AppBase
         end
 
         function deleteComponentButtonPushed(app)
-            % deleteComponentButtonPushed Delete the selected leaf explicitly.
+            % deleteComponentButtonPushed Delete the selected component and its descendants.
             arguments (Input)
                 app (1, 1) yamada
             end
@@ -621,7 +631,7 @@ classdef yamada < matlab.apps.AppBase
                 string(selectedNode.NodeData) == component.Id && ...
                 isa(selectedNode.Parent, "matlab.ui.container.TreeNode");
             try
-                app.Document.removeComponent(component.Id);
+                app.Document.removeSubtree(component.Id, app.Registry);
             catch exception
                 app.setStatus(string(exception.message));
                 app.refreshEditCommands();
@@ -639,6 +649,72 @@ classdef yamada < matlab.apps.AppBase
                 focus(app.HierarchyTree);
             end
             app.setStatus("Deleted " + component.Name);
+        end
+
+        function state = clipboardAvailability(app, action, id)
+            % clipboardAvailability Share model preflight and reasons across all UI entry points.
+            arguments (Input)
+                app (1, 1) yamada
+                action (1, 1) string
+                id (1, 1) string
+            end
+            arguments (Output)
+                state (1, 1) struct
+            end
+            state = struct("Enabled", false, "Reason", "No component is available.", "ParentId", "");
+            if isempty(app.Document) || strlength(app.HierarchyRenameId) > 0 || app.IsReloading, return, end
+            state = app.Clipboard.availability(action, app.Document, id, app.Registry);
+        end
+
+        function position = clipboardPosition(app, id)
+            % clipboardPosition Capture model-local preview pixels for grid-to-absolute paste.
+            arguments (Input)
+                app (1, 1) yamada
+                id (1, 1) string
+            end
+            arguments (Output)
+                position double
+            end
+            position = [];
+            if isempty(app.PreviewHandles) || ~isKey(app.PreviewHandles, char(id)), return, end
+            preview = app.PreviewHandles(char(id));
+            if ~isempty(preview) && isvalid(preview) && isprop(preview, "Position")
+                value = double(preview.Position);
+                if numel(value) == 4 && all(isfinite(value)) && all(value(3:4) > 0), position = value; end
+            end
+        end
+
+        function clipboardCommand(app, action, id)
+            % clipboardCommand Execute one revalidated action and refresh after successful mutation.
+            arguments (Input)
+                app (1, 1) yamada
+                action (1, 1) string
+                id (1, 1) string
+            end
+            state = app.clipboardAvailability(action, id);
+            if ~state.Enabled
+                app.setStatus(state.Reason);
+                return
+            end
+            try
+                if action == "Copy"
+                    app.Clipboard.copy(app.Document, id, app.Registry, app.clipboardPosition(id));
+                    app.refreshEditCommands();
+                elseif action == "Cut"
+                    parentId = app.Document.getComponent(id).ParentId;
+                    app.Clipboard.cut(app.Document, id, app.Registry, app.clipboardPosition(id));
+                    app.SelectedComponentId = parentId;
+                    app.refreshShell();
+                else
+                    component = app.Clipboard.paste(app.Document, id, app.Registry);
+                    app.SelectedComponentId = component.Id;
+                    app.refreshShell();
+                end
+                app.setStatus(action + " completed.");
+            catch exception
+                app.setStatus(string(exception.message));
+                app.refreshEditCommands();
+            end
         end
 
         function undoButtonPushed(app)
@@ -709,6 +785,12 @@ classdef yamada < matlab.apps.AppBase
                 app.reloadSourceRequested();
             elseif strcmpi(event.Key, "delete") && ~hasControl
                 if app.hierarchyOwnsKeyboard(), app.deleteComponentButtonPushed(); end
+            elseif hasControl && any(strcmpi(event.Key, {'c', 'x', 'v'}))
+                if app.hierarchyOwnsKeyboard() || (~app.KeyboardFocusMoved && isequal(app.UIFigure.CurrentObject, app.InteractionOverlay))
+                    actions = ["Copy", "Cut", "Paste"];
+                    keys = ["c", "x", "v"];
+                    app.clipboardCommand(actions(strcmpi(event.Key, keys)), app.SelectedComponentId);
+                end
             elseif hasControl && strcmpi(event.Key, "z")
                 app.undoButtonPushed();
             elseif hasControl && strcmpi(event.Key, "r")
@@ -877,6 +959,7 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             if strlength(app.HierarchyRenameId) > 0
+                for item = app.ClipboardMenuItems(:)', item.Enable = "off"; end
                 app.DeleteMenuItem.Enable = "off";
                 app.EditUndoMenuItem.Enable = "off";
                 app.EditRedoMenuItem.Enable = "off";
@@ -891,8 +974,30 @@ classdef yamada < matlab.apps.AppBase
             app.RefreshTool.Enable = reloadEnabled;
             app.ReloadMenuItem.Enable = reloadEnabled;
             component = app.selectedComponent();
+            actions = ["Copy", "Cut", "Paste"];
+            descriptions = strings(1, numel(actions));
+            for index = 1:numel(actions)
+                state = app.clipboardAvailability(actions(index), app.SelectedComponentId);
+                app.ClipboardMenuItems(index).Enable = state.Enabled;
+                app.ClipboardMenuItems(index).UserData = state;
+                descriptions(index) = actions(index) + ": " + state.Reason;
+                if state.Enabled, descriptions(index) = actions(index) + ": available"; end
+                if state.Enabled && actions(index) == "Paste"
+                    target = app.Document.getComponent(state.ParentId);
+                    descriptions(index) = "Paste into " + target.Name;
+                end
+            end
+            app.StatusLabel.Tooltip = strjoin(descriptions, newline);
             canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
-                isempty(component.Children) && component.IsEditable;
+                component.IsEditable;
+            if canDelete
+                try
+                    candidate = app.Document.structuralCandidate();
+                    candidate.removeSubtree(component.Id, app.Registry);
+                catch
+                    canDelete = false;
+                end
+            end
             app.DeleteMenuItem.Enable = "off";
             if canDelete
                 app.DeleteMenuItem.Enable = "on";
@@ -975,7 +1080,9 @@ classdef yamada < matlab.apps.AppBase
             if isempty(app.HierarchyContextMenu)
                 app.HierarchyContextMenu = macd.ui.HierarchyContextMenu(app.UIFigure, ...
                     app.HierarchyTree, app.Registry, @() app.Document, ...
-                    @(id) app.manageCallbacksRequested(id));
+                    @(id) app.manageCallbacksRequested(id), ...
+                    @(action, id) app.clipboardCommand(action, id), ...
+                    @(action, id) app.clipboardAvailability(action, id));
             end
             app.HierarchyContextMenu.reset();
             delete(app.HierarchyTree.Children);

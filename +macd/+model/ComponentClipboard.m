@@ -7,36 +7,41 @@ classdef ComponentClipboard < handle
         Document macd.model.DocumentModel = macd.model.DocumentModel.empty
         Snapshot macd.model.SubtreeSnapshot = macd.model.SubtreeSnapshot.empty
         PasteCount double = 0
+        MeasuredPosition double = []
     end
 
     methods
-        function copy(obj, document, id, registry)
+        function copy(obj, document, id, registry, measuredPosition)
             % copy Replace clipboard contents only after validating a complete snapshot.
             arguments (Input)
                 obj (1, 1) macd.model.ComponentClipboard
                 document (1, 1) macd.model.DocumentModel
                 id (1, 1) string
                 registry (1, 1) macd.model.ComponentRegistry
+                measuredPosition double {mustBeFinite} = []
             end
             snapshot = document.copySubtree(id, registry);
             obj.Document = document;
             obj.Snapshot = snapshot;
             obj.PasteCount = 0;
+            obj.MeasuredPosition = measuredPosition;
         end
 
-        function cut(obj, document, id, registry)
+        function cut(obj, document, id, registry, measuredPosition)
             % cut Atomically delete the subtree before replacing clipboard contents.
             arguments (Input)
                 obj (1, 1) macd.model.ComponentClipboard
                 document (1, 1) macd.model.DocumentModel
                 id (1, 1) string
                 registry (1, 1) macd.model.ComponentRegistry
+                measuredPosition double {mustBeFinite} = []
             end
             snapshot = document.copySubtree(id, registry);
             document.removeSubtree(id, registry);
             obj.Document = document;
             obj.Snapshot = snapshot;
             obj.PasteCount = 0;
+            obj.MeasuredPosition = measuredPosition;
         end
 
         function component = paste(obj, document, targetId, registry, measuredPosition)
@@ -55,9 +60,45 @@ classdef ComponentClipboard < handle
                 error("macd:ComponentClipboard:Empty", "No subtree is available for this document.");
             end
             parentId = obj.destination(document, targetId, registry);
+            if isempty(measuredPosition), measuredPosition = obj.MeasuredPosition; end
             component = document.pasteSubtree(obj.Snapshot, parentId, registry, measuredPosition, ...
                 [10 10] * (obj.PasteCount + 1));
             obj.PasteCount = obj.PasteCount + 1;
+        end
+
+        function state = availability(obj, action, document, id, registry)
+            % availability Run the same model preflight used by each command without live edits.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentClipboard
+                action (1, 1) string {mustBeMember(action, ["Copy", "Cut", "Paste"])}
+                document (1, 1) macd.model.DocumentModel
+                id (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                state (1, 1) struct
+            end
+            state = struct("Enabled", false, "Reason", "", "ParentId", "");
+            try
+                if action == "Copy"
+                    document.copySubtree(id, registry);
+                elseif action == "Cut"
+                    document.copySubtree(id, registry);
+                    candidate = document.structuralCandidate();
+                    candidate.removeSubtree(id, registry);
+                else
+                    if ~obj.hasContents(document)
+                        error("macd:ComponentClipboard:Empty", "No subtree is available for this document.");
+                    end
+                    state.ParentId = obj.destination(document, id, registry);
+                    candidate = document.structuralCandidate();
+                    candidate.pasteSubtree(obj.Snapshot, state.ParentId, registry, obj.MeasuredPosition, ...
+                        [10 10] * (obj.PasteCount + 1));
+                end
+                state.Enabled = true;
+            catch exception
+                state.Reason = string(exception.message);
+            end
         end
 
         function parentId = destination(obj, document, targetId, registry)
@@ -111,6 +152,7 @@ classdef ComponentClipboard < handle
             obj.Document = macd.model.DocumentModel.empty;
             obj.Snapshot = macd.model.SubtreeSnapshot.empty;
             obj.PasteCount = 0;
+            obj.MeasuredPosition = [];
         end
     end
 end

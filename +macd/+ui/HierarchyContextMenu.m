@@ -10,12 +10,15 @@ classdef HierarchyContextMenu < handle
         Registry macd.model.ComponentRegistry
         DocumentFcn function_handle
         CommandFcn function_handle
+        EditCommandFcn function_handle
+        AvailabilityFcn function_handle
+        EditItems matlab.ui.container.Menu = matlab.ui.container.Menu.empty
         TargetId string = ""
         TargetDocument macd.model.DocumentModel = macd.model.DocumentModel.empty
     end
 
     methods
-        function obj = HierarchyContextMenu(figure, tree, registry, documentFcn, commandFcn)
+        function obj = HierarchyContextMenu(figure, tree, registry, documentFcn, commandFcn, editCommandFcn, availabilityFcn)
             % HierarchyContextMenu Attach one shared native menu to an editor tree.
             arguments (Input)
                 figure (1, 1) matlab.ui.Figure
@@ -23,6 +26,8 @@ classdef HierarchyContextMenu < handle
                 registry (1, 1) macd.model.ComponentRegistry
                 documentFcn (1, 1) function_handle
                 commandFcn (1, 1) function_handle
+                editCommandFcn (1, 1) function_handle = @(action, id) []
+                availabilityFcn (1, 1) function_handle = @(action, id) struct("Enabled", false, "Reason", "Clipboard commands are unavailable.")
             end
             arguments (Output)
                 obj (1, 1) macd.ui.HierarchyContextMenu
@@ -32,6 +37,8 @@ classdef HierarchyContextMenu < handle
             obj.Registry = registry;
             obj.DocumentFcn = documentFcn;
             obj.CommandFcn = commandFcn;
+            obj.EditCommandFcn = editCommandFcn;
+            obj.AvailabilityFcn = availabilityFcn;
             % A shared tree menu receives the native hit node even when it is unselected.
             obj.Menu = uicontextmenu(figure, "Tag", "macd-hierarchy-context", ...
                 "ContextMenuOpeningFcn", @(~, event) obj.opening(event));
@@ -39,6 +46,11 @@ classdef HierarchyContextMenu < handle
                 "Tag", "macd-manage-callbacks", "Enable", "off", ...
                 "MenuSelectedFcn", @(~, ~) obj.invoke());
             tree.ContextMenu = obj.Menu;
+            for action = ["Copy", "Cut", "Paste"]
+                obj.EditItems(end + 1) = uimenu(obj.Menu, "Text", action, ...
+                    "Tag", "macd-context-" + lower(action), "Enable", "off", ...
+                    "MenuSelectedFcn", @(~, ~) obj.invokeEdit(action));
+            end
         end
 
         function reset(obj)
@@ -50,6 +62,9 @@ classdef HierarchyContextMenu < handle
             obj.TargetDocument = macd.model.DocumentModel.empty;
             if ~isempty(obj.CallbackItem) && isvalid(obj.CallbackItem)
                 obj.CallbackItem.Enable = "off";
+            end
+            for item = obj.EditItems(:)'
+                if isvalid(item), item.Enable = "off"; end
             end
         end
 
@@ -89,10 +104,31 @@ classdef HierarchyContextMenu < handle
                 if ~isempty(parentComponent), parentFactory = parentComponent.Factory; end
             end
             callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
-            if isempty(callbacks), return, end
             obj.TargetId = component.Id;
             obj.TargetDocument = document;
-            obj.CallbackItem.Enable = "on";
+            if ~isempty(callbacks), obj.CallbackItem.Enable = "on"; end
+            actions = ["Copy", "Cut", "Paste"];
+            for index = 1:numel(actions)
+                state = obj.AvailabilityFcn(actions(index), obj.TargetId);
+                obj.EditItems(index).Enable = state.Enabled;
+                obj.EditItems(index).UserData = state;
+            end
+        end
+
+        function invokeEdit(obj, action)
+            % invokeEdit Revalidate right-click identity and availability before shared dispatch.
+            arguments (Input)
+                obj (1, 1) macd.ui.HierarchyContextMenu
+                action (1, 1) string
+            end
+            document = obj.DocumentFcn();
+            if isempty(document) || isempty(obj.TargetDocument) || document ~= obj.TargetDocument || ...
+                    isempty(document.getComponent(obj.TargetId))
+                obj.reset();
+                return
+            end
+            state = obj.AvailabilityFcn(action, obj.TargetId);
+            if state.Enabled, obj.EditCommandFcn(action, obj.TargetId); end
         end
 
         function invoke(obj)
