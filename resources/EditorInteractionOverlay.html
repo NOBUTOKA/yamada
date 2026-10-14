@@ -100,6 +100,7 @@ var gridGesture = null;
 function setup(htmlComponent) {
   component = htmlComponent;
   svg = document.getElementById("overlay");
+  document.addEventListener("keydown", deleteSelectionKey);
   htmlComponent.addEventListener("DataChanged", function(event) {
     currentData = event.Data || currentData;
     render();
@@ -108,6 +109,20 @@ function setup(htmlComponent) {
   svg.addEventListener("pointermove", sendPointerEvent);
   svg.addEventListener("pointerup", sendPointerEvent);
   svg.addEventListener("pointercancel", sendPointerEvent);
+}
+
+function deleteSelectionKey(event) {
+  if (event.key !== "Delete" || event.ctrlKey || event.metaKey || event.altKey || gridGesture) return;
+  var target = event.target;
+  if (target && (target.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName || "") ||
+      (target.closest && target.closest(".track-popover")))) return;
+  if (!currentData.selectedComponentId || !currentData.gridEditor) return;
+  event.preventDefault();
+  event.stopPropagation();
+  component.sendEventToMATLAB("DeleteSelection", {
+    componentId: currentData.selectedComponentId, revision: currentData.gridEditor.revision
+  });
 }
 
 function sendPointerEvent(event) {

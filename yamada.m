@@ -40,6 +40,7 @@ classdef yamada < matlab.apps.AppBase
         SavedSourceText string = ""
         IsReloading logical = false
         IsClosingProgrammatically logical = false
+        KeyboardFocusMoved logical = false
         HierarchyPanel matlab.ui.container.Panel
         HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
@@ -149,6 +150,7 @@ classdef yamada < matlab.apps.AppBase
                 "Name", "Yet Another MATLAB App Designer Alternative", ...
                 "Position", [100 100 1280 760], ...
                 "WindowKeyPressFcn", @(~, event) app.editorKeyPressed(event), ...
+                "WindowButtonDownFcn", @(~, ~) app.editorPointerPressed(), ...
                 "CloseRequestFcn", @(~, ~) app.closeRequest(), ...
                 "Tag", "macd-yamada-editor");
             app.MainGrid = uigridlayout(app.UIFigure, [3 3]);
@@ -458,6 +460,9 @@ classdef yamada < matlab.apps.AppBase
             if isempty(event.SelectedNodes) || isempty(event.SelectedNodes.NodeData)
                 return
             end
+            % A native tree selection also establishes ownership after keyboard navigation.
+            app.KeyboardFocusMoved = false;
+            app.UIFigure.CurrentObject = app.HierarchyTree;
             componentId = string(event.SelectedNodes.NodeData);
             if componentId ~= app.SelectedComponentId
                 app.SelectedComponentId = componentId;
@@ -665,15 +670,39 @@ classdef yamada < matlab.apps.AppBase
 
             modifiers = string(event.Modifier);
             hasControl = any(modifiers == "control") || any(modifiers == "command");
+            % CurrentObject tracks clicks, so Tab invalidates its keyboard ownership.
+            if strcmpi(event.Key, "tab")
+                app.KeyboardFocusMoved = true;
+                return
+            end
             if strcmpi(event.Key, "f5") && isempty(modifiers)
                 app.reloadSourceRequested();
             elseif strcmpi(event.Key, "delete") && ~hasControl
-                app.deleteComponentButtonPushed();
+                current = app.UIFigure.CurrentObject;
+                if ~app.KeyboardFocusMoved
+                    while ~isempty(current) && isvalid(current)
+                        if isequal(current, app.HierarchyTree)
+                            app.deleteComponentButtonPushed();
+                            break
+                        end
+                        if ~isprop(current, "Parent"), break, end
+                        current = current.Parent;
+                    end
+                end
             elseif hasControl && strcmpi(event.Key, "z")
                 app.undoButtonPushed();
             elseif hasControl && strcmpi(event.Key, "r")
                 app.redoButtonPushed();
             end
+        end
+
+        function editorPointerPressed(app)
+            % editorPointerPressed Restore click-based keyboard ownership after a pointer action.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+
+            app.KeyboardFocusMoved = false;
         end
 
         function refreshEditCommands(app)
@@ -1179,6 +1208,7 @@ classdef yamada < matlab.apps.AppBase
                 "components", components, ...
                 "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor, ...
                 "gridPlacement", gridPlacement, ...
+                "selectedComponentId", char(app.SelectedComponentId), ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);
         end
@@ -1191,6 +1221,15 @@ classdef yamada < matlab.apps.AppBase
             end
 
             eventName = string(event.HTMLEventName);
+            if eventName == "DeleteSelection"
+                data = event.HTMLEventData;
+                if isstruct(data) && all(isfield(data, ["componentId", "revision"])) && ...
+                        isequal(string(data.componentId), app.SelectedComponentId) && ...
+                        isequal(data.revision, app.InteractionOverlayRevision)
+                    app.deleteComponentButtonPushed();
+                end
+                return
+            end
             if eventName == "GridAction"
                 app.gridActionEvent(event.HTMLEventData);
                 return

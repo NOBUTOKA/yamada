@@ -64,6 +64,62 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'ui'})
+        function deleteShortcutIgnoresInspectorEditingAndKeyboardNavigation(testCase)
+            % deleteShortcutIgnoresInspectorEditingAndKeyboardNavigation Delete only from owned selection contexts.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, palette] = editorPalette();
+            buttonRow = find(string(palette.Data(:, 1)) == "Button", 1);
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", buttonRow)));
+            selectedId = app.SelectedComponentId;
+            historyIndex = app.Document.HistoryIndex;
+            key = struct("Key", "delete", "Modifier", {{}});
+            fields = findall(figure, "Type", "uieditfield");
+            testCase.assertNotEmpty(fields);
+
+            % Input controls own Delete, including when a component remains selected.
+            for field = fields(:)'
+                figure.CurrentObject = field;
+                figure.WindowKeyPressFcn(figure, key);
+                testCase.verifyNotEmpty(app.Document.getComponent(selectedId));
+            end
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
+            tree = findall(figure, "Type", "uitree");
+            figure.CurrentObject = tree;
+            figure.WindowButtonDownFcn(figure, struct());
+            figure.WindowKeyPressFcn(figure, struct("Key", "tab", "Modifier", {{}}));
+            figure.WindowKeyPressFcn(figure, key);
+            testCase.verifyNotEmpty(app.Document.getComponent(selectedId));
+
+            % Preview requests carry selection identity and revision, excluding stale input.
+            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            revision = overlay.Data.gridEditor.revision;
+            request = struct("componentId", selectedId, "revision", revision - 1);
+            overlay.HTMLEventReceivedFcn(overlay, struct( ...
+                "HTMLEventName", "DeleteSelection", "HTMLEventData", request));
+            testCase.verifyNotEmpty(app.Document.getComponent(selectedId));
+            request.revision = revision;
+            overlay.HTMLEventReceivedFcn(overlay, struct( ...
+                "HTMLEventName", "DeleteSelection", "HTMLEventData", request));
+            testCase.verifyEmpty(app.Document.getComponent(selectedId));
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 1);
+
+            % A fresh hierarchy click continues to enable its Delete shortcut.
+            palette.DoubleClickedFcn(palette, ...
+                struct("InteractionInformation", struct("Row", buttonRow)));
+            selectedId = app.SelectedComponentId;
+            figure.CurrentObject = tree;
+            figure.WindowButtonDownFcn(figure, struct());
+            figure.WindowKeyPressFcn(figure, struct("Key", "tab", "Modifier", {{}}));
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", tree.SelectedNodes));
+            figure.WindowKeyPressFcn(figure, key);
+            testCase.verifyEmpty(app.Document.getComponent(selectedId));
+            clear cleanup
+        end
+
         function paletteListsConcreteStyleVariants(testCase)
             % paletteListsConcreteStyleVariants Expose every catalog-defined style.
 
