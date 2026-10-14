@@ -224,8 +224,8 @@ classdef RoundTripGenerator
             for index = 1:numel(components)
                 component = components(index);
                 parent = document.getComponent(component.ParentId);
-                if isempty(parent) || ~obj.isKnownSpan(component.SourceSpans.Creation) && ...
-                        parent.Origin == "generated"
+                if isempty(parent) || parent.Origin == "generated" && ...
+                        ~any(string({components(1:index - 1).Id}) == parent.Id)
                     diagnostic = obj.error("ambiguous-component-insertion", component, ...
                         "Generated component parent initialization is not anchored.");
                     return

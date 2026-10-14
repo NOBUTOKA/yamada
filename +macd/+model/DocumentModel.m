@@ -839,6 +839,148 @@ classdef DocumentModel < handle
                 "BeforePending", {beforePending}, "AfterPending", {candidate.PendingEdits}));
         end
 
+        function snapshot = copySubtree(obj, id, registry)
+            % copySubtree Validate a lossless literal subtree snapshot without editing history.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                id (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
+            end
+            arguments (Output)
+                snapshot (1, 1) macd.model.SubtreeSnapshot
+            end
+            if id == obj.RootComponentId
+                error("macd:DocumentModel:UnsafeSubtreeCopy", "The document root cannot be copied.");
+            end
+            snapshot = macd.model.SubtreeSnapshot(obj, id);
+            sourceDiagnostics = obj.Diagnostics;
+            if strlength(obj.OriginalText) > 0
+                originalDocument = macd.source.AppSourceParser.parseText(obj.OriginalText, registry);
+                sourceDiagnostics = originalDocument.Diagnostics;
+            end
+            for record = snapshot.Records
+                if ~record.IsEditable
+                    error("macd:DocumentModel:UnsafeSubtreeCopy", "A subtree component is read-only.");
+                end
+                definition = registry.get(record.Factory, record.CreationArguments);
+                if definition.IsProgrammaticOnly || definition.Category == "FigureTools"
+                    error("macd:DocumentModel:UnsafeSubtreeCopy", "This construction family is not supported for copying.");
+                end
+                callbacks = macd.source.CallbackSourceAnalyzer.analyze(obj, record.Id, registry);
+                if any(string({callbacks.State}) ~= "absent")
+                    error("macd:DocumentModel:UnsafeSubtreeCopy", "Callback bindings cannot yet be duplicated safely.");
+                end
+                for property = record.Properties
+                    if property.ValueKind ~= "literal" || ...
+                            registry.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
+                        error("macd:DocumentModel:UnsafeSubtreeCopy", "A property cannot be copied without losing source behavior.");
+                    end
+                    macd.source.LiteralEncoder.encode(property.LiteralValue);
+                end
+                for diagnostic = sourceDiagnostics
+                    if diagnostic.ComponentId == record.Id && diagnostic.Code == "source-creation-property"
+                        error("macd:DocumentModel:UnsafeSubtreeCopy", "The constructor contains preserved unsupported properties.");
+                    end
+                end
+                if record.Origin == "parsed"
+                    if isempty(record.SourceSpans.Creation) || ~record.SourceSpans.Creation.isKnown() || ...
+                            isempty(record.SourceSpans.Declaration) || ~record.SourceSpans.Declaration.isKnown()
+                        error("macd:DocumentModel:UnsafeSubtreeCopy", "Creation or declaration ownership is missing.");
+                    end
+                    statements = macd.source.MatlabLexicalScanner.splitStatements(obj.OriginalText);
+                    [direct, ~] = macd.source.SubtreeReparentSourceEdits.directScope(statements);
+                    span = record.SourceSpans.Creation;
+                    matches = find(arrayfun(@(statement) statement.Span.StartOffset == span.StartOffset && ...
+                        statement.Span.EndOffset == span.EndOffset, statements));
+                    if numel(matches) ~= 1 || ~direct(matches)
+                        error("macd:DocumentModel:UnsafeSubtreeCopy", "Component creation ownership is ambiguous.");
+                    end
+                end
+            end
+        end
+
+        function component = pasteSubtree(obj, snapshot, parentId, registry, measuredPosition, offset)
+            % pasteSubtree Insert independently named component records as one undoable edit.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                snapshot (1, 1) macd.model.SubtreeSnapshot
+                parentId (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
+                measuredPosition double {mustBeFinite} = []
+                offset (1, 2) double {mustBeFinite} = [10 10]
+            end
+            arguments (Output)
+                component (1, 1) macd.model.ComponentRecord
+            end
+            plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ...
+                strings(1, 0), measuredPosition, offset);
+            candidate = obj.structuralCandidate();
+            oldIds = string({snapshot.Records.Id});
+            newIds = strings(size(oldIds));
+            newNames = strings(size(oldIds));
+            usedNames = [string({obj.Components.Name}), string({obj.CallbackEdits.HandlerName}), ...
+                string(methods("matlab.apps.AppBase"))', string(properties("matlab.apps.AppBase"))', ...
+                obj.ClassName, "createComponents", "delete"];
+            if isprop(obj, "RenameEdits")
+                mappings = obj.("RenameEdits");
+                usedNames = [usedNames string({mappings.OldName}) string({mappings.NewName})];
+            end
+            usedIds = string({obj.Components.Id});
+            for index = 1:numel(oldIds)
+                newIds(index) = obj.newComponentId();
+                while any(usedIds == newIds(index)), newIds(index) = obj.newComponentId(); end
+                usedIds(end + 1) = newIds(index); %#ok<AGROW>
+                stem = snapshot.Records(index).Name + "Copy";
+                name = extractBefore(stem, min(strlength(stem), namelengthmax) + 1);
+                suffix = 1;
+                while any(usedNames == name) || ~isempty(regexp(obj.OriginalText, '(?<!\w)' + name + '(?!\w)', 'once'))
+                    suffix = suffix + 1;
+                    suffixText = string(suffix);
+                    name = extractBefore(stem, min(strlength(stem), namelengthmax - strlength(suffixText)) + 1) + suffixText;
+                end
+                newNames(index) = name;
+                usedNames(end + 1) = name; %#ok<AGROW>
+            end
+
+            % Create fresh generated records; original source offsets never become edit targets.
+            inserted = macd.model.ComponentRecord.empty;
+            for index = 1:numel(oldIds)
+                record = snapshot.Records(index);
+                fresh = macd.model.ComponentRecord(newIds(index), newNames(index), record.Factory, record.DeclaredType, "generated");
+                fresh.CreationArguments = record.CreationArguments;
+                fresh.Metadata = record.Metadata;
+                for property = record.Properties
+                    if property.ValueKind ~= "literal" || ...
+                            registry.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
+                        error("macd:DocumentModel:UnsafeSubtreeCopy", "Paste requires a validated literal snapshot.");
+                    end
+                    fresh.setProperty(property.Path, property.LiteralValue);
+                end
+                destinationId = parentId;
+                if index > 1, destinationId = newIds(oldIds == record.ParentId); end
+                candidate.addComponent(fresh, destinationId);
+                inserted(end + 1) = fresh; %#ok<AGROW>
+            end
+            component = inserted(1);
+            for change = plan.Changes
+                if change.Remove, component.removeProperty(change.Path); else, component.setProperty(change.Path, change.Value); end
+            end
+            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+            parent = obj.getComponent(parentId);
+            beforeChildren = parent.Children;
+            beforeComponents = obj.Components;
+            obj.Components = [obj.Components inserted];
+            parent.addChild(component.Id);
+            obj.GeneratedText = source;
+            obj.Diagnostics = diagnostics;
+            obj.recordHistory(struct("Kind", "subtree-insert", "ParentId", parentId, ...
+                "BeforeChildren", beforeChildren, "AfterChildren", parent.Children, ...
+                "BeforeComponents", beforeComponents, "AfterComponents", obj.Components));
+        end
+
         function undo(obj)
             % undo Reverse the most recent document edit.
             arguments (Input)
@@ -987,6 +1129,17 @@ classdef DocumentModel < handle
                         obj.applySubtreeReparentState(edit.RootId, edit.BeforeRoot, edit.BeforeParents, ...
                             edit.BeforeComponents, edit.BeforePending);
                     end
+                case "subtree-insert"
+                    parent = obj.getComponent(edit.ParentId);
+                    if forward
+                        obj.Components = edit.AfterComponents;
+                        children = edit.AfterChildren;
+                    else
+                        obj.Components = edit.BeforeComponents;
+                        children = edit.BeforeChildren;
+                    end
+                    for child = parent.Children, parent.removeChild(child); end
+                    for child = children, parent.addChild(child); end
                 case "subtree-delete"
                     parent = obj.getComponent(edit.ParentId);
                     if forward
