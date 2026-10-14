@@ -64,6 +64,50 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'ui'})
+        function previewSelectionSynchronizesHierarchyWithoutRebuildingBranches(testCase)
+            % previewSelectionSynchronizesHierarchyWithoutRebuildingBranches Reveal nested Preview selections.
+
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            [figure, palette] = editorPalette();
+            names = string(palette.Data(:, 1));
+            for name = ["Button Group", "Button"]
+                row = find(names == name, 1);
+                testCase.assertNotEmpty(row, name);
+                palette.DoubleClickedFcn(palette, ...
+                    struct("InteractionInformation", struct("Row", row)));
+            end
+            buttonId = app.SelectedComponentId;
+            tree = findall(figure, "Type", "uitree");
+            rootNode = tree.Children(1);
+            groupNode = rootNode.Children(1);
+            buttonNode = groupNode.Children(1);
+            tree.SelectedNodes = rootNode;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", rootNode));
+            collapse(groupNode);
+            collapse(rootNode);
+            app.Document.markSaved();
+            historyIndex = app.Document.HistoryIndex;
+
+            % A completed SVG click selects the existing leaf without creating history.
+            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            for phase = ["pointerdown", "pointerup"]
+                overlay.HTMLEventReceivedFcn(overlay, struct( ...
+                    "HTMLEventName", "Pointer", "HTMLEventData", struct( ...
+                    "phase", phase, "x", 25, "y", 25, ...
+                    "componentId", buttonId, "handle", "")));
+                overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+                testCase.verifyEqual(tree.SelectedNodes, buttonNode);
+            end
+            testCase.verifyEqual(app.SelectedComponentId, buttonId);
+            testCase.verifyEqual(tree.SelectedNodes, buttonNode);
+            testCase.verifyTrue(isvalid(rootNode) && isvalid(groupNode));
+            testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
+            testCase.verifyFalse(app.Document.IsDirty);
+            clear cleanup
+        end
+
         function deleteShortcutIgnoresInspectorEditingAndKeyboardNavigation(testCase)
             % deleteShortcutIgnoresInspectorEditingAndKeyboardNavigation Delete only from owned selection contexts.
 
@@ -568,6 +612,8 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             testCase.verifyEqual(app.SelectedComponentId, childId);
             testCase.verifyEqual(string(tree.SelectedNodes.NodeData), childId);
+            testCase.verifyTrue(isvalid(gridNode));
+            testCase.verifyEqual(tree.SelectedNodes.Parent, gridNode);
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
             testCase.verifyFalse(app.Document.IsDirty);
             clear cleanup

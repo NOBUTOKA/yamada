@@ -813,6 +813,28 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             app.addHierarchyNode([], app.Document.RootComponentId);
+            app.synchronizeHierarchySelection();
+        end
+
+        function synchronizeHierarchySelection(app)
+            % synchronizeHierarchySelection Reveal the selected component using existing tree nodes.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+
+            % Selection does not rebuild branches or move keyboard focus from Preview.
+            nodes = findall(app.HierarchyTree, "Type", "uitreenode");
+            for node = nodes(:)'
+                if ~isequal(string(node.NodeData), app.SelectedComponentId), continue, end
+                parent = node.Parent;
+                while isa(parent, "matlab.ui.container.TreeNode")
+                    expand(parent);
+                    parent = parent.Parent;
+                end
+                app.HierarchyTree.SelectedNodes = node;
+                scroll(app.HierarchyTree, node);
+                return
+            end
         end
 
         function manageCallbacksRequested(app, componentId)
@@ -891,9 +913,6 @@ classdef yamada < matlab.apps.AppBase
             end
             for index = 1:numel(component.Children)
                 app.addHierarchyNode(node, component.Children(index));
-            end
-            if component.Id == app.SelectedComponentId
-                app.HierarchyTree.SelectedNodes = node;
             end
         end
 
@@ -1366,7 +1385,7 @@ classdef yamada < matlab.apps.AppBase
 
             % Selection is disposable UI state and must not create an edit history entry.
             app.SelectedComponentId = childId;
-            app.refreshHierarchy();
+            app.synchronizeHierarchySelection();
             app.refreshInspector();
             app.updateInteractionOverlay();
         end
@@ -1471,7 +1490,7 @@ classdef yamada < matlab.apps.AppBase
             if startsWith(handle, "root-")
                 app.createRootResizeGuide();
             end
-            app.refreshHierarchy();
+            app.synchronizeHierarchySelection();
             app.refreshInspector();
             app.updateInteractionOverlay();
         end
@@ -1759,7 +1778,7 @@ classdef yamada < matlab.apps.AppBase
                     app.setStatus(string(exception.message));
                 end
             end
-            app.refreshShell();
+            app.refreshShell(true);
         end
 
         function position = movedPosition(app, componentId, startPosition, delta)
