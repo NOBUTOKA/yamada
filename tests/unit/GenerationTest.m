@@ -21,12 +21,13 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
                 "classdef GeneratedApp < matlab.apps.AppBase");
             testCase.verifySubstring(source, ...
                 "% GeneratedApp Define a programmatic AppBase application.");
-            testCase.verifySubstring(source, ...
-                "%       app = GeneratedApp();");
+            testCase.verifyFalse(contains(source, "%   Example:"));
+            testCase.verifyFalse(contains(source, "This class owns its generated"));
             testCase.verifySubstring(source, ...
                 "app.UIFigure = uifigure(""Visible"", ""off"");");
-            testCase.verifySubstring(source, ...
-                "% UIFigure - Generated UI component handle.");
+            testCase.verifyFalse(contains(source, "Generated UI component handle"));
+            testCase.verifyFalse(contains(source, "% Create a"));
+            testCase.verifyFalse(contains(source, "% Configure safe literal properties"));
             testCase.verifySubstring(source, ...
                 "arguments (Input)");
             testCase.verifySubstring(source, ...
@@ -43,6 +44,30 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
                 testCase.verifyEmpty(regexp(source, "\r", "once"));
             end
             testCase.verifyEmpty(regexp(source, "GNU General Public License", "once"));
+        end
+
+        function omitsReadOnlyGridPositionFromGeneratedSource(testCase)
+            % omitsReadOnlyGridPositionFromGeneratedSource Keep grid geometry owned by MATLAB.
+
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("GridOutputApp", registry);
+            outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            inner = document.insertComponent(registry, "uigridlayout", outer.Id);
+            testCase.verifyEmpty(outer.getProperty("Position"));
+            testCase.verifyEmpty(inner.getProperty("Position"));
+
+            % Simulate legacy model values created before read-only insertion was fixed.
+            outer.setProperty("Position", [1 1 640 480]);
+            inner.setProperty("Position", [1 1 300 200]);
+            document.setProperty(outer.Id, "RowHeight", {"fit", "1x"});
+            generator = macd.source.NewAppGenerator(registry);
+            [source, diagnostics] = generator.generate(document);
+
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(contains(source, "app." + outer.Name + ".Position ="));
+            testCase.verifyFalse(contains(source, "app." + inner.Name + ".Position ="));
+            testCase.verifySubstring(source, "app.UIFigure.Position =");
+            testCase.verifySubstring(source, "app." + outer.Name + ".RowHeight = {""fit"", ""1x""};");
         end
 
         function classIdentityRewriteUpdatesArgumentsWithoutChangingLiterals(testCase)

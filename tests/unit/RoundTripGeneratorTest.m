@@ -42,6 +42,43 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
 
+        function insertedGridOmitsReadOnlyPosition(testCase)
+            % insertedGridOmitsReadOnlyPosition Avoid read-only assignments when extending parsed apps.
+
+            [document, generator] = RoundTripGeneratorTest.parsedFixture();
+            registry = macd.model.ComponentRegistry.createDefault();
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            testCase.verifyEmpty(grid.getProperty("Position"));
+            grid.setProperty("Position", [1 1 300 200]);
+            document.setProperty(grid.Id, "RowHeight", {"1x"});
+            [source, diagnostics] = generator.generate(document);
+
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifySubstring(source, "app." + grid.Name + " = uigridlayout(app.UIFigure);");
+            testCase.verifyFalse(contains(source, "app." + grid.Name + ".Position ="));
+            testCase.verifySubstring(source, "app." + grid.Name + ".RowHeight = {""1x""};");
+        end
+
+        function removesOwnedGridPositionAssignment(testCase)
+            % removesOwnedGridPositionAssignment Remove invalid geometry assignments from opened source.
+
+            [document, generator] = RoundTripGeneratorTest.parsedFixture();
+            original = replace(document.OriginalText, ...
+                "app.GridLayout = uigridlayout(app.UIFigure);", ...
+                "app.GridLayout = uigridlayout(app.UIFigure);" + newline + ...
+                "            app.GridLayout.Position = [1 1 640 480];");
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseText(original, registry);
+            grid = document.getComponentByName("GridLayout");
+            testCase.assertNotEmpty(grid.getProperty("Position"));
+            [source, diagnostics] = generator.generate(document);
+
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(contains(source, "app.GridLayout.Position ="));
+            testCase.verifySubstring(source, "app.UIFigure.Position =");
+            testCase.verifySubstring(source, "app.CalculateButton.ButtonPushedFcn = createCallbackFcn(");
+        end
+
         function deletionRejectsExternalReference(testCase)
             % deletionRejectsExternalReference Block deletion when source uses the component.
 

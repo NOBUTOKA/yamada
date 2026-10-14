@@ -62,6 +62,13 @@ classdef RoundTripGenerator
                 component = document.Components(index);
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
+                    if component.Factory == "uigridlayout" && entry.Path == "Position"
+                        % Remove owned assignments to MATLAB's read-only grid geometry.
+                        if obj.isKnownSpan(entry.SourceSpan)
+                            edits(end + 1) = obj.edit(entry.SourceSpan, ""); %#ok<AGROW>
+                        end
+                        continue
+                    end
                     pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id & ...
                         string({document.CallbackEdits.Name}) == entry.Path);
                     if ~isempty(pending), continue, end
@@ -211,6 +218,9 @@ classdef RoundTripGenerator
                 end
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
+                    if component.Factory == "uigridlayout" && entry.Path == "Position"
+                        continue
+                    end
                     if entry.ValueKind ~= "literal"
                         diagnostic = obj.error("nonliteral-component-insertion", component, ...
                             "Generated component has a nonliteral property.");

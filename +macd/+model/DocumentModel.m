@@ -139,7 +139,7 @@ classdef DocumentModel < handle
             component.CreationArguments = definition.CreationArguments;
             effectiveProperties = registry.getEffectiveProperties(definition.Factory, parent.Factory, ...
                 definition.CreationArguments);
-            effectivePaths = string({effectiveProperties.Path});
+            effectivePaths = string({effectiveProperties([effectiveProperties.IsEditable]).Path});
             if any(effectivePaths == "Layout.Row")
                 component.setProperty("Layout.Row", 1);
             end
