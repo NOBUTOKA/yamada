@@ -76,11 +76,11 @@ classdef RoundTripGenerator
                         continue
                     end
                     if obj.isKnownSpan(entry.SourceSpan)
-                        replacement = obj.assignmentText(component, entry, source, ...
-                            entry.SourceSpan.StartOffset);
                         original = extractBetween(source, entry.SourceSpan.StartOffset, ...
                             entry.SourceSpan.EndOffset);
                         if ~obj.isUnchangedLiteral(string(original), entry.LiteralValue)
+                            replacement = obj.assignmentText(component, entry, source, ...
+                                entry.SourceSpan.StartOffset);
                             edits(end + 1) = obj.edit(entry.SourceSpan, replacement); %#ok<AGROW>
                         end
                     elseif obj.isKnownSpan(component.SourceSpans.Creation)

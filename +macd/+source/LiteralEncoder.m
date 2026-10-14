@@ -46,6 +46,8 @@ classdef LiteralEncoder
                 text = string(mat2str(value, 17));
             elseif islogical(value) && ismatrix(value)
                 text = string(mat2str(value));
+            elseif iscell(value) && isequal(size(value), [0 0])
+                text = "{}";
             elseif iscell(value) && isrow(value)
                 % Recursively encode row-cell elements used by UI properties.
                 encoded = strings(1, numel(value));

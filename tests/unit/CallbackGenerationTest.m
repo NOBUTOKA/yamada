@@ -4,6 +4,63 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
     %   method-body deletion and atomic preflight failure without running apps.
 
     methods (Test)
+        function generatesNewAndEditedEmptyItems(testCase)
+            % generatesNewAndEditedEmptyItems Encode empty list contents for new and parsed documents.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("EmptyItemsApp", registry);
+            list = document.insertComponent(registry, "uilistbox", document.RootComponentId);
+            list.setProperty("Items", {});
+            generator = macd.source.RoundTripGenerator(registry);
+            [emptySource, diagnostics] = generator.generate(document);
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifySubstring(emptySource, "app." + list.Name + ".Items = {};");
+            list.setProperty("Items", {'first'});
+            parsed = macd.source.AppSourceParser.parseText(generator.generate(document), registry);
+            parsed.getComponentByName(list.Name).setProperty("Items", {});
+            [edited, diagnostics] = generator.generate(parsed);
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyEqual(edited, emptySource);
+        end
+
+        function unchangedEmptyItemsSurviveCallbackAddDeleteAndUndo(testCase)
+            % unchangedEmptyItemsSurviveCallbackAddDeleteAndUndo Preserve unrelated empty cells during callback preflight.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("EmptyItemsApp", registry);
+            document.insertComponent(registry, "uibutton", document.RootComponentId);
+            document.insertComponent(registry, "uibutton", document.RootComponentId);
+            list = document.insertComponent(registry, "uilistbox", document.RootComponentId);
+            generator = macd.source.RoundTripGenerator(registry);
+            source = generator.generate(document);
+            creation = "app." + list.Name + " = uilistbox(app.UIFigure);";
+            assignment = "app." + list.Name + ".Items = {};";
+            source = replace(source, creation, creation + newline + "            " + assignment);
+            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyEqual(generator.generate(parsed), source);
+
+            % Both buttons must generate handlers without rewriting the list assignment.
+            for name = ["Button", "Button2"]
+                button = parsed.getComponentByName(name);
+                parsed.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            end
+            [added, diagnostics] = generator.generate(parsed);
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifySubstring(added, assignment);
+            reopened = macd.source.AppSourceParser.parseText(added, registry);
+            for name = ["Button", "Button2"]
+                button = reopened.getComponentByName(name);
+                states = macd.source.CallbackSourceAnalyzer.analyze(reopened, button.Id, registry);
+                testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
+                reopened.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
+            end
+            testCase.verifySubstring(generator.generate(reopened), assignment);
+            reopened.undo();
+            reopened.undo();
+            testCase.verifyEqual(generator.generate(reopened), added);
+            parsed.undo();
+            parsed.undo();
+            testCase.verifyEqual(generator.generate(parsed), source);
+        end
+
         function newCallbacksRoundTripAndDeleteEntireMethod(testCase)
             % newCallbacksRoundTripAndDeleteEntireMethod Keep generated bindings and bodies consistent after reopening.
             registry = macd.model.ComponentRegistry.createDefault();

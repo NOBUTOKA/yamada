@@ -4,6 +4,23 @@ classdef (TestTags = {'fast', 'parser'}) LexicalParsingTest < matlab.unittest.Te
     %   continuations, and the conservative literal subset used by source parsing.
 
     methods (Test)
+        function literalEncoderRoundTripsEmptyCells(testCase)
+            % literalEncoderRoundTripsEmptyCells Preserve canonical empty cells and nested cell elements.
+            original = {};
+            source = macd.source.LiteralEncoder.encode(original);
+            [parsed, isLiteral] = macd.source.MatlabLiteralParser.parse(source);
+            testCase.verifyEqual(source, "{}");
+            testCase.verifyTrue(isLiteral);
+            testCase.verifyEqual(parsed, original);
+            nested = {{}, "value"};
+            [parsed, isLiteral] = macd.source.MatlabLiteralParser.parse( ...
+                macd.source.LiteralEncoder.encode(nested));
+            testCase.verifyTrue(isLiteral);
+            testCase.verifyEqual(parsed, nested);
+            testCase.verifyError(@() macd.source.LiteralEncoder.encode(cell(0, 2)), ...
+                "macd:LiteralEncoder:UnsupportedValue");
+        end
+
         function scannerIgnoresQuotedDelimitersAndComments(testCase)
             % scannerIgnoresQuotedDelimitersAndComments Check lexical boundaries.
 
