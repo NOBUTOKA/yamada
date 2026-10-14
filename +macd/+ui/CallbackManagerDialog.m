@@ -5,6 +5,7 @@ classdef CallbackManagerDialog < handle
 
     properties (Access = private)
         Figure matlab.ui.Figure
+        MainGrid matlab.ui.container.GridLayout
         Rows matlab.ui.container.GridLayout
         Message matlab.ui.control.Label
         StateFcn function_handle
@@ -32,16 +33,22 @@ classdef CallbackManagerDialog < handle
             obj.ActionFcn = actionFcn;
             obj.ValidFcn = validFcn;
             obj.Figure = uifigure("Name", "Callbacks: " + targetName, "Visible", "off", ...
-                "WindowStyle", "modal", "Position", [300 300 520 420], ...
+                "WindowStyle", "modal", "Resize", "on", "Position", [300 300 380 170], ...
                 "Tag", "macd-callback-manager", "CloseRequestFcn", @(~, ~) delete(obj));
             obj.Figure.WindowKeyPressFcn = @(~, event) obj.keyPressed(event, reloadFcn);
-            grid = uigridlayout(obj.Figure, [3 1], "RowHeight", {"1x", 52, 30});
+            grid = uigridlayout(obj.Figure, [3 1], "RowHeight", {"1x", 0, 30}, "RowSpacing", 6);
+            obj.MainGrid = grid;
             obj.Rows = uigridlayout(grid, [1 3], "ColumnWidth", {"1x", 64, 64}, ...
-                "Scrollable", "on", "Padding", [0 0 0 0]);
+                "Scrollable", "on", "RowSpacing", 6, "Padding", [0 0 0 0]);
             obj.Message = uilabel(grid, "WordWrap", "on", "Text", "", ...
                 "Tag", "macd-callback-message");
             uibutton(grid, "Text", "Close", "ButtonPushedFcn", @(~, ~) delete(obj));
             obj.refresh();
+            if obj.isOpen()
+                % Fit short callback lists initially and scroll longer lists without resetting user resizing.
+                count = min(numel(obj.Rows.RowHeight), 8);
+                obj.Figure.Position(4) = count * 32 + max(count - 1, 0) * 6 + 62;
+            end
             if visible && obj.isOpen(), obj.Figure.Visible = "on"; end
         end
 
@@ -72,6 +79,14 @@ classdef CallbackManagerDialog < handle
             if ~obj.isOpen(), return, end
             if ~obj.ValidFcn(), delete(obj); return, end
             states = obj.StateFcn();
+            % Reserve message space only while an action has something to report.
+            messageHeight = 52 * double(strlength(obj.Message.Text) > 0);
+            previousHeight = obj.MainGrid.RowHeight{2};
+            obj.MainGrid.RowHeight = {"1x", messageHeight, 30};
+            obj.Message.Visible = messageHeight > 0;
+            if messageHeight ~= previousHeight
+                obj.Figure.Position(4) = obj.Figure.Position(4) + messageHeight - previousHeight;
+            end
             delete(obj.Rows.Children);
             obj.Rows.RowHeight = repmat({32}, 1, max(numel(states), 1));
 
