@@ -102,6 +102,7 @@ classdef RoundTripGenerator
                     pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id & ...
                         string({document.CallbackEdits.Name}) == entry.Path);
                     if ~isempty(pending), continue, end
+                    if isfield(entry.Metadata, "SubtreeReferenceId"), continue, end
                     if entry.ValueKind ~= "literal"
                         continue
                     end
@@ -269,6 +270,7 @@ classdef RoundTripGenerator
                     if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
                         continue
                     end
+                    if isfield(entry.Metadata, "SubtreeReferenceId"), continue, end
                     if entry.ValueKind ~= "literal"
                         diagnostic = obj.error("nonliteral-component-insertion", component, ...
                             "Generated component has a nonliteral property.");
@@ -276,6 +278,17 @@ classdef RoundTripGenerator
                     end
                     creationText = creationText + eol + obj.indent(source, creationOffset) + ...
                         obj.assignmentText(component, entry, source, creationOffset);
+                end
+            end
+            if ~initializationEmitted
+                try
+                    references = macd.model.SubtreeReferencePolicy.assignments(document, components, obj.Registry);
+                    for reference = references
+                        creationText = creationText + eol + obj.indent(source, creationOffset) + reference;
+                    end
+                catch exception
+                    diagnostic = macd.model.Diagnostic("unsafe-component-reference", "error", string(exception.message));
+                    return
                 end
             end
             edits = [obj.insertion(declarationOffset, declarationsText), ...

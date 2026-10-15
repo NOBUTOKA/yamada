@@ -84,6 +84,7 @@ classdef SubtreeReparentSourceEdits
             ending = string(newline);
             if document.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
             block = "";
+            deferredParsedReferences = strings(1, 0);
 
             % Emit moved initialization in the candidate's parent-before-child order.
             for component = document.Components
@@ -117,12 +118,28 @@ classdef SubtreeReparentSourceEdits
                         assignment = "app." + name + "." + entry.Path + " = " + macd.source.LiteralEncoder.encode(entry.LiteralValue) + ";";
                     elseif entry.ValueKind == "expression" && ~isempty(entry.SourceSpan) && entry.SourceSpan.isKnown()
                         assignment = extractBetween(source, entry.SourceSpan.StartOffset, entry.SourceSpan.EndOffset);
+                        if any(entry.Path == ["SelectedTab", "ContextMenu"])
+                            macd.model.SubtreeReferencePolicy.resolve(document, component, entry.Path, entry.SourceExpression, registry);
+                            deferredParsedReferences(end + 1) = assignment; %#ok<AGROW>
+                            continue
+                        end
+                        references = regexp(macd.source.SubtreeSourceEdits.codeMask(entry.SourceExpression), ...
+                            '(?<!\w)app\s*\.\s*([A-Za-z]\w*)', 'tokens');
+                        for reference = references
+                            if any(names == string(reference{1}{1}))
+                                error("macd:SubtreeReparentSourceEdits:UnsafeSource", ...
+                                    "An unsupported internal component reference prevents safe relocation.");
+                            end
+                        end
                     else
                         error("macd:SubtreeReparentSourceEdits:UnsafeSource", "A property has no proven source representation.");
                     end
                     block = block + ending + "            " + assignment;
                 end
             end
+            generated = document.Components([document.Components.Origin] == "generated");
+            references = macd.model.SubtreeReferencePolicy.assignments(document, generated, registry);
+            for reference = [deferredParsedReferences references], block = block + ending + "            " + reference; end
             for span = spans
                 edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", ""); %#ok<AGROW>
             end
@@ -158,6 +175,7 @@ classdef SubtreeReparentSourceEdits
             end
             for entry = component.Properties
                 if registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments), continue, end
+                if isfield(entry.Metadata, "SubtreeReferenceId"), continue, end
                 if entry.ValueKind ~= "literal"
                     error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Generated properties require a literal representation.");
                 end

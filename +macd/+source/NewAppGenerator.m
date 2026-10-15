@@ -100,6 +100,7 @@ classdef NewAppGenerator
                             entry.Path == "Visible"
                         continue
                     end
+                    if isfield(entry.Metadata, "SubtreeReferenceId"), continue, end
                     if entry.ValueKind ~= "literal"
                         diagnostics(end + 1) = macd.model.Diagnostic( ...
                             "nonliteral-new-app-property", "error", ...
@@ -135,6 +136,16 @@ classdef NewAppGenerator
                 lines(end + 1) = ""; %#ok<AGROW>
             end
 
+            % Resolve allowlisted references only after every target exists.
+            try
+                references = macd.model.SubtreeReferencePolicy.assignments(document, document.Components, obj.Registry);
+                lines = [lines "            " + references];
+            catch exception
+                diagnostics(end + 1) = macd.model.Diagnostic("unsafe-component-reference", "error", string(exception.message));
+                source = "";
+                document.Diagnostics = diagnostics;
+                return
+            end
             % Reveal the root only after every child is configured.
             root = document.getComponent(document.RootComponentId);
             visible = root.getProperty("Visible");

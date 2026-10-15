@@ -885,6 +885,25 @@ classdef DocumentModel < handle
                     error("macd:DocumentModel:UnsafeSubtreeCopy", "Callback bindings cannot yet be duplicated safely.");
                 end
                 for property = record.Properties
+                    if property.ValueKind == "expression"
+                        try
+                            owner = obj.getComponent(record.Id);
+                            if isfield(property.Metadata, "SubtreeReferenceId")
+                                target = obj.getComponent(string(property.Metadata.SubtreeReferenceId));
+                                if isempty(target), error("macd:DocumentModel:UnsafeSubtreeCopy", "Reference target is missing."); end
+                                macd.model.SubtreeReferencePolicy.validate(obj, owner, property.Path, target, registry);
+                                targetId = target.Id;
+                            else
+                                targetId = macd.model.SubtreeReferencePolicy.resolve(obj, owner, property.Path, property.SourceExpression, registry);
+                            end
+                            metadata = property.Metadata;
+                            metadata.SubtreeReferenceId = targetId;
+                            snapshot = snapshot.withPropertyMetadata(record.Id, property.Path, metadata);
+                        catch exception
+                            error("macd:DocumentModel:UnsafeSubtreeCopy", "%s", string(exception.message));
+                        end
+                        continue
+                    end
                     if property.ValueKind ~= "literal" || ...
                             registry.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
                         error("macd:DocumentModel:UnsafeSubtreeCopy", "A property cannot be copied without losing source behavior.");
@@ -964,6 +983,23 @@ classdef DocumentModel < handle
                 fresh.CreationArguments = record.CreationArguments;
                 fresh.Metadata = record.Metadata;
                 for property = record.Properties
+                    if property.ValueKind == "expression" && isfield(property.Metadata, "SubtreeReferenceId")
+                        targetId = string(property.Metadata.SubtreeReferenceId);
+                        mapped = find(oldIds == targetId, 1);
+                        targetName = "";
+                        if ~isempty(mapped)
+                            targetId = newIds(mapped);
+                            targetName = newNames(mapped);
+                        else
+                            target = obj.getComponent(targetId);
+                            if isempty(target), error("macd:DocumentModel:UnsafeSubtreeCopy", "Reference target no longer exists."); end
+                            targetName = target.Name;
+                        end
+                        entry = fresh.setProperty(property.Path, []);
+                        entry.setSourceExpression("app." + targetName);
+                        entry.Metadata.SubtreeReferenceId = targetId;
+                        continue
+                    end
                     if property.ValueKind ~= "literal" || ...
                             registry.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
                         error("macd:DocumentModel:UnsafeSubtreeCopy", "Paste requires a validated literal snapshot.");

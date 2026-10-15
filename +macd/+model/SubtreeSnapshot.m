@@ -64,6 +64,25 @@ classdef SubtreeSnapshot
     end
 
     methods
+        function obj = withPropertyMetadata(obj, componentId, path, metadata)
+            % withPropertyMetadata Return a value snapshot with independently validated property metadata.
+            arguments (Input)
+                obj (1, 1) macd.model.SubtreeSnapshot
+                componentId (1, 1) string
+                path (1, 1) string
+                metadata (1, 1) struct
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.SubtreeSnapshot
+            end
+            macd.model.SubtreeSnapshot.validateValue(metadata);
+            index = find(string({obj.Records.Id}) == componentId, 1);
+            if isempty(index), error("macd:SubtreeSnapshot:MissingComponent", "Snapshot component is missing."); end
+            property = find(string({obj.Records(index).Properties.Path}) == path, 1);
+            if isempty(property), error("macd:SubtreeSnapshot:UnsupportedValue", "Snapshot property is missing."); end
+            obj.Records(index).Properties(property).Metadata = metadata;
+        end
+
         function components = materialize(obj)
             % materialize Create independent records retaining original identity and source data.
             arguments (Input)
