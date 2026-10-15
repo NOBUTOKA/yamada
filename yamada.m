@@ -2173,7 +2173,7 @@ classdef yamada < matlab.apps.AppBase
             app.InteractionKind = "";
             if ~isequal(position, startPosition)
                 try
-                    app.Document.setProperty(componentId, "Position", position);
+                    app.Document.setProperty(componentId, "Position", position, app.Registry);
                 catch exception
                     app.setStatus(string(exception.message));
                 end
@@ -2408,7 +2408,7 @@ classdef yamada < matlab.apps.AppBase
             app.ResizeTargetId = "";
             app.ResizeKind = "";
             if ~isequal(position, app.ResizeStartPosition)
-                app.Document.setProperty(componentId, "Position", position);
+                app.Document.setProperty(componentId, "Position", position, app.Registry);
             end
             app.refreshShell();
         end
@@ -2609,7 +2609,7 @@ classdef yamada < matlab.apps.AppBase
             app.DragComponentId = "";
             if ~isequal(sourcePosition, app.DragStartPosition)
                 try
-                    app.Document.setProperty(componentId, "Position", sourcePosition);
+                    app.Document.setProperty(componentId, "Position", sourcePosition, app.Registry);
                 catch exception
                     app.setStatus(string(exception.message));
                 end
@@ -2715,7 +2715,7 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             try
-                app.Document.setPropertyBatch(component.Id, transaction.changes());
+                app.Document.setPropertyBatch(component.Id, transaction.changes(), app.Registry);
             catch exception
                 message = string(exception.message);
                 app.setStatus(message);

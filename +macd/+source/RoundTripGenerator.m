@@ -35,6 +35,14 @@ classdef RoundTripGenerator
                 [source, diagnostics] = macd.source.NewAppGenerator(obj.Registry).generate(document);
                 return
             end
+            if isfield(document.Metadata, "SourceSnapshotText") && ...
+                    document.Metadata.SourceSnapshotText ~= document.OriginalText
+                source = "";
+                diagnostics = macd.model.Diagnostic("stale-source-snapshot", "error", ...
+                    "The source baseline changed without reparsing its setting locations.");
+                document.Diagnostics = diagnostics;
+                return
+            end
             source = document.OriginalText;
             diagnostics = macd.validation.ModelValidator.validate(document, obj.Registry);
             if macd.validation.ModelValidator.hasErrors(diagnostics)

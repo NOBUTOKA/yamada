@@ -23,7 +23,7 @@ classdef ComponentRecord < handle
         Children string = strings(1, 0)
         % Properties - Ordered macd.model.PropertyEntry handle objects.
         Properties macd.model.PropertyEntry = macd.model.PropertyEntry.empty
-        % Settings - Original explicit occurrences in initialization visit order.
+        % Settings - Original source occurrences and pending generated occurrences.
         Settings macd.model.PropertySetting = macd.model.PropertySetting.empty
     end
 
@@ -52,6 +52,40 @@ classdef ComponentRecord < handle
     end
 
     methods
+        function records = settingSnapshot(obj)
+            % settingSnapshot Serialize all immutable occurrences for reversible document operations.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                records (1, :) struct
+            end
+
+            records = struct("Path", {}, "Value", {}, "Location", {});
+            for setting = obj.Settings
+                records(end + 1) = setting.toStruct(); %#ok<AGROW>
+            end
+        end
+
+        function entry = restoreProperty(obj, record)
+            % restoreProperty Restore one captured value and binding without replacing unrelated handles.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                record (1, 1) struct
+            end
+            arguments (Output)
+                entry (1, 1) macd.model.PropertyEntry
+            end
+
+            entry = macd.model.PropertyEntry(record.Path, record.LiteralValue, record.Origin);
+            if record.ValueKind == "expression", entry.setSourceExpression(record.SourceExpression); end
+            entry.SourceSpan = record.SourceSpan;
+            entry.Metadata = record.Metadata;
+            entry.Diagnostics = record.Diagnostics;
+            index = find(string({obj.Properties.Path}) == record.Path, 1);
+            if isempty(index), obj.Properties(end + 1) = entry; else, obj.Properties(index) = entry; end
+        end
+
         function factoryArguments = get.CreationArguments(obj)
             % get.CreationArguments Project constructor values without a second mutable source owner.
             arguments (Input)
@@ -82,7 +116,7 @@ classdef ComponentRecord < handle
                 values cell
             end
 
-            if ~isempty(obj.Settings)
+            if any(string({obj.Settings.Method}) ~= "generated")
                 error("macd:ComponentRecord:SourceOwnedArguments", ...
                     "Parsed constructor values must be edited through their property settings.");
             end
@@ -198,7 +232,13 @@ classdef ComponentRecord < handle
             % Reuse an existing entry so its metadata and source span survive.
             entry = obj.getProperty(path);
             if isempty(entry)
-                entry = macd.model.PropertyEntry(path, value, obj.Origin);
+                entry = macd.model.PropertyEntry(path, value, "generated");
+                sequence = 1;
+                if ~isempty(obj.Settings), sequence = max([obj.Settings.Sequence]) + 1; end
+                setting = macd.model.PropertySetting(path, value, struct( ...
+                    "SourceSnapshotId", "pending:" + obj.Id, "Sequence", sequence));
+                obj.Settings(end + 1) = setting;
+                entry.Metadata.PendingSettingId = setting.Id;
                 obj.Properties(end + 1) = entry;
             else
                 if ~entry.IsEditable
@@ -243,6 +283,8 @@ classdef ComponentRecord < handle
                 return
             end
             obj.Properties(obj.Properties == entry) = [];
+            pending = string({obj.Settings.Path}) == path & string({obj.Settings.Method}) == "generated";
+            obj.Settings(pending) = [];
         end
 
         function addChild(obj, childId)

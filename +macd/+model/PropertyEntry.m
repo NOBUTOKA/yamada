@@ -29,6 +29,21 @@ classdef PropertyEntry < handle
     end
 
     methods
+        function record = toStruct(obj)
+            % toStruct Retain independent current-value and source-binding snapshot data.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+            end
+            arguments (Output)
+                record (1, 1) struct
+            end
+
+            record = struct("Path", obj.Path, "ValueKind", obj.ValueKind, ...
+                "LiteralValue", {obj.LiteralValue}, "SourceExpression", obj.SourceExpression, ...
+                "IsEditable", obj.IsEditable, "Origin", obj.Origin, "SourceSpan", obj.SourceSpan, ...
+                "Metadata", obj.Metadata, "Diagnostics", obj.Diagnostics);
+        end
+
         function applySourceSetting(obj, setting)
             % applySourceSetting Project one original occurrence into the editable value view.
             arguments (Input)

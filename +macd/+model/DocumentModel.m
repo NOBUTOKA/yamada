@@ -156,13 +156,14 @@ classdef DocumentModel < handle
                 "ParentId", parentId, "Index", find(obj.Components == component, 1)));
         end
 
-        function entry = setProperty(obj, componentId, path, value)
+        function entry = setProperty(obj, componentId, path, value, registry)
             % setProperty Change one component property and record its prior state.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 componentId string
                 path string
                 value
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
             arguments (Output)
                 entry (1, 1) macd.model.PropertyEntry
@@ -183,19 +184,28 @@ classdef DocumentModel < handle
                         "Property ""%s"" is source-backed and read-only.", path);
                 end
                 oldValue = oldEntry.LiteralValue;
+                if isequaln(oldValue, value)
+                    entry = oldEntry;
+                    return
+                end
+            end
+            if ~isempty(registry)
+                obj.preflightPropertyChanges(componentId, ...
+                    macd.model.PropertyTransaction.singleChange(path, value), registry);
             end
             entry = component.setProperty(path, value);
             obj.recordHistory(struct("Kind", "property", "ComponentId", componentId, ...
                 "Path", path, "HadOldValue", hadOldValue, "OldValue", oldValue, ...
-                "NewValue", value));
+                "NewValue", value, "TargetSettingId", obj.propertySettingId(entry)));
         end
 
-        function entries = setPropertyBatch(obj, componentId, changes)
+        function entries = setPropertyBatch(obj, componentId, changes, registry)
             % setPropertyBatch Apply one preflighted property batch as a single undoable edit.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 componentId (1, 1) string
                 changes (1, :) struct
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
             arguments (Output)
                 entries macd.model.PropertyEntry
@@ -217,7 +227,7 @@ classdef DocumentModel < handle
                     "Property batch paths must be nonempty and unique.");
             end
             historyChanges = repmat(struct("Path", "", "HadOldValue", false, ...
-                "OldValue", [], "NewValue", []), 1, numel(changes));
+                "OldValue", [], "NewValue", [], "TargetSettingId", ""), 1, numel(changes));
             for index = 1:numel(changes)
                 entry = component.getProperty(paths(index));
                 if ~isempty(entry) && ~entry.IsEditable
@@ -228,8 +238,17 @@ classdef DocumentModel < handle
                 historyChanges(index).HadOldValue = ~isempty(entry);
                 if ~isempty(entry)
                     historyChanges(index).OldValue = entry.LiteralValue;
+                    historyChanges(index).TargetSettingId = obj.propertySettingId(entry);
                 end
                 historyChanges(index).NewValue = changes(index).Value;
+            end
+
+            unchanged = arrayfun(@(change) change.HadOldValue && ...
+                isequaln(change.OldValue, change.NewValue), historyChanges);
+            historyChanges(unchanged) = [];
+            changes(unchanged) = [];
+            if ~isempty(changes) && ~isempty(registry)
+                obj.preflightPropertyChanges(componentId, changes, registry);
             end
 
             % Commit only after every target is known to be editable and reversible.
@@ -238,6 +257,7 @@ classdef DocumentModel < handle
                 for index = 1:numel(changes)
                     entries(end + 1) = component.setProperty( ...
                         historyChanges(index).Path, historyChanges(index).NewValue); %#ok<AGROW>
+                    historyChanges(index).TargetSettingId = obj.propertySettingId(entries(end));
                 end
             catch exception
                 % Preserve all-or-nothing semantics even if a future entry setter can fail.
@@ -246,8 +266,10 @@ classdef DocumentModel < handle
                 end
                 rethrow(exception)
             end
-            obj.recordHistory(struct("Kind", "property-batch", ...
-                "ComponentId", componentId, "Changes", historyChanges));
+            if ~isempty(historyChanges)
+                obj.recordHistory(struct("Kind", "property-batch", ...
+                    "ComponentId", componentId, "Changes", historyChanges));
+            end
         end
 
         function entries = applyGridLayoutEdit(obj, gridId, changes)
@@ -388,9 +410,12 @@ classdef DocumentModel < handle
 
             % Keep absence as a first-class history state instead of materializing a default.
             oldValue = entry.LiteralValue;
+            oldEntry = entry.toStruct();
+            beforeSettings = component.settingSnapshot();
             component.removeProperty(path);
             obj.recordHistory(struct("Kind", "reset-property", ...
-                "ComponentId", componentId, "Path", path, "OldValue", oldValue));
+                "ComponentId", componentId, "Path", path, "OldValue", oldValue, ...
+                "OldEntry", oldEntry, "BeforeSettings", beforeSettings));
         end
 
         function markSaved(obj)
@@ -999,7 +1024,6 @@ classdef DocumentModel < handle
                     if property.ValueKind == "expression" && isfield(property.Metadata, "SubtreeReferenceId")
                         targetId = string(property.Metadata.SubtreeReferenceId);
                         mapped = find(oldIds == targetId, 1);
-                        targetName = "";
                         if ~isempty(mapped)
                             targetId = newIds(mapped);
                             targetName = newNames(mapped);
@@ -1076,6 +1100,82 @@ classdef DocumentModel < handle
     end
 
     methods (Access = private)
+        function preflightPropertyChanges(obj, componentId, changes, registry)
+            % preflightPropertyChanges Validate generated candidate source before mutating live records.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+                changes (1, :) struct
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+
+            % Use independent records and avoid recording candidate-only user history.
+            candidate = obj.structuralCandidate();
+            component = candidate.getComponent(componentId);
+            for change = changes
+                component.setProperty(string(change.Path), change.Value);
+            end
+            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafePropertyEdit", "%s", ...
+                    strjoin(string({diagnostics.Message}), newline));
+            end
+
+            % Reparse output without executing the app and check each requested literal.
+            [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafePropertyEdit", "%s", ...
+                    strjoin(string({diagnostics.Message}), newline));
+            end
+            reparsed = parsed.getComponentByName(component.Name);
+            for change = changes
+                if isempty(reparsed)
+                    error("macd:DocumentModel:UnsafePropertyEdit", "The edited component was not preserved by generation.");
+                end
+                entry = reparsed.getProperty(string(change.Path));
+                if isempty(entry) || entry.ValueKind ~= "literal" || ~isequaln(entry.LiteralValue, change.Value)
+                    error("macd:DocumentModel:UnsafePropertyEdit", ...
+                        "Generated source does not retain requested property %s.", change.Path);
+                end
+            end
+        end
+
+        function id = propertySettingId(~, entry)
+            % propertySettingId Read the immutable occurrence targeted by a value edit.
+            arguments (Input)
+                ~
+                entry (1, 1) macd.model.PropertyEntry
+            end
+            arguments (Output)
+                id (1, 1) string
+            end
+
+            id = "";
+            if isfield(entry.Metadata, "SourceSettingId")
+                id = entry.Metadata.SourceSettingId;
+            elseif isfield(entry.Metadata, "PendingSettingId")
+                id = entry.Metadata.PendingSettingId;
+            end
+        end
+
+        function assertPropertySettingTarget(obj, component, change, forward)
+            % assertPropertySettingTarget Refuse history replay against a different occurrence.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                change (1, 1) struct
+                forward (1, 1) logical
+            end
+
+            if ~isfield(change, "TargetSettingId") || strlength(change.TargetSettingId) == 0, return, end
+            entry = component.getProperty(string(change.Path));
+            if forward && ~change.HadOldValue && isempty(entry), return, end
+            if isempty(entry) || obj.propertySettingId(entry) ~= change.TargetSettingId
+                error("macd:DocumentModel:StalePropertySetting", ...
+                    "Property history no longer targets the same source occurrence.");
+            end
+        end
+
         function mappings = updatedRenameMappings(~, mappings, componentId, kind, oldName, newName)
             % updatedRenameMappings Retarget all historical aliases without cascading source edits.
             arguments (Input)
@@ -1172,6 +1272,7 @@ classdef DocumentModel < handle
             obj.Components = components;
             root = obj.getComponent(id);
             root.restoreProperties(rootState.Properties);
+            if isfield(rootState, "Settings"), root.restoreSettings(rootState.Settings); end
             root.ParentId = rootState.ParentId;
             for state = parentStates
                 parent = obj.getComponent(state.Id);
@@ -1243,6 +1344,7 @@ classdef DocumentModel < handle
                     end
                 case "property"
                     component = obj.getComponent(edit.ComponentId);
+                    obj.assertPropertySettingTarget(component, edit, forward);
                     if forward
                         component.setProperty(edit.Path, edit.NewValue);
                     elseif edit.HadOldValue
@@ -1252,6 +1354,9 @@ classdef DocumentModel < handle
                     end
                 case "property-batch"
                     component = obj.getComponent(edit.ComponentId);
+                    for index = 1:numel(edit.Changes)
+                        obj.assertPropertySettingTarget(component, edit.Changes(index), forward);
+                    end
                     for index = 1:numel(edit.Changes)
                         change = edit.Changes(index);
                         if forward
@@ -1275,7 +1380,12 @@ classdef DocumentModel < handle
                     if forward
                         component.removeProperty(edit.Path);
                     else
-                        component.setProperty(edit.Path, edit.OldValue);
+                        if isfield(edit, "OldEntry")
+                            component.restoreProperty(edit.OldEntry);
+                            component.restoreSettings(edit.BeforeSettings);
+                        else
+                            component.setProperty(edit.Path, edit.OldValue);
+                        end
                     end
             end
         end

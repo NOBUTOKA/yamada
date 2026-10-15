@@ -115,7 +115,7 @@ classdef ModelValidator
                             end
                         end
                         geometryDiagnostic = macd.validation.ModelValidator.validateGeometry( ...
-                            entry, component.Id);
+                            entry, component.Id, component.Factory);
                         if ~isempty(geometryDiagnostic)
                             diagnostics(end + 1) = geometryDiagnostic; %#ok<AGROW>
                         end
@@ -191,11 +191,12 @@ classdef ModelValidator
                 "uipushtool", "uitoggletool"]);
         end
 
-        function diagnostic = validateGeometry(entry, componentId)
+        function diagnostic = validateGeometry(entry, componentId, factory)
             % validateGeometry Check literal Position and grid coordinates.
             arguments (Input)
                 entry (1, 1) macd.model.PropertyEntry
                 componentId string
+                factory (1, 1) string
             end
             arguments (Output)
                 diagnostic macd.model.Diagnostic
@@ -220,7 +221,7 @@ classdef ModelValidator
                         "Grid row and column values must be positive integer scalars or spans.", ...
                         componentId);
                 end
-            elseif any(entry.Path == ["RowHeight", "ColumnWidth"])
+            elseif factory == "uigridlayout" && any(entry.Path == ["RowHeight", "ColumnWidth"])
                 message = macd.model.GridTrackList.validate(value);
                 if strlength(message) > 0
                     diagnostic = macd.validation.ModelValidator.error( ...

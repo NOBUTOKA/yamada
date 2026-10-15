@@ -45,7 +45,7 @@ classdef SubtreeSnapshot
                 % Validate both directions, including children omitted from the parent list.
                 expected = ids(string({document.Components.ParentId}) == id);
                 if numel(unique(component.Children)) ~= numel(component.Children) || ...
-                        ~isequal(sort(expected), sort(component.Children))
+                        ~isequal(sort(expected(:)), sort(component.Children(:)))
                     error("macd:SubtreeSnapshot:InvalidHierarchy", "Parent and child links disagree.");
                 end
                 if strlength(component.ParentId) > 0
@@ -132,17 +132,10 @@ classdef SubtreeSnapshot
                 entry = component.Properties(index);
                 macd.model.SubtreeSnapshot.validateValue(entry.LiteralValue);
                 macd.model.SubtreeSnapshot.validateValue(entry.Metadata);
-                properties(end + 1) = struct("Path", entry.Path, "ValueKind", entry.ValueKind, ...
-                    "LiteralValue", {entry.LiteralValue}, "SourceExpression", entry.SourceExpression, ...
-                    "IsEditable", entry.IsEditable, "Origin", entry.Origin, "SourceSpan", entry.SourceSpan, ...
-                    "Metadata", entry.Metadata, "Diagnostics", entry.Diagnostics); %#ok<AGROW>
+                properties(end + 1) = entry.toStruct(); %#ok<AGROW>
             end
-            settings = struct("Path", {}, "Value", {}, "Location", {});
-            for setting = component.Settings
-                stored = setting.toStruct();
-                macd.model.SubtreeSnapshot.validateValue(stored);
-                settings(end + 1) = stored; %#ok<AGROW>
-            end
+            settings = component.settingSnapshot();
+            macd.model.SubtreeSnapshot.validateValue(settings);
             record = struct("Id", component.Id, "Name", component.Name, "Factory", component.Factory, ...
                 "DeclaredType", component.DeclaredType, "Origin", component.Origin, ...
                 "ParentId", component.ParentId, "Children", component.Children, ...

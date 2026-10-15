@@ -89,6 +89,7 @@ classdef AppSourceParser
             document.Encoding = "UTF-8";
             document.LineEnding = macd.source.AppSourceParser.lineEnding(source);
             document.Metadata.SourceSnapshotId = string(java.util.UUID.randomUUID());
+            document.Metadata.SourceSnapshotText = source;
             diagnostics = macd.model.Diagnostic.empty;
             if ~isAppBase
                 diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
