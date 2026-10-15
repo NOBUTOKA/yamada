@@ -100,9 +100,21 @@ classdef AppSourceParser
 
             % Collect declared component types before constructing model records.
             declarations = macd.source.AppSourceParser.propertyDeclarations(statements);
-
-            % Recover supported component creation calls in original source order.
+            creationOffsets = [];
             for index = 1:numel(statements)
+                creation = macd.source.AppSourceParser.creationMatch(statements(index).Text);
+                if ~isempty(creation) && registry.contains(creation.Factory)
+                    creationOffsets(end + 1) = statements(index).Span.StartOffset;
+                end
+            end
+            [initializationOrder, initializationDiagnostics] = ...
+                macd.source.CallbackSourceAnalyzer.initializationStatements(statements, creationOffsets);
+            diagnostics = [diagnostics(:)' initializationDiagnostics(:)'];
+            creationOrder = unique(initializationOrder, 'stable');
+            creationOrder = [creationOrder setdiff(1:numel(statements), creationOrder, 'stable')];
+
+            % Recover reachable creations first so parent discovery follows initialization calls.
+            for index = creationOrder
                 statement = statements(index);
                 creation = macd.source.AppSourceParser.creationMatch(statement.Text);
                 if isempty(creation)
@@ -190,9 +202,16 @@ classdef AppSourceParser
                 end
             end
 
-            % Recover direct assignments after components and parent links exist.
-            for index = 1:numel(statements)
+            % Recover initial writes in execution order, rather than file declaration order.
+            created = strings(1, 0);
+            for index = initializationOrder
+                % Runtime callback writes never determine editable initial values or source spans.
                 statement = statements(index);
+                creation = macd.source.AppSourceParser.creationMatch(statement.Text);
+                if ~isempty(creation)
+                    component = document.getComponentByName(creation.Name);
+                    if ~isempty(component), created(end + 1) = component.Id; end
+                end
                 assignment = macd.source.AppSourceParser.assignmentMatch(statement.Text);
                 if isempty(assignment)
                     continue
@@ -209,9 +228,8 @@ classdef AppSourceParser
                     continue
                 end
 
-                % Do not mistake callback logic preceding creation for initialization.
-                if statement.Span.StartOffset < ...
-                        component.SourceSpans.Creation.StartOffset
+                % Preserve initialization writes that execute before supported creation.
+                if ~any(created == component.Id)
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "assignment-before-creation", "warning", ...
                         "Property assignment precedes supported component creation and was retained as source.", ...
@@ -251,6 +269,10 @@ classdef AppSourceParser
                     assignment.ValueText);
                 existingEntry = component.getProperty(assignment.Path);
                 if ~isempty(existingEntry) && ~existingEntry.IsEditable
+                    if ~isempty(existingEntry.SourceSpan) && ...
+                            existingEntry.SourceSpan.StartOffset == statement.Span.StartOffset
+                        continue
+                    end
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "conflicting-property-assignment", "warning", ...
                         "Later assignment conflicts with retained source expression and was retained as source.", ...

@@ -5,6 +5,21 @@ classdef CallbackSourceAnalyzer
     %   references remain visible with both mutation actions unavailable.
 
     methods (Static)
+        function [order, diagnostics] = initializationStatements(statements, creationOffsets)
+            % initializationStatements Trace constructor-reachable initializers without executing source.
+            arguments (Input)
+                statements macd.source.SourceStatement
+                creationOffsets double = []
+            end
+            arguments (Output)
+                order double
+                diagnostics macd.model.Diagnostic
+            end
+
+            layout = macd.source.CallbackSourceAnalyzer.layout(statements);
+            [order, diagnostics] = macd.source.InitializationSourceAnalyzer.analyze(statements, layout, creationOffsets);
+        end
+
         function states = analyze(document, componentId, registry)
             % analyze Return catalog-ordered callback states for the current source snapshot.
             arguments (Input)
@@ -115,13 +130,25 @@ classdef CallbackSourceAnalyzer
 
             % Explicit end-delimited scopes avoid interpreting arbitrary expressions as structure.
             layout = struct("Valid", true, "Direct", false(1, numel(statements)), ...
+                "Owner", strings(1, numel(statements)), "ClassName", "", ...
+                "InstanceNames", strings(1, 0), ...
                 "Methods", struct("Name", {}, "Span", {}), "MethodAnchor", 0);
             stack = struct("Kind", {}, "Name", {}, "Start", {}, "Instance", {});
             for index = 1:numel(statements)
                 text = char(strtrim(statements(index).Text));
+                % Associate branch statements with their method, excluding nested bodies.
+                instanceBody = numel(stack) >= 3 && ...
+                    stack(1).Kind == "classdef" && stack(2).Kind == "methods" && ...
+                    stack(2).Instance && stack(3).Kind == "function" && ...
+                    nnz(string({stack.Kind}) == "function") == 1;
+                if instanceBody, layout.Owner(index) = stack(3).Name; end
                 token = regexp(text, '^([A-Za-z]\w*)(?!\w)', 'tokens', 'once');
                 if isempty(token), continue, end
                 keyword = string(token{1});
+                if keyword == "classdef"
+                    declaration = regexp(text, '^classdef(?:\s*\([^)]*\))?\s+(\w+)', 'tokens', 'once');
+                    if ~isempty(declaration), layout.ClassName = string(declaration{1}); end
+                end
                 if keyword == "end" && ~isempty(regexp(text, '^end\s*$', 'once'))
                     if isempty(stack), layout.Valid = false; break, end
                     block = stack(end);
@@ -154,6 +181,7 @@ classdef CallbackSourceAnalyzer
                         if isempty(declaration), layout.Valid = false; break, end
                         name = string(declaration{1});
                         instance = numel(stack) == 2 && stack(2).Kind == "methods" && stack(2).Instance;
+                        if instance, layout.InstanceNames(end + 1) = name; end
                     end
                     stack(end + 1) = struct("Kind", keyword, "Name", name, ...
                         "Start", statements(index).Span.StartOffset, "Instance", instance); %#ok<AGROW>

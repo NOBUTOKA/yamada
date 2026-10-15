@@ -188,6 +188,7 @@ The following boundaries protect the input source:
 
 - `.mlapp` files and their internal format are not supported.
 - The input application's constructor, callbacks, helper methods, and arbitrary expressions are never executed.
+- Initial property values follow statically resolved same-class calls from the constructor, including AppBase startup methods. Method names are unrestricted; callback registrations and anonymous callback bodies are excluded. Repeated calls retain their order. Dynamic calls, recursion, and unsupported call expressions produce diagnostics without executing source. For constructor-free fragments, a single identifiable factory-owning method is used with a warning. Runtime-only writes do not replace initial values or make those properties read-only; initialization expressions remain source-backed and read-only.
 - Dynamic component creation and ambiguous source structures are restricted when they cannot be edited safely; diagnostics explain the restriction.
 - Inclusion in the catalog does not mean that every component or property can be previewed, inserted, and edited to the same extent. Unsupported values may remain visible but read-only.
 - Full App Designer compatibility and complete round-tripping of arbitrary MATLAB syntax are not goals.
