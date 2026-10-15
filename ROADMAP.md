@@ -571,9 +571,10 @@ model that can represent several components before adding group edit commands.
 
 ## Operate on Components with Their Descendants
 
-Removing a component with children is currently rejected. Treat a selected
-container and its entire descendant subtree as one unit when moving, deleting,
-copying, cutting, or pasting it.
+Implementation is present for the supported scope described in SPECIFICATION.md.
+Complete descendant collection, isolated source preflight and atomic history are
+shared by deletion, parent changes, Cut and Paste. The acceptance checks below
+remain recorded until final integrated verification is complete.
 
 - Add model operations that collect descendants in stable hierarchy order and
   validate the complete subtree before changing any component or source intent.
@@ -594,6 +595,10 @@ copying, cutting, or pasting it.
 Allow a component or complete subtree to move from one valid parent to another,
 including dragging it between two Grid Layouts in Safe Preview.
 
+Implementation is present through Move to Container and Preview drop commands.
+Final integrated verification and documentation review are in progress; the
+checks below remain the completion criteria.
+
 - Add a validated reparent operation that rejects cycles, the root component,
   unsupported parent types, ambiguous source ownership, and invalid destinations
   before changing either parent's child list.
@@ -610,6 +615,11 @@ including dragging it between two Grid Layouts in Safe Preview.
   source round trips without executing the input application.
 
 ## Add Component Copy, Cut, and Paste
+
+Implementation is present in the Edit menu, keyboard shortcuts and Hierarchy
+context menu, including static SelectedTab/ContextMenu reference handling.
+Final integrated verification is in progress. See SPECIFICATION.md for explicit
+unsupported source and clipboard boundaries.
 
 - Provide Copy, Cut, and Paste through the Edit menu, keyboard shortcuts, and
   context menus on components in the hierarchy view. All three entry points

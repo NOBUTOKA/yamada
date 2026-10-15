@@ -13,6 +13,7 @@
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
 - Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
 - Add and delete components and edit supported properties
+- Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
 - Rename component properties in the hierarchy, including static source references and default callback names
 - Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion
 - View validation diagnostics and compare the original and generated source before saving
@@ -109,6 +110,48 @@ identifiers, including callback H1 lines and help examples. Ordinary comments an
 code string literals are preserved. Undo and Redo treat the rename as one edit.
 Source using dynamic dispatch or unresolved app aliases is rejected with an
 explanation; references in other files are outside this operation's scope.
+
+### Copy, cut, and paste components
+
+Select a component in Hierarchy and use **Edit > Copy / Cut / Paste**, or
+**Ctrl+C / Ctrl+X / Ctrl+V**. The same commands are available by right-clicking
+a Hierarchy node. Right-click Copy targets that node without changing selection.
+Text fields retain their normal clipboard shortcuts.
+
+The component and all descendants form one unit. Copy captures independent data;
+later edits to the original do not change it. Cut removes the subtree immediately.
+Paste creates fresh IDs and unique MATLAB property names and selects the copied
+root. Cut and Paste each take one Undo step. Repeated Paste is supported.
+
+Paste uses the nearest compatible container, starting with the selected or
+right-clicked node and walking up its ancestors. Absolute copies receive a small
+offset; grid copies use a free rectangle while retaining their span. Hover over
+the status line to see command availability, reasons, and the resolved Paste
+destination. The clipboard belongs to this editor document; successful New,
+Open, or Reload Source clears it. OS and cross-document clipboards are not used.
+
+### Move a subtree to another container
+
+Choose **Edit > Move to Container...** or the same Hierarchy context command.
+The popup lists explicit destinations and reasons for unavailable choices.
+**Move** revalidates and commits; **Cancel** leaves the document unchanged.
+
+In Safe Preview, drag a selected component into another visible container.
+A dashed guide shows the proposed placement; red indicates an invalid target.
+Grid destinations snap to cells and retain spans. Occupied or out-of-range
+rectangles are rejected. Drop commits the parent and placement together as one
+Undo step. Escape or pointer cancellation discards the draft. Moving within the
+same parent continues to use the existing position or grid-placement tools.
+
+Subtree operations require catalog-compatible parents and provable source
+ownership. The root UIFigure, programmatic-only construction families, and native
+FigureTools subtrees are excluded. Copy/Cut accept supported literals and static
+`SelectedTab`/`ContextMenu` references: internal references follow the copies;
+external context menus retain their identity in the same document. Other
+expressions, executable callback bindings, and ambiguous source are rejected
+without dropping their contents. Reparenting preserves existing callback methods;
+pending callback edits on parsed moved nodes currently require Save and Reload
+Source, or Undo, before moving. Review the generated diff before saving.
 
 ### Manage callbacks
 

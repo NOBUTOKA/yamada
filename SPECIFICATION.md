@@ -52,6 +52,51 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
   Save, Discard, or Cancel when required; a canceled or failed save leaves the
   current document open.
 
+### Subtree editing and component clipboard
+
+- Copy, Cut, Paste, Delete, and parent changes treat one component and all its
+  descendants as an ordered unit. A failed preflight leaves model, history,
+  diagnostics, source preview, clipboard and selection unchanged.
+- Copy captures independent value data and does not dirty the document or add
+  history. Cut deletes immediately. Paste allocates fresh IDs and unique names,
+  including collision checks against source members and pending names. Each Cut,
+  Paste, Delete, or parent change is one Undo/Redo step. Undo does not rewind the
+  clipboard. Parent changes preserve existing component IDs and handles.
+- Edit menus, Ctrl+C/X/V and Hierarchy context menus share commands and
+  availability checks. Context targets do not change selection when opening a
+  menu or copying. Text-entry controls and inline renaming retain their shortcuts.
+  Cut selects the former parent; Paste selects the inserted root.
+- Paste resolves the nearest catalog-compatible ancestor, including the target
+  itself. It retains descendant order and internal placement, offsets absolute
+  roots, and finds a free grid rectangle without expanding tracks. Clipboard
+  ownership is limited to one document in one editor instance. Successful
+  New/Open/Reload clears it; canceled or failed replacement retains it.
+- Move to Container lists explicit destinations and reasons. Safe Preview also
+  offers cross-container dragging with candidate guides. Absolute/grid changes
+  commit Position and Layout.Row/Column together. Grid-to-absolute placement
+  requires a literal position or verified preview pixels. Explicit grid drops
+  never fall back to another free cell. Invalid, occupied, cyclic, stale or
+  canceled drops leave the model unchanged.
+- The root UIFigure and noneditable, programmatic-only or FigureTools subtrees
+  cannot be copied or reparented. Other catalog families are enabled only when
+  complete hierarchy, placement and generation preflight succeeds. Native menu,
+  toolbar and tree editing is not expanded into a comprehensive workflow here.
+- Copy supports safely encodable literals and two static component-reference
+  families: SelectedTab on a TabGroup must name its direct child Tab; ContextMenu
+  must name a context menu under the same document root. Internal targets receive
+  copied identities; external targets retain their same-document identity and
+  are revalidated at Paste. Generated assignments follow target creation.
+- Other expressions, unknown object payloads and executable callback bindings
+  prevent Copy/Cut rather than being omitted. Delete/Cut reject surviving external
+  references. Reparenting retains callback methods and proven direct bindings,
+  but rejects ambiguous initialization dependencies and unsupported internal
+  references. Pending callback edits on parsed moved nodes are not combined with
+  relocation; Save and Reload Source, or Undo, is required first.
+- Opened-source changes use proven original-offset spans; original text remains
+  the source snapshot. Parsed relocation and generated insertion share creation
+  ordering. Unsupported source is preserved or the operation is refused. Input
+  applications, handlers and expressions are never executed by these operations.
+
 ### Callback management
 
 - Right-clicking a Hierarchy node opens an editor-owned context menu for that node
