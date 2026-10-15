@@ -53,6 +53,10 @@ classdef PropertyBatchValidator
             message = "";
             schema = definition.ValueSchema;
             if isempty(value) && isfield(schema, "allowsEmpty") && schema.allowsEmpty
+                if definition.Application.EffectPolicy == "numericValue" && ...
+                        (~transaction.hasValue("AllowEmpty") || ~macd.validation.PropertyBatchValidator.isOn(transaction.value("AllowEmpty")))
+                    message = "An empty Value requires AllowEmpty on.";
+                end
                 return
             end
             if definition.Editor == "enum" && isfield(schema, "values") && ...
@@ -269,6 +273,11 @@ classdef PropertyBatchValidator
             end
 
             message = "";
+            if transaction.hasValue("Editable") && ...
+                    macd.validation.PropertyBatchValidator.isOn(transaction.value("Editable")) && ...
+                    ((ischar(value) && (isrow(value) || isempty(value))) || (isstring(value) && isscalar(value)))
+                return
+            end
             if ~transaction.hasValue("Items")
                 % A source-backed or otherwise unavailable Items value cannot be
                 % checked safely here.  The native editor only exposes candidates
@@ -304,7 +313,7 @@ classdef PropertyBatchValidator
                 return
             end
             for index = 1:numel(selected)
-                if ~any(cellfun(@(candidate) isequaln(candidate, selected{index}), candidates))
+                if ~any(cellfun(@(candidate) macd.model.PropertyStateResolver.valuesEquivalent(candidate, selected{index}), candidates))
                     message = "Choose a value represented by Items.";
                     return
                 end

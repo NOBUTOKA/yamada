@@ -71,7 +71,8 @@
                 "Limits"
               ],
               "nameValue": "unknown",
-              "effectPolicy": "none"
+              "effectPolicy": "none",
+              "defaultLiteral": "NaT"
             }
           }
         },
@@ -130,6 +131,12 @@
               "fixedLength": 2,
               "orientation": "row",
               "allowsNaT": false
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "defaultLiteral": "[datetime(0,1,1) datetime(9999,12,31)]"
             }
           }
         },

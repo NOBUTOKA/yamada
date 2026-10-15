@@ -112,6 +112,9 @@ classdef InspectorPropertyRow < handle
                         "A singleton Inspector row requires exactly one member.");
                 end
                 obj.synchronize(members.Value, members.IsEditable, members.RawValue, relatedValues);
+                if isfield(members, "Reason") && strlength(members.Reason) > 0
+                    obj.Editor.Tooltip = members.Reason;
+                end
                 return
             end
             obj.restoreNormalBackgroundColor();
@@ -119,6 +122,10 @@ classdef InspectorPropertyRow < handle
                 obj.Editor, obj.Row, members, relatedValues);
             obj.ErrorMessage = "";
             obj.Editor.Tooltip = "";
+            if isfield(members, "Reason")
+                reasons = string({members.Reason});
+                obj.Editor.Tooltip = strjoin(unique(reasons(strlength(reasons) > 0), "stable"), newline);
+            end
             obj.captureNormalBackgroundColor();
         end
 
@@ -183,6 +190,7 @@ classdef InspectorPropertyRow < handle
                 obj (1, 1) macd.ui.inspector.InspectorPropertyRow
                 value
             end
+            obj.prepareCommit();
             message = obj.CommitFcn(obj.ComponentId, obj.Path, value);
             if strlength(message) > 0
                 obj.showError(message);
@@ -199,7 +207,18 @@ classdef InspectorPropertyRow < handle
                 message (1, 1) string
             end
 
+            obj.prepareCommit();
             message = obj.BatchCommitFcn(obj.ComponentId, changes);
+        end
+
+        function prepareCommit(obj)
+            % prepareCommit Prevent an obsolete invalid draft from surviving an accepted edit refresh.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+            end
+            obj.ErrorMessage = "";
+            obj.Editor.Tooltip = "";
+            obj.restoreNormalBackgroundColor();
         end
 
         function showError(obj, message)

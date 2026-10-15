@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "0870d4bf7f50b1f7d1853ff87ad9b03f2bfc7da5b39afae4ef18442a4d8a138d",
+  "inputSha256": "3ad4829b166e4b25f2a3e830966f65e1a8a99aa408b7a36f621ccfc8cf3a6db4",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
@@ -827,14 +827,13 @@
       ],
       "memberVariantIds": [
         "uidatepicker",
-        "uidropdown",
         "uieditfield-numeric",
         "uieditfield-text",
         "uispinner",
         "uitextarea",
         "uitree-checkbox"
       ],
-      "reuseCount": 7,
+      "reuseCount": 6,
       "documentedCategoryOrders": [
         3
       ]
@@ -1179,10 +1178,9 @@
       ],
       "memberVariantIds": [
         "uibuttongroup",
-        "uipanel",
-        "uitable"
+        "uipanel"
       ],
-      "reuseCount": 3,
+      "reuseCount": 2,
       "documentedCategoryOrders": [
         5
       ]
@@ -1375,12 +1373,12 @@
       ]
     },
     {
-      "candidateId": "candidate.switch.37fe038231b4",
+      "candidateId": "candidate.switch.42bb0bea0d7e",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
       "sharingScope": "familyScoped",
       "scopeRationale": "Switch-style settings.",
-      "capabilitySha256": "37fe038231b4afcb340089555b01239f49f23cfe2ca9209a93a8d780977c2cd8",
+      "capabilitySha256": "42bb0bea0d7edced5c0f7f63ffe2d24e9be3a99f2b47f49e05442723c685e7aa",
       "propertyPaths": [
         "Value",
         "Items",
@@ -1389,9 +1387,9 @@
         "Orientation"
       ],
       "propertyCapabilitySha256": [
-        "6ddc332f61f353b1b40ff5d02bf5fec31390efa8f686b62370125084a97ab351",
-        "232561cb47d8f689b72aff0007d4006f04c9608addc12b949b3ea0dd9960e7b3",
-        "d77dcdb563e599ba49e6fcb6888f4650acd11bef18ebfd81efead95099d8b76d",
+        "8e8faa14a6a28fee444f62596b36594f2c8d90c639695aabb60bfc7c77a2285f",
+        "b2a64adf6e2a68c9d9c1550228e21a9d2e5550cfe1464f54578377bcbfdcb801",
+        "83dfb06622c6b1d1375077e4dc936b9f92c9b60fec47426907ea44d4ae877649",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
         "683c12e648b12bb238aeece0fcb5bf8f8401022fee168f2653b81b5ada390553"
       ],
@@ -1402,43 +1400,6 @@
       "reuseCount": 2,
       "documentedCategoryOrders": [
         1
-      ]
-    },
-    {
-      "candidateId": "candidate.ticks.072186202cdc",
-      "categoryId": "ticks",
-      "categoryDisplayName": "Ticks",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
-      "capabilitySha256": "072186202cdcf3abbf8abe743e2cab1c6aa2a70244023c3e6693734579ddb378",
-      "propertyPaths": [
-        "MajorTicks",
-        "MajorTicksMode",
-        "MajorTickLabels",
-        "MajorTickLabelsMode",
-        "MinorTicks",
-        "MinorTicksMode"
-      ],
-      "propertyCapabilitySha256": [
-        "0d84271c586485afecec05845d77b2feecaa6a4e7450b362227fb607519ed5de",
-        "9476c1f860b25b1248c0904aa1cacb077fb0e9bf738d279d9c16e400ff651ad3",
-        "f82e06ea9d7cd54713e14d4a89ec652b1bc45e1267bcc20ebb4071d2ff2d2af5",
-        "3118389f9a7796aac0e9135e509b777b6d6d25a1383b8ea72f83609c1b61170a",
-        "ae03b66b824b1b0fbe7203c53b0250b5135da8219f2407d17715347e913b8ae2",
-        "fa7b10c0ca006af687482d19ffbc4422180ecf0e5830369774607bdc13d02879"
-      ],
-      "memberVariantIds": [
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uislider-range",
-        "uislider-slider"
-      ],
-      "reuseCount": 7,
-      "documentedCategoryOrders": [
-        2
       ]
     },
     {
@@ -1507,6 +1468,43 @@
         "uiaxes"
       ],
       "reuseCount": 2,
+      "documentedCategoryOrders": [
+        2
+      ]
+    },
+    {
+      "candidateId": "candidate.ticks.dfbbcf8248a7",
+      "categoryId": "ticks",
+      "categoryDisplayName": "Ticks",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
+      "capabilitySha256": "dfbbcf8248a7cb372559da1d61ab918e01163c2b41926fe7ad163c0b4f33afab",
+      "propertyPaths": [
+        "MajorTicks",
+        "MajorTicksMode",
+        "MajorTickLabels",
+        "MajorTickLabelsMode",
+        "MinorTicks",
+        "MinorTicksMode"
+      ],
+      "propertyCapabilitySha256": [
+        "0d84271c586485afecec05845d77b2feecaa6a4e7450b362227fb607519ed5de",
+        "812ae6e5cac309db111809ae026cf5313711b8eaa5c571316d5040a853b58f41",
+        "f82e06ea9d7cd54713e14d4a89ec652b1bc45e1267bcc20ebb4071d2ff2d2af5",
+        "1c33ebacbb141ca3cf4a40a291966102f5240d3b509aca9cdab64106614983cc",
+        "ae03b66b824b1b0fbe7203c53b0250b5135da8219f2407d17715347e913b8ae2",
+        "2788e6bf368e53de2e7c9dd495eb1982145858c90e56092a92f3995313a7e8b2"
+      ],
+      "memberVariantIds": [
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uislider-range",
+        "uislider-slider"
+      ],
+      "reuseCount": 7,
       "documentedCategoryOrders": [
         2
       ]

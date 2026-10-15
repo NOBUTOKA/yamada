@@ -40,7 +40,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -48,7 +48,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 1,
-            "groupId": "exact.switch.37fe038231b4",
+            "groupId": "exact.switch.42bb0bea0d7e",
             "editor": "itemSelection",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -67,13 +67,14 @@
                 "ItemsData"
               ],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "'Off'"
             }
           }
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Items",
@@ -81,7 +82,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 2,
-            "groupId": "exact.switch.37fe038231b4",
+            "groupId": "exact.switch.42bb0bea0d7e",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -101,13 +102,14 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "{'Off','On'}"
             }
           }
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ItemsData",
@@ -115,7 +117,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 3,
-            "groupId": "exact.switch.37fe038231b4",
+            "groupId": "exact.switch.42bb0bea0d7e",
             "editor": "structuredData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -138,13 +140,14 @@
                 "Items"
               ],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "[]"
             }
           }
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ValueIndex",
@@ -152,7 +155,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 4,
-            "groupId": "exact.switch.37fe038231b4",
+            "groupId": "exact.switch.42bb0bea0d7e",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -169,7 +172,7 @@
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Orientation",
@@ -177,7 +180,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 5,
-            "groupId": "exact.switch.37fe038231b4",
+            "groupId": "exact.switch.42bb0bea0d7e",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",

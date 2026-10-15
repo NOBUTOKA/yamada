@@ -254,7 +254,20 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "defaultLiteral": "'pixels'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.figureappd-properties.html",
+          "detail": "Use the explicitly documented pixel position units; coordinate values themselves remain context-dependent."
+        }
+      ]
     },
     {
       "path": "InnerPosition",

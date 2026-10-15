@@ -31,6 +31,9 @@ function Assert-PolicyFailure {
 $emptyPolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{})
 Assert-Condition ($emptyPolicy.nameValue -ceq 'unknown' -and $emptyPolicy.effectPolicy -ceq 'none' -and
     $emptyPolicy.applyAfter.Count -eq 0) 'An empty optional policy did not retain conservative defaults.'
+$seedPolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{ defaultLiteral = '[-Inf Inf]' })
+Assert-Condition ($seedPolicy.defaultLiteral -ceq '[-Inf Inf]') 'A default literal was lost in normalization.'
+Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ defaultLiteral = 0 }) }
 $policy = ConvertTo-ApplicationPolicy ([pscustomobject]@{
     applyAfter = @('ItemsData', 'Items'); nameValue = 'supported'; effectPolicy = 'itemSelection'
 })
@@ -78,6 +81,9 @@ try {
     $gauge = Get-Content -Raw -LiteralPath (Join-Path $catalogRoot 'components/uigauge-circular.json') | ConvertFrom-Json
     Assert-Condition ($gauge.capabilities.overlayShapesByStyle.ninetydegree -ceq 'quarterCircle' -and
         $gauge.capabilities.overlayShapesByStyle.semicircular -ceq 'semicircle') 'Promotion lost reviewed gauge style silhouettes.'
+    $slider = Get-Content -Raw -LiteralPath (Join-Path $catalogRoot 'components/uislider-slider.json') | ConvertFrom-Json
+    $sliderValue = @($slider.categories | ForEach-Object { $_.entries }) | Where-Object path -CEQ 'Value'
+    Assert-Condition ($sliderValue.metadata.application.defaultLiteral -ceq '0') 'An audited default seed was lost during promotion.'
     $first = [IO.File]::ReadAllBytes((Join-Path $catalogRoot 'components/uidropdown.json'))
     & (Join-Path $toolRoot 'PromoteGroupingToRuntimeCatalog.ps1') -ReleaseDirectory $releaseRoot -CatalogRoot $catalogRoot | Out-Null
     $second = [IO.File]::ReadAllBytes((Join-Path $catalogRoot 'components/uidropdown.json'))

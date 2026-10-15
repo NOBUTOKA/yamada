@@ -152,6 +152,10 @@ Record initialization behavior separately in each property's optional
 `application` object. `applyAfter` names prerequisite property paths;
 `nameValue` records verified constructor support (`supported`, `unsupported`,
 or `unknown`); and `effectPolicy` names an allowlisted MATLAB behavior adapter.
+An optional `defaultLiteral` supplies an explicitly audited initial value for
+state resolution. The MATLAB loader must parse it with the inert literal
+parser; executable expressions are rejected. A seed is not an explicit source
+setting and must never create a PropertyEntry, dirty state, or history item.
 `applyAfter` describes the canonical order for new initialization. It does not
 assert that every reversed sequence is illegal, or authorize moving existing
 source settings. Existing sequences need intermediate and final state checks.
@@ -171,6 +175,13 @@ and cycles. Value constraints and inspector ordering remain independent;
 neither automatically creates an application dependency. Include normalized
 application policies in grouping capability equality and hashes, and preserve
 them during runtime promotion. Evidence itself does not determine group identity.
+
+Constructor behavior also needs policy review. R2024a checks a slider's Value
+against the constructor group's final Limits, while tick modes and unit
+conversion can depend on argument order. Do not replay every name-value pair as
+an independent assignment, or reorder preserved arguments using the canonical
+generation graph. Keep explicit values, requested replacements, and effective
+state separate; unsupported conversion or automatic computation stays unknown.
 
 Represent parent dependency as changes to the effective property surface, not
 as a boolean attached indiscriminately to every property.

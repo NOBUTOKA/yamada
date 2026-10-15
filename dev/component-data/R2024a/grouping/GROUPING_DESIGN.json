@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "19cb9745b3ab812aab564dd7c1e035c14a51f02bec8d46820713819634a44539",
+  "inputSha256": "e96e4f144d844ff3e87efdae540e4830e8e29ebc75ec96dd73fa0ed4c467da82",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -2343,8 +2343,7 @@
       ],
       "memberVariantIds": [
         "uibuttongroup",
-        "uipanel",
-        "uitable"
+        "uipanel"
       ]
     },
     {
@@ -2956,7 +2955,7 @@
       ]
     },
     {
-      "id": "exact.switch.37fe038231b4",
+      "id": "exact.switch.42bb0bea0d7e",
       "kind": "exactCategory",
       "categoryId": "switch",
       "capabilities": [
@@ -2984,7 +2983,8 @@
               "ItemsData"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "'Off'"
           }
         },
         {
@@ -3012,7 +3012,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "{'Off','On'}"
           }
         },
         {
@@ -3043,7 +3044,8 @@
               "Items"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "[]"
           }
         },
         {
@@ -3095,197 +3097,6 @@
       "memberVariantIds": [
         "uiswitch-rocker",
         "uiswitch-toggle"
-      ]
-    },
-    {
-      "id": "exact.ticks.072186202cdc",
-      "kind": "exactCategory",
-      "categoryId": "ticks",
-      "capabilities": [
-        {
-          "path": "MajorTicks",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [
-              "Limits"
-            ],
-            "nameValue": "supported",
-            "effectPolicy": "tickMode"
-          }
-        },
-        {
-          "path": "MajorTicksMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "auto",
-              "manual"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [
-              "MajorTickLabels",
-              "MajorTicks"
-            ],
-            "nameValue": "supported",
-            "effectPolicy": "none"
-          }
-        },
-        {
-          "path": "MajorTickLabels",
-          "valueContract": {
-            "kind": "stringList",
-            "matlabClasses": [
-              "categorical",
-              "cell",
-              "char",
-              "string"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "stringList",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [
-              "MajorTicks"
-            ],
-            "nameValue": "supported",
-            "effectPolicy": "tickMode"
-          }
-        },
-        {
-          "path": "MajorTickLabelsMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "auto",
-              "manual"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [
-              "MajorTickLabels"
-            ],
-            "nameValue": "supported",
-            "effectPolicy": "none"
-          }
-        },
-        {
-          "path": "MinorTicks",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [
-              "Limits"
-            ],
-            "nameValue": "supported",
-            "effectPolicy": "tickMode"
-          }
-        },
-        {
-          "path": "MinorTicksMode",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "auto",
-              "manual"
-            ]
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [
-              "MinorTicks"
-            ],
-            "nameValue": "supported",
-            "effectPolicy": "none"
-          }
-        }
-      ],
-      "memberVariantIds": [
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uislider-range",
-        "uislider-slider"
       ]
     },
     {
@@ -3851,6 +3662,200 @@
       "memberVariantIds": [
         "axes",
         "uiaxes"
+      ]
+    },
+    {
+      "id": "exact.ticks.dfbbcf8248a7",
+      "kind": "exactCategory",
+      "categoryId": "ticks",
+      "capabilities": [
+        {
+          "path": "MajorTicks",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "Limits"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "tickMode"
+          }
+        },
+        {
+          "path": "MajorTicksMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "MajorTickLabels",
+              "MajorTicks"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
+          }
+        },
+        {
+          "path": "MajorTickLabels",
+          "valueContract": {
+            "kind": "stringList",
+            "matlabClasses": [
+              "categorical",
+              "cell",
+              "char",
+              "string"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "stringList",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "MajorTicks"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "tickMode"
+          }
+        },
+        {
+          "path": "MajorTickLabelsMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "MajorTickLabels"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
+          }
+        },
+        {
+          "path": "MinorTicks",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "Limits"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "tickMode"
+          }
+        },
+        {
+          "path": "MinorTicksMode",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "auto",
+              "manual"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "MinorTicks"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uislider-range",
+        "uislider-slider"
       ]
     },
     {
@@ -4689,7 +4694,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "'points'"
           }
         },
         {
@@ -5159,7 +5165,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "'normalized'"
           }
         },
         {
@@ -5726,6 +5733,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'points'"
           }
         }
       ],
@@ -6678,6 +6691,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'normalized'"
           }
         },
         {
@@ -7332,7 +7351,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "'points'"
           }
         },
         {
@@ -8460,7 +8480,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "'normalized'"
           }
         },
         {
@@ -9793,7 +9814,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "'pixels'"
           }
         },
         {
@@ -10480,7 +10502,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "'pixels'"
           }
         },
         {
@@ -13154,7 +13177,8 @@
               "Limits"
             ],
             "nameValue": "unknown",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "NaT"
           }
         },
         {
@@ -13201,6 +13225,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "[datetime(0,1,1) datetime(9999,12,31)]"
           }
         },
         {
@@ -13686,7 +13716,8 @@
               "ItemsData"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "'Option 1'"
           }
         },
         {
@@ -13713,7 +13744,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "{'Option 1','Option 2','Option 3','Option 4'}"
           }
         },
         {
@@ -13744,7 +13776,8 @@
               "Items"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "[]"
           }
         },
         {
@@ -13892,6 +13925,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'off'"
           }
         }
       ],
@@ -14392,7 +14431,7 @@
               "double"
             ],
             "shape": "scalar",
-            "allowsEmpty": false,
+            "allowsEmpty": true,
             "constraints": [
               {
                 "kind": "withinLimitsOf",
@@ -14416,7 +14455,8 @@
               "UpperLimitInclusive"
             ],
             "nameValue": "supported",
-            "effectPolicy": "numericValue"
+            "effectPolicy": "numericValue",
+            "defaultLiteral": "0"
           }
         },
         {
@@ -14442,7 +14482,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "numericValue"
+            "effectPolicy": "numericValue",
+            "defaultLiteral": "[-Inf Inf]"
           }
         },
         {
@@ -14472,7 +14513,8 @@
               "UpperLimitInclusive"
             ],
             "nameValue": "unknown",
-            "effectPolicy": "numericValue"
+            "effectPolicy": "numericValue",
+            "defaultLiteral": "'off'"
           }
         },
         {
@@ -14518,7 +14560,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "'off'"
           }
         },
         {
@@ -14585,6 +14628,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'on'"
           }
         },
         {
@@ -14606,6 +14655,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'on'"
           }
         }
       ],
@@ -14994,6 +15049,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "CharacterLimits"
+            ],
+            "nameValue": "unknown",
+            "effectPolicy": "textValue",
+            "defaultLiteral": "''"
           }
         },
         {
@@ -15015,6 +15078,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "textValue",
+            "defaultLiteral": "[0 Inf]"
           }
         },
         {
@@ -15871,6 +15940,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'pixels'"
           }
         },
         {
@@ -20348,7 +20423,8 @@
               "Limits"
             ],
             "nameValue": "supported",
-            "effectPolicy": "boundedValue"
+            "effectPolicy": "boundedValue",
+            "defaultLiteral": "0"
           }
         },
         {
@@ -20373,7 +20449,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "boundedValue"
+            "effectPolicy": "boundedValue",
+            "defaultLiteral": "[0 100]"
           }
         }
       ],
@@ -20713,7 +20790,8 @@
               "ItemsData"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "'Off'"
           }
         },
         {
@@ -20740,7 +20818,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "{'Off','Low','Medium','High'}"
           }
         },
         {
@@ -20771,7 +20850,8 @@
               "Items"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "[]"
           }
         },
         {
@@ -22013,6 +22093,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'off'"
           }
         },
         {
@@ -22115,7 +22201,8 @@
               "Multiselect"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "'Item 1'"
           }
         },
         {
@@ -22142,7 +22229,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "{'Item 1','Item 2','Item 3','Item 4'}"
           }
         },
         {
@@ -22173,7 +22261,8 @@
               "Items"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "[]"
           }
         },
         {
@@ -24275,7 +24364,8 @@
               "Limits"
             ],
             "nameValue": "supported",
-            "effectPolicy": "boundedValue"
+            "effectPolicy": "boundedValue",
+            "defaultLiteral": "[0 100]"
           }
         },
         {
@@ -24300,7 +24390,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "boundedValue"
+            "effectPolicy": "boundedValue",
+            "defaultLiteral": "[0 100]"
           }
         },
         {
@@ -24737,7 +24828,8 @@
               "Limits"
             ],
             "nameValue": "supported",
-            "effectPolicy": "boundedValue"
+            "effectPolicy": "boundedValue",
+            "defaultLiteral": "0"
           }
         },
         {
@@ -24762,7 +24854,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "boundedValue"
+            "effectPolicy": "boundedValue",
+            "defaultLiteral": "[0 100]"
           }
         },
         {
@@ -25165,7 +25258,7 @@
               "double"
             ],
             "shape": "scalar",
-            "allowsEmpty": false,
+            "allowsEmpty": true,
             "constraints": [
               {
                 "kind": "withinLimitsOf",
@@ -25189,7 +25282,8 @@
               "UpperLimitInclusive"
             ],
             "nameValue": "supported",
-            "effectPolicy": "numericValue"
+            "effectPolicy": "numericValue",
+            "defaultLiteral": "0"
           }
         },
         {
@@ -25215,7 +25309,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "numericValue"
+            "effectPolicy": "numericValue",
+            "defaultLiteral": "[-Inf Inf]"
           }
         },
         {
@@ -25264,7 +25359,8 @@
               "UpperLimitInclusive"
             ],
             "nameValue": "unknown",
-            "effectPolicy": "numericValue"
+            "effectPolicy": "numericValue",
+            "defaultLiteral": "'off'"
           }
         },
         {
@@ -25310,7 +25406,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "none",
+            "defaultLiteral": "'off'"
           }
         },
         {
@@ -25377,6 +25474,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'on'"
           }
         },
         {
@@ -25398,6 +25501,12 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "defaultLiteral": "'on'"
           }
         }
       ],
@@ -26040,7 +26149,8 @@
               "ItemsData"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "'Off'"
           }
         },
         {
@@ -26068,7 +26178,8 @@
           "application": {
             "applyAfter": [],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "{'Off','On'}"
           }
         },
         {
@@ -26099,7 +26210,8 @@
               "Items"
             ],
             "nameValue": "supported",
-            "effectPolicy": "itemSelection"
+            "effectPolicy": "itemSelection",
+            "defaultLiteral": "[]"
           }
         },
         {
@@ -28119,6 +28231,118 @@
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uitable"
+      ]
+    },
+    {
+      "id": "local.uitable.position",
+      "kind": "variantLocal",
+      "categoryId": "position",
+      "capabilities": [
+        {
+          "path": "Position",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "adapt",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "Units"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "layout"
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "OuterPosition",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "Units",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "pixels",
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "characters"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'pixels'"
           }
         }
       ],
@@ -38130,32 +38354,32 @@
       "propertyOwners": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -38421,32 +38645,32 @@
       "propertyOwners": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -38718,32 +38942,32 @@
       "propertyOwners": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -39015,32 +39239,32 @@
       "propertyOwners": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -40179,32 +40403,32 @@
       "propertyOwners": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42327,32 +42551,32 @@
       "propertyOwners": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -42612,32 +42836,32 @@
       "propertyOwners": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.072186202cdc",
+          "groupId": "exact.ticks.dfbbcf8248a7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -43163,27 +43387,27 @@
       "propertyOwners": [
         {
           "path": "Value",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         }
       ]
@@ -43655,27 +43879,27 @@
       "propertyOwners": [
         {
           "path": "Value",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.37fe038231b4",
+          "groupId": "exact.switch.42bb0bea0d7e",
           "runtimeSetAccess": "public"
         }
       ]
@@ -44488,22 +44712,22 @@
       "propertyOwners": [
         {
           "path": "Position",
-          "groupId": "exact.position.1d833d1c6b04",
+          "groupId": "local.uitable.position",
           "runtimeSetAccess": "public"
         },
         {
           "path": "InnerPosition",
-          "groupId": "exact.position.1d833d1c6b04",
+          "groupId": "local.uitable.position",
           "runtimeSetAccess": "public"
         },
         {
           "path": "OuterPosition",
-          "groupId": "exact.position.1d833d1c6b04",
+          "groupId": "local.uitable.position",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Units",
-          "groupId": "exact.position.1d833d1c6b04",
+          "groupId": "local.uitable.position",
           "runtimeSetAccess": "public"
         }
       ]

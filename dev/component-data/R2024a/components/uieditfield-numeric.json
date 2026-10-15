@@ -74,7 +74,7 @@
       "valueContract": {
         "kind": "number",
         "shape": "scalar",
-        "allowsEmpty": false,
+        "allowsEmpty": true,
         "constraints": [
           {
             "kind": "withinLimitsOf",
@@ -100,13 +100,19 @@
           "UpperLimitInclusive"
         ],
         "nameValue": "supported",
-        "effectPolicy": "numericValue"
+        "effectPolicy": "numericValue",
+        "defaultLiteral": "0"
       },
       "applicationEvidence": [
         {
-          "kind": "inference",
+          "kind": "documentation",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
-          "detail": "Limits, inclusive bounds, integer rounding, and AllowEmpty constrain accepted Value. Set them before Value for newly generated controls. Existing setter sequences still require intermediate-state validation."
+          "detail": "Value may be empty when AllowEmpty is on. The application policy and batch validator enforce that condition; a blanket allowsEmpty=false incorrectly rejects a supported control state."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+          "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
         },
         {
           "kind": "runtime",
@@ -146,13 +152,19 @@
       "application": {
         "applyAfter": [],
         "nameValue": "supported",
-        "effectPolicy": "numericValue"
+        "effectPolicy": "numericValue",
+        "defaultLiteral": "[-Inf Inf]"
       },
       "applicationEvidence": [
         {
           "kind": "documentation",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
           "detail": "Changing Limits moves an out-of-range Value to an allowed bound, taking inclusive limits into account."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+          "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
         },
         {
           "kind": "runtime",
@@ -196,13 +208,19 @@
           "UpperLimitInclusive"
         ],
         "nameValue": "unknown",
-        "effectPolicy": "numericValue"
+        "effectPolicy": "numericValue",
+        "defaultLiteral": "'off'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
           "detail": "Changing rounding from off to on rounds the existing Value within the configured limits and fails if no integer is allowed. Establish the range before enabling rounding."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+          "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
         }
       ]
     },
@@ -266,9 +284,15 @@
       "application": {
         "applyAfter": [],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'off'"
       },
       "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+          "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
+        },
         {
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#rangesAndNumericOptionsPrecedeRequestedValues",
@@ -366,7 +390,20 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "defaultLiteral": "'on'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+          "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
+        }
+      ]
     },
     {
       "path": "UpperLimitInclusive",
@@ -395,7 +432,20 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "defaultLiteral": "'on'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+          "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
+        }
+      ]
     },
     {
       "path": "FontName",

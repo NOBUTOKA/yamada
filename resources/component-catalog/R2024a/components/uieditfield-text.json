@@ -59,6 +59,14 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "CharacterLimits"
+              ],
+              "nameValue": "unknown",
+              "effectPolicy": "textValue",
+              "defaultLiteral": "''"
             }
           }
         },
@@ -86,6 +94,12 @@
               "constraints": [],
               "fixedLength": 2,
               "allowsInfinity": true
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "textValue",
+              "defaultLiteral": "[0 Inf]"
             }
           }
         },

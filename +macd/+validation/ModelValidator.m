@@ -86,8 +86,9 @@ classdef ModelValidator
                 effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
                     component.CreationArguments);
                 supportedPaths = [effectiveProperties.Path];
-                transaction = macd.validation.ModelValidator.propertyTransaction( ...
+                [transaction, resolved, stateDiagnostics] = macd.validation.ModelValidator.propertyTransaction( ...
                     component, effectiveProperties);
+                diagnostics = [diagnostics stateDiagnostics]; %#ok<AGROW>
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
                     if ~any(supportedPaths == entry.Path)
@@ -105,8 +106,9 @@ classdef ModelValidator
                     elseif entry.ValueKind == "literal"
                         definition = effectiveProperties( ...
                             find(supportedPaths == entry.Path, 1));
-                        if definition.IsEditable && definition.AuditDisposition == "editable"
-                            transaction.stage(entry.Path, entry.LiteralValue);
+                        state = resolved(find(supportedPaths == entry.Path, 1));
+                        if definition.IsEditable && definition.AuditDisposition == "editable" && state.IsKnown
+                            transaction.stage(entry.Path, state.EffectiveValue);
                             message = macd.validation.PropertyBatchValidator.validate( ...
                                 effectiveProperties, transaction);
                             if strlength(message) > 0
@@ -155,27 +157,20 @@ classdef ModelValidator
     end
 
     methods (Static, Access = private)
-        function transaction = propertyTransaction(component, definitions)
-            % propertyTransaction Snapshot literal effective values for shared schema validation.
+        function [transaction, states, diagnostics] = propertyTransaction(component, definitions)
+            % propertyTransaction Resolve audited state before validating the current values.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
                 definitions macd.model.PropertyDefinition
             end
             arguments (Output)
                 transaction (1, 1) macd.model.PropertyTransaction
+                states macd.model.PropertyState
+                diagnostics macd.model.Diagnostic
             end
 
-            paths = string({definitions.Path});
-            values = cell(1, numel(definitions));
-            known = false(1, numel(definitions));
-            for index = 1:numel(definitions)
-                entry = component.getProperty(paths(index));
-                if ~isempty(entry) && entry.ValueKind == "literal"
-                    values{index} = entry.LiteralValue;
-                    known(index) = true;
-                end
-            end
-            transaction = macd.model.PropertyTransaction(paths, values, known);
+            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            transaction = macd.model.PropertyStateResolver.transaction(states);
         end
 
         function result = isNotRenderedFigureTool(factory)

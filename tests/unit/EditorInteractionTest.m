@@ -1085,6 +1085,61 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'inspector', 'ui'})
+        function inspectorShowsEffectiveValueWithoutOverwritingSource(testCase)
+            % inspectorShowsEffectiveValueWithoutOverwritingSource Keep clamped display and fixed-slot edits consistent.
+            source = strjoin(["classdef StateUIApp < matlab.apps.AppBase", "properties", ...
+                "UIFigure matlab.ui.Figure", "Slider matlab.ui.control.Slider", "end", "methods", ...
+                "function app = StateUIApp", "createComponents(app);", "end", ...
+                "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                "app.Slider = uislider(app.UIFigure);", "app.Slider.Value = 20;", ...
+                "app.Slider.Limits = [50 100];", "end", "end", "end"], sprintf("\r\n"));
+            fixture = string(tempname()) + ".m";
+            macd.source.SourceWriter.write(fixture, source);
+            testCase.addTeardown(@() delete(fixture));
+            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure.Visible = "off";
+            menus = findall(figure, "Type", "uimenu");
+            openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
+            openMenu.MenuSelectedFcn(openMenu, struct());
+            document = app.Document;
+            component = document.getComponentByName("Slider");
+            tree = findall(figure, "Type", "uitree");
+            node = tree.Children(1).Children(string({tree.Children(1).Children.NodeData}) == component.Id);
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+            drawnow;
+            labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
+            label = labels(string({labels.Text}) == "Value");
+            editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+            testCase.assertEqual(numel(editor), 1);
+            testCase.verifyEqual(editor.Value, 50);
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, 20);
+            testCase.verifyFalse(document.IsDirty);
+            editor.Value = 30;
+            editor.ValueChangedFcn(editor, struct());
+            testCase.verifyEqual(document.HistoryIndex, 0);
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, 20);
+            testCase.verifySubstring(editor.Tooltip, "Initialization changes requested Value");
+            editor.Value = 75;
+            editor.ValueChangedFcn(editor, struct());
+            testCase.verifyEqual(document.HistoryIndex, 1);
+            testCase.verifyEqual(component.getSettings("Value").LiteralValue, 20);
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, 75);
+            menus = findall(figure, "Type", "uimenu");
+            undo = menus(erase(string({menus.Text}), "&") == "Undo");
+            undo.MenuSelectedFcn(undo, struct());
+            labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
+            label = labels(string({labels.Text}) == "Value");
+            editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+            testCase.verifyEqual(editor.Value, 50);
+            testCase.verifyFalse(document.IsDirty);
+            clear cleanup
+        end
+
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
             % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
 

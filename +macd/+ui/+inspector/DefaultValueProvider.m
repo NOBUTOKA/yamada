@@ -94,7 +94,10 @@ classdef DefaultValueProvider < handle
                 "Values", {cell(1, numel(properties))});
             unresolved = false(1, numel(properties));
             for index = 1:numel(properties)
-                if properties(index).HasDefault
+                if properties(index).Application.HasInitialValue
+                    results.Found(index) = true;
+                    results.Values{index} = properties(index).Application.InitialValue;
+                elseif properties(index).HasDefault
                     results.Found(index) = true;
                     results.Values{index} = properties(index).DefaultValue;
                 else

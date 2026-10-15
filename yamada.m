@@ -2988,7 +2988,8 @@ classdef yamada < matlab.apps.AppBase
                     "auditDisposition", "readOnly", "displayName", entry.Path);
                 sourceState = struct("Definition", macd.model.PropertyDefinition( ...
                     entry.Path, [], false, false, metadata), "Entry", entry, ...
-                    "IsExplicit", true);
+                    "IsExplicit", true, "Resolution", macd.model.PropertyState());
+                sourceState.Resolution = macd.model.PropertyState(sourceState.Definition, entry);
                 states(end + 1) = sourceState; %#ok<AGROW>
             end
         end
@@ -3035,10 +3036,11 @@ classdef yamada < matlab.apps.AppBase
             known = false(1, numel(states));
             for index = 1:numel(states)
                 entry = states(index).Entry;
-                if ~isempty(entry) && entry.ValueKind == "literal"
-                    values{index} = entry.LiteralValue;
+                resolved = states(index).Resolution;
+                if resolved.IsKnown
+                    values{index} = resolved.EffectiveValue;
                     known(index) = true;
-                elseif isempty(entry) && defaults.Found(index)
+                elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index)
                     values{index} = defaults.Values{index};
                     known(index) = true;
                 end
@@ -3067,7 +3069,7 @@ classdef yamada < matlab.apps.AppBase
                 "Values", {relatedTransaction.DraftValues}, ...
                 "KnownValues", relatedTransaction.KnownValues);
             members = repmat(struct("Path", "", "Value", "", "RawValue", [], ...
-                "IsEditable", false, "IsKnown", false), 1, numel(states));
+                "IsEditable", false, "IsKnown", false, "Reason", ""), 1, numel(states));
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
@@ -3075,21 +3077,27 @@ classdef yamada < matlab.apps.AppBase
                 isKnown = false;
                 editable = states(index).Definition.IsEditable && ...
                     states(index).Definition.AuditDisposition == "editable";
+                resolved = states(index).Resolution;
                 if ~isempty(entry)
                     value = macd.ui.InspectorValueFormatter.format(entry);
-                    if entry.ValueKind == "literal"
-                        rawValue = entry.LiteralValue;
-                        isKnown = true;
-                    end
                     editable = editable && entry.IsEditable;
-                else
-                    if defaults.Found(index)
-                        defaultValue = defaults.Values{index};
-                        defaultEntry = macd.model.PropertyEntry(states(index).Definition.Path, defaultValue);
-                        value = macd.ui.InspectorValueFormatter.format(defaultEntry);
-                        rawValue = defaultValue;
-                        isKnown = true;
-                    end
+                end
+                if resolved.IsKnown
+                    rawValue = resolved.EffectiveValue;
+                    isKnown = true;
+                elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index)
+                    rawValue = defaults.Values{index};
+                    isKnown = true;
+                end
+                if isKnown
+                    displayEntry = macd.model.PropertyEntry(states(index).Definition.Path, rawValue);
+                    value = macd.ui.InspectorValueFormatter.format(displayEntry);
+                elseif ~isempty(entry) && entry.ValueKind == "literal"
+                    if states(index).Definition.Category ~= "Source", value = "<unresolved>"; end
+                    editable = false;
+                end
+                if ~isKnown
+                    members(index).Reason = resolved.Reason;
                 end
                 members(index).Path = states(index).Definition.Path;
                 members(index).Value = value;

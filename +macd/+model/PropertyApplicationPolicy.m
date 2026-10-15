@@ -15,6 +15,12 @@ classdef PropertyApplicationPolicy
         NameValue string = "unknown"
         % EffectPolicy - Allowlisted policy for resolving implicit setter effects.
         EffectPolicy string = "none"
+        % DefaultLiteral - Audited inert MATLAB literal used to seed state resolution.
+        DefaultLiteral string = ""
+        % HasInitialValue - Whether the audited seed was parsed without evaluation.
+        HasInitialValue logical = false
+        % InitialValue - Parsed audited default, separate from explicit source settings.
+        InitialValue = []
     end
 
     methods
@@ -33,7 +39,7 @@ classdef PropertyApplicationPolicy
                 obj.fail(context, "Expected one application policy object.");
             end
             unknown = setdiff(string(fieldnames(data)), ...
-                ["applyAfter", "nameValue", "effectPolicy"]);
+                ["applyAfter", "nameValue", "effectPolicy", "defaultLiteral"]);
             if ~isempty(unknown)
                 obj.fail(context + "." + unknown(1), "Unknown application policy field.");
             end
@@ -65,7 +71,21 @@ classdef PropertyApplicationPolicy
             if isfield(data, "effectPolicy")
                 obj.EffectPolicy = obj.identifier(data.effectPolicy, ...
                     ["none", "itemSelection", "boundedValue", "numericValue", ...
-                    "tickMode", "componentReference", "layout"], context + ".effectPolicy");
+                    "tickMode", "textValue", "componentReference", "layout"], context + ".effectPolicy");
+            end
+            if isfield(data, "defaultLiteral")
+                raw = data.defaultLiteral;
+                if ~((ischar(raw) && isrow(raw)) || (isstring(raw) && isscalar(raw)))
+                    obj.fail(context + ".defaultLiteral", "Expected one inert MATLAB literal string.");
+                end
+                obj.DefaultLiteral = string(raw);
+                if ismissing(obj.DefaultLiteral) || strlength(strtrim(obj.DefaultLiteral)) == 0
+                    obj.fail(context + ".defaultLiteral", "Expected a nonempty MATLAB literal string.");
+                end
+                [obj.InitialValue, obj.HasInitialValue] = macd.source.MatlabLiteralParser.parse(obj.DefaultLiteral);
+                if ~obj.HasInitialValue
+                    obj.fail(context + ".defaultLiteral", "Unsupported seed literal; expressions are never evaluated.");
+                end
             end
         end
     end

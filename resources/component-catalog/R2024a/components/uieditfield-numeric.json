@@ -58,7 +58,7 @@
                 "double"
               ],
               "shape": "scalar",
-              "allowsEmpty": false,
+              "allowsEmpty": true,
               "constraints": [
                 {
                   "kind": "withinLimitsOf",
@@ -75,7 +75,8 @@
                 "UpperLimitInclusive"
               ],
               "nameValue": "supported",
-              "effectPolicy": "numericValue"
+              "effectPolicy": "numericValue",
+              "defaultLiteral": "0"
             }
           }
         },
@@ -107,7 +108,8 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "numericValue"
+              "effectPolicy": "numericValue",
+              "defaultLiteral": "[-Inf Inf]"
             }
           }
         },
@@ -143,7 +145,8 @@
                 "UpperLimitInclusive"
               ],
               "nameValue": "unknown",
-              "effectPolicy": "numericValue"
+              "effectPolicy": "numericValue",
+              "defaultLiteral": "'off'"
             }
           }
         },
@@ -201,7 +204,8 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "none"
+              "effectPolicy": "none",
+              "defaultLiteral": "'off'"
             }
           }
         },
@@ -286,6 +290,12 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "defaultLiteral": "'on'"
             }
           }
         },
@@ -313,6 +323,12 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "defaultLiteral": "'on'"
             }
           }
         }

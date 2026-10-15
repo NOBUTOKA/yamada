@@ -185,6 +185,10 @@ classdef DocumentModel < handle
                 end
                 oldValue = oldEntry.LiteralValue;
                 if isequaln(oldValue, value)
+                    if ~isempty(registry)
+                        states = obj.getEffectivePropertyStates(registry, componentId);
+                        obj.assertRequestedStates(states, macd.model.PropertyTransaction.singleChange(path, value));
+                    end
                     entry = oldEntry;
                     return
                 end
@@ -245,10 +249,16 @@ classdef DocumentModel < handle
 
             unchanged = arrayfun(@(change) change.HadOldValue && ...
                 isequaln(change.OldValue, change.NewValue), historyChanges);
+            requested = changes;
             historyChanges(unchanged) = [];
             changes(unchanged) = [];
-            if ~isempty(changes) && ~isempty(registry)
-                obj.preflightPropertyChanges(componentId, changes, registry);
+            if ~isempty(registry)
+                if ~isempty(changes)
+                    obj.preflightPropertyChanges(componentId, requested, registry);
+                else
+                    states = obj.getEffectivePropertyStates(registry, componentId);
+                    obj.assertRequestedStates(states, requested);
+                end
             end
 
             % Commit only after every target is known to be editable and reversible.
@@ -346,8 +356,8 @@ classdef DocumentModel < handle
                 "GridId", gridId, "Changes", historyChanges));
         end
 
-        function states = getEffectivePropertyStates(obj, registry, componentId)
-            % getEffectivePropertyStates Join effective definitions with explicit entries only.
+        function [states, diagnostics] = getEffectivePropertyStates(obj, registry, componentId)
+            % getEffectivePropertyStates Join definitions and source entries with independent effective states.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 registry (1, 1) macd.model.ComponentRegistry
@@ -355,6 +365,7 @@ classdef DocumentModel < handle
             end
             arguments (Output)
                 states (1, :) struct
+                diagnostics macd.model.Diagnostic
             end
 
             % Resolve parent context without materializing any catalog defaults.
@@ -370,14 +381,17 @@ classdef DocumentModel < handle
             end
             definitions = registry.getEffectiveProperties(component.Factory, parentFactory, ...
                 component.CreationArguments);
+            [resolved, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
             states = repmat(struct("Definition", macd.model.PropertyDefinition(), ...
-                "Entry", macd.model.PropertyEntry.empty, "IsExplicit", false), ...
+                "Entry", macd.model.PropertyEntry.empty, "IsExplicit", false, ...
+                "Resolution", macd.model.PropertyState()), ...
                 1, numel(definitions));
             for index = 1:numel(definitions)
                 entry = component.getProperty(definitions(index).Path);
                 states(index).Definition = definitions(index);
                 states(index).Entry = entry;
                 states(index).IsExplicit = ~isempty(entry);
+                states(index).Resolution = resolved(index);
             end
         end
 
@@ -1128,14 +1142,46 @@ classdef DocumentModel < handle
                     strjoin(string({diagnostics.Message}), newline));
             end
             reparsed = parsed.getComponentByName(component.Name);
+            if isempty(reparsed)
+                error("macd:DocumentModel:UnsafePropertyEdit", "The edited component was not preserved by generation.");
+            end
+            states = parsed.getEffectivePropertyStates(registry, reparsed.Id);
             for change = changes
-                if isempty(reparsed)
-                    error("macd:DocumentModel:UnsafePropertyEdit", "The edited component was not preserved by generation.");
-                end
                 entry = reparsed.getProperty(string(change.Path));
                 if isempty(entry) || entry.ValueKind ~= "literal" || ~isequaln(entry.LiteralValue, change.Value)
                     error("macd:DocumentModel:UnsafePropertyEdit", ...
                         "Generated source does not retain requested property %s.", change.Path);
+                end
+            end
+            obj.assertRequestedStates(states, changes);
+        end
+
+        function assertRequestedStates(~, states, changes)
+            % assertRequestedStates Reject requests lost to later setters or unresolved constraints.
+            arguments (Input)
+                ~
+                states (1, :) struct
+                changes (1, :) struct
+            end
+            for change = changes
+                stateIndex = find(arrayfun(@(state) state.Definition.Path == string(change.Path), states), 1);
+                if isempty(stateIndex)
+                    error("macd:DocumentModel:UnsafePropertyEdit", "Property %s is not supported in this context.", change.Path);
+                end
+                state = states(stateIndex).Resolution;
+                if ~state.IsKnown
+                    error("macd:DocumentModel:UnsafePropertyEdit", "Cannot confirm %s after initialization: %s", change.Path, state.Reason);
+                end
+                if ~macd.model.PropertyStateResolver.matchesRequested(state, change.Value)
+                    error("macd:DocumentModel:UnsafePropertyEdit", ...
+                        "Initialization changes requested %s to %s; update the constraining settings or choose a surviving value.", ...
+                        change.Path, macd.source.LiteralEncoder.encode(state.EffectiveValue));
+                end
+                valueIndex = find(arrayfun(@(state) state.Definition.Path == "Value", states), 1);
+                if ~isempty(valueIndex) && any(states(valueIndex).Resolution.ReasonCode == ["constraint", "adjustment"]) && ...
+                        any(states(valueIndex).Definition.Application.ApplyAfter == string(change.Path))
+                    error("macd:DocumentModel:UnsafePropertyEdit", ...
+                        "Cannot confirm Value after changing %s: %s", change.Path, states(valueIndex).Resolution.Reason);
                 end
             end
         end

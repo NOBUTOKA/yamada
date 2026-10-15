@@ -6,6 +6,21 @@
   "scope": "Reviewed initialization rules only. Absence does not assert independence or constructor support. applyAfter describes canonical new initialization, not permission to reorder preserved input.",
   "rules": [
     {
+      "variants": ["uieditfield-text"],
+      "path": "Value",
+      "applyAfter": ["CharacterLimits"],
+      "effectPolicy": "textValue",
+      "kind": "inference",
+      "detail": "Establish character limits before assigning nonempty text. Empty text is permitted even when below the lower character limit."
+    },
+    {
+      "variants": ["uieditfield-text"],
+      "path": "CharacterLimits",
+      "effectPolicy": "textValue",
+      "kind": "documentation",
+      "detail": "Changing CharacterLimits resets an out-of-range Value to empty text. This is an implicit effect rather than an explicit source write."
+    },
+    {
       "variants": ["uidropdown", "uilistbox", "uiknob-discrete", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
       "path": "Items",
       "effectPolicy": "itemSelection",
@@ -165,7 +180,82 @@
       "detail": "Setting MajorTickLabels forces manual mode. Apply an explicitly requested final label mode after its labels."
     }
   ],
+  "initialValues": [
+    {
+      "variants": ["uidatepicker"],
+      "values": {"Value": "NaT", "Limits": "[datetime(0,1,1) datetime(9999,12,31)]"},
+      "detail": "Seed only the documented unspecified date and initial calendar limits, using the allowlisted date literal parser without evaluation."
+    },
+    {
+      "variants": ["uislider-slider", "uiknob-continuous"],
+      "values": {"Value": "0", "Limits": "[0 100]"},
+      "detail": "Seed state resolution from the documented initial Value and Limits; these values are not explicit source settings."
+    },
+    {
+      "variants": ["uislider-range"],
+      "values": {"Value": "[0 100]", "Limits": "[0 100]"},
+      "detail": "The range slider starts with both endpoints spanning its documented initial Limits."
+    },
+    {
+      "variants": ["uieditfield-numeric", "uispinner"],
+      "values": {"Value": "0", "Limits": "[-Inf Inf]", "LowerLimitInclusive": "'on'", "UpperLimitInclusive": "'on'", "RoundFractionalValues": "'off'", "AllowEmpty": "'off'"},
+      "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
+    },
+    {
+      "variants": ["uidropdown"],
+      "values": {"Value": "'Option 1'", "Items": "{'Option 1','Option 2','Option 3','Option 4'}", "ItemsData": "[]", "Editable": "'off'"},
+      "detail": "The dropdown initially selects its first default item, has no item data, and is not editable."
+    },
+    {
+      "variants": ["uilistbox"],
+      "values": {"Value": "'Item 1'", "Items": "{'Item 1','Item 2','Item 3','Item 4'}", "ItemsData": "[]", "Multiselect": "'off'"},
+      "detail": "The listbox initially selects its first default item, has no item data, and uses single selection."
+    },
+    {
+      "variants": ["uiknob-discrete"],
+      "values": {"Value": "'Off'", "Items": "{'Off','Low','Medium','High'}", "ItemsData": "[]"},
+      "detail": "The discrete knob initially selects Off from its four documented default items and has no item data."
+    },
+    {
+      "variants": ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
+      "values": {"Value": "'Off'", "Items": "{'Off','On'}", "ItemsData": "[]"},
+      "detail": "The switch initially selects Off from its two documented default items and has no item data."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "values": {"MajorTicksMode": "'auto'", "MinorTicksMode": "'auto'", "MajorTickLabelsMode": "'auto'"},
+      "detail": "Tick locations and labels initially use their documented automatic modes. Derived arrays are not guessed from the mode alone."
+    },
+    {
+      "variants": ["uieditfield-text"],
+      "values": {"Value": "''", "CharacterLimits": "[0 Inf]"},
+      "detail": "A text field initially contains empty text with a character range of zero through infinity."
+    },
+    {
+      "variants": ["uifigure", "uiaxes", "uitable"],
+      "values": {"Units": "'pixels'"},
+      "detail": "Use the explicitly documented pixel position units; coordinate values themselves remain context-dependent."
+    },
+    {
+      "variants": ["axes", "polaraxes", "geoaxes"],
+      "values": {"Units": "'normalized'", "FontUnits": "'points'"},
+      "detail": "These axes document normalized position units and point font units as defaults."
+    },
+    {
+      "variants": ["uiaxes"],
+      "values": {"FontUnits": "'pixels'"},
+      "detail": "UIAxes documents pixel font units, unlike the point default of ordinary axes."
+    }
+  ],
   "contractCorrections": [
+    {
+      "variants": ["uieditfield-numeric", "uispinner"],
+      "path": "Value",
+      "removeConstraintKinds": [],
+      "allowsEmpty": true,
+      "kind": "documentation",
+      "detail": "Value may be empty when AllowEmpty is on. The application policy and batch validator enforce that condition; a blanket allowsEmpty=false incorrectly rejects a supported control state."
+    },
     {
       "variants": ["uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
       "path": "Value",
@@ -189,11 +279,6 @@
       "variants": ["uitable"],
       "path": "ColumnFormat",
       "detail": "A table-valued Data forbids ColumnFormat. An ordering edge alone cannot make this combination valid. Keep this as a value compatibility requirement for the state validator."
-    },
-    {
-      "variants": ["uieditfield-text"],
-      "path": "CharacterLimits",
-      "detail": "Changing CharacterLimits can reset Value to empty text. A dedicated text effect resolver is required before this interaction is promoted as a complete runtime policy."
     }
   ]
 }

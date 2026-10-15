@@ -54,6 +54,19 @@ classdef (TestTags = {'fast', 'catalog', 'model'}) PropertyApplicationPolicyTest
             testCase.verifyError(@() macd.model.PropertyApplicationPolicy.orderDefinitions(definitions), ...
                 "macd:ComponentCatalogLoader:InvalidCatalog");
         end
+
+        function parsesOnlyAuditedInertDefaults(testCase)
+            % parsesOnlyAuditedInertDefaults Keep seeds separate from source and reject executable expressions.
+            policy = macd.model.PropertyApplicationPolicy(struct("defaultLiteral", "[-Inf Inf]"));
+            testCase.verifyTrue(policy.HasInitialValue);
+            testCase.verifyEqual(policy.InitialValue, [-Inf Inf]);
+            policy = macd.model.PropertyApplicationPolicy(struct("defaultLiteral", "NaT"));
+            testCase.verifyTrue(isnat(policy.InitialValue));
+            for invalid = ["", "createSomething()", "1+2"]
+                testCase.verifyError(@() macd.model.PropertyApplicationPolicy( ...
+                    struct("defaultLiteral", invalid)), "macd:ComponentCatalogLoader:InvalidCatalog");
+            end
+        end
     end
 end
 

@@ -5,6 +5,14 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
     %   document except through focused model coverage elsewhere.
 
     methods (Test)
+        function optionalUnknownPathsHaveNoValue(testCase)
+            % optionalUnknownPathsHaveNoValue Keep predicate queries safe for partial transaction surfaces.
+            transaction = macd.model.PropertyTransaction("Value", {20});
+            testCase.verifyTrue(transaction.hasValue("Value"));
+            testCase.verifyFalse(transaction.hasValue("Editable"));
+            testCase.verifyError(@() transaction.stage("Editable", "on"), "macd:PropertyTransaction:UnknownPath");
+        end
+
         function stagesReplacementAndClearWithoutMutatingSnapshot(testCase)
             % stagesReplacementAndClearWithoutMutatingSnapshot Keep candidate values local to a transaction.
 

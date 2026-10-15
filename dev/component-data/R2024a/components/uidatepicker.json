@@ -101,13 +101,19 @@
           "Limits"
         ],
         "nameValue": "unknown",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "NaT"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.datepicker-properties.html",
           "detail": "A selected datetime must be within Limits; NaT represents no selection. Establish date limits before assigning an explicit date. Date-only normalization is specified separately in the value contract."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.datepicker-properties.html",
+          "detail": "Seed only the documented unspecified date and initial calendar limits, using the allowlisted date literal parser without evaluation."
         }
       ]
     },
@@ -176,6 +182,19 @@
       "runtimeObservations": [
         "R2024a normalizes a two-element column input to a 1-by-2 row.",
         "R2024a accepts equal bounds although the R2024a documentation says the second value must be later; the normalized contract follows the documentation."
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "defaultLiteral": "[datetime(0,1,1) datetime(9999,12,31)]"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.datepicker-properties.html",
+          "detail": "Seed only the documented unspecified date and initial calendar limits, using the allowlisted date literal parser without evaluation."
+        }
       ]
     },
     {

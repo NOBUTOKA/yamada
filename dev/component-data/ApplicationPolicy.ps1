@@ -13,7 +13,7 @@ function ConvertTo-ApplicationPolicy {
         throw "$Context must be an application policy object."
     }
     foreach ($field in @($Policy.PSObject.Properties | ForEach-Object Name)) {
-        if ($field -notin @('applyAfter', 'nameValue', 'effectPolicy')) {
+        if ($field -notin @('applyAfter', 'nameValue', 'effectPolicy', 'defaultLiteral')) {
             throw "$Context contains unknown field '$field'."
         }
     }
@@ -44,14 +44,21 @@ function ConvertTo-ApplicationPolicy {
         $effect = $Policy.effectPolicy
     }
     if ($effect -isnot [string] -or $effect -cnotin @('none', 'itemSelection', 'boundedValue',
-            'numericValue', 'tickMode', 'componentReference', 'layout')) {
+            'numericValue', 'tickMode', 'textValue', 'componentReference', 'layout')) {
         throw "$Context.effectPolicy has an unknown effect policy."
     }
-    return [ordered]@{
+    $result = [ordered]@{
         applyAfter = @($dependencies | Sort-Object -CaseSensitive)
         nameValue = $nameValue
         effectPolicy = $effect
     }
+    if ($null -ne $Policy.PSObject.Properties['defaultLiteral']) {
+        if ($Policy.defaultLiteral -isnot [string] -or [string]::IsNullOrWhiteSpace($Policy.defaultLiteral)) {
+            throw "$Context.defaultLiteral must be a nonempty inert MATLAB literal string."
+        }
+        $result.defaultLiteral = $Policy.defaultLiteral
+    }
+    return $result
 }
 
 function Test-ApplicationPolicies {

@@ -99,13 +99,19 @@
           "Limits"
         ],
         "nameValue": "supported",
-        "effectPolicy": "boundedValue"
+        "effectPolicy": "boundedValue",
+        "defaultLiteral": "0"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
           "detail": "Each Value element must be within Limits. Changing Limits clamps out-of-range Value elements, so canonical initialization establishes Limits before explicit Value. Gauges intentionally do not share this rule."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
+          "detail": "Seed state resolution from the documented initial Value and Limits; these values are not explicit source settings."
         },
         {
           "kind": "runtime",
@@ -144,13 +150,19 @@
       "application": {
         "applyAfter": [],
         "nameValue": "supported",
-        "effectPolicy": "boundedValue"
+        "effectPolicy": "boundedValue",
+        "defaultLiteral": "[0 100]"
       },
       "applicationEvidence": [
         {
           "kind": "documentation",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
           "detail": "Changing Limits clamps out-of-range Value elements to the nearest bound. This is an implicit setter effect, not another explicit Value occurrence."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
+          "detail": "Seed state resolution from the documented initial Value and Limits; these values are not explicit source settings."
         },
         {
           "kind": "runtime",
@@ -241,13 +253,19 @@
           "MajorTicks"
         ],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
           "detail": "Restore a requested final mode after explicit tick locations and labels. This preserves an explicit auto request; intermediate manual-mode requirements are a separate state-aware concern."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
+          "detail": "Tick locations and labels initially use their documented automatic modes. Derived arrays are not guessed from the mode alone."
         },
         {
           "kind": "runtime",
@@ -343,13 +361,19 @@
           "MajorTickLabels"
         ],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
           "detail": "Setting MajorTickLabels forces manual mode. Apply an explicitly requested final label mode after its labels."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
+          "detail": "Tick locations and labels initially use their documented automatic modes. Derived arrays are not guessed from the mode alone."
         },
         {
           "kind": "runtime",
@@ -438,13 +462,19 @@
           "MinorTicks"
         ],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
           "detail": "Setting MinorTicks forces manual mode. Apply an explicitly requested final mode after its tick values."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.knob-properties.html",
+          "detail": "Tick locations and labels initially use their documented automatic modes. Derived arrays are not guessed from the mode alone."
         },
         {
           "kind": "runtime",

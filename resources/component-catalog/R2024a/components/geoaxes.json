@@ -555,6 +555,12 @@
                 "normalized",
                 "pixels"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "defaultLiteral": "'points'"
             }
           }
         }
@@ -1826,6 +1832,12 @@
                 "pixels",
                 "characters"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "defaultLiteral": "'normalized'"
             }
           }
         },

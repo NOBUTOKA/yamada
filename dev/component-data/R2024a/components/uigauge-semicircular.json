@@ -357,13 +357,19 @@
           "MajorTicks"
         ],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
           "detail": "Restore a requested final mode after explicit tick locations and labels. This preserves an explicit auto request; intermediate manual-mode requirements are a separate state-aware concern."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Tick locations and labels initially use their documented automatic modes. Derived arrays are not guessed from the mode alone."
         },
         {
           "kind": "runtime",
@@ -459,13 +465,19 @@
           "MajorTickLabels"
         ],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
           "detail": "Setting MajorTickLabels forces manual mode. Apply an explicitly requested final label mode after its labels."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Tick locations and labels initially use their documented automatic modes. Derived arrays are not guessed from the mode alone."
         },
         {
           "kind": "runtime",
@@ -555,13 +567,19 @@
           "MinorTicks"
         ],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
           "detail": "Setting MinorTicks forces manual mode. Apply an explicitly requested final mode after its tick values."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Tick locations and labels initially use their documented automatic modes. Derived arrays are not guessed from the mode alone."
         },
         {
           "kind": "runtime",

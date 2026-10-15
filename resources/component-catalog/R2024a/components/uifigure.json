@@ -177,6 +177,12 @@
                 "points",
                 "characters"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "defaultLiteral": "'pixels'"
             }
           }
         },

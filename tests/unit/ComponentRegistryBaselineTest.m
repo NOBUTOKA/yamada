@@ -41,6 +41,9 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     testCase.verifyEqual(actual.Application.ApplyAfter, policy.ApplyAfter);
                     testCase.verifyEqual(actual.Application.NameValue, policy.NameValue);
                     testCase.verifyEqual(actual.Application.EffectPolicy, policy.EffectPolicy);
+                    testCase.verifyEqual(actual.Application.DefaultLiteral, policy.DefaultLiteral);
+                    testCase.verifyEqual(actual.Application.HasInitialValue, policy.HasInitialValue);
+                    testCase.verifyTrue(isequaln(actual.Application.InitialValue, policy.InitialValue));
                     testCase.verifyFalse(isfield(actual.Metadata, "applicationEvidence"));
                     if isfield(expected.valueContract, "values")
                         testCase.verifyTrue(isfield(actual.ValueSchema, "values"));
@@ -64,7 +67,10 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             testCase.verifyEqual(manifest.schemaVersion, 2);
             testCase.verifyEqual(string(manifest.matlabRelease), "R2024a");
             testCase.verifyEqual(string(manifest.sourceGroupingSha256), string(groups.inputSha256));
-            testCase.verifyEqual(numel(groups.groups), 316);
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            design = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", ...
+                "R2024a", "grouping", "GROUPING_DESIGN.json")));
+            testCase.verifyEqual(numel(groups.groups), numel(design.groups));
             testCase.verifyEqual(sort(string(manifest.orderProfileFiles)), "order-profiles.json");
             testCase.verifyEqual(sort(string({profiles.profiles.id})), ...
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);

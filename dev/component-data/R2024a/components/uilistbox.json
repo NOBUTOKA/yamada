@@ -95,13 +95,19 @@
           "Multiselect"
         ],
         "nameValue": "supported",
-        "effectPolicy": "itemSelection"
+        "effectPolicy": "itemSelection",
+        "defaultLiteral": "'Item 1'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.listbox-properties.html",
           "detail": "Value uses Items or nonempty ItemsData. Multiselect controls whether multiple elements may be selected. Establish both before assigning Value."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.listbox-properties.html",
+          "detail": "The listbox initially selects its first default item, has no item data, and uses single selection."
         },
         {
           "kind": "runtime",
@@ -143,13 +149,19 @@
       "application": {
         "applyAfter": [],
         "nameValue": "supported",
-        "effectPolicy": "itemSelection"
+        "effectPolicy": "itemSelection",
+        "defaultLiteral": "{'Item 1','Item 2','Item 3','Item 4'}"
       },
       "applicationEvidence": [
         {
           "kind": "documentation",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.listbox-properties.html",
           "detail": "Items defines the labels available to the control. It participates in selection state, including the association with ItemsData; it is not independent of the current Value."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.listbox-properties.html",
+          "detail": "The listbox initially selects its first default item, has no item data, and uses single selection."
         },
         {
           "kind": "runtime",
@@ -193,13 +205,19 @@
           "Items"
         ],
         "nameValue": "supported",
-        "effectPolicy": "itemSelection"
+        "effectPolicy": "itemSelection",
+        "defaultLiteral": "[]"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.listbox-properties.html",
           "detail": "Establish item labels before their associated data. Both setters can change selection; the explicit Value is applied last. This is a canonical generation order, not a claim that the reverse setter order is forbidden."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.listbox-properties.html",
+          "detail": "The listbox initially selects its first default item, has no item data, and uses single selection."
         },
         {
           "kind": "runtime",
@@ -505,7 +523,20 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "defaultLiteral": "'off'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.listbox-properties.html",
+          "detail": "The listbox initially selects its first default item, has no item data, and uses single selection."
+        }
+      ]
     },
     {
       "path": "Enable",

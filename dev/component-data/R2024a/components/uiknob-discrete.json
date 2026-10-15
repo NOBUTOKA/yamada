@@ -94,13 +94,19 @@
           "ItemsData"
         ],
         "nameValue": "supported",
-        "effectPolicy": "itemSelection"
+        "effectPolicy": "itemSelection",
+        "defaultLiteral": "'Off'"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.discreteknob-properties.html",
           "detail": "Value must belong to Items, or to ItemsData when nonempty. Establish its domain before assigning a requested selection."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.discreteknob-properties.html",
+          "detail": "The discrete knob initially selects Off from its four documented default items and has no item data."
         },
         {
           "kind": "runtime",
@@ -142,13 +148,19 @@
       "application": {
         "applyAfter": [],
         "nameValue": "supported",
-        "effectPolicy": "itemSelection"
+        "effectPolicy": "itemSelection",
+        "defaultLiteral": "{'Off','Low','Medium','High'}"
       },
       "applicationEvidence": [
         {
           "kind": "documentation",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.discreteknob-properties.html",
           "detail": "Items defines the labels available to the control. It participates in selection state, including the association with ItemsData; it is not independent of the current Value."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.discreteknob-properties.html",
+          "detail": "The discrete knob initially selects Off from its four documented default items and has no item data."
         },
         {
           "kind": "runtime",
@@ -192,13 +204,19 @@
           "Items"
         ],
         "nameValue": "supported",
-        "effectPolicy": "itemSelection"
+        "effectPolicy": "itemSelection",
+        "defaultLiteral": "[]"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.discreteknob-properties.html",
           "detail": "Establish item labels before their associated data. Both setters can change selection; the explicit Value is applied last. This is a canonical generation order, not a claim that the reverse setter order is forbidden."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.discreteknob-properties.html",
+          "detail": "The discrete knob initially selects Off from its four documented default items and has no item data."
         },
         {
           "kind": "runtime",

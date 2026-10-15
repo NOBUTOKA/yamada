@@ -694,7 +694,8 @@ classdef PropertyEditorFactory
             end
             indices = zeros(1, numel(selected));
             for index = 1:numel(selected)
-                candidateIndex = find(cellfun(@(candidate) isequaln(candidate, selected{index}), candidates), 1);
+                candidateIndex = find(cellfun(@(candidate) ...
+                    macd.model.PropertyStateResolver.valuesEquivalent(candidate, selected{index}), candidates), 1);
                 if isempty(candidateIndex)
                     indices = zeros(1, 0);
                     return

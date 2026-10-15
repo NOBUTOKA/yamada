@@ -100,7 +100,8 @@ classdef PropertyTransaction < handle
                 result (1, 1) logical
             end
 
-            result = obj.KnownValues(obj.pathIndex(path));
+            index = find(obj.Paths == path, 1);
+            result = ~isempty(index) && obj.KnownValues(index);
         end
 
         function changes = changes(obj)

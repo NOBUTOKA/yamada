@@ -256,11 +256,11 @@ classdef ComponentRecord < handle
                 path string
             end
             arguments (Output)
-                entry
+                entry macd.model.PropertyEntry
             end
 
             % Preserve insertion order while performing the path lookup.
-            entry = [];
+            entry = macd.model.PropertyEntry.empty;
             for index = 1:numel(obj.Properties)
                 candidate = obj.Properties(index);
                 if candidate.Path == path

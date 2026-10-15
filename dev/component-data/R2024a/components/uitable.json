@@ -865,9 +865,15 @@
       "application": {
         "applyAfter": [],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'pixels'"
       },
       "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.table-properties.html",
+          "detail": "Use the explicitly documented pixel position units; coordinate values themselves remain context-dependent."
+        },
         {
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#unitsAreEstablishedBeforeCoordinatesAndFontSize",

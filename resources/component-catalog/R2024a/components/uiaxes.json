@@ -315,7 +315,8 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "none"
+              "effectPolicy": "none",
+              "defaultLiteral": "'pixels'"
             }
           }
         },
@@ -3459,7 +3460,8 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "none"
+              "effectPolicy": "none",
+              "defaultLiteral": "'pixels'"
             }
           }
         },

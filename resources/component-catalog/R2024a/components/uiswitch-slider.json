@@ -65,7 +65,8 @@
                 "ItemsData"
               ],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "'Off'"
             }
           }
         },
@@ -99,7 +100,8 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "{'Off','On'}"
             }
           }
         },
@@ -136,7 +138,8 @@
                 "Items"
               ],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "[]"
             }
           }
         },

@@ -420,9 +420,15 @@
       "application": {
         "applyAfter": [],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'points'"
       },
       "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These axes document normalized position units and point font units as defaults."
+        },
         {
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#unitsAreEstablishedBeforeCoordinatesAndFontSize",
@@ -3644,9 +3650,15 @@
       "application": {
         "applyAfter": [],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "none",
+        "defaultLiteral": "'normalized'"
       },
       "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These axes document normalized position units and point font units as defaults."
+        },
         {
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#unitsAreEstablishedBeforeCoordinatesAndFontSize",

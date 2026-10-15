@@ -4,6 +4,78 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
     %   represented application or replacing its immutable source baseline.
 
     methods (Test)
+        function laterSetterCannotSilentlyDiscardARequestedValue(testCase)
+            % laterSetterCannotSilentlyDiscardARequestedValue Preserve all live state when a replacement is clamped later.
+            [document, registry, component] = testCase.sliderFixture();
+            before = component.settingSnapshot();
+            diagnostics = document.Diagnostics;
+            testCase.verifyError(@() document.setProperty(component.Id, "Value", 30, registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, 20);
+            testCase.verifyEqual(component.settingSnapshot(), before);
+            testCase.verifyEqual(document.Diagnostics, diagnostics);
+            testCase.verifyEqual(document.HistoryIndex, 0);
+            testCase.verifyFalse(document.IsDirty);
+        end
+
+        function rawNoOpsStillCheckTheRequestedEffectiveValue(testCase)
+            % rawNoOpsStillCheckTheRequestedEffectiveValue Do not silently accept the old literal when its actual effect differs.
+            [document, registry, component] = testCase.sliderFixture();
+            testCase.verifyError(@() document.setProperty(component.Id, "Value", 20, registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+            changes = [macd.model.PropertyTransaction.singleChange("Value", 20), ...
+                macd.model.PropertyTransaction.singleChange("Limits", [60 100])];
+            testCase.verifyError(@() document.setPropertyBatch(component.Id, changes, registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+            testCase.verifyEqual(component.getProperty("Limits").LiteralValue, [50 100]);
+            testCase.verifyEqual(document.HistoryIndex, 0);
+        end
+
+        function validBatchRetainsOneHistoryUnitAndOriginalSettingIds(testCase)
+            % validBatchRetainsOneHistoryUnitAndOriginalSettingIds Resolve safe replacements through Undo and Redo.
+            [document, registry, component] = testCase.sliderFixture();
+            original = component.getSettings("Value");
+            changes = [macd.model.PropertyTransaction.singleChange("Value", 75), ...
+                macd.model.PropertyTransaction.singleChange("Limits", [60 100])];
+            document.setPropertyBatch(component.Id, changes, registry);
+            testCase.verifyEqual(document.HistoryIndex, 1);
+            states = document.getEffectivePropertyStates(registry, component.Id);
+            state = states(arrayfun(@(entry) entry.Definition.Path == "Value", states)).Resolution;
+            testCase.verifyEqual(state.EffectiveValue, 75);
+            testCase.verifyEqual(state.ExplicitValue, 20);
+            testCase.verifyEqual(state.LastSettingId, original.Id);
+            document.undo();
+            states = document.getEffectivePropertyStates(registry, component.Id);
+            testCase.verifyEqual(states(arrayfun(@(entry) entry.Definition.Path == "Value", states)).Resolution.EffectiveValue, 50);
+            testCase.verifyFalse(document.IsDirty);
+            document.redo();
+            testCase.verifyEqual(component.getSettings("Value").LiteralValue, 20);
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, 75);
+        end
+
+        function finalRangeDoesNotHideAnInvalidIntermediateAssignment(testCase)
+            % finalRangeDoesNotHideAnInvalidIntermediateAssignment Reject a value outside the range at its fixed source slot.
+            [document, registry, component] = testCase.sliderFixture();
+            changes = [macd.model.PropertyTransaction.singleChange("Value", 150), ...
+                macd.model.PropertyTransaction.singleChange("Limits", [120 200])];
+            testCase.verifyError(@() document.setPropertyBatch(component.Id, changes, registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+            testCase.verifyEqual(document.HistoryIndex, 0);
+        end
+
+        function constructorBatchUsesItsFinalDomain(testCase)
+            % constructorBatchUsesItsFinalDomain Keep constructor grouping distinct from sequential assignment checks.
+            [document, registry, component] = testCase.sliderFixture( ...
+                "app.Slider = uislider(app.UIFigure, Value=75, Limits=[50 100]);");
+            changes = [macd.model.PropertyTransaction.singleChange("Value", 150), ...
+                macd.model.PropertyTransaction.singleChange("Limits", [120 200])];
+            document.setPropertyBatch(component.Id, changes, registry);
+            generated = macd.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(generated, "Value=150, Limits=[120 200]");
+            testCase.verifyFalse(contains(generated, "app.Slider.Value ="));
+            testCase.verifyEqual(document.HistoryIndex, 1);
+        end
+
         function rootOnlyDocumentsCanPreflightCanvasResize(testCase)
             % rootOnlyDocumentsCanPreflightCanvasResize Handle empty child collections independent of orientation.
 
@@ -124,6 +196,27 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
     end
 
     methods (Static, Access = private)
+        function [document, registry, component] = sliderFixture(initialization)
+            % sliderFixture Parse an owned range-dependent component without executing its app.
+            arguments (Input)
+                initialization (1, :) string = ["app.Slider = uislider(app.UIFigure);", ...
+                    "app.Slider.Value = 20;", "app.Slider.Limits = [50 100];"]
+            end
+            arguments (Output)
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+                component (1, 1) macd.model.ComponentRecord
+            end
+            source = strjoin(["classdef StateEditApp < matlab.apps.AppBase", "properties", ...
+                "UIFigure matlab.ui.Figure", "Slider matlab.ui.control.Slider", "end", "methods", ...
+                "function app = StateEditApp", "createComponents(app);", "end", ...
+                "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                initialization, "end", "end", "end"], sprintf("\r\n"));
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            component = document.getComponentByName("Slider");
+        end
+
         function [document, registry, component] = fixture()
             % fixture Parse an owned label initializer without constructing its UI.
             arguments (Output)

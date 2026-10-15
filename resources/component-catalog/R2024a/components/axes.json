@@ -315,7 +315,8 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "none"
+              "effectPolicy": "none",
+              "defaultLiteral": "'points'"
             }
           }
         },
@@ -3424,7 +3425,8 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "none"
+              "effectPolicy": "none",
+              "defaultLiteral": "'normalized'"
             }
           }
         },

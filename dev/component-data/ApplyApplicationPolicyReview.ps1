@@ -70,10 +70,38 @@ foreach ($correction in $review.contractCorrections) {
         if ($property.Count -ne 1) { throw "Expected one correction target $id.$($correction.path)." }
         $contract = $property[0].valueContract
         $contract.constraints = @($contract.constraints | Where-Object { $_.kind -cnotin $correction.removeConstraintKinds })
+        if ($null -ne $correction.PSObject.Properties['allowsEmpty']) {
+            if ($correction.allowsEmpty -isnot [bool]) { throw 'allowsEmpty corrections must be boolean.' }
+            $contract.allowsEmpty = $correction.allowsEmpty
+        }
         $source = $documents[$id].sources | Where-Object scope -CEQ 'Public properties.'
         $property[0] | Add-Member -NotePropertyName applicationEvidence -NotePropertyValue @(
             [ordered]@{ kind = $correction.kind; source = $source.url; detail = $correction.detail }
         ) -Force
+    }
+}
+
+# Seed only explicitly audited defaults; never manufacture missing source settings.
+foreach ($seed in $review.initialValues) {
+    foreach ($id in $seed.variants) {
+        if (-not $documents.Contains($id)) { throw "An initial-value seed has no reviewed variant $id." }
+        $ledger = $documents[$id]
+        foreach ($field in $seed.values.PSObject.Properties) {
+            $property = @($ledger.properties | Where-Object path -CEQ $field.Name)
+            if ($property.Count -ne 1) { throw "Missing initial-value target $id.$($field.Name)." }
+            if ($null -eq $property[0].PSObject.Properties['application']) {
+                $policy = ConvertTo-ApplicationPolicy ([pscustomobject]@{}) "$id.$($field.Name)"
+                $property[0] | Add-Member -NotePropertyName application -NotePropertyValue ([pscustomobject]$policy)
+            }
+            $property[0].application | Add-Member -NotePropertyName defaultLiteral -NotePropertyValue $field.Value -Force
+            $source = $ledger.sources | Where-Object scope -CEQ 'Public properties.'
+            $evidence = @()
+            if ($null -ne $property[0].PSObject.Properties['applicationEvidence']) {
+                $evidence = @($property[0].applicationEvidence | Where-Object { $_.detail -cne $seed.detail })
+            }
+            $evidence += [ordered]@{ kind = 'documentation'; source = $source.url; detail = $seed.detail }
+            $property[0] | Add-Member -NotePropertyName applicationEvidence -NotePropertyValue $evidence -Force
+        }
     }
 }
 

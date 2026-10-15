@@ -67,7 +67,8 @@
                 "Multiselect"
               ],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "'Item 1'"
             }
           }
         },
@@ -100,7 +101,8 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "{'Item 1','Item 2','Item 3','Item 4'}"
             }
           }
         },
@@ -137,7 +139,8 @@
                 "Items"
               ],
               "nameValue": "supported",
-              "effectPolicy": "itemSelection"
+              "effectPolicy": "itemSelection",
+              "defaultLiteral": "[]"
             }
           }
         },
@@ -424,6 +427,12 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "defaultLiteral": "'off'"
             }
           }
         },

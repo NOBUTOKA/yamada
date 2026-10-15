@@ -174,12 +174,70 @@
   `testResults/property-application-area-final.log`と所有作業領域のMAT結果へ記録した。
   full profileとStage 6の完了検証を代替する結果ではない。
 
+## Stage 4追加: 独立した実効状態と編集前チェック
+
+実装済み:
+
+- `PropertyState`値クラスで、元の明示値、編集中の要求値、実効値の既知/不明、最後の設定ID、
+  効果の原因ID、不明理由と編集可否を分けた。`PropertyEntry`や元の設定履歴を変更しない。
+- `PropertyStateResolver`は初期化の訪問順に元の設定を再生し、要求値は元の設定IDの位置へ重ねる。
+  新規保留設定は共通plannerの順序で適用する。既定値や暗黙変更を元の履歴へpushしない。
+- 監査済み`defaultLiteral`をapplication契約へ追加し、loaderの非評価literal parserで検証する。
+  空値、Inf、NaT、許可された日付リテラルも扱い、任意の関数呼び出しや式は拒否する。
+- 台帳の部分監査は27具体variant・125プロパティの適用メタデータへ進んだ。
+  Text EditのCharacterLimitsによる空文字化、Numeric Edit/Spinnerの条件付き空値も含む。
+  Numeric Valueの一律`allowsEmpty=false`を修正し、AllowEmptyの状態をモデルとバッチ検証で確認する。
+- Slider/Range Slider/Knobのclamp、数値の丸め・空値、テキストの消去、項目選択、tick modeの暗黙変更を
+  有限ポリシーで解決する。自動計算されるtick配列、native寸法に依存する単位換算、
+  未確定の開区間への補正は、値を捏造せず理由付きで不明とする。
+- 生成時引数は一律の個別setter再生にしない。Valueのdomainは呼び出し全体で検証し、
+  ModeやUnitsの引数順による効果を保持する。所有fixtureで両者の違いを観測した。
+- `ModelValidator`は最後の明示リテラルを実効値と取り違えず、resolverの値と途中の不正状態を検証する。
+  変更後の生成・再解析に続き、要求した各値が実際に残ることも編集前に確認する。
+  元リテラルと同値の要求や、バッチ内でraw値が同じ要求も、この確認を省略しない。
+- Inspectorの表示と候補トランザクションを共通実効状態へ接続した。
+  例としてValue=20の後にLimits=[50 100]がある場合、表示は50、明示設定履歴は20のままとする。
+  不明な効果を既定値で埋め戻さず、不明理由を表示する。
+- `ComponentRecord.getProperty`の不存在を型付きemptyに統一した。空doubleを型付き引数へ渡した際に
+  既定コンストラクターで架空のPropertyEntryができる問題を避ける。
+- 失敗した入力の古い下書きが、後の成功・Undoでも復元されるUI問題を発見した。
+  次のcommit callback前に古いエラー下書きを解除し、失敗時だけ再設定する。
+
+検証:
+
+- `ProbeApplicationInteractions`の固定28ケースで、R2024aの引数順序とsetterの副作用を観測した。
+  実機観測をそのまま実行ポリシーへ自動昇格させず、期待値の根拠としてレビューする。
+- `PropertyStateResolverTest`12件と`PropertyStateRuntimeTest`2件が合格。
+  後者では同じ所有fixtureに対するnative結果とsymbolicな解決結果、全promoted seedの初期値を照合する。
+- 固定slotで失われる要求の拒否、途中の不正、生成時の一括変更、原子的失敗、Undo/Redoを
+  `PropertyEditTransactionTest`へ追加し、同クラス12件の合格を確認した。
+- Inspectorの所有fixtureで、補正後の表示、失敗した編集の無変更、成功した編集、Undo後の再表示が合格。
+  この実行の変更対象11ファイルのcheckcodeは警告なし。
+- optionalなtransaction pathをhasValueで照会する場合は不存在をfalseとする。
+  `PropertyTransactionTest`10件と、既存のListBox/DatePickerのInspector回帰3件が合格。
+- `verifyApplicationPolicyReview.ps1`と`verifyApplicationPolicy.ps1`が合格。
+  seedとtextValueのgrouping/runtime伝搬、再適用の同一性、未確認対応のunknownを含む。
+- `runYamadaTests("area", ["parser", "model", "generation", "preview", "inspector"])`が
+  360/360件合格（Failed=0、Incomplete=0、実測合計536.987秒）。変更20ファイルのcheckcodeも警告なし。
+  `testResults/property-state-area.log`と所有作業領域のMAT結果へ記録した。
+- MATLAB変更20ファイルのUTF-8 BOMなし・CRLF、125プロパティのapplicationスキーマを確認した。
+  このarea結果をfull profileや未実装のStage 5/6の完了根拠にはしない。
+
+未完了:
+
+- ItemsData長の許容と、候補・データ編集UIの整合をまとめて修正する。
+- 全variantの残る監査、Axes等の追加連動、初期化範囲・所属の明示的な保持を続ける。
+- コンポーネントをまたぐ効果も監査する。R2024a RadioButton資料にはValue=1で以前の選択のValueが0となり、
+  親ButtonGroupのSelectedObjectも変わるとある。Checkbox Treeも親子のCheckedNodesを補完する。
+  現在のコンポーネント単位resolverだけで、これらの連動まで解決したと主張しない。
+- 新規設定の依存関係付き挿入と名前-値追記、解析済み部分木の移動、保存後の位置整合を完成させる。
+
 ## 未完了の段階（更新）
 
-- Stage 1の残り: 設定レコード・resolver・plannerの具体APIと全variantの監査状況表を、後続実装で確定する。
+- Stage 1の残り: 既存ソース挿入plannerの具体APIと全variantの監査状況表を後続実装で確定する。
 - Stage 2の残り: 初期化範囲の保持と、後続resolver・plannerへのAPI接続を最終確認する。
-- Stage 3の残り: 依存関係付きplannerの診断を編集前検証へ接続し、保存処理との整合を確認する。
-- Stage 4: 全variantの残る監査、ItemsData長の契約修正、テキスト・axes等の効果、共通実効状態resolver。
+- Stage 3の残り: 新規設定の挿入plannerの診断を編集前検証へ接続し、保存処理との整合を確認する。
+- Stage 4: 全variantの残る監査、ItemsData長の契約修正、Axes等の追加効果と共通resolverの拡充。
 - Stage 5: 名前-値追記、既存初期化への依存関係付き代入挿入、解析済み部分木の移動経路への接続。
 - Stage 6: 保存後の再編集、全体テスト、公開仕様の更新、完了条件の監査。
 

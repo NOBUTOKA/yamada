@@ -4,8 +4,9 @@
 
 状態: 実装中。進捗と検証根拠は[実装・検証記録](PROPERTY_SETTING_VERIFICATION.md)を参照。
 台帳ポリシーの共通契約から段階的に実装し、全体の完了条件は未達成。
-2026-10-15追記: 26具体variantの部分監査をruntimeへ反映し、新規生成とPreviewの適用順序を
-共通plannerへ接続した。既存ソースへの依存関係付き挿入と共通実効状態resolverは引き続き未完了。
+2026-10-15追記: 27具体variantの部分監査をruntimeへ反映し、新規生成とPreviewの適用順序を
+共通plannerへ接続した。実効状態resolverをモデル検証・編集前チェック・Inspectorへ初期接続した。
+既存ソースへの依存関係付き挿入、追加の連動ポリシー、保存後の位置整合は引き続き未完了。
 
 この文書は、名前-値引数と生成後代入を共通の設定履歴として扱い、台帳の設定順序を
 パーサー・コード生成器・Safe Previewへ接続する実装計画である。
@@ -153,6 +154,13 @@ Inspector編集要求 → 候補文書 + 設定適用・挿入位置の計画
 共通resolverは、最後の明示設定ID、明示値、実効値の既知/不明、編集可否と理由を返す。
 既定値・setterの暗黙変更・Previewでの観測値を、実ソースの設定履歴へpushしない。
 
+2026-10-15実装追記: `PropertyState`値クラスと`PropertyStateResolver`へ分離した。
+`DocumentModel.getEffectivePropertyStates`の`Resolution`から、原文の明示値、現在の要求値、
+実効値、原因となった設定ID、不明理由を読む。監査済み`defaultLiteral`は非評価のliteral parserで
+読み、ソースの設定出現を作らず初期状態にだけ使用する。
+Slider等の生成時Valueは同じ呼び出し全体のdomainに対して検証する一方、ModeとUnitsの引数順は
+保持する。設定方式ごとの実機確認を伴わず、一括呼び出しを逐次setterと同一視しない。
+
 - itemSelectionでは、Items / ItemsData / Editable / MultiselectとValueの関連を
   R2024aで確認した専用ポリシーとして解決する。
 - その他の連動は確認済みポリシーの範囲で扱い、推定不能なら実効値を不明とする。
@@ -185,6 +193,8 @@ runtime側の`metadata.application`へ昇格する。以下のフィールド名
   publicなSetAccessだけから生成時指定を許可しない。未確認はunknownとし、追記候補にしない。
 - `effectPolicy`: 連動する実効状態や適用時の注意を扱う、MATLABコード側の許可済み識別子。
   JSONへ関数名、評価する式、任意コードを持ち込まない。
+- `defaultLiteral`: 実効状態の初期値として確認した、不活性なMATLABリテラルの原文。
+  通常の設定やInspector上の明示設定を増やさない。関数呼び出し等はloaderで拒否する。
 - 根拠、確認release、監査判断は開発側へ記録する。製品ポリシーと公式記載を区別する。
 
 Inspectorの`order`は変更しない。`valueSchema.constraints`は値の整合性検証に使い、
