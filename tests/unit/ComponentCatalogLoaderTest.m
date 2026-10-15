@@ -6,6 +6,68 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
     %   versioned runtime catalog and its strict validation boundary.
 
     methods (Test)
+        function loadsApplicationPolicyWithoutChangingInspectorOrder(testCase)
+            % loadsApplicationPolicyWithoutChangingInspectorOrder Keep execution and presentation distinct.
+
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.properties{2}.metadata.application = struct( ...
+                "applyAfter", {{"Visible"}}, "nameValue", "supported", "effectPolicy", "none");
+            testCase.writeJson(root, "components/uilabel.json", component);
+            definition = macd.catalog.ComponentCatalogLoader.load(root).get("uilabel");
+            testCase.verifyEqual(string({definition.Properties.Path}), ...
+                ["Position", "Visible", "Text", "Layout.Row", "Layout.Column"]);
+            policy = definition.getProperty("Text").Application;
+            testCase.verifyEqual(policy.ApplyAfter, "Visible");
+            testCase.verifyEqual(policy.NameValue, "supported");
+            testCase.verifyEqual(definition.getProperty("Position").Application.NameValue, "unknown");
+        end
+
+        function rejectsMissingAndCyclicApplicationDependencies(testCase)
+            % rejectsMissingAndCyclicApplicationDependencies Validate references across expanded groups.
+
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.properties{2}.metadata.application = struct("applyAfter", {{"Missing"}});
+            testCase.writeJson(root, "components/uilabel.json", component);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "Unknown application dependency Missing");
+
+            component.properties{2}.metadata.application.applyAfter = {"Visible"};
+            testCase.writeJson(root, "components/uilabel.json", component);
+            group = testCase.readJson(root, "property-groups/common.json");
+            group.entries(1).metadata = struct();
+            group.entries(2).metadata = struct("application", struct("applyAfter", {{"Text"}}));
+            testCase.writeJson(root, "property-groups/common.json", group);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "Cyclic application dependencies");
+        end
+
+        function rejectsApplicationDependencySuppressedByParent(testCase)
+            % rejectsApplicationDependencySuppressedByParent Validate projected surfaces before returning a registry.
+
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.allowedParentFactories = {"uigridlayout"};
+            component.properties{2}.metadata.application = struct("applyAfter", {{"Position"}});
+            testCase.writeJson(root, "components/uilabel.json", component);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "under uigridlayout");
+            testCase.verifySubstring(string(exception.message), "Position");
+        end
+
+        function rejectsMalformedApplicationPolicyWithSourceContext(testCase)
+            % rejectsMalformedApplicationPolicyWithSourceContext Retain the offending file and metadata field.
+
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.properties{2}.metadata.application = struct("effectPolicy", "executeUserCode");
+            testCase.writeJson(root, "components/uilabel.json", component);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "components/uilabel.json");
+            testCase.verifySubstring(string(exception.message), "application.effectPolicy");
+        end
+
         function loadsOrderedGroupsAndStyleOverrides(testCase)
             % loadsOrderedGroupsAndStyleOverrides Build typed definitions from a valid fixture catalog.
 

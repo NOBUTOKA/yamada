@@ -61,6 +61,7 @@ classdef ComponentCatalogLoader
             for index = 1:numel(definitions)
                 registry.register(definitions(index));
             end
+            macd.catalog.ComponentCatalogLoader.validateApplicationContexts(registry);
         end
 
         function root = defaultCatalogRoot()
@@ -131,6 +132,24 @@ classdef ComponentCatalogLoader
             macd.catalog.ComponentCatalogLoader.validateInspectorRowComponentIds( ...
                 inspectorRows, variantIds, root + "/catalog.json.inspectorRowFiles");
             registry.setInspectorRowDefinitions(inspectorRows);
+            macd.catalog.ComponentCatalogLoader.validateApplicationContexts(registry);
+        end
+
+        function validateApplicationContexts(registry)
+            % validateApplicationContexts Reject dependencies invalidated by a permitted parent.
+            arguments (Input)
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+
+            % Resolve every audited concrete variant through its direct-parent rules.
+            for id = registry.listVariantIds()
+                definition = registry.getById(id);
+                parents = definition.AllowedParentFactories;
+                if definition.IsRoot || isempty(parents), parents = ""; end
+                for parent = parents
+                    registry.getEffectiveProperties(definition.Factory, parent, definition.CreationArguments);
+                end
+            end
         end
 
         function groups = readVersion2Groups(root, files)
@@ -385,6 +404,7 @@ classdef ComponentCatalogLoader
             capabilities = macd.catalog.ComponentCatalogLoader.capabilities(document.capabilities, context + ".capabilities");
             capabilities.id = id;
             capabilities.profileId = profileId;
+            macd.model.PropertyApplicationPolicy.orderDefinitions(properties, context);
             definition = macd.model.ComponentDefinition.fromPaths(factory, declaredType, parents, ...
                 document.isRoot, macd.catalog.ComponentCatalogLoader.creationArguments( ...
                 document.creationArguments, context + ".creationArguments"), properties, capabilities);
@@ -534,6 +554,7 @@ classdef ComponentCatalogLoader
                     document.styleOverrides, capabilities.SupportedStyles, ...
                     context + ".styleOverrides");
             end
+            macd.model.PropertyApplicationPolicy.orderDefinitions(properties, context);
             definition = macd.model.ComponentDefinition.fromPaths(factory, declaredType, ...
                 parents, document.isRoot, creationArguments, properties, capabilities);
         end
@@ -636,9 +657,12 @@ classdef ComponentCatalogLoader
                     ["editor", "validator", "previewPolicy", "resetPolicy", ...
                     "displayName", "category", "order", "valueSchema", ...
                     "applicableStyles", "auditDisposition", "description", ...
-                    "categoryId", "groupId"], ...
+                    "categoryId", "groupId", "application"], ...
                     context + ".metadata");
                 macd.catalog.PropertyBehaviorRegistry.validateMetadata(metadata, context);
+                if isfield(metadata, "application")
+                    macd.model.PropertyApplicationPolicy(metadata.application, context + ".metadata.application");
+                end
                 macd.catalog.ComponentCatalogLoader.validatePropertyPresentationMetadata( ...
                     metadata, context + ".metadata");
             end

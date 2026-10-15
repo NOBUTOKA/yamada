@@ -181,6 +181,24 @@
           "description": "Normalized semantic value contract. Original documentation text remains in documentedAcceptedValues.",
           "$ref": "#/$defs/valueContract"
         },
+        "application": {
+          "description": "Reviewed initialization policy, separate from value validity and presentation order.",
+          "$ref": "#/$defs/application"
+        },
+        "applicationEvidence": {
+          "description": "Evidence for application decisions; retained in the ledger, not executable runtime metadata.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "source", "detail"],
+            "properties": {
+              "kind": {"enum": ["documentation", "inference", "runtime"]},
+              "source": {"type": "string", "minLength": 1},
+              "detail": {"type": "string", "minLength": 1}
+            }
+          }
+        },
         "affectsDisplay": {
           "description": "Whether changing this property can affect the visual or interactive result Safe Preview is intended to represent.",
           "type": "boolean"
@@ -197,6 +215,19 @@
           "description": "Initial product disposition, independent of current adapter availability.",
           "$ref": "#/$defs/disposition"
         }
+      }
+    },
+    "application": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "applyAfter": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"}
+        },
+        "nameValue": {"enum": ["supported", "unsupported", "unknown"]},
+        "effectPolicy": {"enum": ["none", "itemSelection", "boundedValue", "numericValue", "tickMode", "componentReference", "layout"]}
       }
     },
     "valueContract": {

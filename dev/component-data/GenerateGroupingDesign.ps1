@@ -20,6 +20,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot 'ApplicationPolicy.ps1')
 
 function Write-Utf8File {
     param([string]$Path, [string]$Text)
@@ -85,7 +86,7 @@ function Get-PropertyCapability {
             $valueContract[$name] = $Property.valueContract.$name
         }
     }
-    return [ordered]@{
+    $result = [ordered]@{
         path = [string]$Property.path
         valueContract = $valueContract
         affectsDisplay = [bool]$Property.affectsDisplay
@@ -96,6 +97,10 @@ function Get-PropertyCapability {
             reasonCodes = @($Property.disposition.reasonCodes | ForEach-Object { [string]$_ } | Sort-Object)
         }
     }
+    if ($null -ne $Property.PSObject.Properties['application']) {
+        $result.application = ConvertTo-ApplicationPolicy $Property.application
+    }
+    return $result
 }
 
 function Get-CapabilityText {

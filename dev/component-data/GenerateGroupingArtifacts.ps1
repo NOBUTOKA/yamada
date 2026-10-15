@@ -19,6 +19,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot 'ApplicationPolicy.ps1')
 
 function ConvertTo-StringArray {
     param([object]$Value)
@@ -93,7 +94,7 @@ function ConvertTo-NormalizedDisposition {
 function ConvertTo-PropertyCapability {
     param([object]$Property)
 
-    return [ordered]@{
+    $result = [ordered]@{
         path           = [string]$Property.path
         valueContract  = ConvertTo-NormalizedValueContract $Property.valueContract
         affectsDisplay = [bool]$Property.affectsDisplay
@@ -101,6 +102,10 @@ function ConvertTo-PropertyCapability {
         requiredEditor = [string]$Property.requiredEditor
         disposition    = ConvertTo-NormalizedDisposition $Property.disposition
     }
+    if ($null -ne $Property.PSObject.Properties['application']) {
+        $result.application = ConvertTo-ApplicationPolicy $Property.application
+    }
+    return $result
 }
 
 function Get-Sha256 {
@@ -161,6 +166,7 @@ function Test-ComponentDocument {
     }
 
     $properties = @($Document.properties)
+    Test-ApplicationPolicies $properties $context
     $paths = @(ConvertTo-StringArray ($properties | ForEach-Object { $_.path }))
     if ($paths.Count -ne @($paths | Sort-Object -Unique).Count) {
         throw "$context contains duplicate property paths."

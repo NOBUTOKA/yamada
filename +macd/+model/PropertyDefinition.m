@@ -36,6 +36,8 @@ classdef PropertyDefinition
         Order double = 0
         % ValueSchema - Typed literal constraints and adapter-specific options.
         ValueSchema struct = struct()
+        % Application - Initialization dependencies independent of display order.
+        Application macd.model.PropertyApplicationPolicy = macd.model.PropertyApplicationPolicy()
         % ApplicableStyles - Styles for which this property definition applies.
         ApplicableStyles string = strings(1, 0)
         % AuditDisposition - Catalog audit decision such as editable or readOnly.
@@ -71,6 +73,10 @@ classdef PropertyDefinition
             if isfield(metadata, "category"), obj.Category = string(metadata.category); end
             if isfield(metadata, "order"), obj.Order = double(metadata.order); end
             if isfield(metadata, "valueSchema"), obj.ValueSchema = metadata.valueSchema; end
+            if isfield(metadata, "application")
+                obj.Application = macd.model.PropertyApplicationPolicy( ...
+                    metadata.application, "property." + path + ".application");
+            end
             if isfield(metadata, "applicableStyles"), obj.ApplicableStyles = string(metadata.applicableStyles); end
             if isfield(metadata, "auditDisposition"), obj.AuditDisposition = string(metadata.auditDisposition); end
             if strlength(obj.DisplayName) == 0

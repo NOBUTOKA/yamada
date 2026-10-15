@@ -28,6 +28,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot 'ApplicationPolicy.ps1')
 
 function Write-Utf8JsonFile {
     param([string]$Path, [object]$Value)
@@ -82,7 +83,7 @@ function Get-PropertyMetadata {
             $valueSchema[$name] = $Capability.valueContract.$name
         }
     }
-    return [ordered]@{
+    $metadata = [ordered]@{
         displayName = [string]$SourceProperty.path
         description = [string]$SourceProperty.summary
         categoryId = [string]$Category.id
@@ -94,6 +95,10 @@ function Get-PropertyMetadata {
         auditDisposition = [string]$Capability.disposition.kind
         valueSchema = $valueSchema
     }
+    if ($null -ne $Capability.PSObject.Properties['application']) {
+        $metadata.application = ConvertTo-ApplicationPolicy $Capability.application
+    }
+    return $metadata
 }
 
 $releasePath = (Resolve-Path -LiteralPath $ReleaseDirectory).Path

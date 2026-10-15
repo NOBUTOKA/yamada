@@ -146,6 +146,29 @@ empty `property` field merely to satisfy the cross-property shape.
 
 ## Parent-dependent surface
 
+### Property application policy
+
+Record initialization behavior separately in each property's optional
+`application` object. `applyAfter` names prerequisite property paths;
+`nameValue` records verified constructor support (`supported`, `unsupported`,
+or `unknown`); and `effectPolicy` names an allowlisted MATLAB behavior adapter.
+Absence means no declared ordering, unknown constructor support, and no known
+effect adapter. It does not prove the absence of setter side effects.
+
+Keep `applicationEvidence` in the development ledger. Each entry identifies
+`kind` (`documentation`, `inference`, or `runtime`), `source` (release-fixed URL
+or owned verification artifact), and `detail`. Prefer official documentation;
+use runtime checks for ambiguity and generated-order verification. Never
+promote evidence prose into executable behavior or infer constructor support
+from public SetAccess alone.
+
+Validate application dependencies on the expanded concrete variant and its
+effective parent surface. Reject missing targets, duplicates, self-reference,
+and cycles. Value constraints and inspector ordering remain independent;
+neither automatically creates an application dependency. Include normalized
+application policies in grouping capability equality and hashes, and preserve
+them during runtime promotion. Evidence itself does not determine group identity.
+
 Represent parent dependency as changes to the effective property surface, not
 as a boolean attached indiscriminately to every property.
 

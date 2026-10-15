@@ -216,9 +216,13 @@ classdef ComponentRegistry < handle
                 rule = obj.ParentContextRules(index);
                 if ~rule.appliesTo(parentFactory), continue, end
                 properties = properties(~ismember(string({properties.Path}), rule.SuppressedPaths));
-                properties = vertcat(properties(:), rule.AddedProperties(:));
+                added = rule.AddedProperties;
+                added = added(~ismember(string({added.Path}), string({properties.Path})));
+                properties = vertcat(properties(:), added(:));
                 break
             end
+            macd.model.PropertyApplicationPolicy.orderDefinitions(properties, ...
+                definition.Id + " under " + parentFactory);
         end
 
         function result = isReadOnlyProperty(obj, factory, path, creationArguments)
