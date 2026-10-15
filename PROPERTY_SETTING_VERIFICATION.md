@@ -112,7 +112,7 @@
 依存関係付きの挿入位置決定と、setterの暗黙変更を含む途中/最終状態の検証はStage 4以降で接続する。
 現時点のpreflightは生成・再解析・リテラル保持の検証であり、その完了を代替しない。
 
-## Stage 4: 公式資料の収集・監査準備
+## Stage 4: 公式資料の収集・部分監査・共通適用順序
 
 - `dev/component-data/AuditApplicationPolicies.ps1`を追加した。
   台帳が参照するMathWorksのR2024a固定URLだけを読み、本文・出典・hash・相互作用候補を
@@ -124,13 +124,63 @@
   同じキャッシュから48件を再抽出できることと、collectorのPowerShell構文を確認した。
 - 収集時点では、実台帳の適用ルールの監査・昇格や生成順序の実行確認は完了していない。
 
+追加実装:
+
+- `APPLICATION_POLICY_REVIEW.json`へ、公式資料で確認したルールと推論した順序を区別して記録した。
+  対象はitemSelection、Slider/KnobのLimitsとValue、Numeric Edit/Spinnerの値制約、
+  DatePicker、FigureのWindowStyle、Units/Position、FontUnits/FontSize、目盛りとMode。
+- GaugeのValueはLimitsの範囲外でも許され、Limits変更時にも変化しない。
+  4具体variantから誤った`withinLimitsOf`制約を除去し、Sliderの制約を流用しない。
+- `ApplyApplicationPolicyReview.ps1`は全ルールを検証してから台帳を更新する。
+  出典のrelease・variant照合、グラフ検証、重複拒否を行い、候補抽出だけではルールを採用しない。
+- `APPLICATION_POLICY_RUNTIME_REVIEW.json`へ所有fixtureの実行根拠を記録した。
+  検証したプロパティに限って`nameValue=supported`とし、未検証のDatePicker等はunknownを保持する。
+- 26/48具体variantに計113プロパティの適用メタデータを付与してruntimeへ昇格した。
+  この件数は順序ルールに加え、実行確認した生成時指定の対応も含む。
+  policy reviewは26件がpartial・22件がpending、runtime verificationは21件がpartial・27件がpending。
+  partialは当該variantの全プロパティの監査完了を意味しない。
+- `PropertyApplicationPlanner`は完全グラフの依存関係を実際の設定entryへ投影する。
+  省略された中間ノードを経由する依存関係も維持し、準備できた独立entryは元の順序を優先する。
+  Inspector順は流用せず、元entryや設定履歴を変更しない。
+- 新規AppBase、新規コンポーネント挿入、親変更時の生成ノード、新規文書のPreviewを共通順序へ接続した。
+  既存ソースの無編集出力は並べ替えない。
+- 既存ソースのPreviewは生成時引数で構築後、既存の確実なリテラル代入を訪問順に再生する。
+  最後の明示設定だけを並べ替えることで、Limitsによる補正などの既存の副作用を消さない。
+  これはnative Previewにおける再生であり、Inspectorや検証器の共通実効状態resolverの完成ではない。
+
+検証（追加）:
+
+- 最初のplanner・native・policy・loader・baselineの43件が合格。
+- 生成時引数と逐次代入の結果を比較する検証を加えた後、planner 6件、native 7件、
+  GenerationTest 8件、設定履歴6件、Preview回帰2件の合計29件が合格。
+  この実行の末尾のcheckcodeでは配列生成の記述を指摘され、明示的な二次元サイズへ修正した。
+- native fixtureでは21具体variantを対象に、30組の名前-値引数初期化と逐次代入を比較した。
+  項目と選択、既定範囲外の数値・空値、Gaugeの範囲外値、目盛りと最終auto mode、座標とフォント単位を含む。
+- `verifyApplicationPolicyReview.ps1`が合格。監査結果の適用、未検証対応のunknown、
+  Gaugeの例外、再適用時の同一出力、後半ルールが不正な場合の台帳無変更を確認した。
+- `verifyApplicationPolicy.ps1`が合格。空の任意ポリシーも保守的な既定値に正規化する。
+- grouping/promotionのintrinsic parityは48/48、parent-effective parityは144/144で合格。
+- 関連area検証の初回は、検証中にruntimeを再昇格した操作ミスでカタログの一部が欠落したため無効。
+  誤りを復旧し、以後は所有作業ディレクトリへ昇格後に反映する。無効な実行を合格根拠に含めない。
+  復旧後の固定カタログでは282/286件が合格し、残る4件の原因を確認した。
+- 回帰期待を新しい設定契約へ合わせた。group数は315から316へ更新し、全variantのbaselineに
+  Applicationの展開結果と根拠のruntime非混入の照合を追加した。
+  外部参照削除fixtureはOriginalTextだけを差し替えず、追加後の本文を再解析してから編集する。
+  Axes fixtureの未解決`geolimits`は、初期化範囲解析が意図的に返すwarningとして明示確認する。
+- runtime再昇格で古いGaugeのstyle別輪郭が復活することを発見し、元のruntime構築メタデータを
+  quarterCircle/semicircleへ修正した。昇格検証にこの保持を追加した。
+- これらの修正後、固定カタログで`runYamadaTests("area", ["parser", "model", "generation", "preview"])`が
+  286/286件合格（Failed=0、Incomplete=0、実測合計346.979秒）。変更対象10ファイルのcheckcodeも警告なし。
+  `testResults/property-application-area-final.log`と所有作業領域のMAT結果へ記録した。
+  full profileとStage 6の完了検証を代替する結果ではない。
+
 ## 未完了の段階（更新）
 
 - Stage 1の残り: 設定レコード・resolver・plannerの具体APIと全variantの監査状況表を、後続実装で確定する。
 - Stage 2の残り: 初期化範囲の保持と、後続resolver・plannerへのAPI接続を最終確認する。
 - Stage 3の残り: 依存関係付きplannerの診断を編集前検証へ接続し、保存処理との整合を確認する。
-- Stage 4: 公式資料に基づく全variant監査、実台帳の更新、実効状態と適用計画。
-- Stage 5: 名前-値追記、依存関係付き代入挿入、全生成経路とPreviewへの接続。
+- Stage 4: 全variantの残る監査、ItemsData長の契約修正、テキスト・axes等の効果、共通実効状態resolver。
+- Stage 5: 名前-値追記、既存初期化への依存関係付き代入挿入、解析済み部分木の移動経路への接続。
 - Stage 6: 保存後の再編集、全体テスト、公開仕様の更新、完了条件の監査。
 
 この記録に部分的なテスト合格を追記しても、全体完了の扱いにはしない。

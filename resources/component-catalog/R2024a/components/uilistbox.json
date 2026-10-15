@@ -59,6 +59,15 @@
               "allowsEmpty": true,
               "constraints": [],
               "multiselectProperty": "Multiselect"
+            },
+            "application": {
+              "applyAfter": [
+                "Items",
+                "ItemsData",
+                "Multiselect"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },
@@ -87,6 +96,11 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },
@@ -117,6 +131,13 @@
                   "property": "Items"
                 }
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "Items"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },

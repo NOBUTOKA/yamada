@@ -65,12 +65,12 @@
               ],
               "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": [
-                {
-                  "kind": "withinLimitsOf",
-                  "property": "Limits"
-                }
-              ]
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
@@ -97,6 +97,11 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
@@ -192,7 +197,7 @@
       "entries": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.54cad1cfbd30",
+          "groupId": "exact.ticks.072186202cdc",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTicks",
@@ -200,7 +205,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 1,
-            "groupId": "exact.ticks.54cad1cfbd30",
+            "groupId": "exact.ticks.072186202cdc",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -212,12 +217,19 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Limits"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "tickMode"
             }
           }
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.54cad1cfbd30",
+          "groupId": "exact.ticks.072186202cdc",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTicksMode",
@@ -225,7 +237,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 2,
-            "groupId": "exact.ticks.54cad1cfbd30",
+            "groupId": "exact.ticks.072186202cdc",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -242,12 +254,20 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "MajorTickLabels",
+                "MajorTicks"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.54cad1cfbd30",
+          "groupId": "exact.ticks.072186202cdc",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTickLabels",
@@ -255,7 +275,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 3,
-            "groupId": "exact.ticks.54cad1cfbd30",
+            "groupId": "exact.ticks.072186202cdc",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -270,12 +290,19 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "MajorTicks"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "tickMode"
             }
           }
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.54cad1cfbd30",
+          "groupId": "exact.ticks.072186202cdc",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTickLabelsMode",
@@ -283,7 +310,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 4,
-            "groupId": "exact.ticks.54cad1cfbd30",
+            "groupId": "exact.ticks.072186202cdc",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -300,12 +327,19 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "MajorTickLabels"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.54cad1cfbd30",
+          "groupId": "exact.ticks.072186202cdc",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorTicks",
@@ -313,7 +347,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 5,
-            "groupId": "exact.ticks.54cad1cfbd30",
+            "groupId": "exact.ticks.072186202cdc",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -325,12 +359,19 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Limits"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "tickMode"
             }
           }
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.54cad1cfbd30",
+          "groupId": "exact.ticks.072186202cdc",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorTicksMode",
@@ -338,7 +379,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 6,
-            "groupId": "exact.ticks.54cad1cfbd30",
+            "groupId": "exact.ticks.072186202cdc",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -355,6 +396,13 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "MinorTicks"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         }
@@ -1067,8 +1115,8 @@
     "overlayShapesByStyle": {
       "circular": "circle",
       "linear": "rectangle",
-      "ninetydegree": "circle",
-      "semicircular": "circle"
+      "ninetydegree": "quarterCircle",
+      "semicircular": "semicircle"
     },
     "resizeConstraint": "aspectRatio"
   }

@@ -135,6 +135,14 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Units",
+                "WindowStyle"
+              ],
+              "nameValue": "unknown",
+              "effectPolicy": "layout"
             }
           }
         },
@@ -221,6 +229,13 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "WindowStyle"
+              ],
+              "nameValue": "unknown",
+              "effectPolicy": "none"
             }
           }
         },

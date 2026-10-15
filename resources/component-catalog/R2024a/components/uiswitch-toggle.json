@@ -40,7 +40,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.switch.1222d00f3c2a",
+          "groupId": "exact.switch.37fe038231b4",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -48,7 +48,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 1,
-            "groupId": "exact.switch.1222d00f3c2a",
+            "groupId": "exact.switch.37fe038231b4",
             "editor": "itemSelection",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -60,12 +60,20 @@
               "shape": "propertyDependent",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Items",
+                "ItemsData"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.1222d00f3c2a",
+          "groupId": "exact.switch.37fe038231b4",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Items",
@@ -73,7 +81,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 2,
-            "groupId": "exact.switch.1222d00f3c2a",
+            "groupId": "exact.switch.37fe038231b4",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -89,12 +97,17 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.1222d00f3c2a",
+          "groupId": "exact.switch.37fe038231b4",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ItemsData",
@@ -102,7 +115,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 3,
-            "groupId": "exact.switch.1222d00f3c2a",
+            "groupId": "exact.switch.37fe038231b4",
             "editor": "structuredData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -119,12 +132,19 @@
                   "property": "Items"
                 }
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "Items"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.1222d00f3c2a",
+          "groupId": "exact.switch.37fe038231b4",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ValueIndex",
@@ -132,7 +152,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 4,
-            "groupId": "exact.switch.1222d00f3c2a",
+            "groupId": "exact.switch.37fe038231b4",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -149,7 +169,7 @@
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.1222d00f3c2a",
+          "groupId": "exact.switch.37fe038231b4",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Orientation",
@@ -157,7 +177,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 5,
-            "groupId": "exact.switch.1222d00f3c2a",
+            "groupId": "exact.switch.37fe038231b4",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -883,6 +903,9 @@
     },
     "overlayShape": "toggleSwitch",
     "resizeConstraint": "aspectRatio",
-    "defaultSize": [20, 45]
+    "defaultSize": [
+      20,
+      45
+    ]
   }
 }

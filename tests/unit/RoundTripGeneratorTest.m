@@ -95,7 +95,8 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
             [document, generator] = RoundTripGeneratorTest.parsedFixture();
             source = document.OriginalText + newline + "app.LeftValueLabel.Visible = 'on';";
-            document.OriginalText = source;
+            document = macd.source.AppSourceParser.parseText(source, ...
+                macd.model.ComponentRegistry.createDefault());
             document.removeComponent("parsed-LeftValueLabel");
             [generated, diagnostics] = generator.generate(document);
 

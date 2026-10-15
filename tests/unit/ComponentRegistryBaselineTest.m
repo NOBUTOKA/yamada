@@ -34,6 +34,14 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     testCase.verifyEqual(actual.AuditDisposition, string(expected.disposition.kind));
                     testCase.verifyEqual(string(actual.ValueSchema.kind), ...
                         string(expected.valueContract.kind));
+                    policy = macd.model.PropertyApplicationPolicy();
+                    if isfield(expected, "application")
+                        policy = macd.model.PropertyApplicationPolicy(expected.application);
+                    end
+                    testCase.verifyEqual(actual.Application.ApplyAfter, policy.ApplyAfter);
+                    testCase.verifyEqual(actual.Application.NameValue, policy.NameValue);
+                    testCase.verifyEqual(actual.Application.EffectPolicy, policy.EffectPolicy);
+                    testCase.verifyFalse(isfield(actual.Metadata, "applicationEvidence"));
                     if isfield(expected.valueContract, "values")
                         testCase.verifyTrue(isfield(actual.ValueSchema, "values"));
                         testCase.verifyEqual(string(actual.ValueSchema.values), ...
@@ -56,7 +64,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             testCase.verifyEqual(manifest.schemaVersion, 2);
             testCase.verifyEqual(string(manifest.matlabRelease), "R2024a");
             testCase.verifyEqual(string(manifest.sourceGroupingSha256), string(groups.inputSha256));
-            testCase.verifyEqual(numel(groups.groups), 315);
+            testCase.verifyEqual(numel(groups.groups), 316);
             testCase.verifyEqual(sort(string(manifest.orderProfileFiles)), "order-profiles.json");
             testCase.verifyEqual(sort(string({profiles.profiles.id})), ...
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);

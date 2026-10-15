@@ -60,6 +60,14 @@
               "shape": "propertyDependent",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Items",
+                "ItemsData"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },
@@ -88,6 +96,11 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },
@@ -118,6 +131,13 @@
                   "property": "Items"
                 }
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "Items"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "itemSelection"
             }
           }
         },

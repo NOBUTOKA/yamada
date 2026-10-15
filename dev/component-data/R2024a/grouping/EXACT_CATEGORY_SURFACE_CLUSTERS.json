@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "42d807016b7a50f5d1298cc60725f26e83d7f7917f4d75a462de9abbf606a7e8",
+  "inputSha256": "0870d4bf7f50b1f7d1853ff87ad9b03f2bfc7da5b39afae4ef18442a4d8a138d",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -1206,12 +1206,12 @@
       ]
     },
     {
-      "candidateId": "candidate.datepicker.73160c7a8db4",
+      "candidateId": "candidate.datepicker.35b93410b2d5",
       "categoryId": "datepicker",
       "categoryDisplayName": "Date Picker",
       "sharingScope": "variantLocal",
       "scopeRationale": "Date Picker-specific settings.",
-      "capabilitySha256": "73160c7a8db42980f6df7ffaad5f5ad4fadf2cde212f358de5e8f39088451e77",
+      "capabilitySha256": "35b93410b2d5da102326be02e6a182e468cc99b4fca9677f21cdad4abf010c7c",
       "propertyPaths": [
         "Value",
         "Placeholder",
@@ -1221,7 +1221,7 @@
         "DisabledDaysOfWeek"
       ],
       "propertyCapabilitySha256": [
-        "8130a84a35e861b90119c10886b7d573335b46f3df92b9226036dff0740f65f3",
+        "66f84d4d4008eda46efee138601aa77e24880f786699a11c9acb822571103d18",
         "376651651243e2a76c5bcd18aedce45c13c21b8325ba1fe20d93e4814a98201a",
         "58cb2007e397387d3ff289333fac27aa4aeab9f2aeefce1f5462ef91137e4319",
         "13be9ea708fb8c43772d09d702b8c5cf505fb697b883f5cca934da4194f80b3e",
@@ -1237,12 +1237,12 @@
       ]
     },
     {
-      "candidateId": "candidate.dropdown.679834ed3e14",
+      "candidateId": "candidate.dropdown.858f284ce643",
       "categoryId": "dropdown",
       "categoryDisplayName": "Drop-Down",
       "sharingScope": "variantLocal",
       "scopeRationale": "Drop-Down-specific settings.",
-      "capabilitySha256": "679834ed3e14ba980781957f98db283e1eb422d833efb52f761d77354c8eaa52",
+      "capabilitySha256": "858f284ce643bf0678a8f4f54ea4ea2225802a7fdac325ed9b746e019c223c74",
       "propertyPaths": [
         "Value",
         "Items",
@@ -1251,9 +1251,9 @@
         "Placeholder"
       ],
       "propertyCapabilitySha256": [
-        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
-        "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
-        "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
+        "a2733274aa57951353d22e1f3853fde3388077740ff5ed781ece1e184d3aa4bb",
+        "44565001bca976f1700bd0c79ad75fbf54f43ccead63b11d38a5402ed772c23d",
+        "d77dcdb563e599ba49e6fcb6888f4650acd11bef18ebfd81efead95099d8b76d",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
         "376651651243e2a76c5bcd18aedce45c13c21b8325ba1fe20d93e4814a98201a"
       ],
@@ -1451,47 +1451,6 @@
       ]
     },
     {
-      "candidateId": "candidate.font.254942b028e0",
-      "categoryId": "font",
-      "categoryDisplayName": "Font",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "254942b028e08c8f18ff59241945d6b1f9aa9e099f1da24536d693499e6878f5",
-      "propertyPaths": [
-        "FontName",
-        "FontSize",
-        "FontSizeMode",
-        "FontWeight",
-        "FontAngle",
-        "LabelFontSizeMultiplier",
-        "TitleFontSizeMultiplier",
-        "TitleFontWeight",
-        "SubtitleFontWeight",
-        "FontUnits",
-        "FontSmoothing"
-      ],
-      "propertyCapabilitySha256": [
-        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "2afd90bc055a7128e5b1edcafa79ce80cc43ebbc1f374a71274ecbebe152da16",
-        "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
-        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
-        "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
-        "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
-        "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
-        "9bf879f07c0dd1d9e6cee72f749d160f8434b1dd16e4780c18b3bc8cbd920043",
-        "788f1eb3a9e3c0321ed0eace5f1930e9f3335c348f2fbc9b37aee5343493029a"
-      ],
-      "memberVariantIds": [
-        "uiaxes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
       "candidateId": "candidate.font.3a0afe7fc975",
       "categoryId": "font",
       "categoryDisplayName": "Font",
@@ -1529,44 +1488,12 @@
       ]
     },
     {
-      "candidateId": "candidate.font.aea229d3c60f",
+      "candidateId": "candidate.font.40e91be29875",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "aea229d3c60f0d396a2197aa95c2bc49465f79dd917012dbc38be2dcb32f615f",
-      "propertyPaths": [
-        "FontName",
-        "FontSize",
-        "FontWeight",
-        "FontAngle",
-        "FontUnits"
-      ],
-      "propertyCapabilitySha256": [
-        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "98064d96e9e9dcbaf2a847066812282eb125a48c0aa959476635aad81d426c45",
-        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "d55ef03d859adcb0924cec9f74a3b80c417ed998ac5a105b7a81dd72f69cffe6"
-      ],
-      "memberVariantIds": [
-        "uibuttongroup",
-        "uipanel",
-        "uitable"
-      ],
-      "reuseCount": 3,
-      "documentedCategoryOrders": [
-        2,
-        3
-      ]
-    },
-    {
-      "candidateId": "candidate.font.bb38f17d7c33",
-      "categoryId": "font",
-      "categoryDisplayName": "Font",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "bb38f17d7c33129d918993de661c0e6a27d12292240a3cd6dd7db8f8fa2c9f13",
+      "capabilitySha256": "40e91be29875dbf56d97fc9e010bcac43d67fa480cf9e3877a1ba51d9550524c",
       "propertyPaths": [
         "FontName",
         "FontWeight",
@@ -1583,14 +1510,14 @@
       "propertyCapabilitySha256": [
         "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
         "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "2afd90bc055a7128e5b1edcafa79ce80cc43ebbc1f374a71274ecbebe152da16",
+        "5ed5233045b4e4dc6068d141bcc68a852a8b9b06f6d18708048c3884ff2df40c",
         "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
         "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
         "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
         "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
         "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
         "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
-        "c3e2203f6f493a9a2ee0d7dd56818b3df5eebb0294a0e98a0e8650b0fe034af9",
+        "721a7c59990677980ab1a5769f44aebbf886682574f86cb0f4aad67b568fecd9",
         "03b58a10bd7574021051e77420402fdbe97f1f248371a5e90958532decf14d01"
       ],
       "memberVariantIds": [
@@ -1602,18 +1529,19 @@
       ]
     },
     {
-      "candidateId": "candidate.font.defa4abda44c",
+      "candidateId": "candidate.font.b0bd68aa98bc",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "defa4abda44c8e27157778ddb8209f28cd3554e6ff89cb925787d7203430853f",
+      "capabilitySha256": "b0bd68aa98bc21a68c5bde73a9d971edd6e4fe28a668b62b32ff3ca4ff94d78a",
       "propertyPaths": [
         "FontName",
         "FontSize",
         "FontSizeMode",
         "FontWeight",
         "FontAngle",
+        "LabelFontSizeMultiplier",
         "TitleFontSizeMultiplier",
         "TitleFontWeight",
         "SubtitleFontWeight",
@@ -1622,18 +1550,19 @@
       ],
       "propertyCapabilitySha256": [
         "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "2afd90bc055a7128e5b1edcafa79ce80cc43ebbc1f374a71274ecbebe152da16",
+        "5ed5233045b4e4dc6068d141bcc68a852a8b9b06f6d18708048c3884ff2df40c",
         "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
         "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
         "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
+        "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
         "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
         "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
         "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
-        "c3e2203f6f493a9a2ee0d7dd56818b3df5eebb0294a0e98a0e8650b0fe034af9",
-        "03b58a10bd7574021051e77420402fdbe97f1f248371a5e90958532decf14d01"
+        "28a1165494e1c45413071c8e4432a8ead498703d495122ae81190994b7f5a674",
+        "788f1eb3a9e3c0321ed0eace5f1930e9f3335c348f2fbc9b37aee5343493029a"
       ],
       "memberVariantIds": [
-        "polaraxes"
+        "uiaxes"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
@@ -1641,12 +1570,12 @@
       ]
     },
     {
-      "candidateId": "candidate.font.e6f5c39c0791",
+      "candidateId": "candidate.font.b91323cab41e",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "e6f5c39c0791d0b127be518d8888be354bbaefa28d4e65bb7a22a809110e513a",
+      "capabilitySha256": "b91323cab41e3fd0e22588b1aa64d6000393fb9dca9294fa6637ac7cb035238f",
       "propertyPaths": [
         "FontName",
         "FontSize",
@@ -1661,7 +1590,7 @@
       ],
       "propertyCapabilitySha256": [
         "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "2afd90bc055a7128e5b1edcafa79ce80cc43ebbc1f374a71274ecbebe152da16",
+        "d38701fc9cd07085ba0a81e105413aae55b3734edd576ca6f2f0f82f108aa3fa",
         "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
         "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
         "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
@@ -1680,12 +1609,141 @@
       ]
     },
     {
-      "candidateId": "candidate.gauge.34594d6030bd",
+      "candidateId": "candidate.font.dc62be89557b",
+      "categoryId": "font",
+      "categoryDisplayName": "Font",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Font capabilities vary substantially by component family.",
+      "capabilitySha256": "dc62be89557b5813b0367e2fac7f75720f6d7e721f47c9eafe28750706e60e2b",
+      "propertyPaths": [
+        "FontName",
+        "FontSize",
+        "FontWeight",
+        "FontAngle",
+        "FontUnits"
+      ],
+      "propertyCapabilitySha256": [
+        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
+        "5887e40ddffcb74e50888889ace8c2651aaf4f44183bd5d4283857b85f407be1",
+        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
+        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
+        "13ab600d033b3757b655035ed44d514caebce887b13554b41da932b885984cf0"
+      ],
+      "memberVariantIds": [
+        "uibuttongroup",
+        "uipanel",
+        "uitable"
+      ],
+      "reuseCount": 3,
+      "documentedCategoryOrders": [
+        2,
+        3
+      ]
+    },
+    {
+      "candidateId": "candidate.font.fc5b9e37ded2",
+      "categoryId": "font",
+      "categoryDisplayName": "Font",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Font capabilities vary substantially by component family.",
+      "capabilitySha256": "fc5b9e37ded29e57a06075f1d66664c18f001154eb625e3e415d4ba39472bbde",
+      "propertyPaths": [
+        "FontName",
+        "FontSize",
+        "FontSizeMode",
+        "FontWeight",
+        "FontAngle",
+        "TitleFontSizeMultiplier",
+        "TitleFontWeight",
+        "SubtitleFontWeight",
+        "FontUnits",
+        "FontSmoothing"
+      ],
+      "propertyCapabilitySha256": [
+        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
+        "5ed5233045b4e4dc6068d141bcc68a852a8b9b06f6d18708048c3884ff2df40c",
+        "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
+        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
+        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
+        "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
+        "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
+        "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
+        "721a7c59990677980ab1a5769f44aebbf886682574f86cb0f4aad67b568fecd9",
+        "03b58a10bd7574021051e77420402fdbe97f1f248371a5e90958532decf14d01"
+      ],
+      "memberVariantIds": [
+        "polaraxes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
+      "candidateId": "candidate.gauge.1576106a811e",
       "categoryId": "gauge",
       "categoryDisplayName": "Gauge",
       "sharingScope": "familyScoped",
       "scopeRationale": "Gauge-style and shape settings.",
-      "capabilitySha256": "34594d6030bd3c052e6603792fb785ed81bd32600c950516a9ea26f4834442f3",
+      "capabilitySha256": "1576106a811e73cbd06b116d283e9a9186883ca811fd27e717f79df5ba223f18",
+      "propertyPaths": [
+        "Value",
+        "Limits",
+        "ScaleDirection",
+        "ScaleColors",
+        "ScaleColorLimits"
+      ],
+      "propertyCapabilitySha256": [
+        "08fc78578f65273b6c7cbabf5175690218cdabf48528383bfba8457d54de2be8",
+        "d15c753c8eee2efebdada8c9ef5e6f75a1ec22ffab6e20e231aa9ec93c6bcacf",
+        "4d7e6584f18bac8e9696cfecea689062a6890d5758e68a83863e3896a0ac0e1b",
+        "3e8f42bceba64e47fb41f92f6cb5624960f9b3ef7727cbbdd5bc20162fb80582",
+        "2b20ab0354585482505ffd501b9e7e4859e564e967b6e3ec8c4e039e7a3612ab"
+      ],
+      "memberVariantIds": [
+        "uigauge-circular"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
+      "candidateId": "candidate.gauge.167e01de6351",
+      "categoryId": "gauge",
+      "categoryDisplayName": "Gauge",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Gauge-style and shape settings.",
+      "capabilitySha256": "167e01de63514b6e1d1fc71b0388d344b740da0b956316834a6e35091b352885",
+      "propertyPaths": [
+        "Value",
+        "Limits",
+        "Orientation",
+        "ScaleColors",
+        "ScaleColorLimits"
+      ],
+      "propertyCapabilitySha256": [
+        "08fc78578f65273b6c7cbabf5175690218cdabf48528383bfba8457d54de2be8",
+        "d15c753c8eee2efebdada8c9ef5e6f75a1ec22ffab6e20e231aa9ec93c6bcacf",
+        "3c631321d885eda979ac4c655313756ef7f3b305a0b80f04435e4b92a88c98fa",
+        "3e8f42bceba64e47fb41f92f6cb5624960f9b3ef7727cbbdd5bc20162fb80582",
+        "2b20ab0354585482505ffd501b9e7e4859e564e967b6e3ec8c4e039e7a3612ab"
+      ],
+      "memberVariantIds": [
+        "uigauge-linear"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
+      "candidateId": "candidate.gauge.9e106e2093c4",
+      "categoryId": "gauge",
+      "categoryDisplayName": "Gauge",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Gauge-style and shape settings.",
+      "capabilitySha256": "9e106e2093c4d06ac5a205fcfc284c683663c758e8b67d120eb773fce231c41d",
       "propertyPaths": [
         "Value",
         "Limits",
@@ -1695,8 +1753,8 @@
         "ScaleColorLimits"
       ],
       "propertyCapabilitySha256": [
-        "8b9a7ed43b619f2c00328398045041b512a7089ad3a626f416eb151b323ab6f5",
-        "e07e1409d15117a796e0f475f0339595a77a503b6a742ed500dcbe6870b3ee28",
+        "08fc78578f65273b6c7cbabf5175690218cdabf48528383bfba8457d54de2be8",
+        "d15c753c8eee2efebdada8c9ef5e6f75a1ec22ffab6e20e231aa9ec93c6bcacf",
         "7ce19c933ba4b1ce46dddd74f03225cb609ee029e4d65ca9f09fa59de819fe8f",
         "4d7e6584f18bac8e9696cfecea689062a6890d5758e68a83863e3896a0ac0e1b",
         "3e8f42bceba64e47fb41f92f6cb5624960f9b3ef7727cbbdd5bc20162fb80582",
@@ -1711,70 +1769,12 @@
       ]
     },
     {
-      "candidateId": "candidate.gauge.4b9ff2651203",
+      "candidateId": "candidate.gauge.b4d20b95ddbc",
       "categoryId": "gauge",
       "categoryDisplayName": "Gauge",
       "sharingScope": "familyScoped",
       "scopeRationale": "Gauge-style and shape settings.",
-      "capabilitySha256": "4b9ff26512036f875336e6bbd1613217658e9f8afb19b2a1f54e2a7500993f3f",
-      "propertyPaths": [
-        "Value",
-        "Limits",
-        "Orientation",
-        "ScaleColors",
-        "ScaleColorLimits"
-      ],
-      "propertyCapabilitySha256": [
-        "8b9a7ed43b619f2c00328398045041b512a7089ad3a626f416eb151b323ab6f5",
-        "e07e1409d15117a796e0f475f0339595a77a503b6a742ed500dcbe6870b3ee28",
-        "3c631321d885eda979ac4c655313756ef7f3b305a0b80f04435e4b92a88c98fa",
-        "3e8f42bceba64e47fb41f92f6cb5624960f9b3ef7727cbbdd5bc20162fb80582",
-        "2b20ab0354585482505ffd501b9e7e4859e564e967b6e3ec8c4e039e7a3612ab"
-      ],
-      "memberVariantIds": [
-        "uigauge-linear"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
-      "candidateId": "candidate.gauge.69e92711bff5",
-      "categoryId": "gauge",
-      "categoryDisplayName": "Gauge",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Gauge-style and shape settings.",
-      "capabilitySha256": "69e92711bff564abc21b41a71a5d0502619bd801d069249dc3f7181ea01f4ac1",
-      "propertyPaths": [
-        "Value",
-        "Limits",
-        "ScaleDirection",
-        "ScaleColors",
-        "ScaleColorLimits"
-      ],
-      "propertyCapabilitySha256": [
-        "8b9a7ed43b619f2c00328398045041b512a7089ad3a626f416eb151b323ab6f5",
-        "e07e1409d15117a796e0f475f0339595a77a503b6a742ed500dcbe6870b3ee28",
-        "4d7e6584f18bac8e9696cfecea689062a6890d5758e68a83863e3896a0ac0e1b",
-        "3e8f42bceba64e47fb41f92f6cb5624960f9b3ef7727cbbdd5bc20162fb80582",
-        "2b20ab0354585482505ffd501b9e7e4859e564e967b6e3ec8c4e039e7a3612ab"
-      ],
-      "memberVariantIds": [
-        "uigauge-circular"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
-      "candidateId": "candidate.gauge.e7b70aa44dc5",
-      "categoryId": "gauge",
-      "categoryDisplayName": "Gauge",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Gauge-style and shape settings.",
-      "capabilitySha256": "e7b70aa44dc5baaaa757c0669a2527336b194b1726fdfa4dda548eef6a8e95f3",
+      "capabilitySha256": "b4d20b95ddbc627c7a4e358df9e6e4f5e2b4d91620b39918dc1f001589fd1800",
       "propertyPaths": [
         "Value",
         "Limits",
@@ -1784,8 +1784,8 @@
         "ScaleColorLimits"
       ],
       "propertyCapabilitySha256": [
-        "8b9a7ed43b619f2c00328398045041b512a7089ad3a626f416eb151b323ab6f5",
-        "e07e1409d15117a796e0f475f0339595a77a503b6a742ed500dcbe6870b3ee28",
+        "08fc78578f65273b6c7cbabf5175690218cdabf48528383bfba8457d54de2be8",
+        "d15c753c8eee2efebdada8c9ef5e6f75a1ec22ffab6e20e231aa9ec93c6bcacf",
         "9207e2e9eb0272feb220634b1b562bc2ba72d3d493956a162fb6d912bb3ae774",
         "4d7e6584f18bac8e9696cfecea689062a6890d5758e68a83863e3896a0ac0e1b",
         "3e8f42bceba64e47fb41f92f6cb5624960f9b3ef7727cbbdd5bc20162fb80582",
@@ -2857,35 +2857,12 @@
       ]
     },
     {
-      "candidateId": "candidate.knob.1b94ec3e8599",
+      "candidateId": "candidate.knob.4f4fc9fb91ad",
       "categoryId": "knob",
       "categoryDisplayName": "Knob",
       "sharingScope": "familyScoped",
       "scopeRationale": "Knob-style and scale settings.",
-      "capabilitySha256": "1b94ec3e8599f5b4a17bc2a725e320a576781556216dc15e6e015761256e588f",
-      "propertyPaths": [
-        "Value",
-        "Limits"
-      ],
-      "propertyCapabilitySha256": [
-        "8b9a7ed43b619f2c00328398045041b512a7089ad3a626f416eb151b323ab6f5",
-        "e07e1409d15117a796e0f475f0339595a77a503b6a742ed500dcbe6870b3ee28"
-      ],
-      "memberVariantIds": [
-        "uiknob-continuous"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
-      "candidateId": "candidate.knob.38906b3f170d",
-      "categoryId": "knob",
-      "categoryDisplayName": "Knob",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Knob-style and scale settings.",
-      "capabilitySha256": "38906b3f170dd83b23a53d3335ecbb1854e870bd6a7f3fb5754c423ee2eb06cd",
+      "capabilitySha256": "4f4fc9fb91ad94fdf24bf057868b9d180de65ad03b5469a54104e3ac3788a1ea",
       "propertyPaths": [
         "Value",
         "Items",
@@ -2893,13 +2870,36 @@
         "ValueIndex"
       ],
       "propertyCapabilitySha256": [
-        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
-        "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
-        "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
+        "6ddc332f61f353b1b40ff5d02bf5fec31390efa8f686b62370125084a97ab351",
+        "44565001bca976f1700bd0c79ad75fbf54f43ccead63b11d38a5402ed772c23d",
+        "d77dcdb563e599ba49e6fcb6888f4650acd11bef18ebfd81efead95099d8b76d",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb"
       ],
       "memberVariantIds": [
         "uiknob-discrete"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
+      "candidateId": "candidate.knob.7e2942a69e26",
+      "categoryId": "knob",
+      "categoryDisplayName": "Knob",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Knob-style and scale settings.",
+      "capabilitySha256": "7e2942a69e26b0dd7525b8ef08a10bba8b0718ca999c06492f727898a730775b",
+      "propertyPaths": [
+        "Value",
+        "Limits"
+      ],
+      "propertyCapabilitySha256": [
+        "62882f017d0c3ffd6c07814ca22e7d8d65742e5b630325cfbbc7b81f65df8c6b",
+        "a86e0cd92cde1eb4374a60c8e81b9436810004d868d8c888a1116a8bd5f7cf97"
+      ],
+      "memberVariantIds": [
+        "uiknob-continuous"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
@@ -2999,12 +2999,12 @@
       ]
     },
     {
-      "candidateId": "candidate.listbox.6c6abc02d058",
+      "candidateId": "candidate.listbox.703b28fbf9c4",
       "categoryId": "listbox",
       "categoryDisplayName": "List Box",
       "sharingScope": "variantLocal",
       "scopeRationale": "List Box-specific settings.",
-      "capabilitySha256": "6c6abc02d05848559be2d955f07d8c98c76ff41bd51c30b69cd6ac656c87b707",
+      "capabilitySha256": "703b28fbf9c47ba52f0d4df0501a47585711fa15038f26dfab0fc27f1118c9b1",
       "propertyPaths": [
         "Value",
         "Items",
@@ -3012,9 +3012,9 @@
         "ValueIndex"
       ],
       "propertyCapabilitySha256": [
-        "26962721a56bf8e5e493d8029ec3a57fd4436ae0a0d529f7f1daae0d3df7617c",
-        "b60f650ea33f25ec245d05a6a17334b3be58813a23573fbe71128382f2110cef",
-        "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
+        "bb81564263be3feaadbc38d452cf3ac9bf5a54ea8e144beeae4349511811812e",
+        "44565001bca976f1700bd0c79ad75fbf54f43ccead63b11d38a5402ed772c23d",
+        "d77dcdb563e599ba49e6fcb6888f4650acd11bef18ebfd81efead95099d8b76d",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb"
       ],
       "memberVariantIds": [
@@ -3487,12 +3487,12 @@
       ]
     },
     {
-      "candidateId": "candidate.positionandsize.66aebbb525de",
+      "candidateId": "candidate.positionandsize.aeda901e82e7",
       "categoryId": "positionandsize",
       "categoryDisplayName": "Position and Size",
       "sharingScope": "variantLocal",
       "scopeRationale": "uifigure-specific window geometry.",
-      "capabilitySha256": "66aebbb525de07ff1f4da691b21842ddba8887e8624488001dd90f2e95e6ee06",
+      "capabilitySha256": "aeda901e82e78c2bcac8f114753148d3ae0785a6edd8ba0c63b376c09e0ef828",
       "propertyPaths": [
         "Position",
         "Units",
@@ -3501,10 +3501,10 @@
         "AutoResizeChildren"
       ],
       "propertyCapabilitySha256": [
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
+        "66b0a89dac2dba1e0ba6be6f02ec0713b4d543079631e19276e078f96b68be32",
         "65f3327f00882d204c5b92940c53af32453173bb63bd6817994b3a75f832b00e",
         "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "9aded5ed6e41adfaeb4c4588838edb8c2e4da6b2e6a2418741ad8adfb842d1ed",
+        "d3d8027255c7d7fdc757c6fa6414fd6d5884dbb3e45e9a38847bf7f3fc06b555",
         "f638d8a699781c07d5bbc20deaa225f2c793a1cf564f561758105e499a47cde0"
       ],
       "memberVariantIds": [
@@ -3516,12 +3516,12 @@
       ]
     },
     {
-      "candidateId": "candidate.position.1e31da99cbff",
+      "candidateId": "candidate.position.08c8d636ce10",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "1e31da99cbffa48a3916414ad1b36ac451d35b5c7f8cb0d348b49a458a2fa845",
+      "capabilitySha256": "08c8d636ce10d9eeda11a77affc0a239e1e43ef6ecb5b56f4d96b54c7bddc329",
       "propertyPaths": [
         "OuterPosition",
         "InnerPosition",
@@ -3529,31 +3529,52 @@
         "TightInset",
         "PositionConstraint",
         "Units",
-        "DataAspectRatio",
-        "DataAspectRatioMode",
-        "PlotBoxAspectRatio",
-        "PlotBoxAspectRatioMode",
         "Layout"
       ],
       "propertyCapabilitySha256": [
         "1298c2a4f4f6f2ce97621d001f88d2a83be757d239d442b6e4ebbf538195ef08",
         "e2828ecaf5411503a7785945f67b51f413a7dd52573b4cfc0fc838e8567cf48f",
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
+        "2104b38e1e3685da64b8347b090c836e0d633f56e87eae7d838326af17eee932",
         "bfb00566591fa19a1e3a6c18d19c6a6e803dc230ce6489145f5eddf63bb6bc09",
         "25c11d566fb8c4891a7917c18d0a42e1bdc7ebb0d1d426af2a8177f434c91159",
-        "744494c6c3c516899a7ab144036728ff0cfb0c534a1945d24d9f0ea345b22ab7",
-        "4e83722d0b9ebff40563feec39f8b3c427d2e83c29be27c6fd0c22c3d7655af7",
-        "d94be0bf49bd516501f8e33aa2a3c3b9b30013c2497f5dfe088c2f5c4b52ffb1",
-        "1951b5acad2fe7ad08e7462e4812fa0c3689b5806ce5f3feb74113abb9148bfa",
-        "2d4fa599b9bc2c9af40132c73e5e808e9e152857a1b354bfe553bda0038c2d1a",
+        "ba08568a2d5f80e7c6bd1cc2e14077dc1cd3c8d1dbfda92080ce16966621463a",
         "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
       ],
       "memberVariantIds": [
-        "axes"
+        "geoaxes"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
-        9
+        10
+      ]
+    },
+    {
+      "candidateId": "candidate.position.1d833d1c6b04",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "1d833d1c6b04320b732c46ca6ccf628e05682c5538cc5338bdc1be8b21ab2848",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Units"
+      ],
+      "propertyCapabilitySha256": [
+        "ff3678d5500b65f90653a0f2457d324e9ac90abda435cac5465719a21dabdb09",
+        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
+        "9af52318fb7115a75734e4a9b1ee7de6161074f61be637208730c95aae9d69f6",
+        "786029f7902c8d22fad220cd339833ff77e8c53c70f5f23998a022a8a4601b6a"
+      ],
+      "memberVariantIds": [
+        "uibuttongroup",
+        "uipanel",
+        "uitable"
+      ],
+      "reuseCount": 3,
+      "documentedCategoryOrders": [
+        5
       ]
     },
     {
@@ -3585,6 +3606,101 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         4
+      ]
+    },
+    {
+      "candidateId": "candidate.position.46a24a868add",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "46a24a868add851aff8a2d32e240446732ec319b8ea42dfbc9c2115c4b0f3b66",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Units"
+      ],
+      "propertyCapabilitySha256": [
+        "167677dd3c448fa605f1fd233fb22d190643036b6aea1075dd8a8a0f9266eb28",
+        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
+        "929a01fa209e71eafe547e8b3511e11ae3199506ebaf61aec7a34cb8c5d00a17",
+        "65f3327f00882d204c5b92940c53af32453173bb63bd6817994b3a75f832b00e"
+      ],
+      "memberVariantIds": [
+        "uitab"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
+      "candidateId": "candidate.position.473b93c9a5d7",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "473b93c9a5d7d9938348db4d84518d6ff4697633b5f9e443b1c1f1d1e78120e9",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Units"
+      ],
+      "propertyCapabilitySha256": [
+        "2104b38e1e3685da64b8347b090c836e0d633f56e87eae7d838326af17eee932",
+        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
+        "9af52318fb7115a75734e4a9b1ee7de6161074f61be637208730c95aae9d69f6",
+        "65f3327f00882d204c5b92940c53af32453173bb63bd6817994b3a75f832b00e"
+      ],
+      "memberVariantIds": [
+        "uitabgroup"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
+      "candidateId": "candidate.position.6154b431120a",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "6154b431120a57c11e2f7f71631df68e3fe3d7a770d76410a891706b5595c411",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "TightInset",
+        "PositionConstraint",
+        "Units",
+        "DataAspectRatio",
+        "DataAspectRatioMode",
+        "PlotBoxAspectRatio",
+        "PlotBoxAspectRatioMode",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "ff3678d5500b65f90653a0f2457d324e9ac90abda435cac5465719a21dabdb09",
+        "e2828ecaf5411503a7785945f67b51f413a7dd52573b4cfc0fc838e8567cf48f",
+        "1298c2a4f4f6f2ce97621d001f88d2a83be757d239d442b6e4ebbf538195ef08",
+        "bfb00566591fa19a1e3a6c18d19c6a6e803dc230ce6489145f5eddf63bb6bc09",
+        "25c11d566fb8c4891a7917c18d0a42e1bdc7ebb0d1d426af2a8177f434c91159",
+        "786029f7902c8d22fad220cd339833ff77e8c53c70f5f23998a022a8a4601b6a",
+        "4e83722d0b9ebff40563feec39f8b3c427d2e83c29be27c6fd0c22c3d7655af7",
+        "d94be0bf49bd516501f8e33aa2a3c3b9b30013c2497f5dfe088c2f5c4b52ffb1",
+        "1951b5acad2fe7ad08e7462e4812fa0c3689b5806ce5f3feb74113abb9148bfa",
+        "2d4fa599b9bc2c9af40132c73e5e808e9e152857a1b354bfe553bda0038c2d1a",
+        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+      ],
+      "memberVariantIds": [
+        "uiaxes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        9
       ]
     },
     {
@@ -3638,33 +3754,6 @@
         3,
         4,
         5
-      ]
-    },
-    {
-      "candidateId": "candidate.position.6c9d370a7c95",
-      "categoryId": "position",
-      "categoryDisplayName": "Position",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "6c9d370a7c951512685662112d99db58a17f5f79c65c9db67435b4d1ad03f4ae",
-      "propertyPaths": [
-        "Position",
-        "InnerPosition",
-        "OuterPosition",
-        "Units"
-      ],
-      "propertyCapabilitySha256": [
-        "49372140862aa0f5bfdd5457c3f403e63f1d80a695422716a334ed679e1e2590",
-        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "929a01fa209e71eafe547e8b3511e11ae3199506ebaf61aec7a34cb8c5d00a17",
-        "65f3327f00882d204c5b92940c53af32453173bb63bd6817994b3a75f832b00e"
-      ],
-      "memberVariantIds": [
-        "uitab"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        3
       ]
     },
     {
@@ -3730,12 +3819,12 @@
       ]
     },
     {
-      "candidateId": "candidate.position.8ca20383fdf8",
+      "candidateId": "candidate.position.c5ca655e8c49",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "8ca20383fdf8e17d0d913d17c6d8d1debaa1c9a7779fcbd58af4da9a393ba69d",
+      "capabilitySha256": "c5ca655e8c496e018de5855f10c58c972b11f17548c38c6260669cf035492ce2",
       "propertyPaths": [
         "OuterPosition",
         "InnerPosition",
@@ -3748,43 +3837,10 @@
       "propertyCapabilitySha256": [
         "1298c2a4f4f6f2ce97621d001f88d2a83be757d239d442b6e4ebbf538195ef08",
         "e2828ecaf5411503a7785945f67b51f413a7dd52573b4cfc0fc838e8567cf48f",
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
+        "ff3678d5500b65f90653a0f2457d324e9ac90abda435cac5465719a21dabdb09",
         "bfb00566591fa19a1e3a6c18d19c6a6e803dc230ce6489145f5eddf63bb6bc09",
         "25c11d566fb8c4891a7917c18d0a42e1bdc7ebb0d1d426af2a8177f434c91159",
-        "ba08568a2d5f80e7c6bd1cc2e14077dc1cd3c8d1dbfda92080ce16966621463a",
-        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
-      ],
-      "memberVariantIds": [
-        "geoaxes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        10
-      ]
-    },
-    {
-      "candidateId": "candidate.position.95d8ffcdc1fc",
-      "categoryId": "position",
-      "categoryDisplayName": "Position",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "95d8ffcdc1fc38eddf9184526ab24ad4116e7fd57a495dbb2cc991d772e55dc9",
-      "propertyPaths": [
-        "OuterPosition",
-        "InnerPosition",
-        "Position",
-        "TightInset",
-        "PositionConstraint",
-        "Units",
-        "Layout"
-      ],
-      "propertyCapabilitySha256": [
-        "1298c2a4f4f6f2ce97621d001f88d2a83be757d239d442b6e4ebbf538195ef08",
-        "e2828ecaf5411503a7785945f67b51f413a7dd52573b4cfc0fc838e8567cf48f",
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
-        "bfb00566591fa19a1e3a6c18d19c6a6e803dc230ce6489145f5eddf63bb6bc09",
-        "25c11d566fb8c4891a7917c18d0a42e1bdc7ebb0d1d426af2a8177f434c91159",
-        "744494c6c3c516899a7ab144036728ff0cfb0c534a1945d24d9f0ea345b22ab7",
+        "8352002076f76c932713cf7e32535c58974ccebab6a3712d9f3d94ce414f8ef8",
         "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
       ],
       "memberVariantIds": [
@@ -3796,16 +3852,16 @@
       ]
     },
     {
-      "candidateId": "candidate.position.b219cf699479",
+      "candidateId": "candidate.position.cb3506a6f3f7",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "b219cf69947947e46142e2e3f587d10c9306a1dd97e62303fa7431c7155dbafb",
+      "capabilitySha256": "cb3506a6f3f787fc6453bd95c5dfb77f71ba7221e2ec492b413f92904998dd83",
       "propertyPaths": [
-        "Position",
-        "InnerPosition",
         "OuterPosition",
+        "InnerPosition",
+        "Position",
         "TightInset",
         "PositionConstraint",
         "Units",
@@ -3816,12 +3872,12 @@
         "Layout"
       ],
       "propertyCapabilitySha256": [
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
-        "e2828ecaf5411503a7785945f67b51f413a7dd52573b4cfc0fc838e8567cf48f",
         "1298c2a4f4f6f2ce97621d001f88d2a83be757d239d442b6e4ebbf538195ef08",
+        "e2828ecaf5411503a7785945f67b51f413a7dd52573b4cfc0fc838e8567cf48f",
+        "ff3678d5500b65f90653a0f2457d324e9ac90abda435cac5465719a21dabdb09",
         "bfb00566591fa19a1e3a6c18d19c6a6e803dc230ce6489145f5eddf63bb6bc09",
         "25c11d566fb8c4891a7917c18d0a42e1bdc7ebb0d1d426af2a8177f434c91159",
-        "65f3327f00882d204c5b92940c53af32453173bb63bd6817994b3a75f832b00e",
+        "8352002076f76c932713cf7e32535c58974ccebab6a3712d9f3d94ce414f8ef8",
         "4e83722d0b9ebff40563feec39f8b3c427d2e83c29be27c6fd0c22c3d7655af7",
         "d94be0bf49bd516501f8e33aa2a3c3b9b30013c2497f5dfe088c2f5c4b52ffb1",
         "1951b5acad2fe7ad08e7462e4812fa0c3689b5806ce5f3feb74113abb9148bfa",
@@ -3829,7 +3885,7 @@
         "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
       ],
       "memberVariantIds": [
-        "uiaxes"
+        "axes"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
@@ -3861,37 +3917,6 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         4
-      ]
-    },
-    {
-      "candidateId": "candidate.position.d7f947c6c3d8",
-      "categoryId": "position",
-      "categoryDisplayName": "Position",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "d7f947c6c3d86ed63e656f8cd534499429c237862358228637f8b5a731e430ea",
-      "propertyPaths": [
-        "Position",
-        "InnerPosition",
-        "OuterPosition",
-        "Units"
-      ],
-      "propertyCapabilitySha256": [
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
-        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "9af52318fb7115a75734e4a9b1ee7de6161074f61be637208730c95aae9d69f6",
-        "65f3327f00882d204c5b92940c53af32453173bb63bd6817994b3a75f832b00e"
-      ],
-      "memberVariantIds": [
-        "uibuttongroup",
-        "uipanel",
-        "uitabgroup",
-        "uitable"
-      ],
-      "reuseCount": 4,
-      "documentedCategoryOrders": [
-        3,
-        5
       ]
     },
     {
@@ -4091,12 +4116,37 @@
       ]
     },
     {
-      "candidateId": "candidate.slider.57cac2fc6e16",
+      "candidateId": "candidate.slider.c836068e5e26",
       "categoryId": "slider",
       "categoryDisplayName": "Slider",
       "sharingScope": "familyScoped",
       "scopeRationale": "Slider-style and range settings.",
-      "capabilitySha256": "57cac2fc6e16bbb0fb0984715cfe4d71ff138c4cb67afd73f76a4d6b1b20b044",
+      "capabilitySha256": "c836068e5e263554f624b2b21fd74bee06039e370da52ae1dd722da91001cae7",
+      "propertyPaths": [
+        "Value",
+        "Limits",
+        "Orientation"
+      ],
+      "propertyCapabilitySha256": [
+        "62882f017d0c3ffd6c07814ca22e7d8d65742e5b630325cfbbc7b81f65df8c6b",
+        "a86e0cd92cde1eb4374a60c8e81b9436810004d868d8c888a1116a8bd5f7cf97",
+        "3c631321d885eda979ac4c655313756ef7f3b305a0b80f04435e4b92a88c98fa"
+      ],
+      "memberVariantIds": [
+        "uislider-slider"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
+      "candidateId": "candidate.slider.f1dffee74e77",
+      "categoryId": "slider",
+      "categoryDisplayName": "Slider",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Slider-style and range settings.",
+      "capabilitySha256": "f1dffee74e77502b471f6199fd73cd08045806a04bf6c04c63f67b241a216073",
       "propertyPaths": [
         "Value",
         "Limits",
@@ -4105,8 +4155,8 @@
         "StepMode"
       ],
       "propertyCapabilitySha256": [
-        "70f2d2d2bdd4ab22d3db704c78e39fc6e8a07b66cf0fb479470e7c398294aff9",
-        "e07e1409d15117a796e0f475f0339595a77a503b6a742ed500dcbe6870b3ee28",
+        "7647406cd7a49be5b8fdb1e99476fe5609062b33d7c4eea1df8dda239929bad5",
+        "a86e0cd92cde1eb4374a60c8e81b9436810004d868d8c888a1116a8bd5f7cf97",
         "3c631321d885eda979ac4c655313756ef7f3b305a0b80f04435e4b92a88c98fa",
         "379ea3ca240874cd17e87a0bdeeb595e8aab85cdf4a43e014c795df87519571f",
         "d032713656bba928512b3235ed87720b540ca691a973cd8e754afc8b27661e0a"
@@ -4120,37 +4170,12 @@
       ]
     },
     {
-      "candidateId": "candidate.slider.8c811b908425",
-      "categoryId": "slider",
-      "categoryDisplayName": "Slider",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Slider-style and range settings.",
-      "capabilitySha256": "8c811b9084251828495c99ca40f674e0bfb2fc8f266b99bf6c8424cb9b64f11e",
-      "propertyPaths": [
-        "Value",
-        "Limits",
-        "Orientation"
-      ],
-      "propertyCapabilitySha256": [
-        "8b9a7ed43b619f2c00328398045041b512a7089ad3a626f416eb151b323ab6f5",
-        "e07e1409d15117a796e0f475f0339595a77a503b6a742ed500dcbe6870b3ee28",
-        "3c631321d885eda979ac4c655313756ef7f3b305a0b80f04435e4b92a88c98fa"
-      ],
-      "memberVariantIds": [
-        "uislider-slider"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
-      "candidateId": "candidate.switch.1222d00f3c2a",
+      "candidateId": "candidate.switch.37fe038231b4",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
       "sharingScope": "familyScoped",
       "scopeRationale": "Switch-style settings.",
-      "capabilitySha256": "1222d00f3c2afa1aa6da443312929937941c63026595587ebc2d74544e9f372a",
+      "capabilitySha256": "37fe038231b4afcb340089555b01239f49f23cfe2ca9209a93a8d780977c2cd8",
       "propertyPaths": [
         "Value",
         "Items",
@@ -4159,9 +4184,9 @@
         "Orientation"
       ],
       "propertyCapabilitySha256": [
-        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
-        "61a48ed368999826c2e45597f1b647e8cbca210a88f12412e884a2d1afcef6a6",
-        "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
+        "6ddc332f61f353b1b40ff5d02bf5fec31390efa8f686b62370125084a97ab351",
+        "232561cb47d8f689b72aff0007d4006f04c9608addc12b949b3ea0dd9960e7b3",
+        "d77dcdb563e599ba49e6fcb6888f4650acd11bef18ebfd81efead95099d8b76d",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
         "683c12e648b12bb238aeece0fcb5bf8f8401022fee168f2653b81b5ada390553"
       ],
@@ -4175,12 +4200,12 @@
       ]
     },
     {
-      "candidateId": "candidate.switch.c6d7c0299e55",
+      "candidateId": "candidate.switch.4839bd508622",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
       "sharingScope": "familyScoped",
       "scopeRationale": "Switch-style settings.",
-      "capabilitySha256": "c6d7c0299e55372cf4fe8852a230a182c73fdb08eda4ea957c86a0560d30dc40",
+      "capabilitySha256": "4839bd50862277f18eebcee297fe32ed1f886b74ecdd6bab2c967f1be8f63971",
       "propertyPaths": [
         "Value",
         "Items",
@@ -4189,9 +4214,9 @@
         "Orientation"
       ],
       "propertyCapabilitySha256": [
-        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
-        "61a48ed368999826c2e45597f1b647e8cbca210a88f12412e884a2d1afcef6a6",
-        "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
+        "6ddc332f61f353b1b40ff5d02bf5fec31390efa8f686b62370125084a97ab351",
+        "232561cb47d8f689b72aff0007d4006f04c9608addc12b949b3ea0dd9960e7b3",
+        "d77dcdb563e599ba49e6fcb6888f4650acd11bef18ebfd81efead95099d8b76d",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
         "3c631321d885eda979ac4c655313756ef7f3b305a0b80f04435e4b92a88c98fa"
       ],
@@ -4345,12 +4370,12 @@
       ]
     },
     {
-      "candidateId": "candidate.ticks.54cad1cfbd30",
+      "candidateId": "candidate.ticks.072186202cdc",
       "categoryId": "ticks",
       "categoryDisplayName": "Ticks",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
-      "capabilitySha256": "54cad1cfbd303239327bd7edaae7336733e60990a982e112f17700f33a7d7edc",
+      "capabilitySha256": "072186202cdcf3abbf8abe743e2cab1c6aa2a70244023c3e6693734579ddb378",
       "propertyPaths": [
         "MajorTicks",
         "MajorTicksMode",
@@ -4360,12 +4385,12 @@
         "MinorTicksMode"
       ],
       "propertyCapabilitySha256": [
-        "dc4d3f846dbc38b6c2bd4d46c4ec9e40f272b7557a9d4ce905f0af00b089f6d7",
-        "2e974c395daed814b784c09824851edd74a3f01766c82de026e767e5bc9c4475",
-        "bd85261f7f549483a2110abe09f4be141122d54dd5ad6fa7fa3ed67299f43500",
-        "3497d50c0a272995eb3ddd4a9ec36752875b674fa9289ddccefdb0f780935e36",
-        "c7d711151bce17fc890b56fd02106987bf4d5ed8f32aa2088bc6d4d653bd9e6a",
-        "c7e94d6caebe53a09229639e46dcd0c278bf8c8576521c57d9607882024b63dc"
+        "0d84271c586485afecec05845d77b2feecaa6a4e7450b362227fb607519ed5de",
+        "9476c1f860b25b1248c0904aa1cacb077fb0e9bf738d279d9c16e400ff651ad3",
+        "f82e06ea9d7cd54713e14d4a89ec652b1bc45e1267bcc20ebb4071d2ff2d2af5",
+        "3118389f9a7796aac0e9135e509b777b6d6d25a1383b8ea72f83609c1b61170a",
+        "ae03b66b824b1b0fbe7203c53b0250b5135da8219f2407d17715347e913b8ae2",
+        "fa7b10c0ca006af687482d19ffbc4422180ecf0e5830369774607bdc13d02879"
       ],
       "memberVariantIds": [
         "uigauge-circular",
@@ -4801,49 +4826,12 @@
       ]
     },
     {
-      "candidateId": "candidate.value.073cdd78f302",
+      "candidateId": "candidate.value.25ff824ba3c3",
       "categoryId": "value",
       "categoryDisplayName": "Value",
       "sharingScope": "familyScoped",
       "scopeRationale": "Numeric-control value surface.",
-      "capabilitySha256": "073cdd78f30235f12cc323bca47a161dfd9194745fc3b6fa77fd0fb20b2717a9",
-      "propertyPaths": [
-        "Value",
-        "Limits",
-        "RoundFractionalValues",
-        "ValueDisplayFormat",
-        "AllowEmpty",
-        "Placeholder",
-        "HorizontalAlignment",
-        "LowerLimitInclusive",
-        "UpperLimitInclusive"
-      ],
-      "propertyCapabilitySha256": [
-        "8b9a7ed43b619f2c00328398045041b512a7089ad3a626f416eb151b323ab6f5",
-        "71440c1bae0fe392ed837e08742aeafedc5c5a5673c56ace8d3e01c194d4736b",
-        "7ad3cb028d91348d06bce6752e28169651e16046fa9ca7d419e93f02f230e6b0",
-        "1a4fd97a7543f62915b710e3c7229b7166c2163963b780c59a110cd184f90a0d",
-        "932e8755420e4c7d8127226a58dae8b5af699d247371a31a545d04c6952b9c85",
-        "376651651243e2a76c5bcd18aedce45c13c21b8325ba1fe20d93e4814a98201a",
-        "965eeb89b9888963fd246aac4e452f0640509d81571d58cf5ff33d93f355506a",
-        "32c0038d716a4709d11817bb90baf2e063a7e80cdfc1bda9ec3c7d08e865a88e",
-        "9e42539e343cac698861c2be2a38a4ee47604bb1cd8df458d103171ef2ce8ee9"
-      ],
-      "memberVariantIds": [
-        "uieditfield-numeric"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
-      "candidateId": "candidate.value.3ea0890a5868",
-      "categoryId": "value",
-      "categoryDisplayName": "Value",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Numeric-control value surface.",
-      "capabilitySha256": "3ea0890a58685c07b133ad7b7ccc404b58e211d230084550ed2406cfeae1ac31",
+      "capabilitySha256": "25ff824ba3c3d6dbcc52c55cbb3a8dc2823010da510bd58bc10d48ca051a3f69",
       "propertyPaths": [
         "Value",
         "Limits",
@@ -4857,12 +4845,12 @@
         "UpperLimitInclusive"
       ],
       "propertyCapabilitySha256": [
-        "8b9a7ed43b619f2c00328398045041b512a7089ad3a626f416eb151b323ab6f5",
-        "71440c1bae0fe392ed837e08742aeafedc5c5a5673c56ace8d3e01c194d4736b",
+        "9deb2a86420c19e7eb206b15a59508e6b16f9cdfaa98cc4907a7ae9d1e5176bf",
+        "6933be87dc0e6b8adb567f5e567549cc6a0119572f29fb27a572aee46052253b",
         "241d38b1950c9086a26b5a74d1e0ca7d01b4494e08280618101940f1ecdf8b22",
-        "7ad3cb028d91348d06bce6752e28169651e16046fa9ca7d419e93f02f230e6b0",
+        "70dca1f7305ca05bbf0f30e51f59d16ed621426e6bdd513c6ea6a1b3d18d9226",
         "1a4fd97a7543f62915b710e3c7229b7166c2163963b780c59a110cd184f90a0d",
-        "932e8755420e4c7d8127226a58dae8b5af699d247371a31a545d04c6952b9c85",
+        "76884d4ed991ad7afec85f386fa4ee55ac46fabb305cec70d40fdb5023fa0ec2",
         "376651651243e2a76c5bcd18aedce45c13c21b8325ba1fe20d93e4814a98201a",
         "965eeb89b9888963fd246aac4e452f0640509d81571d58cf5ff33d93f355506a",
         "32c0038d716a4709d11817bb90baf2e063a7e80cdfc1bda9ec3c7d08e865a88e",
@@ -4870,6 +4858,43 @@
       ],
       "memberVariantIds": [
         "uispinner"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
+      "candidateId": "candidate.value.29123678212d",
+      "categoryId": "value",
+      "categoryDisplayName": "Value",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Numeric-control value surface.",
+      "capabilitySha256": "29123678212dd8398d301dd3435d0546c5fe88730bf2db1af6d81e2c35215d7f",
+      "propertyPaths": [
+        "Value",
+        "Limits",
+        "RoundFractionalValues",
+        "ValueDisplayFormat",
+        "AllowEmpty",
+        "Placeholder",
+        "HorizontalAlignment",
+        "LowerLimitInclusive",
+        "UpperLimitInclusive"
+      ],
+      "propertyCapabilitySha256": [
+        "9deb2a86420c19e7eb206b15a59508e6b16f9cdfaa98cc4907a7ae9d1e5176bf",
+        "6933be87dc0e6b8adb567f5e567549cc6a0119572f29fb27a572aee46052253b",
+        "70dca1f7305ca05bbf0f30e51f59d16ed621426e6bdd513c6ea6a1b3d18d9226",
+        "1a4fd97a7543f62915b710e3c7229b7166c2163963b780c59a110cd184f90a0d",
+        "76884d4ed991ad7afec85f386fa4ee55ac46fabb305cec70d40fdb5023fa0ec2",
+        "376651651243e2a76c5bcd18aedce45c13c21b8325ba1fe20d93e4814a98201a",
+        "965eeb89b9888963fd246aac4e452f0640509d81571d58cf5ff33d93f355506a",
+        "32c0038d716a4709d11817bb90baf2e063a7e80cdfc1bda9ec3c7d08e865a88e",
+        "9e42539e343cac698861c2be2a38a4ee47604bb1cd8df458d103171ef2ce8ee9"
+      ],
+      "memberVariantIds": [
+        "uieditfield-numeric"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [

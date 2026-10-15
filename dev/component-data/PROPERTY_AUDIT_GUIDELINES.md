@@ -152,6 +152,9 @@ Record initialization behavior separately in each property's optional
 `application` object. `applyAfter` names prerequisite property paths;
 `nameValue` records verified constructor support (`supported`, `unsupported`,
 or `unknown`); and `effectPolicy` names an allowlisted MATLAB behavior adapter.
+`applyAfter` describes the canonical order for new initialization. It does not
+assert that every reversed sequence is illegal, or authorize moving existing
+source settings. Existing sequences need intermediate and final state checks.
 Absence means no declared ordering, unknown constructor support, and no known
 effect adapter. It does not prove the absence of setter side effects.
 

@@ -173,7 +173,8 @@ classdef SubtreeReparentSourceEdits
                         " = createCallbackFcn(app, @" + callback.HandlerName + ", true);";
                 end
             end
-            for entry = component.Properties
+            entries = macd.model.PropertyApplicationPlanner.forComponent(component, document, registry);
+            for entry = entries
                 if registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments), continue, end
                 if isfield(entry.Metadata, "SubtreeReferenceId"), continue, end
                 if entry.ValueKind ~= "literal"

@@ -63,6 +63,17 @@
                   "property": "Limits"
                 }
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "AllowEmpty",
+                "Limits",
+                "LowerLimitInclusive",
+                "RoundFractionalValues",
+                "UpperLimitInclusive"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "numericValue"
             }
           }
         },
@@ -90,6 +101,11 @@
               "constraints": [],
               "fixedLength": 2,
               "allowsInfinity": true
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "numericValue"
             }
           }
         },
@@ -142,6 +158,15 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Limits",
+                "LowerLimitInclusive",
+                "UpperLimitInclusive"
+              ],
+              "nameValue": "unknown",
+              "effectPolicy": "numericValue"
             }
           }
         },
@@ -195,6 +220,11 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },

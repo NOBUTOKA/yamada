@@ -95,6 +95,20 @@
       "runtimeSetAccess": "public",
       "runtimeObservations": [
         "R2024a preserves only the date when assigned a datetime containing time information; assigning [] is rejected."
+      ],
+      "application": {
+        "applyAfter": [
+          "Limits"
+        ],
+        "nameValue": "unknown",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.datepicker-properties.html",
+          "detail": "A selected datetime must be within Limits; NaT represents no selection. Establish date limits before assigning an explicit date. Date-only normalization is specified separately in the value contract."
+        }
       ]
     },
     {

@@ -1,0 +1,199 @@
+{
+  "artifactVersion": 1,
+  "matlabRelease": "R2024a",
+  "reviewedOn": "2026-10-15",
+  "status": "partial",
+  "scope": "Reviewed initialization rules only. Absence does not assert independence or constructor support. applyAfter describes canonical new initialization, not permission to reorder preserved input.",
+  "rules": [
+    {
+      "variants": ["uidropdown", "uilistbox", "uiknob-discrete", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
+      "path": "Items",
+      "effectPolicy": "itemSelection",
+      "kind": "documentation",
+      "detail": "Items defines the labels available to the control. It participates in selection state, including the association with ItemsData; it is not independent of the current Value."
+    },
+    {
+      "variants": ["uidropdown", "uilistbox", "uiknob-discrete", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
+      "path": "ItemsData",
+      "applyAfter": ["Items"],
+      "effectPolicy": "itemSelection",
+      "kind": "inference",
+      "detail": "Establish item labels before their associated data. Both setters can change selection; the explicit Value is applied last. This is a canonical generation order, not a claim that the reverse setter order is forbidden."
+    },
+    {
+      "variants": ["uiknob-discrete", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
+      "path": "Value",
+      "applyAfter": ["Items", "ItemsData"],
+      "effectPolicy": "itemSelection",
+      "kind": "inference",
+      "detail": "Value must belong to Items, or to ItemsData when nonempty. Establish its domain before assigning a requested selection."
+    },
+    {
+      "variants": ["uidropdown"],
+      "path": "Value",
+      "applyAfter": ["Items", "ItemsData", "Editable"],
+      "effectPolicy": "itemSelection",
+      "kind": "inference",
+      "detail": "Value uses Items or nonempty ItemsData; Editable on additionally permits arbitrary scalar text. Apply the domain and Editable before Value."
+    },
+    {
+      "variants": ["uilistbox"],
+      "path": "Value",
+      "applyAfter": ["Items", "ItemsData", "Multiselect"],
+      "effectPolicy": "itemSelection",
+      "kind": "inference",
+      "detail": "Value uses Items or nonempty ItemsData. Multiselect controls whether multiple elements may be selected. Establish both before assigning Value."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous"],
+      "path": "Value",
+      "applyAfter": ["Limits"],
+      "effectPolicy": "boundedValue",
+      "kind": "inference",
+      "detail": "Each Value element must be within Limits. Changing Limits clamps out-of-range Value elements, so canonical initialization establishes Limits before explicit Value. Gauges intentionally do not share this rule."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous"],
+      "path": "Limits",
+      "effectPolicy": "boundedValue",
+      "kind": "documentation",
+      "detail": "Changing Limits clamps out-of-range Value elements to the nearest bound. This is an implicit setter effect, not another explicit Value occurrence."
+    },
+    {
+      "variants": ["uieditfield-numeric", "uispinner"],
+      "path": "Value",
+      "applyAfter": ["Limits", "LowerLimitInclusive", "UpperLimitInclusive", "RoundFractionalValues", "AllowEmpty"],
+      "effectPolicy": "numericValue",
+      "kind": "inference",
+      "detail": "Limits, inclusive bounds, integer rounding, and AllowEmpty constrain accepted Value. Set them before Value for newly generated controls. Existing setter sequences still require intermediate-state validation."
+    },
+    {
+      "variants": ["uieditfield-numeric", "uispinner"],
+      "path": "Limits",
+      "effectPolicy": "numericValue",
+      "kind": "documentation",
+      "detail": "Changing Limits moves an out-of-range Value to an allowed bound, taking inclusive limits into account."
+    },
+    {
+      "variants": ["uieditfield-numeric", "uispinner"],
+      "path": "RoundFractionalValues",
+      "applyAfter": ["Limits", "LowerLimitInclusive", "UpperLimitInclusive"],
+      "effectPolicy": "numericValue",
+      "kind": "inference",
+      "detail": "Changing rounding from off to on rounds the existing Value within the configured limits and fails if no integer is allowed. Establish the range before enabling rounding."
+    },
+    {
+      "variants": ["uidatepicker"],
+      "path": "Value",
+      "applyAfter": ["Limits"],
+      "kind": "inference",
+      "detail": "A selected datetime must be within Limits; NaT represents no selection. Establish date limits before assigning an explicit date. Date-only normalization is specified separately in the value contract."
+    },
+    {
+      "variants": ["uifigure"],
+      "path": "Resize",
+      "applyAfter": ["WindowStyle"],
+      "kind": "documentation",
+      "detail": "The WindowStyle section explicitly instructs setting WindowStyle before Resize or Position."
+    },
+    {
+      "variants": ["uifigure"],
+      "path": "Position",
+      "applyAfter": ["WindowStyle", "Units"],
+      "effectPolicy": "layout",
+      "kind": "documentation",
+      "detail": "Set WindowStyle first. Set Units before Position to interpret the requested coordinates in the requested units; changing Units later converts existing coordinates."
+    },
+    {
+      "variants": ["axes", "geoaxes", "polaraxes", "uiaxes", "uibuttongroup", "uipanel", "uitab", "uitabgroup", "uitable"],
+      "path": "Position",
+      "applyAfter": ["Units"],
+      "effectPolicy": "layout",
+      "kind": "inference",
+      "detail": "Position is interpreted in Units. Establish coordinate units before explicit numeric coordinates, rather than converting coordinates assigned in the old units."
+    },
+    {
+      "variants": ["axes", "geoaxes", "polaraxes", "uiaxes", "uibuttongroup", "uipanel", "uitable"],
+      "path": "FontSize",
+      "applyAfter": ["FontUnits"],
+      "kind": "inference",
+      "detail": "FontSize is interpreted in FontUnits. Establish the unit before assigning an explicit font size."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "path": "MajorTicks",
+      "applyAfter": ["Limits"],
+      "effectPolicy": "tickMode",
+      "kind": "inference",
+      "detail": "Establish the scale before explicit tick locations. Setting MajorTicks changes MajorTicksMode to manual."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "path": "MinorTicks",
+      "applyAfter": ["Limits"],
+      "effectPolicy": "tickMode",
+      "kind": "inference",
+      "detail": "Establish the scale before explicit minor tick locations. Setting MinorTicks changes MinorTicksMode to manual."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "path": "MajorTickLabels",
+      "applyAfter": ["MajorTicks"],
+      "effectPolicy": "tickMode",
+      "kind": "inference",
+      "detail": "Set explicit tick locations before matching labels. MajorTicks sets MajorTicksMode to manual; the documentation warns about labels while ticks are automatic. Setting labels changes MajorTickLabelsMode to manual. Mode-only cases need state-aware handling, not a universal opposite edge."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "path": "MajorTicksMode",
+      "applyAfter": ["MajorTicks", "MajorTickLabels"],
+      "kind": "inference",
+      "detail": "Restore a requested final mode after explicit tick locations and labels. This preserves an explicit auto request; intermediate manual-mode requirements are a separate state-aware concern."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "path": "MinorTicksMode",
+      "applyAfter": ["MinorTicks"],
+      "kind": "inference",
+      "detail": "Setting MinorTicks forces manual mode. Apply an explicitly requested final mode after its tick values."
+    },
+    {
+      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "path": "MajorTickLabelsMode",
+      "applyAfter": ["MajorTickLabels"],
+      "kind": "inference",
+      "detail": "Setting MajorTickLabels forces manual mode. Apply an explicitly requested final label mode after its labels."
+    }
+  ],
+  "contractCorrections": [
+    {
+      "variants": ["uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "path": "Value",
+      "removeConstraintKinds": ["withinLimitsOf"],
+      "kind": "documentation",
+      "detail": "The Value section explicitly permits values outside Limits and states that changing Limits has no effect on Value. Remove the inherited slider-like withinLimitsOf validation constraint."
+    }
+  ],
+  "exclusions": [
+    {
+      "variants": ["uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "path": "Value",
+      "detail": "Gauge Value may be outside Limits. Changing Limits does not change Value; it can move the needle off scale. Do not infer a boundedValue effect or within-limits constraint from slider behavior."
+    },
+    {
+      "variants": ["uidropdown", "uilistbox", "uiknob-discrete"],
+      "path": "ItemsData",
+      "detail": "The documentation permits lengths different from Items: excess data is ignored and missing data hides unmatched labels. The old sameLengthAs contract needs a coordinated validator and editor correction, not another application dependency."
+    },
+    {
+      "variants": ["uitable"],
+      "path": "ColumnFormat",
+      "detail": "A table-valued Data forbids ColumnFormat. An ordering edge alone cannot make this combination valid. Keep this as a value compatibility requirement for the state validator."
+    },
+    {
+      "variants": ["uieditfield-text"],
+      "path": "CharacterLimits",
+      "detail": "Changing CharacterLimits can reset Value to empty text. A dedicated text effect resolver is required before this interaction is promoted as a complete runtime policy."
+    }
+  ]
+}

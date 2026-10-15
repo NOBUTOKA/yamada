@@ -114,7 +114,8 @@ classdef PreviewRenderer < handle
 
             % Isolate unsupported preview assignments as nonblocking diagnostics.
             definition = obj.Registry.get(component.Factory, component.CreationArguments);
-            entries = obj.orderedProperties(component.Properties, definition);
+            entries = macd.model.PropertyApplicationPlanner.forPreview( ...
+                component, document, obj.Registry);
             for index = 1:numel(entries)
                 entry = entries(index);
                 if entry.ValueKind ~= "literal" || ~entry.IsEditable
@@ -182,46 +183,6 @@ classdef PreviewRenderer < handle
                 path = requested;
             end
         end
-        function orderedEntries = orderedProperties(obj, entries, definition)
-            % orderedProperties Apply selection dependencies before their Value.
-            %   Source/model insertion order is normally preserved.  Item-backed
-            %   controls are the exception: MATLAB validates Value against Items
-            %   (or ItemsData), and ListBox validates it against Multiselect.
-            arguments (Input)
-                obj (1, 1) macd.ui.PreviewRenderer
-                entries macd.model.PropertyEntry
-                definition (1, 1) macd.model.ComponentDefinition
-            end
-            arguments (Output)
-                orderedEntries macd.model.PropertyEntry
-            end
-
-            orderedEntries = entries;
-            valueDefinition = definition.getProperty("Value");
-            if isempty(obj.Registry)
-                return
-            end
-            if isempty(valueDefinition) || valueDefinition.Editor ~= "itemSelection"
-                return
-            end
-
-            priority = 2 * ones(1, numel(entries));
-            for index = 1:numel(entries)
-                switch entries(index).Path
-                    case "Items"
-                        priority(index) = 1;
-                    case "ItemsData"
-                        priority(index) = 2;
-                    case "Multiselect"
-                        priority(index) = 3;
-                    case "Value"
-                        priority(index) = 4;
-                end
-            end
-            [~, order] = sortrows([priority(:), (1:numel(entries))'], [1 2]);
-            orderedEntries = entries(order);
-        end
-
 
         function createPreviewSurface(obj, root, parent)
             % createPreviewSurface Place an actual-size client area in the scroll host.

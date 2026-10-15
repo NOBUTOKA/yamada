@@ -28,6 +28,9 @@ function Assert-PolicyFailure {
 }
 
 # Cover normalization and invalid symbols independently of the generator.
+$emptyPolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{})
+Assert-Condition ($emptyPolicy.nameValue -ceq 'unknown' -and $emptyPolicy.effectPolicy -ceq 'none' -and
+    $emptyPolicy.applyAfter.Count -eq 0) 'An empty optional policy did not retain conservative defaults.'
 $policy = ConvertTo-ApplicationPolicy ([pscustomobject]@{
     applyAfter = @('ItemsData', 'Items'); nameValue = 'supported'; effectPolicy = 'itemSelection'
 })
@@ -72,6 +75,9 @@ try {
     Assert-Condition (($promoted.metadata.application.applyAfter -join ',') -ceq 'Items,ItemsData') 'Application dependencies were lost during promotion.'
     Assert-Condition ($promoted.metadata.application.effectPolicy -ceq 'itemSelection') 'Effect policy was lost during promotion.'
     Assert-Condition ($null -eq $promoted.metadata.PSObject.Properties['applicationEvidence']) 'Evidence leaked into runtime metadata.'
+    $gauge = Get-Content -Raw -LiteralPath (Join-Path $catalogRoot 'components/uigauge-circular.json') | ConvertFrom-Json
+    Assert-Condition ($gauge.capabilities.overlayShapesByStyle.ninetydegree -ceq 'quarterCircle' -and
+        $gauge.capabilities.overlayShapesByStyle.semicircular -ceq 'semicircle') 'Promotion lost reviewed gauge style silhouettes.'
     $first = [IO.File]::ReadAllBytes((Join-Path $catalogRoot 'components/uidropdown.json'))
     & (Join-Path $toolRoot 'PromoteGroupingToRuntimeCatalog.ps1') -ReleaseDirectory $releaseRoot -CatalogRoot $catalogRoot | Out-Null
     $second = [IO.File]::ReadAllBytes((Join-Path $catalogRoot 'components/uidropdown.json'))

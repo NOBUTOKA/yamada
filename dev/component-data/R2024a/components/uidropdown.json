@@ -85,7 +85,28 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Editable",
+          "Items",
+          "ItemsData"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "itemSelection"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.dropdown-properties.html",
+          "detail": "Value uses Items or nonempty ItemsData; Editable on additionally permits arbitrary scalar text. Apply the domain and Editable before Value."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#itemDomainsAreEstablishedBeforeSelection",
+          "detail": "Two labels with numeric item data [10 20] and explicit Value 20 give the same result with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "Items",
@@ -116,7 +137,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "itemSelection"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.dropdown-properties.html",
+          "detail": "Items defines the labels available to the control. It participates in selection state, including the association with ItemsData; it is not independent of the current Value."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#itemDomainsAreEstablishedBeforeSelection",
+          "detail": "Two labels with numeric item data [10 20] and explicit Value 20 give the same result with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "ItemsData",
@@ -147,7 +185,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Items"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "itemSelection"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.dropdown-properties.html",
+          "detail": "Establish item labels before their associated data. Both setters can change selection; the explicit Value is applied last. This is a canonical generation order, not a claim that the reverse setter order is forbidden."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#itemDomainsAreEstablishedBeforeSelection",
+          "detail": "Two labels with numeric item data [10 20] and explicit Value 20 give the same result with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "ValueIndex",

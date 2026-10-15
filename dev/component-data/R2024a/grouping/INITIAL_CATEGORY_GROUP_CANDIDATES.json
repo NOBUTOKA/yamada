@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "42d807016b7a50f5d1298cc60725f26e83d7f7917f4d75a462de9abbf606a7e8",
+  "inputSha256": "0870d4bf7f50b1f7d1853ff87ad9b03f2bfc7da5b39afae4ef18442a4d8a138d",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
@@ -529,12 +529,12 @@
       ]
     },
     {
-      "candidateId": "candidate.font.aea229d3c60f",
+      "candidateId": "candidate.font.dc62be89557b",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "aea229d3c60f0d396a2197aa95c2bc49465f79dd917012dbc38be2dcb32f615f",
+      "capabilitySha256": "dc62be89557b5813b0367e2fac7f75720f6d7e721f47c9eafe28750706e60e2b",
       "propertyPaths": [
         "FontName",
         "FontSize",
@@ -544,10 +544,10 @@
       ],
       "propertyCapabilitySha256": [
         "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "98064d96e9e9dcbaf2a847066812282eb125a48c0aa959476635aad81d426c45",
+        "5887e40ddffcb74e50888889ace8c2651aaf4f44183bd5d4283857b85f407be1",
         "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
         "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "d55ef03d859adcb0924cec9f74a3b80c417ed998ac5a105b7a81dd72f69cffe6"
+        "13ab600d033b3757b655035ed44d514caebce887b13554b41da932b885984cf0"
       ],
       "memberVariantIds": [
         "uibuttongroup",
@@ -1159,6 +1159,35 @@
       ]
     },
     {
+      "candidateId": "candidate.position.1d833d1c6b04",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "1d833d1c6b04320b732c46ca6ccf628e05682c5538cc5338bdc1be8b21ab2848",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Units"
+      ],
+      "propertyCapabilitySha256": [
+        "ff3678d5500b65f90653a0f2457d324e9ac90abda435cac5465719a21dabdb09",
+        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
+        "9af52318fb7115a75734e4a9b1ee7de6161074f61be637208730c95aae9d69f6",
+        "786029f7902c8d22fad220cd339833ff77e8c53c70f5f23998a022a8a4601b6a"
+      ],
+      "memberVariantIds": [
+        "uibuttongroup",
+        "uipanel",
+        "uitable"
+      ],
+      "reuseCount": 3,
+      "documentedCategoryOrders": [
+        5
+      ]
+    },
+    {
       "candidateId": "candidate.position.67c16a633bd7",
       "categoryId": "position",
       "categoryDisplayName": "Position",
@@ -1274,37 +1303,6 @@
       ]
     },
     {
-      "candidateId": "candidate.position.d7f947c6c3d8",
-      "categoryId": "position",
-      "categoryDisplayName": "Position",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "d7f947c6c3d86ed63e656f8cd534499429c237862358228637f8b5a731e430ea",
-      "propertyPaths": [
-        "Position",
-        "InnerPosition",
-        "OuterPosition",
-        "Units"
-      ],
-      "propertyCapabilitySha256": [
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
-        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "9af52318fb7115a75734e4a9b1ee7de6161074f61be637208730c95aae9d69f6",
-        "65f3327f00882d204c5b92940c53af32453173bb63bd6817994b3a75f832b00e"
-      ],
-      "memberVariantIds": [
-        "uibuttongroup",
-        "uipanel",
-        "uitabgroup",
-        "uitable"
-      ],
-      "reuseCount": 4,
-      "documentedCategoryOrders": [
-        3,
-        5
-      ]
-    },
-    {
       "candidateId": "candidate.rulers.efb74ddb42a0",
       "categoryId": "rulers",
       "categoryDisplayName": "Rulers",
@@ -1377,12 +1375,12 @@
       ]
     },
     {
-      "candidateId": "candidate.switch.1222d00f3c2a",
+      "candidateId": "candidate.switch.37fe038231b4",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
       "sharingScope": "familyScoped",
       "scopeRationale": "Switch-style settings.",
-      "capabilitySha256": "1222d00f3c2afa1aa6da443312929937941c63026595587ebc2d74544e9f372a",
+      "capabilitySha256": "37fe038231b4afcb340089555b01239f49f23cfe2ca9209a93a8d780977c2cd8",
       "propertyPaths": [
         "Value",
         "Items",
@@ -1391,9 +1389,9 @@
         "Orientation"
       ],
       "propertyCapabilitySha256": [
-        "bf4f47248bc366d7209fac2ca298fc8566f96da1d02a7195b14896eac18fcc67",
-        "61a48ed368999826c2e45597f1b647e8cbca210a88f12412e884a2d1afcef6a6",
-        "0f656ff564f830a8ca7a7c6cb632d2d80c52db92810d2d9dea7adf53a2278d4c",
+        "6ddc332f61f353b1b40ff5d02bf5fec31390efa8f686b62370125084a97ab351",
+        "232561cb47d8f689b72aff0007d4006f04c9608addc12b949b3ea0dd9960e7b3",
+        "d77dcdb563e599ba49e6fcb6888f4650acd11bef18ebfd81efead95099d8b76d",
         "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
         "683c12e648b12bb238aeece0fcb5bf8f8401022fee168f2653b81b5ada390553"
       ],
@@ -1407,12 +1405,12 @@
       ]
     },
     {
-      "candidateId": "candidate.ticks.54cad1cfbd30",
+      "candidateId": "candidate.ticks.072186202cdc",
       "categoryId": "ticks",
       "categoryDisplayName": "Ticks",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
-      "capabilitySha256": "54cad1cfbd303239327bd7edaae7336733e60990a982e112f17700f33a7d7edc",
+      "capabilitySha256": "072186202cdcf3abbf8abe743e2cab1c6aa2a70244023c3e6693734579ddb378",
       "propertyPaths": [
         "MajorTicks",
         "MajorTicksMode",
@@ -1422,12 +1420,12 @@
         "MinorTicksMode"
       ],
       "propertyCapabilitySha256": [
-        "dc4d3f846dbc38b6c2bd4d46c4ec9e40f272b7557a9d4ce905f0af00b089f6d7",
-        "2e974c395daed814b784c09824851edd74a3f01766c82de026e767e5bc9c4475",
-        "bd85261f7f549483a2110abe09f4be141122d54dd5ad6fa7fa3ed67299f43500",
-        "3497d50c0a272995eb3ddd4a9ec36752875b674fa9289ddccefdb0f780935e36",
-        "c7d711151bce17fc890b56fd02106987bf4d5ed8f32aa2088bc6d4d653bd9e6a",
-        "c7e94d6caebe53a09229639e46dcd0c278bf8c8576521c57d9607882024b63dc"
+        "0d84271c586485afecec05845d77b2feecaa6a4e7450b362227fb607519ed5de",
+        "9476c1f860b25b1248c0904aa1cacb077fb0e9bf738d279d9c16e400ff651ad3",
+        "f82e06ea9d7cd54713e14d4a89ec652b1bc45e1267bcc20ebb4071d2ff2d2af5",
+        "3118389f9a7796aac0e9135e509b777b6d6d25a1383b8ea72f83609c1b61170a",
+        "ae03b66b824b1b0fbe7203c53b0250b5135da8219f2407d17715347e913b8ae2",
+        "fa7b10c0ca006af687482d19ffbc4422180ecf0e5830369774607bdc13d02879"
       ],
       "memberVariantIds": [
         "uigauge-circular",

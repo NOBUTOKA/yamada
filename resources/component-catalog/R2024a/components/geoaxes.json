@@ -315,6 +315,13 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "FontUnits"
+              ],
+              "nameValue": "unknown",
+              "effectPolicy": "none"
             }
           }
         },
@@ -1728,6 +1735,13 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Units"
+              ],
+              "nameValue": "unknown",
+              "effectPolicy": "layout"
             }
           }
         },

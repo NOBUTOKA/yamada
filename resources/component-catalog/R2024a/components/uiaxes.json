@@ -71,6 +71,13 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "FontUnits"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
@@ -304,6 +311,11 @@
                 "normalized",
                 "points"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
@@ -3301,6 +3313,13 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Units"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "layout"
             }
           }
         },
@@ -3436,6 +3455,11 @@
                 "points",
                 "characters"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },

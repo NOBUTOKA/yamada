@@ -88,7 +88,30 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "AllowEmpty",
+          "Limits",
+          "LowerLimitInclusive",
+          "RoundFractionalValues",
+          "UpperLimitInclusive"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "numericValue"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.spinner-properties.html",
+          "detail": "Limits, inclusive bounds, integer rounding, and AllowEmpty constrain accepted Value. Set them before Value for newly generated controls. Existing setter sequences still require intermediate-state validation."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#rangesAndNumericOptionsPrecedeRequestedValues",
+          "detail": "Limits and explicit numeric Value agree across construction modes. A separate case assigns empty Value after enabling AllowEmpty and verifies constructor agreement. Rounding and exclusive-bound combinations are not covered by this constructor check."
+        }
+      ]
     },
     {
       "path": "Limits",
@@ -117,7 +140,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "numericValue"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.spinner-properties.html",
+          "detail": "Changing Limits moves an out-of-range Value to an allowed bound, taking inclusive limits into account."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#rangesAndNumericOptionsPrecedeRequestedValues",
+          "detail": "Limits and explicit numeric Value agree across construction modes. A separate case assigns empty Value after enabling AllowEmpty and verifies constructor agreement. Rounding and exclusive-bound combinations are not covered by this constructor check."
+        }
+      ]
     },
     {
       "path": "Step",
@@ -171,7 +211,23 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Limits",
+          "LowerLimitInclusive",
+          "UpperLimitInclusive"
+        ],
+        "nameValue": "unknown",
+        "effectPolicy": "numericValue"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.spinner-properties.html",
+          "detail": "Changing rounding from off to on rounds the existing Value within the configured limits and fails if no integer is allowed. Establish the range before enabling rounding."
+        }
+      ]
     },
     {
       "path": "ValueDisplayFormat",
@@ -229,7 +285,19 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#rangesAndNumericOptionsPrecedeRequestedValues",
+          "detail": "Limits and explicit numeric Value agree across construction modes. A separate case assigns empty Value after enabling AllowEmpty and verifies constructor agreement. Rounding and exclusive-bound combinations are not covered by this constructor check."
+        }
+      ]
     },
     {
       "path": "Placeholder",

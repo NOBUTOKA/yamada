@@ -88,8 +88,10 @@ classdef NewAppGenerator
                     strjoin(factoryArguments, ", ")); %#ok<AGROW>
 
                 % Encode only safe literals while retaining property paths.
-                for propertyIndex = 1:numel(component.Properties)
-                    entry = component.Properties(propertyIndex);
+                entries = macd.model.PropertyApplicationPlanner.forComponent( ...
+                    component, document, obj.Registry);
+                for propertyIndex = 1:numel(entries)
+                    entry = entries(propertyIndex);
                     if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
                         continue
                     end

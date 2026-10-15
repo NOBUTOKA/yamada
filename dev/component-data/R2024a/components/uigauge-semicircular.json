@@ -80,12 +80,7 @@
         "kind": "number",
         "shape": "scalar",
         "allowsEmpty": false,
-        "constraints": [
-          {
-            "kind": "withinLimitsOf",
-            "property": "Limits"
-          }
-        ],
+        "constraints": [],
         "matlabClasses": "double"
       },
       "affectsDisplay": true,
@@ -95,7 +90,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "The Value section explicitly permits values outside Limits and states that changing Limits has no effect on Value. Remove the inherited slider-like withinLimitsOf validation constraint."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#gaugesAllowOffScaleValuesWithoutClamping",
+          "detail": "Value 20 remains 20 when Limits becomes [50 100], including the constructor case. A subsequent Value 150 is also accepted."
+        }
+      ]
     },
     {
       "path": "Limits",
@@ -123,7 +135,19 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "Orientation",
@@ -275,7 +299,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Limits"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "tickMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Establish the scale before explicit tick locations. Setting MajorTicks changes MajorTicksMode to manual."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MajorTicksMode",
@@ -307,7 +350,27 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MajorTickLabels",
+          "MajorTicks"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Restore a requested final mode after explicit tick locations and labels. This preserves an explicit auto request; intermediate manual-mode requirements are a separate state-aware concern."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MajorTickLabels",
@@ -339,7 +402,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MajorTicks"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "tickMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Set explicit tick locations before matching labels. MajorTicks sets MajorTicksMode to manual; the documentation warns about labels while ticks are automatic. Setting labels changes MajorTickLabelsMode to manual. Mode-only cases need state-aware handling, not a universal opposite edge."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MajorTickLabelsMode",
@@ -371,7 +453,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MajorTickLabels"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Setting MajorTickLabels forces manual mode. Apply an explicitly requested final label mode after its labels."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MinorTicks",
@@ -397,7 +498,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Limits"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "tickMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Establish the scale before explicit minor tick locations. Setting MinorTicks changes MinorTicksMode to manual."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MinorTicksMode",
@@ -429,7 +549,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MinorTicks"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Setting MinorTicks forces manual mode. Apply an explicitly requested final mode after its tick values."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "FontName",

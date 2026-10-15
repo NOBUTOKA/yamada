@@ -295,8 +295,10 @@ classdef RoundTripGenerator
                             " = createCallbackFcn(app, @" + callback.HandlerName + ", true);";
                     end
                 end
-                for propertyIndex = 1:numel(component.Properties)
-                    entry = component.Properties(propertyIndex);
+                entries = macd.model.PropertyApplicationPlanner.forComponent( ...
+                    component, document, obj.Registry);
+                for propertyIndex = 1:numel(entries)
+                    entry = entries(propertyIndex);
                     if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
                         continue
                     end

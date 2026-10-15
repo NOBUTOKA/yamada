@@ -199,7 +199,22 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Units",
+          "WindowStyle"
+        ],
+        "nameValue": "unknown",
+        "effectPolicy": "layout"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.figureappd-properties.html",
+          "detail": "Set WindowStyle first. Set Units before Position to interpret the requested coordinates in the requested units; changing Units later converts existing coordinates."
+        }
+      ]
     },
     {
       "path": "Units",
@@ -294,7 +309,21 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "WindowStyle"
+        ],
+        "nameValue": "unknown",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.figureappd-properties.html",
+          "detail": "The WindowStyle section explicitly instructs setting WindowStyle before Resize or Position."
+        }
+      ]
     },
     {
       "path": "AutoResizeChildren",

@@ -93,7 +93,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Limits"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "boundedValue"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rangeslider-properties.html",
+          "detail": "Each Value element must be within Limits. Changing Limits clamps out-of-range Value elements, so canonical initialization establishes Limits before explicit Value. Gauges intentionally do not share this rule."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#rangesAndNumericOptionsPrecedeRequestedValues",
+          "detail": "Limits [120 200] and Value 150, or range Value [140 180], are accepted by both canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "Limits",
@@ -121,7 +140,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "boundedValue"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rangeslider-properties.html",
+          "detail": "Changing Limits clamps out-of-range Value elements to the nearest bound. This is an implicit setter effect, not another explicit Value occurrence."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "Orientation",
@@ -238,7 +274,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Limits"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "tickMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rangeslider-properties.html",
+          "detail": "Establish the scale before explicit tick locations. Setting MajorTicks changes MajorTicksMode to manual."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MajorTicksMode",
@@ -270,7 +325,27 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MajorTickLabels",
+          "MajorTicks"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rangeslider-properties.html",
+          "detail": "Restore a requested final mode after explicit tick locations and labels. This preserves an explicit auto request; intermediate manual-mode requirements are a separate state-aware concern."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MajorTickLabels",
@@ -302,7 +377,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MajorTicks"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "tickMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rangeslider-properties.html",
+          "detail": "Set explicit tick locations before matching labels. MajorTicks sets MajorTicksMode to manual; the documentation warns about labels while ticks are automatic. Setting labels changes MajorTickLabelsMode to manual. Mode-only cases need state-aware handling, not a universal opposite edge."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MajorTickLabelsMode",
@@ -334,7 +428,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MajorTickLabels"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rangeslider-properties.html",
+          "detail": "Setting MajorTickLabels forces manual mode. Apply an explicitly requested final label mode after its labels."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MinorTicks",
@@ -360,7 +473,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "Limits"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "tickMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rangeslider-properties.html",
+          "detail": "Establish the scale before explicit minor tick locations. Setting MinorTicks changes MinorTicksMode to manual."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "MinorTicksMode",
@@ -392,7 +524,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MinorTicks"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.rangeslider-properties.html",
+          "detail": "Setting MinorTicks forces manual mode. Apply an explicitly requested final mode after its tick values."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#explicitFinalModesSurviveTickSetterEffects",
+          "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
+        }
+      ]
     },
     {
       "path": "FontName",

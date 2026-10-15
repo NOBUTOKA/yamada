@@ -12,7 +12,7 @@ function ConvertTo-ApplicationPolicy {
     if ($null -eq $Policy -or $Policy -isnot [pscustomobject]) {
         throw "$Context must be an application policy object."
     }
-    foreach ($field in $Policy.PSObject.Properties.Name) {
+    foreach ($field in @($Policy.PSObject.Properties | ForEach-Object Name)) {
         if ($field -notin @('applyAfter', 'nameValue', 'effectPolicy')) {
             throw "$Context contains unknown field '$field'."
         }

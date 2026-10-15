@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "8d7c2fff80d305b0423f726617cdb5b367e24c07",
-  "inputSha256": "42d807016b7a50f5d1298cc60725f26e83d7f7917f4d75a462de9abbf606a7e8",
+  "ledgerBaselineGitCommit": "730a7c085bbea17b2d29c6a4e1f1622a705f07b0",
+  "inputSha256": "0870d4bf7f50b1f7d1853ff87ad9b03f2bfc7da5b39afae4ef18442a4d8a138d",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -77,19 +77,19 @@
     },
     {
       "path": "components/axes.json",
-      "sha256": "389285dc714607ad95972640e68a26d7668e07946e65f62acffce530fff7744f"
+      "sha256": "0dcf1ac8b459752241fcaf4e60b239f946113900542d86ff15efb58ca8b7c248"
     },
     {
       "path": "components/geoaxes.json",
-      "sha256": "6ef6eac7cd27e2a50164e37d63c9ebad77d4446556c738a5ca17e6a274dd4bef"
+      "sha256": "c55be2ec1d704c57707d16a8fb0994b86153306b760884dc179f4923827a46a6"
     },
     {
       "path": "components/polaraxes.json",
-      "sha256": "a3737831909e8548539d6dda5d0a0f23e6f1d71df7d0ffb4ba0a63453bbc793a"
+      "sha256": "ca6e471a4061ed8bf9b3b1ab45263764f84621ec5b4ae7908ec53fd1c3b1fca7"
     },
     {
       "path": "components/uiaxes.json",
-      "sha256": "26392e4f7c1208c0e5c1d54b8cd621e4aef8ea5fcc8c10d8b0852040692fa1e7"
+      "sha256": "8d552b8b1d005f9214e1c5e0ebd9c2c4168d9c552ab2b4e97252badbf70d4aee"
     },
     {
       "path": "components/uibutton-push.json",
@@ -101,7 +101,7 @@
     },
     {
       "path": "components/uibuttongroup.json",
-      "sha256": "26076943c94e0c73787fc1bcfb2d4c420ce25cc04975359ab14194f4f1f77a61"
+      "sha256": "939fc15c5539075be7dae1b13cb51ad54b4063a0d7fa732bec3f584b5ea6e718"
     },
     {
       "path": "components/uicheckbox.json",
@@ -117,15 +117,15 @@
     },
     {
       "path": "components/uidatepicker.json",
-      "sha256": "9e171dbf68dd63e45e01a11bbdee9718769c196d16f151b18d4b443b3bf3f91a"
+      "sha256": "1f9241951f7648c4974ff410671e0df9e81324b3e1db4a9c845c3a8a1d8784ba"
     },
     {
       "path": "components/uidropdown.json",
-      "sha256": "c491fd326f1d63458c2687edb018765d767992158fbcfaab6bc87c245ef8640c"
+      "sha256": "e8039d7aff6d2616ddd2323307b44ecabce7ffd8eee571f05b09919bb0ea60cc"
     },
     {
       "path": "components/uieditfield-numeric.json",
-      "sha256": "e652820649bbe2fe9c0b90a3def3ddb813e0b732f5b273be6d93c17ddb51a5c7"
+      "sha256": "4af1447a7eae22e5770170e73dd0c3bde30be832d36a865ca1c3849cf18b4571"
     },
     {
       "path": "components/uieditfield-text.json",
@@ -133,27 +133,27 @@
     },
     {
       "path": "components/uifigure.json",
-      "sha256": "24cc7ca2159f75159d64e5ff215b75ccb983f16489831930442bec27ca7c347d"
+      "sha256": "6c10a26994b2d1bdb5030b5e9fcfb0e7dbd175daee34451a61736818fb316e00"
     },
     {
       "path": "components/uigauge-circular.json",
-      "sha256": "9150ced61782285ada79c99f36224043b80b15249e38310334728ac107807aaf"
+      "sha256": "dbfa19770c15cf945c2bc9aca88cae70cfd977e7a6064a69347091c5d24c7b6c"
     },
     {
       "path": "components/uigauge-linear.json",
-      "sha256": "8e54fbb20942826e9116d31883cff09e16014f2ef5b34b7f785b3b7253e902a9"
+      "sha256": "704f1dd317b5801cd50fdc0e1f11ad8a327267f9e26857ea06a5c5ef5696547e"
     },
     {
       "path": "components/uigauge-ninetydegree.json",
-      "sha256": "080446fb02a3b2539a7f860f6511af3e8e5d68cc0e18f858877574796ba0f97d"
+      "sha256": "44dff6dbf4eabaa4ad0f9c499da67c18e6321800d3460109c3cf5815d90160a4"
     },
     {
       "path": "components/uigauge-semicircular.json",
-      "sha256": "97fac1c36274b2829d06644f32aeb6cb09e8c43f7aedcf317a5c86961cc10209"
+      "sha256": "25cd5c104265a62b774adcc5d58f9e03fa364add01cf7844f7a34dde857e82f4"
     },
     {
       "path": "components/uigridlayout.json",
-      "sha256": "cb26c150a0e652f83d8ca11203e6e9b54bf68c85e4ba21319ae815a5b0d8dd3f"
+      "sha256": "4b147bf652dadb189819d2795081f25e47d106d615dd07ec63ab1c62c0c55b2c"
     },
     {
       "path": "components/uihtml.json",
@@ -169,11 +169,11 @@
     },
     {
       "path": "components/uiknob-continuous.json",
-      "sha256": "7503b9ef78579543283298f688cda28121d9190b75601bc5e524ddc3041c59ac"
+      "sha256": "8d9f11f28ce260523e8c333bf4e33c3c9b5c86b72c84c4bf50638272ae3e20d7"
     },
     {
       "path": "components/uiknob-discrete.json",
-      "sha256": "681d37366582aa18ecd399e84c4ac7f66b67fadf6befc0e21c1d35713ed41925"
+      "sha256": "49ec97f6f7d76cdf5cfa92224e7e10f8d6540651807f020d5cc9e91384e7c256"
     },
     {
       "path": "components/uilabel.json",
@@ -185,7 +185,7 @@
     },
     {
       "path": "components/uilistbox.json",
-      "sha256": "7112ba2756a6cd10b767a94bc04e2ae641bf4ec985e6b1cfc810928eecc07bce"
+      "sha256": "daa8f4be968130a8e7dd746655538f31f72ab916352ace184b797d409aea850c"
     },
     {
       "path": "components/uimenu.json",
@@ -193,7 +193,7 @@
     },
     {
       "path": "components/uipanel.json",
-      "sha256": "3b1e34f999b692e043a8b5519a734c8bb47828251d0d41e32f6985766d5ac94a"
+      "sha256": "4fdbb8d4345b6707a92ef13d71b9572b4bf3c1cbca702bcae8121113635ff30a"
     },
     {
       "path": "components/uipushtool.json",
@@ -205,39 +205,39 @@
     },
     {
       "path": "components/uislider-range.json",
-      "sha256": "1756fd9cbdd0f3244c73f84bee41ea2ac2f343fb64f1ddbc4bc97d9b6152ec9e"
+      "sha256": "d0998b59e115b22a259ca36acb8292be3af4f2e0f3f24c07c94c0e34c4f087db"
     },
     {
       "path": "components/uislider-slider.json",
-      "sha256": "f42b7ef04df8f357b2b336e49a0bf5bb43fe7e33b06d6102139e702ee69aecb7"
+      "sha256": "7c468a557ccd4310053f8587d25d13c92dcac7c0e111e344d8e3e4496044676f"
     },
     {
       "path": "components/uispinner.json",
-      "sha256": "fa5c5092e7b84694169b8e4802b332c6eeede5734f12bb544c48478333b03952"
+      "sha256": "c96111279ea2bbe00d68498256a622f01c393076c401b1df612d92190f235d37"
     },
     {
       "path": "components/uiswitch-rocker.json",
-      "sha256": "b604894dba856a433b82df3afa4a6e7a9b364b945c1e12809562ccb9fed9613e"
+      "sha256": "57a420bd89690810467a4f907c0a0676fda5161411b2ca7f6f11f7f9687120c3"
     },
     {
       "path": "components/uiswitch-slider.json",
-      "sha256": "2788d4c1e6d9364475b6abc001076f45ee01195484a7a077f5fbbbfab5d479cb"
+      "sha256": "49109a3fdee2f7156f817c8a291551532b6d03737bcb3120476bfee7b772b938"
     },
     {
       "path": "components/uiswitch-toggle.json",
-      "sha256": "3a2981f7639eb769bab99d68498f496821e775a153a910ca55ec1f08980b5552"
+      "sha256": "8e4f60eb8e4edd484daf265f5c6481551103e4a2b2774cc00b77647c2eb3d0e5"
     },
     {
       "path": "components/uitab.json",
-      "sha256": "c0000f25c4146bfb792328be99cd1c8f048568e898f8432a388adbc48c7d1acb"
+      "sha256": "f952e695b1886f286b87c44c9a32ca17785f6b624c91914f4b433cf3aa3c85ec"
     },
     {
       "path": "components/uitabgroup.json",
-      "sha256": "e3bdc17c6e6ed03cbb7ec63ddb0a81281423816bf75aaf6d8abaec4c923a1119"
+      "sha256": "2b440df0416d1085d4afd34dbe2dde45633316684de52cc5bd01f08eb5fadfa0"
     },
     {
       "path": "components/uitable.json",
-      "sha256": "ef5498855b5f8b992403b3fa5f64f3cfb925846a85c2b71104140d1b51c1c46f"
+      "sha256": "aab1d78ae15878c53e736bc813b5105eff0776c6391966d9d1b450186ceaa494"
     },
     {
       "path": "components/uitextarea.json",
@@ -273,7 +273,7 @@
     },
     {
       "path": "schema.json",
-      "sha256": "b9305a13516cc5aa60432a85e23888a1e5685ea48e216d19576effa294575eca"
+      "sha256": "284e2a1c746b32fb8d08638a72d06bea8c8c17dbe8f006975da995875b0b36fd"
     }
   ],
   "validation": {

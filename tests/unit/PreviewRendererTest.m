@@ -97,7 +97,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             [axesDocument, axesHandles, axesDiagnostics, axesPanel] = ...
                 testCase.renderFixture(registry, fixtureFolder, "AxesExplorerApp", previewFigure);
             axesCleanup = onCleanup(@() deleteIfValid(axesPanel));
-            testCase.verifyEmpty(axesDocument.Diagnostics);
+            testCase.verifyEqual(string({axesDocument.Diagnostics.Code}), "unresolved-initialization-call");
+            testCase.verifyEqual(axesDocument.Diagnostics.Severity, "warning");
+            testCase.verifySubstring(axesDocument.Diagnostics.Message, "geolimits");
             testCase.verifyEmpty(axesDiagnostics);
             testCase.verifyEqual(axesHandles("parsed-UIAxes").Position, ...
                 [20 230 340 180]);

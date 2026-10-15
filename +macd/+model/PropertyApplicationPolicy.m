@@ -8,7 +8,8 @@ classdef PropertyApplicationPolicy
     %           struct("applyAfter", {{"Items"}}, "nameValue", "supported"));
 
     properties (SetAccess = private)
-        % ApplyAfter - Property paths that must be initialized before this value.
+        % ApplyAfter - Prerequisites used when planning new initialization.
+        % Preserved source order requires separate state-aware validation.
         ApplyAfter string = strings(1, 0)
         % NameValue - Verified constructor support, or unknown for unaudited data.
         NameValue string = "unknown"

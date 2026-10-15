@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "08c21ad63fb31a6a7ac60a85b29055ae0afd9a8a551ace7d7849a56189d81185",
+  "inputSha256": "19cb9745b3ab812aab564dd7c1e035c14a51f02bec8d46820713819634a44539",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -753,7 +753,7 @@
       ]
     },
     {
-      "id": "exact.font.aea229d3c60f",
+      "id": "exact.font.dc62be89557b",
       "kind": "exactCategory",
       "categoryId": "font",
       "entries": [
@@ -2102,7 +2102,7 @@
       ]
     },
     {
-      "id": "exact.position.d7f947c6c3d8",
+      "id": "exact.position.1d833d1c6b04",
       "kind": "exactCategory",
       "categoryId": "position",
       "entries": [
@@ -2802,7 +2802,7 @@
       ]
     },
     {
-      "id": "exact.switch.1222d00f3c2a",
+      "id": "exact.switch.37fe038231b4",
       "kind": "exactCategory",
       "categoryId": "switch",
       "entries": [
@@ -2920,7 +2920,7 @@
       ]
     },
     {
-      "id": "exact.ticks.54cad1cfbd30",
+      "id": "exact.ticks.072186202cdc",
       "kind": "exactCategory",
       "categoryId": "ticks",
       "entries": [
@@ -15573,12 +15573,7 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": [
-              {
-                "kind": "withinLimitsOf",
-                "property": "Limits"
-              }
-            ]
+            "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -15956,12 +15951,7 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": [
-              {
-                "kind": "withinLimitsOf",
-                "property": "Limits"
-              }
-            ]
+            "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -16339,12 +16329,7 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": [
-              {
-                "kind": "withinLimitsOf",
-                "property": "Limits"
-              }
-            ]
+            "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -16748,12 +16733,7 @@
             ],
             "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": [
-              {
-                "kind": "withinLimitsOf",
-                "property": "Limits"
-              }
-            ]
+            "constraints": []
           },
           "affectsDisplay": true,
           "previewPolicy": "apply",
@@ -26033,6 +26013,102 @@
             "reasonCodes": [
               "lowDesignTimeValue"
             ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uitabgroup.position",
+      "kind": "variantLocal",
+      "categoryId": "position",
+      "entries": [
+        {
+          "path": "Position",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "adapt",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "OuterPosition",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "Units",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "pixels",
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "characters"
+            ]
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
           }
         }
       ]

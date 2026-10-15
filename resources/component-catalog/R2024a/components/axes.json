@@ -101,6 +101,13 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "FontUnits"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
@@ -304,6 +311,11 @@
                 "normalized",
                 "pixels"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
@@ -3326,6 +3338,13 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Units"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "layout"
             }
           }
         },
@@ -3401,6 +3420,11 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "none"
             }
           }
         },
