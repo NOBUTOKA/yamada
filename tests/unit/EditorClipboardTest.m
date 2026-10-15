@@ -2,6 +2,10 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
     % EditorClipboardTest Verify the three shared clipboard command entry points.
     %   Real editor fixtures exercise menus, keyboard focus and native context targets.
 
+    properties (Access = private)
+        HtmlEvents string = strings(1, 0)
+    end
+
     methods (Test)
         function editMenuUsesAtomicSubtreeCommands(testCase)
             % editMenuUsesAtomicSubtreeCommands Exercise Copy, Paste and Cut through Edit menus.
@@ -39,6 +43,87 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(app.Document.Components, before);
         end
 
+        function menusShowShortcutsAndReparentHasNoMenu(testCase)
+            % menusShowShortcutsAndReparentHasNoMenu Keep parent changes exclusive to Preview drag.
+            [app, figure] = testCase.fixture();
+            cleanup = onCleanup(@() delete(app));
+            actions = ["Copy", "Cut", "Paste"];
+            keys = ["C", "X", "V"];
+            for index = 1:numel(actions)
+                item = findall(figure, "Tag", "macd-edit-" + lower(actions(index)));
+                testCase.verifyEqual(string(item.Text), actions(index) + string(char(9)) + "Ctrl+" + keys(index));
+            end
+            rename = findall(figure, "Tag", "macd-rename-component");
+            testCase.verifyEqual(string(rename.Text), "Rename Component" + string(char(9)) + "F2");
+            testCase.verifyEmpty(findall(figure, "Tag", "macd-edit-reparent"));
+            testCase.verifyEmpty(findall(figure, "Tag", "macd-context-reparent"));
+        end
+
+        function embeddedPreviewCtrlVPastesSubtree(testCase)
+            % embeddedPreviewCtrlVPastesSubtree Exercise actual iframe key handlers and the MATLAB bridge.
+            [app, figure, panelId] = testCase.fixture();
+            cleanup = onCleanup(@() delete(app));
+            testCase.select(figure, panelId);
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            originalFcn = overlay.HTMLEventReceivedFcn;
+            overlay.HTMLEventReceivedFcn = @(src, event) testCase.captureHtml(originalFcn, src, event);
+            html = string(fileread(overlay.HTMLSource));
+            hook = "htmlComponent.addEventListener('HarnessKey', function(event) {" + ...
+                "var target=document; if(event.Data.editing){target=document.createElement('input');document.body.appendChild(target);}" + ...
+                "target.dispatchEvent(new KeyboardEvent('keydown',{key:event.Data.key,ctrlKey:true,bubbles:true,cancelable:true}));" + ...
+                "if(event.Data.editing)target.remove(); htmlComponent.sendEventToMATLAB('HarnessDone',{});});";
+            html = replace(html, "function setup(htmlComponent) {", "function setup(htmlComponent) {" + hook);
+            marker = "  currentData = htmlComponent.Data || currentData;" + string(sprintf("\r\n")) + "  render();";
+            html = replace(html, marker, marker + " htmlComponent.sendEventToMATLAB('HarnessReady', {});");
+            filePath = string(tempname) + ".html";
+            fileCleanup = onCleanup(@() EditorClipboardTest.removeHarness(filePath));
+            file = fopen(filePath, "w", "n", "UTF-8");
+            fwrite(file, unicode2native(char(html), "UTF-8"), "uint8");
+            fclose(file);
+            overlay.HTMLSource = filePath;
+            testCase.waitForHtml("HarnessReady");
+            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "c", "editing", false));
+            testCase.waitForHtml("HarnessDone");
+            testCase.verifyEqual(sum(testCase.HtmlEvents == "Clipboard"), 1);
+            testCase.select(figure, app.Document.RootComponentId);
+            drawnow;
+            pause(0.1);
+            history = app.Document.HistoryIndex;
+            testCase.HtmlEvents = strings(1, 0);
+            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "v", "editing", true));
+            testCase.waitForHtml("HarnessDone");
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+            testCase.HtmlEvents = strings(1, 0);
+            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "v", "editing", false));
+            testCase.waitForHtml("HarnessDone");
+            testCase.verifyEqual(sum(testCase.HtmlEvents == "Clipboard"), 1);
+            testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
+            pasted = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEqual(pasted.ParentId, app.Document.RootComponentId);
+            testCase.verifyEqual(numel(pasted.Children), 1);
+        end
+
+        function previewClipboardEventChecksSelectionAndRevision(testCase)
+            % previewClipboardEventChecksSelectionAndRevision Reject stale Preview commands and paste once.
+            [app, figure, panelId] = testCase.fixture();
+            cleanup = onCleanup(@() delete(app));
+            testCase.select(figure, panelId);
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            data = struct("action", "Copy", "componentId", panelId, "revision", overlay.Data.gridEditor.revision);
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Clipboard", "HTMLEventData", data));
+            testCase.select(figure, app.Document.RootComponentId);
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            history = app.Document.HistoryIndex;
+            data.action = "Paste";
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Clipboard", "HTMLEventData", data));
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+            data.componentId = app.SelectedComponentId;
+            data.revision = overlay.Data.gridEditor.revision;
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Clipboard", "HTMLEventData", data));
+            testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
+            testCase.verifyEqual(numel(app.Document.getComponent(app.SelectedComponentId).Children), 1);
+        end
+
         function documentReplacementClearsClipboard(testCase)
             % documentReplacementClearsClipboard Do not offer prior-document content after successful New.
             [app, figure, panelId] = testCase.fixture();
@@ -58,7 +143,43 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
         end
     end
 
+    methods (Static, Access = private)
+        function removeHarness(path)
+            % removeHarness Remove only the temporary iframe test source.
+            arguments (Input)
+                path (1, 1) string
+            end
+            if isfile(path), delete(path); end
+        end
+    end
+
     methods (Access = private)
+        function captureHtml(testCase, callback, src, event)
+            % captureHtml Record bridge messages and forward the real editor handler.
+            arguments (Input)
+                testCase (1, 1) EditorClipboardTest
+                callback (1, 1) function_handle
+                src
+                event
+            end
+            testCase.HtmlEvents(end + 1) = string(event.HTMLEventName);
+            callback(src, event);
+        end
+
+        function waitForHtml(testCase, name)
+            % waitForHtml Allow the asynchronous iframe bridge to deliver a bounded event.
+            arguments (Input)
+                testCase (1, 1) EditorClipboardTest
+                name (1, 1) string
+            end
+            timer = tic;
+            while ~any(testCase.HtmlEvents == name) && toc(timer) < 10
+                drawnow;
+                pause(0.05);
+            end
+            testCase.assertTrue(any(testCase.HtmlEvents == name), "Missing iframe event: " + name);
+        end
+
         function exerciseRoute(testCase, route)
             % exerciseRoute Verify complete subtree changes through one public UI command route.
             arguments (Input)

@@ -97,7 +97,7 @@ Source-backed values are preserved.
 ### Rename a component
 
 Select a component in **Hierarchy** and press **F2**, click the same selected node
-again, or choose **Edit > Rename Component (F2)**. Edit the name within the
+again, or choose **Edit > Rename Component** (**F2**). Edit the name within the
 hierarchy view; **Enter** commits and **Escape** cancels. Invalid or conflicting
 names remain in the editor with an explanation so you can correct them.
 
@@ -116,12 +116,15 @@ explanation; references in other files are outside this operation's scope.
 Select a component in Hierarchy and use **Edit > Copy / Cut / Paste**, or
 **Ctrl+C / Ctrl+X / Ctrl+V**. The same commands are available by right-clicking
 a Hierarchy node. Right-click Copy targets that node without changing selection.
-Text fields retain their normal clipboard shortcuts.
+The same shortcuts work in Safe Preview. Edit menu shortcut hints use a separate
+column, including F2 for Rename. Text fields retain their normal clipboard shortcuts.
 
 The component and all descendants form one unit. Copy captures independent data;
 later edits to the original do not change it. Cut removes the subtree immediately.
-Paste creates fresh IDs and unique MATLAB property names and selects the copied
-root. Cut and Paste each take one Undo step. Repeated Paste is supported.
+Paste creates fresh IDs and unique MATLAB property names and selects the inserted
+root. Copy adds `Copy` to names; Cut retains the original names when available
+and adds a numeric suffix only on collision. Cut and Paste each take one Undo
+step. Repeated Paste is supported.
 
 Paste uses the nearest compatible container, starting with the selected or
 right-clicked node and walking up its ancestors. Absolute copies receive a small
@@ -131,10 +134,6 @@ destination. The clipboard belongs to this editor document; successful New,
 Open, or Reload Source clears it. OS and cross-document clipboards are not used.
 
 ### Move a subtree to another container
-
-Choose **Edit > Move to Container...** or the same Hierarchy context command.
-The popup lists explicit destinations and reasons for unavailable choices.
-**Move** revalidates and commits; **Cancel** leaves the document unchanged.
 
 In Safe Preview, drag a selected component into another visible container.
 A dashed guide shows the proposed placement; red indicates an invalid target.

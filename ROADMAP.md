@@ -572,7 +572,8 @@ model that can represent several components before adding group edit commands.
 ## Operate on Components with Their Descendants
 
 Status: completed for the supported scope in SPECIFICATION.md. MATLAB R2024a
-full verification passed 341/341 tests; all seven HTML overlay Node tests passed.
+initial full verification passed 341/341 tests; the subsequent UI/clipboard
+revision and its verification are recorded in SUBTREE_EDITING_VERIFICATION.md.
 Complete descendant collection, isolated source preflight and atomic history are
 shared by deletion, parent changes, Cut and Paste. Acceptance criteria remain
 recorded below; see SUBTREE_EDITING_VERIFICATION.md for requirement evidence.
@@ -596,8 +597,8 @@ recorded below; see SUBTREE_EDITING_VERIFICATION.md for requirement evidence.
 Allow a component or complete subtree to move from one valid parent to another,
 including dragging it between two Grid Layouts in Safe Preview.
 
-Status: completed through Move to Container and Preview drop commands in the
-supported scope. Full MATLAB and HTML overlay verification passed; see
+Status: completed through Preview drop commands in the supported scope.
+Parent changes are available only by dragging in Preview. Verification is recorded in
 SUBTREE_EDITING_VERIFICATION.md. The checks below are retained as acceptance evidence.
 
 - Add a validated reparent operation that rejects cycles, the root component,
@@ -606,8 +607,8 @@ SUBTREE_EDITING_VERIFICATION.md. The checks below are retained as acceptance evi
 - Define placement when moving among absolute-positioned containers and Grid
   Layouts. Update `Position` or `Layout.Row`/`Layout.Column` together with the
   parent change; do not silently discard unsupported layout or source values.
-- Expose eligible drop targets and a clear insertion preview in Safe Preview and
-  the hierarchy view. Keep existing drag-within-one-parent behavior distinct
+- Expose eligible drop targets and a clear insertion preview in Safe Preview.
+  Keep existing drag-within-one-parent behavior distinct
   from reparenting, and reject an invalid drop without moving the component.
 - Commit the parent change and any placement changes as one undoable operation;
   update selection, Inspector, Safe Preview, diagnostics, and generated source.

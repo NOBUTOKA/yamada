@@ -37,9 +37,6 @@ classdef yamada < matlab.apps.AppBase
         EditRedoMenuItem matlab.ui.container.Menu
         Clipboard macd.model.ComponentClipboard
         ClipboardMenuItems matlab.ui.container.Menu = matlab.ui.container.Menu.empty
-        ReparentMenuItem matlab.ui.container.Menu
-        ParentDialog macd.ui.ParentSelectionDialog = macd.ui.ParentSelectionDialog.empty
-        ParentDialogTargetId string = ""
         DropSourceId string = ""
         DropStates struct = struct([])
         ReparentRevision double = 0
@@ -137,7 +134,6 @@ classdef yamada < matlab.apps.AppBase
             % Stop deferred UI work before releasing the editor figure.
             app.IsClosingProgrammatically = true;
             app.closeCallbackDialog();
-            app.closeParentDialog();
             if ~isempty(app.HierarchyContextMenu), delete(app.HierarchyContextMenu), end
             if ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer)
                 stop(app.TabLayoutTimer);
@@ -282,15 +278,17 @@ classdef yamada < matlab.apps.AppBase
                 "MenuSelectedFcn", @(~, ~) app.saveAsButtonPushed());
 
             editMenu = uimenu(app.UIFigure, "Text", "&Edit");
-            app.ReparentMenuItem = uimenu(editMenu, "Text", "Move to Container...", ...
-                "Tag", "macd-edit-reparent", "Enable", "off", ...
-                "MenuSelectedFcn", @(~, ~) app.reparentRequested(app.SelectedComponentId));
-            for action = ["Copy", "Cut", "Paste"]
-                app.ClipboardMenuItems(end + 1) = uimenu(editMenu, "Text", action, ...
+            % Display hints while leaving clipboard key ownership with the focused editor surface.
+            shortcuts = ["C", "X", "V"];
+            actions = ["Copy", "Cut", "Paste"];
+            for index = 1:numel(actions)
+                action = actions(index);
+                label = action + string(char(9)) + "Ctrl+" + shortcuts(index);
+                app.ClipboardMenuItems(end + 1) = uimenu(editMenu, "Text", label, ...
                     "Tag", "macd-edit-" + lower(action), "Enable", "off", ...
                     "MenuSelectedFcn", @(~, ~) app.clipboardCommand(action, app.SelectedComponentId));
             end
-            uimenu(editMenu, "Text", "Rename Component (F2)", ...
+            uimenu(editMenu, "Text", "Rename Component" + string(char(9)) + "F2", ...
                 "Tag", "macd-rename-component", ...
                 "MenuSelectedFcn", @(~, ~) app.beginHierarchyRename());
             app.DeleteMenuItem = uimenu(editMenu, "Text", "&Delete", ...
@@ -465,7 +463,6 @@ classdef yamada < matlab.apps.AppBase
             app.closeCallbackDialog();
             app.clearInspector();
             app.Document = document;
-            app.closeParentDialog();
             app.Clipboard.clear();
             app.SavedSourceText = document.OriginalText;
             if ~isempty(document.Components)
@@ -530,9 +527,6 @@ classdef yamada < matlab.apps.AppBase
             app.refreshTitle();
             if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog)
                 app.CallbackDialog.refresh();
-            end
-            if ~isempty(app.ParentDialog) && isvalid(app.ParentDialog)
-                app.ParentDialog.refresh();
             end
             % Publish geometry after every shell surface has finished native layout.
             drawnow;
@@ -677,12 +671,6 @@ classdef yamada < matlab.apps.AppBase
             end
             state = struct("Enabled", false, "Reason", "No component is available.", "ParentId", "");
             if isempty(app.Document) || strlength(app.HierarchyRenameId) > 0 || app.IsReloading, return, end
-            if action == "Reparent"
-                component = app.Document.getComponent(id);
-                state.Enabled = ~isempty(component) && id ~= app.Document.RootComponentId && component.IsEditable;
-                state.Reason = "Choose a valid destination in Move to Container.";
-                return
-            end
             state = app.Clipboard.availability(action, app.Document, id, app.Registry);
         end
 
@@ -716,7 +704,6 @@ classdef yamada < matlab.apps.AppBase
                 app.setStatus(state.Reason);
                 return
             end
-            if action == "Reparent", app.reparentRequested(id); return, end
             try
                 if action == "Copy"
                     app.Clipboard.copy(app.Document, id, app.Registry, app.clipboardPosition(id));
@@ -770,60 +757,6 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
-        function reparentRequested(app, id)
-            % reparentRequested Open or focus a popup for the explicit hierarchy target.
-            arguments (Input)
-                app (1, 1) yamada
-                id (1, 1) string
-            end
-            state = app.clipboardAvailability("Reparent", id);
-            if ~state.Enabled, app.setStatus(state.Reason); return, end
-            if ~isempty(app.ParentDialog) && isvalid(app.ParentDialog) && ...
-                    app.ParentDialog.isOpen() && app.ParentDialogTargetId == id
-                app.ParentDialog.focus();
-                return
-            end
-            app.closeParentDialog();
-            document = app.Document;
-            component = document.getComponent(id);
-            app.ParentDialogTargetId = id;
-            app.ParentDialog = macd.ui.ParentSelectionDialog(component.Name, ...
-                @() app.reparentStates(id), @(parentId) app.reparentAction(id, parentId), ...
-                @() app.Document == document && ~isempty(document.getComponent(id)));
-        end
-
-        function message = reparentAction(app, id, parentId)
-            % reparentAction Commit one shared parent change and retain the moved subtree selection.
-            arguments (Input)
-                app (1, 1) yamada
-                id (1, 1) string
-                parentId (1, 1) string
-            end
-            arguments (Output)
-                message (1, 1) string
-            end
-            message = "";
-            try
-                app.Document.reparentSubtree(id, parentId, app.Registry, app.clipboardPosition(id));
-                app.SelectedComponentId = id;
-                app.refreshShell();
-                app.setStatus("Moved component subtree.");
-            catch exception
-                message = string(exception.message);
-                app.setStatus(message);
-            end
-        end
-
-        function closeParentDialog(app)
-            % closeParentDialog Dispose transient parent choices on document replacement and cleanup.
-            arguments (Input)
-                app (1, 1) yamada
-            end
-            if ~isempty(app.ParentDialog) && isvalid(app.ParentDialog), delete(app.ParentDialog); end
-            app.ParentDialog = macd.ui.ParentSelectionDialog.empty;
-            app.ParentDialogTargetId = "";
-        end
-
         function undoButtonPushed(app)
             % undoButtonPushed Undo the most recent model edit.
             arguments (Input)
@@ -873,7 +806,6 @@ classdef yamada < matlab.apps.AppBase
             hasControl = any(modifiers == "control") || any(modifiers == "command");
             % Text editing owns Delete and local undo until its transaction ends.
             if strlength(app.HierarchyRenameId) > 0
-                app.ReparentMenuItem.Enable = "off";
                 if strcmpi(event.Key, "escape")
                     app.endHierarchyRename();
                 elseif strcmpi(event.Key, "return") || strcmpi(event.Key, "enter")
@@ -1068,7 +1000,6 @@ classdef yamada < matlab.apps.AppBase
             end
             if strlength(app.HierarchyRenameId) > 0
                 for item = app.ClipboardMenuItems(:)', item.Enable = "off"; end
-                app.ReparentMenuItem.Enable = "off";
                 app.DeleteMenuItem.Enable = "off";
                 app.EditUndoMenuItem.Enable = "off";
                 app.EditRedoMenuItem.Enable = "off";
@@ -1083,8 +1014,6 @@ classdef yamada < matlab.apps.AppBase
             app.RefreshTool.Enable = reloadEnabled;
             app.ReloadMenuItem.Enable = reloadEnabled;
             component = app.selectedComponent();
-            state = app.clipboardAvailability("Reparent", app.SelectedComponentId);
-            app.ReparentMenuItem.Enable = state.Enabled;
             actions = ["Copy", "Cut", "Paste"];
             descriptions = strings(1, numel(actions));
             for index = 1:numel(actions)
@@ -1652,6 +1581,16 @@ classdef yamada < matlab.apps.AppBase
             eventName = string(event.HTMLEventName);
             if eventName == "Reparent"
                 app.reparentDropEvent(event.HTMLEventData);
+                return
+            end
+            if eventName == "Clipboard"
+                data = event.HTMLEventData;
+                if isstruct(data) && all(isfield(data, ["componentId", "revision", "action"])) && ...
+                        isequal(string(data.componentId), app.SelectedComponentId) && ...
+                        isequal(data.revision, app.InteractionOverlayRevision) && ...
+                        any(string(data.action) == ["Copy", "Cut", "Paste"])
+                    app.clipboardCommand(string(data.action), app.SelectedComponentId);
+                end
                 return
             end
             if eventName == "DeleteSelection"

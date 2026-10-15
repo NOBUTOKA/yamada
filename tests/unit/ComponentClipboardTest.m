@@ -74,6 +74,68 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
             testCase.verifyTrue(clipboard.hasContents(document));
         end
 
+        function cutReusesNamesAndNumbersRepeatedPastes(testCase)
+            % cutReusesNamesAndNumbersRepeatedPastes Preserve subtree names while avoiding later collisions.
+            [document, registry, left, right, leaf] = ComponentClipboardTest.fixture();
+            clipboard = macd.model.ComponentClipboard();
+            clipboard.cut(document, left.Id, registry);
+            first = clipboard.paste(document, right.Id, registry);
+            testCase.verifyEqual(first.Name, left.Name);
+            testCase.verifyEqual(document.getComponent(first.Children(1)).Name, leaf.Name);
+            second = clipboard.paste(document, right.Id, registry);
+            testCase.verifyEqual(second.Name, left.Name + "3");
+            testCase.verifyEqual(document.getComponent(second.Children(1)).Name, leaf.Name + "2");
+        end
+
+        function parsedCutReusesNamesAfterSourceDeletion(testCase)
+            % parsedCutReusesNamesAfterSourceDeletion Save and reopen original identifiers under a different parent.
+            [original, registry, left, right, leaf] = ComponentClipboardTest.fixture();
+            source = macd.source.NewAppGenerator(registry).generate(original);
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            clipboard = macd.model.ComponentClipboard();
+            clipboard.cut(document, document.getComponentByName(left.Name).Id, registry);
+            target = document.getComponentByName(right.Name);
+            testCase.verifyTrue(clipboard.availability("Paste", document, target.Id, registry).Enabled);
+            pasted = clipboard.paste(document, target.Id, registry);
+            testCase.verifyEqual(pasted.Name, left.Name);
+            reopened = macd.source.AppSourceParser.parseText(document.GeneratedText, registry);
+            testCase.verifyEqual(reopened.getComponentByName(left.Name).ParentId, reopened.getComponentByName(right.Name).Id);
+            testCase.verifyEqual(reopened.getComponentByName(leaf.Name).ParentId, reopened.getComponentByName(left.Name).Id);
+            document.undo();
+            document.undo();
+            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+        end
+
+        function renamedParsedCutKeepsCurrentName(testCase)
+            % renamedParsedCutKeepsCurrentName Reuse the current name despite a pending source rename.
+            [original, registry, left, right] = ComponentClipboardTest.fixture();
+            source = macd.source.NewAppGenerator(registry).generate(original);
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            component = document.getComponentByName(left.Name);
+            document.renameComponent(component.Id, "MovedPanel", registry);
+            clipboard = macd.model.ComponentClipboard();
+            clipboard.cut(document, component.Id, registry);
+            pasted = clipboard.paste(document, document.getComponentByName(right.Name).Id, registry);
+            testCase.verifyEqual(pasted.Name, "MovedPanel");
+            reopened = macd.source.AppSourceParser.parseText(document.GeneratedText, registry);
+            testCase.verifyNotEmpty(reopened.getComponentByName("MovedPanel"));
+            testCase.verifyEmpty(reopened.getComponentByName(left.Name));
+        end
+
+        function undoCutDoesNotAllowDuplicateOriginalNames(testCase)
+            % undoCutDoesNotAllowDuplicateOriginalNames Keep clipboard usable when Undo restores the source subtree.
+            [document, registry, left, right] = ComponentClipboardTest.fixture();
+            clipboard = macd.model.ComponentClipboard();
+            clipboard.cut(document, left.Id, registry);
+            document.undo();
+            pasted = clipboard.paste(document, right.Id, registry);
+            testCase.verifyEqual(pasted.Name, left.Name + "3");
+            testCase.verifyEqual(document.getComponent(left.Id), left);
+            clipboard.copy(document, left.Id, registry);
+            copied = clipboard.paste(document, right.Id, registry);
+            testCase.verifyEqual(copied.Name, left.Name + "Copy");
+        end
+
         function rejectedCutPreservesPreviousClipboard(testCase)
             % rejectedCutPreservesPreviousClipboard Keep prior copied data on read-only cut failure.
             [document, registry, left, right, leaf] = ComponentClipboardTest.fixture();

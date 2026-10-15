@@ -17,19 +17,20 @@
 | 内部参照の再対応、外部参照の同一性、参照先の生成順序 | SelectedTab / ContextMenuの限定policy、遅延代入 | SubtreeReferenceTest |
 | コールバック本文・未知コード保持と非実行 | 静的source分析と局所編集 | SubtreeReparentTest、CallbackDiscovery/Generation系、SubtreeWorkflowTest |
 | 生成・parsed混在、親変更後の削除とPaste | SubtreeReparentSourceEdits、RoundTripGenerator | SubtreeWorkflowTest |
-| 独立Copy、即時Cut、反復Paste、名前長・衝突回避 | ComponentClipboard、DocumentModel.copySubtree / pasteSubtree | ComponentClipboardTest |
+| 独立Copy、即時Cut、Cut後の元名維持、反復Paste、名前長・衝突回避 | ComponentClipboard、DocumentModel.copySubtree / pasteSubtree | ComponentClipboardTest |
 | 同一文書限定と文書交換時の破棄 | ComponentClipboard.hasContents / clear、yamada.swapDocument | ComponentClipboardTest、EditorClipboardTest、既存EditorLifecycleTestの文書交換・取消・失敗の契約 |
 | 共通のEdit・キー・Hierarchy右クリック | clipboardCommand / clipboardAvailability、HierarchyContextMenu | EditorClipboardTestの三入口、HierarchyContextMenuTest |
-| 右クリック対象と選択の独立、空白・再構築・対象失効 | HierarchyContextMenuのdocument/ID照合とreset | HierarchyContextMenuTest、EditorClipboardTest、EditorReparentTest |
+| 右クリック対象と選択の独立、空白・再構築・対象失効 | HierarchyContextMenuのdocument/ID照合とreset | HierarchyContextMenuTest、EditorClipboardTest |
 | 入力中・Tab移動後のショートカット保護 | hierarchyOwnsKeyboard、inline renameのキー所有 | EditorClipboardTest、EditorInteractionTest |
-| 選択先、Inspector、Preview、診断、ソースの更新 | yamadaの成功後refresh | EditorClipboardTest、EditorReparentTest、EditorReparentDragTest、既存EditorInteractionTest |
-| Hierarchyの移動先選択、不可理由、再検証とCancel | ParentSelectionDialog / reparentStates / reparentAction | ParentSelectionDialogTest、EditorReparentTest |
+| 選択先、Inspector、Preview、診断、ソースの更新 | yamadaの成功後refresh | EditorClipboardTest、EditorReparentDragTest、既存EditorInteractionTest |
+| PreviewのCtrl+C/X/V、入力保護、古いイベント拒否 | HTML keydown → Clipboard event → clipboardCommand | EditorClipboardTest.embeddedPreviewCtrlVPastesSubtree / previewClipboardEventChecksSelectionAndRevision、overlayClipboardShortcut.test.cjs |
+| 親変更UIをPreviewドラッグに限定 | メニュー・専用ウィンドウを削除 | EditorClipboardTest.menusShowShortcutsAndReparentHasNoMenu |
 | Previewでの親変更、ガイド、同一親操作との区別 | ReparentOverlayDataBuilder、EditorInteractionOverlay.html | reparentGesture.test.cjs、既存overlayテスト、EditorReparentDragTest |
 | Grid間のHTML実行経路、モデルまでの接続 | uihtml内DOM pointer → Reparent event → model | EditorReparentDragTest.embeddedBrowserDragTransfersBetweenGrids |
 | 無効・占有・範囲外・古いdropとキャンセル | targetCell検証、モデル版番号、draft破棄 | SubtreePlacementPlannerTest、reparentGesture.test.cjs、EditorReparentDragTest |
 | スクロール・入れ子の座標系 | surfaceBoundsとcanvas-local geometry、既存Grid controls | overlayCursor / nestedGridPlacement / nestedGridInteractionの各Nodeテスト、既存Grid/Preview UIテスト |
 | 保存・再読込、UTF-8 BOMなし、CRLF/LF | SourceWriter / AppSourceParser | 既存SourceWriter/round-trip系、追加の実ファイル検証（下記） |
-| 全体回帰と規約 | runYamadaTests("full") / ProjectConventionsTest | full: Passed=341 / Failed=0 / Incomplete=0 / Duration=699.024秒 |
+| 前回実装完了時の全体回帰と規約 | runYamadaTests("full") / ProjectConventionsTest | 2026-10-14: full Passed=341 / Failed=0 / Incomplete=0 / Duration=699.024秒 |
 
 ## 追加の実ファイル検証
 
@@ -63,7 +64,7 @@ OSマウス自体の自動操作を検証したという主張はしない。
 | 外部から削除対象への参照 | 削除を拒否。親変更で書換予定のconstructor親トークンのみ除外 |
 | 複数選択・別文書・OS clipboard | 初版の対象外 |
 
-## 最終ゲート
+## 初回実装完了時のゲート
 
 - [x] 関連モデル・生成・UIテスト
 - [x] HTML overlay Nodeテスト7本
@@ -72,7 +73,7 @@ OSマウス自体の自動操作を検証したという主張はしない。
 - [x] fullプロファイル341件の最終集計（341/341合格、失敗0、未完了0、699.024秒）
 - [x] 最終結果の反映とGit状態の確認（実装・文書の変更はコミット済み）
 
-## 最終実行コマンド
+## 初回実装完了時の実行コマンド
 
 ```matlab
 addpath(pwd, fullfile(pwd, 'tests'));
@@ -81,3 +82,22 @@ results = runYamadaTests('full');
 
 HTML overlayは tests 配下の7本の .test.cjs をNodeで実行し、全て合格した。
 仕様上の対応範囲・後続範囲は上の対応表とSPECIFICATION.mdに記載し、計画の全段階の実装と検証を完了した。
+
+## 2026-10-15: UI・Cut命名・Previewショートカット修正
+
+- 親変更UIをPreviewのドラッグに限定し、Edit/Hierarchyの親変更コマンドと専用ウィンドウを削除した。
+- CutのPasteは子孫も元名を維持し、実際のメンバー名・参照との衝突時だけ数字を追加する。
+  削除後のソースを独立candidateで生成して確認する。Copyは従来どおりCopy接尾辞を付ける。
+- Preview HTMLにCtrl+C/X/Vの転送を追加した。入力欄、編集中のpopover、操作中のgestureは除外し、
+  MATLAB側でも選択IDとrevisionを照合する。実iframeのKeyboardEventからPasteまでを検証した。
+  OSの物理キーボード自体を自動操作した検証ではない。
+- EditのCopy/Cut/Pasteにキー表記を追加し、RenameのF2も同じ区切りで表示する。
+- MATLAB R2024a quick: **221/221合格**、失敗0、未完了0、190.701秒。
+- 関連UI: EditorClipboardTest **8/8**、EditorReparentDragTest **4/4**、
+  HierarchyContextMenuTest **5/5**。TestSelectionContractTestも**3/3合格**。
+- 最終モデルコードのComponentClipboardTestを再実行し、**13/13合格**。
+  既存ソースの保存・再解析、Rename後のCut、反復Paste、Undo後の名前衝突を含む。
+- HTML Nodeテストは新規overlayClipboardShortcut.test.cjsを含む**8/8合格**。
+- checkcode: 変更箇所の新規指摘0。DocumentModelには既存の未使用初期値targetNameに関するNASGUが1件ある。
+  その他の変更MATLABファイルは指摘0。文字コード・改行・GPLの規約テストも合格。
+- 今回はquickと関連UIを実行した。上記341件のfull記録は初回実装完了時の記録である。

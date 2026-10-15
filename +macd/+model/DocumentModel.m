@@ -932,7 +932,7 @@ classdef DocumentModel < handle
             end
         end
 
-        function component = pasteSubtree(obj, snapshot, parentId, registry, measuredPosition, offset)
+        function component = pasteSubtree(obj, snapshot, parentId, registry, measuredPosition, offset, preserveNames)
             % pasteSubtree Insert independently named component records as one undoable edit.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
@@ -941,6 +941,7 @@ classdef DocumentModel < handle
                 registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
                 measuredPosition double {mustBeFinite} = []
                 offset (1, 2) double {mustBeFinite} = [10 10]
+                preserveNames (1, 1) logical = false
             end
             arguments (Output)
                 component (1, 1) macd.model.ComponentRecord
@@ -956,17 +957,29 @@ classdef DocumentModel < handle
                 obj.ClassName, "createComponents", "delete"];
             if isprop(obj, "RenameEdits")
                 mappings = obj.("RenameEdits");
-                usedNames = [usedNames string({mappings.OldName}) string({mappings.NewName})];
+                usedNames = [usedNames string({mappings.OldName})];
+                if ~preserveNames, usedNames = [usedNames string({mappings.NewName})]; end
+            end
+            % Reserve identifiers in the effective source after pending deletions.
+            namingSource = obj.OriginalText;
+            if preserveNames
+                namingSource = macd.source.RoundTripGenerator(registry).generate(candidate);
+                sourceMembers = macd.source.ComponentNameRewriter.memberNames(namingSource);
+                sourceReferences = string(regexp(macd.source.ComponentNameRewriter.codeMask(namingSource), ...
+                    '(?<=app\.)[A-Za-z]\w*', 'match'));
+                usedNames = [usedNames, sourceMembers(:)', sourceReferences(:)'];
             end
             usedIds = string({obj.Components.Id});
             for index = 1:numel(oldIds)
                 newIds(index) = obj.newComponentId();
                 while any(usedIds == newIds(index)), newIds(index) = obj.newComponentId(); end
                 usedIds(end + 1) = newIds(index); %#ok<AGROW>
-                stem = snapshot.Records(index).Name + "Copy";
+                stem = snapshot.Records(index).Name;
+                if ~preserveNames, stem = stem + "Copy"; end
                 name = extractBefore(stem, min(strlength(stem), namelengthmax) + 1);
                 suffix = 1;
-                while any(usedNames == name) || ~isempty(regexp(obj.OriginalText, '(?<!\w)' + name + '(?!\w)', 'once'))
+                while any(usedNames == name) || (~preserveNames && ...
+                        ~isempty(regexp(namingSource, '(?<!\w)' + name + '(?!\w)', 'once')))
                     suffix = suffix + 1;
                     suffixText = string(suffix);
                     name = extractBefore(stem, min(strlength(stem), namelengthmax - strlength(suffixText)) + 1) + suffixText;

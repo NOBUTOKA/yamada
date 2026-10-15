@@ -6,6 +6,7 @@ classdef ComponentClipboard < handle
     properties (Access = private)
         Document macd.model.DocumentModel = macd.model.DocumentModel.empty
         Snapshot macd.model.SubtreeSnapshot = macd.model.SubtreeSnapshot.empty
+        IsCut logical = false
         PasteCount double = 0
         MeasuredPosition double = []
     end
@@ -23,6 +24,7 @@ classdef ComponentClipboard < handle
             snapshot = document.copySubtree(id, registry);
             obj.Document = document;
             obj.Snapshot = snapshot;
+            obj.IsCut = false;
             obj.PasteCount = 0;
             obj.MeasuredPosition = measuredPosition;
         end
@@ -40,6 +42,7 @@ classdef ComponentClipboard < handle
             document.removeSubtree(id, registry);
             obj.Document = document;
             obj.Snapshot = snapshot;
+            obj.IsCut = true;
             obj.PasteCount = 0;
             obj.MeasuredPosition = measuredPosition;
         end
@@ -62,7 +65,7 @@ classdef ComponentClipboard < handle
             parentId = obj.destination(document, targetId, registry);
             if isempty(measuredPosition), measuredPosition = obj.MeasuredPosition; end
             component = document.pasteSubtree(obj.Snapshot, parentId, registry, measuredPosition, ...
-                [10 10] * (obj.PasteCount + 1));
+                [10 10] * (obj.PasteCount + 1), obj.IsCut);
             obj.PasteCount = obj.PasteCount + 1;
         end
 
@@ -93,7 +96,7 @@ classdef ComponentClipboard < handle
                     state.ParentId = obj.destination(document, id, registry);
                     candidate = document.structuralCandidate();
                     candidate.pasteSubtree(obj.Snapshot, state.ParentId, registry, obj.MeasuredPosition, ...
-                        [10 10] * (obj.PasteCount + 1));
+                        [10 10] * (obj.PasteCount + 1), obj.IsCut);
                 end
                 state.Enabled = true;
             catch exception
@@ -151,6 +154,7 @@ classdef ComponentClipboard < handle
             end
             obj.Document = macd.model.DocumentModel.empty;
             obj.Snapshot = macd.model.SubtreeSnapshot.empty;
+            obj.IsCut = false;
             obj.PasteCount = 0;
             obj.MeasuredPosition = [];
         end

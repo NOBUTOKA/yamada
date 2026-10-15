@@ -59,21 +59,24 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
   diagnostics, source preview, clipboard and selection unchanged.
 - Copy captures independent value data and does not dirty the document or add
   history. Cut deletes immediately. Paste allocates fresh IDs and unique names,
-  including collision checks against source members and pending names. Each Cut,
-  Paste, Delete, or parent change is one Undo/Redo step. Undo does not rewind the
+  including collision checks against source members and pending names. Copy uses
+  a Copy suffix; Cut reuses original names, with numeric suffixes on collision.
+  Each Cut, Paste, Delete, or parent change is one Undo/Redo step. Undo does not rewind the
   clipboard. Parent changes preserve existing component IDs and handles.
 - Edit menus, Ctrl+C/X/V and Hierarchy context menus share commands and
   availability checks. Context targets do not change selection when opening a
   menu or copying. Text-entry controls and inline renaming retain their shortcuts.
-  Cut selects the former parent; Paste selects the inserted root.
+  Preview HTML forwards Ctrl+C/X/V to those same commands with selected-ID and
+  revision validation. Edit menus show shortcut hints; Rename shows F2 in the
+  same column. Cut selects the former parent; Paste selects the inserted root.
 - Paste resolves the nearest catalog-compatible ancestor, including the target
   itself. It retains descendant order and internal placement, offsets absolute
   roots, and finds a free grid rectangle without expanding tracks. Clipboard
   ownership is limited to one document in one editor instance. Successful
   New/Open/Reload clears it; canceled or failed replacement retains it.
-- Move to Container lists explicit destinations and reasons. Safe Preview also
-  offers cross-container dragging with candidate guides. Absolute/grid changes
-  commit Position and Layout.Row/Column together. Grid-to-absolute placement
+- Parent changes use Safe Preview cross-container dragging with candidate guides.
+  No parent-change menu command or dedicated destination window is provided.
+  Absolute/grid changes commit Position and Layout.Row/Column together. Grid-to-absolute placement
   requires a literal position or verified preview pixels. Explicit grid drops
   never fall back to another free cell. Invalid, occupied, cyclic, stale or
   canceled drops leave the model unchanged.

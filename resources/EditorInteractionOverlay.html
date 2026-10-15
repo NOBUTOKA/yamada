@@ -103,6 +103,7 @@ function setup(htmlComponent) {
   component = htmlComponent;
   svg = document.getElementById("overlay");
   document.addEventListener("keydown", deleteSelectionKey);
+  document.addEventListener("keydown", clipboardSelectionKey);
   htmlComponent.addEventListener("DataChanged", function(event) {
     currentData = htmlComponent.Data || currentData;
     if (absoluteGesture && absoluteGesture.modelRevision !== currentData.reparentRevision) {
@@ -127,6 +128,24 @@ function setup(htmlComponent) {
   svg.addEventListener("pointercancel", sendPointerEvent);
   currentData = htmlComponent.Data || currentData;
   render();
+}
+
+function clipboardSelectionKey(event) {
+  if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey || event.repeat ||
+      gridGesture || absoluteGesture) return;
+  var actions = {c: "Copy", x: "Cut", v: "Paste"};
+  var action = actions[String(event.key).toLowerCase()];
+  if (!action) return;
+  var target = event.target;
+  if (target && (target.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName || "") ||
+      (target.closest && target.closest(".track-popover")))) return;
+  if (!currentData.selectedComponentId || !currentData.gridEditor) return;
+  event.preventDefault();
+  event.stopPropagation();
+  component.sendEventToMATLAB("Clipboard", {
+    action: action, componentId: currentData.selectedComponentId, revision: currentData.gridEditor.revision
+  });
 }
 
 function deleteSelectionKey(event) {
