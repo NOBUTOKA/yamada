@@ -414,6 +414,21 @@ without a BOM. New documents use the host line-ending convention; opened source
 preserves detected CRLF or LF text. `SourceWriter` provides the separately tested
 byte-level utility for callers that need explicit line-ending normalization.
 
+`SavedSourceCheckpoint` reparses the exact normalized output without executing
+input code. It verifies the component set, parent links, and known effective
+property states before writing. Its value-only subtree snapshot owns the saved
+setting histories and offsets under a fresh source version; `ComponentMap` joins
+those parsed identities to the editable document's stable component identities.
+Unknown effective values remain unknown and are not fabricated by the save check.
+
+Only after writing succeeds does `DocumentModel.confirmSavedSource` attach this
+checkpoint and advance the saved history position. It rechecks detached source
+generation to reject intentions changed during the write. `OriginalText`, its
+setting IDs and offsets, and existing Undo/Redo records remain the immutable edit
+basis until reload. Subsequent saves regenerate from that basis rather than
+applying old offsets to a previously saved output. Save As changes the confirmed
+class identity while preserving the same ownership boundary.
+
 ## Resource and Development-Data Boundary
 
 Runtime code resolves resources relative to the project root:

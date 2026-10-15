@@ -49,6 +49,8 @@ classdef DocumentModel < handle
         CallbackEdits macd.model.CallbackEdit = macd.model.CallbackEdit.empty
         % IsDirty - Whether the document has changes that are not known to be saved.
         IsDirty logical = true
+        % SavedSource - Independent parsed positions in the last successfully written source.
+        SavedSource macd.model.SavedSourceCheckpoint = macd.model.SavedSourceCheckpoint.empty
     end
 
     properties (Access = private)
@@ -430,6 +432,23 @@ classdef DocumentModel < handle
             obj.recordHistory(struct("Kind", "reset-property", ...
                 "ComponentId", componentId, "Path", path, "OldValue", oldValue, ...
                 "OldEntry", oldEntry, "BeforeSettings", beforeSettings));
+        end
+
+        function confirmSavedSource(obj, checkpoint, registry)
+            % confirmSavedSource Attach confirmed saved positions while retaining the immutable edit baseline.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                checkpoint (1, 1) macd.model.SavedSourceCheckpoint
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+
+            % Validate before committing metadata or advancing the saved history position.
+            checkpoint.assertCurrent(obj, registry);
+            obj.SavedSource = checkpoint;
+            obj.ClassName = checkpoint.ClassName;
+            obj.FilePath = checkpoint.FilePath;
+            obj.GeneratedText = checkpoint.SourceText;
+            obj.markSaved();
         end
 
         function markSaved(obj)

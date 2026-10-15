@@ -357,6 +357,54 @@
   setterで保存値を変える連動を区別する必要がある。PositionとInnerPosition/OuterPositionの同値記述も、
   読み取り専用・alias・相互代入の範囲を分けて確認する。資料候補の共起だけから順序辺を追加しない。
 
+## Stage 6追加: 保存側の位置と編集基準の分離（2026-10-16）
+
+実装済み:
+
+- `SavedSourceCheckpoint`は、`SourceWriter.normalize`と共通の正規化後の出力を非実行で再解析する。
+  コンポーネント集合・親子関係と、共通resolverが既知とする実効値を保存前に照合する。
+  未知の自動計算値や任意式は評価・補完しない。
+- 値オブジェクトのsnapshotへ保存側の全設定履歴と新しい位置・source版を保持し、
+  `ComponentMap`で編集側の安定IDと対応付ける。返されたsnapshotからのmaterializeも独立する。
+- `DocumentModel.confirmSavedSource`は、書き込み成功後にだけ保存checkpoint・class名・pathと
+  saved history位置を更新する。書き込みの間に変更意図が変わった場合は確定を拒否する。
+  原子的な確定前に、独立した候補文書で生成結果も再照合する。
+- 元の`OriginalText`、設定ID、SourceSpan、変更意図、Undo/Redo履歴は維持する。
+  保存出力の新しい位置を元の編集基準へ混ぜない。再読込は新文書へ置き換える既存境界を使う。
+- 保存前の生成も独立した候補文書で行い、失敗した生成・書き込みで実文書の生成結果や診断を上書きしない。
+  既存のDiff Previewでは従来どおり生成結果を更新する。
+
+検証:
+
+- `PropertySaveCheckpointTest` 9件が合格。両名前-値構文、過去の代入、保留設定、再読込後の編集、
+  複数保存をまたぐUndo/Redo、移動・複製・削除、未知式の保持、古いcheckpoint拒否を含む。
+- 所有一時ファイルで、Save As後のclass名、Unicode、LF正規化、UTF-8 BOMなしの実バイトと
+  再解析したValueSpanを照合した。部分木生成時の改行混在も、保存時の正規化後の位置で扱う。
+- 最後の明示Valueが20でLimits変更後の実効値が50となるケースでは、保存出力の明示値20を維持し、
+  再解析後の実効値50を確認した。auto tickの計算値は未知のまま保持する。
+- `EditorLifecycleTest`に、実メニューでのSave As・Undo/Redo・連続保存・再読込後の再編集と、
+  2回目の書き込み失敗時にcheckpoint・履歴・要求値・生成結果・診断・ファイルを維持するテストを追加した。
+  追加した2件を含むライフサイクル全13件が合格。
+- MATLAB変更6ファイルのcheckcodeは警告なし。UTF-8 BOMなし・CRLF、`git diff --check`も確認した。
+- 計画指定のparser/catalog/model/generation/preview/inspector/lifecycleの関連area 427件が全件合格。
+  Failed=0、Incomplete=0、実測合計799.248秒。
+  `testResults/property-save-area.log`と`testResults/property-save-area-results.mat`へ記録した。
+  既存の所有fixtureによる生成・適用順序の実行テストもこのareaに含まれる。
+  この結果は、残る台帳監査・full profile・計画全体の完了根拠にはしない。
+
+残作業:
+
+- 全variantの残る台帳監査と共通効果の拡充を継続する。
+- 残る資料監査では候補抽出だけに依存しない。RadioButtonのValue節には、0への変更で別のRadioButtonが
+  選択されることと、初回追加順がChildren順と一致するとは限らないことが記載されているが、
+  現在の候補抽出にはこの段落が現れない。CheckBoxTreeの親子CheckedNodes補完も本文で照合する。
+  いずれも収集済みR2024aの対応プロパティページが根拠であり、共通resolverへの反映はまだ未完了。
+- Button・Checkbox・Hyperlink・Label・Lamp等のPositionとInnerPosition/OuterPositionの別名関係は、
+  既存台帳のomitted/readOnly分類を含めて監査する。ColorPickerではOuterPositionも指定可能と記載されている。
+  また、ToggleToolのState節にはOnCallback/OffCallbackの実行が記載されており、
+  ユーザー操作時だけのcallbackと区別する。これらを表示上の依存だけとして処理しない。
+- 全体のfull profileと、公開仕様・各完了条件の最終監査は未完了。
+
 ## 対象範囲の変更（2026-10-16）
 
 - ItemsとItemsDataの長さが異なる場合の対応は、データ編集UIの大きな変更を伴うため、
@@ -370,10 +418,10 @@
 
 - Stage 1の残り: 既存ソース挿入plannerの具体APIと全variantの監査状況表を後続実装で確定する。
 - Stage 2の残り: 初期化範囲の保持と、後続resolver・plannerへのAPI接続を最終確認する。
-- Stage 3の残り: 新規設定の挿入plannerの診断を編集前検証へ接続し、保存処理との整合を確認する。
+- Stage 3の残り: 新規設定の挿入plannerの診断・編集前検証・保存処理の接続を最終監査する。
 - Stage 4: 全variantの残る監査、Axes等の追加効果と共通resolverの拡充。
   ItemsData長の契約修正は今回の対象外。
 - Stage 5: 複製経路の回帰確認と、残る共通効果ポリシーの反映。
-- Stage 6: 保存後の再編集、全体テスト、公開仕様の更新、完了条件の監査。
+- Stage 6: 全体テスト、公開仕様と完了条件の最終監査。
 
 この記録に部分的なテスト合格を追記しても、全体完了の扱いにはしない。

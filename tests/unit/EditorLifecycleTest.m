@@ -204,6 +204,82 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             clear cleanupApp cleanupFile
         end
 
+        function propertyHistorySurvivesMenuSaveAndReopen(testCase)
+            % propertyHistorySurvivesMenuSaveAndReopen Keep source ownership across Save As, Undo/Redo, and fresh parsing.
+            originalPath = string(tempname) + ".m";
+            target = string(tempname) + ".m";
+            originalCleanup = onCleanup(@() deleteTemporaryFile(originalPath));
+            targetCleanup = onCleanup(@() deleteTemporaryFile(target));
+            source = strjoin(["classdef SaveHistoryFixture < matlab.apps.AppBase", "properties", ...
+                "UIFigure matlab.ui.Figure", "Choice matlab.ui.control.DropDown", "end", "methods", ...
+                "function app = SaveHistoryFixture", "createComponents(app);", "end", ...
+                "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                "app.Choice = uidropdown(app.UIFigure, Items=[""A"" ""B""], Value='A');", ...
+                "app.Choice.Value = 'B';", "end", "end", "end"], sprintf('\r\n'));
+            macd.source.SourceWriter.write(originalPath, source, "CRLF");
+            app = yamada(lifecycleForTest(struct("OpenPath", originalPath, "SavePath", target)));
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            control = app.Document.getComponentByName("Choice");
+            settings = control.settingSnapshot();
+            app.Document.setProperty(control.Id, "Value", 'A');
+            invokeEditorMenu("Save As...");
+            testCase.verifyFalse(app.Document.IsDirty);
+            testCase.verifyEqual(app.Document.SavedSource.SourceText, string(fileread(target)));
+            testCase.verifyEqual(app.Document.OriginalText, source);
+            testCase.verifyEqual(control.settingSnapshot(), settings);
+            app.Document.undo();
+            invokeEditorMenu("Save");
+            testCase.verifyFalse(app.Document.IsDirty);
+            testCase.verifySubstring(string(fileread(target)), "app.Choice.Value = 'B';");
+            app.Document.redo();
+            invokeEditorMenu("Save");
+            testCase.verifyFalse(app.Document.IsDirty);
+            testCase.verifySubstring(string(fileread(target)), "app.Choice.Value = 'A';");
+            testCase.verifyEqual(control.settingSnapshot(), settings);
+            clear appCleanup
+
+            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            control = app.Document.getComponentByName("Choice");
+            testCase.verifyNumElements(control.getSettings("Value"), 2);
+            app.Document.setProperty(control.Id, "Value", 'B');
+            invokeEditorMenu("Save");
+            testCase.verifyFalse(app.Document.IsDirty);
+            testCase.verifyEqual(app.Document.SavedSource.SourceText, string(fileread(target)));
+            testCase.verifySubstring(string(fileread(target)), "Value='A'");
+            testCase.verifySubstring(string(fileread(target)), "app.Choice.Value = 'B';");
+        end
+
+        function failedSecondWriteKeepsConfirmedCheckpoint(testCase)
+            % failedSecondWriteKeepsConfirmedCheckpoint Retain saved source, dirty intentions, and history on write failure.
+            target = string(tempname) + ".m";
+            targetCleanup = onCleanup(@() deleteTemporaryFile(target));
+            service = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestSavePathFcn", @(~) deal(true, target), ...
+                "WriteSourceFcn", failingSecondWriter()));
+            app = yamada(service);
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Save As...");
+            testCase.verifyFalse(app.Document.IsDirty);
+            first = app.Document.SavedSource;
+            root = app.Document.getComponent(app.Document.RootComponentId);
+            app.Document.setProperty(root.Id, "Name", "Unsaved change");
+            history = app.Document.HistoryIndex;
+            generated = app.Document.GeneratedText;
+            diagnostics = app.Document.Diagnostics;
+            invokeEditorMenu("Save");
+            testCase.verifyTrue(app.Document.IsDirty);
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+            testCase.verifyEqual(app.Document.GeneratedText, generated);
+            testCase.verifyEqual(app.Document.Diagnostics, diagnostics);
+            testCase.verifyEqual(root.getProperty("Name").LiteralValue, "Unsaved change");
+            testCase.verifyEqual(app.Document.SavedSource.SourceSnapshotId, first.SourceSnapshotId);
+            testCase.verifyEqual(app.Document.SavedSource.SourceText, first.SourceText);
+            testCase.verifyEqual(string(fileread(target)), first.SourceText);
+        end
+
         function canceledAndFailedSavesKeepTheDocumentDirty(testCase)
             % canceledAndFailedSavesKeepTheDocumentDirty Preserve state after unsuccessful writes.
 
@@ -230,6 +306,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyEqual(app.Document.FilePath, "");
             testCase.verifyEqual(app.Document.ClassName, "UntitledApp");
             testCase.verifyFalse(isfile(target));
+            testCase.verifyEmpty(app.Document.SavedSource);
             clear cleanup
             delete(app);
             clear cleanupFile
@@ -312,6 +389,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 "SavePath", target, "SaveAccepted", true));
             app = yamada(saved);
             addPaletteComponent("Button");
+            testCase.verifyTrue(app.Document.IsDirty);
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
             testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "macd-yamada-editor"));
@@ -320,6 +398,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             discarded = lifecycleForTest(struct("UnsavedChoice", "Discard"));
             app = yamada(discarded);
             addPaletteComponent("Button");
+            testCase.verifyTrue(app.Document.IsDirty);
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
             testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "macd-yamada-editor"));
@@ -328,11 +407,29 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 "SaveAccepted", true, "ConfirmMustNotRun", true));
             app = yamada(clean);
             invokeEditorMenu("Save As...");
+            testCase.verifyFalse(app.Document.IsDirty);
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
             testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "macd-yamada-editor"));
             clear cleanupFile
         end
+    end
+end
+
+function writer = failingSecondWriter()
+% failingSecondWriter Return an owned writer that fails before changing the second target.
+arguments (Output)
+    writer (1, 1) function_handle
+end
+count = 0;
+writer = @write;
+    function write(path, source, lineEnding)
+        % write Write the first output and inject a failure for later writes.
+        count = count + 1;
+        if count > 1
+            error("macd:EditorLifecycleTest:WriteFailed", "Injected second write failure.");
+        end
+        macd.source.SourceWriter.write(path, source, lineEnding);
     end
 end
 

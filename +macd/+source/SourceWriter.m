@@ -16,9 +16,7 @@ classdef SourceWriter
             end
 
             % Normalize lines before performing byte-level UTF-8 encoding.
-            source = regexprep(source, "\r\n|\r|\n", newline);
-            source = replace(source, newline, ...
-                macd.source.SourceWriter.lineEndingText(lineEnding));
+            source = macd.source.SourceWriter.normalize(source, lineEnding);
             bytes = unicode2native(char(source), "UTF-8");
             % Use binary mode to prevent a second Windows newline translation.
             [fileId, message] = fopen(filePath, "wb");
@@ -34,6 +32,22 @@ classdef SourceWriter
             end
             % Close eagerly so callers can immediately read or move the file.
             clear cleanup
+        end
+
+        function source = normalize(source, lineEnding)
+            % normalize Return the exact text that the UTF-8 writer will encode.
+            arguments (Input)
+                source (1, 1) string
+                lineEnding (1, 1) string
+            end
+            arguments (Output)
+                source (1, 1) string
+            end
+
+            % Share byte-format normalization with saved-source position tracking.
+            source = regexprep(source, "\r\n|\r|\n", newline);
+            source = replace(source, newline, ...
+                macd.source.SourceWriter.lineEndingText(lineEnding));
         end
     end
 

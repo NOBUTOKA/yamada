@@ -3178,11 +3178,12 @@ classdef yamada < matlab.apps.AppBase
             end
         end
 
-        function [source, diagnostics] = generateSource(app, targetClassName)
+        function [source, diagnostics] = generateSource(app, targetClassName, updatePreview)
             % generateSource Generate source with the requested class identity.
             arguments (Input)
                 app (1, 1) yamada
                 targetClassName (1, 1) string = ""
+                updatePreview (1, 1) logical = true
             end
             arguments (Output)
                 source string
@@ -3193,15 +3194,19 @@ classdef yamada < matlab.apps.AppBase
             if strlength(targetClassName) == 0
                 targetClassName = app.Document.ClassName;
             end
-            [source, diagnostics] = macd.source.RoundTripGenerator(app.Registry).generate(app.Document);
+            document = app.Document;
+            if ~updatePreview, document = document.structuralCandidate(); end
+            [source, diagnostics] = macd.source.RoundTripGenerator(app.Registry).generate(document);
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                 return
             end
             [source, renameDiagnostics] = macd.source.AppClassIdentityRewriter.rewrite( ...
                 source, targetClassName);
             diagnostics = [diagnostics renameDiagnostics];
-            app.Document.GeneratedText = source;
-            app.Document.Diagnostics = diagnostics;
+            if updatePreview
+                app.Document.GeneratedText = source;
+                app.Document.Diagnostics = diagnostics;
+            end
         end
 
         function component = selectedComponent(app)
@@ -3264,12 +3269,26 @@ classdef yamada < matlab.apps.AppBase
                 end
             end
 
-            % Validate and generate before committing any document metadata changes.
-            [source, diagnostics] = app.generateSource(targetClassName);
+            % Validate detached intentions before committing any document metadata changes.
+            try
+                [source, diagnostics] = app.generateSource(targetClassName, false);
+            catch exception
+                app.setStatus("Save is blocked: " + string(exception.message));
+                return
+            end
             app.refreshDiagnostics(diagnostics);
             app.updateSaveState(diagnostics);
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                 app.setStatus("Save is blocked by errors.");
+                return
+            end
+
+            % Reparse exact output before I/O, keeping saved and editable source epochs separate.
+            try
+                checkpoint = macd.model.SavedSourceCheckpoint(app.Document, source, filePath, app.Registry);
+                source = checkpoint.SourceText;
+            catch exception
+                app.setStatus("Save is blocked: " + string(exception.message));
                 return
             end
 
@@ -3282,10 +3301,13 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % Commit confirmed metadata only after the complete write succeeds.
-            app.Document.ClassName = targetClassName;
-            app.Document.FilePath = filePath;
-            app.Document.GeneratedText = source;
-            app.Document.markSaved();
+            try
+                app.Document.confirmSavedSource(checkpoint, app.Registry);
+            catch exception
+                app.setStatus("File written, but the document changed while saving: " + string(exception.message));
+                return
+            end
+            app.Document.Diagnostics = diagnostics;
             app.SavedSourceText = source;
             app.SavePathConfirmed = true;
             app.updateSaveState(diagnostics);

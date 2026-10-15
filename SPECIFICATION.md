@@ -202,6 +202,11 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - `yamada` does not automatically add, replace, or remove the project's GPL notice in an application created or opened by the user.
 - Save As requires explicit replacement approval for an existing target. A normal
   Save writes only to the current confirmed path and does not repeat that approval.
+- Before saving, the editor reparses the output without executing it and checks
+  supported known initial values and component parent links. Successful saving
+  retains Undo/Redo and original source ownership, and records the saved output's
+  positions separately. Reopening or Reload Source establishes fresh ownership
+  from the saved file. A failed write does not advance the saved checkpoint.
 
 ## Out of Scope
 
