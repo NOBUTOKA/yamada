@@ -87,8 +87,6 @@
 - 最後の明示設定と、他setterにより変わる実効状態の共通resolver。
 - 保存・再読込後のソース版とUndo/Redoの整合、全variant監査とruntime適用ポリシーの実データ整備。
 
-## 未完了の段階
-
 ## Stage 3: 編集前検証・保留設定・履歴
 
 実装済み:
@@ -113,6 +111,18 @@
 
 依存関係付きの挿入位置決定と、setterの暗黙変更を含む途中/最終状態の検証はStage 4以降で接続する。
 現時点のpreflightは生成・再解析・リテラル保持の検証であり、その完了を代替しない。
+
+## Stage 4: 公式資料の収集・監査準備
+
+- `dev/component-data/AuditApplicationPolicies.ps1`を追加した。
+  台帳が参照するMathWorksのR2024a固定URLだけを読み、本文・出典・hash・相互作用候補を
+  明示された作業キャッシュへ保存する。ページのスクリプトやサンプルコードは実行しない。
+- 48/48具体variantの公式プロパティ本文を取得し、全台帳とのID照合を確認した。
+- 監査状況を`dev/component-data/R2024a/APPLICATION_POLICY_AUDIT.json`へ記録した。
+  候補抽出は監査判断と別にし、全variantのpolicy reviewとruntime verificationはpendingと明記した。
+- キャッシュは出典URLとSHA-256が前回の収集記録に一致する場合だけ再利用する。
+  同じキャッシュから48件を再抽出できることと、collectorのPowerShell構文を確認した。
+- 収集時点では、実台帳の適用ルールの監査・昇格や生成順序の実行確認は完了していない。
 
 ## 未完了の段階（更新）
 
