@@ -105,6 +105,72 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
             clear cleanup
         end
 
+        function copiedOwnedClassesRetainNativeEffectiveValues(testCase)
+            % copiedOwnedClassesRetainNativeEffectiveValues Compare copied bounded, item, rounded, and automatic states with native originals.
+            registry = macd.model.ComponentRegistry.createDefault();
+            folder = string(tempname());
+            mkdir(folder);
+            originalPath = path;
+            addpath(folder);
+            cleanup = onCleanup(@() PropertyInsertionRuntimeTest.cleanFolder(folder, originalPath));
+            try
+                for scenario = ["bounded", "items", "rounded", "automatic"]
+                    className = "OwnedInsertion" + erase(string(java.util.UUID.randomUUID()), "-");
+                    type = "Slider";
+                    if scenario == "bounded"
+                        control = ["app.Control = uislider(app.Left);", "app.Control.Value = 20;", "app.Control.Limits = [50 100];"];
+                    elseif scenario == "items"
+                        type = "DropDown";
+                        control = ["app.Control = uidropdown(app.Left, Items=[""A"" ""B""], ItemsData=[10 20], Value=20);", ...
+                            "app.Control.ItemsData = [100 200];"];
+                    elseif scenario == "rounded"
+                        type = "NumericEditField";
+                        control = "app.Control = uieditfield(app.Left, 'numeric', Value=3.4, RoundFractionalValues='on');";
+                    else
+                        control = ["app.Control = uislider(app.Left);", "app.Control.MajorTicks = [0 25 100];", ...
+                            "app.Control.MajorTicksMode = 'auto';"];
+                    end
+                    height = 22;
+                    if type == "Slider", height = 3; end
+                    position = macd.source.LiteralEncoder.encode([10 20 100 height]);
+                    body = ["app.Left = uipanel(app.UIFigure);", control, "app.Control.Position = " + position + ";", ...
+                        "app.Right = uipanel(app.UIFigure);"];
+                    source = testCase.source(className, body);
+                    source = replace(source, "Control matlab.ui.control.DropDown", "Control matlab.ui.control." + type);
+                    source = replace(source, "UIFigure matlab.ui.Figure", strjoin(["UIFigure matlab.ui.Figure", ...
+                        "Left matlab.ui.container.Panel", "Right matlab.ui.container.Panel"], sprintf("\r\n")));
+                    document = macd.source.AppSourceParser.parseText(source, registry);
+                    component = document.getComponentByName("Control");
+                    target = document.getComponentByName("Right");
+                    pasted = document.pasteSubtree(document.copySubtree(component.Id, registry), target.Id, registry);
+                    source = macd.source.RoundTripGenerator(registry).generate(document);
+                    macd.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
+                    app = feval(className);
+                    appCleanup = onCleanup(@() delete(app));
+                    figure = uifigure("Visible", "off");
+                    figureCleanup = onCleanup(@() delete(figure));
+                    [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, uipanel(figure));
+                    testCase.assertEmpty(diagnostics, scenario + ": " + strjoin(string({diagnostics.Message}), " | "));
+                    copied = app.(pasted.Name);
+                    testCase.verifyEqual(copied.Value, app.Control.Value, scenario);
+                    testCase.verifyEqual(handles(char(pasted.Id)).Value, copied.Value, scenario);
+                    if scenario == "automatic"
+                        testCase.verifyEqual(string(copied.MajorTicksMode), "auto");
+                        testCase.verifyEqual(copied.MajorTicks, app.Control.MajorTicks);
+                        testCase.verifyEqual(handles(char(pasted.Id)).MajorTicks, copied.MajorTicks);
+                        drawnow;
+                        testCase.verifyEqual(copied.MajorTicks, app.Control.MajorTicks);
+                    end
+                    clear figureCleanup appCleanup
+                end
+            catch exception
+                % Remove class files only after disposing the instances that depend on them.
+                clear figureCleanup appCleanup cleanup
+                rethrow(exception)
+            end
+            clear cleanup
+        end
+
         function multilineConstructorInsertionCompilesAndPreviewMatches(testCase)
             % multilineConstructorInsertionCompilesAndPreviewMatches Verify source token trivia against actual MATLAB syntax.
             registry = macd.model.ComponentRegistry.createDefault();

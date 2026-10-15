@@ -969,6 +969,7 @@ classdef DocumentModel < handle
                     end
                 end
             end
+            snapshot = snapshot.withCopyConfiguration(macd.model.SubtreeCopyPlanner.prepare(obj, snapshot, registry));
         end
 
         function component = pasteSubtree(obj, snapshot, parentId, registry, measuredPosition, offset, preserveNames)
@@ -984,6 +985,10 @@ classdef DocumentModel < handle
             end
             arguments (Output)
                 component (1, 1) macd.model.ComponentRecord
+            end
+            configuration = snapshot.CopyConfiguration;
+            if isempty(configuration)
+                configuration = macd.model.SubtreeCopyPlanner.prepare(obj, snapshot, registry);
             end
             plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ...
                 strings(1, 0), measuredPosition, offset);
@@ -1032,9 +1037,9 @@ classdef DocumentModel < handle
             for index = 1:numel(oldIds)
                 record = snapshot.Records(index);
                 fresh = macd.model.ComponentRecord(newIds(index), newNames(index), record.Factory, record.DeclaredType, "generated");
-                fresh.CreationArguments = record.CreationArguments;
+                fresh.CreationArguments = configuration(index).CreationArguments;
                 fresh.Metadata = record.Metadata;
-                for property = record.Properties
+                for property = configuration(index).Properties
                     if property.ValueKind == "expression" && isfield(property.Metadata, "SubtreeReferenceId")
                         targetId = string(property.Metadata.SubtreeReferenceId);
                         mapped = find(oldIds == targetId, 1);
@@ -1070,6 +1075,11 @@ classdef DocumentModel < handle
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
+            [reparsed, parsedDiagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            if macd.validation.ModelValidator.hasErrors(parsedDiagnostics)
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({parsedDiagnostics.Message}), newline));
+            end
+            macd.model.SubtreeCopyPlanner.verify(reparsed, configuration, inserted, plan.Changes, registry);
             parent = obj.getComponent(parentId);
             beforeChildren = parent.Children;
             beforeComponents = obj.Components;

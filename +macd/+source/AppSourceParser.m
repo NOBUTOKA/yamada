@@ -140,6 +140,14 @@ classdef AppSourceParser
                 definition = registry.get(creation.Factory);
                 [parentName, creationArguments, settings, skippedProperties, isSupported] = ...
                     macd.source.PropertySettingSyntax.factory(statement, definition, document.Metadata.SourceSnapshotId);
+                if isSupported
+                    concrete = registry.get(creation.Factory, creationArguments);
+                    if concrete.Id ~= definition.Id
+                        % A positional style selects the property surface for subsequent named arguments.
+                        [parentName, creationArguments, settings, skippedProperties, isSupported] = ...
+                            macd.source.PropertySettingSyntax.factory(statement, concrete, document.Metadata.SourceSnapshotId);
+                    end
+                end
                 if ~isSupported
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "nonliteral-creation-argument", "warning", ...

@@ -9,6 +9,8 @@ classdef SubtreeSnapshot
         RootId string = ""
         % Records - Parent-first immutable component and property data.
         Records struct = struct([])
+        % CopyConfiguration - Independent effective configuration prepared for fresh generated records.
+        CopyConfiguration struct = struct([])
     end
 
     methods
@@ -81,6 +83,25 @@ classdef SubtreeSnapshot
             property = find(string({obj.Records(index).Properties.Path}) == path, 1);
             if isempty(property), error("macd:SubtreeSnapshot:UnsupportedValue", "Snapshot property is missing."); end
             obj.Records(index).Properties(property).Metadata = metadata;
+            obj.CopyConfiguration = struct([]);
+        end
+
+        function obj = withCopyConfiguration(obj, configuration)
+            % withCopyConfiguration Attach a value-only copy plan without changing captured source history.
+            arguments (Input)
+                obj (1, 1) macd.model.SubtreeSnapshot
+                configuration (1, :) struct
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.SubtreeSnapshot
+            end
+            required = ["ComponentId", "CreationArguments", "Properties", "Expected"];
+            if ~isequal(sort(string(fieldnames(configuration))), sort(required(:))) || ...
+                    ~isequal(string({configuration.ComponentId}), string({obj.Records.Id}))
+                error("macd:SubtreeSnapshot:InvalidCopyConfiguration", "Copy configuration must cover the captured component identities in order.");
+            end
+            macd.model.SubtreeSnapshot.validateValue(configuration);
+            obj.CopyConfiguration = configuration;
         end
 
         function components = materialize(obj)

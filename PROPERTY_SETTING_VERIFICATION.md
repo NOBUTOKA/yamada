@@ -309,10 +309,51 @@
   `testResults/property-relocation-area.log`と所有作業領域のMAT結果へ記録した。
   この結果は、残る台帳監査やCopy/Paste・保存checkpoint・full profileの完了根拠にはしない。
 
+### Copy/Pasteの実効設定計画（2026-10-16）
+
+- SubtreeSnapshotの元Recordsは変更せず、独立したCopyConfigurationを保持する。
+  SubtreeCopyPlannerは凍結した元レコードを共通resolverへ渡し、コピー時点の実効値を計画する。
+  原文のValue=20が後続Limitsで50となるケースでも、元履歴20を残し、複製先の明示値は50とする。
+- 元の名前-値引数は、位置情報に対応する引数indexからコピー用の生成引数列から除く。
+  numeric/state/discrete/range等の位置引数を残し、値設定は共通plannerによる生成後代入に一本化する。
+- 元に明示設定がないValueやModeも、確認済みsetter効果で決まる値は複製先の新しい設定として保持する。
+  元コンポーネントの設定履歴へ暗黙値をpushしない。貼り付け先は新しいcomponent/setting IDを作り、
+  SourceSpan・SourceSettingIdを元の編集先として引き継がない。
+- auto目盛配列の実効値は不明のままとする。最後のliteral入力とautoモードを出力することで、
+  描画前の値と描画後の自動計算の両方を保持し、計算済み配列を推測して明示設定にしない。
+- 自動モードで説明できない不明な実効値は、理由を付けてCopyを拒否する。
+  通常のCopyは設定計画も凍結し、原本や以前の複製を後から編集しても内容を変えない。
+  未準備のsnapshotを直接Pasteする経路も凍結レコードを使い、異なるsource版の位置情報を拒否する。
+- Pasteは候補ソースを再解析し、配置変更を除く全既知期待値を比較してから原子的に適用する。
+  参照値は既存のSubtreeReferencePolicyで新IDへ対応付ける。
+- 汎用factory定義で名前-値引数を一度解析した後、位置引数から具体variantを選び、
+  variantが変わる場合は具体surfaceで再解析する。numeric専用RoundFractionalValues等を未知式へ落とさない。
+
+検証:
+
+- 既存のSubtreeSnapshot 6件・ComponentClipboard 13件・SubtreeWorkflow 6件、計25件が合格。
+- 新しいPropertyCopyTest 10件が合格。補正値、両名前-値構文、ItemsData変更後の選択、numericの丸め、
+  state/discrete/range、暗黙Value、新ID・空SourceSpan、Undo/Redo、コピーの凍結、auto目盛、不明値の拒否を含む。
+  variant追加で見つかったcell値の期待値struct展開も修正した。
+- parser 12件・設定構文7件を含む初期27件が合格。参照6件と実機比較を含む15件も合格。
+- テスト自身が作った4つのAppBaseクラスのみを実行し、Sliderのclamp、Dropdownのdomain変更、
+  NumericEditFieldの丸め、Sliderのauto目盛で、元と複製の実効値およびPreviewが一致した。
+  autoへの変更直後に直前の配列が残る実機結果を受け、配列を削除する初期案を修正した。
+  描画前後の一致を確認し、Sliderの所有fixtureは固定の高さ3で検証した。
+- 変更6ファイルのcheckcodeは警告なし。UTF-8 BOMなし・CRLFも確認した。
+- parser/model/generation/preview/inspectorの関連area 405件が全件合格。
+  Failed=0、Incomplete=0、実測合計546.160秒。
+  `testResults/property-copy-area.log`と所有作業領域のMAT結果へ記録した。
+  この結果は、残る台帳監査・保存checkpoint・full profileの完了根拠にはしない。
+
 残作業:
 
-- Copy/Pasteで生成時引数と明示値を二重適用しないこと、最後の明示値と実効値が異なる場合の複製を確認・修正する。
 - 保存後の再編集と位置整合、全variantの残る監査を完了する。
+- コンポーネント間の選択連動等は、共通resolver側の監査・実装に従ってCopy計画にも反映する。
+  現在のコピー検証で、未監査setterの効果まで解決したとは扱わない。
+- 未監査の公式資料では、表示だけの依存（ImageのScaleMethodと整列、LabelのInterpreterとfont等）と、
+  setterで保存値を変える連動を区別する必要がある。PositionとInnerPosition/OuterPositionの同値記述も、
+  読み取り専用・alias・相互代入の範囲を分けて確認する。資料候補の共起だけから順序辺を追加しない。
 
 ## 未完了の段階（更新）
 
@@ -320,7 +361,7 @@
 - Stage 2の残り: 初期化範囲の保持と、後続resolver・plannerへのAPI接続を最終確認する。
 - Stage 3の残り: 新規設定の挿入plannerの診断を編集前検証へ接続し、保存処理との整合を確認する。
 - Stage 4: 全variantの残る監査、ItemsData長の契約修正、Axes等の追加効果と共通resolverの拡充。
-- Stage 5: 移動経路の回帰確認、Copy/Pasteの生成時引数・履歴と実効状態の整合。
+- Stage 5: 複製経路の回帰確認と、残る共通効果ポリシーの反映。
 - Stage 6: 保存後の再編集、全体テスト、公開仕様の更新、完了条件の監査。
 
 この記録に部分的なテスト合格を追記しても、全体完了の扱いにはしない。
