@@ -22,7 +22,7 @@ classdef PropertyApplicationPlanner
 
             % Native preview construction already consumes projected name-value arguments.
             canonical = macd.model.PropertyApplicationPlanner.forComponent(component, document, registry);
-            if component.Origin ~= "parsed"
+            if component.Origin ~= "parsed" || isempty(canonical)
                 entries = canonical;
                 return
             end

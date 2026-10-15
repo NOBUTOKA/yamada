@@ -4,6 +4,45 @@ classdef FactoryCallEditor
     %   original text. The caller proves eligibility and chooses a token slot.
 
     methods (Static)
+        function edits = remove(statement, settings)
+            % remove Delete owned argument code while preserving comments and continuations.
+            arguments (Input)
+                statement (1, 1) macd.source.SourceStatement
+                settings macd.model.PropertySetting
+            end
+            arguments (Output)
+                edits struct
+            end
+            offsets = zeros(1, 0);
+            code = char(statement.Text);
+            for setting = settings
+                pair = setting.PairSpan;
+                first = find(statement.CodeOffsets == pair.StartOffset, 1);
+                last = find(statement.CodeOffsets == pair.EndOffset, 1);
+                if isempty(first) || isempty(last) || setting.Method ~= "nameValue"
+                    error("macd:FactoryCallEditor:UnsafeSource", "The removed argument has no proven token ownership.");
+                end
+                preceding = first - 1;
+                while preceding > 0 && isspace(code(preceding)), preceding = preceding - 1; end
+                if preceding == 0 || code(preceding) ~= ','
+                    error("macd:FactoryCallEditor:UnsafeSource", "The argument delimiter cannot be proven.");
+                end
+                tokens = first:last;
+                tokens = tokens(~isspace(code(tokens)));
+                offsets = [offsets statement.CodeOffsets([preceding tokens])]; %#ok<AGROW>
+            end
+            % Separate code runs leave every unmapped comment byte in the source.
+            offsets = unique(offsets);
+            edits = struct("Start", {}, "End", {}, "Text", {});
+            if isempty(offsets), return, end
+            starts = [1 find(diff(offsets) > 1) + 1];
+            stops = [starts(2:end) - 1 numel(offsets)];
+            for index = 1:numel(starts)
+                edits(end + 1) = struct("Start", offsets(starts(index)), ...
+                    "End", offsets(stops(index)), "Text", ""); %#ok<AGROW>
+            end
+        end
+
         function edit = insert(source, statement, entry, style, before)
             % insert Add one pair before an existing named argument or the closing parenthesis.
             arguments (Input)

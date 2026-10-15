@@ -32,9 +32,9 @@ classdef PropertyStateResolver
 
             % Source additions use the same actual placement as generation and Preview.
             if ~isempty(document) && ~isempty(registry) && ...
-                    macd.source.PropertyInsertionPlanner.needsPlan(document, component)
+                    macd.source.PropertySourcePlan.needsPlan(document, component)
                 try
-                    plan = macd.source.PropertyInsertionPlanner.plan(document, component, registry);
+                    plan = macd.source.PropertySourcePlan.plan(document, component, registry);
                     resolved = macd.model.PropertyStateResolver.resolve(plan.Component, definitions);
                     for index = 1:numel(states)
                         effective = resolved(index);

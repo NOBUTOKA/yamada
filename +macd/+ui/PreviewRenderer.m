@@ -91,8 +91,8 @@ classdef PreviewRenderer < handle
             try
                 configured = component;
                 configurationDocument = document;
-                if macd.source.PropertyInsertionPlanner.needsPlan(document, component)
-                    plan = macd.source.PropertyInsertionPlanner.plan(document, component, obj.Registry);
+                if macd.source.PropertySourcePlan.needsPlan(document, component)
+                    plan = macd.source.PropertySourcePlan.plan(document, component, obj.Registry);
                     configured = plan.Component;
                     configurationDocument = plan.Document;
                     configurationDocument.FilePath = document.FilePath;

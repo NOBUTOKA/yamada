@@ -250,7 +250,7 @@
   同offsetの追加を結合し、依存順が逆転しないようにする。
 - RoundTripGenerator、モデルの実効状態・編集前検証、既存要素のPreviewを同じ挿入計画へ接続した。
   元の設定IDと原文の履歴は維持し、候補だけのSourceSpanを元の編集対象として再利用しない。
-  親変更中のparsed要素は既存のrelocation emitterが所有し、その統合は後続作業とする。
+  この時点では親変更中のparsed要素を既存のrelocation emitterが所有していた。後述の移動経路で統合する。
 
 検証:
 
@@ -276,10 +276,43 @@
   挿入17件・scope 14件・native 2件の合計33件が合格（Failed=0、Incomplete=0）。
   追加変更2ファイルのcheckcodeも警告なし。MATLAB変更14ファイルのUTF-8 BOMなし・CRLFを確認した。
 
+### parsed部分木の移動経路（2026-10-16）
+
+- 所有範囲を最後のPropertyEntryだけから集めず、元の全設定出現から集めて重複を除く。
+  createComponents内の一意かつ確実な実行訪問を要求し、反復初期化の所有範囲を移動しない。
+- 元の生成呼び出しと代入文を保持し、要求変更はSourceSettingIdが指す値トークンだけへ適用する。
+  名前-値設定を代入文として重複出力せず、過去の代入も落とさない。
+- 元の文順を安定した順序として、所有者と親の生成に必要な制約を満たす順に配置する。
+  移動要素間の交差する代入順、行末コメント、Figureの最終Visible設定を保持する。
+- Gridへ移す際に不要になる生成時Position等は、FactoryCallEditorのコードトークン削除で除去する。
+  引数内の改行、継続記号、コメントを残し、新しいLayout設定を共通plannerへ渡す。
+- 移動ブロックを含む独立した候補ソースを再解析し、保留中のliteral設定を
+  PropertyInsertionPlannerで配置する。挿入が移動ブロックを越える場合は拒否する。
+  初期化途中の制約違反を直すLimitsも、単純な末尾追加ではなく合法な位置へ挿入する。
+- PropertySourcePlanを実効状態resolverとPreviewの共通入口にした。
+  元の設定ID・SourceSpanを変更せず、移動後の候補の実効値だけを元の明示設定・編集要求へ対応付ける。
+- 設定が空のparsed親コンテナで、空のOrigin配列とstringを比較してPreviewが失敗する問題も修正した。
+
+検証:
+
+- 新しいPropertyRelocationTestは、混在履歴、既存値の再編集とUndo/Redo、反復初期化の拒否、
+  保留Value、名前-値方式の保持、途中状態を修復するLimits、Gridへの変換、交差する文順、
+  最終Visible、未評価式の非実行保持の10件を含む。
+- 既存のSubtreeReparentTest 9件が合格。新しい契約テストの初期失敗は、所有fixtureの絶対配置引数と
+  元の設定ID比較（移動が追加するPositionの保留設定を除外）を修正して解消した。
+- PropertyInsertionRuntimeTestに移動の実機比較を追加した。テスト自身が作ったAppBaseクラスのみを実行し、
+  既存3方式とGrid移動の4ケースで選択値・親子関係・Grid配置をPreviewと比較して合格した。
+  Position値の内部にも継続行とコメントを入れ、引数除去後のMATLAB構文を確認した。
+- 変更8ファイルのcheckcodeは警告なし。UTF-8 BOMなし・CRLFも確認した。
+- parser/model/generation/preview/inspectorの関連area 394件が全件合格。
+  Failed=0、Incomplete=0、実測合計515.954秒。
+  `testResults/property-relocation-area.log`と所有作業領域のMAT結果へ記録した。
+  この結果は、残る台帳監査やCopy/Paste・保存checkpoint・full profileの完了根拠にはしない。
+
 残作業:
 
-- parsed部分木の移動時に、名前-値・古い設定出現・保留設定を一貫して移動する。
-- Copy/Paste、保存後の再編集と位置整合、全variantの残る監査を完了する。
+- Copy/Pasteで生成時引数と明示値を二重適用しないこと、最後の明示値と実効値が異なる場合の複製を確認・修正する。
+- 保存後の再編集と位置整合、全variantの残る監査を完了する。
 
 ## 未完了の段階（更新）
 
@@ -287,7 +320,7 @@
 - Stage 2の残り: 初期化範囲の保持と、後続resolver・plannerへのAPI接続を最終確認する。
 - Stage 3の残り: 新規設定の挿入plannerの診断を編集前検証へ接続し、保存処理との整合を確認する。
 - Stage 4: 全variantの残る監査、ItemsData長の契約修正、Axes等の追加効果と共通resolverの拡充。
-- Stage 5: 既存初期化への挿入の回帰確認、解析済み部分木の移動経路と保留設定の配置への接続。
+- Stage 5: 移動経路の回帰確認、Copy/Pasteの生成時引数・履歴と実効状態の整合。
 - Stage 6: 保存後の再編集、全体テスト、公開仕様の更新、完了条件の監査。
 
 この記録に部分的なテスト合格を追記しても、全体完了の扱いにはしない。

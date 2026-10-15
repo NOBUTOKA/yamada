@@ -43,6 +43,68 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
             clear cleanup
         end
 
+        function relocatedOwnedClassesMatchNativeStateAndPreview(testCase)
+            % relocatedOwnedClassesMatchNativeStateAndPreview Execute all source styles and constructor layout removal.
+            registry = macd.model.ComponentRegistry.createDefault();
+            folder = string(tempname());
+            mkdir(folder);
+            originalPath = path;
+            addpath(folder);
+            cleanup = onCleanup(@() PropertyInsertionRuntimeTest.cleanFolder(folder, originalPath));
+            try
+            for style = ["nameValue", "assignment", "mixed", "grid"]
+                className = "OwnedInsertion" + erase(string(java.util.UUID.randomUUID()), "-");
+                if style == "nameValue"
+                    creation = "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], ItemsData=[10 20]);";
+                elseif style == "assignment"
+                    creation = ["app.Control = uidropdown(app.Left);", "app.Control.Items = [""A"" ""B""];", ...
+                        "app.Control.ItemsData = [10 20];"];
+                elseif style == "mixed"
+                    creation = ["app.Control = uidropdown(app.Left, Items=[""A"" ""B""]);", ...
+                        "app.Control.ItemsData = [10 20];"];
+                else
+                    creation = ["app.Control = uidropdown(app.Left, ... % factory", ...
+                        "    Position=[10 ... % x-coordinate", "    20 100 22], ... % position", ...
+                        "    Items=[""A"" ""B""], ItemsData=[10 20]);"];
+                end
+                body = ["app.Left = uipanel(app.UIFigure);", creation, "app.Right = uipanel(app.UIFigure);", ...
+                    "app.Grid = uigridlayout(app.Right);"];
+                source = testCase.source(className, body);
+                source = replace(source, "UIFigure matlab.ui.Figure", ...
+                    strjoin(["UIFigure matlab.ui.Figure", "Left matlab.ui.container.Panel", ...
+                    "Right matlab.ui.container.Panel", "Grid matlab.ui.container.GridLayout"], sprintf("\r\n")));
+                document = macd.source.AppSourceParser.parseText(source, registry);
+                component = document.getComponentByName("Control");
+                document.setProperty(component.Id, "Value", 20, registry);
+                target = document.getComponentByName("Right");
+                if style == "grid", target = document.getComponentByName("Grid"); end
+                document.reparentSubtree(component.Id, target.Id, registry, [], [], [10 20 100 22]);
+                source = macd.source.RoundTripGenerator(registry).generate(document);
+                macd.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
+                app = feval(className);
+                appCleanup = onCleanup(@() delete(app));
+                figure = uifigure("Visible", "off");
+                figureCleanup = onCleanup(@() delete(figure));
+                [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, uipanel(figure));
+                testCase.assertEmpty(diagnostics, style + ": " + strjoin(string({diagnostics.Message}), " | "));
+                testCase.verifyEqual(app.Control.Value, 20);
+                testCase.verifyEqual(handles(char(component.Id)).Value, app.Control.Value);
+                testCase.verifyEqual(app.Control.Parent, app.(target.Name));
+                testCase.verifyEqual(handles(char(component.Id)).Parent, handles(char(target.Id)));
+                if style == "grid"
+                    testCase.verifyEqual(app.Control.Layout.Row, 1);
+                    testCase.verifyEqual(app.Control.Layout.Column, 1);
+                end
+                clear figureCleanup appCleanup
+            end
+            catch exception
+                % Dispose owned instances before removing their class files from the path.
+                clear figureCleanup appCleanup cleanup
+                rethrow(exception)
+            end
+            clear cleanup
+        end
+
         function multilineConstructorInsertionCompilesAndPreviewMatches(testCase)
             % multilineConstructorInsertionCompilesAndPreviewMatches Verify source token trivia against actual MATLAB syntax.
             registry = macd.model.ComponentRegistry.createDefault();

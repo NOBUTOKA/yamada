@@ -4,7 +4,7 @@ classdef SubtreeReparentSourceEdits
     %   statements with known ownership can be relocated.
 
     methods (Static)
-        function [edits, movedIds] = build(document, registry)
+        function [edits, movedIds, candidate] = build(document, registry)
             % build Generate subtree relocation edits against the original source snapshot.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
@@ -13,10 +13,12 @@ classdef SubtreeReparentSourceEdits
             arguments (Output)
                 edits struct
                 movedIds string
+                candidate macd.model.DocumentModel
             end
 
             edits = struct("Start", {}, "End", {}, "Text", {});
             movedIds = strings(1, 0);
+            candidate = macd.model.DocumentModel.empty;
             originals = struct([]);
             for index = 1:numel(document.PendingEdits)
                 pending = document.PendingEdits{index};
@@ -33,6 +35,9 @@ classdef SubtreeReparentSourceEdits
             source = document.OriginalText;
             statements = macd.source.MatlabLexicalScanner.splitStatements(source);
             [direct, methodSpan] = macd.source.SubtreeReparentSourceEdits.directScope(statements);
+            parsed = document.Components([document.Components.Origin] == "parsed");
+            offsets = arrayfun(@(item) item.SourceSpans.Creation.StartOffset, parsed);
+            [order, ~, certain] = macd.source.CallbackSourceAnalyzer.initializationStatements(statements, offsets);
             spans = macd.model.SourceSpan.empty;
             names = strings(1, 0);
             for record = originals
@@ -40,30 +45,49 @@ classdef SubtreeReparentSourceEdits
                 for property = record.Properties
                     if ~isempty(property.SourceSpan), own = [own property.SourceSpan]; end %#ok<AGROW>
                 end
+                for setting = record.Settings
+                    if ~isempty(setting.Location.SourceSpan), own = [own setting.Location.SourceSpan]; end %#ok<AGROW>
+                end
+                [~, uniqueSpans] = unique([[own.StartOffset]' [own.EndOffset]'], 'rows', 'stable');
+                own = own(uniqueSpans);
                 for span = own
                     matches = find(arrayfun(@(statement) statement.Span.StartOffset == span.StartOffset && ...
                         statement.Span.EndOffset == span.EndOffset, statements));
-                    if ~span.isKnown() || numel(matches) ~= 1 || ~direct(matches)
+                    visits = find(ismember(order, matches));
+                    if ~span.isKnown() || numel(matches) ~= 1 || ~direct(matches) || ...
+                            ~isscalar(visits) || ~certain(visits)
                         error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Initialization ownership is not a unique direct createComponents statement.");
                     end
                 end
-                spans = [spans own]; %#ok<AGROW>
+                for span = own
+                    spans(end + 1) = macd.source.SubtreeReparentSourceEdits.withTrailingComment(source, span); %#ok<AGROW>
+                end
                 creation = extractBetween(source, record.SourceSpans.Creation.StartOffset, record.SourceSpans.Creation.EndOffset);
                 token = regexp(creation, '^app\.(\w+)\s*=', 'tokens', 'once');
                 if isempty(token), error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Creation identity is unknown."); end
                 names(end + 1) = string(token{1}); %#ok<AGROW>
             end
+            [~, uniqueSpans] = unique([[spans.StartOffset]' [spans.EndOffset]'], 'rows', 'stable');
+            spans = spans(uniqueSpans);
 
             % Insert after owned initialization, with all destination parents already created.
             anchor = 0;
+            rootName = document.sourceComponentName(document.RootComponentId);
+            ownedIndices = zeros(1, 0);
             for statementIndex = find(direct)
                 statement = statements(statementIndex);
                 text = char(statement.Text);
                 if ~isempty(regexp(text, '^app\.\w+\s*=\s*\w+\s*\(|^app\.\w+\.\w+(?:\.\w+)*\s*=', 'once'))
-                    anchor = max(anchor, statement.Span.EndOffset);
+                    ownedIndices(end + 1) = statementIndex; %#ok<AGROW>
                 end
             end
+            if ~isempty(ownedIndices) && ~isempty(regexp(statements(ownedIndices(end)).Text, ...
+                    '^app\.' + rootName + '\.Visible\s*=', 'once'))
+                ownedIndices(end) = [];
+            end
+            if ~isempty(ownedIndices), anchor = max(arrayfun(@(item) item.Span.EndOffset, statements(ownedIndices))); end
             if anchor == 0, error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Initialization insertion anchor is unavailable."); end
+            anchor = macd.source.SubtreeReparentSourceEdits.withTrailingComment(source, macd.model.SourceSpan(anchor, anchor)).EndOffset;
             code = macd.source.SubtreeSourceEdits.codeMask(source);
             if ~isempty(regexp(code, 'app\s*\.\s*\(|\w+\s*=\s*app\s*(?:;|\n)|(?:subsref|subsasgn|eval|feval)\s*\(', 'once'))
                 error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Dynamic or aliased references prevent proving relocation safety.");
@@ -85,11 +109,14 @@ classdef SubtreeReparentSourceEdits
             if document.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
             block = "";
             deferredParsedReferences = strings(1, 0);
+            events = struct("Id", {}, "ParentId", {}, "Creates", {}, "SourceOrder", {}, "Text", {});
 
-            % Emit moved initialization in the candidate's parent-before-child order.
+            % Preserve original interleaving subject to the destination creation dependencies.
             for component = document.Components
                 if component.Origin == "generated"
-                    block = block + macd.source.SubtreeReparentSourceEdits.generatedInitialization(document, component, registry, ending);
+                    text = macd.source.SubtreeReparentSourceEdits.generatedInitialization(document, component, registry, ending);
+                    events(end + 1) = struct("Id", component.Id, "ParentId", component.ParentId, ...
+                        "Creates", true, "SourceOrder", Inf, "Text", text); %#ok<AGROW>
                     continue
                 end
                 if ~any(movedIds == component.Id), continue, end
@@ -98,7 +125,8 @@ classdef SubtreeReparentSourceEdits
                 if isempty(parent)
                     error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Destination parent no longer exists.");
                 end
-                creation = extractBetween(source, record.SourceSpans.Creation.StartOffset, record.SourceSpans.Creation.EndOffset);
+                [creation, assignments, deferred, positions] = macd.source.SubtreeReparentSourceEdits.parsedInitialization( ...
+                    source, statements, record, component, names, document, registry);
                 pattern = '^(app\.\w+\s*=\s*\w+\s*\(\s*)app\.\w+';
                 if isempty(regexp(creation, pattern, 'once'))
                     error("macd:SubtreeReparentSourceEdits:UnsafeSource", "The creation parent is not a static component reference.");
@@ -110,40 +138,46 @@ classdef SubtreeReparentSourceEdits
                     parentName = string(token{1});
                 end
                 creation = regexprep(creation, pattern, "$1app." + parentName, 'once');
-                block = block + ending + "            " + creation;
-                name = names(string({originals.Id}) == component.Id);
-                for entry = component.Properties
-                    if registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments), continue, end
-                    if entry.ValueKind == "literal"
-                        assignment = "app." + name + "." + entry.Path + " = " + macd.source.LiteralEncoder.encode(entry.LiteralValue) + ";";
-                    elseif entry.ValueKind == "expression" && ~isempty(entry.SourceSpan) && entry.SourceSpan.isKnown()
-                        assignment = extractBetween(source, entry.SourceSpan.StartOffset, entry.SourceSpan.EndOffset);
-                        if any(entry.Path == ["SelectedTab", "ContextMenu"])
-                            macd.model.SubtreeReferencePolicy.resolve(document, component, entry.Path, entry.SourceExpression, registry);
-                            deferredParsedReferences(end + 1) = assignment; %#ok<AGROW>
-                            continue
-                        end
-                        references = regexp(macd.source.SubtreeSourceEdits.codeMask(entry.SourceExpression), ...
-                            '(?<!\w)app\s*\.\s*([A-Za-z]\w*)', 'tokens');
-                        for reference = references
-                            if any(names == string(reference{1}{1}))
-                                error("macd:SubtreeReparentSourceEdits:UnsafeSource", ...
-                                    "An unsupported internal component reference prevents safe relocation.");
-                            end
-                        end
-                    else
-                        error("macd:SubtreeReparentSourceEdits:UnsafeSource", "A property has no proven source representation.");
-                    end
-                    block = block + ending + "            " + assignment;
+                events(end + 1) = struct("Id", component.Id, "ParentId", component.ParentId, ...
+                    "Creates", true, "SourceOrder", record.SourceSpans.Creation.StartOffset, ...
+                    "Text", ending + "            " + creation); %#ok<AGROW>
+                for index = 1:numel(assignments)
+                    events(end + 1) = struct("Id", component.Id, "ParentId", component.ParentId, ...
+                        "Creates", false, "SourceOrder", positions(index), ...
+                        "Text", ending + "            " + assignments(index)); %#ok<AGROW>
                 end
+                deferredParsedReferences = [deferredParsedReferences deferred]; %#ok<AGROW>
             end
+            for event = macd.source.SubtreeReparentSourceEdits.orderEvents(events), block = block + event.Text; end
             generated = document.Components([document.Components.Origin] == "generated");
             references = macd.model.SubtreeReferencePolicy.assignments(document, generated, registry);
             for reference = [deferredParsedReferences references], block = block + ending + "            " + reference; end
             for span = spans
                 edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", ""); %#ok<AGROW>
             end
+            [block, candidate] = macd.source.SubtreeReparentSourceEdits.placePending( ...
+                document, registry, edits, anchor, block, movedIds);
             edits(end + 1) = struct("Start", anchor + 1, "End", anchor, "Text", block);
+        end
+
+        function result = contains(document, componentId)
+            % contains Test whether parsed initialization belongs to a pending relocation.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            for pending = document.PendingEdits
+                edit = pending{1};
+                if isstruct(edit) && isfield(edit, "Kind") && edit.Kind == "reparent-subtree" && ...
+                        any(string({edit.OriginalRecords.Id}) == componentId)
+                    result = true;
+                    return
+                end
+            end
         end
 
         function text = generatedInitialization(document, component, registry, ending)
@@ -235,6 +269,197 @@ classdef SubtreeReparentSourceEdits
             end
             if ~isempty(stack) || count ~= 1 || ~methodSpan.isKnown()
                 error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Unique initialization method ownership cannot be proven.");
+            end
+        end
+    end
+
+    methods (Static, Access = private)
+        function [creation, assignments, deferred, positions] = parsedInitialization(source, statements, record, component, names, document, registry)
+            % parsedInitialization Preserve every owned occurrence and update only its bound value token.
+            arguments (Input)
+                source (1, 1) string
+                statements macd.source.SourceStatement
+                record (1, 1) struct
+                component (1, 1) macd.model.ComponentRecord
+                names string
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                creation (1, 1) string
+                assignments (1, :) string
+                deferred (1, :) string
+                positions (1, :) double
+            end
+            patches = struct("Start", {}, "End", {}, "Text", {});
+            removed = macd.model.PropertySetting.empty;
+            assignments = strings(1, 0);
+            deferred = strings(1, 0);
+            positions = zeros(1, 0);
+            settings = component.Settings(string({component.Settings.Method}) ~= "generated");
+            [~, order] = sort([settings.Sequence]);
+            settings = settings(order);
+            % Source settings remain immutable; current entries carry replacement requests.
+            for setting = settings
+                entry = component.getProperty(setting.Path);
+                if isempty(entry)
+                    if setting.Method == "nameValue", removed(end + 1) = setting; end %#ok<AGROW>
+                    continue
+                end
+                if ~setting.IsCertain
+                    error("macd:SubtreeReparentSourceEdits:UnsafeSource", "An uncertain occurrence cannot be relocated.");
+                end
+                if entry.ValueKind == "literal" && isfield(entry.Metadata, "SourceSettingId") && ...
+                        string(entry.Metadata.SourceSettingId) == setting.Id && ~isequaln(entry.LiteralValue, setting.LiteralValue)
+                    span = setting.ValueSpan;
+                    if isempty(span) || ~span.isKnown()
+                        error("macd:SubtreeReparentSourceEdits:UnsafeSource", "A replacement has no proven value token.");
+                    end
+                    patches(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, ...
+                        "Text", macd.source.LiteralEncoder.encode(entry.LiteralValue)); %#ok<AGROW>
+                end
+                if setting.Method ~= "assignment", continue, end
+                span = macd.source.SubtreeReparentSourceEdits.withTrailingComment(source, setting.SourceSpan);
+                assignment = macd.source.SubtreeReparentSourceEdits.applyRange(source, span, patches);
+                if setting.ValueKind == "expression"
+                    if any(setting.Path == ["SelectedTab", "ContextMenu"])
+                        macd.model.SubtreeReferencePolicy.resolve(document, component, setting.Path, setting.SourceExpression, registry);
+                        deferred(end + 1) = assignment; %#ok<AGROW>
+                        continue
+                    end
+                    references = regexp(macd.source.SubtreeSourceEdits.codeMask(setting.SourceExpression), ...
+                        '(?<!\w)app\s*\.\s*([A-Za-z]\w*)', 'tokens');
+                    for reference = references
+                        if any(names == string(reference{1}{1}))
+                            error("macd:SubtreeReparentSourceEdits:UnsafeSource", ...
+                                "An unsupported internal component reference prevents safe relocation.");
+                        end
+                    end
+                end
+                assignments(end + 1) = assignment; %#ok<AGROW>
+                positions(end + 1) = setting.SourceSpan.StartOffset; %#ok<AGROW>
+            end
+            statement = statements(arrayfun(@(item) item.Span.StartOffset == record.SourceSpans.Creation.StartOffset, statements));
+            patches = [patches macd.source.FactoryCallEditor.remove(statement, removed)];
+            span = macd.source.SubtreeReparentSourceEdits.withTrailingComment(source, record.SourceSpans.Creation);
+            creation = macd.source.SubtreeReparentSourceEdits.applyRange(source, span, patches);
+        end
+
+        function span = withTrailingComment(source, span)
+            % withTrailingComment Keep a same-line comment attached to its relocated statement.
+            arguments (Input)
+                source (1, 1) string
+                span (1, 1) macd.model.SourceSpan
+            end
+            arguments (Output)
+                span (1, 1) macd.model.SourceSpan
+            end
+            tail = extractAfter(source, span.EndOffset);
+            stop = regexp(char(tail), '\r?\n', 'start', 'once');
+            if isempty(stop), stop = strlength(tail) + 1; end
+            suffix = extractBefore(tail, stop);
+            if ~isempty(regexp(suffix, '^[ \t]*%[^\r\n]*$', 'once'))
+                span = macd.model.SourceSpan(span.StartOffset, span.EndOffset + strlength(suffix));
+            end
+        end
+
+        function events = orderEvents(events)
+            % orderEvents Keep source order while ensuring each owner and parent exists before use.
+            arguments (Input)
+                events (1, :) struct
+            end
+            arguments (Output)
+                events (1, :) struct
+            end
+            ids = string({events.Id});
+            creates = [events.Creates];
+            edges = false(numel(events), numel(events));
+            for index = 1:numel(events)
+                owner = ids == events(index).Id;
+                if events(index).Creates
+                    edges(creates & ids == events(index).ParentId, index) = true;
+                else
+                    edges(owner & (creates | [events.SourceOrder] < events(index).SourceOrder), index) = true;
+                end
+            end
+            remaining = true(1, numel(events));
+            order = zeros(1, numel(events));
+            for index = 1:numel(events)
+                ready = find(remaining & ~any(edges, 1));
+                if isempty(ready)
+                    error("macd:SubtreeReparentSourceEdits:UnsafeSource", "Relocated creation dependencies contain a cycle.");
+                end
+                [~, first] = min([events(ready).SourceOrder]);
+                selected = ready(first);
+                order(index) = selected;
+                remaining(selected) = false;
+                edges(selected, :) = false;
+            end
+            events = events(order);
+        end
+
+        function [block, candidate] = placePending(document, registry, removals, anchor, block, movedIds)
+            % placePending Use the shared insertion planner inside the independently relocated source block.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+                removals struct
+                anchor (1, 1) double
+                block (1, 1) string
+                movedIds string
+            end
+            arguments (Output)
+                block (1, 1) string
+                candidate (1, 1) macd.model.DocumentModel
+            end
+            prefix = macd.source.SubtreeReparentSourceEdits.applyRange( ...
+                document.OriginalText, macd.model.SourceSpan(1, anchor), removals);
+            suffix = extractAfter(document.OriginalText, anchor);
+            source = prefix + block + suffix;
+            candidate = macd.source.AppSourceParser.parseText(source, registry);
+            additions = struct("Start", {}, "End", {}, "Text", {});
+            % All candidates share one source version; only their owned insertions are combined.
+            for id = movedIds
+                original = document.getComponent(id);
+                configured = candidate.getComponentByName(document.sourceComponentName(id));
+                pending = original.Properties(string({original.Properties.Origin}) == "generated");
+                pending = pending(arrayfun(@(entry) isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
+                    ~isfield(entry.Metadata, "SubtreeReferenceId"), pending));
+                for entry = pending, configured.setProperty(entry.Path, entry.LiteralValue); end
+                if isempty(pending), continue, end
+                plan = macd.source.PropertyInsertionPlanner.plan(candidate, configured, registry);
+                additions = [additions plan.Edits]; %#ok<AGROW>
+            end
+            additions = macd.source.CallbackSourceEdits.combineInsertions(additions);
+            first = strlength(prefix) + 1;
+            last = strlength(prefix) + strlength(block);
+            if any([additions.Start] < first | [additions.End] > last)
+                error("macd:SubtreeReparentSourceEdits:UnsafeSource", "A pending property escapes the relocated initialization block.");
+            end
+            block = macd.source.SubtreeReparentSourceEdits.applyRange(source, macd.model.SourceSpan(first, last), additions);
+            [candidate, diagnostics] = macd.source.AppSourceParser.parseText(prefix + block + suffix, registry);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:SubtreeReparentSourceEdits:UnsafeSource", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+        end
+
+        function text = applyRange(source, span, edits)
+            % applyRange Apply token edits contained in an original source interval.
+            arguments (Input)
+                source (1, 1) string
+                span (1, 1) macd.model.SourceSpan
+                edits struct
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+            text = extractBetween(source, span.StartOffset, span.EndOffset);
+            edits = edits([edits.Start] >= span.StartOffset & [edits.End] <= span.EndOffset);
+            [~, order] = sort([edits.Start], 'descend');
+            for edit = edits(order)
+                first = edit.Start - span.StartOffset + 1;
+                last = edit.End - span.StartOffset + 1;
+                text = extractBefore(text, first) + edit.Text + extractAfter(text, last);
             end
         end
     end
