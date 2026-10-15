@@ -97,6 +97,17 @@ classdef RoundTripGenerator
             for index = 1:numel(document.Components)
                 component = document.Components(index);
                 if any(movedIds == component.Id), continue, end
+                if macd.source.PropertyInsertionPlanner.needsPlan(document, component)
+                    try
+                        plan = macd.source.PropertyInsertionPlanner.plan(document, component, obj.Registry);
+                        edits = [edits plan.Edits]; %#ok<AGROW>
+                    catch exception
+                        diagnostics(end + 1) = obj.error("unsafe-property-insertion", component, string(exception.message)); %#ok<AGROW>
+                        source = "";
+                        document.Diagnostics = diagnostics;
+                        return
+                    end
+                end
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
                     constructorSetting = isfield(entry.Metadata, "SettingMethod") && ...
@@ -139,11 +150,6 @@ classdef RoundTripGenerator
                                 entry.SourceSpan.StartOffset);
                             edits(end + 1) = obj.edit(entry.SourceSpan, replacement); %#ok<AGROW>
                         end
-                    elseif obj.isKnownSpan(component.SourceSpans.Creation)
-                        insertion = component.SourceSpans.Creation.EndOffset;
-                        text = obj.lineEnding(document) + obj.indent(source, insertion) + ...
-                            obj.assignmentText(component, entry, source, insertion);
-                        edits(end + 1) = obj.insertion(insertion, text); %#ok<AGROW>
                     end
                 end
             end

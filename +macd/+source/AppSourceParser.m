@@ -109,8 +109,10 @@ classdef AppSourceParser
                     creationOffsets(end + 1) = statements(index).Span.StartOffset;
                 end
             end
-            [initializationOrder, initializationDiagnostics, initializationCertain] = ...
+            [initializationOrder, initializationDiagnostics, initializationCertain, initializationLayout, initializationReturns] = ...
                 macd.source.CallbackSourceAnalyzer.initializationStatements(statements, creationOffsets);
+            document.Metadata.InitializationContext = struct("Order", initializationOrder, ...
+                "Certain", initializationCertain, "Returns", initializationReturns, "Layout", initializationLayout);
             diagnostics = [diagnostics(:)' initializationDiagnostics(:)'];
             creationOrder = unique(initializationOrder, 'stable');
             creationOrder = [creationOrder setdiff(1:numel(statements), creationOrder, 'stable')];
@@ -223,7 +225,8 @@ classdef AppSourceParser
                             record.Location.Sequence = sequence;
                             record.Location.IsCertain = setting.IsCertain && initializationCertain(visit) && ...
                                 nnz(initializationOrder == index) == 1;
-                            component.recordSetting(macd.model.PropertySetting(record.Path, record.Value, record.Location));
+                            captured = macd.model.PropertySetting(record.Path, record.Value, record.Location);
+                            component.recordSetting(macd.source.AppSourceParser.scopedSetting(captured, initializationLayout, index));
                         end
                     end
                 end
@@ -266,6 +269,7 @@ classdef AppSourceParser
                 sequence = sequence + 1;
                 setting = macd.source.PropertySettingSyntax.assignment(statement, ...
                     document.Metadata.SourceSnapshotId, sequence, initializationCertain(visit));
+                setting = macd.source.AppSourceParser.scopedSetting(setting, initializationLayout, index);
                 if ~any(string({effectiveProperties.Path}) == assignment.Path)
                     record = setting.toStruct();
                     record.Location.IsEditable = false;
@@ -310,6 +314,23 @@ classdef AppSourceParser
     end
 
     methods (Static, Access = private)
+        function setting = scopedSetting(setting, layout, index)
+            % scopedSetting Attach a proven original initializer method to one occurrence.
+            arguments (Input)
+                setting (1, 1) macd.model.PropertySetting
+                layout (1, 1) struct
+                index (1, 1) double
+            end
+            arguments (Output)
+                setting (1, 1) macd.model.PropertySetting
+            end
+            owner = layout.Owner(index);
+            span = macd.model.SourceSpan.empty;
+            match = find(string({layout.Methods.Name}) == owner);
+            if isscalar(match), span = layout.Methods(match).Span; end
+            setting = setting.withScope(owner, span);
+        end
+
         function result = isNotRenderedFigureTool(factory)
             % isNotRenderedFigureTool Identify retained Figure Tools outside Safe Preview scope.
             arguments (Input)

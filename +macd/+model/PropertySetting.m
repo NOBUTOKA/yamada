@@ -35,6 +35,12 @@ classdef PropertySetting
         StatementId string = ""
         % Sequence - Execution-visit order across distinct property paths.
         Sequence double = 0
+        % OwnerMethod - Instance initializer method that contains this source occurrence.
+        OwnerMethod string = ""
+        % ScopeSpan - Original complete initializer method span, when proven.
+        ScopeSpan macd.model.SourceSpan = macd.model.SourceSpan.empty
+        % InitializationScopeId - Source-version-bound identity of the owning method.
+        InitializationScopeId string = ""
         % FactoryArgumentIndex - Literal value index in the legacy factory-argument projection.
         FactoryArgumentIndex double = 0
         % IsCertain - Whether straight-line initialization owns this occurrence.
@@ -58,7 +64,8 @@ classdef PropertySetting
             % Validate metadata before copying it into immutable source ownership.
             allowed = ["Method", "Syntax", "SourceSpan", "ValueSpan", "NameSpan", ...
                 "PairSpan", "SourceSnapshotId", "StatementId", "Sequence", "IsCertain", ...
-                "SourceExpression", "IsEditable", "FactoryArgumentIndex"];
+                "SourceExpression", "IsEditable", "FactoryArgumentIndex", ...
+                "OwnerMethod", "ScopeSpan", "InitializationScopeId"];
             unknown = setdiff(string(fieldnames(location)), allowed);
             if ~isempty(unknown)
                 error("macd:PropertySetting:InvalidLocation", "Unknown setting field %s.", unknown(1));
@@ -109,9 +116,27 @@ classdef PropertySetting
                 "NameSpan", obj.NameSpan, "PairSpan", obj.PairSpan, ...
                 "SourceSnapshotId", obj.SourceSnapshotId, "StatementId", obj.StatementId, ...
                 "Sequence", obj.Sequence, "IsCertain", obj.IsCertain, "IsEditable", obj.IsEditable, ...
-                "FactoryArgumentIndex", obj.FactoryArgumentIndex);
+                "FactoryArgumentIndex", obj.FactoryArgumentIndex, "OwnerMethod", obj.OwnerMethod, ...
+                "ScopeSpan", obj.ScopeSpan, "InitializationScopeId", obj.InitializationScopeId);
             if obj.ValueKind == "expression", location.SourceExpression = obj.SourceExpression; end
             record = struct("Path", obj.Path, "Value", {obj.LiteralValue}, "Location", location);
+        end
+
+        function obj = withScope(obj, owner, span)
+            % withScope Return a source-version-bound initializer ownership annotation.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertySetting
+                owner (1, 1) string
+                span macd.model.SourceSpan
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.PropertySetting
+            end
+            obj.OwnerMethod = owner;
+            obj.ScopeSpan = span;
+            if ~isempty(span) && span.isKnown()
+                obj.InitializationScopeId = obj.SourceSnapshotId + ":scope:" + span.StartOffset;
+            end
         end
     end
 end

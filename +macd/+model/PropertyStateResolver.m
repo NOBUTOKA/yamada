@@ -6,11 +6,13 @@ classdef PropertyStateResolver
     %   validation is grouped; mode and unit arguments retain their own order.
 
     methods (Static)
-        function [states, diagnostics] = resolve(component, definitions)
+        function [states, diagnostics] = resolve(component, definitions, document, registry)
             % resolve Return independent explicit/requested/effective states and proven errors.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
                 definitions macd.model.PropertyDefinition
+                document macd.model.DocumentModel = macd.model.DocumentModel.empty
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
             arguments (Output)
                 states macd.model.PropertyState
@@ -26,6 +28,28 @@ classdef PropertyStateResolver
                 last = macd.model.PropertySetting.empty;
                 if ~isempty(settings), last = settings(end); end
                 states(end + 1) = macd.model.PropertyState(definition, entry, last); %#ok<AGROW>
+            end
+
+            % Source additions use the same actual placement as generation and Preview.
+            if ~isempty(document) && ~isempty(registry) && ...
+                    macd.source.PropertyInsertionPlanner.needsPlan(document, component)
+                try
+                    plan = macd.source.PropertyInsertionPlanner.plan(document, component, registry);
+                    resolved = macd.model.PropertyStateResolver.resolve(plan.Component, definitions);
+                    for index = 1:numel(states)
+                        effective = resolved(index);
+                        id = macd.model.PropertyStateResolver.originalEffectId(component, plan.Component, effective.EffectSettingId);
+                        states(index) = states(index).withEffective(effective.EffectiveValue, effective.IsKnown, ...
+                            id, effective.Reason, effective.ReasonCode);
+                    end
+                catch exception
+                    diagnostics(end + 1) = macd.model.Diagnostic("unsafe-property-insertion", "error", ...
+                        string(exception.message), component.Id, component.SourceSpans.Creation);
+                    for index = 1:numel(states)
+                        states(index) = states(index).withEffective([], false, "unresolved-placement", string(exception.message), "placement");
+                    end
+                end
+                return
             end
 
             % Keep source execution order, treating each constructor as one group.
@@ -120,6 +144,28 @@ classdef PropertyStateResolver
     end
 
     methods (Static, Access = private)
+        function id = originalEffectId(original, candidate, candidateId)
+            % originalEffectId Map candidate-only offsets back to immutable original or pending identities.
+            arguments (Input)
+                original (1, 1) macd.model.ComponentRecord
+                candidate (1, 1) macd.model.ComponentRecord
+                candidateId (1, 1) string
+            end
+            arguments (Output)
+                id (1, 1) string
+            end
+            id = "";
+            effect = candidate.Settings(string({candidate.Settings.Id}) == candidateId);
+            if isempty(effect), return, end
+            path = effect(end).Path;
+            before = original.getSettings(path);
+            after = candidate.getSettings(path);
+            ordinal = find(string({after.Id}) == candidateId, 1, 'last');
+            if ~isempty(before) && ~isempty(ordinal)
+                id = before(min(ordinal, numel(before))).Id;
+            end
+        end
+
         function [states, message] = apply(states, definitions, path, value, known, id)
             % apply Resolve one supported write and its allowlisted sibling effects.
             arguments (Input)

@@ -5,7 +5,7 @@ classdef CallbackSourceAnalyzer
     %   references remain visible with both mutation actions unavailable.
 
     methods (Static)
-        function [order, diagnostics, certain] = initializationStatements(statements, creationOffsets)
+        function [order, diagnostics, certain, layout, returns] = initializationStatements(statements, creationOffsets)
             % initializationStatements Trace constructor-reachable initializers without executing source.
             arguments (Input)
                 statements macd.source.SourceStatement
@@ -15,10 +15,12 @@ classdef CallbackSourceAnalyzer
                 order double
                 diagnostics macd.model.Diagnostic
                 certain logical
+                layout (1, 1) struct
+                returns double
             end
 
             layout = macd.source.CallbackSourceAnalyzer.layout(statements);
-            [order, diagnostics, certain] = macd.source.InitializationSourceAnalyzer.analyze(statements, layout, creationOffsets);
+            [order, diagnostics, certain, returns] = macd.source.InitializationSourceAnalyzer.analyze(statements, layout, creationOffsets);
         end
 
         function states = analyze(document, componentId, registry)

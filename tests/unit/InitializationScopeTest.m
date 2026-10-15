@@ -4,6 +4,51 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) InitializationScopeTest <
     %   that constructor-reachable assignments own editable initial values.
 
     methods (Test)
+        function aConditionalCallDoesNotMakeItsDefiniteReturnFallThrough(testCase)
+            % aConditionalCallDoesNotMakeItsDefiniteReturnFallThrough Distinguish call certainty from local control flow.
+            source = testCase.returnFixture(["if app.UIFigure.Visible == ""on""", "configure(app);", ...
+                "end", "finalize(app);"], ["app.Options.Value = ""Second"";", "return;", ...
+                "app.Options.Value = ""Third"";"]);
+            document = macd.source.AppSourceParser.parseText(source, macd.model.ComponentRegistry.createDefault());
+            component = document.getComponentByName("Options");
+            testCase.verifyNumElements(component.getSettings("Value"), 2);
+            testCase.verifyFalse(component.getProperty("Value").IsEditable);
+            testCase.verifyEqual(component.getProperty("Tooltip").LiteralValue, "Final");
+        end
+
+        function helperReturnStopsItsTailButNotItsCaller(testCase)
+            % helperReturnStopsItsTailButNotItsCaller Keep the enclosing constructor's later calls reachable.
+            source = testCase.returnFixture(["configure(app);", "finalize(app);"], ...
+                ["app.Options.Value = ""Second"";", "return;", "app.Options.Value = ""Third"";"]);
+            document = macd.source.AppSourceParser.parseText(source, macd.model.ComponentRegistry.createDefault());
+            component = document.getComponentByName("Options");
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, "Second");
+            testCase.verifyEqual(component.getProperty("Tooltip").LiteralValue, "Final");
+            testCase.verifyNumElements(component.getSettings("Value"), 2);
+        end
+
+        function constructorReturnDoesNotVisitLaterHelpers(testCase)
+            % constructorReturnDoesNotVisitLaterHelpers Do not own settings in unreachable initializer calls.
+            source = testCase.returnFixture(["return;", "configure(app);", "finalize(app);"], ...
+                "app.Options.Value = ""Second"";");
+            document = macd.source.AppSourceParser.parseText(source, macd.model.ComponentRegistry.createDefault());
+            component = document.getComponentByName("Options");
+            testCase.verifyEqual(component.getProperty("Value").LiteralValue, "First");
+            testCase.verifyEmpty(component.getProperty("Tooltip"));
+            testCase.verifyNumElements(component.getSettings("Value"), 1);
+        end
+
+        function guardedReturnMakesOnlyTheCurrentMethodTailUncertain(testCase)
+            % guardedReturnMakesOnlyTheCurrentMethodTailUncertain Preserve conditional ownership without contaminating caller certainty.
+            source = testCase.returnFixture(["configure(app);", "finalize(app);"], ...
+                ["if app.UIFigure.Visible == ""on""", "return;", "end", "app.Options.Value = ""Second"";"]);
+            document = macd.source.AppSourceParser.parseText(source, macd.model.ComponentRegistry.createDefault());
+            component = document.getComponentByName("Options");
+            testCase.verifyFalse(component.getProperty("Value").IsEditable);
+            testCase.verifyTrue(component.getProperty("Tooltip").IsEditable);
+            testCase.verifyEqual(component.getProperty("Tooltip").LiteralValue, "Final");
+        end
+
         function callbackExpressionsDoNotLockInitialValues(testCase)
             % callbackExpressionsDoNotLockInitialValues Ignore runtime writes in either method order and nested functions.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -182,6 +227,24 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) InitializationScopeTest <
     end
 
     methods (Static, Access = private)
+        function source = returnFixture(tail, configure)
+            % returnFixture Build owned control-flow text without evaluating constructor conditions.
+            arguments (Input)
+                tail (1, :) string
+                configure (1, :) string
+            end
+            arguments (Output)
+                source (1, 1) string
+            end
+            source = strjoin(["classdef ReturnScopeApp < matlab.apps.AppBase", "properties", ...
+                "UIFigure matlab.ui.Figure", "Options matlab.ui.control.DropDown", "end", "methods", ...
+                "function app = ReturnScopeApp", "createComponents(app);", tail, "end", ...
+                "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                "app.Options = uidropdown(app.UIFigure);", "app.Options.Items = [""First"" ""Second""];", ...
+                "app.Options.Value = ""First"";", "end", "function configure(app)", configure, "end", ...
+                "function finalize(app)", "app.Options.Tooltip = ""Final"";", "end", "end", "end"], sprintf("\r\n"));
+        end
+
         function [source, callback] = fixture(placement, literalWrites)
             % fixture Create an unexecuted AppBase source with runtime property mutations.
             arguments (Input)

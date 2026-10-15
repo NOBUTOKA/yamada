@@ -89,9 +89,17 @@ classdef PreviewRenderer < handle
                 return
             end
             try
-                preview = obj.createPreviewComponent(component, parent);
+                configured = component;
+                configurationDocument = document;
+                if macd.source.PropertyInsertionPlanner.needsPlan(document, component)
+                    plan = macd.source.PropertyInsertionPlanner.plan(document, component, obj.Registry);
+                    configured = plan.Component;
+                    configurationDocument = plan.Document;
+                    configurationDocument.FilePath = document.FilePath;
+                end
+                preview = obj.createPreviewComponent(configured, parent);
                 handles(char(component.Id)) = preview;
-                obj.applyProperties(preview, component, document);
+                obj.applyProperties(preview, configured, configurationDocument);
                 for index = 1:numel(component.Children)
                     obj.renderComponent(document, component.Children(index), preview, handles);
                 end

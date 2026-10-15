@@ -87,7 +87,7 @@ classdef ModelValidator
                     component.CreationArguments);
                 supportedPaths = [effectiveProperties.Path];
                 [transaction, resolved, stateDiagnostics] = macd.validation.ModelValidator.propertyTransaction( ...
-                    component, effectiveProperties);
+                    component, effectiveProperties, document, registry);
                 diagnostics = [diagnostics stateDiagnostics]; %#ok<AGROW>
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
@@ -157,11 +157,13 @@ classdef ModelValidator
     end
 
     methods (Static, Access = private)
-        function [transaction, states, diagnostics] = propertyTransaction(component, definitions)
+        function [transaction, states, diagnostics] = propertyTransaction(component, definitions, document, registry)
             % propertyTransaction Resolve audited state before validating the current values.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
                 definitions macd.model.PropertyDefinition
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
             end
             arguments (Output)
                 transaction (1, 1) macd.model.PropertyTransaction
@@ -169,7 +171,7 @@ classdef ModelValidator
                 diagnostics macd.model.Diagnostic
             end
 
-            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions, document, registry);
             transaction = macd.model.PropertyStateResolver.transaction(states);
         end
 
