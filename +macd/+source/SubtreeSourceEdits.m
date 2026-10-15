@@ -38,10 +38,15 @@ classdef SubtreeSourceEdits
                     end
                     own(end + 1) = entry.SourceSpan; %#ok<AGROW>
                 end
+                for setting = component.Settings
+                    if ~isempty(setting.SourceSpan), own(end + 1) = setting.SourceSpan; end %#ok<AGROW>
+                end
                 spans = [spans own]; %#ok<AGROW>
             end
             edits = struct("Start", {}, "End", {}, "Text", {});
             if isempty(spans), return, end
+            [~, uniqueSpans] = unique([[spans.StartOffset]' [spans.EndOffset]'], "rows", "stable");
+            spans = spans(uniqueSpans);
 
             % Mask text and comments without changing offsets; reject indirect app access.
             code = macd.source.SubtreeSourceEdits.codeMask(source);

@@ -29,6 +29,31 @@ classdef PropertyEntry < handle
     end
 
     methods
+        function applySourceSetting(obj, setting)
+            % applySourceSetting Project one original occurrence into the editable value view.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                setting (1, 1) macd.model.PropertySetting
+            end
+
+            % Parsed occurrences may replace earlier expressions without editing source.
+            obj.ValueKind = setting.ValueKind;
+            obj.LiteralValue = setting.LiteralValue;
+            obj.SourceExpression = setting.SourceExpression;
+            obj.IsEditable = setting.IsEditable;
+            if ~obj.IsEditable && setting.ValueKind == "literal"
+                obj.ValueKind = "expression";
+                obj.SourceExpression = macd.source.LiteralEncoder.encode(setting.LiteralValue);
+                obj.LiteralValue = [];
+            end
+            obj.SourceSpan = setting.SourceSpan;
+            obj.Metadata.SourceSettingId = setting.Id;
+            obj.Metadata.SettingMethod = setting.Method;
+            obj.Metadata.SettingSyntax = setting.Syntax;
+            obj.Metadata.ValueSpan = setting.ValueSpan;
+            obj.Metadata.SourceSnapshotId = setting.SourceSnapshotId;
+        end
+
         function obj = PropertyEntry(path, value, origin)
             % PropertyEntry Create a literal component property entry.
             arguments (Input)

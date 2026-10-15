@@ -73,7 +73,6 @@ classdef RoundTripGenerator
             end
 
             % Relocate source-owned subtree initialization before ordinary property rewrites.
-            movedIds = strings(1, 0);
             relocationAnchor = 0;
             try
                 [relocations, movedIds] = macd.source.SubtreeReparentSourceEdits.build(document, obj.Registry);
@@ -92,9 +91,11 @@ classdef RoundTripGenerator
                 if any(movedIds == component.Id), continue, end
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
+                    constructorSetting = isfield(entry.Metadata, "SettingMethod") && ...
+                        entry.Metadata.SettingMethod == "nameValue";
                     if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
                         % Remove owned assignments to catalog-declared read-only properties.
-                        if obj.isKnownSpan(entry.SourceSpan)
+                        if ~constructorSetting && obj.isKnownSpan(entry.SourceSpan)
                             edits(end + 1) = obj.edit(entry.SourceSpan, ""); %#ok<AGROW>
                         end
                         continue
@@ -104,6 +105,22 @@ classdef RoundTripGenerator
                     if ~isempty(pending), continue, end
                     if isfield(entry.Metadata, "SubtreeReferenceId"), continue, end
                     if entry.ValueKind ~= "literal"
+                        continue
+                    end
+                    if isfield(entry.Metadata, "SourceSettingId")
+                        settings = component.getSettings(entry.Path);
+                        originalSetting = settings(string({settings.Id}) == entry.Metadata.SourceSettingId);
+                        if isempty(originalSetting)
+                            diagnostics(end + 1) = obj.error("ambiguous-property-setting", component, ...
+                                "Property value ownership is unknown."); %#ok<AGROW>
+                            source = "";
+                            document.Diagnostics = diagnostics;
+                            return
+                        end
+                        if ~isequaln(originalSetting(end).LiteralValue, entry.LiteralValue)
+                            edits(end + 1) = obj.edit(entry.Metadata.ValueSpan, ...
+                                macd.source.LiteralEncoder.encode(entry.LiteralValue)); %#ok<AGROW>
+                        end
                         continue
                     end
                     if obj.isKnownSpan(entry.SourceSpan)
@@ -184,6 +201,11 @@ classdef RoundTripGenerator
                 end
                 spans(end + 1) = entry.SourceSpan; %#ok<AGROW>
             end
+            for setting = component.Settings
+                if ~isempty(setting.SourceSpan), spans(end + 1) = setting.SourceSpan; end %#ok<AGROW>
+            end
+            [~, uniqueSpans] = unique([[spans.StartOffset]' [spans.EndOffset]'], "rows", "stable");
+            spans = spans(uniqueSpans);
             statements = macd.source.MatlabLexicalScanner.splitStatements(source);
             creationText = extractBetween(source, component.SourceSpans.Creation.StartOffset, component.SourceSpans.Creation.EndOffset);
             originalName = regexp(creationText, 'app\.(\w+)\s*=', 'tokens', 'once');

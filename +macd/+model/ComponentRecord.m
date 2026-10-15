@@ -23,13 +23,13 @@ classdef ComponentRecord < handle
         Children string = strings(1, 0)
         % Properties - Ordered macd.model.PropertyEntry handle objects.
         Properties macd.model.PropertyEntry = macd.model.PropertyEntry.empty
+        % Settings - Original explicit occurrences in initialization visit order.
+        Settings macd.model.PropertySetting = macd.model.PropertySetting.empty
     end
 
     properties
         % Name - Editable MATLAB property name for the component.
         Name string = ""
-        % CreationArguments - Ordered literal arguments passed to the factory.
-        CreationArguments cell = {}
         % ParentId - Stable identity of the parent component, or empty for a root.
         ParentId string = ""
         % IsEditable - Whether the component can be changed by the editor.
@@ -42,7 +42,98 @@ classdef ComponentRecord < handle
         Metadata struct = struct()
     end
 
+    properties (Dependent)
+        % CreationArguments - Factory arguments projected from source settings and requested values.
+        CreationArguments cell
+    end
+
+    properties (Access = private)
+        CreationArgumentData cell = {}
+    end
+
     methods
+        function factoryArguments = get.CreationArguments(obj)
+            % get.CreationArguments Project constructor values without a second mutable source owner.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                factoryArguments cell
+            end
+
+            factoryArguments = obj.CreationArgumentData;
+            for setting = obj.Settings
+                index = setting.FactoryArgumentIndex;
+                if index == 0, continue, end
+                value = setting.LiteralValue;
+                entry = obj.getProperty(setting.Path);
+                if ~isempty(entry) && entry.ValueKind == "literal" && ...
+                        isfield(entry.Metadata, "SourceSettingId") && entry.Metadata.SourceSettingId == setting.Id
+                    value = entry.LiteralValue;
+                end
+                factoryArguments{index} = value;
+            end
+        end
+
+        function set.CreationArguments(obj, values)
+            % set.CreationArguments Initialize legacy factory inputs before source occurrences exist.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                values cell
+            end
+
+            if ~isempty(obj.Settings)
+                error("macd:ComponentRecord:SourceOwnedArguments", ...
+                    "Parsed constructor values must be edited through their property settings.");
+            end
+            obj.CreationArgumentData = values;
+        end
+
+        function recordSetting(obj, setting)
+            % recordSetting Append a parsed occurrence and refresh the current value projection.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                setting (1, 1) macd.model.PropertySetting
+            end
+
+            % Original occurrences and editable requested values have distinct owners.
+            obj.Settings(end + 1) = setting;
+            entry = obj.getProperty(setting.Path);
+            if isempty(entry)
+                entry = macd.model.PropertyEntry(setting.Path, [], obj.Origin);
+                obj.Properties(end + 1) = entry;
+            end
+            entry.applySourceSetting(setting);
+        end
+
+        function settings = getSettings(obj, path)
+            % getSettings Return a property's original occurrences with the last at the end.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                path (1, 1) string
+            end
+            arguments (Output)
+                settings macd.model.PropertySetting
+            end
+
+            settings = obj.Settings(string({obj.Settings.Path}) == path);
+        end
+
+        function restoreSettings(obj, records)
+            % restoreSettings Restore immutable source occurrences without changing pending values.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                records struct
+            end
+
+            settings = macd.model.PropertySetting.empty;
+            for record = records
+                settings(end + 1) = macd.model.PropertySetting( ...
+                    record.Path, record.Value, record.Location); %#ok<AGROW>
+            end
+            obj.Settings = settings;
+        end
+
         function obj = ComponentRecord(id, name, factory, declaredType, origin)
             % ComponentRecord Create an extensible intermediate component record.
             arguments (Input)

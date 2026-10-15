@@ -5,7 +5,7 @@ classdef CallbackSourceAnalyzer
     %   references remain visible with both mutation actions unavailable.
 
     methods (Static)
-        function [order, diagnostics] = initializationStatements(statements, creationOffsets)
+        function [order, diagnostics, certain] = initializationStatements(statements, creationOffsets)
             % initializationStatements Trace constructor-reachable initializers without executing source.
             arguments (Input)
                 statements macd.source.SourceStatement
@@ -14,10 +14,11 @@ classdef CallbackSourceAnalyzer
             arguments (Output)
                 order double
                 diagnostics macd.model.Diagnostic
+                certain logical
             end
 
             layout = macd.source.CallbackSourceAnalyzer.layout(statements);
-            [order, diagnostics] = macd.source.InitializationSourceAnalyzer.analyze(statements, layout, creationOffsets);
+            [order, diagnostics, certain] = macd.source.InitializationSourceAnalyzer.analyze(statements, layout, creationOffsets);
         end
 
         function states = analyze(document, componentId, registry)
@@ -130,6 +131,7 @@ classdef CallbackSourceAnalyzer
 
             % Explicit end-delimited scopes avoid interpreting arbitrary expressions as structure.
             layout = struct("Valid", true, "Direct", false(1, numel(statements)), ...
+                "StraightLine", false(1, numel(statements)), ...
                 "Owner", strings(1, numel(statements)), "ClassName", "", ...
                 "InstanceNames", strings(1, 0), ...
                 "Methods", struct("Name", {}, "Span", {}), "MethodAnchor", 0);
@@ -142,6 +144,7 @@ classdef CallbackSourceAnalyzer
                     stack(2).Instance && stack(3).Kind == "function" && ...
                     nnz(string({stack.Kind}) == "function") == 1;
                 if instanceBody, layout.Owner(index) = stack(3).Name; end
+                layout.StraightLine(index) = instanceBody && numel(stack) == 3;
                 token = regexp(text, '^([A-Za-z]\w*)(?!\w)', 'tokens', 'once');
                 if isempty(token), continue, end
                 keyword = string(token{1});

@@ -106,6 +106,7 @@ classdef SubtreeSnapshot
                 component.Diagnostics = record.Diagnostics;
                 for child = record.Children, component.addChild(child); end
                 component.restoreProperties(record.Properties);
+                if isfield(record, "Settings"), component.restoreSettings(record.Settings); end
                 components(end + 1) = component; %#ok<AGROW>
             end
         end
@@ -136,11 +137,17 @@ classdef SubtreeSnapshot
                     "IsEditable", entry.IsEditable, "Origin", entry.Origin, "SourceSpan", entry.SourceSpan, ...
                     "Metadata", entry.Metadata, "Diagnostics", entry.Diagnostics); %#ok<AGROW>
             end
+            settings = struct("Path", {}, "Value", {}, "Location", {});
+            for setting = component.Settings
+                stored = setting.toStruct();
+                macd.model.SubtreeSnapshot.validateValue(stored);
+                settings(end + 1) = stored; %#ok<AGROW>
+            end
             record = struct("Id", component.Id, "Name", component.Name, "Factory", component.Factory, ...
                 "DeclaredType", component.DeclaredType, "Origin", component.Origin, ...
                 "ParentId", component.ParentId, "Children", component.Children, ...
                 "CreationArguments", {component.CreationArguments}, "IsEditable", component.IsEditable, ...
-                "Properties", properties, "SourceSpans", component.SourceSpans, ...
+                "Properties", properties, "Settings", settings, "SourceSpans", component.SourceSpans, ...
                 "Metadata", component.Metadata, "Diagnostics", component.Diagnostics);
         end
 

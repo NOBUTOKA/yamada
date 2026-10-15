@@ -88,6 +88,7 @@ classdef AppSourceParser
             document.OriginalText = source;
             document.Encoding = "UTF-8";
             document.LineEnding = macd.source.AppSourceParser.lineEnding(source);
+            document.Metadata.SourceSnapshotId = string(java.util.UUID.randomUUID());
             diagnostics = macd.model.Diagnostic.empty;
             if ~isAppBase
                 diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
@@ -107,11 +108,12 @@ classdef AppSourceParser
                     creationOffsets(end + 1) = statements(index).Span.StartOffset;
                 end
             end
-            [initializationOrder, initializationDiagnostics] = ...
+            [initializationOrder, initializationDiagnostics, initializationCertain] = ...
                 macd.source.CallbackSourceAnalyzer.initializationStatements(statements, creationOffsets);
             diagnostics = [diagnostics(:)' initializationDiagnostics(:)'];
             creationOrder = unique(initializationOrder, 'stable');
             creationOrder = [creationOrder setdiff(1:numel(statements), creationOrder, 'stable')];
+            creationSettings = containers.Map("KeyType", "char", "ValueType", "any");
 
             % Recover reachable creations first so parent discovery follows initialization calls.
             for index = creationOrder
@@ -133,9 +135,8 @@ classdef AppSourceParser
 
                 % Recover an optional parent and safe name/value factory arguments.
                 definition = registry.get(creation.Factory);
-                [parentName, creationArguments, skippedProperties, isSupported] = ...
-                    macd.source.AppSourceParser.creationArguments( ...
-                    creation.Arguments, definition);
+                [parentName, creationArguments, settings, skippedProperties, isSupported] = ...
+                    macd.source.PropertySettingSyntax.factory(statement, definition, document.Metadata.SourceSnapshotId);
                 if ~isSupported
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "nonliteral-creation-argument", "warning", ...
@@ -182,6 +183,7 @@ classdef AppSourceParser
                     "parsed-" + creation.Name, creation.Name, creation.Factory, ...
                     declaredType, "parsed");
                 component.CreationArguments = creationArguments;
+                creationSettings(char(component.Id)) = settings;
                 component.SourceSpans = struct( ...
                     "Declaration", declarationSpan, "Creation", statement.Span);
                 try
@@ -204,13 +206,25 @@ classdef AppSourceParser
 
             % Recover initial writes in execution order, rather than file declaration order.
             created = strings(1, 0);
-            for index = initializationOrder
+            sequence = 0;
+            for visit = 1:numel(initializationOrder)
+                index = initializationOrder(visit);
                 % Runtime callback writes never determine editable initial values or source spans.
                 statement = statements(index);
                 creation = macd.source.AppSourceParser.creationMatch(statement.Text);
                 if ~isempty(creation)
                     component = document.getComponentByName(creation.Name);
-                    if ~isempty(component), created(end + 1) = component.Id; end
+                    if ~isempty(component)
+                        created(end + 1) = component.Id;
+                        for setting = creationSettings(char(component.Id))
+                            sequence = sequence + 1;
+                            record = setting.toStruct();
+                            record.Location.Sequence = sequence;
+                            record.Location.IsCertain = setting.IsCertain && initializationCertain(visit) && ...
+                                nnz(initializationOrder == index) == 1;
+                            component.recordSetting(macd.model.PropertySetting(record.Path, record.Value, record.Location));
+                        end
+                    end
                 end
                 assignment = macd.source.AppSourceParser.assignmentMatch(statement.Text);
                 if isempty(assignment)
@@ -248,14 +262,13 @@ classdef AppSourceParser
                 end
                 effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
                     component.CreationArguments);
+                sequence = sequence + 1;
+                setting = macd.source.PropertySettingSyntax.assignment(statement, ...
+                    document.Metadata.SourceSnapshotId, sequence, initializationCertain(visit));
                 if ~any(string({effectiveProperties.Path}) == assignment.Path)
-                    existingEntry = component.getProperty(assignment.Path);
-                    if ~isempty(existingEntry) && ~existingEntry.IsEditable
-                        continue
-                    end
-                    entry = component.setProperty(assignment.Path, []);
-                    entry.setSourceExpression(assignment.ValueText);
-                    entry.SourceSpan = statement.Span;
+                    record = setting.toStruct();
+                    record.Location.IsEditable = false;
+                    component.recordSetting(macd.model.PropertySetting(record.Path, record.Value, record.Location));
                     if ~macd.source.AppSourceParser.isNotRenderedFigureTool(component.Factory)
                         diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                             "context-inapplicable-property", "warning", ...
@@ -264,27 +277,18 @@ classdef AppSourceParser
                     end
                     continue
                 end
-                % Keep unsupported expressions opaque instead of evaluating them.
-                [value, isLiteral] = macd.source.MatlabLiteralParser.parse( ...
-                    assignment.ValueText);
-                existingEntry = component.getProperty(assignment.Path);
-                if ~isempty(existingEntry) && ~existingEntry.IsEditable
-                    if ~isempty(existingEntry.SourceSpan) && ...
-                            existingEntry.SourceSpan.StartOffset == statement.Span.StartOffset
-                        continue
-                    end
+                % Preserve every occurrence; conditional writes remain uncertain projections.
+                component.recordSetting(setting);
+                if ~setting.IsCertain
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "conflicting-property-assignment", "warning", ...
-                        "Later assignment conflicts with retained source expression and was retained as source.", ...
+                        "Initialization ownership is conditional or repeated; the setting remains read-only.", ...
                         component.Id, statement.Span);
                     document.UnknownRegions(end + 1) = ...
                         macd.model.UnknownSourceRegion( ...
                         statement.Text, statement.Span, "conflicting-property-assignment");
-                    continue
                 end
-                entry = component.setProperty(assignment.Path, value);
-                if ~isLiteral
-                    entry.setSourceExpression(assignment.ValueText);
+                if setting.ValueKind == "expression"
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "source-expression", "warning", ...
                         "Property expression was retained as read-only source text.", ...
@@ -293,7 +297,6 @@ classdef AppSourceParser
                         macd.model.UnknownSourceRegion( ...
                         statement.Text, statement.Span, "source-expression");
                 end
-                entry.SourceSpan = statement.Span;
             end
 
             % Combine parser findings with shared model validation diagnostics.
@@ -462,140 +465,6 @@ classdef AppSourceParser
                     "Path", string(tokens.path), ...
                     "ValueText", string(strtrim(tokens.value)));
             end
-        end
-
-        function [parentName, values, skippedProperties, isSupported] = ...
-                creationArguments(text, definition)
-            % creationArguments Parse a parent plus safe name/value factory arguments.
-            arguments (Input)
-                text string
-                definition (1, 1) macd.model.ComponentDefinition
-            end
-            arguments (Output)
-                parentName string
-                values cell
-                skippedProperties string
-                isSupported logical
-            end
-
-            % Split top-level commas while preserving nested and quoted arguments.
-            parentName = "";
-            values = {};
-            skippedProperties = strings(1, 0);
-            isSupported = true;
-            elements = macd.source.AppSourceParser.splitArguments(char(text));
-            if isempty(elements)
-                return
-            end
-            firstElement = string(strtrim(elements{1}));
-            parentTokens = regexp(char(firstElement), ...
-                '^app\.(?<name>[A-Za-z]\w*)$', "names", "once");
-            startIndex = 1;
-            if ~isempty(parentTokens)
-                parentName = string(parentTokens.name);
-                startIndex = 2;
-            end
-            index = startIndex;
-            while index <= numel(elements)
-                [value, isLiteral] = macd.source.MatlabLiteralParser.parse( ...
-                    string(elements{index}));
-                if ~isLiteral
-                    values = {};
-                    skippedProperties = strings(1, 0);
-                    isSupported = false;
-                    return
-                end
-                propertyDefinition = macd.model.PropertyDefinition.empty;
-                if isstring(value) && isscalar(value)
-                    propertyDefinition = definition.getProperty(value);
-                end
-                if ~isempty(propertyDefinition) && index < numel(elements)
-                    [propertyValue, isPropertyLiteral] = ...
-                        macd.source.MatlabLiteralParser.parse(string(elements{index + 1}));
-                    if isPropertyLiteral
-                        values(end + 1:end + 2) = {value, propertyValue};
-                    else
-                        skippedProperties(end + 1) = value;
-                    end
-                    index = index + 2;
-                    continue
-                end
-                % Retain unknown name/value pairs as source without losing the component.
-                if isstring(value) && isscalar(value) && index < numel(elements) && ...
-                        ~any(definition.SupportedStyles == value)
-                    skippedProperties(end + 1) = value;
-                    index = index + 2;
-                    continue
-                end
-                values{end + 1} = value;
-                index = index + 1;
-            end
-        end
-
-        function elements = splitArguments(text)
-            % splitArguments Split comma-separated source while tracking nesting.
-            arguments (Input)
-                text char
-            end
-            arguments (Output)
-                elements cell
-            end
-
-            % Use the same quote and delimiter rules as the lexical scanner.
-            if isempty(strtrim(text))
-                elements = {};
-                return
-            end
-            elements = {};
-            startOffset = 1;
-            parenDepth = 0;
-            bracketDepth = 0;
-            braceDepth = 0;
-            inCharacterVector = false;
-            inString = false;
-            index = 1;
-            while index <= numel(text)
-                character = text(index);
-                nextCharacter = char(0);
-                if index < numel(text)
-                    nextCharacter = text(index + 1);
-                end
-                if character == '''' && ~inString
-                    if inCharacterVector && nextCharacter == ''''
-                        index = index + 2;
-                        continue
-                    end
-                    inCharacterVector = ~inCharacterVector;
-                elseif character == '"' && ~inCharacterVector
-                    if inString && nextCharacter == '"'
-                        index = index + 2;
-                        continue
-                    end
-                    inString = ~inString;
-                elseif ~inCharacterVector && ~inString
-                    switch character
-                        case '('
-                            parenDepth = parenDepth + 1;
-                        case ')'
-                            parenDepth = max(parenDepth - 1, 0);
-                        case '['
-                            bracketDepth = bracketDepth + 1;
-                        case ']'
-                            bracketDepth = max(bracketDepth - 1, 0);
-                        case '{'
-                            braceDepth = braceDepth + 1;
-                        case '}'
-                            braceDepth = max(braceDepth - 1, 0);
-                    end
-                end
-                if character == ',' && ~inCharacterVector && ~inString && ...
-                        parenDepth == 0 && bracketDepth == 0 && braceDepth == 0
-                    elements{end + 1} = text(startOffset:index - 1);
-                    startOffset = index + 1;
-                end
-                index = index + 1;
-            end
-            elements{end + 1} = text(startOffset:end);
         end
 
         function result = lineEnding(source)

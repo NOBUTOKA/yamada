@@ -21,6 +21,7 @@ classdef MatlabLexicalScanner
             text = char(source);
             statements = macd.source.SourceStatement.empty;
             buffer = '';
+            codeOffsets = zeros(1, 0);
             startOffset = 0;
             parenDepth = 0;
             bracketDepth = 0;
@@ -72,6 +73,7 @@ classdef MatlabLexicalScanner
                 if character == '''' && ~inString
                     if inCharacterVector && nextCharacter == ''''
                         buffer = [buffer '''''']; %#ok<AGROW>
+                        codeOffsets = [codeOffsets index index + 1]; %#ok<AGROW>
                         index = index + 2;
                         continue
                     end
@@ -82,6 +84,7 @@ classdef MatlabLexicalScanner
                 elseif character == '"' && ~inCharacterVector
                     if inString && nextCharacter == '"'
                         buffer = [buffer '""']; %#ok<AGROW>
+                        codeOffsets = [codeOffsets index index + 1]; %#ok<AGROW>
                         index = index + 2;
                         continue
                     end
@@ -110,8 +113,9 @@ classdef MatlabLexicalScanner
                 if character == ';' && ~inCharacterVector && ~inString && ...
                         parenDepth == 0 && bracketDepth == 0 && braceDepth == 0
                     statements = macd.source.MatlabLexicalScanner.appendStatement( ...
-                        statements, buffer, startOffset, index);
+                        statements, buffer, startOffset, index, codeOffsets);
                     buffer = '';
+                    codeOffsets = zeros(1, 0);
                     startOffset = 0;
                     index = index + 1;
                     continue
@@ -121,6 +125,9 @@ classdef MatlabLexicalScanner
                 if character == newline && ~inCharacterVector && ~inString
                     trimmed = strtrim(buffer);
                     if endsWith(string(trimmed), "...")
+                        first = find(~isspace(buffer), 1);
+                        last = find(~isspace(buffer), 1, "last") - 3;
+                        codeOffsets = [codeOffsets(first:last) index];
                         buffer = [extractBefore(trimmed, strlength(trimmed) - 2) ' '];
                         index = index + 1;
                         continue
@@ -131,31 +138,34 @@ classdef MatlabLexicalScanner
                 if character == newline && ~inCharacterVector && ~inString && ...
                         parenDepth == 0 && bracketDepth == 0 && braceDepth == 0
                     statements = macd.source.MatlabLexicalScanner.appendStatement( ...
-                        statements, buffer, startOffset, index - 1);
+                        statements, buffer, startOffset, index - 1, codeOffsets);
                     buffer = '';
+                    codeOffsets = zeros(1, 0);
                     startOffset = 0;
                     index = index + 1;
                     continue
                 end
 
                 buffer = [buffer character]; %#ok<AGROW>
+                codeOffsets(end + 1) = index; %#ok<AGROW>
                 index = index + 1;
             end
 
             % Retain a final unterminated statement for conservative diagnostics.
             statements = macd.source.MatlabLexicalScanner.appendStatement( ...
-                statements, buffer, startOffset, numel(text));
+                statements, buffer, startOffset, numel(text), codeOffsets);
         end
     end
 
     methods (Static, Access = private)
-        function statements = appendStatement(statements, buffer, startOffset, endOffset)
+        function statements = appendStatement(statements, buffer, startOffset, endOffset, codeOffsets)
             % appendStatement Append nonempty trimmed text with a valid span.
             arguments (Input)
                 statements macd.source.SourceStatement
                 buffer char
                 startOffset double
                 endOffset double
+                codeOffsets (1, :) double
             end
             arguments (Output)
                 statements macd.source.SourceStatement
@@ -167,7 +177,8 @@ classdef MatlabLexicalScanner
                 return
             end
             statements(end + 1) = macd.source.SourceStatement( ...
-                text, macd.model.SourceSpan(startOffset, endOffset));
+                text, macd.model.SourceSpan(startOffset, endOffset), ...
+                codeOffsets(find(~isspace(buffer), 1):find(~isspace(buffer), 1, "last")));
         end
     end
 end

@@ -5,7 +5,7 @@ classdef InitializationSourceAnalyzer
     %   Constructor-free fragments retain a diagnosed factory-owner fallback.
 
     methods (Static)
-        function [order, diagnostics] = analyze(statements, scopes, creationOffsets)
+        function [order, diagnostics, certain] = analyze(statements, scopes, creationOffsets)
             % analyze Return statement visits in conservative constructor call order.
             arguments (Input)
                 statements macd.source.SourceStatement
@@ -15,12 +15,14 @@ classdef InitializationSourceAnalyzer
             arguments (Output)
                 order double
                 diagnostics macd.model.Diagnostic
+                certain logical
             end
 
             names = unique(scopes.InstanceNames, 'stable');
             roots = scopes.ClassName;
             diagnostics = macd.model.Diagnostic.empty;
             order = [];
+            certain = false(1, 0);
             if ~any(names == roots)
                 % Partial class fixtures have no executable entry point; disclose inference.
                 creation = ismember(arrayfun(@(statement) statement.Span.StartOffset, statements), creationOffsets);
@@ -30,7 +32,7 @@ classdef InitializationSourceAnalyzer
                 if ~isscalar(roots), return, end
             end
             % Bound repeated calls while retaining their order and detecting recursion.
-            queue = struct("Name", roots, "Indices", find(scopes.Owner == roots), "Next", 1);
+            queue = struct("Name", roots, "Indices", find(scopes.Owner == roots), "Next", 1, "IsCertain", true);
             reported = [];
             while ~isempty(queue)
                 frame = queue(end);
@@ -41,6 +43,7 @@ classdef InitializationSourceAnalyzer
                 index = frame.Indices(frame.Next);
                 queue(end).Next = frame.Next + 1;
                 order(end + 1) = index; %#ok<AGROW>
+                certain(end + 1) = frame.IsCertain && scopes.Valid && scopes.StraightLine(index); %#ok<AGROW>
                 if numel(order) > 10000
                     diagnostics(end + 1) = macd.model.Diagnostic("initialization-trace-limit", "warning", ...
                         "Initialization tracing exceeded its static visit limit.", "", statements(index).Span); %#ok<AGROW>
@@ -57,7 +60,8 @@ classdef InitializationSourceAnalyzer
                     reported(end + 1) = index; %#ok<AGROW>
                 end
                 if strlength(target) > 0
-                    queue(end + 1) = struct("Name", target, "Indices", find(scopes.Owner == target), "Next", 1); %#ok<AGROW>
+                    queue(end + 1) = struct("Name", target, "Indices", find(scopes.Owner == target), ...
+                        "Next", 1, "IsCertain", certain(end)); %#ok<AGROW>
                 end
             end
         end

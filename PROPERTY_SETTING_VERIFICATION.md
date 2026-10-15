@@ -51,11 +51,47 @@
 | 値の検証・表示 | ModelValidator、PropertyBatchValidator、DefaultValueProvider、InspectorValueFormatter、InspectorView |
 | Preview・保存 | PreviewRenderer、DocumentLifecycleService、yamadaの保存後文書更新 |
 
+## Stage 2: 共通設定履歴と位置付き解析
+
+実装済み:
+
+- `PropertySetting`値クラスと、`ComponentRecord.Settings` / `getSettings`の型付き出現履歴。
+  元の値・式、設定方式、構文、文/名前/値/引数ペアの範囲、ソース版、実行訪問順、確実性を保持する。
+- `PropertyEntry`は最後の明示設定の編集用投影となり、編集中の要求値で元の設定レコードを書き換えない。
+- `CreationArguments`は設定履歴と要求値から投影する互換APIとし、解析後の別経路による変更を拒否する。
+- 字句解析の`CodeOffsets`を使用し、コメント除去・継続行処理後も元の値トークンの位置を保持する。
+- `PropertySettingSyntax`で`"Name", value`、`'Name', value`、`Name=value`、ドット代入を解析する。
+  式・未知引数・同一キーの重複も失わず保持する。
+- 現在の初期化呼び出し順の解析を再利用し、条件分岐内・条件付き呼び出しの設定を不確実として保持する。
+  同じ直列helperの反復呼び出しは訪問順を保持する。ファイルの物理順を実行順と同一視しない。
+- 既存の名前-値引数と代入の値更新は元の値範囲だけに限定する。無編集時の値内コメントも保持する。
+- SubtreeSnapshotで元の設定履歴を独立した値として保存・復元する。
+  削除では最後の設定だけでなく全出現を所有範囲に含め、共有する生成文を重複削除しない。
+- 外側が引用符でも内部に未エスケープの引用符がある連結式は、リテラルと判定しない。
+
+検証:
+
+- MATLAB R2024aの`runYamadaTests("area", ["parser", "model", "generation"])`が
+  250/250件合格（Failed=0、Incomplete=0）。実測合計時間273.305秒。
+- その後の追加変更を含む`PropertySettingSyntaxTest` 7件、`PropertySettingHistoryTest` 6件、
+  `LexicalParsingTest` 8件、`TestSelectionContractTest` 3件の合計24件が合格。
+- 設定履歴関連15ファイルのcheckcodeが警告なし。追加変更を含む4ファイルの再確認も警告なし。
+  両チェックを合わせた対象は16種類のMATLABファイル。
+- 上記のareaは既存のCopy/Cut/Paste、親変更、モデル・生成器・Inspectorのsmoke回帰を含むが、
+  名前-値引数を持つ部分木の全移動ケースや保存後の位置再設定まで完了した根拠ではない。
+
+後続の必須作業:
+
+- 新規設定の保留意図、編集前の設定ID固定、依存関係付きの原子的preflightを完成させる。
+- 名前-値引数の追加、既存初期化への依存関係付き挿入、全生成/移動経路の共通化。
+- 最後の明示設定と、他setterにより変わる実効状態の共通resolver。
+- 保存・再読込後のソース版とUndo/Redoの整合、全variant監査とruntime適用ポリシーの実データ整備。
+
 ## 未完了の段階
 
 - Stage 1の残り: 設定レコード・resolver・plannerの具体APIと全variantの監査状況表を、後続実装で確定する。
-- Stage 2: 共通の設定出現・位置付き解析・既存APIへの投影。
-- Stage 3: 元位置での更新、変更意図、原子的履歴とスナップショット。
+- Stage 2の残り: 初期化範囲の保持と、後続resolver・plannerへのAPI接続を最終確認する。
+- Stage 3: 変更意図、設定IDの固定、原子的preflight。元位置更新とスナップショットの基盤は上記で実装済み。
 - Stage 4: 公式資料に基づく全variant監査、実台帳の更新、実効状態と適用計画。
 - Stage 5: 名前-値追記、依存関係付き代入挿入、全生成経路とPreviewへの接続。
 - Stage 6: 保存後の再編集、全体テスト、公開仕様の更新、完了条件の監査。

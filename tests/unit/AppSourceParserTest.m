@@ -115,11 +115,16 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             registry = macd.model.ComponentRegistry.createDefault();
             [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
 
-            % Preserve the first opaque value and retain the alternate branch as unknown source.
+            % Retain both conditional occurrences without claiming a definite final value.
             statusLabel = document.getComponentByName("StatusLabel");
             entry = statusLabel.getProperty("Text");
             testCase.verifyEqual(entry.ValueKind, "expression");
-            testCase.verifyEqual(entry.SourceExpression, "compose(""Count %d"", 1)");
+            testCase.verifyFalse(entry.IsEditable);
+            settings = statusLabel.getSettings("Text");
+            testCase.verifyNumElements(settings, 2);
+            testCase.verifyEqual(settings(1).SourceExpression, "compose(""Count %d"", 1)");
+            testCase.verifyEqual(settings(2).LiteralValue, "Ready");
+            testCase.verifyFalse(any([settings.IsCertain]));
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyTrue(any([diagnostics.Code] == ...
                 "conflicting-property-assignment"));

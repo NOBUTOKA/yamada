@@ -29,6 +29,9 @@ classdef MatlabLiteralParser
             % Parse quoted text before recognizing operators or delimiters.
             if source(1) == '''' && source(end) == '''' && numel(source) >= 2
                 contents = source(2:end - 1);
+                if contains(strrep(contents, '''''', ''), '''')
+                    return
+                end
                 if isempty(contents)
                     value = char.empty(0, 0);
                 else
@@ -38,6 +41,9 @@ classdef MatlabLiteralParser
                 return
             end
             if source(1) == '"' && source(end) == '"' && numel(source) >= 2
+                if contains(strrep(source(2:end - 1), '""', ''), '"')
+                    return
+                end
                 value = string(strrep(source(2:end - 1), '""', '"'));
                 isLiteral = true;
                 return

@@ -13,14 +13,17 @@ classdef SourceStatement
         Text string = ""
         % Span - Inclusive offset range of the original statement.
         Span macd.model.SourceSpan = macd.model.SourceSpan.empty
+        % CodeOffsets - Original source offsets for each code unit of Text.
+        CodeOffsets double = zeros(1, 0)
     end
 
     methods
-        function obj = SourceStatement(text, span)
+        function obj = SourceStatement(text, span, codeOffsets)
             % SourceStatement Create an immutable statement and source range.
             arguments (Input)
                 text string = ""
                 span macd.model.SourceSpan = macd.model.SourceSpan.empty
+                codeOffsets (1, :) double = zeros(1, 0)
             end
             arguments (Output)
                 obj (1, 1) macd.source.SourceStatement
@@ -29,6 +32,11 @@ classdef SourceStatement
             % Store lexical output without making semantic assumptions.
             obj.Text = text;
             obj.Span = span;
+            if ~isempty(codeOffsets) && numel(codeOffsets) ~= strlength(text)
+                error("macd:SourceStatement:InvalidOffsets", ...
+                    "Code offsets must identify every code unit of the statement text.");
+            end
+            obj.CodeOffsets = codeOffsets;
         end
     end
 end
