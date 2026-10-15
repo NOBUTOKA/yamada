@@ -29,7 +29,7 @@
 | 無効・占有・範囲外・古いdropとキャンセル | targetCell検証、モデル版番号、draft破棄 | SubtreePlacementPlannerTest、reparentGesture.test.cjs、EditorReparentDragTest |
 | スクロール・入れ子の座標系 | surfaceBoundsとcanvas-local geometry、既存Grid controls | overlayCursor / nestedGridPlacement / nestedGridInteractionの各Nodeテスト、既存Grid/Preview UIテスト |
 | 保存・再読込、UTF-8 BOMなし、CRLF/LF | SourceWriter / AppSourceParser | 既存SourceWriter/round-trip系、追加の実ファイル検証（下記） |
-| 全体回帰と規約 | runYamadaTests("full") / ProjectConventionsTest | fullプロファイルの結果を確認後に記録 |
+| 全体回帰と規約 | runYamadaTests("full") / ProjectConventionsTest | full: Passed=341 / Failed=0 / Incomplete=0 / Duration=699.024秒 |
 
 ## 追加の実ファイル検証
 
@@ -69,5 +69,15 @@ OSマウス自体の自動操作を検証したという主張はしない。
 - [x] HTML overlay Nodeテスト7本
 - [x] 文字コード・改行・GPLの規約テストと追加コードの静的解析
 - [x] README / SPECIFICATION / ROADMAPへの対応範囲と制限の反映
-- [ ] fullプロファイル341件の最終集計
-- [ ] 最終結果の反映とGit状態の確認
+- [x] fullプロファイル341件の最終集計（341/341合格、失敗0、未完了0、699.024秒）
+- [x] 最終結果の反映とGit状態の確認（実装・文書の変更はコミット済み）
+
+## 最終実行コマンド
+
+```matlab
+addpath(pwd, fullfile(pwd, 'tests'));
+results = runYamadaTests('full');
+```
+
+HTML overlayは tests 配下の7本の .test.cjs をNodeで実行し、全て合格した。
+仕様上の対応範囲・後続範囲は上の対応表とSPECIFICATION.mdに記載し、計画の全段階の実装と検証を完了した。

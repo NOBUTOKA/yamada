@@ -571,10 +571,11 @@ model that can represent several components before adding group edit commands.
 
 ## Operate on Components with Their Descendants
 
-Implementation is present for the supported scope described in SPECIFICATION.md.
+Status: completed for the supported scope in SPECIFICATION.md. MATLAB R2024a
+full verification passed 341/341 tests; all seven HTML overlay Node tests passed.
 Complete descendant collection, isolated source preflight and atomic history are
-shared by deletion, parent changes, Cut and Paste. The acceptance checks below
-remain recorded until final integrated verification is complete.
+shared by deletion, parent changes, Cut and Paste. Acceptance criteria remain
+recorded below; see SUBTREE_EDITING_VERIFICATION.md for requirement evidence.
 
 - Add model operations that collect descendants in stable hierarchy order and
   validate the complete subtree before changing any component or source intent.
@@ -595,9 +596,9 @@ remain recorded until final integrated verification is complete.
 Allow a component or complete subtree to move from one valid parent to another,
 including dragging it between two Grid Layouts in Safe Preview.
 
-Implementation is present through Move to Container and Preview drop commands.
-Final integrated verification and documentation review are in progress; the
-checks below remain the completion criteria.
+Status: completed through Move to Container and Preview drop commands in the
+supported scope. Full MATLAB and HTML overlay verification passed; see
+SUBTREE_EDITING_VERIFICATION.md. The checks below are retained as acceptance evidence.
 
 - Add a validated reparent operation that rejects cycles, the root component,
   unsupported parent types, ambiguous source ownership, and invalid destinations
@@ -616,10 +617,10 @@ checks below remain the completion criteria.
 
 ## Add Component Copy, Cut, and Paste
 
-Implementation is present in the Edit menu, keyboard shortcuts and Hierarchy
-context menu, including static SelectedTab/ContextMenu reference handling.
-Final integrated verification is in progress. See SPECIFICATION.md for explicit
-unsupported source and clipboard boundaries.
+Status: completed in the Edit menu, keyboard shortcuts and Hierarchy context
+menu, including static SelectedTab/ContextMenu reference handling. Full MATLAB
+and HTML overlay verification passed. See SPECIFICATION.md for explicit source
+and clipboard boundaries and SUBTREE_EDITING_VERIFICATION.md for evidence.
 
 - Provide Copy, Cut, and Paste through the Edit menu, keyboard shortcuts, and
   context menus on components in the hierarchy view. All three entry points

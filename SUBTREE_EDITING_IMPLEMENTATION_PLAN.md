@@ -2,6 +2,10 @@
 
 作成日: 2026-10-14
 
+実装・検証: 完了。対応範囲と要件ごとの根拠は [検証記録](SUBTREE_EDITING_VERIFICATION.md) を参照。
+MATLAB R2024a fullプロファイルは341/341件、HTML overlay Nodeテストは7/7本が合格。
+以下は当初の計画として保持する。現在の公開契約と制限はSPECIFICATION.mdに記載する。
+
 ## 目的と実装順
 
 ROADMAP.md の「子孫を含む一括操作」「親コンテナの付け替え」
