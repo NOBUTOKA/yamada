@@ -133,6 +133,16 @@ the source-generation state.
 
 ## Component Catalog and Capability Resolution
 
+The development pipeline runs `Assert-ComponentLedgerSchema` from
+`dev/component-data/ComponentLedger.ps1` before policy application, grouping
+artifact generation, grouping design, and runtime promotion. It validates every
+complete concrete document against the release schema before writing outputs.
+Application graph, source evidence, and grouping parity checks remain separate.
+Accepted MATLAB classes remain JSON arrays even for a single class; their order
+has no semantic meaning. Combined official headings supply each named property's
+description, rather than leaving earlier names blank. Full-schema verification
+does not establish that a property's setter effects have been audited.
+
 [`ComponentRegistry`](../+macd/+model/ComponentRegistry.m) is the runtime query
 boundary. `createDefault` loads the packaged R2024a catalog through
 [`ComponentCatalogLoader`](../+macd/+catalog/ComponentCatalogLoader.m).

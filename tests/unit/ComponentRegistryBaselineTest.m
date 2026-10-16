@@ -32,8 +32,12 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     if expectedEditor == "none", expectedEditor = "readOnly"; end
                     testCase.verifyEqual(actual.Editor, expectedEditor);
                     testCase.verifyEqual(actual.AuditDisposition, string(expected.disposition.kind));
+                    testCase.verifyEqual(string(actual.Metadata.description), string(expected.summary));
                     testCase.verifyEqual(string(actual.ValueSchema.kind), ...
                         string(expected.valueContract.kind));
+                    % Accepted classes form a set; transcript order is not a capability.
+                    testCase.verifyEqual(sort(reshape(string(actual.ValueSchema.matlabClasses), 1, [])), ...
+                        sort(reshape(string(expected.valueContract.matlabClasses), 1, [])));
                     policy = macd.model.PropertyApplicationPolicy();
                     if isfield(expected, "application")
                         policy = macd.model.PropertyApplicationPolicy(expected.application);

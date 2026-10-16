@@ -295,6 +295,11 @@
           "description": "Documented or target-runtime canonical form relevant to safe editing.",
           "enum": ["dateOnly", "columnVector", "charOrRowCell", "logical", "rowCell"]
         },
+        "multiselectProperty": {
+          "description": "Existing peer property controlling scalar or multiple item selection.",
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*(\\.[A-Za-z][A-Za-z0-9]*)?$"
+        },
         "values": {
           "description": "Complete finite choices for an enum contract, normalized without MATLAB literal quotes. Omit when the documentation does not establish a complete finite set.",
           "type": "array",
@@ -352,7 +357,7 @@
         "reasonCodes": {
           "type": "array",
           "items": {
-            "enum": ["documentedReadOnly", "runtimeSetRestricted", "hierarchyManaged", "callbackManaged", "callbackExecutable", "handleReference", "arbitraryData", "externalResource", "lifecycleInternal", "lowDesignTimeValue", "unsafeToEvaluate", "sourceOnly"]
+            "enum": ["documentedReadOnly", "runtimeSetRestricted", "hierarchyManaged", "callbackManaged", "callbackExecutable", "handleReference", "arbitraryData", "externalResource", "lifecycleInternal", "lowDesignTimeValue", "unsafeToEvaluate", "sourceOnly", "deferredComponentReference"]
           },
           "uniqueItems": true
         }

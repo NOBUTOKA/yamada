@@ -368,7 +368,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTick",
-            "description": "",
+            "description": "Tick values",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 1,
@@ -400,7 +400,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTick",
-            "description": "",
+            "description": "Tick values",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 2,
@@ -464,7 +464,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickMode",
-            "description": "",
+            "description": "Selection mode for tick values",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 4,
@@ -502,7 +502,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickMode",
-            "description": "",
+            "description": "Selection mode for tick values",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 5,
@@ -578,7 +578,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabel",
-            "description": "",
+            "description": "Tick labels",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 7,
@@ -613,7 +613,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabel",
-            "description": "",
+            "description": "Tick labels",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 8,
@@ -683,7 +683,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelMode",
-            "description": "",
+            "description": "Selection mode for tick labels",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 10,
@@ -721,7 +721,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelMode",
-            "description": "",
+            "description": "Selection mode for tick labels",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 11,
@@ -828,7 +828,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelRotation",
-            "description": "",
+            "description": "Tick label rotation",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 14,
@@ -858,7 +858,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelRotation",
-            "description": "",
+            "description": "Tick label rotation",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 15,
@@ -918,7 +918,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelRotationMode",
-            "description": "",
+            "description": "Selection mode for tick label rotation",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 17,
@@ -956,7 +956,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelRotationMode",
-            "description": "",
+            "description": "Selection mode for tick label rotation",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 18,
@@ -1032,7 +1032,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XMinorTick",
-            "description": "",
+            "description": "Minor tick marks",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 20,
@@ -1059,7 +1059,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YMinorTick",
-            "description": "",
+            "description": "Minor tick marks",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 21,
@@ -1221,7 +1221,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLim",
-            "description": "",
+            "description": "Minimum and maximum axis limits",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 1,
@@ -1251,7 +1251,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLim",
-            "description": "",
+            "description": "Minimum and maximum axis limits",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 2,
@@ -1312,7 +1312,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimMode",
-            "description": "",
+            "description": "Selection mode for axis limits",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 4,
@@ -1350,7 +1350,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimMode",
-            "description": "",
+            "description": "Selection mode for axis limits",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 5,
@@ -1426,7 +1426,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimitMethod",
-            "description": "",
+            "description": "Axis limit selection method",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 7,
@@ -1457,7 +1457,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimitMethod",
-            "description": "",
+            "description": "Axis limit selection method",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 8,
@@ -1519,7 +1519,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxis",
-            "description": "",
+            "description": "Axis ruler",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 10,
@@ -1544,7 +1544,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "YAxis",
-            "description": "",
+            "description": "Axis ruler",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 11,
@@ -1656,7 +1656,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColor",
-            "description": "",
+            "description": "Color of axis line, tick values, and labels",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 15,
@@ -1688,7 +1688,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColor",
-            "description": "",
+            "description": "Color of axis line, tick values, and labels",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 16,
@@ -1956,7 +1956,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XScale",
-            "description": "",
+            "description": "Scale of values along axis",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 24,
@@ -1986,7 +1986,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YScale",
-            "description": "",
+            "description": "Scale of values along axis",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 25,
@@ -2053,7 +2053,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XGrid",
-            "description": "",
+            "description": "Grid lines",
             "categoryId": "grids",
             "category": "Grids",
             "order": 1,
@@ -2080,7 +2080,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YGrid",
-            "description": "",
+            "description": "Grid lines",
             "categoryId": "grids",
             "category": "Grids",
             "order": 2,
@@ -2405,7 +2405,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XMinorGrid",
-            "description": "",
+            "description": "Minor grid lines",
             "categoryId": "grids",
             "category": "Grids",
             "order": 12,
@@ -2432,7 +2432,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YMinorGrid",
-            "description": "",
+            "description": "Minor grid lines",
             "categoryId": "grids",
             "category": "Grids",
             "order": 13,
@@ -2818,7 +2818,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLabel",
-            "description": "",
+            "description": "Text object for axis label",
             "categoryId": "labels",
             "category": "Labels",
             "order": 4,
@@ -2843,7 +2843,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLabel",
-            "description": "",
+            "description": "Text object for axis label",
             "categoryId": "labels",
             "category": "Labels",
             "order": 5,

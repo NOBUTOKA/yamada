@@ -15,6 +15,8 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 . (Join-Path $PSScriptRoot 'ApplicationPolicy.ps1')
+. (Join-Path $PSScriptRoot 'ComponentLedger.ps1')
+Assert-ComponentLedgerSchema -ReleaseDirectory $ReleaseDirectory
 $reviewPath = Join-Path $ReleaseDirectory 'APPLICATION_POLICY_REVIEW.json'
 $review = Get-Content -LiteralPath $reviewPath -Raw | ConvertFrom-Json
 $auditPath = Join-Path $ReleaseDirectory 'APPLICATION_POLICY_AUDIT.json'

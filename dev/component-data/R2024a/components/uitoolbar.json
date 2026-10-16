@@ -93,7 +93,9 @@
         "shape": "scalar",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "notRendered",
@@ -249,7 +251,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "notRendered",
@@ -304,7 +308,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "notRendered",
@@ -331,7 +337,9 @@
         "shape": "any",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "notRendered",
@@ -389,7 +397,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "notRendered",
@@ -447,7 +457,9 @@
         "shape": "any",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "any"
+        "matlabClasses": [
+          "any"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "notRendered",

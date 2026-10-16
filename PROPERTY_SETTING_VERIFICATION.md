@@ -571,7 +571,48 @@
   `SubtreePlacementPlanner`が生のPositionを読む経路と、placement changesを照合から除外する経路も確認する。
 - Grid配下のlayout-managed geometry、Lampの補正、残るコンポーネント間の効果、全variant監査、
   full profile、計画全体の完了条件監査は引き続き未完了。
-- 上記の台帳serialization・summary・schemaの不整合を別の変更として是正し、48文書全体をschemaで検証する。
+- 上記の台帳serialization・summary・schemaの不整合は、次節の変更で是正した。
+
+## 全文書のschema検証と台帳の是正（2026-10-16）
+
+根拠と変更:
+
+- [Axes Properties](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html)と
+  [UIAxes Properties](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html)の
+  X/Y/Zを併記する16種の公式見出しを確認した。各ページでX/Y側の32項目、合計64項目の空summaryを補完した。
+  Z側の説明と同じ公式見出しに基づく転記であり、プロパティ名から新しい契約や効果を推定しない。
+- `valueContract.matlabClasses`の単一文字列602項目を、既存schemaどおり要素1個の配列へ揃えた。
+  受理するクラス名は変更していない。変更前の48文書との意味比較でも、この配列化とsummary補完以外の
+  フィールドに差がないことを確認した。ItemsDataの長さに関する既存契約は変更しない。
+- 既存95項目が使用する`deferredComponentReference` reason codeと、ListBoxの既存契約
+  `multiselectProperty`をschemaへ収録した。任意のreasonや未定義フィールドを許可する変更ではない。
+- `ComponentLedger.ps1`へ、全concrete文書をschemaで検証する共通preflightを追加した。
+  台帳ポリシー適用、grouping artifact生成、grouping design生成、runtime昇格の4入口は、
+  最初の出力書き込みより前に呼び出す。従来のapplication graph・source・parity検証も維持する。
+- runtimeの受理クラスはもともと配列へ正規化されており、設定効果の動作は変えない。
+  補完した64項目の説明はruntime定義へ伝搬し、全プロパティの説明と受理クラス集合を既存baselineで照合する。
+
+検証:
+
+- 48文書・1825プロパティを含む全concrete文書がschema検証に合格した。
+- `verifyComponentLedgerSchema.ps1`は、全台帳の再適用・再生成の再現性と公式見出しのruntime伝搬を確認した。
+  クラスの単一文字列化、空summary、未知reason、peer pathの型違い、未知policy field、不正JSONを
+  4入口それぞれへ入力し、計24ケースで文脈付きの拒否と、書き込み前後の全ファイルhashの一致を確認した。
+- `verifyApplicationPolicyReview.ps1`と`verifyApplicationPolicy.ps1`も合格した。
+  これらの入口でも、従来のpolicy部分検証に加えて全文書のschema検証を実行する。
+- groupingのintrinsic parityは48/48、parent-effective parityは144/144で合格。
+- MATLABで追加したクラス集合の照合は、初回に並び順まで一致させて失敗した。
+  runtimeが集合をソートする既存契約に合わせて修正し、再実行で合格した。初回の記録は
+  `testResults/ledger-schema-focused-initial.log`へ保持した。
+- MATLABの関連39件が全件合格。Failed=0、Incomplete=0、実測合計45.930秒。
+  `testResults/ledger-schema-focused.log`と`testResults/ledger-schema-focused-results.mat`へ記録した。
+  変更したMATLABテスト1ファイルのcheckcodeは警告なし。UTF-8 BOMなし・CRLFと
+  `git diff --check`も確認した。実行時の適用契約が不変であることは上記の全48文書の差分で確認している。
+
+未完了:
+
+- このschema合格は、全propertyの依存関係監査や全計画の完了を示さない。
+  位置の別名効果・Lamp補正・その他の残る効果、全variant監査、full profile、完了条件監査は継続する。
 
 ## 対象範囲の変更（2026-10-16）
 

@@ -135,7 +135,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -300,7 +302,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -327,7 +331,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -493,13 +499,15 @@
       "path": "XTick",
       "categoryId": "ticks",
       "order": 1,
-      "summary": "",
+      "summary": "Tick values",
       "valueContract": {
         "kind": "numericArray",
         "shape": "vector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -533,13 +541,15 @@
       "path": "YTick",
       "categoryId": "ticks",
       "order": 2,
-      "summary": "",
+      "summary": "Tick values",
       "valueContract": {
         "kind": "numericArray",
         "shape": "vector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -583,7 +593,9 @@
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -617,7 +629,7 @@
       "path": "XTickMode",
       "categoryId": "ticks",
       "order": 4,
-      "summary": "",
+      "summary": "Selection mode for tick values",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -674,7 +686,7 @@
       "path": "YTickMode",
       "categoryId": "ticks",
       "order": 5,
-      "summary": "",
+      "summary": "Selection mode for tick values",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -788,7 +800,7 @@
       "path": "XTickLabel",
       "categoryId": "ticks",
       "order": 7,
-      "summary": "",
+      "summary": "Tick labels",
       "valueContract": {
         "kind": "stringList",
         "shape": "vector",
@@ -833,7 +845,7 @@
       "path": "YTickLabel",
       "categoryId": "ticks",
       "order": 8,
-      "summary": "",
+      "summary": "Tick labels",
       "valueContract": {
         "kind": "stringList",
         "shape": "vector",
@@ -929,7 +941,7 @@
       "path": "XTickLabelMode",
       "categoryId": "ticks",
       "order": 10,
-      "summary": "",
+      "summary": "Selection mode for tick labels",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -986,7 +998,7 @@
       "path": "YTickLabelMode",
       "categoryId": "ticks",
       "order": 11,
-      "summary": "",
+      "summary": "Selection mode for tick labels",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -1134,13 +1146,15 @@
       "path": "XTickLabelRotation",
       "categoryId": "ticks",
       "order": 14,
-      "summary": "",
+      "summary": "Tick label rotation",
       "valueContract": {
         "kind": "numericArray",
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -1172,13 +1186,15 @@
       "path": "YTickLabelRotation",
       "categoryId": "ticks",
       "order": 15,
-      "summary": "",
+      "summary": "Tick label rotation",
       "valueContract": {
         "kind": "numericArray",
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -1254,7 +1270,7 @@
       "path": "XTickLabelRotationMode",
       "categoryId": "ticks",
       "order": 17,
-      "summary": "",
+      "summary": "Selection mode for tick label rotation",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -1311,7 +1327,7 @@
       "path": "YTickLabelRotationMode",
       "categoryId": "ticks",
       "order": 18,
-      "summary": "",
+      "summary": "Selection mode for tick label rotation",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -1425,7 +1441,7 @@
       "path": "XMinorTick",
       "categoryId": "ticks",
       "order": 20,
-      "summary": "",
+      "summary": "Minor tick marks",
       "valueContract": {
         "kind": "onOff",
         "shape": "scalar",
@@ -1450,7 +1466,7 @@
       "path": "YMinorTick",
       "categoryId": "ticks",
       "order": 21,
-      "summary": "",
+      "summary": "Minor tick marks",
       "valueContract": {
         "kind": "onOff",
         "shape": "scalar",
@@ -1642,13 +1658,15 @@
       "path": "XLim",
       "categoryId": "rulers",
       "order": 1,
-      "summary": "",
+      "summary": "Minimum and maximum axis limits",
       "valueContract": {
         "kind": "numericArray",
         "shape": "vector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -1680,13 +1698,15 @@
       "path": "YLim",
       "categoryId": "rulers",
       "order": 2,
-      "summary": "",
+      "summary": "Minimum and maximum axis limits",
       "valueContract": {
         "kind": "numericArray",
         "shape": "vector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -1763,7 +1783,7 @@
       "path": "XLimMode",
       "categoryId": "rulers",
       "order": 4,
-      "summary": "",
+      "summary": "Selection mode for axis limits",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -1820,7 +1840,7 @@
       "path": "YLimMode",
       "categoryId": "rulers",
       "order": 5,
-      "summary": "",
+      "summary": "Selection mode for axis limits",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -1934,7 +1954,7 @@
       "path": "XLimitMethod",
       "categoryId": "rulers",
       "order": 7,
-      "summary": "",
+      "summary": "Axis limit selection method",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -1968,7 +1988,7 @@
       "path": "YLimitMethod",
       "categoryId": "rulers",
       "order": 8,
-      "summary": "",
+      "summary": "Axis limit selection method",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -2036,13 +2056,15 @@
       "path": "XAxis",
       "categoryId": "rulers",
       "order": 10,
-      "summary": "",
+      "summary": "Axis ruler",
       "valueContract": {
         "kind": "graphicsObject",
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -2059,13 +2081,15 @@
       "path": "YAxis",
       "categoryId": "rulers",
       "order": 11,
-      "summary": "",
+      "summary": "Axis ruler",
       "valueContract": {
         "kind": "graphicsObject",
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -2091,7 +2115,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -2176,7 +2202,7 @@
       "path": "XColor",
       "categoryId": "rulers",
       "order": 15,
-      "summary": "",
+      "summary": "Color of axis line, tick values, and labels",
       "valueContract": {
         "kind": "color",
         "shape": "fixedLengthVector",
@@ -2218,7 +2244,7 @@
       "path": "YColor",
       "categoryId": "rulers",
       "order": 16,
-      "summary": "",
+      "summary": "Color of axis line, tick values, and labels",
       "valueContract": {
         "kind": "color",
         "shape": "fixedLengthVector",
@@ -2577,7 +2603,7 @@
       "path": "XScale",
       "categoryId": "rulers",
       "order": 24,
-      "summary": "",
+      "summary": "Scale of values along axis",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -2609,7 +2635,7 @@
       "path": "YScale",
       "categoryId": "rulers",
       "order": 25,
-      "summary": "",
+      "summary": "Scale of values along axis",
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -2673,7 +2699,7 @@
       "path": "XGrid",
       "categoryId": "grids",
       "order": 1,
-      "summary": "",
+      "summary": "Grid lines",
       "valueContract": {
         "kind": "onOff",
         "shape": "scalar",
@@ -2698,7 +2724,7 @@
       "path": "YGrid",
       "categoryId": "grids",
       "order": 2,
-      "summary": "",
+      "summary": "Grid lines",
       "valueContract": {
         "kind": "onOff",
         "shape": "scalar",
@@ -2832,7 +2858,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double",
+        "matlabClasses": [
+          "double"
+        ],
         "minimum": 0,
         "exclusiveMinimum": true
       },
@@ -2884,7 +2912,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -3043,7 +3073,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double",
+        "matlabClasses": [
+          "double"
+        ],
         "minimum": 0,
         "maximum": 1
       },
@@ -3134,7 +3166,7 @@
       "path": "XMinorGrid",
       "categoryId": "grids",
       "order": 12,
-      "summary": "",
+      "summary": "Minor grid lines",
       "valueContract": {
         "kind": "onOff",
         "shape": "scalar",
@@ -3159,7 +3191,7 @@
       "path": "YMinorGrid",
       "categoryId": "grids",
       "order": 13,
-      "summary": "",
+      "summary": "Minor grid lines",
       "valueContract": {
         "kind": "onOff",
         "shape": "scalar",
@@ -3261,7 +3293,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double",
+        "matlabClasses": [
+          "double"
+        ],
         "minimum": 0,
         "exclusiveMinimum": true
       },
@@ -3313,7 +3347,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -3473,7 +3509,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double",
+        "matlabClasses": [
+          "double"
+        ],
         "minimum": 0,
         "maximum": 1
       },
@@ -3652,13 +3690,15 @@
       "path": "XLabel",
       "categoryId": "labels",
       "order": 4,
-      "summary": "",
+      "summary": "Text object for axis label",
       "valueContract": {
         "kind": "graphicsObject",
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -3675,13 +3715,15 @@
       "path": "YLabel",
       "categoryId": "labels",
       "order": 5,
-      "summary": "",
+      "summary": "Text object for axis label",
       "valueContract": {
         "kind": "graphicsObject",
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -3736,7 +3778,9 @@
         "shape": "any",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -3792,7 +3836,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -3852,7 +3898,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -3879,7 +3927,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -3974,7 +4024,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -4164,7 +4216,9 @@
         "shape": "vector",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "double",
+        "matlabClasses": [
+          "double"
+        ],
         "minimum": 0,
         "maximum": 1
       },
@@ -4386,7 +4440,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double",
+        "matlabClasses": [
+          "double"
+        ],
         "minimum": 0,
         "exclusiveMinimum": true
       },
@@ -4591,7 +4647,9 @@
         "shape": "fixedLengthVector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "adapt",
@@ -4635,7 +4693,9 @@
         "shape": "vector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -4690,7 +4750,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -4717,7 +4779,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -4922,7 +4986,9 @@
         "shape": "scalar",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -5187,7 +5253,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double",
+        "matlabClasses": [
+          "double"
+        ],
         "minimum": 0,
         "maximum": 180,
         "exclusiveMaximum": true
@@ -5246,7 +5314,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -5273,7 +5343,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -5300,7 +5372,9 @@
         "shape": "vector",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "double"
+        "matlabClasses": [
+          "double"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "apply",
@@ -5383,7 +5457,9 @@
         "shape": "scalar",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": true,
       "previewPolicy": "skip",
@@ -5694,7 +5770,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -5724,7 +5802,9 @@
         "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -5751,7 +5831,9 @@
         "shape": "any",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "handle"
+        "matlabClasses": [
+          "handle"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -5809,7 +5891,9 @@
         "shape": "any",
         "allowsEmpty": false,
         "constraints": [],
-        "matlabClasses": "unknown"
+        "matlabClasses": [
+          "unknown"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",
@@ -5867,7 +5951,9 @@
         "shape": "any",
         "allowsEmpty": true,
         "constraints": [],
-        "matlabClasses": "any"
+        "matlabClasses": [
+          "any"
+        ]
       },
       "affectsDisplay": false,
       "previewPolicy": "skip",

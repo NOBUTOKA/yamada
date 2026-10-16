@@ -29,6 +29,8 @@ param(
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 . (Join-Path $PSScriptRoot 'ApplicationPolicy.ps1')
+. (Join-Path $PSScriptRoot 'ComponentLedger.ps1')
+Assert-ComponentLedgerSchema -ReleaseDirectory $ReleaseDirectory
 
 function Write-Utf8JsonFile {
     param([string]$Path, [object]$Value)

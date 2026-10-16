@@ -35,6 +35,9 @@ Position/InnerPositionをpublic、OuterPositionをrestrictedへ修正した。
 setter観測からconstructor policyの対応可否やpolicy reviewの完了は推定しない。
 この変更後の計画指定関連area 452件は全件合格。追加監査で、全台帳schemaに既存の
 serialization・まとめ見出し・未収録フィールドの不整合が見つかったため、次の是正対象とする。
+2026-10-16追記: クラス名602項目を配列へ揃え、Axes/UIAxesの公式まとめ見出し64項目を補完した。
+既存reason codeとListBox契約をschemaへ収録し、48文書全体がschema検証に合格する状態へ是正した。
+4つの開発パイプラインの入口に全文書のschema preflightを追加した。設定効果の残る監査は別途継続する。
 
 この文書は、名前-値引数と生成後代入を共通の設定履歴として扱い、台帳の設定順序を
 パーサー・コード生成器・Safe Previewへ接続する実装計画である。

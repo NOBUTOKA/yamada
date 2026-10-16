@@ -348,6 +348,19 @@ Audit each concrete variant in the following order:
 
 ## Runtime promotion gate
 
+Before generating or promoting artifacts, validate every complete concrete
+document against the release's `schema.json`. All four pipeline entry points use
+`ComponentLedger.ps1` to reject invalid input before writing outputs; validating
+only an application-policy fragment is insufficient. Run
+`tests/verifyComponentLedgerSchema.ps1` to check full-document validation,
+reproducible regeneration, and rejection without partial artifacts.
+
+Keep `valueContract.matlabClasses` as an array when it has one member. A combined
+official heading applies to each property named in that heading, including its
+summary. Fill those facts from the complete heading rather than guessing from
+property-name suffixes. Schema validity and completed dependency review are
+separate gates.
+
 Development audit data may describe desired editors or validators that have not
 yet shipped. A property may enter the runtime component catalog as editable only
 when all of the following are true:
