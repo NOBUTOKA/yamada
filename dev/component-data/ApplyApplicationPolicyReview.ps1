@@ -183,6 +183,8 @@ foreach ($coverage in $runtime.coverage) {
         $variant.runtimeVerificationStatus = 'partial'
     }
 }
+. (Join-Path $PSScriptRoot 'EffectReview.ps1')
+Add-EffectReview -ReleaseDirectory $ReleaseDirectory -Documents $documents
 foreach ($id in $documents.Keys) {
     Test-ApplicationPolicies $documents[$id].properties $id
 }
@@ -195,7 +197,10 @@ foreach ($id in $documents.Keys) {
     $variant = $audit.variants | Where-Object id -CEQ $id
     if ($id -cin $policyDocuments) {
         $variant.policyReviewStatus = 'partial'
-        $count = @($documents[$id].properties | Where-Object { $null -ne $_.PSObject.Properties['application'] }).Count
+        $count = @($documents[$id].properties | Where-Object {
+            $_.application.effectPolicy -cne 'none' -or $_.application.nameValue -cne 'unknown' -or
+            $_.application.applyAfter.Count -gt 0 -or $null -ne $_.application.PSObject.Properties['defaultLiteral']
+        }).Count
         $variant | Add-Member -NotePropertyName reviewedPolicyCount -NotePropertyValue $count -Force
     }
 }

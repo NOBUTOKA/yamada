@@ -275,6 +275,7 @@ classdef RoundTripGenerator
             eol = obj.lineEnding(document);
             declarationsText = "";
             creationText = "";
+            deferredSelection = "";
             for index = 1:numel(components)
                 component = components(index);
                 parent = document.getComponent(component.ParentId);
@@ -314,10 +315,16 @@ classdef RoundTripGenerator
                             "Generated component has a nonliteral property.");
                         return
                     end
-                    creationText = creationText + eol + obj.indent(source, creationOffset) + ...
+                    assignment = eol + obj.indent(source, creationOffset) + ...
                         obj.assignmentText(component, entry, source, creationOffset);
+                    if macd.model.ButtonSelectionPolicy.deferValue(component, entry.Path)
+                        deferredSelection = deferredSelection + assignment;
+                    else
+                        creationText = creationText + assignment;
+                    end
                 end
             end
+            creationText = creationText + deferredSelection;
             if ~initializationEmitted
                 try
                     references = macd.model.SubtreeReferencePolicy.assignments(document, components, obj.Registry);

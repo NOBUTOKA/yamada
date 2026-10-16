@@ -13,7 +13,7 @@ function ConvertTo-ApplicationPolicy {
         throw "$Context must be an application policy object."
     }
     foreach ($field in @($Policy.PSObject.Properties | ForEach-Object Name)) {
-        if ($field -notin @('applyAfter', 'nameValue', 'effectPolicy', 'defaultLiteral')) {
+        if ($field -notin @('applyAfter', 'nameValue', 'effectPolicy', 'defaultLiteral', 'effectStatus', 'affectedPaths', 'effectReason')) {
             throw "$Context contains unknown field '$field'."
         }
     }
@@ -45,7 +45,7 @@ function ConvertTo-ApplicationPolicy {
     }
     if ($effect -isnot [string] -or $effect -cnotin @('none', 'itemSelection', 'boundedValue',
             'numericValue', 'tickMode', 'valueMode', 'modeFlag', 'axisWidth', 'positionAlias', 'squarePositionAlias',
-            'textValue', 'componentReference', 'layout', 'gridTracks')) {
+            'textValue', 'componentReference', 'layout', 'gridTracks', 'buttonSelection', 'positionInput', 'sliderPosition', 'squarePosition')) {
         throw "$Context.effectPolicy has an unknown effect policy."
     }
     $result = [ordered]@{
@@ -58,6 +58,29 @@ function ConvertTo-ApplicationPolicy {
             throw "$Context.defaultLiteral must be a nonempty inert MATLAB literal string."
         }
         $result.defaultLiteral = $Policy.defaultLiteral
+    }
+    $status = 'unknown'
+    if ($null -ne $Policy.PSObject.Properties['effectStatus']) { $status = $Policy.effectStatus }
+    if ($status -isnot [string] -or $status -cnotin @('unknown', 'independent', 'modeled', 'unsupported')) {
+        throw "$Context.effectStatus is invalid."
+    }
+    $result.effectStatus = $status
+    $affected = @()
+    if ($null -ne $Policy.PSObject.Properties['affectedPaths']) {
+        if ($Policy.affectedPaths -isnot [array]) { throw "$Context.affectedPaths must be an array." }
+        foreach ($path in $Policy.affectedPaths) {
+            if ($path -isnot [string] -or $path -cnotmatch '^[A-Za-z]\w*(\.[A-Za-z]\w*)*$' -or $affected -ccontains $path) {
+                throw "$Context.affectedPaths must contain unique property paths."
+            }
+            $affected += $path
+        }
+    }
+    $result.affectedPaths = @($affected | Sort-Object -CaseSensitive)
+    if ($null -ne $Policy.PSObject.Properties['effectReason']) {
+        if ($Policy.effectReason -isnot [string] -or [string]::IsNullOrWhiteSpace($Policy.effectReason)) {
+            throw "$Context.effectReason must be a nonempty explanation."
+        }
+        $result.effectReason = $Policy.effectReason
     }
     return $result
 }
@@ -73,6 +96,9 @@ function Test-ApplicationPolicies {
     foreach ($property in $Properties) {
         if ($null -eq $property.PSObject.Properties['application']) { continue }
         $policy = ConvertTo-ApplicationPolicy $property.application "$Context.$($property.path).application"
+        foreach ($target in $policy.affectedPaths) {
+            if (-not $remaining.ContainsKey($target)) { throw "$Context names missing affected path '$target'." }
+        }
         foreach ($target in $policy.applyAfter) {
             if (-not $remaining.ContainsKey($target)) {
                 throw "$Context.$($property.path) names missing application dependency '$target'."

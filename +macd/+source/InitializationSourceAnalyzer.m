@@ -95,6 +95,8 @@ classdef InitializationSourceAnalyzer
             code = strtrim(string(macd.source.ComponentNameRewriter.codeMask(source)));
             target = "";
             reason = "";
+            % Argument declarations are structural syntax, never executable instance calls.
+            if ~isempty(regexp(code, '^(arguments|function|methods|properties|classdef)(?!\w)', 'once')), return, end
             % AppBase's startup wrapper executes its method during construction.
             startup = regexp(code, '^runStartupFcn\s*\(\s*app\s*,\s*@(?:app\s*\.\s*)?(\w+)\s*\)$', 'tokens', 'once');
             if isempty(startup)

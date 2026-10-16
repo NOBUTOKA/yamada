@@ -46,6 +46,14 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -76,6 +84,14 @@
                 "normal",
                 "bold"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -107,7 +123,10 @@
                 "FontUnits"
               ],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
@@ -145,7 +164,10 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
@@ -176,6 +198,14 @@
                 "normal",
                 "italic"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -201,6 +231,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -226,6 +264,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -256,6 +302,14 @@
                 "bold",
                 "normal"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -286,6 +340,14 @@
                 "normal",
                 "bold"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -324,7 +386,10 @@
               "applyAfter": [],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'points'"
+              "defaultLiteral": "'points'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
@@ -352,6 +417,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }
@@ -364,7 +437,7 @@
       "entries": [
         {
           "path": "XTick",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTick",
@@ -372,7 +445,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 1,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -390,13 +463,16 @@
                 "XLim"
               ],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YTick",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTick",
@@ -404,7 +480,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 2,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -422,13 +498,16 @@
                 "YLim"
               ],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZTick",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTick",
@@ -436,7 +515,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 3,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -454,13 +533,16 @@
                 "ZLim"
               ],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XTickMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickMode",
@@ -468,7 +550,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 4,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -492,13 +574,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YTickMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickMode",
@@ -506,7 +591,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 5,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -530,13 +615,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZTickMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickMode",
@@ -544,7 +632,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 6,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -568,13 +656,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XTickLabel",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabel",
@@ -582,7 +673,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 7,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -603,13 +694,16 @@
                 "XTick"
               ],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YTickLabel",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabel",
@@ -617,7 +711,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 8,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -638,13 +732,16 @@
                 "YTick"
               ],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZTickLabel",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickLabel",
@@ -652,7 +749,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 9,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -673,13 +770,16 @@
                 "ZTick"
               ],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XTickLabelMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelMode",
@@ -687,7 +787,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 10,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -711,13 +811,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YTickLabelMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelMode",
@@ -725,7 +828,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 11,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -749,13 +852,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZTickLabelMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickLabelMode",
@@ -763,7 +869,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 12,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -787,13 +893,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "TickLabelInterpreter",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickLabelInterpreter",
@@ -801,7 +910,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 13,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -819,12 +928,20 @@
                 "latex",
                 "none"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "XTickLabelRotation",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelRotation",
@@ -832,7 +949,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 14,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -848,13 +965,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YTickLabelRotation",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelRotation",
@@ -862,7 +982,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 15,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -878,13 +998,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZTickLabelRotation",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickLabelRotation",
@@ -892,7 +1015,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 16,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -908,13 +1031,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XTickLabelRotationMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelRotationMode",
@@ -922,7 +1048,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 17,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -946,13 +1072,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YTickLabelRotationMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelRotationMode",
@@ -960,7 +1089,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 18,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -984,13 +1113,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZTickLabelRotationMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickLabelRotationMode",
@@ -998,7 +1130,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 19,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1022,13 +1154,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XMinorTick",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XMinorTick",
@@ -1036,7 +1171,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 20,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1050,12 +1185,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "YMinorTick",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YMinorTick",
@@ -1063,7 +1206,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 21,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1077,12 +1220,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "ZMinorTick",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZMinorTick",
@@ -1090,7 +1241,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 22,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1104,12 +1255,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "TickDir",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickDir",
@@ -1117,7 +1276,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 23,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1140,13 +1299,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "TickDirMode",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickDirMode",
@@ -1154,7 +1316,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 24,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1178,13 +1340,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "TickLength",
-          "groupId": "exact.ticks.c22f0b30644f",
+          "groupId": "exact.ticks.a78dd5d6ac89",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickLength",
@@ -1192,7 +1357,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 25,
-            "groupId": "exact.ticks.c22f0b30644f",
+            "groupId": "exact.ticks.a78dd5d6ac89",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1205,6 +1370,14 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }
@@ -1217,7 +1390,7 @@
       "entries": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLim",
@@ -1225,7 +1398,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 1,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1241,13 +1414,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLim",
@@ -1255,7 +1431,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 2,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1271,13 +1447,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLim",
@@ -1285,7 +1464,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 3,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1302,13 +1481,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimMode",
@@ -1316,7 +1498,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 4,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1340,13 +1522,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimMode",
@@ -1354,7 +1539,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 5,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1378,13 +1563,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLimMode",
@@ -1392,7 +1580,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 6,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1416,13 +1604,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimitMethod",
@@ -1430,7 +1621,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 7,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1448,12 +1639,20 @@
                 "tight",
                 "padded"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimitMethod",
@@ -1461,7 +1660,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 8,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1479,12 +1678,20 @@
                 "tight",
                 "padded"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLimitMethod",
@@ -1492,7 +1699,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 9,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1510,12 +1717,20 @@
                 "tight",
                 "padded"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxis",
@@ -1523,7 +1738,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 10,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -1535,12 +1750,20 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "YAxis",
@@ -1548,7 +1771,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 11,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -1560,12 +1783,20 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZAxis",
@@ -1573,7 +1804,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 12,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -1585,12 +1816,20 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxisLocation",
@@ -1598,7 +1837,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 13,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1616,12 +1855,20 @@
                 "top",
                 "origin"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YAxisLocation",
@@ -1629,7 +1876,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 14,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1647,12 +1894,20 @@
                 "right",
                 "origin"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColor",
@@ -1660,7 +1915,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 15,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1678,13 +1933,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "modeFlag"
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColor",
@@ -1692,7 +1950,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 16,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1710,13 +1968,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "modeFlag"
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZColor",
@@ -1724,7 +1985,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 17,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1742,13 +2003,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "modeFlag"
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColorMode",
@@ -1756,7 +2020,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 18,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1780,13 +2044,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColorMode",
@@ -1794,7 +2061,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 19,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1818,13 +2085,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZColorMode",
@@ -1832,7 +2102,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 20,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1856,13 +2126,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XDir",
@@ -1870,7 +2143,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 21,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1887,12 +2160,20 @@
                 "normal",
                 "reverse"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YDir",
@@ -1900,7 +2181,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 22,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1917,12 +2198,20 @@
                 "normal",
                 "reverse"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZDir",
@@ -1930,7 +2219,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 23,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1947,12 +2236,20 @@
                 "normal",
                 "reverse"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XScale",
@@ -1960,7 +2257,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 24,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1977,12 +2274,20 @@
                 "linear",
                 "log"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YScale",
@@ -1990,7 +2295,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 25,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2007,12 +2312,20 @@
                 "linear",
                 "log"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.02b40eb8adf3",
+          "groupId": "exact.rulers.cbecba7147ab",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZScale",
@@ -2020,7 +2333,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 26,
-            "groupId": "exact.rulers.02b40eb8adf3",
+            "groupId": "exact.rulers.cbecba7147ab",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2037,6 +2350,14 @@
                 "linear",
                 "log"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -2049,7 +2370,7 @@
       "entries": [
         {
           "path": "XGrid",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XGrid",
@@ -2057,7 +2378,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 1,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2071,12 +2392,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "YGrid",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YGrid",
@@ -2084,7 +2413,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 2,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2098,12 +2427,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "ZGrid",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZGrid",
@@ -2111,7 +2448,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 3,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2125,12 +2462,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "Layer",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Layer",
@@ -2138,7 +2483,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 4,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2155,12 +2500,20 @@
                 "bottom",
                 "top"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "GridLineStyle",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineStyle",
@@ -2168,7 +2521,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 5,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2188,12 +2541,20 @@
                 "-.",
                 "none"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "GridLineWidth",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineWidth",
@@ -2201,7 +2562,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 6,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2222,13 +2583,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "axisWidth",
-              "defaultLiteral": "0.5"
+              "defaultLiteral": "0.5",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "GridLineWidthMode",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineWidthMode",
@@ -2236,7 +2600,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 7,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -2255,13 +2619,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "axisWidth",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "GridColor",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridColor",
@@ -2269,7 +2636,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 8,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2287,13 +2654,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "modeFlag"
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "GridColorMode",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridColorMode",
@@ -2301,7 +2671,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 9,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2325,13 +2695,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "GridAlpha",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridAlpha",
@@ -2339,7 +2712,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 10,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2357,13 +2730,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "modeFlag"
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "GridAlphaMode",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridAlphaMode",
@@ -2371,7 +2747,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 11,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2395,13 +2771,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "XMinorGrid",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XMinorGrid",
@@ -2409,7 +2788,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 12,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2423,12 +2802,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "YMinorGrid",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YMinorGrid",
@@ -2436,7 +2823,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 13,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2450,12 +2837,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "ZMinorGrid",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZMinorGrid",
@@ -2463,7 +2858,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 14,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2477,12 +2872,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "MinorGridLineStyle",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineStyle",
@@ -2490,7 +2893,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 15,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2510,12 +2913,20 @@
                 "-.",
                 "none"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "MinorGridLineWidth",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineWidth",
@@ -2523,7 +2934,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 16,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2544,13 +2955,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "axisWidth",
-              "defaultLiteral": "0.5"
+              "defaultLiteral": "0.5",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MinorGridLineWidthMode",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineWidthMode",
@@ -2558,7 +2972,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 17,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -2578,13 +2992,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "axisWidth",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MinorGridColor",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridColor",
@@ -2592,7 +3009,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 18,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2610,13 +3027,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "modeFlag"
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MinorGridColorMode",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridColorMode",
@@ -2624,7 +3044,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 19,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2648,13 +3068,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MinorGridAlpha",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridAlpha",
@@ -2662,7 +3085,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 20,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2680,13 +3103,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "modeFlag"
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MinorGridAlphaMode",
-          "groupId": "exact.grids.cdc3df92da79",
+          "groupId": "exact.grids.788013a24321",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridAlphaMode",
@@ -2694,7 +3120,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 21,
-            "groupId": "exact.grids.cdc3df92da79",
+            "groupId": "exact.grids.788013a24321",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2718,7 +3144,10 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         }
@@ -2731,7 +3160,7 @@
       "entries": [
         {
           "path": "Title",
-          "groupId": "exact.labels.9c06736f2caf",
+          "groupId": "exact.labels.edeef597101e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Title",
@@ -2739,7 +3168,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 1,
-            "groupId": "exact.labels.9c06736f2caf",
+            "groupId": "exact.labels.edeef597101e",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2752,12 +3181,20 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "Subtitle",
-          "groupId": "exact.labels.9c06736f2caf",
+          "groupId": "exact.labels.edeef597101e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Subtitle",
@@ -2765,7 +3202,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 2,
-            "groupId": "exact.labels.9c06736f2caf",
+            "groupId": "exact.labels.edeef597101e",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2778,12 +3215,20 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "TitleHorizontalAlignment",
-          "groupId": "exact.labels.9c06736f2caf",
+          "groupId": "exact.labels.edeef597101e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitleHorizontalAlignment",
@@ -2791,7 +3236,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 3,
-            "groupId": "exact.labels.9c06736f2caf",
+            "groupId": "exact.labels.edeef597101e",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2809,12 +3254,20 @@
                 "left",
                 "right"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "XLabel",
-          "groupId": "exact.labels.9c06736f2caf",
+          "groupId": "exact.labels.edeef597101e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLabel",
@@ -2822,7 +3275,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 4,
-            "groupId": "exact.labels.9c06736f2caf",
+            "groupId": "exact.labels.edeef597101e",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -2834,12 +3287,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "YLabel",
-          "groupId": "exact.labels.9c06736f2caf",
+          "groupId": "exact.labels.edeef597101e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLabel",
@@ -2847,7 +3308,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 5,
-            "groupId": "exact.labels.9c06736f2caf",
+            "groupId": "exact.labels.edeef597101e",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -2859,12 +3320,20 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "ZLabel",
-          "groupId": "exact.labels.9c06736f2caf",
+          "groupId": "exact.labels.edeef597101e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLabel",
@@ -2872,7 +3341,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 6,
-            "groupId": "exact.labels.9c06736f2caf",
+            "groupId": "exact.labels.edeef597101e",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2885,12 +3354,20 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "Legend",
-          "groupId": "exact.labels.9c06736f2caf",
+          "groupId": "exact.labels.edeef597101e",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Legend",
@@ -2898,7 +3375,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 7,
-            "groupId": "exact.labels.9c06736f2caf",
+            "groupId": "exact.labels.edeef597101e",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -2910,6 +3387,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -2922,7 +3407,7 @@
       "entries": [
         {
           "path": "ColorOrder",
-          "groupId": "exact.multipleplots.f60264b7b9ff",
+          "groupId": "exact.multipleplots.9ca2ff8e5e60",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorOrder",
@@ -2930,7 +3415,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 1,
-            "groupId": "exact.multipleplots.f60264b7b9ff",
+            "groupId": "exact.multipleplots.9ca2ff8e5e60",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2944,12 +3429,20 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "LineStyleOrder",
-          "groupId": "exact.multipleplots.f60264b7b9ff",
+          "groupId": "exact.multipleplots.9ca2ff8e5e60",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleOrder",
@@ -2957,7 +3450,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 2,
-            "groupId": "exact.multipleplots.f60264b7b9ff",
+            "groupId": "exact.multipleplots.9ca2ff8e5e60",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2972,12 +3465,20 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "LineStyleCyclingMethod",
-          "groupId": "exact.multipleplots.f60264b7b9ff",
+          "groupId": "exact.multipleplots.9ca2ff8e5e60",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleCyclingMethod",
@@ -2985,7 +3486,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 3,
-            "groupId": "exact.multipleplots.f60264b7b9ff",
+            "groupId": "exact.multipleplots.9ca2ff8e5e60",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -2997,12 +3498,20 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "NextSeriesIndex",
-          "groupId": "exact.multipleplots.f60264b7b9ff",
+          "groupId": "exact.multipleplots.9ca2ff8e5e60",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "NextSeriesIndex",
@@ -3010,7 +3519,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 4,
-            "groupId": "exact.multipleplots.f60264b7b9ff",
+            "groupId": "exact.multipleplots.9ca2ff8e5e60",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -3022,12 +3531,20 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "NextPlot",
-          "groupId": "exact.multipleplots.f60264b7b9ff",
+          "groupId": "exact.multipleplots.9ca2ff8e5e60",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "NextPlot",
@@ -3035,7 +3552,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 5,
-            "groupId": "exact.multipleplots.f60264b7b9ff",
+            "groupId": "exact.multipleplots.9ca2ff8e5e60",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3054,12 +3571,20 @@
                 "replacechildren",
                 "replaceall"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "SortMethod",
-          "groupId": "exact.multipleplots.f60264b7b9ff",
+          "groupId": "exact.multipleplots.9ca2ff8e5e60",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SortMethod",
@@ -3067,7 +3592,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 6,
-            "groupId": "exact.multipleplots.f60264b7b9ff",
+            "groupId": "exact.multipleplots.9ca2ff8e5e60",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3084,12 +3609,20 @@
                 "depth",
                 "childorder"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "ColorOrderIndex",
-          "groupId": "exact.multipleplots.f60264b7b9ff",
+          "groupId": "exact.multipleplots.9ca2ff8e5e60",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorOrderIndex",
@@ -3097,7 +3630,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 7,
-            "groupId": "exact.multipleplots.f60264b7b9ff",
+            "groupId": "exact.multipleplots.9ca2ff8e5e60",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -3109,12 +3642,20 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "LineStyleOrderIndex",
-          "groupId": "exact.multipleplots.f60264b7b9ff",
+          "groupId": "exact.multipleplots.9ca2ff8e5e60",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleOrderIndex",
@@ -3122,7 +3663,7 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 8,
-            "groupId": "exact.multipleplots.f60264b7b9ff",
+            "groupId": "exact.multipleplots.9ca2ff8e5e60",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -3134,6 +3675,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -3146,7 +3695,7 @@
       "entries": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
@@ -3154,7 +3703,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 1,
-            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3168,12 +3717,20 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorScale",
@@ -3181,7 +3738,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 2,
-            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3198,12 +3755,20 @@
                 "linear",
                 "log"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLim",
@@ -3211,7 +3776,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 3,
-            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3228,13 +3793,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLimMode",
@@ -3242,7 +3810,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 4,
-            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3266,13 +3834,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
@@ -3280,7 +3851,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 5,
-            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3294,12 +3865,20 @@
               "constraints": [],
               "minimum": 0,
               "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AlphaScale",
@@ -3307,7 +3886,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 6,
-            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3324,12 +3903,20 @@
                 "linear",
                 "log"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALim",
@@ -3337,7 +3924,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 7,
-            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3354,13 +3941,16 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "valueMode"
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALimMode",
@@ -3368,7 +3958,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 8,
-            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
+            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3392,7 +3982,10 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         }
@@ -3427,6 +4020,14 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -3459,7 +4060,10 @@
               "applyAfter": [],
               "nameValue": "supported",
               "effectPolicy": "axisWidth",
-              "defaultLiteral": "0.5"
+              "defaultLiteral": "0.5",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
@@ -3487,6 +4091,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -3517,6 +4129,14 @@
                 "back",
                 "full"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -3544,6 +4164,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -3574,6 +4202,14 @@
                 "3dbox",
                 "rectangle"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -3601,6 +4237,14 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -3634,6 +4278,18 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 4
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
             }
           }
         },
@@ -3659,6 +4315,18 @@
               "shape": "vector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
             }
           }
         },
@@ -3690,7 +4358,10 @@
                 "Units"
               ],
               "nameValue": "supported",
-              "effectPolicy": "layout"
+              "effectPolicy": "layout",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
@@ -3716,6 +4387,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -3741,6 +4420,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -3771,7 +4458,10 @@
               "applyAfter": [],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'normalized'"
+              "defaultLiteral": "'normalized'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
@@ -3798,6 +4488,29 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 3
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
@@ -3828,6 +4541,29 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
@@ -3854,6 +4590,29 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 3
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
@@ -3884,6 +4643,29 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
@@ -3909,6 +4691,14 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -3921,7 +4711,7 @@
       "entries": [
         {
           "path": "View",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "View",
@@ -3929,7 +4719,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 1,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3942,12 +4732,35 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "Projection",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Projection",
@@ -3955,7 +4768,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 2,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3972,12 +4785,35 @@
                 "orthographic",
                 "perspective"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "CameraPosition",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraPosition",
@@ -3985,7 +4821,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 3,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -3998,12 +4834,35 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 3
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "CameraPositionMode",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraPositionMode",
@@ -4011,7 +4870,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 4,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4028,12 +4887,35 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "CameraTarget",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraTarget",
@@ -4041,7 +4923,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 5,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4054,12 +4936,35 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 3
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "CameraTargetMode",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraTargetMode",
@@ -4067,7 +4972,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 6,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4084,12 +4989,35 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "CameraUpVector",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraUpVector",
@@ -4097,7 +5025,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 7,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4110,12 +5038,35 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 3
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "CameraUpVectorMode",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraUpVectorMode",
@@ -4123,7 +5074,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 8,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4140,12 +5091,35 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "CameraViewAngle",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraViewAngle",
@@ -4153,7 +5127,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 9,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4168,12 +5142,35 @@
               "minimum": 0,
               "maximum": 180,
               "exclusiveMaximum": true
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         },
         {
           "path": "CameraViewAngleMode",
-          "groupId": "exact.view.17630eed8ac9",
+          "groupId": "exact.view.b4b39644cb15",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraViewAngleMode",
@@ -4181,7 +5178,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 10,
-            "groupId": "exact.view.17630eed8ac9",
+            "groupId": "exact.view.b4b39644cb15",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4198,6 +5195,29 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "CameraPosition",
+                "CameraPositionMode",
+                "CameraTarget",
+                "CameraTargetMode",
+                "CameraUpVector",
+                "CameraUpVectorMode",
+                "CameraViewAngle",
+                "CameraViewAngleMode",
+                "DataAspectRatio",
+                "DataAspectRatioMode",
+                "PlotBoxAspectRatio",
+                "PlotBoxAspectRatioMode",
+                "Projection",
+                "View"
+              ],
+              "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
           }
         }
@@ -4230,6 +5250,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -4255,6 +5283,14 @@
               "shape": "vector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -4282,6 +5318,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -4307,6 +5351,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -4332,6 +5384,14 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -4359,6 +5419,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -4386,6 +5454,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }
@@ -4420,6 +5496,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -4447,6 +5531,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
             }
           }
         },
@@ -4474,6 +5566,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
             }
           }
         }
@@ -4508,6 +5608,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -4538,6 +5646,14 @@
                 "queue",
                 "cancel"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -4569,6 +5685,14 @@
                 "all",
                 "none"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -4596,6 +5720,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -4621,6 +5753,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -4653,6 +5793,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -4678,6 +5826,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -4704,6 +5860,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }
@@ -4736,6 +5900,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -4762,6 +5934,14 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -4787,6 +5967,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }

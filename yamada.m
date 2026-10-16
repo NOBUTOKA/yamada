@@ -3042,7 +3042,8 @@ classdef yamada < matlab.apps.AppBase
                 if resolved.IsKnown
                     values{index} = resolved.EffectiveValue;
                     known(index) = true;
-                elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index)
+                elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index) && ...
+                        any(states(index).Definition.Application.EffectStatus == ["independent", "modeled"])
                     values{index} = defaults.Values{index};
                     known(index) = true;
                 end
@@ -3077,8 +3078,7 @@ classdef yamada < matlab.apps.AppBase
                 value = "";
                 rawValue = [];
                 isKnown = false;
-                editable = states(index).Definition.IsEditable && ...
-                    states(index).Definition.AuditDisposition == "editable";
+                editable = states(index).Resolution.IsEditable;
                 resolved = states(index).Resolution;
                 if ~isempty(entry)
                     value = macd.ui.InspectorValueFormatter.format(entry);
@@ -3087,7 +3087,8 @@ classdef yamada < matlab.apps.AppBase
                 if resolved.IsKnown
                     rawValue = resolved.EffectiveValue;
                     isKnown = true;
-                elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index)
+                elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index) && ...
+                        any(states(index).Definition.Application.EffectStatus == ["independent", "modeled"])
                     rawValue = defaults.Values{index};
                     isKnown = true;
                 end
@@ -3100,6 +3101,8 @@ classdef yamada < matlab.apps.AppBase
                 end
                 if ~isKnown
                     members(index).Reason = resolved.Reason;
+                elseif ~editable
+                    members(index).Reason = resolved.ReadOnlyReason;
                 end
                 members(index).Path = states(index).Definition.Path;
                 members(index).Value = value;

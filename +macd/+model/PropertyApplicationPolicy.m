@@ -15,6 +15,12 @@ classdef PropertyApplicationPolicy
         NameValue string = "unknown"
         % EffectPolicy - Allowlisted policy for resolving implicit setter effects.
         EffectPolicy string = "none"
+        % EffectStatus - Unknown, independent, modeled, or explicitly unsupported setter semantics.
+        EffectStatus string = "unknown"
+        % AffectedPaths - Stored states invalidated by an unresolved setter; empty means all.
+        AffectedPaths string = strings(1, 0)
+        % EffectReason - Audited explanation of an unresolved setter boundary.
+        EffectReason string = "Setter effects have not been reviewed."
         % DefaultLiteral - Audited inert MATLAB literal used to seed state resolution.
         DefaultLiteral string = ""
         % HasInitialValue - Whether the audited seed was parsed without evaluation.
@@ -39,7 +45,7 @@ classdef PropertyApplicationPolicy
                 obj.fail(context, "Expected one application policy object.");
             end
             unknown = setdiff(string(fieldnames(data)), ...
-                ["applyAfter", "nameValue", "effectPolicy", "defaultLiteral"]);
+                ["applyAfter", "nameValue", "effectPolicy", "defaultLiteral", "effectStatus", "affectedPaths", "effectReason"]);
             if ~isempty(unknown)
                 obj.fail(context + "." + unknown(1), "Unknown application policy field.");
             end
@@ -72,7 +78,32 @@ classdef PropertyApplicationPolicy
                 obj.EffectPolicy = obj.identifier(data.effectPolicy, ...
                     ["none", "itemSelection", "boundedValue", "numericValue", ...
                     "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", ...
-                    "textValue", "componentReference", "layout", "gridTracks"], context + ".effectPolicy");
+                    "textValue", "componentReference", "layout", "gridTracks", "buttonSelection", "positionInput", "sliderPosition", "squarePosition"], context + ".effectPolicy");
+            end
+            if isfield(data, "effectStatus")
+                obj.EffectStatus = obj.identifier(data.effectStatus, ...
+                    ["unknown", "independent", "modeled", "unsupported"], context + ".effectStatus");
+            end
+            if isfield(data, "affectedPaths")
+                raw = data.affectedPaths;
+                if ~(isstring(raw) || (iscell(raw) && all(cellfun(@(item) ...
+                        (ischar(item) && isrow(item)) || (isstring(item) && isscalar(item)), raw), "all")) || (isnumeric(raw) && isempty(raw)))
+                    obj.fail(context + ".affectedPaths", "Expected property paths as a string array.");
+                end
+                paths = reshape(string(raw), 1, []);
+                if any(ismissing(paths)) || numel(unique(paths)) ~= numel(paths) || ...
+                        any(cellfun(@isempty, regexp(cellstr(paths), '^[A-Za-z]\w*(\.[A-Za-z]\w*)*$', 'once')))
+                    obj.fail(context + ".affectedPaths", "Expected unique valid property paths.");
+                end
+                obj.AffectedPaths = paths;
+            end
+            if isfield(data, "effectReason")
+                if ~((ischar(data.effectReason) && isrow(data.effectReason)) || ...
+                        (isstring(data.effectReason) && isscalar(data.effectReason))) || ...
+                        ismissing(string(data.effectReason)) || strlength(strtrim(string(data.effectReason))) == 0
+                    obj.fail(context + ".effectReason", "Expected a nonempty explanation.");
+                end
+                obj.EffectReason = string(data.effectReason);
             end
             if isfield(data, "defaultLiteral")
                 raw = data.defaultLiteral;
@@ -92,11 +123,12 @@ classdef PropertyApplicationPolicy
     end
 
     methods (Static)
-        function order = orderDefinitions(definitions, context)
+        function order = orderDefinitions(definitions, context, suppressedPaths)
             % orderDefinitions Validate dependencies and return a stable topological order.
             arguments (Input)
                 definitions macd.model.PropertyDefinition
                 context (1, 1) string = "properties"
+                suppressedPaths string = strings(1, 0)
             end
             arguments (Output)
                 order (1, :) double
@@ -110,6 +142,11 @@ classdef PropertyApplicationPolicy
             end
             edges = false(count);
             for index = 1:count
+                affected = definitions(index).Application.AffectedPaths;
+                if any(~ismember(affected, [paths reshape(suppressedPaths, 1, [])]))
+                    macd.model.PropertyApplicationPolicy.fail(context + "." + paths(index), ...
+                        "Unknown affected property path outside the declared parent suppression.");
+                end
                 dependencies = definitions(index).Application.ApplyAfter;
                 for dependency = dependencies
                     target = find(paths == dependency, 1);

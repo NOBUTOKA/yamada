@@ -114,6 +114,8 @@ classdef AppSourceParser
             document.Metadata.InitializationContext = struct("Order", initializationOrder, ...
                 "Certain", initializationCertain, "Returns", initializationReturns, "Layout", initializationLayout);
             diagnostics = [diagnostics(:)' initializationDiagnostics(:)'];
+            unresolved = initializationDiagnostics(string({initializationDiagnostics.Code}) == "unresolved-initialization-call");
+            document.Metadata.HasUnresolvedInitialization = ~isempty(unresolved);
             creationOrder = unique(initializationOrder, 'stable');
             creationOrder = [creationOrder setdiff(1:numel(statements), creationOrder, 'stable')];
             creationSettings = containers.Map("KeyType", "char", "ValueType", "any");

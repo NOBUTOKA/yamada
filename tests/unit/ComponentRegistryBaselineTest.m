@@ -45,6 +45,9 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     testCase.verifyEqual(actual.Application.ApplyAfter, policy.ApplyAfter);
                     testCase.verifyEqual(actual.Application.NameValue, policy.NameValue);
                     testCase.verifyEqual(actual.Application.EffectPolicy, policy.EffectPolicy);
+                    testCase.verifyEqual(actual.Application.EffectStatus, policy.EffectStatus);
+                    testCase.verifyEqual(actual.Application.AffectedPaths, policy.AffectedPaths);
+                    testCase.verifyEqual(actual.Application.EffectReason, policy.EffectReason);
                     testCase.verifyEqual(actual.Application.DefaultLiteral, policy.DefaultLiteral);
                     testCase.verifyEqual(actual.Application.HasInitialValue, policy.HasInitialValue);
                     testCase.verifyTrue(isequaln(actual.Application.InitialValue, policy.InitialValue));

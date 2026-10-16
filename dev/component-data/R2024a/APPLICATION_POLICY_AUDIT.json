@@ -80,7 +80,7 @@
       "sourceSha256": "649bfd09dcafd4dbe9a9fa3710e9e8561b6669115ce644ab47ab471daaa7fdbd",
       "candidateCount": 16,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 4
+      "reviewedPolicyCount": 5
     },
     {
       "id": "uicheckbox",
@@ -123,7 +123,7 @@
       "sourceSha256": "2f73b4c1f16d2f4a85694945928f574110f537608a779bfc0ae057c4536b7fe9",
       "candidateCount": 7,
       "runtimeVerificationStatus": "pending",
-      "reviewedPolicyCount": 2
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uidropdown",
@@ -134,7 +134,7 @@
       "sourceSha256": "c0cc14a3637552bf6a0a1376fd07bb68cd01f7790bb01ceb6c4664be21c5f764",
       "candidateCount": 17,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 4
+      "reviewedPolicyCount": 5
     },
     {
       "id": "uieditfield-numeric",
@@ -145,7 +145,7 @@
       "sourceSha256": "b2b116a25937140b690165b088af17b4214b0d24ac414f523438cd8a596ef118",
       "candidateCount": 20,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 6
+      "reviewedPolicyCount": 7
     },
     {
       "id": "uieditfield-text",
@@ -156,7 +156,7 @@
       "sourceSha256": "a427a378b7025ea8e7248500b86c723ee6f85fb68c5abe9ee1d35ac08665d0a3",
       "candidateCount": 16,
       "runtimeVerificationStatus": "pending",
-      "reviewedPolicyCount": 2
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uifigure",
@@ -178,7 +178,7 @@
       "sourceSha256": "e4cb1a5cf9f8108972e5b4fcc43868ec0455d03b3b7a1f0dff820093c13ce922",
       "candidateCount": 21,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 8
+      "reviewedPolicyCount": 9
     },
     {
       "id": "uigauge-linear",
@@ -189,7 +189,7 @@
       "sourceSha256": "5a6cbeb798328bc56190c0027dae41bf42eac1215858b38798303a3cee481e52",
       "candidateCount": 21,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 8
+      "reviewedPolicyCount": 9
     },
     {
       "id": "uigauge-ninetydegree",
@@ -200,7 +200,7 @@
       "sourceSha256": "842e500061f737edf24c31f0e0d5c4747385ba858e74adc585e8096b44a78e16",
       "candidateCount": 20,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 8
+      "reviewedPolicyCount": 9
     },
     {
       "id": "uigauge-semicircular",
@@ -266,7 +266,7 @@
       "sourceSha256": "b6f47e93f62b2a46d8792a3163645461a4cda146d850dc118b71a6ada5977645",
       "candidateCount": 18,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 8
+      "reviewedPolicyCount": 9
     },
     {
       "id": "uiknob-discrete",
@@ -277,7 +277,7 @@
       "sourceSha256": "696f10cfd9fc75b82c970a0f730c0829b438822bb3ce29b971c173c5d8e9da22",
       "candidateCount": 10,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 3
+      "reviewedPolicyCount": 4
     },
     {
       "id": "uilabel",
@@ -310,7 +310,7 @@
       "sourceSha256": "f16aaa7aaba5a6504a2304fdebe5dec8ab8d6c173c3b54b6498c0d6fb891263f",
       "candidateCount": 13,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 4
+      "reviewedPolicyCount": 5
     },
     {
       "id": "uimenu",
@@ -352,7 +352,7 @@
       "sourceSha256": "be44580743073f5f1c56600749f27cbf973b3d9d4e8b2173da19ab5cff4e445e",
       "candidateCount": 6,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 3
+      "reviewedPolicyCount": 4
     },
     {
       "id": "uislider-range",
@@ -363,7 +363,7 @@
       "sourceSha256": "118315077050769ab92f43b42f51fb2c346a48e3fb84f5a3bd677f5c50e1b8f9",
       "candidateCount": 21,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 8
+      "reviewedPolicyCount": 10
     },
     {
       "id": "uislider-slider",
@@ -374,7 +374,7 @@
       "sourceSha256": "e6a8d9516f3ca0c126aadec4baa0fe6d6a42f343be6492a85b18864c2edc8f0c",
       "candidateCount": 18,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 8
+      "reviewedPolicyCount": 10
     },
     {
       "id": "uispinner",
@@ -385,7 +385,7 @@
       "sourceSha256": "e7c083d43525dfeb7a1072d45b767fe40ec31026b49d5954f84144e258b8f9ce",
       "candidateCount": 28,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 6
+      "reviewedPolicyCount": 7
     },
     {
       "id": "uiswitch-rocker",
@@ -473,7 +473,7 @@
       "sourceSha256": "9b7592eab133bf133051d5e35b5fb03aa8b70fdc2443a64454aad8f7df6db8b4",
       "candidateCount": 8,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 3
+      "reviewedPolicyCount": 4
     },
     {
       "id": "uitoggletool",

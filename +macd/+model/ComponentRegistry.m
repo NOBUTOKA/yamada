@@ -212,17 +212,28 @@ classdef ComponentRegistry < handle
             % Compose only the parent rule selected by the direct parent factory.
             definition = obj.get(factory, creationArguments);
             properties = definition.Properties;
+            suppressedPaths = strings(1, 0);
             for index = 1:numel(obj.ParentContextRules)
                 rule = obj.ParentContextRules(index);
                 if ~rule.appliesTo(parentFactory), continue, end
+                suppressedPaths = rule.SuppressedPaths;
                 properties = properties(~ismember(string({properties.Path}), rule.SuppressedPaths));
                 added = rule.AddedProperties;
                 added = added(~ismember(string({added.Path}), string({properties.Path})));
                 properties = vertcat(properties(:), added(:));
                 break
             end
+            % Project declared impacts through the same explicit parent suppression.
+            for propertyIndex = 1:numel(properties)
+                property = properties(propertyIndex);
+                if ~any(ismember(property.Application.AffectedPaths, suppressedPaths)), continue, end
+                metadata = property.Metadata;
+                metadata.application.affectedPaths = cellstr(setdiff(property.Application.AffectedPaths, suppressedPaths, 'stable'));
+                properties(propertyIndex) = macd.model.PropertyDefinition(property.Path, ...
+                    property.DefaultValue, property.HasDefault, property.IsEditable, metadata);
+            end
             macd.model.PropertyApplicationPolicy.orderDefinitions(properties, ...
-                definition.Id + " under " + parentFactory);
+                definition.Id + " under " + parentFactory, suppressedPaths);
         end
 
         function result = isReadOnlyProperty(obj, factory, path, creationArguments)

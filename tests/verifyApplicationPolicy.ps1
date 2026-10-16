@@ -30,7 +30,16 @@ function Assert-PolicyFailure {
 # Cover normalization and invalid symbols independently of the generator.
 $emptyPolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{})
 Assert-Condition ($emptyPolicy.nameValue -ceq 'unknown' -and $emptyPolicy.effectPolicy -ceq 'none' -and
-    $emptyPolicy.applyAfter.Count -eq 0) 'An empty optional policy did not retain conservative defaults.'
+    $emptyPolicy.applyAfter.Count -eq 0 -and $emptyPolicy.effectStatus -ceq 'unknown') 'An empty optional policy did not retain conservative defaults.'
+$unresolved = ConvertTo-ApplicationPolicy ([pscustomobject]@{
+    effectStatus = 'unsupported'; affectedPaths = @('Value'); effectReason = 'Owned fixture boundary.'
+})
+Assert-Condition ($unresolved.effectStatus -ceq 'unsupported' -and $unresolved.affectedPaths[0] -ceq 'Value') 'Effect coverage was lost.'
+Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ effectStatus = 'approved' }) }
+Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ affectedPaths = @('Value','Value') }) }
+Assert-PolicyFailure { Test-ApplicationPolicies @([pscustomobject]@{
+    path = 'A'; application = [pscustomobject]@{ affectedPaths = @('Missing') }
+}) 'fixture' }
 $seedPolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{ defaultLiteral = '[-Inf Inf]' })
 Assert-Condition ($seedPolicy.defaultLiteral -ceq '[-Inf Inf]') 'A default literal was lost in normalization.'
 $modePolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{ effectPolicy = 'valueMode' })

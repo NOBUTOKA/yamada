@@ -49,7 +49,8 @@ classdef ParentContextRule
                 result (1, 1) macd.model.ParentContextRule
             end
             metadata = struct("category", "Layout", "editor", "numericVector", ...
-                "valueSchema", struct("integer", true, "minimum", 1));
+                "valueSchema", struct("integer", true, "minimum", 1), ...
+                "application", struct("effectPolicy", "layout", "effectStatus", "modeled"));
             added = [macd.model.PropertyDefinition("Layout.Row", [], false, true, metadata); ...
                 macd.model.PropertyDefinition("Layout.Column", [], false, true, metadata)];
             result = macd.model.ParentContextRule("uigridlayout", added, "Position");
@@ -67,7 +68,8 @@ classdef ParentContextRule
             switch kind
                 case "grid"
                     metadata = struct("category", "Layout", "editor", "numericVector", ...
-                        "valueSchema", struct("integer", true, "minimum", 1));
+                        "valueSchema", struct("integer", true, "minimum", 1), ...
+                "application", struct("effectPolicy", "layout", "effectStatus", "modeled"));
                     added = [macd.model.PropertyDefinition("Layout.Row", [], false, true, metadata); ...
                         macd.model.PropertyDefinition("Layout.Column", [], false, true, metadata)];
                     result = macd.model.ParentContextRule(parentFactories, added, "Position");

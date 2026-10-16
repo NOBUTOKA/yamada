@@ -54,12 +54,16 @@ classdef PropertyState
             obj.EffectPolicy = definition.Application.EffectPolicy;
             obj.IsEditable = definition.IsEditable && definition.AuditDisposition == "editable";
             if ~obj.IsEditable, obj.ReadOnlyReason = "The catalog marks this property as read-only."; end
-            if definition.Application.HasInitialValue
+            if ~any(definition.Application.EffectStatus == ["independent", "modeled"])
+                obj.IsEditable = false;
+                obj.ReadOnlyReason = definition.Application.EffectReason;
+            end
+            if any(definition.Application.EffectStatus == ["independent", "modeled"]) && definition.Application.HasInitialValue
                 obj.EffectiveValue = definition.Application.InitialValue;
                 obj.IsKnown = true;
                 obj.Reason = "";
                 obj.ReasonCode = "";
-            elseif definition.HasDefault
+            elseif any(definition.Application.EffectStatus == ["independent", "modeled"]) && definition.HasDefault
                 obj.EffectiveValue = definition.DefaultValue;
                 obj.IsKnown = true;
                 obj.Reason = "";

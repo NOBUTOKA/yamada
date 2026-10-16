@@ -72,7 +72,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "CreateFcn",
@@ -106,7 +114,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [],
+        "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+      }
     },
     {
       "path": "DeleteFcn",
@@ -140,7 +156,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [],
+        "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+      }
     },
     {
       "path": "Interruptible",
@@ -169,7 +193,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "BusyAction",
@@ -201,7 +233,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "BeingDeleted",
@@ -230,7 +270,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Parent",
@@ -258,7 +306,15 @@
           "deferredComponentReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Children",
@@ -287,7 +343,15 @@
           "handleReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "HandleVisibility",
@@ -318,7 +382,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Type",
@@ -347,7 +419,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Tag",
@@ -378,7 +458,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "UserData",
@@ -408,7 +496,15 @@
           "sourceOnly"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     }
   ]
 }

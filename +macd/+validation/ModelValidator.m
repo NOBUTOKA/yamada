@@ -49,6 +49,15 @@ classdef ModelValidator
                 end
                 names(end + 1) = component.Name; %#ok<AGROW>
 
+                % Native groups accept one mutually exclusive child family at a time.
+                if component.Factory == "uibuttongroup"
+                    children = document.Components(string({document.Components.ParentId}) == component.Id & ...
+                        ismember(string({document.Components.Factory}), ["uiradiobutton", "uitogglebutton"]));
+                    if numel(unique(string({children.Factory}))) > 1
+                        diagnostics(end + 1) = macd.validation.ModelValidator.error( ...
+                            "mixed-button-group", "RadioButton and ToggleButton cannot share one ButtonGroup.", component.Id); %#ok<AGROW>
+                    end
+                end
                 % Registry membership controls component-specific behavior.
                 if ~registry.contains(component.Factory)
                     diagnostics(end + 1) = macd.validation.ModelValidator.error( ...

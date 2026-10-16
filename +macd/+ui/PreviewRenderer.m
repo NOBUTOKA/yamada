@@ -59,7 +59,8 @@ classdef PreviewRenderer < handle
 
             % Cross-component pending grid writes share one complete parsed configuration.
             obj.UsesCombinedConfiguration = any(arrayfun(@(component) ...
-                macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document), document.Components));
+                (macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document) || ...
+                macd.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document)), document.Components));
             if obj.UsesCombinedConfiguration
                 try
                     plan = macd.source.PropertySourcePlan.combined(document, root, obj.Registry);
@@ -123,6 +124,18 @@ classdef PreviewRenderer < handle
                 obj.applyProperties(preview, configured, configurationDocument);
                 for index = 1:numel(component.Children)
                     obj.renderComponent(document, component.Children(index), preview, handles);
+                end
+                if component.Factory == "uibuttongroup"
+                    for childId = component.Children
+                        child = configurationDocument.getComponentByName(document.getComponent(childId).Name);
+                        if isempty(child) || ~any(child.Factory == ["uiradiobutton", "uitogglebutton"]), continue, end
+                        states = configurationDocument.getEffectivePropertyStates(obj.Registry, child.Id);
+                        value = states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution;
+                        if value.IsKnown && logical(value.EffectiveValue) && isKey(handles, char(childId))
+                            selected = handles(char(childId));
+                            preview.SelectedObject = selected;
+                        end
+                    end
                 end
             catch exception
                 obj.Diagnostics(end + 1) = macd.model.Diagnostic( ...

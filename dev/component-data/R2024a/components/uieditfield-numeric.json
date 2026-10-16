@@ -93,18 +93,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "AllowEmpty",
-          "Limits",
-          "LowerLimitInclusive",
-          "RoundFractionalValues",
-          "UpperLimitInclusive"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "numericValue",
-        "defaultLiteral": "0"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -121,7 +109,22 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#rangesAndNumericOptionsPrecedeRequestedValues",
           "detail": "Limits and explicit numeric Value agree across construction modes. A separate case assigns empty Value after enabling AllowEmpty and verifies constructor agreement. Rounding and exclusive-bound combinations are not covered by this constructor check."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "AllowEmpty",
+          "Limits",
+          "LowerLimitInclusive",
+          "RoundFractionalValues",
+          "UpperLimitInclusive"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "numericValue",
+        "defaultLiteral": "0",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "Limits",
@@ -151,12 +154,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "numericValue",
-        "defaultLiteral": "[-Inf Inf]"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -173,7 +170,16 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#rangesAndNumericOptionsPrecedeRequestedValues",
           "detail": "Limits and explicit numeric Value agree across construction modes. A separate case assigns empty Value after enabling AllowEmpty and verifies constructor agreement. Rounding and exclusive-bound combinations are not covered by this constructor check."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "numericValue",
+        "defaultLiteral": "[-Inf Inf]",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RoundFractionalValues",
@@ -203,16 +209,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "Limits",
-          "LowerLimitInclusive",
-          "UpperLimitInclusive"
-        ],
-        "nameValue": "unknown",
-        "effectPolicy": "numericValue",
-        "defaultLiteral": "'off'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -224,7 +220,20 @@
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
           "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "Limits",
+          "LowerLimitInclusive",
+          "UpperLimitInclusive"
+        ],
+        "nameValue": "unknown",
+        "effectPolicy": "numericValue",
+        "defaultLiteral": "'off'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ValueDisplayFormat",
@@ -253,7 +262,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "AllowEmpty",
@@ -283,12 +300,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'off'"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -300,7 +311,16 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#rangesAndNumericOptionsPrecedeRequestedValues",
           "detail": "Limits and explicit numeric Value agree across construction modes. A separate case assigns empty Value after enabling AllowEmpty and verifies constructor agreement. Rounding and exclusive-bound combinations are not covered by this constructor check."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'off'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "Placeholder",
@@ -329,7 +349,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "HorizontalAlignment",
@@ -363,7 +391,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "LowerLimitInclusive",
@@ -393,19 +429,22 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "unknown",
-        "effectPolicy": "none",
-        "defaultLiteral": "'on'"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
           "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "defaultLiteral": "'on'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "UpperLimitInclusive",
@@ -435,19 +474,22 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "unknown",
-        "effectPolicy": "none",
-        "defaultLiteral": "'on'"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
           "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "defaultLiteral": "'on'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "FontName",
@@ -474,7 +516,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "FontSize",
@@ -503,7 +553,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "FontWeight",
@@ -535,7 +593,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "FontAngle",
@@ -567,7 +633,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "FontColor",
@@ -600,7 +674,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "BackgroundColor",
@@ -633,7 +715,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Visible",
@@ -662,7 +752,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Editable",
@@ -691,7 +789,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Enable",
@@ -720,7 +826,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Tooltip",
@@ -753,7 +867,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ContextMenu",
@@ -782,7 +904,15 @@
           "deferredComponentReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Position",
@@ -809,7 +939,22 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+          "detail": "Owned R2024a ProbeStoredPositionInteractions verifies the stored Position getter. Native decorated/container aliases remain unknown; slider minor size is fixed at 3 and the reviewed square families use the smaller requested dimension."
+        }
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "positionInput",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Finite stored Position behavior verified by the owned R2024a probe. InnerPosition and OuterPosition are not assumed equivalent."
+      }
     },
     {
       "path": "InnerPosition",
@@ -838,7 +983,19 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [
+          "InnerPosition",
+          "OuterPosition",
+          "Position"
+        ],
+        "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+      }
     },
     {
       "path": "OuterPosition",
@@ -868,7 +1025,19 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [
+          "InnerPosition",
+          "OuterPosition",
+          "Position"
+        ],
+        "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+      }
     },
     {
       "path": "Layout",
@@ -898,7 +1067,15 @@
           "handleReference"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "ValueChangedFcn",
@@ -932,7 +1109,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "CreateFcn",
@@ -966,7 +1151,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [],
+        "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+      }
     },
     {
       "path": "DeleteFcn",
@@ -1000,7 +1193,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [],
+        "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+      }
     },
     {
       "path": "Interruptible",
@@ -1029,7 +1230,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "BusyAction",
@@ -1061,7 +1270,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "BeingDeleted",
@@ -1090,7 +1307,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Parent",
@@ -1122,7 +1347,15 @@
           "deferredComponentReference"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "HandleVisibility",
@@ -1153,7 +1386,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Type",
@@ -1182,7 +1423,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Tag",
@@ -1213,7 +1462,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "UserData",
@@ -1243,7 +1500,15 @@
           "sourceOnly"
         ]
       },
-      "runtimeSetAccess": "unresolved"
+      "runtimeSetAccess": "unresolved",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     }
   ]
 }

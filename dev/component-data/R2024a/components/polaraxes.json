@@ -116,7 +116,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "FontSize",
@@ -143,13 +151,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "FontUnits"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -161,7 +162,17 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "FontUnits"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "FontSizeMode",
@@ -194,14 +205,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "FontSize"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -218,7 +221,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "FontSize"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "FontWeight",
@@ -250,7 +264,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "FontAngle",
@@ -282,7 +304,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "TitleFontSizeMultiplier",
@@ -311,7 +341,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "TitleFontWeight",
@@ -343,7 +381,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "SubtitleFontWeight",
@@ -375,7 +421,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "FontUnits",
@@ -414,12 +468,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'points'"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -431,7 +479,16 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#unitsAreEstablishedBeforeCoordinatesAndFontSize",
           "detail": "Position [1 1 8 6] in centimeters and FontSize 14 in points survive both canonical setters and a single constructor."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'points'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "FontSmoothing",
@@ -460,7 +517,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "RTick",
@@ -488,13 +553,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "RLim"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -506,7 +564,17 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "RLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RTickMode",
@@ -539,14 +607,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "RTick"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -563,7 +623,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "RTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RTickLabel",
@@ -596,13 +667,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "RTick"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -614,7 +678,17 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "RTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RTickLabelMode",
@@ -647,14 +721,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "RTickLabel"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -671,7 +737,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "RTickLabel"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ThetaTick",
@@ -699,13 +776,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "ThetaLim"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -717,7 +787,17 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "ThetaLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ThetaTickMode",
@@ -750,14 +830,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "ThetaTick"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -774,7 +846,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "ThetaTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ThetaTickLabel",
@@ -807,13 +890,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "ThetaTick"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -825,7 +901,17 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "ThetaTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ThetaTickLabelMode",
@@ -858,14 +944,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "ThetaTickLabel"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -882,7 +960,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "ThetaTickLabel"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RTickLabelRotation",
@@ -910,11 +999,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -926,7 +1010,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RTickLabelRotationMode",
@@ -959,14 +1051,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "RTickLabelRotation"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -983,7 +1067,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "RTickLabelRotation"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RMinorTick",
@@ -1012,7 +1107,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ThetaMinorTick",
@@ -1041,7 +1144,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ThetaZeroLocation",
@@ -1077,7 +1188,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "TickDir",
@@ -1114,11 +1233,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1130,7 +1244,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "TickDirMode",
@@ -1163,14 +1285,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "TickDir"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1187,7 +1301,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "TickDir"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "TickLabelInterpreter",
@@ -1221,7 +1346,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "TickLength",
@@ -1249,7 +1382,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "RLim",
@@ -1278,11 +1419,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1294,7 +1430,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RLimMode",
@@ -1327,14 +1471,6 @@
       "documentedAcceptedValues": [
         "'manual'"
       ],
-      "application": {
-        "applyAfter": [
-          "RLim"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1351,7 +1487,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "RLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ThetaLim",
@@ -1380,11 +1527,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1396,7 +1538,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ThetaLimMode",
@@ -1429,14 +1579,6 @@
       "documentedAcceptedValues": [
         "'manual'"
       ],
-      "application": {
-        "applyAfter": [
-          "ThetaLim"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1453,7 +1595,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "ThetaLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RAxis",
@@ -1479,7 +1632,15 @@
           "handleReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "ThetaAxis",
@@ -1505,7 +1666,15 @@
           "handleReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "RAxisLocation",
@@ -1533,11 +1702,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1549,7 +1713,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RAxisLocationMode",
@@ -1582,14 +1754,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "RAxisLocation"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1606,7 +1770,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "RAxisLocation"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RColor",
@@ -1640,11 +1815,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "modeFlag"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -1656,7 +1826,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RColorMode",
@@ -1689,14 +1867,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "RColor"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1713,7 +1883,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "RColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ThetaColor",
@@ -1747,11 +1928,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "modeFlag"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -1763,7 +1939,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ThetaColorMode",
@@ -1796,14 +1980,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "ThetaColor"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -1820,7 +1996,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "ThetaColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RDir",
@@ -1852,7 +2039,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ThetaDir",
@@ -1884,7 +2079,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ThetaAxisUnits",
@@ -1916,7 +2119,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "RGrid",
@@ -1945,7 +2156,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ThetaGrid",
@@ -1974,7 +2193,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Layer",
@@ -2006,7 +2233,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "GridLineStyle",
@@ -2044,7 +2279,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "GridColor",
@@ -2078,11 +2321,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "modeFlag"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -2094,7 +2332,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "GridColorMode",
@@ -2127,14 +2373,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "GridColor"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -2151,7 +2389,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "GridColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "GridAlpha",
@@ -2181,11 +2430,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "modeFlag"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -2197,7 +2441,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "GridAlphaMode",
@@ -2230,14 +2482,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "GridAlpha"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -2254,7 +2498,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "GridAlpha"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "RMinorGrid",
@@ -2283,7 +2538,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ThetaMinorGrid",
@@ -2312,7 +2575,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "MinorGridLineStyle",
@@ -2350,7 +2621,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "MinorGridColor",
@@ -2384,11 +2663,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "modeFlag"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -2400,7 +2674,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "MinorGridColorMode",
@@ -2433,14 +2715,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "MinorGridColor"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -2457,7 +2731,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "MinorGridColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "MinorGridAlpha",
@@ -2487,11 +2772,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "modeFlag"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -2503,7 +2783,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "MinorGridAlphaMode",
@@ -2536,14 +2824,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "MinorGridAlpha"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -2560,7 +2840,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "MinorGridAlpha"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "Title",
@@ -2587,7 +2878,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Subtitle",
@@ -2614,7 +2913,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "TitleHorizontalAlignment",
@@ -2648,7 +2955,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Legend",
@@ -2678,7 +2993,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "ColorOrder",
@@ -2707,7 +3030,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ColorOrderIndex",
@@ -2736,7 +3067,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "LineStyleOrder",
@@ -2768,7 +3107,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "LineStyleCyclingMethod",
@@ -2798,7 +3145,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "NextSeriesIndex",
@@ -2827,7 +3182,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "NextPlot",
@@ -2863,7 +3226,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "SortMethod",
@@ -2895,7 +3266,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "LineStyleOrderIndex",
@@ -2924,7 +3303,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Colormap",
@@ -2953,7 +3340,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ColorScale",
@@ -2985,7 +3380,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "CLim",
@@ -3014,11 +3417,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -3030,7 +3428,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "CLimMode",
@@ -3063,14 +3469,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "CLim"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -3087,7 +3485,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "CLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "Alphamap",
@@ -3116,7 +3525,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "AlphaScale",
@@ -3148,7 +3565,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "ALim",
@@ -3177,11 +3602,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "valueMode"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -3193,7 +3613,15 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "ALimMode",
@@ -3226,14 +3654,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "ALim"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'auto'"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -3250,7 +3670,18 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
           "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "ALim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "Color",
@@ -3283,7 +3714,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "LineWidth",
@@ -3310,7 +3749,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Box",
@@ -3339,7 +3786,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Clipping",
@@ -3368,7 +3823,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "OuterPosition",
@@ -3396,7 +3859,19 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [
+          "InnerPosition",
+          "OuterPosition",
+          "Position"
+        ],
+        "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+      }
     },
     {
       "path": "InnerPosition",
@@ -3425,7 +3900,19 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [
+          "InnerPosition",
+          "OuterPosition",
+          "Position"
+        ],
+        "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+      }
     },
     {
       "path": "Position",
@@ -3453,13 +3940,6 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [
-          "Units"
-        ],
-        "nameValue": "supported",
-        "effectPolicy": "layout"
-      },
       "applicationEvidence": [
         {
           "kind": "inference",
@@ -3471,7 +3951,17 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#unitsAreEstablishedBeforeCoordinatesAndFontSize",
           "detail": "Position [1 1 8 6] in centimeters and FontSize 14 in points survive both canonical setters and a single constructor."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [
+          "Units"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "layout",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "TightInset",
@@ -3500,7 +3990,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "PositionConstraint",
@@ -3529,7 +4027,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Units",
@@ -3563,12 +4069,6 @@
         ]
       },
       "runtimeSetAccess": "public",
-      "application": {
-        "applyAfter": [],
-        "nameValue": "supported",
-        "effectPolicy": "none",
-        "defaultLiteral": "'normalized'"
-      },
       "applicationEvidence": [
         {
           "kind": "documentation",
@@ -3580,7 +4080,16 @@
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#unitsAreEstablishedBeforeCoordinatesAndFontSize",
           "detail": "Position [1 1 8 6] in centimeters and FontSize 14 in points survive both canonical setters and a single constructor."
         }
-      ]
+      ],
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'normalized'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      }
     },
     {
       "path": "Layout",
@@ -3611,7 +4120,15 @@
           "handleReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "InteractionOptions",
@@ -3639,7 +4156,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Toolbar",
@@ -3665,7 +4190,15 @@
           "handleReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Interactions",
@@ -3694,7 +4227,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Visible",
@@ -3723,7 +4264,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "CurrentPoint",
@@ -3752,7 +4301,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "ContextMenu",
@@ -3781,7 +4338,15 @@
           "deferredComponentReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Selected",
@@ -3810,7 +4375,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "SelectionHighlight",
@@ -3839,7 +4412,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "ButtonDownFcn",
@@ -3873,7 +4454,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "CreateFcn",
@@ -3907,7 +4496,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [],
+        "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+      }
     },
     {
       "path": "DeleteFcn",
@@ -3941,7 +4538,15 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [],
+        "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+      }
     },
     {
       "path": "Interruptible",
@@ -3970,7 +4575,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "BusyAction",
@@ -4002,7 +4615,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "PickableParts",
@@ -4036,7 +4657,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "HitTest",
@@ -4065,7 +4694,15 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "BeingDeleted",
@@ -4094,7 +4731,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Parent",
@@ -4126,7 +4771,15 @@
           "deferredComponentReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Children",
@@ -4155,7 +4808,15 @@
           "handleReference"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "HandleVisibility",
@@ -4186,7 +4847,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "Type",
@@ -4213,7 +4882,15 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      }
     },
     {
       "path": "Tag",
@@ -4244,7 +4921,15 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     },
     {
       "path": "UserData",
@@ -4274,7 +4959,15 @@
           "sourceOnly"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      }
     }
   ]
 }

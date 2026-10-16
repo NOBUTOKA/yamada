@@ -30,10 +30,21 @@ classdef PropertyStateResolver
                 states(end + 1) = macd.model.PropertyState(definition, entry, last); %#ok<AGROW>
             end
 
+            % An unexpanded initializer may mutate any reachable object or its hierarchy.
+            if ~isempty(document) && isfield(document.Metadata, "HasUnresolvedInitialization") && ...
+                    document.Metadata.HasUnresolvedInitialization
+                for index = 1:numel(states)
+                    states(index) = states(index).withEffective([], false, "unresolved-call", ...
+                        "An initialization call cannot be expanded without executing application code.", "initialization-call");
+                end
+                return
+            end
+
             % Source additions use the same actual placement as generation and Preview.
             combined = false;
             if ~isempty(document) && ~isempty(registry)
-                combined = macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document) && ...
+                combined = (macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document) || ...
+                    macd.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document)) && ...
                     ~(isfield(document.Metadata, "ResolvingCombinedPropertySource") && ...
                     document.Metadata.ResolvingCombinedPropertySource);
             end
@@ -128,6 +139,14 @@ classdef PropertyStateResolver
             end
             if ~isempty(document) && ~isempty(registry)
                 states = macd.model.GridLayoutStatePolicy.resolve(states, component, document, registry);
+                [states, selectionDiagnostics] = macd.model.ButtonSelectionPolicy.resolve(states, component, document, registry);
+                diagnostics = [diagnostics selectionDiagnostics];
+            else
+                for index = 1:numel(definitions)
+                    if definitions(index).Application.EffectPolicy ~= "buttonSelection", continue, end
+                    states(index) = states(index).withEffective([], false, "", ...
+                        "Button selection requires the owning document and sibling creation order.", "button-selection");
+                end
             end
         end
 
@@ -154,6 +173,10 @@ classdef PropertyStateResolver
                 result (1, 1) logical
             end
             result = state.IsKnown && macd.model.PropertyStateResolver.equivalent(state.EffectiveValue, value);
+            if state.IsKnown && state.EffectPolicy == "buttonSelection" && ...
+                    (isnumeric(value) || islogical(value)) && isreal(value) && isscalar(value) && any(value == [0 1])
+                result = isequaln(double(state.EffectiveValue), double(value));
+            end
             if state.IsKnown && state.EffectPolicy == "gridTracks"
                 result = macd.model.GridLayoutStatePolicy.equivalent(state.EffectiveValue, value);
             end
@@ -246,8 +269,24 @@ classdef PropertyStateResolver
             index = find(paths == path, 1);
             if isempty(index), return, end
             previous = states;
+            policy = definitions(index).Application;
+            if ~any(policy.EffectStatus == ["independent", "modeled"])
+                affected = policy.AffectedPaths;
+                if isempty(affected), affected = paths; end
+                affected = unique([path affected]);
+                for target = affected
+                    states = setUnknown(states, target, id, policy.EffectReason, "unreviewed-effect");
+                end
+                return
+            end
             states(index) = states(index).withEffective(value, known, id, "The source value or its execution is uncertain.", "source");
             if known, states(index) = states(index).withEffective(value, true, id); end
+            if policy.EffectPolicy == "buttonSelection" && path == "Value" && known && ...
+                    (~(isnumeric(value) || islogical(value)) || ~isscalar(value) || ~isreal(value) || ~any(value == [0 1]))
+                message = "Button Value must be zero or one.";
+                states = setUnknown(states, path, id, message, "constraint");
+                return
+            end
             % Read-only getter writes are cleaned by the existing generation policy.
             if macd.model.PositionAliasPolicy.applies(definitions(index))
                 if ~definitions(index).IsEditable
@@ -255,6 +294,31 @@ classdef PropertyStateResolver
                     return
                 end
                 [states, message] = macd.model.PositionAliasPolicy.apply(states, definitions, path, id);
+            end
+            if any(policy.EffectPolicy == ["positionInput", "sliderPosition", "squarePosition"])
+                for alias = ["InnerPosition", "OuterPosition"]
+                    states = setUnknown(states, alias, id, "This getter depends on native decoration or container layout.", "native-geometry");
+                end
+                if known && (~isnumeric(value) || ~isreal(value) || numel(value) ~= 4 || ...
+                        any(~isfinite(value), "all") || any(value(3:4) < 0))
+                    message = "Position requires four finite real values and nonnegative dimensions.";
+                    states = setUnknown(states, path, id, message, "constraint");
+                elseif known
+                    value = reshape(double(value), 1, 4);
+                    if policy.EffectPolicy == "squarePosition"
+                        value(3:4) = min(value(3:4));
+                    elseif policy.EffectPolicy == "sliderPosition"
+                        [orientation, orientationKnown] = stateValue(states, "Orientation");
+                        if ~orientationKnown || ~any(string(orientation) == ["horizontal", "vertical"])
+                            states = setUnknown(states, path, id, "Slider orientation is not known.", "native-geometry");
+                            return
+                        end
+                        minor = 4;
+                        if string(orientation) == "vertical", minor = 3; end
+                        value(minor) = 3;
+                    end
+                    states = setEffective(states, path, value, id);
+                end
             end
             valueIndex = find(paths == "Value", 1);
             family = "none";
@@ -300,6 +364,13 @@ classdef PropertyStateResolver
                 end
             end
 
+            if path == "Orientation"
+                position = find(paths == "Position", 1);
+                if ~isempty(position) && definitions(position).Application.EffectPolicy == "sliderPosition" && ...
+                        strlength(states(position).EffectSettingId) > 0
+                    states = setUnknown(states, "Position", id, "A later Orientation setter may change slider geometry.", "native-geometry");
+                end
+            end
             % Infinite endpoints request native data-dependent axis-limit calculation.
             if definitions(index).Application.EffectPolicy == "valueMode" && ...
                     endsWith(path, "Lim") && known && isnumeric(value) && any(~isfinite(value), "all")

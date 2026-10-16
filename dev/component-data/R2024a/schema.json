@@ -227,7 +227,10 @@
           "items": {"type": "string", "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"}
         },
         "nameValue": {"enum": ["supported", "unsupported", "unknown"]},
-        "effectPolicy": {"enum": ["none", "itemSelection", "boundedValue", "numericValue", "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", "textValue", "componentReference", "layout", "gridTracks"]},
+        "effectPolicy": {"enum": ["none", "itemSelection", "boundedValue", "numericValue", "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", "textValue", "componentReference", "layout", "gridTracks", "buttonSelection", "positionInput", "sliderPosition", "squarePosition"]},
+        "effectStatus": {"enum": ["unknown", "independent", "modeled", "unsupported"]},
+        "affectedPaths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"}},
+        "effectReason": {"type": "string", "minLength": 1},
         "defaultLiteral": {"type": "string", "minLength": 1, "description": "Audited inert MATLAB literal, parsed without eval to seed effective-state resolution."}
       }
     },

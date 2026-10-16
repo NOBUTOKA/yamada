@@ -65,6 +65,7 @@ classdef NewAppGenerator
                 compose("                app (1, 1) %s", document.ClassName), ...
                 "            end", ""];
 
+            deferredSelection = strings(1, 0);
             % Emit components in parent-before-child document order.
             for index = 1:numel(document.Components)
                 component = document.Components(index);
@@ -123,8 +124,12 @@ classdef NewAppGenerator
                         document.Diagnostics = diagnostics;
                         return
                     end
-                    lines(end + 1) = compose("            app.%s.%s = %s;", ...
-                        component.Name, entry.Path, valueText); %#ok<AGROW>
+                    assignment = compose("            app.%s.%s = %s;", component.Name, entry.Path, valueText);
+                    if macd.model.ButtonSelectionPolicy.deferValue(component, entry.Path)
+                        deferredSelection(end + 1) = assignment; %#ok<AGROW>
+                    else
+                        lines(end + 1) = assignment; %#ok<AGROW>
+                    end
                 end
                 % Emit managed callbacks without exposing executable expressions to Safe Preview.
                 pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
@@ -138,6 +143,8 @@ classdef NewAppGenerator
                 lines(end + 1) = ""; %#ok<AGROW>
             end
 
+            % Exclusive values may select siblings, so every sibling must already exist.
+            lines = [lines deferredSelection];
             % Resolve allowlisted references only after every target exists.
             try
                 references = macd.model.SubtreeReferencePolicy.assignments(document, document.Components, obj.Registry);

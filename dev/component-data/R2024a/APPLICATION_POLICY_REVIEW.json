@@ -199,9 +199,9 @@
         "WindowStyle",
         "Units"
       ],
-      "effectPolicy": "layout",
-      "kind": "documentation",
-      "detail": "Set WindowStyle first. Set Units before Position to interpret the requested coordinates in the requested units; changing Units later converts existing coordinates."
+      "effectPolicy": "positionInput",
+      "kind": "inference",
+      "detail": "Owned R2024a ProbeStoredPositionInteractions verifies the stored Position getter. Native decorated/container aliases remain unknown; slider minor size is fixed at 3 and the reviewed square families use the smaller requested dimension."
     },
     {
       "variants": [
@@ -209,11 +209,8 @@
         "geoaxes",
         "polaraxes",
         "uiaxes",
-        "uibuttongroup",
-        "uipanel",
         "uitab",
-        "uitabgroup",
-        "uitable"
+        "uitabgroup"
       ],
       "path": "Position",
       "applyAfter": [
@@ -222,6 +219,20 @@
       "effectPolicy": "layout",
       "kind": "inference",
       "detail": "Position is interpreted in Units. Establish coordinate units before explicit numeric coordinates, rather than converting coordinates assigned in the old units."
+    },
+    {
+      "variants": [
+        "uibuttongroup",
+        "uipanel",
+        "uitable"
+      ],
+      "path": "Position",
+      "applyAfter": [
+        "Units"
+      ],
+      "effectPolicy": "positionInput",
+      "kind": "inference",
+      "detail": "Owned R2024a ProbeStoredPositionInteractions verifies the stored Position getter. Native decorated/container aliases remain unknown; slider minor size is fixed at 3 and the reviewed square families use the smaller requested dimension."
     },
     {
       "variants": [
@@ -1077,7 +1088,8 @@
     {
       "variants": [
         "axes",
-        "uiaxes"
+        "uiaxes",
+        "polaraxes"
       ],
       "path": "MinorGridColor",
       "effectPolicy": "modeFlag",
@@ -1087,7 +1099,8 @@
     {
       "variants": [
         "axes",
-        "uiaxes"
+        "uiaxes",
+        "polaraxes"
       ],
       "path": "MinorGridColorMode",
       "applyAfter": [
@@ -1099,7 +1112,8 @@
     {
       "variants": [
         "axes",
-        "uiaxes"
+        "uiaxes",
+        "polaraxes"
       ],
       "path": "MinorGridAlpha",
       "effectPolicy": "modeFlag",
@@ -1109,7 +1123,8 @@
     {
       "variants": [
         "axes",
-        "uiaxes"
+        "uiaxes",
+        "polaraxes"
       ],
       "path": "MinorGridAlphaMode",
       "applyAfter": [
@@ -1154,46 +1169,6 @@
       "path": "ThetaColorMode",
       "applyAfter": [
         "ThetaColor"
-      ],
-      "kind": "inference",
-      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
-    },
-    {
-      "variants": [
-        "polaraxes"
-      ],
-      "path": "MinorGridColor",
-      "effectPolicy": "modeFlag",
-      "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
-    },
-    {
-      "variants": [
-        "polaraxes"
-      ],
-      "path": "MinorGridColorMode",
-      "applyAfter": [
-        "MinorGridColor"
-      ],
-      "kind": "inference",
-      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
-    },
-    {
-      "variants": [
-        "polaraxes"
-      ],
-      "path": "MinorGridAlpha",
-      "effectPolicy": "modeFlag",
-      "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
-    },
-    {
-      "variants": [
-        "polaraxes"
-      ],
-      "path": "MinorGridAlphaMode",
-      "applyAfter": [
-        "MinorGridAlpha"
       ],
       "kind": "inference",
       "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
@@ -1369,6 +1344,71 @@
       "effectPolicy": "gridTracks",
       "kind": "documentation",
       "detail": "Requested track lists determine the baseline grid size. Direct-child creation and Layout.Row/Layout.Column affect stored track getters; occupied tracks cannot be removed. The finite grid policy keeps 1x occupancy padding separate from explicit source settings. Supplemental owned R2024a fixtures establish padding release and default placement order."
+    },
+    {
+      "variants": [
+        "uiradiobutton",
+        "uitogglebutton"
+      ],
+      "path": "Value",
+      "effectPolicy": "buttonSelection",
+      "kind": "documentation",
+      "detail": "Only one radio/toggle child is selected. Creation order determines the default and zero-value fallback; selecting one child clears the others and updates the parent SelectedObject."
+    },
+    {
+      "variants": [
+        "uibuttongroup"
+      ],
+      "path": "SelectedObject",
+      "effectPolicy": "buttonSelection",
+      "kind": "documentation",
+      "detail": "A simple owned child reference determines group selection. Unresolved handle expressions remain unknown and are never executed."
+    },
+    {
+      "variants": [
+        "uidatepicker",
+        "uidropdown",
+        "uieditfield-numeric",
+        "uieditfield-text",
+        "uilistbox",
+        "uispinner",
+        "uigauge-linear"
+      ],
+      "path": "Position",
+      "effectPolicy": "positionInput",
+      "kind": "inference",
+      "detail": "Owned R2024a ProbeStoredPositionInteractions verifies the stored Position getter. Native decorated/container aliases remain unknown; slider minor size is fixed at 3 and the reviewed square families use the smaller requested dimension."
+    },
+    {
+      "variants": [
+        "uiknob-continuous",
+        "uiknob-discrete",
+        "uigauge-circular",
+        "uigauge-ninetydegree"
+      ],
+      "path": "Position",
+      "effectPolicy": "squarePosition",
+      "kind": "inference",
+      "detail": "Owned R2024a ProbeStoredPositionInteractions verifies the stored Position getter. Native decorated/container aliases remain unknown; slider minor size is fixed at 3 and the reviewed square families use the smaller requested dimension."
+    },
+    {
+      "variants": [
+        "uislider-slider",
+        "uislider-range"
+      ],
+      "path": "Position",
+      "effectPolicy": "sliderPosition",
+      "kind": "inference",
+      "detail": "Owned R2024a ProbeStoredPositionInteractions verifies the stored Position getter. Native decorated/container aliases remain unknown; slider minor size is fixed at 3 and the reviewed square families use the smaller requested dimension."
+    },
+    {
+      "variants": [
+        "uislider-slider",
+        "uislider-range"
+      ],
+      "path": "Orientation",
+      "kind": "documentation",
+      "detail": "The default slider orientation is horizontal. Changing orientation requires separate native geometry resolution."
     }
   ],
   "initialValues": [
@@ -1659,6 +1699,16 @@
         "ColumnWidth": "{'1x','1x'}"
       },
       "detail": "The public GridLayout properties document two flexible rows and columns by default. An explicit positional size or track setter overrides this seed before child placement; fit tokens remain stored tokens rather than inferred pixel measurements."
+    },
+    {
+      "variants": [
+        "uislider-slider",
+        "uislider-range"
+      ],
+      "values": {
+        "Orientation": "'horizontal'"
+      },
+      "detail": "The R2024a slider properties document horizontal as the default Orientation."
     }
   ],
   "contractCorrections": [

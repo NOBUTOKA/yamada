@@ -1,16 +1,16 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "4afc8c871825e88fe758d96df5c8b754805273b91808e53e2ecfbcae54cc6e6b",
+  "inputSha256": "b45fc03ffb97f99fd27e452d5f7e8271e8ab245096091ffaf19ac08f943a5475",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
-      "candidateId": "candidate.callbackexecutioncontrol.80f13c4d8ca8",
+      "candidateId": "candidate.callbackexecutioncontrol.5b240a7f6c51",
       "categoryId": "callbackexecutioncontrol",
       "categoryDisplayName": "Callback Execution Control",
       "sharingScope": "crossCutting",
       "scopeRationale": "Execution behavior is shared across unrelated UI families.",
-      "capabilitySha256": "80f13c4d8ca8cbf71442f9503a3dc4c5e87b44d79c0d4b82db9efa531ef610c2",
+      "capabilitySha256": "5b240a7f6c5148bfe14cad751d28fe36beace12f8dc2c3a7ef501106b612b565",
       "propertyPaths": [
         "Interruptible",
         "BusyAction",
@@ -18,39 +18,10 @@
         "HitTest"
       ],
       "propertyCapabilitySha256": [
-        "47007bf4e3c94369caaf8676cfa9de081f8160a21b7615fca980ac93a27e2bf6",
-        "89ab6d52535e8fe14f3c51d70513543d3267373826b73611663f9ddfeb9e3bf3",
-        "f7fd1b49b4e8afee25c95fa3a49bd543b36d6e53ee8623d9f614302d4519799e",
-        "9dd10044d16dcf81c090e1f1b0c37e27acb49f50f480a59744e4abe7d80f82c8"
-      ],
-      "memberVariantIds": [
-        "uibuttongroup",
-        "uipanel",
-        "uitable"
-      ],
-      "reuseCount": 3,
-      "documentedCategoryOrders": [
-        7
-      ]
-    },
-    {
-      "candidateId": "candidate.callbackexecutioncontrol.9727da922b1e",
-      "categoryId": "callbackexecutioncontrol",
-      "categoryDisplayName": "Callback Execution Control",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Execution behavior is shared across unrelated UI families.",
-      "capabilitySha256": "9727da922b1ea2137bc1b8fd8f9440f0b74368ef12b3e8e5dc2a0a2e3437539e",
-      "propertyPaths": [
-        "Interruptible",
-        "BusyAction",
-        "BeingDeleted",
-        "HitTest"
-      ],
-      "propertyCapabilitySha256": [
-        "98259cbff320f3fde3077e044daab9374310560ea740686d4f2d6f18b7363145",
-        "fbfb83d26b7e2e1ff142ea3c341ff4891646683acf54299765757b2c9bce94ca",
-        "28b2ad5ef48fa83d4e4622820a63bc9090919d92cfdf324465daabc6733dd654",
-        "f4966fc650263ae12a4c4ca4f4ae917e0cdd31433af234ec5daa02911aca82f6"
+        "3b17f59f1a1a78754854f918451ee219ecedc0c41308e1989848ab1f51a63774",
+        "e053485ba2d053a2c37ccb502685abd23b01f00b190d70d902163b8de3bff24d",
+        "3f15da2d981c308c8e759c81aba334712b697e3baab4fbc182f50bcfae931ec3",
+        "60841fbd17d2aa2bd6dc9a7d0d9f474d3930dfed29bc52ff717d3019a0c582ac"
       ],
       "memberVariantIds": [
         "uipushtool",
@@ -64,81 +35,21 @@
       ]
     },
     {
-      "candidateId": "candidate.callbackexecutioncontrol.97a487fa3929",
+      "candidateId": "candidate.callbackexecutioncontrol.7064003da88e",
       "categoryId": "callbackexecutioncontrol",
       "categoryDisplayName": "Callback Execution Control",
       "sharingScope": "crossCutting",
       "scopeRationale": "Execution behavior is shared across unrelated UI families.",
-      "capabilitySha256": "97a487fa392996b3548692f674df85bfcca7d095be51b26da7811d6aca2cc777",
+      "capabilitySha256": "7064003da88ea130d30d92e01604a5fac2c49a6676e4911c2c4bc1ba863afce5",
       "propertyPaths": [
         "Interruptible",
         "BusyAction",
         "BeingDeleted"
       ],
       "propertyCapabilitySha256": [
-        "98259cbff320f3fde3077e044daab9374310560ea740686d4f2d6f18b7363145",
-        "fbfb83d26b7e2e1ff142ea3c341ff4891646683acf54299765757b2c9bce94ca",
-        "28b2ad5ef48fa83d4e4622820a63bc9090919d92cfdf324465daabc6733dd654"
-      ],
-      "memberVariantIds": [
-        "uicontextmenu",
-        "uimenu"
-      ],
-      "reuseCount": 2,
-      "documentedCategoryOrders": [
-        2,
-        4
-      ]
-    },
-    {
-      "candidateId": "candidate.callbackexecutioncontrol.a1bd79f5dbdf",
-      "categoryId": "callbackexecutioncontrol",
-      "categoryDisplayName": "Callback Execution Control",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Execution behavior is shared across unrelated UI families.",
-      "capabilitySha256": "a1bd79f5dbdf7a8d5591719f51c4d3bcca042bcd955c05bcdd262ba2b80dd72b",
-      "propertyPaths": [
-        "Interruptible",
-        "BusyAction",
-        "PickableParts",
-        "HitTest",
-        "BeingDeleted"
-      ],
-      "propertyCapabilitySha256": [
-        "47007bf4e3c94369caaf8676cfa9de081f8160a21b7615fca980ac93a27e2bf6",
-        "89ab6d52535e8fe14f3c51d70513543d3267373826b73611663f9ddfeb9e3bf3",
-        "c3580675a57c7a4a1b90c14a53051ed3704daae79fccef43235a7b88205af19d",
-        "9dd10044d16dcf81c090e1f1b0c37e27acb49f50f480a59744e4abe7d80f82c8",
-        "f7fd1b49b4e8afee25c95fa3a49bd543b36d6e53ee8623d9f614302d4519799e"
-      ],
-      "memberVariantIds": [
-        "axes",
-        "geoaxes",
-        "polaraxes",
-        "uiaxes"
-      ],
-      "reuseCount": 4,
-      "documentedCategoryOrders": [
-        12,
-        13
-      ]
-    },
-    {
-      "candidateId": "candidate.callbackexecutioncontrol.bc75b2ee3d56",
-      "categoryId": "callbackexecutioncontrol",
-      "categoryDisplayName": "Callback Execution Control",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Execution behavior is shared across unrelated UI families.",
-      "capabilitySha256": "bc75b2ee3d56b1d0eaa7459b0fcbcc99f939233a2e727ae164b6e831b8837803",
-      "propertyPaths": [
-        "Interruptible",
-        "BusyAction",
-        "BeingDeleted"
-      ],
-      "propertyCapabilitySha256": [
-        "47007bf4e3c94369caaf8676cfa9de081f8160a21b7615fca980ac93a27e2bf6",
-        "89ab6d52535e8fe14f3c51d70513543d3267373826b73611663f9ddfeb9e3bf3",
-        "f7fd1b49b4e8afee25c95fa3a49bd543b36d6e53ee8623d9f614302d4519799e"
+        "6e9ab8c9cfeb30b14aca46a69d17147d991725cce26cfb16eb9115c1589805d3",
+        "f85736b1f4d79cd6809da7ca0c0439bbb2148c678612e6c2003b8fcf98cb499e",
+        "a0bf58be12e09a16a52609cbcf47363ba6aac46b885012b7715b0780158c051f"
       ],
       "memberVariantIds": [
         "uibutton-push",
@@ -188,41 +99,101 @@
       ]
     },
     {
-      "candidateId": "candidate.callbacks.0d48e44e8b1d",
-      "categoryId": "callbacks",
-      "categoryDisplayName": "Callbacks",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
-      "capabilitySha256": "0d48e44e8b1d7913d4aff185dbf6c5a59c4f47047d18b42271b742750f57f5ee",
+      "candidateId": "candidate.callbackexecutioncontrol.70dbfcc452dc",
+      "categoryId": "callbackexecutioncontrol",
+      "categoryDisplayName": "Callback Execution Control",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Execution behavior is shared across unrelated UI families.",
+      "capabilitySha256": "70dbfcc452dc85e44fde6d14e7e69592705d047b2dbb89cffdd613f645597584",
       "propertyPaths": [
-        "SizeChangedFcn",
-        "ButtonDownFcn",
-        "CreateFcn",
-        "DeleteFcn"
+        "Interruptible",
+        "BusyAction",
+        "BeingDeleted"
       ],
       "propertyCapabilitySha256": [
-        "9d832c4e13a229877769a5326f38166bbebd97c3a060fa4477b802c7db6d927a",
-        "c0c12e6a75f51fb98291bca7229d981b13a4dc06a718e0362a86fbd5353d7ae7",
-        "d36250b7a67233424075e209fa7a10e6c8daf68515787cd7e5847e18b12edf5e",
-        "a5e7a3d10cfd2fd0590b03d63f8de9db9f7e8530bf9bf1ec0e8d94aa3b5bcf4d"
+        "3b17f59f1a1a78754854f918451ee219ecedc0c41308e1989848ab1f51a63774",
+        "e053485ba2d053a2c37ccb502685abd23b01f00b190d70d902163b8de3bff24d",
+        "3f15da2d981c308c8e759c81aba334712b697e3baab4fbc182f50bcfae931ec3"
       ],
       "memberVariantIds": [
-        "uipanel",
-        "uitab"
+        "uicontextmenu",
+        "uimenu"
       ],
       "reuseCount": 2,
       "documentedCategoryOrders": [
-        4,
-        6
+        2,
+        4
       ]
     },
     {
-      "candidateId": "candidate.callbacks.7076bea35fba",
+      "candidateId": "candidate.callbackexecutioncontrol.8405bb7721b0",
+      "categoryId": "callbackexecutioncontrol",
+      "categoryDisplayName": "Callback Execution Control",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Execution behavior is shared across unrelated UI families.",
+      "capabilitySha256": "8405bb7721b02771c75cf70ec2581856520c5ef65780061ec9e144bd9130a53d",
+      "propertyPaths": [
+        "Interruptible",
+        "BusyAction",
+        "PickableParts",
+        "HitTest",
+        "BeingDeleted"
+      ],
+      "propertyCapabilitySha256": [
+        "6e9ab8c9cfeb30b14aca46a69d17147d991725cce26cfb16eb9115c1589805d3",
+        "f85736b1f4d79cd6809da7ca0c0439bbb2148c678612e6c2003b8fcf98cb499e",
+        "e009c54b6a68882a0e76bd2d6edbb551a8f5e359d041ed84ee06176ddef72e5d",
+        "a256719e8d5a4f23e001ddfc58295d9a1e85f07d0ce20a0abe74e5974520a58c",
+        "a0bf58be12e09a16a52609cbcf47363ba6aac46b885012b7715b0780158c051f"
+      ],
+      "memberVariantIds": [
+        "axes",
+        "geoaxes",
+        "polaraxes",
+        "uiaxes"
+      ],
+      "reuseCount": 4,
+      "documentedCategoryOrders": [
+        12,
+        13
+      ]
+    },
+    {
+      "candidateId": "candidate.callbackexecutioncontrol.9edadea2fd52",
+      "categoryId": "callbackexecutioncontrol",
+      "categoryDisplayName": "Callback Execution Control",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Execution behavior is shared across unrelated UI families.",
+      "capabilitySha256": "9edadea2fd52cc21717021a03a60ab23958d7b8f95343b3a9a85a72ca4805576",
+      "propertyPaths": [
+        "Interruptible",
+        "BusyAction",
+        "BeingDeleted",
+        "HitTest"
+      ],
+      "propertyCapabilitySha256": [
+        "6e9ab8c9cfeb30b14aca46a69d17147d991725cce26cfb16eb9115c1589805d3",
+        "f85736b1f4d79cd6809da7ca0c0439bbb2148c678612e6c2003b8fcf98cb499e",
+        "a0bf58be12e09a16a52609cbcf47363ba6aac46b885012b7715b0780158c051f",
+        "a256719e8d5a4f23e001ddfc58295d9a1e85f07d0ce20a0abe74e5974520a58c"
+      ],
+      "memberVariantIds": [
+        "uibuttongroup",
+        "uipanel",
+        "uitable"
+      ],
+      "reuseCount": 3,
+      "documentedCategoryOrders": [
+        7
+      ]
+    },
+    {
+      "candidateId": "candidate.callbacks.4c01a73a76dc",
       "categoryId": "callbacks",
       "categoryDisplayName": "Callbacks",
       "sharingScope": "familyScoped",
       "scopeRationale": "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
-      "capabilitySha256": "7076bea35fbac99a865caa317eadf2c2c6173c69725b8cfdae22ee6c8d64bab6",
+      "capabilitySha256": "4c01a73a76dc94e0f0e8b27f90c9da25064cf9edebda2b326f9747764f8775a2",
       "propertyPaths": [
         "SelectionChangedFcn",
         "SizeChangedFcn",
@@ -231,11 +202,11 @@
         "DeleteFcn"
       ],
       "propertyCapabilitySha256": [
-        "fa0eb6022e6bf6c07a50bfc751bb24b1d13b29408dda5c08185ef5ef02da5838",
-        "9d832c4e13a229877769a5326f38166bbebd97c3a060fa4477b802c7db6d927a",
-        "c0c12e6a75f51fb98291bca7229d981b13a4dc06a718e0362a86fbd5353d7ae7",
-        "d36250b7a67233424075e209fa7a10e6c8daf68515787cd7e5847e18b12edf5e",
-        "a5e7a3d10cfd2fd0590b03d63f8de9db9f7e8530bf9bf1ec0e8d94aa3b5bcf4d"
+        "c904ecf8b7d1ddc930a248e2a5fc7513d9ee882d049e8bdf374ece43a54c4045",
+        "1696534d4dbcfdb7bb97588071c98589fd67d75f770a61681b58c2b1754fb8d5",
+        "3dd5992155c2d03ede2c385b69d254ed8e20cb12816e4b02da5293246cd0e9c5",
+        "1901fd5243918313994280da92d2fba44468b4975c72394b321dd3b220a5e452",
+        "df701adefb4af127c5f8addc3d113d353b3d1b4304686f6dfaebcaa55559505a"
       ],
       "memberVariantIds": [
         "uibuttongroup",
@@ -248,85 +219,77 @@
       ]
     },
     {
-      "candidateId": "candidate.callbacks.bf0fb0d93b49",
+      "candidateId": "candidate.callbacks.a55637d2f6e7",
       "categoryId": "callbacks",
       "categoryDisplayName": "Callbacks",
       "sharingScope": "familyScoped",
       "scopeRationale": "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
-      "capabilitySha256": "bf0fb0d93b491918107051fa801ffb8c67a49d8392204d38cf16cf836cc5c54c",
+      "capabilitySha256": "a55637d2f6e75685b5384bb06a44fd6c51d60b29aae2130a506c98f6f5616c76",
       "propertyPaths": [
-        "ValueChangedFcn",
+        "SizeChangedFcn",
+        "ButtonDownFcn",
         "CreateFcn",
         "DeleteFcn"
       ],
       "propertyCapabilitySha256": [
-        "fca9c2cf404b1ea633310f3b6e53236ac07eba7a08719e73be35f074ef9576c9",
-        "d36250b7a67233424075e209fa7a10e6c8daf68515787cd7e5847e18b12edf5e",
-        "a5e7a3d10cfd2fd0590b03d63f8de9db9f7e8530bf9bf1ec0e8d94aa3b5bcf4d"
+        "1696534d4dbcfdb7bb97588071c98589fd67d75f770a61681b58c2b1754fb8d5",
+        "3dd5992155c2d03ede2c385b69d254ed8e20cb12816e4b02da5293246cd0e9c5",
+        "1901fd5243918313994280da92d2fba44468b4975c72394b321dd3b220a5e452",
+        "df701adefb4af127c5f8addc3d113d353b3d1b4304686f6dfaebcaa55559505a"
       ],
       "memberVariantIds": [
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
-        "uidatepicker",
-        "uieditfield-numeric",
-        "uiknob-discrete",
-        "uiswitch-rocker",
-        "uiswitch-slider",
-        "uiswitch-toggle"
+        "uipanel",
+        "uitab"
       ],
-      "reuseCount": 9,
+      "reuseCount": 2,
       "documentedCategoryOrders": [
-        5
-      ]
-    },
-    {
-      "candidateId": "candidate.callbacks.e9858937ea19",
-      "categoryId": "callbacks",
-      "categoryDisplayName": "Callbacks",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
-      "capabilitySha256": "e9858937ea198e9a4da5a455cd27d076c039e11b5412f930e3fde7c4c25b72e2",
-      "propertyPaths": [
-        "ValueChangedFcn",
-        "ValueChangingFcn",
-        "CreateFcn",
-        "DeleteFcn"
-      ],
-      "propertyCapabilitySha256": [
-        "fca9c2cf404b1ea633310f3b6e53236ac07eba7a08719e73be35f074ef9576c9",
-        "c18612488da5515de0633250297c68b401312d55b33790aa92195b5d688b0783",
-        "d36250b7a67233424075e209fa7a10e6c8daf68515787cd7e5847e18b12edf5e",
-        "a5e7a3d10cfd2fd0590b03d63f8de9db9f7e8530bf9bf1ec0e8d94aa3b5bcf4d"
-      ],
-      "memberVariantIds": [
-        "uieditfield-text",
-        "uiknob-continuous",
-        "uislider-range",
-        "uislider-slider",
-        "uispinner",
-        "uitextarea"
-      ],
-      "reuseCount": 6,
-      "documentedCategoryOrders": [
-        5,
+        4,
         6
       ]
     },
     {
-      "candidateId": "candidate.callbacks.f386f43cec2a",
+      "candidateId": "candidate.callbacks.a98e88a652f6",
       "categoryId": "callbacks",
       "categoryDisplayName": "Callbacks",
       "sharingScope": "familyScoped",
       "scopeRationale": "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
-      "capabilitySha256": "f386f43cec2a627f190eeae95bc7e4e63eb2e9df63d8424fde60b78a6557c8f5",
+      "capabilitySha256": "a98e88a652f699850812f0c8ad424868671bfdbd99e8730d06a610bc5f7104ad",
+      "propertyPaths": [
+        "ButtonDownFcn",
+        "CreateFcn",
+        "DeleteFcn"
+      ],
+      "propertyCapabilitySha256": [
+        "3dd5992155c2d03ede2c385b69d254ed8e20cb12816e4b02da5293246cd0e9c5",
+        "1901fd5243918313994280da92d2fba44468b4975c72394b321dd3b220a5e452",
+        "df701adefb4af127c5f8addc3d113d353b3d1b4304686f6dfaebcaa55559505a"
+      ],
+      "memberVariantIds": [
+        "axes",
+        "geoaxes",
+        "polaraxes",
+        "uiaxes"
+      ],
+      "reuseCount": 4,
+      "documentedCategoryOrders": [
+        11,
+        12
+      ]
+    },
+    {
+      "candidateId": "candidate.callbacks.bab21114225c",
+      "categoryId": "callbacks",
+      "categoryDisplayName": "Callbacks",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
+      "capabilitySha256": "bab21114225c56557639722f5d4c8c029058da1170116bb3bf83a281d3c22bce",
       "propertyPaths": [
         "CreateFcn",
         "DeleteFcn"
       ],
       "propertyCapabilitySha256": [
-        "d36250b7a67233424075e209fa7a10e6c8daf68515787cd7e5847e18b12edf5e",
-        "a5e7a3d10cfd2fd0590b03d63f8de9db9f7e8530bf9bf1ec0e8d94aa3b5bcf4d"
+        "1901fd5243918313994280da92d2fba44468b4975c72394b321dd3b220a5e452",
+        "df701adefb4af127c5f8addc3d113d353b3d1b4304686f6dfaebcaa55559505a"
       ],
       "memberVariantIds": [
         "uigauge-circular",
@@ -349,46 +312,83 @@
       ]
     },
     {
-      "candidateId": "candidate.callbacks.ff87b987b579",
+      "candidateId": "candidate.callbacks.cfcd3191ccb0",
       "categoryId": "callbacks",
       "categoryDisplayName": "Callbacks",
       "sharingScope": "familyScoped",
       "scopeRationale": "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
-      "capabilitySha256": "ff87b987b57927e205487881e1b429a6eaf0b7072d1d4341b7ddc9e55fbc05f0",
+      "capabilitySha256": "cfcd3191ccb097c61a63be4fea54cf5253f7f9c77f4367e4906764f7648e0bf4",
       "propertyPaths": [
-        "ButtonDownFcn",
+        "ValueChangedFcn",
+        "ValueChangingFcn",
         "CreateFcn",
         "DeleteFcn"
       ],
       "propertyCapabilitySha256": [
-        "c0c12e6a75f51fb98291bca7229d981b13a4dc06a718e0362a86fbd5353d7ae7",
-        "d36250b7a67233424075e209fa7a10e6c8daf68515787cd7e5847e18b12edf5e",
-        "a5e7a3d10cfd2fd0590b03d63f8de9db9f7e8530bf9bf1ec0e8d94aa3b5bcf4d"
+        "6a1615912cfa825b6e57391435e37daf589a9dd2d6d6037e0751df69384ca319",
+        "75d5637fc7b4506d6ef293b52ded5291d81f89e5494848d81b3baf1348416168",
+        "1901fd5243918313994280da92d2fba44468b4975c72394b321dd3b220a5e452",
+        "df701adefb4af127c5f8addc3d113d353b3d1b4304686f6dfaebcaa55559505a"
       ],
       "memberVariantIds": [
-        "axes",
-        "geoaxes",
-        "polaraxes",
-        "uiaxes"
+        "uieditfield-text",
+        "uiknob-continuous",
+        "uislider-range",
+        "uislider-slider",
+        "uispinner",
+        "uitextarea"
       ],
-      "reuseCount": 4,
+      "reuseCount": 6,
       "documentedCategoryOrders": [
-        11,
-        12
+        5,
+        6
       ]
     },
     {
-      "candidateId": "candidate.color.5136e7ef41e7",
+      "candidateId": "candidate.callbacks.fc19b7bfdb5e",
+      "categoryId": "callbacks",
+      "categoryDisplayName": "Callbacks",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Callback surfaces differ substantially by component family and are not inspector-editable in the current product scope.",
+      "capabilitySha256": "fc19b7bfdb5ef1cd6a4c669306bb59069aae01f29c09b3cfadeb3329e6a89a14",
+      "propertyPaths": [
+        "ValueChangedFcn",
+        "CreateFcn",
+        "DeleteFcn"
+      ],
+      "propertyCapabilitySha256": [
+        "6a1615912cfa825b6e57391435e37daf589a9dd2d6d6037e0751df69384ca319",
+        "1901fd5243918313994280da92d2fba44468b4975c72394b321dd3b220a5e452",
+        "df701adefb4af127c5f8addc3d113d353b3d1b4304686f6dfaebcaa55559505a"
+      ],
+      "memberVariantIds": [
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uidatepicker",
+        "uieditfield-numeric",
+        "uiknob-discrete",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle"
+      ],
+      "reuseCount": 9,
+      "documentedCategoryOrders": [
+        5
+      ]
+    },
+    {
+      "candidateId": "candidate.color.ec07a348f3ec",
       "categoryId": "color",
       "categoryDisplayName": "Color",
       "sharingScope": "familyScoped",
       "scopeRationale": "The same heading names unrelated Color Picker, lamp, image, and layout surfaces.",
-      "capabilitySha256": "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3",
+      "capabilitySha256": "ec07a348f3ec02d4c6f420b6ab316733b02c0d6c02491abe16f0825e50302b85",
       "propertyPaths": [
         "BackgroundColor"
       ],
       "propertyCapabilitySha256": [
-        "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3"
+        "ec07a348f3ec02d4c6f420b6ab316733b02c0d6c02491abe16f0825e50302b85"
       ],
       "memberVariantIds": [
         "uicolorpicker",
@@ -401,12 +401,12 @@
       ]
     },
     {
-      "candidateId": "candidate.colorandstyling.7afb8367a736",
+      "candidateId": "candidate.colorandstyling.ebe5b6262ea1",
       "categoryId": "colorandstyling",
       "categoryDisplayName": "Color and Styling",
       "sharingScope": "familyScoped",
       "scopeRationale": "Container-family styling.",
-      "capabilitySha256": "7afb8367a736f4b970b507adc7af958fd98d596de3484f92a7d0ac96977f36bd",
+      "capabilitySha256": "ebe5b6262ea155ce297faa8e2fe10e549dcafb547d8d51f2291aaef2c4ee5e52",
       "propertyPaths": [
         "ForegroundColor",
         "BackgroundColor",
@@ -415,11 +415,11 @@
         "BorderColor"
       ],
       "propertyCapabilitySha256": [
-        "9f66ad960942c8452a1a0d84a7bfdfd590f1b7f64e8c9b27e4f9695b6ac5e39b",
-        "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3",
-        "9a8c3b48eb92ed3d2f862b1b224602a43ae7b468fcd8d22c17d57a6a95dffd8a",
-        "32280aa99c552842610a638d93f227f9c27a296fb50d2d55ec584e56591185c0",
-        "b2e95e25ffd6cc068be606875bb7536949421a222ff637e4bc7e49ed91d917a3"
+        "816acb612ba9d40e7c0bdca0ae21d3bfc5850e01945bf6e6172ebe9f66fd1c3a",
+        "ec07a348f3ec02d4c6f420b6ab316733b02c0d6c02491abe16f0825e50302b85",
+        "088af4df0c91ec7a214bcf3d3d382dd3d69aa3aa57e6b5a867dc81472b81a143",
+        "07e7e7d67eadc99d6b93341846bffc23bf0171a6862f9fe6620685c5bf0fec05",
+        "c7e239b48ce3195faa941ae3ae502d90b763a7a062042debfe3c2f9fcb38908e"
       ],
       "memberVariantIds": [
         "uibuttongroup",
@@ -431,12 +431,12 @@
       ]
     },
     {
-      "candidateId": "candidate.colorandtransparencymaps.44733db12cd7",
+      "candidateId": "candidate.colorandtransparencymaps.6436bd9486ee",
       "categoryId": "colorandtransparencymaps",
       "categoryDisplayName": "Color and Transparency Maps",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family map configuration.",
-      "capabilitySha256": "44733db12cd74edb0a8bbb14da15b778d48e2ce93ad410cf31e5e03d690ebf0f",
+      "capabilitySha256": "6436bd9486ee3bd11c44c55e38d5a760b1f5874725f313c877a9324ca0e2fd8a",
       "propertyPaths": [
         "Colormap",
         "ColorScale",
@@ -448,14 +448,14 @@
         "ALimMode"
       ],
       "propertyCapabilitySha256": [
-        "17f9d4e0071e0702b6dbd3d8119263810004a9dacbecabaf03d16821161b1b64",
-        "afc88f9bd99da19ec4eb91b125ddc6a4bf86ae7f98c48ae96a2281236e475e0a",
-        "a535b20df2919a7fdf3d7d1f528a75ccb0115494aaaf5e9292a4ba5bcd885cda",
-        "702c144edfc22822b489cb746650828267e8a07c0a2ea8a36e7daae3369c6d67",
-        "f4a94e193c42f2e05661c2781a0e5f5e4cd8e80598a0a9ae17b424cf5985111c",
-        "b281a37c3fd5fd7839d2f81544023a87990786eb9d22ecf6a0c48f9decd0cbf5",
-        "d48a8bf32df744f3e59a0ff0922dfbb08ca223c3f2db264d96d35609ebbbe5f1",
-        "bcac12cd1da157e39b1bbe88711888eae6281731d58235e7e18685774c8bc1a0"
+        "4ad7a3f6e6eff9f4ce3a53f936b1cc33ce1fdba101c29103e9c7c565c7a38c42",
+        "7ede9e4ba92a12458d4c895d06b3cf4e7251a67cadca0d651423e28685db0c18",
+        "f1320893568ce382764489c83b7f0b1aa510bd81de704c3f4c9d95b0a44d891f",
+        "64aa6523d621183edc9a8d270ce53f209c25ff12ff69fa162f46e1461fcfe022",
+        "98f9917d4552418d988d3fe65a39398bcd094c8286c95ae03252b3857edf5c98",
+        "e098493911c2ceefc165cc4b635dfad3d8e4e3e70424ca0b0451d975af2895cd",
+        "9d50106bad2e9966512124423f68713b7f90c4c909b565ad262d6fbaa7e80b54",
+        "270919a23c88366bca4d173bd928db75a944e7f29dd9d08529cdeaa3a433c35d"
       ],
       "memberVariantIds": [
         "axes",
@@ -470,17 +470,17 @@
       ]
     },
     {
-      "candidateId": "candidate.figurebasedappsonly.3dcae9e56e9e",
+      "candidateId": "candidate.figurebasedappsonly.363330ae6ec1",
       "categoryId": "figurebasedappsonly",
       "categoryDisplayName": "figure -Based Apps Only",
       "sharingScope": "familyScoped",
       "scopeRationale": "Figure-app container surface, not a generic control capability.",
-      "capabilitySha256": "3dcae9e56e9ec7e36d425c33c56692621f493d905e69417dae5edfa3b69a5d74",
+      "capabilitySha256": "363330ae6ec18a9b4949139097aed48aa5d65e77b07ff5a1bff668724a5ae0ac",
       "propertyPaths": [
         "ShadowColor"
       ],
       "propertyCapabilitySha256": [
-        "3dcae9e56e9ec7e36d425c33c56692621f493d905e69417dae5edfa3b69a5d74"
+        "363330ae6ec18a9b4949139097aed48aa5d65e77b07ff5a1bff668724a5ae0ac"
       ],
       "memberVariantIds": [
         "uibuttongroup",
@@ -492,12 +492,12 @@
       ]
     },
     {
-      "candidateId": "candidate.font.3a0afe7fc975",
+      "candidateId": "candidate.font.bb68af77ba17",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "3a0afe7fc9750c1c0e3aefd8bb2478a2c7a30ee54cf510522e4ff24fec147ee2",
+      "capabilitySha256": "bb68af77ba17d9f2db88c3a11227bbce9c38fab3f0debe570b9ecb2e4fbdabb9",
       "propertyPaths": [
         "FontName",
         "FontSize",
@@ -506,11 +506,11 @@
         "FontColor"
       ],
       "propertyCapabilitySha256": [
-        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "98064d96e9e9dcbaf2a847066812282eb125a48c0aa959476635aad81d426c45",
-        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "3f11fb402393bd72f1ebb9ba0cf399aae68b3f7fde5dbd27676b27bb6e92695b"
+        "d1961d6c3ed3fdfd5df9a7485d42865891fc6f1c972ffc032b60ec09cfaae3a1",
+        "51c71b1f11a50b9fae1a383efbd177530f43f2d354f18467cc4a5b413dc92dff",
+        "6fec7622b3a0402a8871af9af343c4ff78fc07edcce2c312d2ced368428d13b6",
+        "af32160e1c4c64af2aa8eddee0d68533110c11d48bee62ae5119dca50e3f8064",
+        "2a925583373f2258705c850588049918a876b914f0773e163d2bf34e83525a77"
       ],
       "memberVariantIds": [
         "uiknob-continuous",
@@ -529,12 +529,12 @@
       ]
     },
     {
-      "candidateId": "candidate.font.dc62be89557b",
+      "candidateId": "candidate.font.d7ee7a32b855",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "dc62be89557b5813b0367e2fac7f75720f6d7e721f47c9eafe28750706e60e2b",
+      "capabilitySha256": "d7ee7a32b8550f202fd199f943ca85bdd826c0fdd3d8edd9cf2012768cce16c9",
       "propertyPaths": [
         "FontName",
         "FontSize",
@@ -543,11 +543,11 @@
         "FontUnits"
       ],
       "propertyCapabilitySha256": [
-        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "5887e40ddffcb74e50888889ace8c2651aaf4f44183bd5d4283857b85f407be1",
-        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "13ab600d033b3757b655035ed44d514caebce887b13554b41da932b885984cf0"
+        "d1961d6c3ed3fdfd5df9a7485d42865891fc6f1c972ffc032b60ec09cfaae3a1",
+        "bc99a4d66e013a2c2602c967fb352a7899b9385273585f1e72a6fc599a076116",
+        "6fec7622b3a0402a8871af9af343c4ff78fc07edcce2c312d2ced368428d13b6",
+        "af32160e1c4c64af2aa8eddee0d68533110c11d48bee62ae5119dca50e3f8064",
+        "5b6aca236ac0ae0f6d08ef5a860a7866b4ea3ff70708063be11a4c5e97ba1bcf"
       ],
       "memberVariantIds": [
         "uibuttongroup",
@@ -561,12 +561,48 @@
       ]
     },
     {
-      "candidateId": "candidate.fontandcolor.1e661cc8facf",
+      "candidateId": "candidate.fontandcolor.523b022ed7c6",
       "categoryId": "fontandcolor",
       "categoryDisplayName": "Font and Color",
       "sharingScope": "familyScoped",
       "scopeRationale": "Combined font and color capabilities vary substantially by component family.",
-      "capabilitySha256": "1e661cc8facfc4eb879b9956e47ab3475771887efb3b92715ae1c9b46cd32cbc",
+      "capabilitySha256": "523b022ed7c613b4beddfba8410e57fad3dac9bd796ebb3763f1c9c122440c6e",
+      "propertyPaths": [
+        "FontName",
+        "FontSize",
+        "FontWeight",
+        "FontAngle",
+        "FontColor",
+        "BackgroundColor",
+        "StyleConfigurations"
+      ],
+      "propertyCapabilitySha256": [
+        "d1961d6c3ed3fdfd5df9a7485d42865891fc6f1c972ffc032b60ec09cfaae3a1",
+        "51c71b1f11a50b9fae1a383efbd177530f43f2d354f18467cc4a5b413dc92dff",
+        "6fec7622b3a0402a8871af9af343c4ff78fc07edcce2c312d2ced368428d13b6",
+        "af32160e1c4c64af2aa8eddee0d68533110c11d48bee62ae5119dca50e3f8064",
+        "2a925583373f2258705c850588049918a876b914f0773e163d2bf34e83525a77",
+        "ec07a348f3ec02d4c6f420b6ab316733b02c0d6c02491abe16f0825e50302b85",
+        "6d679aaeb5c1ac9ad8fefe1034c9aaad1c5853ef1e971a9056be62fbdf93c370"
+      ],
+      "memberVariantIds": [
+        "uidropdown",
+        "uilistbox",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "reuseCount": 4,
+      "documentedCategoryOrders": [
+        2
+      ]
+    },
+    {
+      "candidateId": "candidate.fontandcolor.78f135f7b30a",
+      "categoryId": "fontandcolor",
+      "categoryDisplayName": "Font and Color",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Combined font and color capabilities vary substantially by component family.",
+      "capabilitySha256": "78f135f7b30a0c67cfabe66852959fc3d447f513181b82a85a6ff41bbadbf704",
       "propertyPaths": [
         "FontName",
         "FontSize",
@@ -576,12 +612,12 @@
         "BackgroundColor"
       ],
       "propertyCapabilitySha256": [
-        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "98064d96e9e9dcbaf2a847066812282eb125a48c0aa959476635aad81d426c45",
-        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "3f11fb402393bd72f1ebb9ba0cf399aae68b3f7fde5dbd27676b27bb6e92695b",
-        "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3"
+        "d1961d6c3ed3fdfd5df9a7485d42865891fc6f1c972ffc032b60ec09cfaae3a1",
+        "51c71b1f11a50b9fae1a383efbd177530f43f2d354f18467cc4a5b413dc92dff",
+        "6fec7622b3a0402a8871af9af343c4ff78fc07edcce2c312d2ced368428d13b6",
+        "af32160e1c4c64af2aa8eddee0d68533110c11d48bee62ae5119dca50e3f8064",
+        "2a925583373f2258705c850588049918a876b914f0773e163d2bf34e83525a77",
+        "ec07a348f3ec02d4c6f420b6ab316733b02c0d6c02491abe16f0825e50302b85"
       ],
       "memberVariantIds": [
         "uibutton-push",
@@ -605,48 +641,12 @@
       ]
     },
     {
-      "candidateId": "candidate.fontandcolor.d0526128c26c",
-      "categoryId": "fontandcolor",
-      "categoryDisplayName": "Font and Color",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Combined font and color capabilities vary substantially by component family.",
-      "capabilitySha256": "d0526128c26ca5f6f8716352ba4ea90641e318055675ae8816864e5c4035098d",
-      "propertyPaths": [
-        "FontName",
-        "FontSize",
-        "FontWeight",
-        "FontAngle",
-        "FontColor",
-        "BackgroundColor",
-        "StyleConfigurations"
-      ],
-      "propertyCapabilitySha256": [
-        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "98064d96e9e9dcbaf2a847066812282eb125a48c0aa959476635aad81d426c45",
-        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "3f11fb402393bd72f1ebb9ba0cf399aae68b3f7fde5dbd27676b27bb6e92695b",
-        "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3",
-        "a27505081f43e4a0f3ec24f5d9dbfc48d4a0612ee6c1d44342e6f5b60b1b30f8"
-      ],
-      "memberVariantIds": [
-        "uidropdown",
-        "uilistbox",
-        "uitree",
-        "uitree-checkbox"
-      ],
-      "reuseCount": 4,
-      "documentedCategoryOrders": [
-        2
-      ]
-    },
-    {
-      "candidateId": "candidate.grids.cdc3df92da79",
+      "candidateId": "candidate.grids.788013a24321",
       "categoryId": "grids",
       "categoryDisplayName": "Grids",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family grid settings.",
-      "capabilitySha256": "cdc3df92da794759ac38e39011b8d0356f8085832ccc1637e8b0f5699179320a",
+      "capabilitySha256": "788013a243218f8119e024b2b0f6d76f1ca7ea4b7f2c34b78985d1dd62df949e",
       "propertyPaths": [
         "XGrid",
         "YGrid",
@@ -671,27 +671,27 @@
         "MinorGridAlphaMode"
       ],
       "propertyCapabilitySha256": [
-        "fca4691df1c6e026244b05d44c09b9eea7e6571b5bb78dabdfdf11ccb556e0f9",
-        "a7a765958ca18b1d183b2cf7f976562cf1c724bf9ca5fd58693725ddb179751c",
-        "b19d37a84547bbed646cf91556e1b819255b73a46b89e8b13dce34cac7b90556",
-        "e643a8d78816ff688ab1744d7f92ddedd0b6ae28b16ddab74be9376c6d2ce407",
-        "3d9119e1ef47d2bf610574117f4a926c014448002f8f70ffa3d37cd3915de781",
-        "c0f821aaafa5dda73205c91180fe9d7bad762d4f68c3011e1414b9a2ddc8f064",
-        "13966cc8e87f762a994a755a4dde138c4c39b96c47ba40e4756420452dfea424",
-        "67736483ce391fd268a3420aa0847c02320f5c010cab72ba7b248766caa7b5b9",
-        "bd3720fa67843bbbf7d63470fd35862a931e3500e56758441208587a5807cb12",
-        "3040e0dbebaee6dc4ef2d19c767f4816de744230fe94f69529ebfda008f9f6dc",
-        "500ede8cebbe21f782ad1300139a76411c34d92cfaf1bf0daac2f815332c3618",
-        "0d940019a3984966a2756ac019ae0687ccc9757631602ea4f9b5a186e9c32315",
-        "9dae2d84255d3e3a753622079e2b5d806f546317065b2b7278c9be3df1b04e9b",
-        "6745d3ab49f4b68118f01a4e6b76bed62737e2a5b217087f31cd79f038b6e4eb",
-        "678ead20b13712a45c3c1d16ef27546a318556d72a8ac49d63d0df7839a36b85",
-        "c89037de6576020fa81c184d319ea53e50bf5c2b9cfa7783b33ac73f25665801",
-        "288bcfd64211ed2e1e4487d91312798994cb6b67e5e72e79475bfb0f928b0b22",
-        "690795b20c0d92afce321925a9a584ae1d16ea58b846ce28e191d5e3d0c8f0d9",
-        "7130df952023dd7d03b546e8a33687d1b38b331ab758eccca7824058984b6a16",
-        "d12825690ffcd0f800e7475d2a39ffe32c9f04733ef9b5225b73cd422f54aa44",
-        "cfbf29237e46d139172e892e3d5090021bd1b8370851377a5f682c2d254dbb3c"
+        "7f0575f2a78bdb10dcf1026a574e0867543cde63650474954e8d85b41d6600c1",
+        "948f0c84112d5695a84b03d803e4c2613e9f7b73a5194fd9e9066730c0b9466d",
+        "1db04d5eebf74654f16f035caad22a7fefd6c7fb149eb6a6502550d2cc3065e5",
+        "9d70ad55880345464d3fe1122bf3fcb94651a05d5ffd1f13668cb60e4f03f8e7",
+        "9860f2250472d61048f64bfc82a1548219ce5fe43a194cdc7eee553171216147",
+        "e0ffff6926d8e5301a57d19c5151a05618dc478a5d01b763dd3caa79f7a59504",
+        "58b0b6c2b82ed6de18ecf95475b794229799932c5afee5498af1fc6433ff591e",
+        "fb2a46d4c2ccc243bcef6c2aa7b55dc48170582b3eabc10af9d3998a09364da7",
+        "96fba198685aded213300230cf7030b2eedb22b3100e79191de26124e5f471cc",
+        "0e06b2b12747cab30760318954c3ba2a2522a1823f7bb02026e86b5e06dce2b7",
+        "61dc5ca5781dc6cf2f02670a002c358ab67c7ad9176ed61ae2a21cca74cadb84",
+        "112a83e78a23e356962640e99daa8178b5891e49f649eb1ffefd19505a8655e0",
+        "7def8f8fcf4898e61f03500f2dabeed5a89b855a36bf5a8f722e00c4e9012ee4",
+        "5600a8db60fae5f8f916eb07acd3e5763b7b3055237c3779cd7596b7236fd631",
+        "30a6a8c9d114df334c60cb4aedb5d1dee09f56e1dba561222a4d5ca073ba903c",
+        "71e10d2138c0931b370910bff9a19850357acfe242bd52dcc99d0435b37e83f2",
+        "5ece5d92471d0a6be6ca0a51777d849fdf927d9a0270f78a90809016a9b80cea",
+        "63c3313a344b5bcd6c53009f16ddb0a0c8686beb7872a53ab336e6d06313c074",
+        "c8bd7ab6cad7d0adb2c65d0ef0c3b7f4e36b8a0e3c59832a5e84910b097ec098",
+        "8d195d4373f806c1701beb81077a924f8a34c843ef42c7c18ad2208867fc8f23",
+        "f63da1639094bc403d1b86a1edc05dc57363653c78f0ec7a309bf0924b20592b"
       ],
       "memberVariantIds": [
         "axes",
@@ -703,21 +703,52 @@
       ]
     },
     {
-      "candidateId": "candidate.identifiers.6408bd856504",
+      "candidateId": "candidate.identifiers.6717914b3c7a",
       "categoryId": "identifiers",
       "categoryDisplayName": "Identifiers",
       "sharingScope": "familyScoped",
       "scopeRationale": "Identifier metadata remains variant-local at runtime; the only broadly shared editable path, Tag, is intentionally omitted.",
-      "capabilitySha256": "6408bd856504fe154fa1977112b50db24134b595c4433d33456c3763a0b95b5b",
+      "capabilitySha256": "6717914b3c7a9cbb133ce406698423a89ed032cd86dd58af8e5f483d7b1ea799",
       "propertyPaths": [
         "Type",
         "Tag",
         "UserData"
       ],
       "propertyCapabilitySha256": [
-        "45eed239d9e67011b6c99b1ea799197b5e337a4a9f284670fe8698d53dea280d",
-        "bedc7f077e5aad8df38ab350db17a8949bd7a80582636dffff8942210354886e",
-        "9bb9afd888d9f568e1e6069a6e70fd598f24be8ee9df7dd5c6c5fc0b41fe22e4"
+        "5681bc6ceace00a43a0161677893f2004410c5f1eb1b52b01102b2e11b0fd6a5",
+        "07d9c2066c363fffbca96d6406dd2c9c679bb86a2cb76659fb23b6ba9a57ec07",
+        "7f29ce7082ca89054363222de49762dbdda66f3849f3362c8bb7208c17b5ef3b"
+      ],
+      "memberVariantIds": [
+        "uicontextmenu",
+        "uimenu",
+        "uipushtool",
+        "uitoggletool",
+        "uitoolbar"
+      ],
+      "reuseCount": 5,
+      "documentedCategoryOrders": [
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "candidateId": "candidate.identifiers.9e8dec03dba8",
+      "categoryId": "identifiers",
+      "categoryDisplayName": "Identifiers",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Identifier metadata remains variant-local at runtime; the only broadly shared editable path, Tag, is intentionally omitted.",
+      "capabilitySha256": "9e8dec03dba823e6bc0dec13b4359faadeb79b6fc3f36b3f029448f748915ec0",
+      "propertyPaths": [
+        "Type",
+        "Tag",
+        "UserData"
+      ],
+      "propertyCapabilitySha256": [
+        "bb1da356cc44b9da7ca440cf2bff89bbe0165e95c8317d3ef7e7bca4b7deeede",
+        "07d9c2066c363fffbca96d6406dd2c9c679bb86a2cb76659fb23b6ba9a57ec07",
+        "5adfbbe2f7be0db9dd2d8b3c2a73c1b20aff2b7691ab25127dc9647a7db65e07"
       ],
       "memberVariantIds": [
         "axes",
@@ -774,43 +805,12 @@
       ]
     },
     {
-      "candidateId": "candidate.identifiers.d234496dc540",
-      "categoryId": "identifiers",
-      "categoryDisplayName": "Identifiers",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Identifier metadata remains variant-local at runtime; the only broadly shared editable path, Tag, is intentionally omitted.",
-      "capabilitySha256": "d234496dc540e13982f5cdfceb5e528c97e28405794e9074b63cf40f3a19e944",
-      "propertyPaths": [
-        "Type",
-        "Tag",
-        "UserData"
-      ],
-      "propertyCapabilitySha256": [
-        "60a0ec6a20cef650bf9531f1289346960ddc500cc5de6c4354b54cada877577e",
-        "bedc7f077e5aad8df38ab350db17a8949bd7a80582636dffff8942210354886e",
-        "7402e8b8370b19ee9631176971be11025fe3c547553f5789951f38c294549bd2"
-      ],
-      "memberVariantIds": [
-        "uicontextmenu",
-        "uimenu",
-        "uipushtool",
-        "uitoggletool",
-        "uitoolbar"
-      ],
-      "reuseCount": 5,
-      "documentedCategoryOrders": [
-        4,
-        5,
-        6
-      ]
-    },
-    {
-      "candidateId": "candidate.interactivity.1ab2e79dd3ee",
+      "candidateId": "candidate.interactivity.055b46d78563",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "1ab2e79dd3ee24a372817292610f310f41c41898b1c53973a815a03315f4763e",
+      "capabilitySha256": "055b46d78563c0bd3a59fe49d651643938fe0840e1674b2c1a9a12aed930d008",
       "propertyPaths": [
         "Visible",
         "Editable",
@@ -819,11 +819,11 @@
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
-        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "e492628c06a7d3eac681c0305f0f42af2204e018d3e974a5cc7e490589cc5e95",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-        "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
+        "b68b6c9096ced5ca15a0f501189ae1fcfe5dfc25ae0b3ebc77cc0a8513290f9c",
+        "51a82a1650f4d37355b95103f9abf8d92f59746a1778d4ed50bd8b04e538ec67",
+        "06335f3c91ca373ff594e9f07cc8ec9ee0a6ec834ffd40efe345f86546cc6500",
+        "312af0503c323a52732b9176b3012a75bea7c451dcbc269c74127f43bf139c6b",
+        "7037935641b34b6e3d1fe7bd989d8fa1a771f86bdd5c3e04d61ef8d08c7c1a94"
       ],
       "memberVariantIds": [
         "uidatepicker",
@@ -839,12 +839,37 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.341f77c53323",
+      "candidateId": "candidate.interactivity.0df741b8d3ad",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "341f77c53323c7a3758dd2cd6d926686b8820c41221781cf884d4a8dc0a3d980",
+      "capabilitySha256": "0df741b8d3ad3ff5fa3e75433eb58aee6c4f4d67d0ccc7d7e203544bf81c1bc4",
+      "propertyPaths": [
+        "Visible",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "b68b6c9096ced5ca15a0f501189ae1fcfe5dfc25ae0b3ebc77cc0a8513290f9c",
+        "7037935641b34b6e3d1fe7bd989d8fa1a771f86bdd5c3e04d61ef8d08c7c1a94"
+      ],
+      "memberVariantIds": [
+        "uipanel",
+        "uitabgroup"
+      ],
+      "reuseCount": 2,
+      "documentedCategoryOrders": [
+        2,
+        4
+      ]
+    },
+    {
+      "candidateId": "candidate.interactivity.d2758e7deb05",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "d2758e7deb0532cedf2e803c970436d38bac6a18c8ed5e62b8af1ab91b4984b9",
       "propertyPaths": [
         "Visible",
         "Enable",
@@ -852,10 +877,10 @@
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
-        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "14d910ede8db71804342c9bfefa8054f07ae3c4b1a60d9fcd31067111480a3e1",
-        "c402c660cb6717e440c368ef076225c03bb7fe4d16f82751c746381f87299e0b",
-        "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
+        "b68b6c9096ced5ca15a0f501189ae1fcfe5dfc25ae0b3ebc77cc0a8513290f9c",
+        "06335f3c91ca373ff594e9f07cc8ec9ee0a6ec834ffd40efe345f86546cc6500",
+        "312af0503c323a52732b9176b3012a75bea7c451dcbc269c74127f43bf139c6b",
+        "7037935641b34b6e3d1fe7bd989d8fa1a771f86bdd5c3e04d61ef8d08c7c1a94"
       ],
       "memberVariantIds": [
         "uibutton-push",
@@ -884,12 +909,12 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.98156a67d0ff",
+      "candidateId": "candidate.interactivity.f07e6903a776",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "98156a67d0ffe75aea4acddd72d6d076191b540d33296ffcd8a795ad4d08e59b",
+      "capabilitySha256": "f07e6903a7769994764fd41f5af532ae1ac9f4b396690e63e3887d6b75b196de",
       "propertyPaths": [
         "Visible",
         "Enable",
@@ -898,11 +923,11 @@
         "TooltipString"
       ],
       "propertyCapabilitySha256": [
-        "8e5b2ae8c3a77c1739263ef4c080870a07eab2f4e9000c8110577c9e58a59287",
-        "2dbcc27bfd0ea983215ef9a7b6ebca1df13aad5dbc269cdc949c833a98a631af",
-        "dc06f70ca86664bb0efc9025249c5d292d0d86db377e7d94636cd4704884a68b",
-        "49b055c155d75cd70e4602a4e9e0abd76f63769456aff5c088bab4f3ba1050bc",
-        "4c52e92e388cb9956c835f70923f522196a49fa416d0e9149b0c0616a0f32f41"
+        "bc22db1d2dcd8915ef7d86b766df37b43ca03edb39cf3c9df45099a9f5251c85",
+        "b2c46beffdff36955baf3b881181aa2751c8e2bb5dfd25d82de7518117247bb4",
+        "7d16f5c94dc9a2ebcc02c31bdbf999e6b56d6d3393c1eb08633ba99e57f499f7",
+        "9aae378f29dd35f3070c6df5774e383616a17d450ced8d7d6e946eb2bc9e1464",
+        "a4316d8324cb7a4a2073101b32a811a22697e1821e98247d4da68743175445e3"
       ],
       "memberVariantIds": [
         "uipushtool",
@@ -914,37 +939,12 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.e21d679c65a5",
-      "categoryId": "interactivity",
-      "categoryDisplayName": "Interactivity",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "e21d679c65a52c4780c7cc68add3916f28b69e4c2eb530665578606ff9d08ca6",
-      "propertyPaths": [
-        "Visible",
-        "ContextMenu"
-      ],
-      "propertyCapabilitySha256": [
-        "e0ce3940a33972e938a330d3a0b739610c5a0019ace41c4bbc2c204c64f58424",
-        "154cbac7563506f46bbfeca2000727e89a529aa0bd7a8b238cb6fc329c9a3bae"
-      ],
-      "memberVariantIds": [
-        "uipanel",
-        "uitabgroup"
-      ],
-      "reuseCount": 2,
-      "documentedCategoryOrders": [
-        2,
-        4
-      ]
-    },
-    {
-      "candidateId": "candidate.labels.9c06736f2caf",
+      "candidateId": "candidate.labels.edeef597101e",
       "categoryId": "labels",
       "categoryDisplayName": "Labels",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family labels.",
-      "capabilitySha256": "9c06736f2caf41d8b6301dd7d8049069570d041d2ff40debdc05befc473eab62",
+      "capabilitySha256": "edeef597101e12cf59c0afd1c78b212de658aea7f396cb8570570e0cdbc92fe2",
       "propertyPaths": [
         "Title",
         "Subtitle",
@@ -955,13 +955,13 @@
         "Legend"
       ],
       "propertyCapabilitySha256": [
-        "f967061f27bf12202312ecf5a899091dfc4a6dece3e60954054650cf5c825bec",
-        "0822c65b32e8bc56c94deb9386c447f619aff4e231d4ae078f82efc17f42b4c3",
-        "7d595f8c7007b4932a7b2c86ccf9b7ed3f2d29afe44c29be196250b86fd7581a",
-        "dc469a9753ca7eecb0db993de0ecf04e503f316fc61efde4cb3ba75d2503a709",
-        "f4c42519e59f650ce18d2a64a6a25ca14b3eb6523344375913747c39235ba423",
-        "94d7800dd91251b0e365d281f7278018abc3db798f81753254dfdcdab6f204e0",
-        "2e1cb5d5848051c3eb048dceb4fd1ffbd7fecc09732be708c2fe6074c079dfd2"
+        "0f8ea15a7f3cd5d68cb29415acd0427ef50c79a14b96774af6887960dc4bc64d",
+        "16746612105d7c7fce2d3c371ac8247652db6dc603881a7e1cdd2e17cd31f0bb",
+        "7b757970420fe84f15d1f61de74862d97a6d7263a3f0a27e132dd84cd7ff2239",
+        "699d63b6d340f732353ad0ec7faa0f5850b3e1ecf6a162fd677a9c1d000c037f",
+        "f5549eac4a695512f2af127b857b1e43ee6178fb214018e989df79350679283c",
+        "675f6b68ac4f4e298483c0408d49b7e3802141b5494bbda80ba44965e06d8dff",
+        "70a5843803c3fa2ffd9309771f28c041bd719f2077046360f1fa178b70d3ad17"
       ],
       "memberVariantIds": [
         "axes",
@@ -973,12 +973,12 @@
       ]
     },
     {
-      "candidateId": "candidate.multipleplots.f60264b7b9ff",
+      "candidateId": "candidate.multipleplots.9ca2ff8e5e60",
       "categoryId": "multipleplots",
       "categoryDisplayName": "Multiple Plots",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family plotting-cycle settings.",
-      "capabilitySha256": "f60264b7b9ff606d0e3fc2bc8ccbaa8f6a4fe60a1f4994234e26583459f4da35",
+      "capabilitySha256": "9ca2ff8e5e60a83d88415b83cd464073392fa7348d73ce613d1bf9d9f9124b89",
       "propertyPaths": [
         "ColorOrder",
         "LineStyleOrder",
@@ -990,14 +990,14 @@
         "LineStyleOrderIndex"
       ],
       "propertyCapabilitySha256": [
-        "eda88141235539e21eca112aaa5895cd9e078a32feedfc61c691d8c481eda0a4",
-        "dcbfe94692353aecb21007f39d8829fff8bf6c33c7f62333850f628d7d75aacb",
-        "b50d3c5703189d7e6f011a624b803c9b2595b86a3c844e27581e22bf1b3a86a9",
-        "db09055dc12a3fa867cdbf73660e8c91ad7f419c235c9dc06ba350c5fbbb7ab0",
-        "2218660025aa0072ada4e11735726edd2b5462b6a39e8a6b8fe87d61965ecaf3",
-        "1734cce80d1b2257c3c967f4bd5930fa02d08d884e122af8f5a67a7a31c8a69e",
-        "d6f767e01eae0c185545b757ac4ffbc3889eddcc454801c96a4eaa48f9cce25e",
-        "c9c43174bb7b52f7b0f85afdf8f0f6fab63f3216ce0758190b098c039a17171f"
+        "151d5688e6051d566bd8915e20784b1dd5282bc9c1e10f82f8dcd0f0ad01d67b",
+        "d1188db04b9431cca065bda42dd9ef61ee8bf506ad01173803940da6d8be21c8",
+        "985679f9cf1bcb085976970a2128ca213ac502568abadf7cfa21a0b2937190a3",
+        "d25c8e4fdc99e814e6876d346f276d68999bbb6a1ef7520d965594e9f3d5b77e",
+        "b4c3fa620e9511a731a4eb2cb3b6440888746e06fffb42730e049fe08b3effff",
+        "584b33e5b132643c1ad420a820a0469c8f8b2bd111d007b3233e21d857c32a50",
+        "40f09fbd0ca053134f028b0ce79c008c84de72f276b372e2f8ecdd50f6f146a7",
+        "f7cb80cb9add5c4ea602bdb95de2729f50af61d6593a39e9472e6d86696a9927"
       ],
       "memberVariantIds": [
         "axes",
@@ -1010,19 +1010,90 @@
       ]
     },
     {
-      "candidateId": "candidate.parentchild.1614338cd0ba",
+      "candidateId": "candidate.parentchild.4fdbeaf81b3b",
       "categoryId": "parentchild",
       "categoryDisplayName": "Parent/Child",
       "sharingScope": "familyScoped",
       "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
-      "capabilitySha256": "1614338cd0ba5847a88e4cce0e60a54160eca14bc3f1ef5580f840628b4f7203",
+      "capabilitySha256": "4fdbeaf81b3b59b70e45de4c51d1eb0759f7c46fe0d5710f16fc9e5c2fa9986c",
+      "propertyPaths": [
+        "Parent",
+        "Children",
+        "HandleVisibility"
+      ],
+      "propertyCapabilitySha256": [
+        "3c7a0ddd95b1d805a35f99b6f1a8254e6476f03c97bbdab0433d2591814740e0",
+        "aa7667bb701e3c36138bed9625d89e9eff12346e644e48af260d42f5d815b28b",
+        "5469beb0fa1bf015bd0df9704fdaa723b3c74e361eb452c205146a8528f4a05c"
+      ],
+      "memberVariantIds": [
+        "axes",
+        "geoaxes",
+        "polaraxes",
+        "uiaxes",
+        "uibuttongroup",
+        "uigridlayout",
+        "uipanel",
+        "uitab",
+        "uitabgroup",
+        "uitable",
+        "uitree",
+        "uitree-checkbox",
+        "uitreenode"
+      ],
+      "reuseCount": 13,
+      "documentedCategoryOrders": [
+        5,
+        6,
+        7,
+        8,
+        13,
+        14
+      ]
+    },
+    {
+      "candidateId": "candidate.parentchild.6f8a40481afc",
+      "categoryId": "parentchild",
+      "categoryDisplayName": "Parent/Child",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
+      "capabilitySha256": "6f8a40481afcf622774882aec8a3853b4cdb49a2d536b952e10d6ae98f842778",
+      "propertyPaths": [
+        "Parent",
+        "Children",
+        "HandleVisibility"
+      ],
+      "propertyCapabilitySha256": [
+        "c60965917f5b437e213fb239002a1aefc98c8b3316cbd9465aaa3dd2c67e4a79",
+        "96ff076a5c64905ec1abd4af2ac23c2f891c276401baa1616de35368c4753f24",
+        "1ed5dc3fa0553c51e2de1552d9f21af3e1bb050774d5dc88bc89322b4a17d879"
+      ],
+      "memberVariantIds": [
+        "uicontextmenu",
+        "uimenu",
+        "uitoolbar"
+      ],
+      "reuseCount": 3,
+      "documentedCategoryOrders": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "candidateId": "candidate.parentchild.804e73e66a15",
+      "categoryId": "parentchild",
+      "categoryDisplayName": "Parent/Child",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
+      "capabilitySha256": "804e73e66a157a568adcdc05f971829b280f6815f0f1f78f091e24922483c64c",
       "propertyPaths": [
         "Parent",
         "HandleVisibility"
       ],
       "propertyCapabilitySha256": [
-        "34eac3878409bd42bd8a9933a78c45798424176f01c6af205a1d48b4d0a70e41",
-        "0d557ca8a3b9f9c1db3709b975c33d59022364f60f8356381226251fb25def83"
+        "3c7a0ddd95b1d805a35f99b6f1a8254e6476f03c97bbdab0433d2591814740e0",
+        "5469beb0fa1bf015bd0df9704fdaa723b3c74e361eb452c205146a8528f4a05c"
       ],
       "memberVariantIds": [
         "uibutton-push",
@@ -1063,19 +1134,19 @@
       ]
     },
     {
-      "candidateId": "candidate.parentchild.824df8047d11",
+      "candidateId": "candidate.parentchild.a646cd49b352",
       "categoryId": "parentchild",
       "categoryDisplayName": "Parent/Child",
       "sharingScope": "familyScoped",
       "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
-      "capabilitySha256": "824df8047d11352488451178c3413a38a330a6e7e3d868a525def60a83ace4b0",
+      "capabilitySha256": "a646cd49b3523eaa4f07194c2b92ede6a16406bb1035301158a214de41878cbb",
       "propertyPaths": [
         "Parent",
         "HandleVisibility"
       ],
       "propertyCapabilitySha256": [
-        "1262585a57c9974cbacbcb9fe3b7d8b80b1b3f80f3304a47bbd65d658a669879",
-        "cf01bf47fa2aa02c13d6faf62eb71bb42e67d534f61de5d4dd995bb0ea24c676"
+        "c60965917f5b437e213fb239002a1aefc98c8b3316cbd9465aaa3dd2c67e4a79",
+        "1ed5dc3fa0553c51e2de1552d9f21af3e1bb050774d5dc88bc89322b4a17d879"
       ],
       "memberVariantIds": [
         "uipushtool",
@@ -1087,83 +1158,12 @@
       ]
     },
     {
-      "candidateId": "candidate.parentchild.a55d498d6448",
-      "categoryId": "parentchild",
-      "categoryDisplayName": "Parent/Child",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
-      "capabilitySha256": "a55d498d64480f3e5419fb2b6ca43301bbe4a21925cd0e514b2915ee21b1b565",
-      "propertyPaths": [
-        "Parent",
-        "Children",
-        "HandleVisibility"
-      ],
-      "propertyCapabilitySha256": [
-        "1262585a57c9974cbacbcb9fe3b7d8b80b1b3f80f3304a47bbd65d658a669879",
-        "d8384d88e388b757b47fe27cf70ff71e0e8346f4f3dced51b059d84733d4b9ca",
-        "cf01bf47fa2aa02c13d6faf62eb71bb42e67d534f61de5d4dd995bb0ea24c676"
-      ],
-      "memberVariantIds": [
-        "uicontextmenu",
-        "uimenu",
-        "uitoolbar"
-      ],
-      "reuseCount": 3,
-      "documentedCategoryOrders": [
-        3,
-        4,
-        5
-      ]
-    },
-    {
-      "candidateId": "candidate.parentchild.b0afde452a3c",
-      "categoryId": "parentchild",
-      "categoryDisplayName": "Parent/Child",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Hierarchy metadata remains variant-local at runtime; Parent, Children, and HandleVisibility are intentionally omitted.",
-      "capabilitySha256": "b0afde452a3c4e50cf90c317f7829b622666951f448f9b94cfd54a7a81b02ed0",
-      "propertyPaths": [
-        "Parent",
-        "Children",
-        "HandleVisibility"
-      ],
-      "propertyCapabilitySha256": [
-        "34eac3878409bd42bd8a9933a78c45798424176f01c6af205a1d48b4d0a70e41",
-        "a99c92aa638861ca3c11c9d050eb0de701f88d079f51a0387242892b0178d5ef",
-        "0d557ca8a3b9f9c1db3709b975c33d59022364f60f8356381226251fb25def83"
-      ],
-      "memberVariantIds": [
-        "axes",
-        "geoaxes",
-        "polaraxes",
-        "uiaxes",
-        "uibuttongroup",
-        "uigridlayout",
-        "uipanel",
-        "uitab",
-        "uitabgroup",
-        "uitable",
-        "uitree",
-        "uitree-checkbox",
-        "uitreenode"
-      ],
-      "reuseCount": 13,
-      "documentedCategoryOrders": [
-        5,
-        6,
-        7,
-        8,
-        13,
-        14
-      ]
-    },
-    {
-      "candidateId": "candidate.position.1d833d1c6b04",
+      "candidateId": "candidate.position.464084a32dfa",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "1d833d1c6b04320b732c46ca6ccf628e05682c5538cc5338bdc1be8b21ab2848",
+      "capabilitySha256": "464084a32dfaab30f512a51fc0aeee085b80c1fb801b24a5faeda71fb4370dd1",
       "propertyPaths": [
         "Position",
         "InnerPosition",
@@ -1171,10 +1171,10 @@
         "Units"
       ],
       "propertyCapabilitySha256": [
-        "ff3678d5500b65f90653a0f2457d324e9ac90abda435cac5465719a21dabdb09",
-        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "9af52318fb7115a75734e4a9b1ee7de6161074f61be637208730c95aae9d69f6",
-        "786029f7902c8d22fad220cd339833ff77e8c53c70f5f23998a022a8a4601b6a"
+        "5663b9832636e49a4c3fbb711eb6e4565c484f346e4429a42978fd6c0eb78440",
+        "55403dcf8424bb2b1302b962f00289d7a3044910ad53a34f12f674b5612f7dcc",
+        "ea1de6b85035cdbe8d3f8389f96886ead0d312a14e238f9e90e627ed815270a7",
+        "9ea4d7f2cf1c27ef33f4572d1eb16cdfbfd88a03513d8c57e398dd281c91bd5c"
       ],
       "memberVariantIds": [
         "uibuttongroup",
@@ -1186,12 +1186,46 @@
       ]
     },
     {
-      "candidateId": "candidate.position.43c7473b22c9",
+      "candidateId": "candidate.position.6e594d2ef21c",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "43c7473b22c9ad4eb5dca40541e7808066bf9a28975f003c418d6278d1d1a1fb",
+      "capabilitySha256": "6e594d2ef21c28cb2b7661951b28b458059867f20c525755089e22c2debd0c19",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "HorizontalAlignment",
+        "VerticalAlignment",
+        "IconAlignment",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "fdf25c5caddc61d4aebcb00f96101798139202c191959c06e80fb6b3d936a851",
+        "a744ae0e14f8a45c48183c6c4421c55d9f9332be9442d4987a4c03f76ac3de19",
+        "bca252e5f3463f0f3c5ae3564dcfb36a2ee7517c54fe22f717a22e2e66a0b9c2",
+        "70e266ebab430b7c895100c733a1e4043e183f957954f379bbba1b8a5c332a85",
+        "4f4aba37a00fdffa85e7ff87a75f7a8e31a24ab914d04ded78ed79529ad75d62",
+        "a2125f1919f8b78ccfc8473095385c4e96c8f6f01ef6a46d826e94ab315a46dd",
+        "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
+      ],
+      "memberVariantIds": [
+        "uibutton-push",
+        "uibutton-state"
+      ],
+      "reuseCount": 2,
+      "documentedCategoryOrders": [
+        4
+      ]
+    },
+    {
+      "candidateId": "candidate.position.7a207c246c6e",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "7a207c246c6ee2edad80f46c3771448a0dee5562fac7134d0cfb55ff78b7ad5d",
       "propertyPaths": [
         "Position",
         "InnerPosition",
@@ -1199,10 +1233,38 @@
         "Layout"
       ],
       "propertyCapabilitySha256": [
-        "e8eac2849121ce7fe7d5913c06fe3d74be784ecd3a75721514c86fa37468d630",
-        "54d69c283bfb0a16e02c481e05fda1fa97d45e54867d459bb583b11f1c47ee1f",
-        "f15523b34c437a14a50fabb7dda49455e5cc036c94f8c90e011b29a4513758eb",
-        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+        "04692a5b554f112eaf49098acfb3ab35fd908f638c32464bb2ebf925c566434d",
+        "55403dcf8424bb2b1302b962f00289d7a3044910ad53a34f12f674b5612f7dcc",
+        "8b65f1d39ec9b6920c31b978e139efa70bc393451e99822c34d5c3064541f99e",
+        "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
+      ],
+      "memberVariantIds": [
+        "uislider-range",
+        "uislider-slider"
+      ],
+      "reuseCount": 2,
+      "documentedCategoryOrders": [
+        5
+      ]
+    },
+    {
+      "candidateId": "candidate.position.a09082ab77e1",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "a09082ab77e113fb5f2a1c57e3feb15ce13f110515263718306bab7bab1c71d1",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "fdf25c5caddc61d4aebcb00f96101798139202c191959c06e80fb6b3d936a851",
+        "a744ae0e14f8a45c48183c6c4421c55d9f9332be9442d4987a4c03f76ac3de19",
+        "bca252e5f3463f0f3c5ae3564dcfb36a2ee7517c54fe22f717a22e2e66a0b9c2",
+        "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
       ],
       "memberVariantIds": [
         "uicheckbox",
@@ -1221,12 +1283,12 @@
       ]
     },
     {
-      "candidateId": "candidate.position.67c16a633bd7",
+      "candidateId": "candidate.position.af70ad521fc3",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "67c16a633bd7321258c366f25b4607a9b250bae850baf86787f5822cc767edb8",
+      "capabilitySha256": "af70ad521fc32266ce90e605d9e93a1aaadaa175a1490b6deb44b111c0e0cfe9",
       "propertyPaths": [
         "Position",
         "InnerPosition",
@@ -1234,76 +1296,94 @@
         "Layout"
       ],
       "propertyCapabilitySha256": [
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
-        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "929a01fa209e71eafe547e8b3511e11ae3199506ebaf61aec7a34cb8c5d00a17",
-        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+        "47cac96c42ac3e0f6cdef63f6d46152cabf4026919792104a5882e2af13eff3b",
+        "55403dcf8424bb2b1302b962f00289d7a3044910ad53a34f12f674b5612f7dcc",
+        "8b65f1d39ec9b6920c31b978e139efa70bc393451e99822c34d5c3064541f99e",
+        "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
       ],
       "memberVariantIds": [
-        "uidropdown",
-        "uieditfield-numeric",
-        "uieditfield-text",
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
         "uigauge-semicircular",
-        "uiknob-continuous",
-        "uiknob-discrete",
-        "uilistbox",
-        "uislider-range",
-        "uislider-slider",
-        "uispinner",
         "uiswitch-rocker",
         "uiswitch-slider",
         "uiswitch-toggle"
       ],
-      "reuseCount": 16,
+      "reuseCount": 4,
       "documentedCategoryOrders": [
         4,
         5
       ]
     },
     {
-      "candidateId": "candidate.position.d9582482690e",
+      "candidateId": "candidate.position.d579f77f023d",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "d9582482690e1a64b5a18bd1baccb6ddd6f7589d9ec52dd0b1906487b6654cc7",
+      "capabilitySha256": "d579f77f023d960c7d9c583ead250d263a7f5605e898c6076b72d1b70c4bfb2e",
       "propertyPaths": [
         "Position",
         "InnerPosition",
         "OuterPosition",
-        "HorizontalAlignment",
-        "VerticalAlignment",
-        "IconAlignment",
         "Layout"
       ],
       "propertyCapabilitySha256": [
-        "e8eac2849121ce7fe7d5913c06fe3d74be784ecd3a75721514c86fa37468d630",
-        "54d69c283bfb0a16e02c481e05fda1fa97d45e54867d459bb583b11f1c47ee1f",
-        "f15523b34c437a14a50fabb7dda49455e5cc036c94f8c90e011b29a4513758eb",
-        "852050b38ed1f1cb6f023fba7d31604b49ca08ba6b4ce4867292a249ebaab562",
-        "74143635cc12df7e6f6dac1acbb4cb842bf9cf414124509bc8eb7e63d40c1fdf",
-        "fd3d00a84a466dc29ab40525b123d5ed2eaf588e1ad84a4f6455081db1f0c9fc",
-        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+        "100f12a9251562e815f373ee2f6d2f7e64d4904fdbd0034e2d09b3a87a070006",
+        "55403dcf8424bb2b1302b962f00289d7a3044910ad53a34f12f674b5612f7dcc",
+        "8b65f1d39ec9b6920c31b978e139efa70bc393451e99822c34d5c3064541f99e",
+        "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
       ],
       "memberVariantIds": [
-        "uibutton-push",
-        "uibutton-state"
+        "uigauge-circular",
+        "uigauge-ninetydegree",
+        "uiknob-continuous",
+        "uiknob-discrete"
       ],
-      "reuseCount": 2,
+      "reuseCount": 4,
       "documentedCategoryOrders": [
-        4
+        4,
+        5
       ]
     },
     {
-      "candidateId": "candidate.rulers.02b40eb8adf3",
+      "candidateId": "candidate.position.d647d71b3d53",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "d647d71b3d53afa0b6eef72a747babd4805ae48cd160f54b34b6a77f8bbdad34",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "51354a27340f9d7086d5d5dd12914ecd055a716ee431bc44e13abb2e0b5abf78",
+        "55403dcf8424bb2b1302b962f00289d7a3044910ad53a34f12f674b5612f7dcc",
+        "8b65f1d39ec9b6920c31b978e139efa70bc393451e99822c34d5c3064541f99e",
+        "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
+      ],
+      "memberVariantIds": [
+        "uidropdown",
+        "uieditfield-numeric",
+        "uieditfield-text",
+        "uigauge-linear",
+        "uilistbox",
+        "uispinner"
+      ],
+      "reuseCount": 6,
+      "documentedCategoryOrders": [
+        4,
+        5
+      ]
+    },
+    {
+      "candidateId": "candidate.rulers.cbecba7147ab",
       "categoryId": "rulers",
       "categoryDisplayName": "Rulers",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family ruler settings.",
-      "capabilitySha256": "02b40eb8adf35848357c7a3a3e42d2960484fa9537f61830f92190418febdd5b",
+      "capabilitySha256": "cbecba7147ab436564f998c162bf13ec421847e4af391ea0ac3789e5250e6e37",
       "propertyPaths": [
         "XLim",
         "YLim",
@@ -1333,32 +1413,32 @@
         "ZScale"
       ],
       "propertyCapabilitySha256": [
-        "f27747b81bb94272d944854c7ce98ce880f61d2fb9ba7a0f9b21536c4286fcd2",
-        "1e9a009a0be84e56d220243a92a80ab06331edf7856db7da2afcaf31bd97d8be",
-        "8c8ec0a82e79c1e7bb6f2223d7b949a6bc1c23f197332086805d3e9cc05e8a7e",
-        "dba190224dc7e5f4861275f330e37b386b0badd9f122f7289734285e95da679e",
-        "25c502e8e522fcb06e5756779c8c4996feb732b2d6e6ba92d133d4ab27aaa5d1",
-        "cf28e91f97ab0536aefeffb4e00ff30288fca5a368015337ccff4a4f3e719101",
-        "43157c3ec541972334325d79aace1b1d1511791483ee32a6e536b83dc3e8d993",
-        "db6fbb079a444fa57d1bbc8651c8ad5f6c5d3e408c2359f2df4bce7ead5a998b",
-        "d7e1ac42c61adad8ea3730501f93ca10671e91ad52a9ebfbcc6d7c5fed21fb29",
-        "a33fb770e5d5d154989e2e2016b7245790480eadea4d1355e8b71131da65d156",
-        "ce4ab4054571e80dc101b245590fd28568cc2ce2977b687784f2a5b8ea4c7e58",
-        "c754023641b9215b5ab6586b17ec8032d77c4dfd04edd5c06c57407e1e9d76c5",
-        "98b1d7440334b7d2d99955c7f9c009d466c1c7744bbf67290a8c638754fafd9e",
-        "c1c8aa0efff941d7b2c96d148ce73b76a46a573a5f335720b0073246519d1177",
-        "c794359af434bcee1a371a27e149dfff679d00c08aec737186858e484b85d052",
-        "da56f4a009e2fded5a2a9ef1c4cadb2b4ee2f99b3ce3f618a748ee331228c5dd",
-        "01fb0ad5c9141707be2dbf557218b99845e6f412d2c66722a056d0eb9fd40964",
-        "4b557c1f1a7cb580c784fb7427c7063ada8d1733ca6f187fe35800d375818c5b",
-        "0914811f13f5dfd39b6364a98330918167668cd157eb6d63ee11a23a0df8cd92",
-        "65ee97eed8e3e15f130f6798d78bd43a64637a503c9a1503b736aec943a60835",
-        "7f23b23101dff383f7292831ab4f49e65a9a5f1ab3c7835aa26d20c3851849ab",
-        "3797eb9ef3649a21f61483d06a4db551e94281a1237bb54a9c5c5945d7b80f88",
-        "ae5af49df5f80ad171ce46d3c9c9ae44871765c3b3f73ddd90b552594b413834",
-        "ec0e9ade10b6d7d73c322582349cd29c391538444e2e126bdf30dfa62dfae2fd",
-        "8b15fd2c3e73231df520766ba623bb8d049e6e4d7eee02aec69e693f00721eae",
-        "890e5a3691127f1b9379bee9d55a6aa2d490161bc125839b0b6329d1e2ed138c"
+        "977991ddd00d16ec07c8ff6eaa7773f7c7cd9b78e5721f1c9e40e81c5f5bbbd9",
+        "d7d36092a14ab522b013e09626722d0de2abf7bea85a1d1e5da26d705f4055cb",
+        "d04d582e9c0232c55bea5fbece642a75d7ca44ace378a09fb711511752a7666b",
+        "6e1886e2c3b8e0afc82a59f316fe7ca2d043c2e9509d4c1cf32395dd5d942779",
+        "3c0353ee407dcb0404f2828048995fbf8dc63863bcce97f4f7660e3f7288cfef",
+        "b0332824c8c851d11e6cd68155871305cb4e612c79b972856e09ac3739934ae0",
+        "54ef5f31c231a41f6fabc581121a3270aa477c6dcf461b3eec04ae0d9e87007c",
+        "95e09ff43104049221808266a62e2338d7721264c6eacadc2e68d0d2d9bdcd69",
+        "a67aec80d70ca6fdebedc7a0944a38b03b44e33a685bc0da7f4c1190bef73aef",
+        "6a49334f96837f9107420f11a1ae031d97dffe3efc501283050f32633adae3b4",
+        "3d16831d1e6a1f00b2708df87dc63dc0f7b6933b284231857a893aac94260c85",
+        "149dc3b582ae91a6d74886917ef40133af99ea0b3d63bd2b57c5658c90b3feb3",
+        "35002e43d1e0759bf4eb76dddb3f74733e65c1dfaae1df0a3f6419156139d833",
+        "6c1bfa4959eac6deb0646a31ad21b9d27fd58880e4b93328233c0ae5561f9590",
+        "29f028c9ce20e1be2915e6587e303ac3e5259bdc3aaded9456b0b32d1d092ba8",
+        "17ce91213c602c490ff6e0dc9ebc42278b3b9b657170f32f619ffa17ef822c20",
+        "82ddefde3f6f24f0f664b670174a89f80e5ea2f8efe47505b183df5f9f072166",
+        "31dcd94884a93942de3aaa81e710c8780460e9cc44eb6dc072f8fa2d204ee878",
+        "b5a49167a4faa048f1ec4be5ece31bdf8d1ad82de472775f6ecb0b11839bd673",
+        "55cce0fab8e0a0175d70f842d754d2cb75ded20e3de8b615109f3e2c5371e060",
+        "6a39e5d3bf5bd0bb61b38bca1755f78daf8f8aa40a8b7f3b9c01678a0fec98c8",
+        "dcf70e2f518aaeca125dcc2694c1b0c3433dffb0aa691e39c5365cf34fbac587",
+        "07782e6c8cef2f547b40b581ac0f64403a37af9584691584ea9fc770bbb36e34",
+        "32397e15574f45502e6432d141c723b7306ea77e03b485c5664872217518e941",
+        "bf2ad77a60e88d42a1269229bfdbceafd519fc3f403c5b0e0e876fc3b64df000",
+        "808af90433fb066228f221ad939d61125a4f5548484b41fa26f23667c1df4ba7"
       ],
       "memberVariantIds": [
         "axes",
@@ -1370,12 +1450,12 @@
       ]
     },
     {
-      "candidateId": "candidate.switch.42bb0bea0d7e",
+      "candidateId": "candidate.switch.cd3e40c4761c",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
       "sharingScope": "familyScoped",
       "scopeRationale": "Switch-style settings.",
-      "capabilitySha256": "42bb0bea0d7edced5c0f7f63ffe2d24e9be3a99f2b47f49e05442723c685e7aa",
+      "capabilitySha256": "cd3e40c4761cf699b16dee0cfaa633a6e5ae6f84b91820bed05abd3c5b04aef2",
       "propertyPaths": [
         "Value",
         "Items",
@@ -1384,11 +1464,11 @@
         "Orientation"
       ],
       "propertyCapabilitySha256": [
-        "8e8faa14a6a28fee444f62596b36594f2c8d90c639695aabb60bfc7c77a2285f",
-        "b2a64adf6e2a68c9d9c1550228e21a9d2e5550cfe1464f54578377bcbfdcb801",
-        "83dfb06622c6b1d1375077e4dc936b9f92c9b60fec47426907ea44d4ae877649",
-        "feea750188f119ea68ef6767868cfcd9bcc5185555c608e01ac62327a3cd29eb",
-        "683c12e648b12bb238aeece0fcb5bf8f8401022fee168f2653b81b5ada390553"
+        "cee1b3118828fef0d9dd1dc2b86fc8d5ba43f05a4fedbe26c062d61d1ba0d43f",
+        "c0903bf5cce81a5812546177302d1f9b3b704f2f2e7267556a5f23c136494b7d",
+        "ef9902599b0840fb4ecabc14f106a4c7fd7ee84a527048e87e0ae4b0a1774eab",
+        "4b92307a6fe53352d2c5bc6183cc084b50ab7b589eaa035b5017f1ae9fa62908",
+        "672b18459587c188ee79d0f14495824ac1f5b2a2f16b014fdb847050910ed77f"
       ],
       "memberVariantIds": [
         "uiswitch-rocker",
@@ -1400,12 +1480,49 @@
       ]
     },
     {
-      "candidateId": "candidate.ticks.c22f0b30644f",
+      "candidateId": "candidate.ticks.557d58db2f78",
       "categoryId": "ticks",
       "categoryDisplayName": "Ticks",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
-      "capabilitySha256": "c22f0b30644f152e022389a09fca6b0393f5971afab6660390be94fe7ba1f41f",
+      "capabilitySha256": "557d58db2f7884134c20923496c015fffe12cc771bbc7a3152efa4580e8b1c8d",
+      "propertyPaths": [
+        "MajorTicks",
+        "MajorTicksMode",
+        "MajorTickLabels",
+        "MajorTickLabelsMode",
+        "MinorTicks",
+        "MinorTicksMode"
+      ],
+      "propertyCapabilitySha256": [
+        "b2f7aeac7fd8f0523183a1e0a34f51561fa1737521df86555328d49176e0e212",
+        "3752cc68ff158d58080e0647eae6e549635b155a9bd2bfdf368f14cf78a7fcc2",
+        "84805817e8bff460d2e40ba0467b15305e5a48ffec610b78eab9ed33d22274ef",
+        "af34b0dcd25ef8882fdf6c016469241c5c51c460d5feeb235212c8e5ae48a312",
+        "4ba634846c3a6c275c1c9913efaf18092e9ee0daaf30d789af4d050a0ac53871",
+        "7d89720db579471e2846cb89fc5c0b3fc9455917252cc32f9dd006f6d2ac7222"
+      ],
+      "memberVariantIds": [
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular",
+        "uiknob-continuous",
+        "uislider-range",
+        "uislider-slider"
+      ],
+      "reuseCount": 7,
+      "documentedCategoryOrders": [
+        2
+      ]
+    },
+    {
+      "candidateId": "candidate.ticks.a78dd5d6ac89",
+      "categoryId": "ticks",
+      "categoryDisplayName": "Ticks",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
+      "capabilitySha256": "a78dd5d6ac89354bdc9ab0015a24749ddbcc4fbeda2ae90c525ef90da71fb608",
       "propertyPaths": [
         "XTick",
         "YTick",
@@ -1434,31 +1551,31 @@
         "TickLength"
       ],
       "propertyCapabilitySha256": [
-        "f6ba3bc35faa1912f887cc8acc6c3f25c4b36b6fee4785cc3237f8e0f3045f6a",
-        "acc8e26f30dd6874e93f9ec825dd82e6bc0a4e22d7729b1071d9a84489369874",
-        "7b21cb2dbc0e235615769173f963c07a33ac75e928a39f766c2856b5dafb3751",
-        "f52a7bdf226996dce7d0e5e3ff418a32a9089920491c034cb6982bef5e52476d",
-        "b5f5af8a1b87d81b11a4e0929afe80faec5f9067392b79437dc393f85e28962d",
-        "9d29982d1763b22aa38f0b2ffc6da67f06be6187ada0365f91924b57c8249a69",
-        "c96e6705d30715167886ea4ea36b5fccf1e20d933e669f04a2a906433e8c73b4",
-        "5650c575f9ea87b34959e306d1550f2433b966721e31fc46283ef47d0935dded",
-        "14cc6c5aa4213e9a2fc931130de6b50be894bdde2d90fe59283e31c119f8bddb",
-        "fb0220c3c7de5ed826f7227a5b1fe751492260fe4430243b6774697395d7c53f",
-        "94bc0db5051689b30fc0741b393aabcbdb7093d77ae23cedd578901b0fdac740",
-        "4400245555b083a2f2936d5b9960013d8402e61cc1c37354d3f18c465bd5a7b7",
-        "120e7716c7c207291479e7f39ec2ca8fde954e10dab7dd65afa7310af81f758d",
-        "113a9a193d7aab43a6595d0165f16652d7e0668bf1ff62c4de91ea55b93a2d55",
-        "e97272e787fc87f7d1a5352800becc3f7ca716b26d54d35f67886278ce913053",
-        "8c4d5ae46eb0084c81ffe6f648a50f1a201b3507713dbef16fa0136349c799da",
-        "1bb098f7c6260a4ca44db336c7fbf383f62bff9e8b13d5ef8b39be3967d4b7da",
-        "7e1a9597ed69c1fc287184fef0a9f12ac0b74ab2b398c017b545ecd37c8c63a8",
-        "a3e486341678f5a6e7b9d22d1e2b270207e818deb95ee27b192a66d380663f57",
-        "18f61e2a682b922d841d57293f1cf19135269e19450f888cf8195a63f8ea8822",
-        "316c36612cda941aeeafa79f1183ef62421f2086df5d6f60de57876f2623a2e3",
-        "427158dbcdbc9c285d2b5ff8207c06effd984a4415c33e4444b34f988017b10c",
-        "041007c1b07ced5cd81c427e4cda09e302df7cfb223053ddce0bfbbf59c9c0de",
-        "b9bf8ae005f513ef6b532bca12c398bb3a9a202225ebceabf2aa5e2f00ed4485",
-        "abcfe96a4a2a342c35cd774104fab677395d6942ab8395bc473183eb4d38ce1f"
+        "251064d665a28e90211eb577925420afadefae922067ca4c80abe393276c0e34",
+        "242c8dda42d41f89e4c0c3b0e29bca8d10dabd8908694e9b574f7323f5ccb2f2",
+        "40297daf30faa0059ccc6b966d4fce2c7c4e4c0fbeb3f6af09a5fa3e3eb3a608",
+        "ad09eaae38db4cd189e629833e9b9322d46eb895e9434f12e4c321fd9b207072",
+        "9b339ba26412fcbdd80266d01bd3abb3dc673f1a3a263be12d70d92d986e8162",
+        "b55253f28605350c0de677d473c767b93ca2d773b3b2131f13768fe93fe4290b",
+        "708e5ed13419f0a4ebdfc2454129165ba359f940d245546a8ce32d098746acae",
+        "cc52656a0af2fd26a47822b4ee5a0ca053dd2d74ead3031faac18ce597df8830",
+        "296812b5045cfee1c0d1480f31a2b1d8640bcdf93ae55f1b6112aa28d0438768",
+        "c13d08bf6e2fd30ce0bd1d44a68083f0196e50a95190b76679da5851cce86258",
+        "ffc2a0197fb2b81b78f0103b65ff7294eb9d8af1f0f4a5be77a6de065876e020",
+        "c2d4b785d0eb64f9994cd6398733ce36930df575bf515a047b073f873fe9aa4d",
+        "f539677b8b6b20ff7de5612bc34048cedec81fc1b8c39fdfb6c9ea9e1c1db757",
+        "39d3a48f4dcf973f2f44c8735e05aef15f6b5d925ca4f95aa80942f0c8bc81c9",
+        "ec861e1caf197ba17fb79661f70607235127e18cbcbdc8d24039b2990a17f6d0",
+        "a850e332bdba4bdc9eac8c597d4a6872930ec458f02c058a644c14068e18a6e6",
+        "678e21e52a73eed5ca3616568bf89d86c0731c5004ab5b840a7457a186eecb10",
+        "f718c8b0014db3f413683b730a9930c3644641b2c078c24a1957bb510b67882c",
+        "481aa2f88d34194e5ad592895a1977bc9b57b7098b1ee880cc67fe3b76729369",
+        "aedc02cc8255357733448581bd5f4ffc8add16070f08d07b6b2b5664d1bfec54",
+        "e0116fd78e0e5527a22fe7bb147473cf2ca4350fb89133cd96d2d673b78f3db0",
+        "07959556e65baf0c84ed2361e63d22d44b4c519a8e9174eced9a86ff981629d0",
+        "ebb5b48680bd6492bcb574974315cfa1113917e8a9492df5d6667ea8d6e70897",
+        "5fef7074bec97e11676accad9b5b0a1cce4ca1f99e3b3e14f7bb11348bb8643e",
+        "5127490958d4bf637249e2195fe01d4417d731145cc882052a1754e3856340c6"
       ],
       "memberVariantIds": [
         "axes",
@@ -1470,56 +1587,19 @@
       ]
     },
     {
-      "candidateId": "candidate.ticks.dfbbcf8248a7",
-      "categoryId": "ticks",
-      "categoryDisplayName": "Ticks",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
-      "capabilitySha256": "dfbbcf8248a7cb372559da1d61ab918e01163c2b41926fe7ad163c0b4f33afab",
-      "propertyPaths": [
-        "MajorTicks",
-        "MajorTicksMode",
-        "MajorTickLabels",
-        "MajorTickLabelsMode",
-        "MinorTicks",
-        "MinorTicksMode"
-      ],
-      "propertyCapabilitySha256": [
-        "0d84271c586485afecec05845d77b2feecaa6a4e7450b362227fb607519ed5de",
-        "812ae6e5cac309db111809ae026cf5313711b8eaa5c571316d5040a853b58f41",
-        "f82e06ea9d7cd54713e14d4a89ec652b1bc45e1267bcc20ebb4071d2ff2d2af5",
-        "1c33ebacbb141ca3cf4a40a291966102f5240d3b509aca9cdab64106614983cc",
-        "ae03b66b824b1b0fbe7203c53b0250b5135da8219f2407d17715347e913b8ae2",
-        "2788e6bf368e53de2e7c9dd495eb1982145858c90e56092a92f3995313a7e8b2"
-      ],
-      "memberVariantIds": [
-        "uigauge-circular",
-        "uigauge-linear",
-        "uigauge-ninetydegree",
-        "uigauge-semicircular",
-        "uiknob-continuous",
-        "uislider-range",
-        "uislider-slider"
-      ],
-      "reuseCount": 7,
-      "documentedCategoryOrders": [
-        2
-      ]
-    },
-    {
-      "candidateId": "candidate.title.29b523ae5b31",
+      "candidateId": "candidate.title.15a60542c785",
       "categoryId": "title",
       "categoryDisplayName": "Title",
       "sharingScope": "familyScoped",
       "scopeRationale": "Container-family title settings.",
-      "capabilitySha256": "29b523ae5b318fc8b481bdd6a81b46be8c9f3f92c5a5e51007ebf5f6898edda9",
+      "capabilitySha256": "15a60542c7855fb5476c3e32c6ee2ffa966849bb6d59040e4b2091645f3e1d02",
       "propertyPaths": [
         "Title",
         "TitlePosition"
       ],
       "propertyCapabilitySha256": [
-        "1e408d29e06c1f5d9fb536392397b147d9494c5e22f0afb6cf580cc451120f0c",
-        "81591f1994ebca3ed56e1ee4745332078e5755f69cca013bcaf9fc2bf5b01d8e"
+        "724c356be435697726ad92eb56e3ad4d4158a395fe36a8d41af0d848e872ab1d",
+        "ef63c38bf418c45314f463ae5622e91119768b039ea4b22098aaebb3a2f0a65e"
       ],
       "memberVariantIds": [
         "uibuttongroup",
@@ -1531,12 +1611,12 @@
       ]
     },
     {
-      "candidateId": "candidate.view.17630eed8ac9",
+      "candidateId": "candidate.view.b4b39644cb15",
       "categoryId": "view",
       "categoryDisplayName": "View",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family view settings.",
-      "capabilitySha256": "17630eed8ac9ea43874fce5bb762a49b862a0c861536dd0245081fe4354010e5",
+      "capabilitySha256": "b4b39644cb15e915c3070d5e18c8ae9e524a255300fdcb42ea5576f2dd5d8dba",
       "propertyPaths": [
         "View",
         "Projection",
@@ -1550,16 +1630,16 @@
         "CameraViewAngleMode"
       ],
       "propertyCapabilitySha256": [
-        "d882d8ccdf1343c17c29bf913bf9f5432afa7c089910ee26e14a8cdfadb82bb5",
-        "b47643c51b8146aeb27347288fecc912c4b4a29d0a8ab223fb3c28a887eee875",
-        "4dabca80db3f9055e5391c8516d39de04fe31a782c5b77a99e0e5512341af32d",
-        "f7db917556a1d1e97342b2d21b6e5366684b7e17b5a1a451dd0f48c3927221ad",
-        "f94a45bf72d678ebc75c5347e48c1373838208f0b34bfc97395cee58b61efceb",
-        "274f7483e9ed19f6a3f9a11b1b6469de4b87f6c068316eb7ff56024c7340eb9a",
-        "bd9e7dfac9e4f23a85b25bd57c9f3989f4cbff7bde867758ee393b43c99ca7f8",
-        "fefc406e73c3b5cba78e93c275c797e3b2d0e783586294bca691a8cff362189d",
-        "a5aab0641922d6d5a8794bcfd88bb12796b2272f2c13dc0ec8049bf23e19899a",
-        "1b4c9cb704e01c47ab0f0541f199a82ea143a1d824449bc8f322efdace062cde"
+        "8c731c2209c43cfdefc14f1c8d0a25e67c7a338c8b686fd5be304ac7be00b5ef",
+        "e9991443af6070945e42a61531c6bc665997332a8381013e28e5e18cb4a0b3d7",
+        "da67a7ec02ff5e87c6078fa01532827376d52f96482baf388c6edb73df6677d9",
+        "c553439debc85e01850b24f1ca57f6a603b1dd193bb143a9710bb157aed4403d",
+        "eadfc1f74d8bcd9de4a93ab943ad8863881d8b18da86a34f554cd2b0ad78ca00",
+        "5e029ac4741d2584f16737b0d2d88d34a3f5c64c04121cc55fe274f7340fadcf",
+        "29d70329bdd4ce0cfb5f2dc4656f8818fcd65023bbea0c2a256675ac9b5b58e2",
+        "7f945b146c1df67bb3fa37aa17388d928789f180a27e6fbaa4aaf0ab7788955c",
+        "7b13cb053f0abcc17dcc404b948e1ca15854430168bf19659c9b16830b2e2d71",
+        "a8023db865c73338a9886dc7745215279aa317127e39cd28111f8b7346692599"
       ],
       "memberVariantIds": [
         "axes",

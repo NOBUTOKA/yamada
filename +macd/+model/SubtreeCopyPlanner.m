@@ -72,7 +72,12 @@ classdef SubtreeCopyPlanner
                 end
                 % Implicit setter effects may determine properties with no explicit source write.
                 for state = states
+                    % The source-only parent handle is represented by copied child Values.
+                    if state.Definition.Path == "SelectedObject" && ...
+                            state.Definition.Application.EffectPolicy == "buttonSelection", continue, end
                     if macd.model.PositionAliasPolicy.applies(state.Definition), continue, end
+                    if any(state.Definition.Path == ["InnerPosition", "OuterPosition"]) && ...
+                            state.Definition.AuditDisposition ~= "editable" && state.Resolution.ReasonCode == "native-geometry", continue, end
                     resolution = state.Resolution;
                     explicit = any(string({record.Properties.Path}) == state.Definition.Path);
                     affected = strlength(resolution.EffectSettingId) > 0;

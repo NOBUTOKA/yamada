@@ -68,7 +68,10 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "none"
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -99,7 +102,10 @@
             "application": {
               "applyAfter": [],
               "nameValue": "supported",
-              "effectPolicy": "none"
+              "effectPolicy": "none",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
@@ -130,6 +136,14 @@
                 "clockwise",
                 "counterclockwise"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -158,6 +172,14 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -183,6 +205,14 @@
               "shape": "vector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }
@@ -195,7 +225,7 @@
       "entries": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.dfbbcf8248a7",
+          "groupId": "exact.ticks.557d58db2f78",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTicks",
@@ -203,7 +233,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 1,
-            "groupId": "exact.ticks.dfbbcf8248a7",
+            "groupId": "exact.ticks.557d58db2f78",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -221,13 +251,16 @@
                 "Limits"
               ],
               "nameValue": "supported",
-              "effectPolicy": "tickMode"
+              "effectPolicy": "tickMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.dfbbcf8248a7",
+          "groupId": "exact.ticks.557d58db2f78",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTicksMode",
@@ -235,7 +268,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 2,
-            "groupId": "exact.ticks.dfbbcf8248a7",
+            "groupId": "exact.ticks.557d58db2f78",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -260,13 +293,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.dfbbcf8248a7",
+          "groupId": "exact.ticks.557d58db2f78",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTickLabels",
@@ -274,7 +310,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 3,
-            "groupId": "exact.ticks.dfbbcf8248a7",
+            "groupId": "exact.ticks.557d58db2f78",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -295,13 +331,16 @@
                 "MajorTicks"
               ],
               "nameValue": "supported",
-              "effectPolicy": "tickMode"
+              "effectPolicy": "tickMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.dfbbcf8248a7",
+          "groupId": "exact.ticks.557d58db2f78",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTickLabelsMode",
@@ -309,7 +348,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 4,
-            "groupId": "exact.ticks.dfbbcf8248a7",
+            "groupId": "exact.ticks.557d58db2f78",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -333,13 +372,16 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.dfbbcf8248a7",
+          "groupId": "exact.ticks.557d58db2f78",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorTicks",
@@ -347,7 +389,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 5,
-            "groupId": "exact.ticks.dfbbcf8248a7",
+            "groupId": "exact.ticks.557d58db2f78",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -365,13 +407,16 @@
                 "Limits"
               ],
               "nameValue": "supported",
-              "effectPolicy": "tickMode"
+              "effectPolicy": "tickMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.dfbbcf8248a7",
+          "groupId": "exact.ticks.557d58db2f78",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorTicksMode",
@@ -379,7 +424,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 6,
-            "groupId": "exact.ticks.dfbbcf8248a7",
+            "groupId": "exact.ticks.557d58db2f78",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -403,7 +448,10 @@
               ],
               "nameValue": "supported",
               "effectPolicy": "none",
-              "defaultLiteral": "'auto'"
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
             }
           }
         }
@@ -416,7 +464,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.fontandcolor.1e661cc8facf",
+          "groupId": "exact.fontandcolor.78f135f7b30a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -424,7 +472,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 1,
-            "groupId": "exact.fontandcolor.1e661cc8facf",
+            "groupId": "exact.fontandcolor.78f135f7b30a",
             "editor": "text",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -437,12 +485,20 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "FontSize",
-          "groupId": "exact.fontandcolor.1e661cc8facf",
+          "groupId": "exact.fontandcolor.78f135f7b30a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -450,7 +506,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 2,
-            "groupId": "exact.fontandcolor.1e661cc8facf",
+            "groupId": "exact.fontandcolor.78f135f7b30a",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -465,12 +521,20 @@
               "minimum": 0,
               "exclusiveMinimum": true,
               "integer": false
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.fontandcolor.1e661cc8facf",
+          "groupId": "exact.fontandcolor.78f135f7b30a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -478,7 +542,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 3,
-            "groupId": "exact.fontandcolor.1e661cc8facf",
+            "groupId": "exact.fontandcolor.78f135f7b30a",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -495,12 +559,20 @@
                 "normal",
                 "bold"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.fontandcolor.1e661cc8facf",
+          "groupId": "exact.fontandcolor.78f135f7b30a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -508,7 +580,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 4,
-            "groupId": "exact.fontandcolor.1e661cc8facf",
+            "groupId": "exact.fontandcolor.78f135f7b30a",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -525,12 +597,20 @@
                 "normal",
                 "italic"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "FontColor",
-          "groupId": "exact.fontandcolor.1e661cc8facf",
+          "groupId": "exact.fontandcolor.78f135f7b30a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -538,7 +618,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 5,
-            "groupId": "exact.fontandcolor.1e661cc8facf",
+            "groupId": "exact.fontandcolor.78f135f7b30a",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -552,12 +632,20 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.fontandcolor.1e661cc8facf",
+          "groupId": "exact.fontandcolor.78f135f7b30a",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
@@ -565,7 +653,7 @@
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 6,
-            "groupId": "exact.fontandcolor.1e661cc8facf",
+            "groupId": "exact.fontandcolor.78f135f7b30a",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -579,6 +667,14 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }
@@ -613,6 +709,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -640,6 +744,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -668,6 +780,14 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -693,6 +813,14 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -725,6 +853,14 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "squarePosition",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Finite stored Position behavior verified by the owned R2024a probe. InnerPosition and OuterPosition are not assumed equivalent."
             }
           }
         },
@@ -750,6 +886,18 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
             }
           }
         },
@@ -775,6 +923,18 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
             }
           }
         },
@@ -800,6 +960,14 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -834,6 +1002,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
             }
           }
         },
@@ -861,6 +1037,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
             }
           }
         }
@@ -895,6 +1079,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -925,6 +1117,14 @@
                 "queue",
                 "cancel"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -950,6 +1150,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         }
@@ -982,6 +1190,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -1008,6 +1224,14 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }
@@ -1040,6 +1264,14 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
             }
           }
         },
@@ -1066,6 +1298,14 @@
               "shape": "scalar",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         },
@@ -1091,6 +1331,14 @@
               "shape": "any",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "unknown",
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
             }
           }
         }

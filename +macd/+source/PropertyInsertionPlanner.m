@@ -78,8 +78,9 @@ classdef PropertyInsertionPlanner
             if ~isscalar(created) || ~certain(created) || ~layout.Valid
                 error("macd:PropertyInsertionPlanner:UnsafePlacement", "The factory is conditional, repeated, or outside a proven initializer.");
             end
-            [anchors, boundary] = macd.source.PropertyInsertionPlanner.anchors( ...
-                source, statements, order, certain, returns, layout, created, sourceSettings);
+            [selectionSettings, selectionCreations] = macd.model.ButtonSelectionPolicy.insertionSurface(component, document);
+            [anchors, boundary] = macd.source.PropertyInsertionPlanner.anchors(source, statements, order, certain, returns, layout, created, ...
+                [sourceSettings selectionSettings], selectionCreations);
             paths = string({definitions.Path});
             if any(~ismember(string({entries.Path}), paths))
                 error("macd:PropertyInsertionPlanner:UnsafePlacement", "A new property is not supported in this parent context.");
@@ -232,7 +233,7 @@ classdef PropertyInsertionPlanner
             end
         end
 
-        function [anchors, boundary] = anchors(source, statements, order, certain, returns, layout, created, settings)
+        function [anchors, boundary] = anchors(source, statements, order, certain, returns, layout, created, settings, selectionCreations)
             % anchors Bound proven source slots by the first opaque operation or observable read.
             arguments (Input)
                 source (1, 1) string
@@ -243,6 +244,7 @@ classdef PropertyInsertionPlanner
                 layout (1, 1) struct
                 created (1, 1) double
                 settings macd.model.PropertySetting
+                selectionCreations double
             end
             arguments (Output)
                 anchors (1, :) struct
@@ -258,7 +260,11 @@ classdef PropertyInsertionPlanner
                 call = returns(visit) > visit;
                 owned = settings(arrayfun(@(setting) ~isempty(setting.SourceSpan) && ...
                     setting.SourceSpan.StartOffset == statement.Span.StartOffset, settings));
-                write = ~isempty(owned) && all([owned.IsCertain]) && all(string({owned.ValueKind}) == "literal");
+                simpleReference = arrayfun(@(item) item.Path == "SelectedObject" && ...
+                    ~isempty(regexp(char(strtrim(item.SourceExpression)), '^app\.[A-Za-z]\w*$', 'once')), owned);
+                write = ~isempty(owned) && all([owned.IsCertain]) && ...
+                    all(string({owned.ValueKind}) == "literal" | simpleReference);
+                write = write || any(selectionCreations == statement.Span.StartOffset);
                 if visit > created && ~structural && ~call && ~write
                     % Literal local assignments cannot call or observe a component.
                     local = regexp(code, '^[A-Za-z]\w*\s*=\s*(.*)$', 'tokens', 'once');

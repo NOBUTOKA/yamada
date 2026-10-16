@@ -106,7 +106,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             [document, registry, component, target] = testCase.fixture([ ...
                 "app.Control = uislider(app.Left);", "app.Control.Value = 150;"]);
             document.setProperty(component.Id, "Limits", [0 200], registry);
-            document.reparentSubtree(component.Id, target.Id, registry, [], [], [10 20 100 22]);
+            document.reparentSubtree(component.Id, target.Id, registry, [], [], [10 20 100 3]);
             source = document.GeneratedText;
             testCase.verifyLessThan(strfind(source, "app.Control.Limits = [0 200];"), strfind(source, "app.Control.Value = 150;"));
             states = document.getEffectivePropertyStates(registry, component.Id);
