@@ -12,6 +12,8 @@ classdef PreviewRenderer < handle
         Registry macd.model.ComponentRegistry
         PreviewSurface
         PreviewMargin double = 12
+        CombinedConfiguration macd.model.DocumentModel = macd.model.DocumentModel.empty
+        UsesCombinedConfiguration logical = false
     end
 
     methods
@@ -48,9 +50,25 @@ classdef PreviewRenderer < handle
             diagnostics = macd.model.Diagnostic.empty;
             surface = [];
             obj.Diagnostics = macd.model.Diagnostic.empty;
+            obj.CombinedConfiguration = macd.model.DocumentModel.empty;
+            obj.UsesCombinedConfiguration = false;
             root = document.getComponent(document.RootComponentId);
             if isempty(root)
                 return
+            end
+
+            % Cross-component pending grid writes share one complete parsed configuration.
+            obj.UsesCombinedConfiguration = any(arrayfun(@(component) ...
+                macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document), document.Components));
+            if obj.UsesCombinedConfiguration
+                try
+                    plan = macd.source.PropertySourcePlan.combined(document, root, obj.Registry);
+                    obj.CombinedConfiguration = plan.Document;
+                    obj.CombinedConfiguration.FilePath = document.FilePath;
+                catch exception
+                    obj.Diagnostics(end + 1) = macd.model.Diagnostic("preview-grid-unknown", "warning", ...
+                        "Cannot resolve combined grid initialization: " + string(exception.message));
+                end
             end
 
             % Recreate the source figure at its actual client-area pixel size.
@@ -91,7 +109,10 @@ classdef PreviewRenderer < handle
             try
                 configured = component;
                 configurationDocument = document;
-                if macd.source.PropertySourcePlan.needsPlan(document, component)
+                if obj.UsesCombinedConfiguration && ~isempty(obj.CombinedConfiguration)
+                    configurationDocument = obj.CombinedConfiguration;
+                    configured = configurationDocument.getComponentByName(component.Name);
+                elseif ~obj.UsesCombinedConfiguration && macd.source.PropertySourcePlan.needsPlan(document, component)
                     plan = macd.source.PropertySourcePlan.plan(document, component, obj.Registry);
                     configured = plan.Component;
                     configurationDocument = plan.Document;
@@ -122,11 +143,15 @@ classdef PreviewRenderer < handle
 
             % Isolate unsupported preview assignments as nonblocking diagnostics.
             definition = obj.Registry.get(component.Factory, component.CreationArguments);
-            [entries, positionReason] = macd.model.PropertyApplicationPlanner.forPreview( ...
+            [entries, positionReason, gridReason] = macd.model.PropertyApplicationPlanner.forPreview( ...
                 component, document, obj.Registry);
             if strlength(positionReason) > 0
                 obj.Diagnostics(end + 1) = macd.model.Diagnostic("preview-position-unknown", "warning", ...
                     "Preview position is uncertain for " + component.Name + ": " + positionReason, component.Id);
+            end
+            if strlength(gridReason) > 0
+                obj.Diagnostics(end + 1) = macd.model.Diagnostic("preview-grid-unknown", "warning", ...
+                    "Preview layout is uncertain for " + component.Name + ": " + gridReason, component.Id);
             end
             for index = 1:numel(entries)
                 entry = entries(index);

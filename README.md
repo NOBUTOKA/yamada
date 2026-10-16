@@ -20,6 +20,8 @@
   stored color values separately from automatic rendering modes
 - Resolve reviewed position aliases consistently in the Inspector, Safe Preview,
   and subtree copies, including Lamp's square size constraint
+- Resolve Grid Layout tracks and implicit child placements from initialization
+  order, and reject track edits whose requested size would be lost to occupancy
 - Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
 - Rename component properties in the hierarchy, including static source references and default callback names
 - Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion

@@ -249,6 +249,33 @@ diagnostic instead of silently treating an earlier value as the effective one.
 Named ImageSource values use the existing asset adapter after construction.
 Original constructor arguments and setting ownership stay unchanged.
 
+`gridTracks` selects the finite `GridLayoutStatePolicy`. The parser records a
+global initialization sequence and certainty for each creation, including calls
+without named properties. The policy merges these events with explicit track
+and direct-child placement writes. It retains requested track baselines, pads
+occupied rows/columns with `1x`, and releases implicit padding after children
+move out. Default placement follows the last occupied cell in row-major order.
+Positional grid size precedes named track overrides. Unknown placement affects
+the corresponding track state; later certain literals can restore it. Pixel
+geometry and `fit` measurements are outside this policy.
+`PropertyState.EffectPolicy` scopes normalized track comparisons to this audited
+family; a table's unrelated `ColumnWidth` retains its own comparison semantics.
+
+The shared resolver exposes final tracks and implicit placements without adding
+source occurrences. Preview projects known values, and copy configuration
+freezes affected values for independent generation and verification. Grid
+overlay track data and track actions consume the same effective values. A
+pending sibling placement reuses its actual insertion plan; new child events
+use the generator's parsed creation anchor. `PropertySourcePlan.combined`
+generates and reparses complete output for multiple pending grid plans. Its
+detached generation candidate uses conservative states to avoid recursive
+planning; the model, copies, Preview, and overlay consume the complete parsed
+result. Preview shares one combined configuration per render. Parsed
+grid batches generate and reparse a detached combined candidate before committing
+one history record, so an occupied-track shrink cannot silently change the
+requested size. Single-property history wraps cell values as scalar record
+fields so track lists remain one Undo/Redo operation.
+
 Copies keep the full original snapshot but collapse its effective configuration
 to one Position. Placement uses that frozen result, and copy verification checks
 placement changes, including offsets, rather than excluding them. Grid copy

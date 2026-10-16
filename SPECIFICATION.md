@@ -63,6 +63,13 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
   Copies emit one effective `Position` and verify their placement offset. Grid
   layout geometry remains managed by the layout rather than an alias literal.
   Parent changes also verify the requested geometry before committing history.
+- Grid Layout track getters include flexible padding required by direct-child
+  placements. The editor retains explicit track inputs, resolves implicit child
+  positions from initialization order, and uses the resulting layout for Preview
+  and copies. Moving children out releases implicit padding. Track edits and
+  combined grid/child edits must survive generated initialization before they
+  commit. Unknown placement expressions remain unresolved; `fit` stays a stored
+  token rather than a predicted pixel measurement.
 - Compare the original and generated source, then save to a new path or to an explicitly confirmed path.
 - Show diagnostics for unsupported or ambiguous structures.
 - Track unsaved edits in the editor title. New, Open, and closing the editor offer

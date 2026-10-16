@@ -1525,7 +1525,7 @@ classdef yamada < matlab.apps.AppBase
             app.InteractionOverlayRevision = app.InteractionOverlayRevision + 1;
             gridEditor = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, app.ActiveGridId, ...
-                app.SelectedComponentId, app.InteractionOverlayRevision);
+                app.SelectedComponentId, app.InteractionOverlayRevision, app.Registry);
             % A selected nested grid edits its tracks while moving in its parent grid.
             placementGridId = "";
             selected = app.Document.getComponent(app.SelectedComponentId);
@@ -1538,7 +1538,7 @@ classdef yamada < matlab.apps.AppBase
             end
             gridPlacement = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, placementGridId, ...
-                app.SelectedComponentId, app.InteractionOverlayRevision);
+                app.SelectedComponentId, app.InteractionOverlayRevision, app.Registry);
             innerPosition = double(app.PreviewCanvas.InnerPosition);
             root = app.Document.getComponent(app.Document.RootComponentId);
             rootPosition = root.getProperty("Position");
@@ -1732,10 +1732,12 @@ classdef yamada < matlab.apps.AppBase
                     error("macd:yamada:ReadOnlyGridTrack", ...
                         "%s is source-backed and cannot be edited safely.", path);
                 end
-                value = app.PreviewHandles(char(gridId)).(char(path));
-                if ~isempty(entry)
-                    value = entry.LiteralValue;
+                states = app.Document.getEffectivePropertyStates(app.Registry, gridId);
+                state = states(arrayfun(@(item) item.Definition.Path == path, states));
+                if isempty(state) || ~state.Resolution.IsKnown
+                    error("macd:yamada:ReadOnlyGridTrack", "%s depends on unresolved grid placement.", path);
                 end
+                value = state.Resolution.EffectiveValue;
                 if action == "set-track"
                     replacement = macd.model.GridTrackList.replace(value, double(data.index), ...
                         string(data.mode), double(data.value));
@@ -1747,7 +1749,7 @@ classdef yamada < matlab.apps.AppBase
                     changes = macd.model.GridLayoutStructuralEditPlanner.delete( ...
                         app.Document, gridId, axis, double(data.index), value);
                 end
-                app.Document.applyGridLayoutEdit(gridId, changes);
+                app.Document.applyGridLayoutEdit(gridId, changes, app.Registry);
                 app.setStatus("Updated " + path + ".");
                 app.refreshPreview();
             catch exception
@@ -1817,7 +1819,7 @@ classdef yamada < matlab.apps.AppBase
             try
                 overlay = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
                     app.PreviewHandles, app.PreviewCanvas, gridId, childId, ...
-                    app.InteractionOverlayRevision);
+                    app.InteractionOverlayRevision, app.Registry);
                 if ~overlay.geometryAvailable || ~overlay.editable
                     return
                 end
@@ -1843,7 +1845,7 @@ classdef yamada < matlab.apps.AppBase
                         double(values(3)), double(values(4)), rowCount, columnCount);
                     message = "Resized grid child span.";
                 end
-                app.Document.applyGridLayoutEdit(gridId, changes);
+                app.Document.applyGridLayoutEdit(gridId, changes, app.Registry);
                 app.setStatus(message);
                 app.refreshPreview();
             catch exception

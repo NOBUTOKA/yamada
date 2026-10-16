@@ -43,6 +43,16 @@ Grid管理下の扱いを共通resolverへ接続した。Previewは既知Positio
 集約してoffsetを検証する。生成時のskipプロパティもPreviewのconstructorから除外する。
 親変更も生成後の実効配置を確定前に照合し、確認済みfamilyのゼロサイズをモデル・配置で同じ条件にした。
 この時点のfull profile 512件が全件合格。残るvariant・効果の監査と、最終状態の全完了条件監査は継続する。
+2026-10-16追記: GridLayoutのRowHeight/ColumnWidthへ`gridTracks`を追加した。
+生成イベントと直接の子の配置を共通resolverで解決し、占有による`1x`補完と移動後の解除を扱う。
+明示したtrack listは元の設定出現に保持し、Preview・Copyは解決済み配置を使う。
+parsedのグリッド一括編集も生成・再解析後の要求値照合を行う。編集オーバーレイも実効trackを使う。
+複数のpending設定は全体候補を生成・再解析し、モデル・Copy・Preview・オーバーレイで同じ結果を使う。
+専用16件が合格した。同名のUITable.ColumnWidthとの比較を台帳policyで分離する回帰も加えた。
+修正後の関連38件が合格し、変更MATLAB 14ファイルは静的解析警告なし。
+計画指定の関連area 485件は全件合格。生成モデルのlegacy constructor引数と生成後設定の併用を
+仕上げとして補完し、その後の生成・保存・GridLayout回帰35件も全件合格した。
+残るvariant・効果の監査と全完了条件の監査は継続する。
 
 この文書は、名前-値引数と生成後代入を共通の設定履歴として扱い、台帳の設定順序を
 パーサー・コード生成器・Safe Previewへ接続する実装計画である。

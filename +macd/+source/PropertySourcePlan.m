@@ -4,6 +4,34 @@ classdef PropertySourcePlan
     %   parsed configurations. Original records and edit identities stay intact.
 
     methods (Static)
+        function plan = combined(document, component, registry)
+            % combined Reparse complete emitted initialization without executing the input app.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                plan (1, 1) struct
+            end
+            % The detached candidate may use conservative states during generation.
+            candidate = document.structuralCandidate();
+            candidate.Metadata.ResolvingCombinedPropertySource = true;
+            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+            [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+            configured = parsed.getComponentByName(component.Name);
+            if isempty(configured)
+                error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "The configured component was not retained.");
+            end
+            plan = struct("Document", parsed, "Component", configured);
+        end
+
         function result = needsPlan(document, component)
             % needsPlan Identify parsed components whose initialization source will change location.
             arguments (Input)

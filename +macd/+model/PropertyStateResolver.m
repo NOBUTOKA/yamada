@@ -31,14 +31,31 @@ classdef PropertyStateResolver
             end
 
             % Source additions use the same actual placement as generation and Preview.
+            combined = false;
+            if ~isempty(document) && ~isempty(registry)
+                combined = macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document) && ...
+                    ~(isfield(document.Metadata, "ResolvingCombinedPropertySource") && ...
+                    document.Metadata.ResolvingCombinedPropertySource);
+            end
             if ~isempty(document) && ~isempty(registry) && ...
-                    macd.source.PropertySourcePlan.needsPlan(document, component)
+                    (combined || macd.source.PropertySourcePlan.needsPlan(document, component))
                 try
-                    plan = macd.source.PropertySourcePlan.plan(document, component, registry);
-                    resolved = macd.model.PropertyStateResolver.resolve(plan.Component, definitions);
+                    if combined
+                        plan = macd.source.PropertySourcePlan.combined(document, component, registry);
+                    else
+                        plan = macd.source.PropertySourcePlan.plan(document, component, registry);
+                    end
+                    resolved = macd.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, registry);
+                    incomplete = ~combined && macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document);
                     for index = 1:numel(states)
                         effective = resolved(index);
-                        id = macd.model.PropertyStateResolver.originalEffectId(component, plan.Component, effective.EffectSettingId);
+                        if incomplete && any(effective.Path == ["RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column"])
+                            states(index) = states(index).withEffective([], false, "", ...
+                                "Grid placement requires a combined emitted candidate for pending changes.", "grid-layout");
+                            continue
+                        end
+                        id = macd.model.PropertyStateResolver.originalEffectId(component, plan.Component, ...
+                            effective.EffectSettingId, document, plan.Document);
                         states(index) = states(index).withEffective(effective.EffectiveValue, effective.IsKnown, ...
                             id, effective.Reason, effective.ReasonCode);
                     end
@@ -109,6 +126,9 @@ classdef PropertyStateResolver
                         entry.Path + ": " + message, component.Id); %#ok<AGROW>
                 end
             end
+            if ~isempty(document) && ~isempty(registry)
+                states = macd.model.GridLayoutStatePolicy.resolve(states, component, document, registry);
+            end
         end
 
         function transaction = transaction(states)
@@ -134,6 +154,9 @@ classdef PropertyStateResolver
                 result (1, 1) logical
             end
             result = state.IsKnown && macd.model.PropertyStateResolver.equivalent(state.EffectiveValue, value);
+            if state.IsKnown && state.EffectPolicy == "gridTracks"
+                result = macd.model.GridLayoutStatePolicy.equivalent(state.EffectiveValue, value);
+            end
         end
 
         function result = valuesEquivalent(first, second)
@@ -149,29 +172,60 @@ classdef PropertyStateResolver
         end
     end
 
-    methods (Static, Access = private)
-        function id = originalEffectId(original, candidate, candidateId)
+    methods (Static)
+        function id = originalEffectId(original, candidate, candidateId, document, candidateDocument)
             % originalEffectId Map candidate-only offsets back to immutable original or pending identities.
             arguments (Input)
                 original (1, 1) macd.model.ComponentRecord
                 candidate (1, 1) macd.model.ComponentRecord
                 candidateId (1, 1) string
+                document (1, 1) macd.model.DocumentModel
+                candidateDocument (1, 1) macd.model.DocumentModel
             end
             arguments (Output)
                 id (1, 1) string
             end
             id = "";
+            if startsWith(candidateId, "creation:")
+                created = candidateDocument.getComponent(extractAfter(candidateId, "creation:"));
+                if ~isempty(created)
+                    for member = document.Components
+                        if document.sourceComponentName(member.Id) == created.Name || member.Name == created.Name
+                            id = "creation:" + member.Id;
+                            return
+                        end
+                    end
+                end
+            end
             effect = candidate.Settings(string({candidate.Settings.Id}) == candidateId);
-            if isempty(effect), return, end
+            if isempty(effect)
+                % A direct child may determine its parent grid's effective track getter.
+                for member = candidateDocument.Components
+                    match = member.Settings(string({member.Settings.Id}) == candidateId);
+                    if isempty(match), continue, end
+                    for before = document.Components
+                        if document.sourceComponentName(before.Id) == member.Name || before.Name == member.Name
+                            id = macd.model.PropertyStateResolver.originalEffectId(before, member, ...
+                                candidateId, document, candidateDocument);
+                            return
+                        end
+                    end
+                end
+                return
+            end
             path = effect(end).Path;
             before = original.getSettings(path);
             after = candidate.getSettings(path);
             ordinal = find(string({after.Id}) == candidateId, 1, 'last');
             if ~isempty(before) && ~isempty(ordinal)
                 id = before(min(ordinal, numel(before))).Id;
+            elseif isempty(before)
+                id = "pending:" + original.Id + ":" + path;
             end
         end
+    end
 
+    methods (Static, Access = private)
         function [states, message] = apply(states, definitions, path, value, known, id, constructor)
             % apply Resolve one supported write and its allowlisted sibling effects.
             arguments (Input)

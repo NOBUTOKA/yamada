@@ -36,7 +36,7 @@ classdef PropertyApplicationPlanner
             values = values(~removed);
         end
 
-        function [entries, positionReason] = forPreview(component, document, registry)
+        function [entries, positionReason, gridReason] = forPreview(component, document, registry)
             % forPreview Replay parsed literal writes and canonically order pending additions.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
@@ -46,6 +46,7 @@ classdef PropertyApplicationPlanner
             arguments (Output)
                 entries macd.model.PropertyEntry
                 positionReason (1, 1) string
+                gridReason (1, 1) string
             end
 
             % Native preview construction already consumes projected name-value arguments.
@@ -53,6 +54,7 @@ classdef PropertyApplicationPlanner
             if component.Origin ~= "parsed" || isempty(canonical)
                 entries = canonical;
                 [entries, positionReason] = macd.model.PositionAliasPolicy.forPreview(entries, component, document, registry);
+                [entries, gridReason] = macd.model.GridLayoutStatePolicy.forPreview(entries, component, document, registry);
                 return
             end
             entries = macd.model.PropertyEntry.empty;
@@ -82,6 +84,7 @@ classdef PropertyApplicationPlanner
                 entries(end + 1) = image;
             end
             [entries, positionReason] = macd.model.PositionAliasPolicy.forPreview(entries, component, document, registry);
+            [entries, gridReason] = macd.model.GridLayoutStatePolicy.forPreview(entries, component, document, registry);
         end
 
         function entries = forComponent(component, document, registry)

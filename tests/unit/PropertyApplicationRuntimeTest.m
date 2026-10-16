@@ -4,6 +4,29 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
     %   These tests never execute opened app source or undocumented callbacks.
 
     methods (Test)
+        function gridTracksSupportConstructorsAndOccupancyPadding(testCase)
+            % gridTracksSupportConstructorsAndOccupancyPadding Verify constructor tokens and occupied-track release.
+            [figure, ~] = testCase.environment();
+            for tokens = {{55, 'fit'}, [55 75], ["1x" "2x"]}
+                grid = uigridlayout(figure, [3 4], "RowHeight", tokens{1}, "ColumnWidth", tokens{1});
+                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(grid.RowHeight, tokens{1}));
+                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(grid.ColumnWidth, tokens{1}));
+                delete(grid);
+            end
+            for axis = ["Row", "Column"]
+                grid = uigridlayout(figure, [2 2]);
+                child = uibutton(grid);
+                child.Layout.(axis) = 4;
+                trackPath = "RowHeight";
+                if axis == "Column", trackPath = "ColumnWidth"; end
+                grid.(trackPath) = {50};
+                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(grid.(trackPath), {50, "1x", "1x", "1x"}));
+                child.Layout.(axis) = 1;
+                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(grid.(trackPath), {50}));
+                delete(grid);
+            end
+        end
+
         function positionAliasesExposeNativeSetterAccess(testCase)
             % positionAliasesExposeNativeSetterAccess Separate writable aliases, read-only getters, and constructor order.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));

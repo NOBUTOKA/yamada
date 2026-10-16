@@ -201,8 +201,8 @@ classdef DocumentModel < handle
             end
             entry = component.setProperty(path, value);
             obj.recordHistory(struct("Kind", "property", "ComponentId", componentId, ...
-                "Path", path, "HadOldValue", hadOldValue, "OldValue", oldValue, ...
-                "NewValue", value, "TargetSettingId", obj.propertySettingId(entry)));
+                "Path", path, "HadOldValue", hadOldValue, "OldValue", {oldValue}, ...
+                "NewValue", {value}, "TargetSettingId", obj.propertySettingId(entry)));
         end
 
         function entries = setPropertyBatch(obj, componentId, changes, registry)
@@ -284,12 +284,13 @@ classdef DocumentModel < handle
             end
         end
 
-        function entries = applyGridLayoutEdit(obj, gridId, changes)
+        function entries = applyGridLayoutEdit(obj, gridId, changes, registry)
             % applyGridLayoutEdit Atomically apply one grid and direct-child layout change set.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 gridId (1, 1) string
                 changes (1, :) struct
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
             arguments (Output)
                 entries macd.model.PropertyEntry
@@ -337,6 +338,34 @@ classdef DocumentModel < handle
                     historyChanges(index).OldValue = entry.LiteralValue;
                 end
                 historyChanges(index).NewValue = changes(index).Value;
+            end
+
+            % Check the combined emitted initialization before changing parsed records.
+            if any(arrayfun(@(id) obj.getComponent(id).Origin == "parsed", componentIds)) && ...
+                    strlength(obj.OriginalText) > 0
+                if isempty(registry), registry = macd.model.ComponentRegistry.createDefault(); end
+                candidate = obj.structuralCandidate();
+                for change = changes
+                    target = candidate.getComponent(string(change.ComponentId));
+                    target.setProperty(string(change.Path), change.Value);
+                end
+                [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+                if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
+                    error("macd:DocumentModel:UnsafePropertyEdit", "%s", strjoin(string({diagnostics.Message}), newline));
+                end
+                [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+                if macd.validation.ModelValidator.hasErrors(diagnostics)
+                    error("macd:DocumentModel:UnsafePropertyEdit", "%s", strjoin(string({diagnostics.Message}), newline));
+                end
+                for id = unique(componentIds, "stable")
+                    original = obj.getComponent(id);
+                    configured = parsed.getComponentByName(original.Name);
+                    if isempty(configured)
+                        error("macd:DocumentModel:UnsafePropertyEdit", "A grid-edit component was not retained.");
+                    end
+                    states = parsed.getEffectivePropertyStates(registry, configured.Id);
+                    obj.assertRequestedStates(states, changes(componentIds == id));
+                end
             end
 
             % Commit once, and restore every prior entry if any future setter fails.

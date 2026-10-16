@@ -226,6 +226,10 @@ classdef AppSourceParser
                 if ~isempty(creation)
                     component = document.getComponentByName(creation.Name);
                     if ~isempty(component)
+                        sequence = sequence + 1;
+                        component.Metadata.InitializationCreationSequence = sequence;
+                        component.Metadata.InitializationCreationCertain = initializationCertain(visit) && ...
+                            nnz(initializationOrder == index) == 1;
                         created(end + 1) = component.Id;
                         for setting = creationSettings(char(component.Id))
                             sequence = sequence + 1;

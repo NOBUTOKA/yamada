@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "c7267acb370715312c48f6654c414a049af0cb58",
-  "inputSha256": "a41c5ccda29ee96fe9fb1a6e9a35f5ada854af685cd52358dd0a17d67dbba8c5",
+  "ledgerBaselineGitCommit": "166e33fd328a14c36f0c5ee07d487ce216c742e1",
+  "inputSha256": "4afc8c871825e88fe758d96df5c8b754805273b91808e53e2ecfbcae54cc6e6b",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -153,7 +153,7 @@
     },
     {
       "path": "components/uigridlayout.json",
-      "sha256": "17dbe49e3088617f8c799c33b9b9b0f02f042a30aad2c2f86247f59e5d9fdf61"
+      "sha256": "dd23419a3f5f96bac72ca1fb3998647ddc480cd3744403c6b5e6ef0cc0cf246b"
     },
     {
       "path": "components/uihtml.json",
@@ -273,7 +273,7 @@
     },
     {
       "path": "schema.json",
-      "sha256": "54fbaf16fb3901f911786bce053367012ed576001c56ffa5a4147e63ec2ee3a9"
+      "sha256": "95153a05e7295a2a75d5b7feef46af81d1773694f8619174cef8318760c1a4de"
     }
   ],
   "validation": {

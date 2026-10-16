@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "a41c5ccda29ee96fe9fb1a6e9a35f5ada854af685cd52358dd0a17d67dbba8c5",
+  "inputSha256": "4afc8c871825e88fe758d96df5c8b754805273b91808e53e2ecfbcae54cc6e6b",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -1800,12 +1800,12 @@
       ]
     },
     {
-      "candidateId": "candidate.grid.7a39f839f916",
+      "candidateId": "candidate.grid.a8744581276b",
       "categoryId": "grid",
       "categoryDisplayName": "Grid",
       "sharingScope": "variantLocal",
       "scopeRationale": "Grid Layout-specific settings.",
-      "capabilitySha256": "7a39f839f916508aacce257cdb14a1f4fe40e0c66864c8a30350978dcfa75674",
+      "capabilitySha256": "a8744581276b824617647e607d6dda8f9d5a75280b0054bf7994ee8b371e7705",
       "propertyPaths": [
         "ColumnWidth",
         "RowHeight",
@@ -1814,8 +1814,8 @@
         "Padding"
       ],
       "propertyCapabilitySha256": [
-        "35ff511cc03689f4561c63739a35d2dc432bd00032408bd420b812a9945f03c1",
-        "ddb64694a3943c6e5f3fb6bdead4282389b9b7f44b90c3ab0da4491faaf07209",
+        "fb372e33b57bbed40e4aa4618cf5026f4e97110b00503548aac0ecad93322f58",
+        "45a7f022ce7cf7a725c05cb5cef7dbe9f95c5420134e4b7bdcb0b61241ffc865",
         "e68fbfd9c5c6d05ee488c2967b5f9d953e37afe37d099c6f3c0e8c7a2f7d69f8",
         "b5a3ac121c2c484613d65839140112c3eb0dc7498977c9da114353a3984778bb",
         "ed05ea4860075109965b0aed79b774d82ebe23e77f2f8047ad19483bf5613e9b"

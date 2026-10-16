@@ -7,6 +7,8 @@ classdef PropertyState
     properties (SetAccess = private)
         % Path - Property represented by this state.
         Path string = ""
+        % EffectPolicy - Audited application family selected by the property definition.
+        EffectPolicy string = "none"
         % LastSettingId - Last original occurrence or pending-setting identity.
         LastSettingId string = ""
         % ExplicitKind - absent, pending, literal, or expression source form.
@@ -49,6 +51,7 @@ classdef PropertyState
 
             % Seed from inert audited data without materializing an explicit property.
             obj.Path = definition.Path;
+            obj.EffectPolicy = definition.Application.EffectPolicy;
             obj.IsEditable = definition.IsEditable && definition.AuditDisposition == "editable";
             if ~obj.IsEditable, obj.ReadOnlyReason = "The catalog marks this property as read-only."; end
             if definition.Application.HasInitialValue

@@ -371,6 +371,18 @@
       ],
       "result": "passed",
       "detail": "Owned R2024a fixtures compare all shared getters with the common resolver after each public alias write and both constructor orders. Lamp keeps its coerced square while explicit input vectors remain intact. Supplemental positionAliasBoundariesMatchNative verifies 84 zero, fractional, positive, and invalid-negative cases; native comparison allows 1e-12 pixel floating roundoff."
+    },
+    {
+      "testMethod": "gridTracksSupportConstructorsAndOccupancyPadding",
+      "variants": [
+        "uigridlayout"
+      ],
+      "nameValuePaths": [
+        "RowHeight",
+        "ColumnWidth"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a grids accept cell, numeric, and string track lists as constructor arguments after positional size. Occupied tracks add 1x padding; moving the child out releases the implicit padding while retaining the requested baseline. No user source or callbacks are executed."
     }
   ],
   "setterAccess": [

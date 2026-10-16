@@ -9,7 +9,7 @@ classdef GridLayoutOverlayDataBuilder
 
     methods
         function data = build(~, document, previewHandles, previewPanel, ...
-                activeGridId, selectedComponentId, revision)
+                activeGridId, selectedComponentId, revision, registry)
             % build Return one versioned overlay payload for the active Grid Layout.
             arguments (Input)
                 ~
@@ -19,6 +19,7 @@ classdef GridLayoutOverlayDataBuilder
                 activeGridId (1, 1) string
                 selectedComponentId (1, 1) string
                 revision (1, 1) double
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
             arguments (Output)
                 data (1, 1) struct
@@ -47,9 +48,9 @@ classdef GridLayoutOverlayDataBuilder
             data.innerBounds = innerBounds;
 
             [rowValue, rowEditable, rowReason] = ...
-                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "RowHeight");
+                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "RowHeight", document, registry);
             [columnValue, columnEditable, columnReason] = ...
-                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "ColumnWidth");
+                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "ColumnWidth", document, registry);
             if strlength(rowReason) > 0 || strlength(columnReason) > 0
                 data.readOnlyReason = macd.ui.GridLayoutOverlayDataBuilder.joinMessages( ...
                     [rowReason columnReason]);
@@ -155,8 +156,21 @@ classdef GridLayoutOverlayDataBuilder
                 innerPosition(3:4)];
         end
 
-        function [value, editable, reason] = trackValue(grid, preview, path)
-            % trackValue Select a literal model value or the Safe Preview default.
+        function [value, editable, reason] = trackValue(grid, preview, path, document, registry)
+            % trackValue Prefer shared effective tracks while retaining explicit edit ownership.
+            arguments (Input)
+                grid (1, 1) macd.model.ComponentRecord
+                preview (1, 1) matlab.ui.container.GridLayout
+                path (1, 1) string
+                document (1, 1) macd.model.DocumentModel
+                registry macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                value
+                editable (1, 1) logical
+                reason (1, 1) string
+            end
+
             value = [];
             editable = grid.IsEditable;
             reason = "";
@@ -170,6 +184,17 @@ classdef GridLayoutOverlayDataBuilder
                 value = entry.LiteralValue;
             else
                 value = preview.(char(path));
+            end
+            if ~isempty(registry)
+                states = document.getEffectivePropertyStates(registry, grid.Id);
+                state = states(arrayfun(@(item) item.Definition.Path == path, states));
+                if isempty(state) || ~state.Resolution.IsKnown
+                    editable = false;
+                    reason = path + " depends on unresolved grid placement.";
+                    return
+                end
+                value = state.Resolution.EffectiveValue;
+                editable = editable && state.Resolution.IsEditable;
             end
             message = macd.model.GridTrackList.validate(value);
             if strlength(message) > 0

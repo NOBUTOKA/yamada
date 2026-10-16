@@ -1351,6 +1351,24 @@
       "effectPolicy": "squarePositionAlias",
       "kind": "inference",
       "detail": "The Lamp documentation states identical position getters and coupled width/height. Owned R2024a fixtures supplement that contract: finite nonnegative dimensions become a square using the smaller dimension, including zero and fractional sizes. Keep explicit vectors unchanged and resolve the coerced getter separately."
+    },
+    {
+      "variants": [
+        "uigridlayout"
+      ],
+      "path": "RowHeight",
+      "effectPolicy": "gridTracks",
+      "kind": "documentation",
+      "detail": "Requested track lists determine the baseline grid size. Direct-child creation and Layout.Row/Layout.Column affect stored track getters; occupied tracks cannot be removed. The finite grid policy keeps 1x occupancy padding separate from explicit source settings. Supplemental owned R2024a fixtures establish padding release and default placement order."
+    },
+    {
+      "variants": [
+        "uigridlayout"
+      ],
+      "path": "ColumnWidth",
+      "effectPolicy": "gridTracks",
+      "kind": "documentation",
+      "detail": "Requested track lists determine the baseline grid size. Direct-child creation and Layout.Row/Layout.Column affect stored track getters; occupied tracks cannot be removed. The finite grid policy keeps 1x occupancy padding separate from explicit source settings. Supplemental owned R2024a fixtures establish padding release and default placement order."
     }
   ],
   "initialValues": [
@@ -1631,6 +1649,16 @@
         "MinorGridLineWidthMode": "'auto'"
       },
       "detail": "The R2024a pages document 0.5 for line and grid widths and automatic grid-width modes. These inert seeds support conditional follower resolution without inventing source settings."
+    },
+    {
+      "variants": [
+        "uigridlayout"
+      ],
+      "values": {
+        "RowHeight": "{'1x','1x'}",
+        "ColumnWidth": "{'1x','1x'}"
+      },
+      "detail": "The public GridLayout properties document two flexible rows and columns by default. An explicit positional size or track setter overrides this seed before child placement; fit tokens remain stored tokens rather than inferred pixel measurements."
     }
   ],
   "contractCorrections": [

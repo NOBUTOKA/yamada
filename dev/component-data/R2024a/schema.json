@@ -227,7 +227,7 @@
           "items": {"type": "string", "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"}
         },
         "nameValue": {"enum": ["supported", "unsupported", "unknown"]},
-        "effectPolicy": {"enum": ["none", "itemSelection", "boundedValue", "numericValue", "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", "textValue", "componentReference", "layout"]},
+        "effectPolicy": {"enum": ["none", "itemSelection", "boundedValue", "numericValue", "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", "textValue", "componentReference", "layout", "gridTracks"]},
         "defaultLiteral": {"type": "string", "minLength": 1, "description": "Audited inert MATLAB literal, parsed without eval to seed effective-state resolution."}
       }
     },

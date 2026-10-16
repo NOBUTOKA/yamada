@@ -691,6 +691,80 @@
 - この時点のfull profileは合格した。全variantの残る監査・効果の実装と、最終状態での完了条件監査は未完了。
   ItemsDataの長さ差は引き続き対象外とする。
 
+## GridLayoutのtrackと子の配置（2026-10-16）
+
+根拠:
+
+- [GridLayout Properties（R2024a）](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html)
+  のRowHeight/ColumnWidthは、track数と子の占有状態の関係を明記している。
+  既存の子を配置したまま占有中の行・列を削ることはできない。`fit`は内容に応じたサイズ指定であり、
+  保存されるtokenと実測pixel値を区別する。
+- [uigridlayout（R2024a）](https://www.mathworks.com/help/releases/r2024a/matlab/ref/uigridlayout.html)
+  は既定の2×2、位置引数のサイズ、名前-値引数、左から右・上から下の既定配置を説明している。
+- `ProbeGridLayoutInteractions`の所有する非表示fixture 32ケースが例外なしで完了した。
+  補足観測は`testResults/grid-layout-probe.json`と同logに保存した。
+  占有に足りないtrackは`1x`で補完され、子を移すと暗黙の補完分が解除される。
+  先行する空きセルがあっても、次の子は現在の最後の占有セルの後へ配置される。
+  この補完値と穴埋めをしない挙動は、資料だけから決めずnative観測で補った。
+
+実装:
+
+- RowHeight/ColumnWidthへ`gridTracks`と資料由来の既定値を追加した。
+  パーサは名前-値引数のない生成も含め、initializer実行順の生成sequenceと確実性を記録する。
+- `GridLayoutStatePolicy`が明示したtrackの基準値と、子の生成・Layout.Row/Columnを再生する。
+  実効track・暗黙配置はsource occurrenceを作らず返し、未評価の配置は該当状態を未知にする。
+- 追加した配置が後続の暗黙配置へ与える影響も、共通の挿入plannerの候補で解決する。
+  新規子の生成は生成器と同じ最後のparsed生成spanへ配置する。
+  複数のpending設定は`PropertySourcePlan.combined`で全体候補を生成・再解析し、
+  モデル・Copy・Preview・オーバーレイが同じ結果を参照する。生成中の一時候補だけは保守的に未知とし、
+  部分的な候補や末尾へ適用した結果を最終状態として返さない。
+- Previewは既知の実効track・子の配置を投影し、Copyは暗黙配置と補完済みtrackも凍結する。
+  グリッド編集オーバーレイとtrack変更操作も同じ実効値を使い、明示listが短い場合の補完trackを表示・編集する。
+  `fit`のpixel値、未評価式、入力アプリの実行はこのpolicyの対象外。
+- 単一property編集とparsed grid batchは、生成・再解析した結果で要求値が残ることを確かめる。
+  trackのセル配列が複数のhistoryレコードに展開される既存不具合も修正し、Undo/Redoを確認する。
+
+検証状況:
+
+- native constructor契約1件が合格した。cell/numeric/stringのtrack指定と占有補正の解除を含む。
+  `testResults/grid-layout-native-contract-results.mat`へ保存した。
+- 初期接続後の関連53件が全件合格した。Failed=0、Incomplete=0、実測合計96.188秒。
+  `testResults/grid-layout-final-focused-results.mat`へ保存した。生成順序の追加確認はこの後に行う。
+- 台帳の再適用・昇格・schema検証のPowerShell 3本が合格した。
+  groupingのintrinsic parity 48/48、parent-effective parity 144/144が合格した。
+- 台帳の部分監査は42 variant、保留6 variant。policy対象propertyは317。
+  runtime部分検証は37 variant、保留11 variant。全体の完了を意味しない。
+- 追加の生成順序・挿入planner・テスト選択契約34件が全件合格した。
+  `testResults/grid-layout-source-order-results.mat`へ保存した。Failed=0、Incomplete=0、実測合計67.515秒。
+- オーバーレイを含む専用回帰23件が全件合格した。
+  `testResults/grid-layout-overlay-focused-results.mat`へ保存した。Failed=0、Incomplete=0、実測合計79.460秒。
+- 複数のpending設定と保存checkpointを加えた専用15件はFailed=0、Incomplete=0だった。
+  同じ起動の静的解析でテスト名がMATLABの63文字上限を超えたため、名前を短縮した。
+- 全体候補への接続前のarea 483件は、複数設定直後のCopy・Previewを補完するため中断した。
+  `testResults/grid-layout-area-before-combined.log`へ保存し、合格の根拠には含めない。
+- 補完後の専用16件が全件合格した。Failed=0、Incomplete=0、実測合計59.464秒。
+  `testResults/grid-layout-combined-final-results.mat`へ保存した。複数設定直後のCopy・Preview・
+  オーバーレイ・保存checkpoint・Undoを含む。
+- 次のareaで、GridLayout用の比較が同名のUITable.ColumnWidthへ誤適用される不具合を検出した。
+  `testResults/grid-layout-area-before-table-fix.log`へ保存し、修正のため中断した。
+  `PropertyState.EffectPolicy`で台帳の`gridTracks`に限定し、通常のtable schemaの比較を維持した。
+- 修正後のGridLayout・プロパティ編集・オーバーレイ38件が全件合格した。
+  Failed=0、Incomplete=0、実測合計109.335秒。`testResults/grid-layout-table-fix-results.mat`へ保存した。
+  同じColumnWidthでも台帳のpolicyが異なればtrack用の表現変換を適用しないことを確認した。
+- 最終状態の変更MATLAB 14ファイルはcheckcode警告なし。
+  計画指定の関連area 485件が全件合格した。Failed=0、Incomplete=0、実測合計1004.248秒。
+  `testResults/grid-layout-area.log`と`testResults/grid-layout-area-results.mat`へ保存した。
+- area後の仕上げとして、生成モデルのlegacy constructor引数は、他の生成後設定が存在しても
+  track初期値として読むよう条件を補完した。位置引数サイズと名前-値override、Padding代入を混在させ、
+  新規生成・再解析・保存checkpointの一致を確認する回帰を追加した。
+  この補完後の生成・保存・GridLayout回帰35件が全件合格した。
+  Failed=0、Incomplete=0、実測合計97.026秒。
+  `testResults/grid-layout-generated-final-results.mat`と同logへ保存した。
+  仕上げの2ファイルもcheckcode警告なし。前段のareaと仕上げ後の専用検証を区別して記録する。
+- 変更MATLAB 14ファイルのUTF-8・BOMなし・CRLFと、`git diff --check`を確認した。
+  ItemsとItemsDataの長さ差は引き続き対象外。
+  残るvariant・効果の監査と、最終状態での全完了条件の監査は継続する。
+
 ## 対象範囲の変更（2026-10-16）
 
 - ItemsとItemsDataの長さが異なる場合の対応は、データ編集UIの大きな変更を伴うため、
@@ -702,12 +776,17 @@
 
 ## 未完了の段階（更新）
 
-- Stage 1の残り: 既存ソース挿入plannerの具体APIと全variantの監査状況表を後続実装で確定する。
-- Stage 2の残り: 初期化範囲の保持と、後続resolver・plannerへのAPI接続を最終確認する。
-- Stage 3の残り: 新規設定の挿入plannerの診断・編集前検証・保存処理の接続を最終監査する。
-- Stage 4: 全variantの残る監査、Axes等の追加効果と共通resolverの拡充。
+- Stage 1: 共通契約と`PropertyInsertionPlanner.plan(document, component, registry)`は実装済み。
+  全variantの監査状況は`dev/component-data/R2024a/APPLICATION_POLICY_AUDIT.json`で管理する。
+  残りは保留variantと部分監査variantの未確認property・効果の監査。
+- Stage 2: 設定履歴、initializerの実行順・確実性、生成イベントをresolver・plannerへ接続済み。
+  最終監査では、未対応構文を含む所有・未知状態・原文保持の境界を再確認する。
+- Stage 3: 挿入診断・編集前候補検証・保存checkpointは実装・専用検証済み。
+  複数pending planの全体候補への接続と、未対応の効果を未知とする境界を完了条件の監査に含める。
+- Stage 4: 保留6 variant・部分監査42 variantの残る監査、Axes等の追加効果と共通resolverの拡充。
   ItemsData長の契約修正は今回の対象外。
-- Stage 5: 複製経路の回帰確認と、残る共通効果ポリシーの反映。
+- Stage 5: 独立した設定snapshot・実効copy計画・保存checkpointは実装・回帰検証済み。
+  残る共通効果ポリシーを加えるたび、複製・移動・保存への反映を確認する。
 - Stage 6: 全体テスト、公開仕様と完了条件の最終監査。
 
 この記録に部分的なテスト合格を追記しても、全体完了の扱いにはしない。

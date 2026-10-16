@@ -60,6 +60,12 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "gridTracks",
+              "defaultLiteral": "{'1x','1x'}"
             }
           }
         },
@@ -88,6 +94,12 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "gridTracks",
+              "defaultLiteral": "{'1x','1x'}"
             }
           }
         },

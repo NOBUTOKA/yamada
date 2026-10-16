@@ -217,11 +217,12 @@
       "id": "uigridlayout",
       "propertyCount": 24,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html",
       "sourceSha256": "e3d08236640df5634f2cd2df0f63973671f2c4b9fc8fe0ce58eb19f513f0b389",
       "candidateCount": 10,
-      "runtimeVerificationStatus": "pending"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 2
     },
     {
       "id": "uihtml",

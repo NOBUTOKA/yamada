@@ -90,7 +90,30 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "gridTracks",
+        "defaultLiteral": "{'1x','1x'}"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html",
+          "detail": "Requested track lists determine the baseline grid size. Direct-child creation and Layout.Row/Layout.Column affect stored track getters; occupied tracks cannot be removed. The finite grid policy keeps 1x occupancy padding separate from explicit source settings. Supplemental owned R2024a fixtures establish padding release and default placement order."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html",
+          "detail": "The public GridLayout properties document two flexible rows and columns by default. An explicit positional size or track setter overrides this seed before child placement; fit tokens remain stored tokens rather than inferred pixel measurements."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#gridTracksSupportConstructorsAndOccupancyPadding",
+          "detail": "Owned R2024a grids accept cell, numeric, and string track lists as constructor arguments after positional size. Occupied tracks add 1x padding; moving the child out releases the implicit padding while retaining the requested baseline. No user source or callbacks are executed."
+        }
+      ]
     },
     {
       "path": "RowHeight",
@@ -122,7 +145,30 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "gridTracks",
+        "defaultLiteral": "{'1x','1x'}"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html",
+          "detail": "Requested track lists determine the baseline grid size. Direct-child creation and Layout.Row/Layout.Column affect stored track getters; occupied tracks cannot be removed. The finite grid policy keeps 1x occupancy padding separate from explicit source settings. Supplemental owned R2024a fixtures establish padding release and default placement order."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html",
+          "detail": "The public GridLayout properties document two flexible rows and columns by default. An explicit positional size or track setter overrides this seed before child placement; fit tokens remain stored tokens rather than inferred pixel measurements."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#gridTracksSupportConstructorsAndOccupancyPadding",
+          "detail": "Owned R2024a grids accept cell, numeric, and string track lists as constructor arguments after positional size. Occupied tracks add 1x padding; moving the child out releases the implicit padding while retaining the requested baseline. No user source or callbacks are executed."
+        }
+      ]
     },
     {
       "path": "ColumnSpacing",
