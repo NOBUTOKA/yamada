@@ -43,6 +43,17 @@ try {
     $date = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uidatepicker.json') -Raw | ConvertFrom-Json
     $dateValue = $date.properties | Where-Object path -CEQ 'Value'
     Assert-Condition ($dateValue.application.nameValue -ceq 'unknown') 'Unverified date constructor support was asserted.'
+    $axes = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uiaxes.json') -Raw | ConvertFrom-Json
+    $ticks = $axes.properties | Where-Object path -CEQ 'XTick'
+    $mode = $axes.properties | Where-Object path -CEQ 'XTickMode'
+    Assert-Condition ($ticks.application.effectPolicy -ceq 'valueMode') 'Audited axes mode effects were lost.'
+    Assert-Condition (($mode.application.applyAfter -join ',') -ceq 'XTick') 'A final axes mode must follow its value.'
+    Assert-Condition ($mode.application.defaultLiteral -ceq "'auto'") 'The documented automatic mode seed was lost.'
+    Assert-Condition ($mode.application.nameValue -ceq 'supported') 'Verified axes constructor mode support was lost.'
+    $geographic = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/geoaxes.json') -Raw | ConvertFrom-Json
+    $direction = $geographic.properties | Where-Object path -CEQ 'TickDir'
+    Assert-Condition ($null -eq $direction.PSObject.Properties['application'] -or
+        $direction.application.effectPolicy -cne 'valueMode') 'Unresolved geographic direction behavior was generalized.'
     foreach ($style in @('circular', 'linear', 'ninetydegree', 'semicircular')) {
         $gauge = Get-Content -LiteralPath (Join-Path $releaseRoot "components/uigauge-$style.json") -Raw | ConvertFrom-Json
         $gaugeValue = $gauge.properties | Where-Object path -CEQ 'Value'

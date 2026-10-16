@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "e96e4f144d844ff3e87efdae540e4830e8e29ebc75ec96dd73fa0ed4c467da82",
+  "inputSha256": "e82973dce4cc86e1a34541b7eb69f17da5094a470fd44cd1a21e33dfaf10783b",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -513,7 +513,7 @@
       ]
     },
     {
-      "id": "exact.colorandtransparencymaps.abd6f1739aa6",
+      "id": "exact.colorandtransparencymaps.44733db12cd7",
       "kind": "exactCategory",
       "categoryId": "colorandtransparencymaps",
       "capabilities": [
@@ -580,6 +580,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -604,6 +609,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "CLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -669,6 +682,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -693,6 +711,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ALim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         }
       ],
@@ -2347,7 +2373,7 @@
       ]
     },
     {
-      "id": "exact.rulers.efb74ddb42a0",
+      "id": "exact.rulers.9e9813d3c1e2",
       "kind": "exactCategory",
       "categoryId": "rulers",
       "capabilities": [
@@ -2368,6 +2394,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -2387,6 +2418,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -2407,6 +2443,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -2431,6 +2472,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "XLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -2455,6 +2504,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "YLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -2479,6 +2536,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ZLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3100,7 +3165,7 @@
       ]
     },
     {
-      "id": "exact.ticks.d9789c09f239",
+      "id": "exact.ticks.c22f0b30644f",
       "kind": "exactCategory",
       "categoryId": "ticks",
       "capabilities": [
@@ -3121,6 +3186,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "XLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3140,6 +3212,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "YLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3159,6 +3238,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ZLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3183,6 +3269,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "XTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3207,6 +3301,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "YTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3231,6 +3333,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ZTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3253,6 +3363,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "XTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3275,6 +3392,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "YTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3297,6 +3421,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ZTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3321,6 +3452,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "XTickLabel"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3345,6 +3484,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "YTickLabel"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3369,6 +3516,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ZTickLabel"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3413,6 +3568,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3432,6 +3592,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3451,6 +3616,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3475,6 +3645,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "XTickLabelRotation"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3499,6 +3677,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "YTickLabelRotation"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3523,6 +3709,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ZTickLabelRotation"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -3612,6 +3806,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -3636,6 +3835,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "TickDir"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -4524,7 +4731,7 @@
               "FontUnits"
             ],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -4549,6 +4756,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "FontSize"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -5542,8 +5757,8 @@
             "applyAfter": [
               "FontUnits"
             ],
-            "nameValue": "unknown",
-            "effectPolicy": "none"
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -5568,6 +5783,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "FontSize"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -6380,6 +6603,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -6404,6 +6632,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "MapCenter"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -6425,6 +6661,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -6449,6 +6690,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ZoomLevel"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -7178,7 +7427,7 @@
               "FontUnits"
             ],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -7203,6 +7452,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "FontSize"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -8534,6 +8791,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -8558,6 +8820,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "RLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -8578,6 +8848,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -8602,6 +8877,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ThetaLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -8663,6 +8946,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -8687,6 +8975,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "RAxisLocation"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -8878,6 +9174,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "RLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -8902,6 +9205,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "RTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -8924,6 +9235,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "RTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -8948,6 +9266,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "RTickLabel"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -8967,6 +9293,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ThetaLim"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -8991,6 +9324,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ThetaTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -9013,6 +9354,13 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ThetaTick"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -9037,6 +9385,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "ThetaTickLabel"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -9056,6 +9412,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -9080,6 +9441,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "RTickLabelRotation"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -9174,6 +9543,11 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "supported",
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -9198,6 +9572,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "TickDir"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -9620,7 +10002,7 @@
               "FontUnits"
             ],
             "nameValue": "supported",
-            "effectPolicy": "none"
+            "effectPolicy": "valueMode"
           }
         },
         {
@@ -9645,6 +10027,14 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "FontSize"
+            ],
+            "nameValue": "supported",
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'"
           }
         },
         {
@@ -31950,127 +32340,127 @@
       "propertyOwners": [
         {
           "path": "XTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabel",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabel",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabel",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickLabelInterpreter",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelRotation",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelRotation",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelRotation",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelRotationMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelRotationMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelRotationMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XMinorTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YMinorTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZMinorTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickDir",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickDirMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickLength",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         }
       ]
@@ -32110,132 +32500,132 @@
       "propertyOwners": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         }
       ]
@@ -32500,42 +32890,42 @@
       "propertyOwners": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -33256,42 +33646,42 @@
       "propertyOwners": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34036,42 +34426,42 @@
       "propertyOwners": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34446,127 +34836,127 @@
       "propertyOwners": [
         {
           "path": "XTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabel",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabel",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabel",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickLabelInterpreter",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelRotation",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelRotation",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelRotation",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XTickLabelRotationMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YTickLabelRotationMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZTickLabelRotationMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XMinorTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YMinorTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZMinorTick",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickDir",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickDirMode",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TickLength",
-          "groupId": "exact.ticks.d9789c09f239",
+          "groupId": "exact.ticks.c22f0b30644f",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34606,132 +34996,132 @@
       "propertyOwners": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.efb74ddb42a0",
+          "groupId": "exact.rulers.9e9813d3c1e2",
           "runtimeSetAccess": "public"
         }
       ]
@@ -34996,42 +35386,42 @@
       "propertyOwners": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public"
         }
       ]

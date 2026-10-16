@@ -124,6 +124,49 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             testCase.verifyEqual(testCase.state(states, "Value").EffectiveValue, 75);
         end
 
+        function axesValuesSelectManualModeWithoutAddingExplicitSettings(testCase)
+            % axesValuesSelectManualModeWithoutAddingExplicitSettings Preserve original histories while resolving known mode side effects.
+            for id = ["axes", "uiaxes", "polaraxes", "geoaxes"]
+                [component, definitions] = testCase.fixture(id, {"FontSize", 14});
+                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                mode = testCase.state(states, "FontSizeMode");
+                testCase.verifyTrue(mode.IsKnown);
+                testCase.verifyEqual(mode.EffectiveValue, "manual");
+                testCase.verifyEqual(mode.ExplicitKind, "absent");
+                testCase.verifyEmpty(component.getSettings("FontSizeMode"));
+                testCase.verifyEqual(testCase.state(states, "FontSize").EffectiveValue, 14);
+            end
+        end
+
+        function axesConstructorAndAutomaticModesRetainExecutionOrder(testCase)
+            % axesConstructorAndAutomaticModesRetainExecutionOrder Distinguish final auto, final manual, and uncertain mode expressions.
+            [component, definitions] = testCase.fixture("uiaxes", {"XTickMode", "auto"; "XTick", [0 1]}, "nameValue");
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyEqual(testCase.state(states, "XTickMode").EffectiveValue, "manual");
+            testCase.verifyEqual(testCase.state(states, "XTick").EffectiveValue, [0 1]);
+            [component, definitions] = testCase.fixture("uiaxes", {"XTick", [0 1]; "XTickMode", "auto"}, "nameValue");
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyFalse(testCase.state(states, "XTick").IsKnown);
+            testCase.verifyEqual(testCase.state(states, "XTick").ReasonCode, "automatic");
+            location = testCase.setting("XTickMode", [], 3).toStruct().Location;
+            location.SourceExpression = "chooseMode()";
+            component.recordSetting(macd.model.PropertySetting("XTickMode", [], location));
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyFalse(testCase.state(states, "XTickMode").IsKnown);
+            testCase.verifyFalse(testCase.state(states, "XTick").IsKnown);
+            testCase.verifyEqual(testCase.state(states, "XTick").ReasonCode, "uncertain-mode");
+        end
+
+        function automaticLimitEndpointsAreNotPretendedToBeResolved(testCase)
+            % automaticLimitEndpointsAreNotPretendedToBeResolved Retain the input but mark data-dependent output as unknown.
+            [component, definitions] = testCase.fixture("uiaxes", {"XLim", [-Inf 10]});
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyEqual(testCase.state(states, "XLim").ExplicitValue, [-Inf 10]);
+            testCase.verifyFalse(testCase.state(states, "XLim").IsKnown);
+            testCase.verifyEqual(testCase.state(states, "XLim").ReasonCode, "automatic-limits");
+            testCase.verifyEqual(testCase.state(states, "XLimMode").EffectiveValue, "manual");
+        end
+
         function constructorUnitConversionsAreNotReplacedByRawNumbers(testCase)
             % constructorUnitConversionsAreNotReplacedByRawNumbers Respect source argument order for position units.
             [component, definitions] = testCase.fixture("uipanel", ...

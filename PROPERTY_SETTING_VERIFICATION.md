@@ -405,6 +405,60 @@
   ユーザー操作時だけのcallbackと区別する。これらを表示上の依存だけとして処理しない。
 - 全体のfull profileと、公開仕様・各完了条件の最終監査は未完了。
 
+## Stage 4追加: Axesの確認済み値・Mode連動（2026-10-16）
+
+根拠と範囲:
+
+- R2024aの[Axes](https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.graphics.axis.axes-properties.html)、
+  [UIAxes](https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html)、
+  [PolarAxes](https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html)、
+  [GeographicAxes](https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html)
+  の対応する値・Mode節を照合した。収集済みsource/hashと、補足の所有fixtureを分けて保持する。
+- 49組はFontSize、CLim/ALim、Cartesian/Polarの目盛・ラベル・回転・範囲、対応するTickDir、
+  PolarのRAxisLocation、GeographicのMapCenter/ZoomLevelを対象とする。
+  canonicalの値→Mode順は推論として記録し、既存ソースの並べ替えの根拠にしない。
+- `ProbeAxisModeInteractions`は非表示の所有axesだけで88組を調べ、getter、Mode、両constructor順を記録する。
+  地理データのタイルを要求しないようBasemapはnoneとし、開いた入力アプリやユーザーcallbackは実行しない。
+  49組の適用ポリシーでは、setterのmanual化・値の一致・constructor順とcanonical順を確認済み。
+
+実装済み:
+
+- 任意のMode接尾辞へ一般化せず、監査済みプロパティにだけ`valueMode`を付与する。
+  開発schema・正規化・grouping/hash・runtime・loaderへ同じ許可識別子を伝搬した。
+- 値のsetterで対応Modeを暗黙にmanualとする。autoモードまたは未評価のMode式は、
+  再計算され得る値を未知とする。Infを含む自動端点の入力も解決済み実効値として扱わない。
+  暗黙Modeを新しい明示設定やUndo履歴として追加しない。
+- 新規生成と新規名前-値追記は最終Modeを値の後へ置く。既存Modeが値より先にある場合は、
+  元位置の変更で実現できない要求を拒否し、後勝ちの代入や設定の移動で隠さない。
+- Copyはauto値の最後の明示入力とModeを保持し、計算済みgetter値の一致を主張しない。
+  保存側の再解析でも入力とModeを残し、値の未知状態を維持する。
+- 部分監査は27具体variant・219プロパティの適用メタデータへ進んだ。
+  policy reviewは27 partial / 21 pending、runtime reviewは22 partial / 26 pendingであり、全variant監査は未完了。
+
+検証:
+
+- `axisValueModesAreOrderedAndPreserved`が49組のnative setter・constructor・canonical順を検証して合格。
+  `APPLICATION_POLICY_RUNTIME_REVIEW.json`は、この実行結果から確認したpathだけへ生成時対応を付与する。
+- `AxisModeSourceTest` 5件が合格。両名前-値構文、assignment追加、元位置を維持する拒否、
+  Copy時の新IDと未知値、保存側の位置・明示入力を含む。
+- `verifyApplicationPolicyReview.ps1`と`verifyApplicationPolicy.ps1`が合格。
+  未確認の地理TickDirへの一般化を拒否し、依存辺・Mode seed・constructor根拠・再適用・昇格の再現性を確認した。
+- groupingのintrinsic parityは48/48、parent-effective parityは144/144で合格。
+- 変更MATLABファイル7件のcheckcodeは警告なし。UTF-8 BOMなし・CRLFと`git diff --check`も確認した。
+- 計画指定のparser/catalog/model/generation/preview/inspector/lifecycleの関連area 436件が全件合格。
+  Failed=0、Incomplete=0、実測合計841.323秒。
+  `testResults/axis-mode-area.log`と`testResults/axis-mode-area-results.mat`へ記録した。
+  この結果は、未監査ポリシー、full profile、計画全体の完了根拠にはしない。
+
+残る監査対象:
+
+- 色Modeは表示色の決定と保存getterの変更を区別する。対応する色・alphaのModeを一括でvalueModeにしない。
+- manualなPlotBoxAspectRatioも、手動limitsとDataAspectRatioを併用するとgetterが補正される。
+  カメラ・縦横比、LineWidth→GridLineWidth→MinorGridLineWidthのmode依存追従は別途実装する。
+- GeographicAxesのTickDirは、資料の既定Mode manualと所有Basemap=none fixtureのautoが一致せず、
+  out指定直後のgetterもinとなるため保留した。他variantのTickDir規則を流用しない。
+- 残る台帳監査・コンポーネント間効果・full profile・計画全体の完了監査は未完了。
+
 ## 対象範囲の変更（2026-10-16）
 
 - ItemsとItemsDataの長さが異なる場合の対応は、データ編集UIの大きな変更を伴うため、

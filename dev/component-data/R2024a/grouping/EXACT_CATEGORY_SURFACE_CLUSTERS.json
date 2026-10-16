@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "3ad4829b166e4b25f2a3e830966f65e1a8a99aa408b7a36f621ccfc8cf3a6db4",
+  "inputSha256": "76a7074e74bb4e56d6ff65d98bd82f246fcbfc1368cb4cb3a9f68cd4411ceb6e",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -1075,12 +1075,12 @@
       ]
     },
     {
-      "candidateId": "candidate.colorandtransparencymaps.abd6f1739aa6",
+      "candidateId": "candidate.colorandtransparencymaps.44733db12cd7",
       "categoryId": "colorandtransparencymaps",
       "categoryDisplayName": "Color and Transparency Maps",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family map configuration.",
-      "capabilitySha256": "abd6f1739aa6bcd5a37b9ebdaf636bcd072fc2613d1313521575318582abb885",
+      "capabilitySha256": "44733db12cd74edb0a8bbb14da15b778d48e2ce93ad410cf31e5e03d690ebf0f",
       "propertyPaths": [
         "Colormap",
         "ColorScale",
@@ -1094,12 +1094,12 @@
       "propertyCapabilitySha256": [
         "17f9d4e0071e0702b6dbd3d8119263810004a9dacbecabaf03d16821161b1b64",
         "afc88f9bd99da19ec4eb91b125ddc6a4bf86ae7f98c48ae96a2281236e475e0a",
-        "e4667187b76b8cfccf396ffcebd720149c5fdfc1a47950a14531c75998e96e52",
-        "c47bd7b720830f8b62203bdbdcb3bc5e008ab13ec5c2078cad08e971341a6a6b",
+        "a535b20df2919a7fdf3d7d1f528a75ccb0115494aaaf5e9292a4ba5bcd885cda",
+        "702c144edfc22822b489cb746650828267e8a07c0a2ea8a36e7daae3369c6d67",
         "f4a94e193c42f2e05661c2781a0e5f5e4cd8e80598a0a9ae17b424cf5985111c",
         "b281a37c3fd5fd7839d2f81544023a87990786eb9d22ecf6a0c48f9decd0cbf5",
-        "d5f554ad88592f6d5705de0f34af7b099980d3133f83128a45ad534cf66e0acd",
-        "63857dc0d8e6e36fac421aa4ce9b97b5e27676d6c4796432e16b4711fb9ab7e5"
+        "d48a8bf32df744f3e59a0ff0922dfbb08ca223c3f2db264d96d35609ebbbe5f1",
+        "bcac12cd1da157e39b1bbe88711888eae6281731d58235e7e18685774c8bc1a0"
       ],
       "memberVariantIds": [
         "axes",
@@ -1451,6 +1451,47 @@
       ]
     },
     {
+      "candidateId": "candidate.font.21d7fc4d2053",
+      "categoryId": "font",
+      "categoryDisplayName": "Font",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Font capabilities vary substantially by component family.",
+      "capabilitySha256": "21d7fc4d20536520c24fd46b1d8f436717e6453a62c9baa1f51c41e6ddc6b39a",
+      "propertyPaths": [
+        "FontName",
+        "FontSize",
+        "FontSizeMode",
+        "FontWeight",
+        "FontAngle",
+        "LabelFontSizeMultiplier",
+        "TitleFontSizeMultiplier",
+        "TitleFontWeight",
+        "SubtitleFontWeight",
+        "FontUnits",
+        "FontSmoothing"
+      ],
+      "propertyCapabilitySha256": [
+        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
+        "19c08c40672b6ceac76ee29b71175ee2720bd027be7dcf1c28f74299812d376e",
+        "e3ac5150a66d14383e1bb1b52aeacb90c0cf01776707855e23750cd38dc059f4",
+        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
+        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
+        "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
+        "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
+        "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
+        "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
+        "e88dcf626a12849c9c031a84ca933f92798f0f005327e905960964c2a283556d",
+        "788f1eb3a9e3c0321ed0eace5f1930e9f3335c348f2fbc9b37aee5343493029a"
+      ],
+      "memberVariantIds": [
+        "uiaxes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
       "candidateId": "candidate.font.3a0afe7fc975",
       "categoryId": "font",
       "categoryDisplayName": "Font",
@@ -1488,94 +1529,12 @@
       ]
     },
     {
-      "candidateId": "candidate.font.7b054967e14e",
+      "candidateId": "candidate.font.69bc2bd3d3ce",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "7b054967e14e076b9a7dfc44f4dfa6aa908b0eb4835cb867b44cfd999417f2e0",
-      "propertyPaths": [
-        "FontName",
-        "FontSize",
-        "FontSizeMode",
-        "FontWeight",
-        "FontAngle",
-        "LabelFontSizeMultiplier",
-        "TitleFontSizeMultiplier",
-        "TitleFontWeight",
-        "SubtitleFontWeight",
-        "FontUnits",
-        "FontSmoothing"
-      ],
-      "propertyCapabilitySha256": [
-        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "5ed5233045b4e4dc6068d141bcc68a852a8b9b06f6d18708048c3884ff2df40c",
-        "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
-        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
-        "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
-        "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
-        "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
-        "e88dcf626a12849c9c031a84ca933f92798f0f005327e905960964c2a283556d",
-        "788f1eb3a9e3c0321ed0eace5f1930e9f3335c348f2fbc9b37aee5343493029a"
-      ],
-      "memberVariantIds": [
-        "uiaxes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
-      "candidateId": "candidate.font.82d1638d0276",
-      "categoryId": "font",
-      "categoryDisplayName": "Font",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "82d1638d0276654bce7fb7b88569b833ca58128451bd30ae02438d0c87a10133",
-      "propertyPaths": [
-        "FontName",
-        "FontWeight",
-        "FontSize",
-        "FontSizeMode",
-        "FontAngle",
-        "LabelFontSizeMultiplier",
-        "TitleFontSizeMultiplier",
-        "TitleFontWeight",
-        "SubtitleFontWeight",
-        "FontUnits",
-        "FontSmoothing"
-      ],
-      "propertyCapabilitySha256": [
-        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
-        "5ed5233045b4e4dc6068d141bcc68a852a8b9b06f6d18708048c3884ff2df40c",
-        "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
-        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
-        "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
-        "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
-        "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
-        "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
-        "84b625c1285c094cae1627fcc8313b083fd81d1c81fb561ab70dc5c27a25c352",
-        "03b58a10bd7574021051e77420402fdbe97f1f248371a5e90958532decf14d01"
-      ],
-      "memberVariantIds": [
-        "axes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
-      "candidateId": "candidate.font.a7517dadf0e7",
-      "categoryId": "font",
-      "categoryDisplayName": "Font",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "a7517dadf0e7b78fc8eef3e015e8b9e4a6c964428284ff36d93702f937ab5782",
+      "capabilitySha256": "69bc2bd3d3cee8b3ce1580bbbcb9a7786e385af389f5f943d10096ebcbc15222",
       "propertyPaths": [
         "FontName",
         "FontSize",
@@ -1590,8 +1549,8 @@
       ],
       "propertyCapabilitySha256": [
         "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "5ed5233045b4e4dc6068d141bcc68a852a8b9b06f6d18708048c3884ff2df40c",
-        "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
+        "19c08c40672b6ceac76ee29b71175ee2720bd027be7dcf1c28f74299812d376e",
+        "e3ac5150a66d14383e1bb1b52aeacb90c0cf01776707855e23750cd38dc059f4",
         "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
         "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
         "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
@@ -1609,12 +1568,53 @@
       ]
     },
     {
-      "candidateId": "candidate.font.ba6c3c5bc19b",
+      "candidateId": "candidate.font.704f432c0dc2",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "ba6c3c5bc19b1a1b3e6155672c1d3489baa07c9702d147137e9266912e7c41b1",
+      "capabilitySha256": "704f432c0dc288665c88a6fd8ccac456105e506b268361ca15c98fbfe0947c0a",
+      "propertyPaths": [
+        "FontName",
+        "FontWeight",
+        "FontSize",
+        "FontSizeMode",
+        "FontAngle",
+        "LabelFontSizeMultiplier",
+        "TitleFontSizeMultiplier",
+        "TitleFontWeight",
+        "SubtitleFontWeight",
+        "FontUnits",
+        "FontSmoothing"
+      ],
+      "propertyCapabilitySha256": [
+        "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
+        "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
+        "19c08c40672b6ceac76ee29b71175ee2720bd027be7dcf1c28f74299812d376e",
+        "e3ac5150a66d14383e1bb1b52aeacb90c0cf01776707855e23750cd38dc059f4",
+        "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
+        "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
+        "969add090fd9f1ed05b6f2d5e7bba7968ce194f7965a346ec7ff6d40e00cec9d",
+        "d33a62f4ca467b15d1601fe502a7565b67cab52048efcbac4546fd79ec455cc5",
+        "a290aea512782b32ec0e31f25ae3b98dd8b1e8d10574e21b374628eab8269455",
+        "84b625c1285c094cae1627fcc8313b083fd81d1c81fb561ab70dc5c27a25c352",
+        "03b58a10bd7574021051e77420402fdbe97f1f248371a5e90958532decf14d01"
+      ],
+      "memberVariantIds": [
+        "axes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
+      ]
+    },
+    {
+      "candidateId": "candidate.font.9b7a023abec1",
+      "categoryId": "font",
+      "categoryDisplayName": "Font",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Font capabilities vary substantially by component family.",
+      "capabilitySha256": "9b7a023abec13936ce5a6d2ac3c6136f4180541dc764fae258603199ee1f197f",
       "propertyPaths": [
         "FontName",
         "FontSize",
@@ -1629,8 +1629,8 @@
       ],
       "propertyCapabilitySha256": [
         "79ca2edb4ca0c2726e1568de3bbccc81a15e1533dddc909f9e476cc56f82166d",
-        "d38701fc9cd07085ba0a81e105413aae55b3734edd576ca6f2f0f82f108aa3fa",
-        "3da7c81c8ef11a689c28aec0c12596e14cb55f6750709ae223bf1c41af66ae21",
+        "19c08c40672b6ceac76ee29b71175ee2720bd027be7dcf1c28f74299812d376e",
+        "e3ac5150a66d14383e1bb1b52aeacb90c0cf01776707855e23750cd38dc059f4",
         "d758eb8dcbe7537c0dccbe57013f0435114a34fb2c05b5c05c8edb48d90d777c",
         "067077360d51c5fa9833989e38948b118a2ee9f9db493676fdb7ff9f9ea02311",
         "3f2ec964f1ae8c1c705d7c48ed520a6a4e40b71514dbb2f962c43afaec5615ae",
@@ -3054,12 +3054,12 @@
       ]
     },
     {
-      "candidateId": "candidate.maps.f17b9d750211",
+      "candidateId": "candidate.maps.37763d085609",
       "categoryId": "maps",
       "categoryDisplayName": "Maps",
       "sharingScope": "variantLocal",
       "scopeRationale": "Geographic axes-specific map settings.",
-      "capabilitySha256": "f17b9d750211651dc8ad9e6d6f5d27020addb05d382c94df2280065cae63eb58",
+      "capabilitySha256": "37763d085609a40860f8cff56be30f88ded18b094b34f04b97072029de5161c7",
       "propertyPaths": [
         "Basemap",
         "LatitudeLimits",
@@ -3074,10 +3074,10 @@
         "dee072c02a9100714958c4dfced0135be21783eb6c879e62b86e9ca4bd6ae5dc",
         "27ec1ee5edd95202874bf3bb010fb51bb76c7a89fbf3bdcee59b4cd3e29f128d",
         "f4cfbcb6e0f0d560adfab89bd12bc646c10a4b0418056ef95246282898878c1b",
-        "519663e87b838249d01df46bdff278190a329828e878843d098d5d3261326639",
-        "d2872f7b1a6c32337a177fdd7f4f5a79fd2ba7b51d0a3327e24853642b7d0e0e",
-        "984f81596ec04349b322b3466633631c58e3cc1520845f50042901caf27ebdfe",
-        "40b6a58e0947effc33e00c12bb780c86d43bb4e73d53005a563198f5e6b24d64",
+        "7cdadda423d9cb54217d45daf26675d535937a401a19baf9f28301a699ad9195",
+        "bf1a45e721fa5ea037177592acb578226ab93c97a46e532c9978348ec10607da",
+        "fccdbf6f21ca59eab45cb4060488dc907ff562c09de6b939d7d9782bd48bf8de",
+        "7d401d79313ec6cfd4eddd276a04008e0398b155773a6c9ef9e03705ceec4882",
         "ac873b8f62172f0cadd05c5ab3752a6df5580248ee71eb131615197af7e021a1"
       ],
       "memberVariantIds": [
@@ -4024,12 +4024,12 @@
       ]
     },
     {
-      "candidateId": "candidate.rulers.8aed27fe501c",
+      "candidateId": "candidate.rulers.76aad3726f10",
       "categoryId": "rulers",
       "categoryDisplayName": "Rulers",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family ruler settings.",
-      "capabilitySha256": "8aed27fe501cd78a3bb4247d1ddac55e7455e66af75838b06ad8c5a1a71463f7",
+      "capabilitySha256": "76aad3726f100566c535ee9ba632b2c05925218e7271899198e5b090a3257da4",
       "propertyPaths": [
         "RLim",
         "RLimMode",
@@ -4048,14 +4048,14 @@
         "ThetaAxisUnits"
       ],
       "propertyCapabilitySha256": [
-        "977e1fa05f14fd18d169de72a88f44119c7e772907619b532baa529f75084d87",
-        "90c8511f30c59f530d8987ef5824f474e74b4327b37b608baa7ce565a3983d05",
-        "01913373562dd66ecdb17a727c1e64ad36a983f349578b83ea284f992a8d6a64",
-        "af1f931ae848ecfdc67fde25e754871daf2525586e400c3baad9bae680f9a0a1",
+        "a4de00b71367d34b46a664bc912248054ff24a9f46b7b3eccebc2d3f3016486e",
+        "6f493080eb2ae09b4b86abd32b91900a4a5a5736e177c35e10a20da0d0280004",
+        "a0495746087a1cffd7ab9adcadb4481cbd2fe334c454ff049f395e1870f4b145",
+        "7529fa8d8ee79656b0cba8a6c3f50ad950358e43ae4552bdd21196255f289472",
         "00c66dcd940abc111b016074777a4be21080fb4a3ec4613da820965539db7c4a",
         "6fc41d05ecb4f063953e2016a89a3e8af9aee0c76e12fc6082287a82dc5e9707",
-        "46c8ec00315459bb1106774dfaa6073a1f949dc4d50d9ce2de146b4bbd2c8570",
-        "256f1297a6ca3f052bce965f31551a33688f5657cd71e6647153d834a60db0a5",
+        "615bbaa9f00405bdef44792421cca95685a829fed009f7fa0e69fb68ad4f300d",
+        "375095290dd658f8bdde88312360676cf797bf851466f04d1082ac1b0f792981",
         "5878671e51f695af9ed6af22bd432b5c6991228ff27b6c9cbd12de2aa723f809",
         "8036d1a2b5c6fd400ec785572ebfde339fcdf90cddf04c9cee3ea2c1dbbe4446",
         "b996fb7bdd3c4be5193ba51f399c155ffaaf0fc436858d382766ad18330742bf",
@@ -4098,12 +4098,12 @@
       ]
     },
     {
-      "candidateId": "candidate.rulers.efb74ddb42a0",
+      "candidateId": "candidate.rulers.9e9813d3c1e2",
       "categoryId": "rulers",
       "categoryDisplayName": "Rulers",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family ruler settings.",
-      "capabilitySha256": "efb74ddb42a0483941e24a9d0a52e1fca61a822538d7afad70a043f05a3a40fc",
+      "capabilitySha256": "9e9813d3c1e2049861b300bfbf8a1027db45b8faf0cc81f982781fa4ee51af8f",
       "propertyPaths": [
         "XLim",
         "YLim",
@@ -4133,12 +4133,12 @@
         "ZScale"
       ],
       "propertyCapabilitySha256": [
-        "67f72737246e23ff0080f40bb1451cee01e054bc137166ce9dc1472818c336e5",
-        "86d63a39c47ed3c550580562496cb0a66677d81c0625af945aa6845ddeb1572e",
-        "3f34e35f5e1c80e48d52c522c18e98452b6d8978d0609d98f8564fc950711f71",
-        "3fba56c54fc57425a0f69c9f9572b6bee60bab87b8b3f62a2f393b4ec21f6661",
-        "fdfcf1ab78e7ac3a405a0140dc767dee258618256d35b14bf045ffbaa43c0967",
-        "2d85c75dc20bd44050f0100e0122d7d4b06a7e63b5b94b0f43fa06815d566f8a",
+        "f27747b81bb94272d944854c7ce98ce880f61d2fb9ba7a0f9b21536c4286fcd2",
+        "1e9a009a0be84e56d220243a92a80ab06331edf7856db7da2afcaf31bd97d8be",
+        "8c8ec0a82e79c1e7bb6f2223d7b949a6bc1c23f197332086805d3e9cc05e8a7e",
+        "dba190224dc7e5f4861275f330e37b386b0badd9f122f7289734285e95da679e",
+        "25c502e8e522fcb06e5756779c8c4996feb732b2d6e6ba92d133d4ab27aaa5d1",
+        "cf28e91f97ab0536aefeffb4e00ff30288fca5a368015337ccff4a4f3e719101",
         "43157c3ec541972334325d79aace1b1d1511791483ee32a6e536b83dc3e8d993",
         "db6fbb079a444fa57d1bbc8651c8ad5f6c5d3e408c2359f2df4bce7ead5a998b",
         "d7e1ac42c61adad8ea3730501f93ca10671e91ad52a9ebfbcc6d7c5fed21fb29",
@@ -4451,12 +4451,12 @@
       ]
     },
     {
-      "candidateId": "candidate.ticks.d9789c09f239",
+      "candidateId": "candidate.ticks.c22f0b30644f",
       "categoryId": "ticks",
       "categoryDisplayName": "Ticks",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
-      "capabilitySha256": "d9789c09f23995a6871a11d1c30a08ce92fba6e191b08640ff0fe2930fbdb836",
+      "capabilitySha256": "c22f0b30644f152e022389a09fca6b0393f5971afab6660390be94fe7ba1f41f",
       "propertyPaths": [
         "XTick",
         "YTick",
@@ -4485,30 +4485,30 @@
         "TickLength"
       ],
       "propertyCapabilitySha256": [
-        "8fd304bcf39ad0ff2e8162401f07eb4acaf809dab4d031096f13b4af77df7002",
-        "d33c7e48424e418ea82c32ffeabe8e763c8aa7bbc261b830e0615a32eeaa6912",
-        "71645e01859dc24fbbef6e66d49f5908500f1f86ebd479c54dcd63c78934bfac",
-        "c7cc89643111723a14d9cdaa307aaa892013c5cea64314719c6acff8e47616b5",
-        "bb9f5c6022fd87407c4d5868555154fc112919ea4d1b744e927e2911c3feb5fc",
-        "d68f85bd78149dbef54dfdcb9e3ab90a8cad9e421530b1b76f0e9ed38bb024d2",
-        "3ed8762904f9badbfd5fb1c193307b29f33c84bdd39bbb7f7a456c6b0e4e49ab",
-        "d6e6326a5b93442ef1da7ff805309d11af90e2ac35e9372b34449ebccb1eaee0",
-        "5d61be0666fe06a68b53e1462e7519699db89ef74e876b8af681d179da36bd8e",
-        "821bb992ddd253e720c1788a0ecf65aa0725de7bd01e1df9078152c32b72616d",
-        "5706e0c2bf39044c70b15391e73512f974219411d8b795209bc7d577e83ab186",
-        "e5d1c718b95057e91b5debf625001c266b8a6e0a2dbca72fe518d14d3fc33be0",
+        "f6ba3bc35faa1912f887cc8acc6c3f25c4b36b6fee4785cc3237f8e0f3045f6a",
+        "acc8e26f30dd6874e93f9ec825dd82e6bc0a4e22d7729b1071d9a84489369874",
+        "7b21cb2dbc0e235615769173f963c07a33ac75e928a39f766c2856b5dafb3751",
+        "f52a7bdf226996dce7d0e5e3ff418a32a9089920491c034cb6982bef5e52476d",
+        "b5f5af8a1b87d81b11a4e0929afe80faec5f9067392b79437dc393f85e28962d",
+        "9d29982d1763b22aa38f0b2ffc6da67f06be6187ada0365f91924b57c8249a69",
+        "c96e6705d30715167886ea4ea36b5fccf1e20d933e669f04a2a906433e8c73b4",
+        "5650c575f9ea87b34959e306d1550f2433b966721e31fc46283ef47d0935dded",
+        "14cc6c5aa4213e9a2fc931130de6b50be894bdde2d90fe59283e31c119f8bddb",
+        "fb0220c3c7de5ed826f7227a5b1fe751492260fe4430243b6774697395d7c53f",
+        "94bc0db5051689b30fc0741b393aabcbdb7093d77ae23cedd578901b0fdac740",
+        "4400245555b083a2f2936d5b9960013d8402e61cc1c37354d3f18c465bd5a7b7",
         "120e7716c7c207291479e7f39ec2ca8fde954e10dab7dd65afa7310af81f758d",
-        "06c8ce1c487db5dc104f384e89fcb5a4c7b292a48d75e84ebe665fa6c32624ad",
-        "ec2b3353cda2791f13925f8cc2383779fa660d5e72d2a48e5b65dc4a1891a4d2",
-        "2a6f3b06c09acf338302e6b6c56deae1b4be365fbb970c6aee3a6f2ea347af35",
-        "2521e20103894b0a77954e30e2dff2084a06407537092a5802d4c830636e838d",
-        "7155c0273ee2e0f844f295f6e6cda85446858b62287989253b39e4741383f5b9",
-        "53381c581d8689fcd4e2415cf3e17a0f850633155bce12805cae50f31aa15301",
+        "113a9a193d7aab43a6595d0165f16652d7e0668bf1ff62c4de91ea55b93a2d55",
+        "e97272e787fc87f7d1a5352800becc3f7ca716b26d54d35f67886278ce913053",
+        "8c4d5ae46eb0084c81ffe6f648a50f1a201b3507713dbef16fa0136349c799da",
+        "1bb098f7c6260a4ca44db336c7fbf383f62bff9e8b13d5ef8b39be3967d4b7da",
+        "7e1a9597ed69c1fc287184fef0a9f12ac0b74ab2b398c017b545ecd37c8c63a8",
+        "a3e486341678f5a6e7b9d22d1e2b270207e818deb95ee27b192a66d380663f57",
         "18f61e2a682b922d841d57293f1cf19135269e19450f888cf8195a63f8ea8822",
         "316c36612cda941aeeafa79f1183ef62421f2086df5d6f60de57876f2623a2e3",
         "427158dbcdbc9c285d2b5ff8207c06effd984a4415c33e4444b34f988017b10c",
-        "d63b7a96ffbec06393f27b1ef8a2f957740970caf93c5aab42345dd7b863b9ae",
-        "7f77727d072a003937fbe310978f43a02b4f91e35e34b7b6ef2630c6c491609e",
+        "041007c1b07ced5cd81c427e4cda09e302df7cfb223053ddce0bfbbf59c9c0de",
+        "b9bf8ae005f513ef6b532bca12c398bb3a9a202225ebceabf2aa5e2f00ed4485",
         "abcfe96a4a2a342c35cd774104fab677395d6942ab8395bc473183eb4d38ce1f"
       ],
       "memberVariantIds": [
@@ -4516,6 +4516,59 @@
         "uiaxes"
       ],
       "reuseCount": 2,
+      "documentedCategoryOrders": [
+        2
+      ]
+    },
+    {
+      "candidateId": "candidate.ticks.c6aef770cc4a",
+      "categoryId": "ticks",
+      "categoryDisplayName": "Ticks",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
+      "capabilitySha256": "c6aef770cc4a9de403ff7eb9de6b47bcb8fd2a68810b3e5865caa27e90c1b645",
+      "propertyPaths": [
+        "RTick",
+        "RTickMode",
+        "RTickLabel",
+        "RTickLabelMode",
+        "ThetaTick",
+        "ThetaTickMode",
+        "ThetaTickLabel",
+        "ThetaTickLabelMode",
+        "RTickLabelRotation",
+        "RTickLabelRotationMode",
+        "RMinorTick",
+        "ThetaMinorTick",
+        "ThetaZeroLocation",
+        "TickDir",
+        "TickDirMode",
+        "TickLabelInterpreter",
+        "TickLength"
+      ],
+      "propertyCapabilitySha256": [
+        "b8cbce404491607085ba5112622cd02f518b84adbcf7b5f6c0227c0a6911ae8c",
+        "b696686fefbe1ca7ad41395a998fa901e0475447cf4fb9b0921259728e189320",
+        "cb2865837e66d4f22db0e0c84f6a52a481878fb6c22ffe63e5108b2f08c4e221",
+        "0c8f0e4dcd5447537c6a65ec863cf65e0be86fbf14abc3fbea595dd960a7d095",
+        "a18f8c64240e4073ae9a9368be78648c108a184a21f888d4f7e5f002b16c402e",
+        "1d80cffcfb11add26855014e6b0a8476fd29d4aeb026ad8f9b98afb57fa6b32c",
+        "7125bc065180f6e7957510eb9e8e12949c1d4afc3f996758f327383e4c11d267",
+        "7c88ee594acbee310296793c06fb4abf41a5705b597e5f13ad35368151ddacef",
+        "3b9702617bd89c35c086541703e7327382e925b818e819030b937d0570b8de1f",
+        "33057c84e260b7ac07602a5143fa5d1c0ab083af26ba8bcfb2b19aacce54718e",
+        "f75636101d7fe49e5c8d50593dced7aa46a2a84690210b73186a851876030430",
+        "3c0b236667e0dfb959a783ad3c9a9a26b1715256c14576f4bba30095d7d8f261",
+        "849bc354a68e17cbf2e176ee2138fdda8f94b666f2cc1fac7ab71dfddddf01c2",
+        "041007c1b07ced5cd81c427e4cda09e302df7cfb223053ddce0bfbbf59c9c0de",
+        "b9bf8ae005f513ef6b532bca12c398bb3a9a202225ebceabf2aa5e2f00ed4485",
+        "120e7716c7c207291479e7f39ec2ca8fde954e10dab7dd65afa7310af81f758d",
+        "abcfe96a4a2a342c35cd774104fab677395d6942ab8395bc473183eb4d38ce1f"
+      ],
+      "memberVariantIds": [
+        "polaraxes"
+      ],
+      "reuseCount": 1,
       "documentedCategoryOrders": [
         2
       ]
@@ -4553,59 +4606,6 @@
         "uislider-slider"
       ],
       "reuseCount": 7,
-      "documentedCategoryOrders": [
-        2
-      ]
-    },
-    {
-      "candidateId": "candidate.ticks.f472428559da",
-      "categoryId": "ticks",
-      "categoryDisplayName": "Ticks",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Axes and instrumentation tick surfaces differ by family.",
-      "capabilitySha256": "f472428559daca44c0e3c491f428f36dbdc7d368b18fec932fb7f3ebf1631297",
-      "propertyPaths": [
-        "RTick",
-        "RTickMode",
-        "RTickLabel",
-        "RTickLabelMode",
-        "ThetaTick",
-        "ThetaTickMode",
-        "ThetaTickLabel",
-        "ThetaTickLabelMode",
-        "RTickLabelRotation",
-        "RTickLabelRotationMode",
-        "RMinorTick",
-        "ThetaMinorTick",
-        "ThetaZeroLocation",
-        "TickDir",
-        "TickDirMode",
-        "TickLabelInterpreter",
-        "TickLength"
-      ],
-      "propertyCapabilitySha256": [
-        "1f61e2b7839ce3baf175fcbed5f4ea5aea6309e822848d2f5f616d5825fdfebf",
-        "86ad56bdf18b99b0ccb771774b215ea011c334f257da99fadec0cad564e2f985",
-        "590d07ddcb9bbfc1af9e8b9be8037dc396e56bf3d57042af7c3fa389d65abe7f",
-        "47789a588560b5c8de7b395a40c1a59932de19c85c36a24fabecc2f5f9ae2b0a",
-        "08fd69784d4edca70a0e54dedf6cbe559aba6f603b91ffda4bb61d7f713ffba3",
-        "4b44adffcd427c89c4da6fd2be6fe4fc16e7f2c507efd625977879c135b6d614",
-        "1425a0b8179eb69ad3db5a8af96b16a0b523c0e34cb429a13070983b50cb2656",
-        "93f726fbe6b4f98b02dd2910c3f29c32e9264014169ccbb43c984275d4cd158a",
-        "8767d39edf6cc57a27a754e576b9c90b3ae3067555e827a63bbbb995feefa856",
-        "ed10bf2127f0e34a572bd748b8786f7a6ab661de0e1f1fb2558211c00a92b0cd",
-        "f75636101d7fe49e5c8d50593dced7aa46a2a84690210b73186a851876030430",
-        "3c0b236667e0dfb959a783ad3c9a9a26b1715256c14576f4bba30095d7d8f261",
-        "849bc354a68e17cbf2e176ee2138fdda8f94b666f2cc1fac7ab71dfddddf01c2",
-        "d63b7a96ffbec06393f27b1ef8a2f957740970caf93c5aab42345dd7b863b9ae",
-        "7f77727d072a003937fbe310978f43a02b4f91e35e34b7b6ef2630c6c491609e",
-        "120e7716c7c207291479e7f39ec2ca8fde954e10dab7dd65afa7310af81f758d",
-        "abcfe96a4a2a342c35cd774104fab677395d6942ab8395bc473183eb4d38ce1f"
-      ],
-      "memberVariantIds": [
-        "polaraxes"
-      ],
-      "reuseCount": 1,
       "documentedCategoryOrders": [
         2
       ]

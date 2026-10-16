@@ -146,18 +146,18 @@
           "FontUnits"
         ],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "valueMode"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
-          "detail": "FontSize is interpreted in FontUnits. Establish the unit before assigning an explicit font size."
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
         },
         {
           "kind": "runtime",
-          "source": "tests/unit/PropertyApplicationRuntimeTest.m#unitsAreEstablishedBeforeCoordinatesAndFontSize",
-          "detail": "Position [1 1 8 6] in centimeters and FontSize 14 in points survive both canonical setters and a single constructor."
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
       ]
     },
@@ -191,7 +191,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "FontSize"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "FontWeight",
@@ -456,7 +481,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "RLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RTickMode",
@@ -488,7 +532,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "RTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RTickLabel",
@@ -520,7 +589,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "RTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RTickLabelMode",
@@ -552,7 +640,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "RTickLabel"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ThetaTick",
@@ -577,7 +690,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ThetaLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ThetaTickMode",
@@ -609,7 +741,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ThetaTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ThetaTickLabel",
@@ -641,7 +798,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ThetaTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ThetaTickLabelMode",
@@ -673,7 +849,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ThetaTickLabel"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RTickLabelRotation",
@@ -700,7 +901,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RTickLabelRotationMode",
@@ -732,7 +950,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "RTickLabelRotation"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RMinorTick",
@@ -862,7 +1105,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "TickDirMode",
@@ -894,7 +1154,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "TickDir"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "TickLabelInterpreter",
@@ -984,7 +1269,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RLimMode",
@@ -1016,6 +1318,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "RLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -1044,7 +1371,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ThetaLimMode",
@@ -1076,6 +1420,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "ThetaLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -1149,7 +1518,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RAxisLocationMode",
@@ -1181,7 +1567,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "RAxisLocation"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "RColor",
@@ -2322,7 +2733,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "CLimMode",
@@ -2354,7 +2782,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "CLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "Alphamap",
@@ -2441,7 +2894,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ALimMode",
@@ -2473,7 +2943,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ALim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "Color",

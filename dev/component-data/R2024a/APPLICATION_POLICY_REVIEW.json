@@ -6,250 +6,1190 @@
   "scope": "Reviewed initialization rules only. Absence does not assert independence or constructor support. applyAfter describes canonical new initialization, not permission to reorder preserved input.",
   "rules": [
     {
-      "variants": ["uieditfield-text"],
+      "variants": [
+        "uieditfield-text"
+      ],
       "path": "Value",
-      "applyAfter": ["CharacterLimits"],
+      "applyAfter": [
+        "CharacterLimits"
+      ],
       "effectPolicy": "textValue",
       "kind": "inference",
       "detail": "Establish character limits before assigning nonempty text. Empty text is permitted even when below the lower character limit."
     },
     {
-      "variants": ["uieditfield-text"],
+      "variants": [
+        "uieditfield-text"
+      ],
       "path": "CharacterLimits",
       "effectPolicy": "textValue",
       "kind": "documentation",
       "detail": "Changing CharacterLimits resets an out-of-range Value to empty text. This is an implicit effect rather than an explicit source write."
     },
     {
-      "variants": ["uidropdown", "uilistbox", "uiknob-discrete", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
+      "variants": [
+        "uidropdown",
+        "uilistbox",
+        "uiknob-discrete",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle"
+      ],
       "path": "Items",
       "effectPolicy": "itemSelection",
       "kind": "documentation",
       "detail": "Items defines the labels available to the control. It participates in selection state, including the association with ItemsData; it is not independent of the current Value."
     },
     {
-      "variants": ["uidropdown", "uilistbox", "uiknob-discrete", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
+      "variants": [
+        "uidropdown",
+        "uilistbox",
+        "uiknob-discrete",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle"
+      ],
       "path": "ItemsData",
-      "applyAfter": ["Items"],
+      "applyAfter": [
+        "Items"
+      ],
       "effectPolicy": "itemSelection",
       "kind": "inference",
       "detail": "Establish item labels before their associated data. Both setters can change selection; the explicit Value is applied last. This is a canonical generation order, not a claim that the reverse setter order is forbidden."
     },
     {
-      "variants": ["uiknob-discrete", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
+      "variants": [
+        "uiknob-discrete",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle"
+      ],
       "path": "Value",
-      "applyAfter": ["Items", "ItemsData"],
+      "applyAfter": [
+        "Items",
+        "ItemsData"
+      ],
       "effectPolicy": "itemSelection",
       "kind": "inference",
       "detail": "Value must belong to Items, or to ItemsData when nonempty. Establish its domain before assigning a requested selection."
     },
     {
-      "variants": ["uidropdown"],
+      "variants": [
+        "uidropdown"
+      ],
       "path": "Value",
-      "applyAfter": ["Items", "ItemsData", "Editable"],
+      "applyAfter": [
+        "Items",
+        "ItemsData",
+        "Editable"
+      ],
       "effectPolicy": "itemSelection",
       "kind": "inference",
       "detail": "Value uses Items or nonempty ItemsData; Editable on additionally permits arbitrary scalar text. Apply the domain and Editable before Value."
     },
     {
-      "variants": ["uilistbox"],
+      "variants": [
+        "uilistbox"
+      ],
       "path": "Value",
-      "applyAfter": ["Items", "ItemsData", "Multiselect"],
+      "applyAfter": [
+        "Items",
+        "ItemsData",
+        "Multiselect"
+      ],
       "effectPolicy": "itemSelection",
       "kind": "inference",
       "detail": "Value uses Items or nonempty ItemsData. Multiselect controls whether multiple elements may be selected. Establish both before assigning Value."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous"
+      ],
       "path": "Value",
-      "applyAfter": ["Limits"],
+      "applyAfter": [
+        "Limits"
+      ],
       "effectPolicy": "boundedValue",
       "kind": "inference",
       "detail": "Each Value element must be within Limits. Changing Limits clamps out-of-range Value elements, so canonical initialization establishes Limits before explicit Value. Gauges intentionally do not share this rule."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous"
+      ],
       "path": "Limits",
       "effectPolicy": "boundedValue",
       "kind": "documentation",
       "detail": "Changing Limits clamps out-of-range Value elements to the nearest bound. This is an implicit setter effect, not another explicit Value occurrence."
     },
     {
-      "variants": ["uieditfield-numeric", "uispinner"],
+      "variants": [
+        "uieditfield-numeric",
+        "uispinner"
+      ],
       "path": "Value",
-      "applyAfter": ["Limits", "LowerLimitInclusive", "UpperLimitInclusive", "RoundFractionalValues", "AllowEmpty"],
+      "applyAfter": [
+        "Limits",
+        "LowerLimitInclusive",
+        "UpperLimitInclusive",
+        "RoundFractionalValues",
+        "AllowEmpty"
+      ],
       "effectPolicy": "numericValue",
       "kind": "inference",
       "detail": "Limits, inclusive bounds, integer rounding, and AllowEmpty constrain accepted Value. Set them before Value for newly generated controls. Existing setter sequences still require intermediate-state validation."
     },
     {
-      "variants": ["uieditfield-numeric", "uispinner"],
+      "variants": [
+        "uieditfield-numeric",
+        "uispinner"
+      ],
       "path": "Limits",
       "effectPolicy": "numericValue",
       "kind": "documentation",
       "detail": "Changing Limits moves an out-of-range Value to an allowed bound, taking inclusive limits into account."
     },
     {
-      "variants": ["uieditfield-numeric", "uispinner"],
+      "variants": [
+        "uieditfield-numeric",
+        "uispinner"
+      ],
       "path": "RoundFractionalValues",
-      "applyAfter": ["Limits", "LowerLimitInclusive", "UpperLimitInclusive"],
+      "applyAfter": [
+        "Limits",
+        "LowerLimitInclusive",
+        "UpperLimitInclusive"
+      ],
       "effectPolicy": "numericValue",
       "kind": "inference",
       "detail": "Changing rounding from off to on rounds the existing Value within the configured limits and fails if no integer is allowed. Establish the range before enabling rounding."
     },
     {
-      "variants": ["uidatepicker"],
+      "variants": [
+        "uidatepicker"
+      ],
       "path": "Value",
-      "applyAfter": ["Limits"],
+      "applyAfter": [
+        "Limits"
+      ],
       "kind": "inference",
       "detail": "A selected datetime must be within Limits; NaT represents no selection. Establish date limits before assigning an explicit date. Date-only normalization is specified separately in the value contract."
     },
     {
-      "variants": ["uifigure"],
+      "variants": [
+        "uifigure"
+      ],
       "path": "Resize",
-      "applyAfter": ["WindowStyle"],
+      "applyAfter": [
+        "WindowStyle"
+      ],
       "kind": "documentation",
       "detail": "The WindowStyle section explicitly instructs setting WindowStyle before Resize or Position."
     },
     {
-      "variants": ["uifigure"],
+      "variants": [
+        "uifigure"
+      ],
       "path": "Position",
-      "applyAfter": ["WindowStyle", "Units"],
+      "applyAfter": [
+        "WindowStyle",
+        "Units"
+      ],
       "effectPolicy": "layout",
       "kind": "documentation",
       "detail": "Set WindowStyle first. Set Units before Position to interpret the requested coordinates in the requested units; changing Units later converts existing coordinates."
     },
     {
-      "variants": ["axes", "geoaxes", "polaraxes", "uiaxes", "uibuttongroup", "uipanel", "uitab", "uitabgroup", "uitable"],
+      "variants": [
+        "axes",
+        "geoaxes",
+        "polaraxes",
+        "uiaxes",
+        "uibuttongroup",
+        "uipanel",
+        "uitab",
+        "uitabgroup",
+        "uitable"
+      ],
       "path": "Position",
-      "applyAfter": ["Units"],
+      "applyAfter": [
+        "Units"
+      ],
       "effectPolicy": "layout",
       "kind": "inference",
       "detail": "Position is interpreted in Units. Establish coordinate units before explicit numeric coordinates, rather than converting coordinates assigned in the old units."
     },
     {
-      "variants": ["axes", "geoaxes", "polaraxes", "uiaxes", "uibuttongroup", "uipanel", "uitable"],
+      "variants": [
+        "uibuttongroup",
+        "uipanel",
+        "uitable"
+      ],
       "path": "FontSize",
-      "applyAfter": ["FontUnits"],
+      "applyAfter": [
+        "FontUnits"
+      ],
       "kind": "inference",
       "detail": "FontSize is interpreted in FontUnits. Establish the unit before assigning an explicit font size."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
       "path": "MajorTicks",
-      "applyAfter": ["Limits"],
+      "applyAfter": [
+        "Limits"
+      ],
       "effectPolicy": "tickMode",
       "kind": "inference",
       "detail": "Establish the scale before explicit tick locations. Setting MajorTicks changes MajorTicksMode to manual."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
       "path": "MinorTicks",
-      "applyAfter": ["Limits"],
+      "applyAfter": [
+        "Limits"
+      ],
       "effectPolicy": "tickMode",
       "kind": "inference",
       "detail": "Establish the scale before explicit minor tick locations. Setting MinorTicks changes MinorTicksMode to manual."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
       "path": "MajorTickLabels",
-      "applyAfter": ["MajorTicks"],
+      "applyAfter": [
+        "MajorTicks"
+      ],
       "effectPolicy": "tickMode",
       "kind": "inference",
       "detail": "Set explicit tick locations before matching labels. MajorTicks sets MajorTicksMode to manual; the documentation warns about labels while ticks are automatic. Setting labels changes MajorTickLabelsMode to manual. Mode-only cases need state-aware handling, not a universal opposite edge."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
       "path": "MajorTicksMode",
-      "applyAfter": ["MajorTicks", "MajorTickLabels"],
+      "applyAfter": [
+        "MajorTicks",
+        "MajorTickLabels"
+      ],
       "kind": "inference",
       "detail": "Restore a requested final mode after explicit tick locations and labels. This preserves an explicit auto request; intermediate manual-mode requirements are a separate state-aware concern."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
       "path": "MinorTicksMode",
-      "applyAfter": ["MinorTicks"],
+      "applyAfter": [
+        "MinorTicks"
+      ],
       "kind": "inference",
       "detail": "Setting MinorTicks forces manual mode. Apply an explicitly requested final mode after its tick values."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
       "path": "MajorTickLabelsMode",
-      "applyAfter": ["MajorTickLabels"],
+      "applyAfter": [
+        "MajorTickLabels"
+      ],
       "kind": "inference",
       "detail": "Setting MajorTickLabels forces manual mode. Apply an explicitly requested final label mode after its labels."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "FontSize",
+      "applyAfter": [
+        "FontUnits"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "FontSizeMode",
+      "applyAfter": [
+        "FontSize"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "CLim",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "CLimMode",
+      "applyAfter": [
+        "CLim"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "ALim",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "ALimMode",
+      "applyAfter": [
+        "ALim"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes"
+      ],
+      "path": "TickDir",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes"
+      ],
+      "path": "TickDirMode",
+      "applyAfter": [
+        "TickDir"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XTick",
+      "applyAfter": [
+        "XLim"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XTickMode",
+      "applyAfter": [
+        "XTick"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YTick",
+      "applyAfter": [
+        "YLim"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YTickMode",
+      "applyAfter": [
+        "YTick"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZTick",
+      "applyAfter": [
+        "ZLim"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZTickMode",
+      "applyAfter": [
+        "ZTick"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XTickLabel",
+      "applyAfter": [
+        "XTick"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XTickLabelMode",
+      "applyAfter": [
+        "XTickLabel"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YTickLabel",
+      "applyAfter": [
+        "YTick"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YTickLabelMode",
+      "applyAfter": [
+        "YTickLabel"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZTickLabel",
+      "applyAfter": [
+        "ZTick"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZTickLabelMode",
+      "applyAfter": [
+        "ZTickLabel"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XTickLabelRotation",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XTickLabelRotationMode",
+      "applyAfter": [
+        "XTickLabelRotation"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YTickLabelRotation",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YTickLabelRotationMode",
+      "applyAfter": [
+        "YTickLabelRotation"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZTickLabelRotation",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZTickLabelRotationMode",
+      "applyAfter": [
+        "ZTickLabelRotation"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XLim",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XLimMode",
+      "applyAfter": [
+        "XLim"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YLim",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YLimMode",
+      "applyAfter": [
+        "YLim"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZLim",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZLimMode",
+      "applyAfter": [
+        "ZLim"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RTick",
+      "applyAfter": [
+        "RLim"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RTickMode",
+      "applyAfter": [
+        "RTick"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "ThetaTick",
+      "applyAfter": [
+        "ThetaLim"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "ThetaTickMode",
+      "applyAfter": [
+        "ThetaTick"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RTickLabel",
+      "applyAfter": [
+        "RTick"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RTickLabelMode",
+      "applyAfter": [
+        "RTickLabel"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "ThetaTickLabel",
+      "applyAfter": [
+        "ThetaTick"
+      ],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "ThetaTickLabelMode",
+      "applyAfter": [
+        "ThetaTickLabel"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RTickLabelRotation",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RTickLabelRotationMode",
+      "applyAfter": [
+        "RTickLabelRotation"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RLim",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RLimMode",
+      "applyAfter": [
+        "RLim"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "ThetaLim",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "ThetaLimMode",
+      "applyAfter": [
+        "ThetaLim"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RAxisLocation",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RAxisLocationMode",
+      "applyAfter": [
+        "RAxisLocation"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "geoaxes"
+      ],
+      "path": "MapCenter",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "geoaxes"
+      ],
+      "path": "MapCenterMode",
+      "applyAfter": [
+        "MapCenter"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "geoaxes"
+      ],
+      "path": "ZoomLevel",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "inference",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+    },
+    {
+      "variants": [
+        "geoaxes"
+      ],
+      "path": "ZoomLevelMode",
+      "applyAfter": [
+        "ZoomLevel"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
     }
   ],
   "initialValues": [
     {
-      "variants": ["uidatepicker"],
-      "values": {"Value": "NaT", "Limits": "[datetime(0,1,1) datetime(9999,12,31)]"},
+      "variants": [
+        "uidatepicker"
+      ],
+      "values": {
+        "Value": "NaT",
+        "Limits": "[datetime(0,1,1) datetime(9999,12,31)]"
+      },
       "detail": "Seed only the documented unspecified date and initial calendar limits, using the allowlisted date literal parser without evaluation."
     },
     {
-      "variants": ["uislider-slider", "uiknob-continuous"],
-      "values": {"Value": "0", "Limits": "[0 100]"},
+      "variants": [
+        "uislider-slider",
+        "uiknob-continuous"
+      ],
+      "values": {
+        "Value": "0",
+        "Limits": "[0 100]"
+      },
       "detail": "Seed state resolution from the documented initial Value and Limits; these values are not explicit source settings."
     },
     {
-      "variants": ["uislider-range"],
-      "values": {"Value": "[0 100]", "Limits": "[0 100]"},
+      "variants": [
+        "uislider-range"
+      ],
+      "values": {
+        "Value": "[0 100]",
+        "Limits": "[0 100]"
+      },
       "detail": "The range slider starts with both endpoints spanning its documented initial Limits."
     },
     {
-      "variants": ["uieditfield-numeric", "uispinner"],
-      "values": {"Value": "0", "Limits": "[-Inf Inf]", "LowerLimitInclusive": "'on'", "UpperLimitInclusive": "'on'", "RoundFractionalValues": "'off'", "AllowEmpty": "'off'"},
+      "variants": [
+        "uieditfield-numeric",
+        "uispinner"
+      ],
+      "values": {
+        "Value": "0",
+        "Limits": "[-Inf Inf]",
+        "LowerLimitInclusive": "'on'",
+        "UpperLimitInclusive": "'on'",
+        "RoundFractionalValues": "'off'",
+        "AllowEmpty": "'off'"
+      },
       "detail": "Use the documented numeric-control defaults for bounds, inclusive endpoints, rounding, and empty-value acceptance."
     },
     {
-      "variants": ["uidropdown"],
-      "values": {"Value": "'Option 1'", "Items": "{'Option 1','Option 2','Option 3','Option 4'}", "ItemsData": "[]", "Editable": "'off'"},
+      "variants": [
+        "uidropdown"
+      ],
+      "values": {
+        "Value": "'Option 1'",
+        "Items": "{'Option 1','Option 2','Option 3','Option 4'}",
+        "ItemsData": "[]",
+        "Editable": "'off'"
+      },
       "detail": "The dropdown initially selects its first default item, has no item data, and is not editable."
     },
     {
-      "variants": ["uilistbox"],
-      "values": {"Value": "'Item 1'", "Items": "{'Item 1','Item 2','Item 3','Item 4'}", "ItemsData": "[]", "Multiselect": "'off'"},
+      "variants": [
+        "uilistbox"
+      ],
+      "values": {
+        "Value": "'Item 1'",
+        "Items": "{'Item 1','Item 2','Item 3','Item 4'}",
+        "ItemsData": "[]",
+        "Multiselect": "'off'"
+      },
       "detail": "The listbox initially selects its first default item, has no item data, and uses single selection."
     },
     {
-      "variants": ["uiknob-discrete"],
-      "values": {"Value": "'Off'", "Items": "{'Off','Low','Medium','High'}", "ItemsData": "[]"},
+      "variants": [
+        "uiknob-discrete"
+      ],
+      "values": {
+        "Value": "'Off'",
+        "Items": "{'Off','Low','Medium','High'}",
+        "ItemsData": "[]"
+      },
       "detail": "The discrete knob initially selects Off from its four documented default items and has no item data."
     },
     {
-      "variants": ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
-      "values": {"Value": "'Off'", "Items": "{'Off','On'}", "ItemsData": "[]"},
+      "variants": [
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle"
+      ],
+      "values": {
+        "Value": "'Off'",
+        "Items": "{'Off','On'}",
+        "ItemsData": "[]"
+      },
       "detail": "The switch initially selects Off from its two documented default items and has no item data."
     },
     {
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
-      "values": {"MajorTicksMode": "'auto'", "MinorTicksMode": "'auto'", "MajorTickLabelsMode": "'auto'"},
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
+      "values": {
+        "MajorTicksMode": "'auto'",
+        "MinorTicksMode": "'auto'",
+        "MajorTickLabelsMode": "'auto'"
+      },
       "detail": "Tick locations and labels initially use their documented automatic modes. Derived arrays are not guessed from the mode alone."
     },
     {
-      "variants": ["uieditfield-text"],
-      "values": {"Value": "''", "CharacterLimits": "[0 Inf]"},
+      "variants": [
+        "uieditfield-text"
+      ],
+      "values": {
+        "Value": "''",
+        "CharacterLimits": "[0 Inf]"
+      },
       "detail": "A text field initially contains empty text with a character range of zero through infinity."
     },
     {
-      "variants": ["uifigure", "uiaxes", "uitable"],
-      "values": {"Units": "'pixels'"},
+      "variants": [
+        "uifigure",
+        "uiaxes",
+        "uitable"
+      ],
+      "values": {
+        "Units": "'pixels'"
+      },
       "detail": "Use the explicitly documented pixel position units; coordinate values themselves remain context-dependent."
     },
     {
-      "variants": ["axes", "polaraxes", "geoaxes"],
-      "values": {"Units": "'normalized'", "FontUnits": "'points'"},
+      "variants": [
+        "axes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "values": {
+        "Units": "'normalized'",
+        "FontUnits": "'points'"
+      },
       "detail": "These axes document normalized position units and point font units as defaults."
     },
     {
-      "variants": ["uiaxes"],
-      "values": {"FontUnits": "'pixels'"},
+      "variants": [
+        "uiaxes"
+      ],
+      "values": {
+        "FontUnits": "'pixels'"
+      },
       "detail": "UIAxes documents pixel font units, unlike the point default of ordinary axes."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "values": {
+        "FontSizeMode": "'auto'",
+        "CLimMode": "'auto'",
+        "ALimMode": "'auto'"
+      },
+      "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes"
+      ],
+      "values": {
+        "TickDirMode": "'auto'"
+      },
+      "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "values": {
+        "XTickMode": "'auto'",
+        "YTickMode": "'auto'",
+        "ZTickMode": "'auto'",
+        "XTickLabelMode": "'auto'",
+        "YTickLabelMode": "'auto'",
+        "ZTickLabelMode": "'auto'",
+        "XTickLabelRotationMode": "'auto'",
+        "YTickLabelRotationMode": "'auto'",
+        "ZTickLabelRotationMode": "'auto'",
+        "XLimMode": "'auto'",
+        "YLimMode": "'auto'",
+        "ZLimMode": "'auto'"
+      },
+      "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "values": {
+        "RTickMode": "'auto'",
+        "ThetaTickMode": "'auto'",
+        "RTickLabelMode": "'auto'",
+        "ThetaTickLabelMode": "'auto'",
+        "RTickLabelRotationMode": "'auto'",
+        "RLimMode": "'auto'",
+        "ThetaLimMode": "'auto'",
+        "RAxisLocationMode": "'auto'"
+      },
+      "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+    },
+    {
+      "variants": [
+        "geoaxes"
+      ],
+      "values": {
+        "MapCenterMode": "'auto'",
+        "ZoomLevelMode": "'auto'"
+      },
+      "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
     }
   ],
   "contractCorrections": [
     {
-      "variants": ["uieditfield-numeric", "uispinner"],
+      "variants": [
+        "uieditfield-numeric",
+        "uispinner"
+      ],
       "path": "Value",
       "removeConstraintKinds": [],
       "allowsEmpty": true,
@@ -257,28 +1197,71 @@
       "detail": "Value may be empty when AllowEmpty is on. The application policy and batch validator enforce that condition; a blanket allowsEmpty=false incorrectly rejects a supported control state."
     },
     {
-      "variants": ["uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "variants": [
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
       "path": "Value",
-      "removeConstraintKinds": ["withinLimitsOf"],
+      "removeConstraintKinds": [
+        "withinLimitsOf"
+      ],
       "kind": "documentation",
       "detail": "The Value section explicitly permits values outside Limits and states that changing Limits has no effect on Value. Remove the inherited slider-like withinLimitsOf validation constraint."
     }
   ],
   "exclusions": [
     {
-      "variants": ["uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
+      "variants": [
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
       "path": "Value",
       "detail": "Gauge Value may be outside Limits. Changing Limits does not change Value; it can move the needle off scale. Do not infer a boundedValue effect or within-limits constraint from slider behavior."
     },
     {
-      "variants": ["uidropdown", "uilistbox", "uiknob-discrete"],
+      "variants": [
+        "uidropdown",
+        "uilistbox",
+        "uiknob-discrete"
+      ],
       "path": "ItemsData",
       "detail": "The documentation permits lengths different from Items: excess data is ignored and missing data hides unmatched labels. The old sameLengthAs contract needs a coordinated validator and editor correction, not another application dependency."
     },
     {
-      "variants": ["uitable"],
+      "variants": [
+        "uitable"
+      ],
       "path": "ColumnFormat",
       "detail": "A table-valued Data forbids ColumnFormat. An ordering edge alone cannot make this combination valid. Keep this as a value compatibility requirement for the state validator."
+    },
+    {
+      "variants": [
+        "geoaxes"
+      ],
+      "path": "TickDir",
+      "detail": "Keep pending: the R2024a page lists TickDirMode manual as the default, but the owned Basemap=none fixture reports auto, and assigning out reports stored TickDir in. Do not apply the Cartesian tick-direction policy or assert a default from a suffix match."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "GridColor",
+      "detail": "Color modes control rendered grid colors without universally resetting the stored color getter. Grid/axis colors and alpha modes need separate reviewed adapters; do not treat every property ending in Mode as a runtime-computed base value."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "PlotBoxAspectRatio",
+      "detail": "Aspect ratios and camera modes remain pending separate review. With manual limits and DataAspectRatio, the native getter can replace an explicit PlotBoxAspectRatio even while its mode is manual. GridLineWidth also has mode-conditional follower effects and is not an independent mode pair."
     }
   ]
 }

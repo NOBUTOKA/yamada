@@ -203,21 +203,34 @@ classdef PropertyStateResolver
                 [states, message] = macd.model.PropertyStateResolver.text(states, path, id);
             end
 
-            % Tick arrays force manual mode; automatic modes compute nonliteral arrays.
-            if definitions(index).Application.EffectPolicy == "tickMode"
+            % Audited value setters force manual mode; auto values remain runtime-derived.
+            modePolicies = ["tickMode", "valueMode"];
+            if any(definitions(index).Application.EffectPolicy == modePolicies)
                 target = find(paths == path + "Mode", 1);
                 if ~isempty(target)
                     reason = "";
-                    if ~known, reason = "An uncertain tick setter may change this mode."; end
+                    if ~known, reason = "An uncertain value setter may change this mode."; end
                     states(target) = states(target).withEffective("manual", known, id, reason);
                 end
-            elseif endsWith(path, "Mode") && known && ...
-                    ((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && string(value) == "auto"
+            elseif endsWith(path, "Mode")
                 base = extractBefore(path, strlength(path) - 3);
                 target = find(paths == base, 1);
-                if ~isempty(target) && definitions(target).Application.EffectPolicy == "tickMode"
-                    states(target) = states(target).withEffective([], false, id, "Automatic mode computes this value at runtime.", "automatic");
+                if ~isempty(target) && any(definitions(target).Application.EffectPolicy == modePolicies)
+                    if ~known
+                        states(target) = states(target).withEffective([], false, id, ...
+                            "An uncertain mode may compute this value at runtime.", "uncertain-mode");
+                    elseif ((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && string(value) == "auto"
+                        states(target) = states(target).withEffective([], false, id, ...
+                            "Automatic mode computes this value at runtime.", "automatic");
+                    end
                 end
+            end
+
+            % Infinite endpoints request native data-dependent axis-limit calculation.
+            if definitions(index).Application.EffectPolicy == "valueMode" && ...
+                    endsWith(path, "Lim") && known && isnumeric(value) && any(~isfinite(value), "all")
+                states(index) = states(index).withEffective([], false, id, ...
+                    "Automatic limit endpoints depend on native axes data and layout.", "automatic-limits");
             end
 
             % Unit conversion depends on native parent geometry and display metrics.

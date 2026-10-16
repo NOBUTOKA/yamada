@@ -183,6 +183,14 @@ an independent assignment, or reorder preserved arguments using the canonical
 generation graph. Keep explicit values, requested replacements, and effective
 state separate; unsupported conversion or automatic computation stays unknown.
 
+Use `valueMode` only for individually reviewed value/mode pairs whose explicit
+value setter selects manual mode and whose automatic value depends on runtime
+data or layout. Unknown mode expressions also make that value unknown. This
+identifier is not a suffix-based rule for every property ending in `Mode`.
+Axis color modes can affect rendered grid colors while retaining the stored
+color, and aspect-ratio or grid-width setters have additional coupled effects.
+Review those separately instead of labeling them independent computed pairs.
+
 Represent parent dependency as changes to the effective property surface, not
 as a boolean attached indiscriminately to every property.
 

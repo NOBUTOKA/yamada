@@ -14,7 +14,7 @@
       "sourceSha256": "f29615f3acc191a8e009337562ce577cc07a0f033521a0bff026de16387d09d9",
       "candidateCount": 156,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 4
+      "reviewedPolicyCount": 35
     },
     {
       "id": "geoaxes",
@@ -24,8 +24,8 @@
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
       "sourceSha256": "c7d827d48f7de1e0b1ca08b9962259bae8bb5449e44fd32169bc2bb9c88eaa40",
       "candidateCount": 66,
-      "runtimeVerificationStatus": "pending",
-      "reviewedPolicyCount": 4
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 13
     },
     {
       "id": "polaraxes",
@@ -36,7 +36,7 @@
       "sourceSha256": "5560192804cb86f2cdc0f458ca61f540216558eca51e4d62172c39e4b8b5820d",
       "candidateCount": 117,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 4
+      "reviewedPolicyCount": 27
     },
     {
       "id": "uiaxes",
@@ -47,7 +47,7 @@
       "sourceSha256": "f558e5c6f086d2afaf64dc8f45371b0d9b2c08d486a7845e3750d00d6f139ffb",
       "candidateCount": 157,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 4
+      "reviewedPolicyCount": 35
     },
     {
       "id": "uibutton-push",

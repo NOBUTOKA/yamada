@@ -221,6 +221,16 @@ catalog definitions with explicit instance entries. Source-only assignments that
 are outside the effective catalog surface are appended as read-only rows instead
 of being dropped.
 
+`PropertyStateResolver` keeps original explicit values, replacement requests,
+and effective values separate. The allowlisted `valueMode` policy covers
+individually reviewed axes font, tick, limit, and map value/mode pairs. An explicit
+value selects manual mode; an automatic or unevaluated mode makes computed output
+unknown. The canonical application graph restores a requested final mode after
+the value, while parsed settings retain their original order and token ownership.
+Copy retains audited automatic-mode inputs and their mode without claiming a
+computed getter value. This rule is not generalized to color modes, coupled
+aspect ratios, grid-width followers, or unreviewed geographic behavior.
+
 [`DefaultValueProvider`](../+macd/+ui/+inspector/DefaultValueProvider.m) resolves
 implicit values without changing the document. It first uses catalog or MATLAB
 class metadata and then, when required, constructs one hidden, editor-owned

@@ -87,7 +87,7 @@
                 "FontUnits"
               ],
               "nameValue": "supported",
-              "effectPolicy": "none"
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -118,6 +118,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "FontSize"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -361,6 +369,13 @@
               "shape": "vector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "RLim"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -391,6 +406,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "RTick"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -419,6 +442,13 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "RTick"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -449,6 +479,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "RTickLabel"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -474,6 +512,13 @@
               "shape": "vector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaLim"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -504,6 +549,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaTick"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -532,6 +585,13 @@
               "shape": "vector",
               "allowsEmpty": true,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaTick"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -562,6 +622,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaTickLabel"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -587,6 +655,11 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -617,6 +690,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "RTickLabelRotation"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -735,6 +816,11 @@
                 "both",
                 "none"
               ]
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -765,6 +851,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "TickDir"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -855,6 +949,11 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -885,6 +984,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "RLim"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -911,6 +1018,11 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -941,6 +1053,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaLim"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -1016,6 +1136,11 @@
               "shape": "scalar",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
@@ -1046,6 +1171,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "RAxisLocation"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -2040,7 +2173,7 @@
       "entries": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
@@ -2048,7 +2181,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 1,
-            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2067,7 +2200,7 @@
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorScale",
@@ -2075,7 +2208,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 2,
-            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2097,7 +2230,7 @@
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLim",
@@ -2105,7 +2238,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 3,
-            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2118,12 +2251,17 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLimMode",
@@ -2131,7 +2269,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 4,
-            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2148,12 +2286,20 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "CLim"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
@@ -2161,7 +2307,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 5,
-            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2180,7 +2326,7 @@
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AlphaScale",
@@ -2188,7 +2334,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 6,
-            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2210,7 +2356,7 @@
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALim",
@@ -2218,7 +2364,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 7,
-            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2231,12 +2377,17 @@
               "allowsEmpty": false,
               "constraints": [],
               "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "valueMode"
             }
           }
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+          "groupId": "exact.colorandtransparencymaps.44733db12cd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALimMode",
@@ -2244,7 +2395,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 8,
-            "groupId": "exact.colorandtransparencymaps.abd6f1739aa6",
+            "groupId": "exact.colorandtransparencymaps.44733db12cd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2261,6 +2412,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "ALim"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         }

@@ -13,6 +13,8 @@
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
 - Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
 - Add and delete components and edit supported properties
+- Preserve existing initialization settings and apply reviewed dependencies when
+  adding properties, including supported axes value/Mode pairs
 - Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
 - Rename component properties in the hierarchy, including static source references and default callback names
 - Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion

@@ -183,18 +183,18 @@
           "FontUnits"
         ],
         "nameValue": "supported",
-        "effectPolicy": "none"
+        "effectPolicy": "valueMode"
       },
       "applicationEvidence": [
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
-          "detail": "FontSize is interpreted in FontUnits. Establish the unit before assigning an explicit font size."
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
         },
         {
           "kind": "runtime",
-          "source": "tests/unit/PropertyApplicationRuntimeTest.m#unitsAreEstablishedBeforeCoordinatesAndFontSize",
-          "detail": "Position [1 1 8 6] in centimeters and FontSize 14 in points survive both canonical setters and a single constructor."
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
         }
       ]
     },
@@ -228,7 +228,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "FontSize"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "FontAngle",
@@ -484,7 +509,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "XLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "YTick",
@@ -505,7 +549,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "YLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ZTick",
@@ -530,7 +593,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ZLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "XTickMode",
@@ -562,6 +644,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "XTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -594,6 +701,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "YTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -626,7 +758,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ZTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "XTickLabel",
@@ -652,7 +809,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "XTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "YTickLabel",
@@ -678,7 +854,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "YTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ZTickLabel",
@@ -710,7 +905,26 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ZTick"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "XTickLabelMode",
@@ -742,6 +956,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "XTickLabel"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -774,6 +1013,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "YTickLabel"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -806,7 +1070,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ZTickLabel"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "TickLabelInterpreter",
@@ -861,7 +1150,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "YTickLabelRotation",
@@ -882,7 +1188,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ZTickLabelRotation",
@@ -909,7 +1232,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "XTickLabelRotationMode",
@@ -941,6 +1281,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "XTickLabelRotation"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -973,6 +1338,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "YTickLabelRotation"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -1005,7 +1395,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ZTickLabelRotation"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "XMinorTick",
@@ -1119,7 +1534,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "TickDirMode",
@@ -1151,7 +1583,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "TickDir"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "TickLength",
@@ -1200,7 +1657,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "YLim",
@@ -1221,7 +1695,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ZLim",
@@ -1249,7 +1740,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "XLimMode",
@@ -1281,6 +1789,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "XLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -1313,6 +1846,31 @@
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
+      ],
+      "application": {
+        "applyAfter": [
+          "YLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
       ]
     },
     {
@@ -1345,7 +1903,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ZLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "XLimitMethod",
@@ -3096,7 +3679,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "CLimMode",
@@ -3128,7 +3728,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "CLim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "Alphamap",
@@ -3215,7 +3840,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "valueMode"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "ALimMode",
@@ -3247,7 +3889,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ALim"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+        }
+      ]
     },
     {
       "path": "Color",

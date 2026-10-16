@@ -33,6 +33,8 @@ Assert-Condition ($emptyPolicy.nameValue -ceq 'unknown' -and $emptyPolicy.effect
     $emptyPolicy.applyAfter.Count -eq 0) 'An empty optional policy did not retain conservative defaults.'
 $seedPolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{ defaultLiteral = '[-Inf Inf]' })
 Assert-Condition ($seedPolicy.defaultLiteral -ceq '[-Inf Inf]') 'A default literal was lost in normalization.'
+$modePolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{ effectPolicy = 'valueMode' })
+Assert-Condition ($modePolicy.effectPolicy -ceq 'valueMode') 'An audited value/mode adapter was lost.'
 Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ defaultLiteral = 0 }) }
 $policy = ConvertTo-ApplicationPolicy ([pscustomobject]@{
     applyAfter = @('ItemsData', 'Items'); nameValue = 'supported'; effectPolicy = 'itemSelection'

@@ -83,6 +83,39 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             end
         end
 
+        function axisValueModesAreOrderedAndPreserved(testCase)
+            % axisValueModesAreOrderedAndPreserved Compare all reviewed axes mode pairs with native setters and constructors.
+            [figure, registry] = testCase.environment();
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            oldPath = path;
+            pathCleanup = onCleanup(@() path(oldPath));
+            addpath(fullfile(projectRoot, "dev", "component-data"));
+            output = string(tempname) + ".json";
+            fileCleanup = onCleanup(@() delete(output));
+            results = ProbeAxisModeInteractions(output);
+            checked = 0;
+            for result = results
+                testCase.assertEqual(result.Error, "");
+                definition = registry.getById(result.Factory);
+                property = definition.Properties(string({definition.Properties.Path}) == result.Path);
+                if property.Application.EffectPolicy ~= "valueMode", continue, end
+                testCase.verifyEqual(result.DefaultMode, "auto");
+                testCase.verifyEqual(result.ManualMode, "manual");
+                testCase.verifyTrue(result.ManualMatches, result.Factory + "." + result.Path);
+                testCase.verifyEqual(result.ConstructorValueLastMode, "manual");
+                testCase.verifyEqual(result.ConstructorModeLastMode, "auto");
+                entries = [macd.model.PropertyEntry(result.Path + "Mode", "auto"), ...
+                    macd.model.PropertyEntry(result.Path, result.RequestedValue)];
+                creation = {};
+                if result.Factory == "geoaxes", creation = {"Basemap", "none"}; end
+                target = testCase.apply(figure, registry, result.Factory, creation, entries);
+                testCase.verifyEqual(string(target.(result.Path + "Mode")), "auto");
+                delete(target);
+                checked = checked + 1;
+            end
+            testCase.verifyEqual(checked, 49);
+        end
+
         function unitsAreEstablishedBeforeCoordinatesAndFontSize(testCase)
             % unitsAreEstablishedBeforeCoordinatesAndFontSize Avoid conversion of values assigned in old units.
             [figure, registry] = testCase.environment();

@@ -1,52 +1,251 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "verifiedOn": "2026-10-15",
+  "verifiedOn": "2026-10-16",
   "status": "partial",
   "scope": "Owned native controls only. These checks verify constructor support and agreement with the canonical setter order for the listed literal clusters. They do not validate arbitrary property combinations, parsed insertion positions, or the complete effective-state resolver.",
   "testSource": "tests/unit/PropertyApplicationRuntimeTest.m",
   "coverage": [
     {
       "testMethod": "itemDomainsAreEstablishedBeforeSelection",
-      "variants": ["uidropdown", "uilistbox", "uiknob-discrete", "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"],
-      "nameValuePaths": ["Items", "ItemsData", "Value"],
+      "variants": [
+        "uidropdown",
+        "uilistbox",
+        "uiknob-discrete",
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle"
+      ],
+      "nameValuePaths": [
+        "Items",
+        "ItemsData",
+        "Value"
+      ],
       "result": "passed",
       "detail": "Two labels with numeric item data [10 20] and explicit Value 20 give the same result with canonical setters and a single constructor."
     },
     {
       "testMethod": "rangesAndNumericOptionsPrecedeRequestedValues",
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous"],
-      "nameValuePaths": ["Value", "Limits"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous"
+      ],
+      "nameValuePaths": [
+        "Value",
+        "Limits"
+      ],
       "result": "passed",
       "detail": "Limits [120 200] and Value 150, or range Value [140 180], are accepted by both canonical setters and a single constructor."
     },
     {
       "testMethod": "rangesAndNumericOptionsPrecedeRequestedValues",
-      "variants": ["uieditfield-numeric", "uispinner"],
-      "nameValuePaths": ["Value", "Limits", "AllowEmpty"],
+      "variants": [
+        "uieditfield-numeric",
+        "uispinner"
+      ],
+      "nameValuePaths": [
+        "Value",
+        "Limits",
+        "AllowEmpty"
+      ],
       "result": "passed",
       "detail": "Limits and explicit numeric Value agree across construction modes. A separate case assigns empty Value after enabling AllowEmpty and verifies constructor agreement. Rounding and exclusive-bound combinations are not covered by this constructor check."
     },
     {
       "testMethod": "gaugesAllowOffScaleValuesWithoutClamping",
-      "variants": ["uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
-      "nameValuePaths": ["Value", "Limits"],
+      "variants": [
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
+      "nameValuePaths": [
+        "Value",
+        "Limits"
+      ],
       "result": "passed",
       "detail": "Value 20 remains 20 when Limits becomes [50 100], including the constructor case. A subsequent Value 150 is also accepted."
     },
     {
       "testMethod": "explicitFinalModesSurviveTickSetterEffects",
-      "variants": ["uislider-slider", "uislider-range", "uiknob-continuous", "uigauge-circular", "uigauge-linear", "uigauge-ninetydegree", "uigauge-semicircular"],
-      "nameValuePaths": ["Limits", "MajorTicks", "MinorTicks", "MajorTickLabels", "MajorTicksMode", "MinorTicksMode", "MajorTickLabelsMode"],
+      "variants": [
+        "uislider-slider",
+        "uislider-range",
+        "uiknob-continuous",
+        "uigauge-circular",
+        "uigauge-linear",
+        "uigauge-ninetydegree",
+        "uigauge-semicircular"
+      ],
+      "nameValuePaths": [
+        "Limits",
+        "MajorTicks",
+        "MinorTicks",
+        "MajorTickLabels",
+        "MajorTicksMode",
+        "MinorTicksMode",
+        "MajorTickLabelsMode"
+      ],
       "result": "passed",
       "detail": "Explicit tick arrays and labels followed by explicit auto modes give matching native properties with canonical setters and a single constructor."
     },
     {
       "testMethod": "unitsAreEstablishedBeforeCoordinatesAndFontSize",
-      "variants": ["uipanel", "uibuttongroup", "uitable", "uiaxes", "axes", "polaraxes"],
-      "nameValuePaths": ["Position", "Units", "FontSize", "FontUnits"],
+      "variants": [
+        "uipanel",
+        "uibuttongroup",
+        "uitable",
+        "uiaxes",
+        "axes",
+        "polaraxes"
+      ],
+      "nameValuePaths": [
+        "Position",
+        "Units",
+        "FontSize",
+        "FontUnits"
+      ],
       "result": "passed",
       "detail": "Position [1 1 8 6] in centimeters and FontSize 14 in points survive both canonical setters and a single constructor."
+    },
+    {
+      "testMethod": "axisValueModesAreOrderedAndPreserved",
+      "variants": [
+        "axes"
+      ],
+      "nameValuePaths": [
+        "ALim",
+        "ALimMode",
+        "CLim",
+        "CLimMode",
+        "FontSize",
+        "FontSizeMode",
+        "TickDir",
+        "TickDirMode",
+        "XLim",
+        "XLimMode",
+        "XTick",
+        "XTickLabel",
+        "XTickLabelMode",
+        "XTickLabelRotation",
+        "XTickLabelRotationMode",
+        "XTickMode",
+        "YLim",
+        "YLimMode",
+        "YTick",
+        "YTickLabel",
+        "YTickLabelMode",
+        "YTickLabelRotation",
+        "YTickLabelRotationMode",
+        "YTickMode",
+        "ZLim",
+        "ZLimMode",
+        "ZTick",
+        "ZTickLabel",
+        "ZTickLabelMode",
+        "ZTickLabelRotation",
+        "ZTickLabelRotationMode",
+        "ZTickMode"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+    },
+    {
+      "testMethod": "axisValueModesAreOrderedAndPreserved",
+      "variants": [
+        "uiaxes"
+      ],
+      "nameValuePaths": [
+        "ALim",
+        "ALimMode",
+        "CLim",
+        "CLimMode",
+        "FontSize",
+        "FontSizeMode",
+        "TickDir",
+        "TickDirMode",
+        "XLim",
+        "XLimMode",
+        "XTick",
+        "XTickLabel",
+        "XTickLabelMode",
+        "XTickLabelRotation",
+        "XTickLabelRotationMode",
+        "XTickMode",
+        "YLim",
+        "YLimMode",
+        "YTick",
+        "YTickLabel",
+        "YTickLabelMode",
+        "YTickLabelRotation",
+        "YTickLabelRotationMode",
+        "YTickMode",
+        "ZLim",
+        "ZLimMode",
+        "ZTick",
+        "ZTickLabel",
+        "ZTickLabelMode",
+        "ZTickLabelRotation",
+        "ZTickLabelRotationMode",
+        "ZTickMode"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+    },
+    {
+      "testMethod": "axisValueModesAreOrderedAndPreserved",
+      "variants": [
+        "polaraxes"
+      ],
+      "nameValuePaths": [
+        "ALim",
+        "ALimMode",
+        "CLim",
+        "CLimMode",
+        "FontSize",
+        "FontSizeMode",
+        "RAxisLocation",
+        "RAxisLocationMode",
+        "RLim",
+        "RLimMode",
+        "RTick",
+        "RTickLabel",
+        "RTickLabelMode",
+        "RTickLabelRotation",
+        "RTickLabelRotationMode",
+        "RTickMode",
+        "ThetaLim",
+        "ThetaLimMode",
+        "ThetaTick",
+        "ThetaTickLabel",
+        "ThetaTickLabelMode",
+        "ThetaTickMode",
+        "TickDir",
+        "TickDirMode"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+    },
+    {
+      "testMethod": "axisValueModesAreOrderedAndPreserved",
+      "variants": [
+        "geoaxes"
+      ],
+      "nameValuePaths": [
+        "ALim",
+        "ALimMode",
+        "CLim",
+        "CLimMode",
+        "FontSize",
+        "FontSizeMode",
+        "MapCenter",
+        "MapCenterMode",
+        "ZoomLevel",
+        "ZoomLevelMode"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
     }
   ]
 }

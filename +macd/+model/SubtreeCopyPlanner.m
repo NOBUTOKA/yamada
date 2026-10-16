@@ -120,7 +120,7 @@ classdef SubtreeCopyPlanner
 
     methods (Static, Access = private)
         function result = isAutomatic(state, states)
-            % isAutomatic Recognize audited runtime-computed tick data controlled by a known automatic mode.
+            % isAutomatic Recognize audited runtime-computed data controlled by a known automatic mode.
             arguments (Input)
                 state (1, 1) struct
                 states (1, :) struct
@@ -129,7 +129,8 @@ classdef SubtreeCopyPlanner
                 result (1, 1) logical
             end
             result = false;
-            if state.Resolution.ReasonCode ~= "automatic" || state.Definition.Application.EffectPolicy ~= "tickMode", return, end
+            if state.Resolution.ReasonCode ~= "automatic" || ...
+                    ~any(state.Definition.Application.EffectPolicy == ["tickMode", "valueMode"]), return, end
             mode = find(arrayfun(@(item) item.Definition.Path == state.Definition.Path + "Mode", states), 1);
             if isempty(mode) || ~states(mode).Resolution.IsKnown, return, end
             value = states(mode).Resolution.EffectiveValue;

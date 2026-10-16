@@ -46,6 +46,10 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 - Statically parse supported declarations, creation statements, parent-child relationships, and direct property assignments.
 - Display parsed components in the hierarchy browser, Safe Preview, and Property Inspector.
 - Edit property assignments and components whose source ownership can be determined safely.
+- Reviewed axes value/Mode pairs follow their original initialization order.
+  A later automatic mode can make the effective value unknown; the editor keeps
+  the explicit source input and reports that uncertainty. New initialization
+  applies an explicitly requested final mode after its corresponding value.
 - Compare the original and generated source, then save to a new path or to an explicitly confirmed path.
 - Show diagnostics for unsupported or ambiguous structures.
 - Track unsaved edits in the editor title. New, Open, and closing the editor offer
