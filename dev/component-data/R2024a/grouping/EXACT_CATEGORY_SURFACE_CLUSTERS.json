@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "b45fc03ffb97f99fd27e452d5f7e8271e8ab245096091ffaf19ac08f943a5475",
+  "inputSha256": "beac540a6bc8d195b49d6cfe83040fb2bc74bd5c1610784cc69e6f052d1259cd",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.4829c1eb51b4",
@@ -2561,6 +2561,33 @@
       ]
     },
     {
+      "candidateId": "candidate.interactivity.c3b502f08578",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "c3b502f08578411d2f177fbae513d21f946c38899fdc28dd4098cc6f3284deab",
+      "propertyPaths": [
+        "Visible",
+        "Enable",
+        "Tooltip",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "b68b6c9096ced5ca15a0f501189ae1fcfe5dfc25ae0b3ebc77cc0a8513290f9c",
+        "06335f3c91ca373ff594e9f07cc8ec9ee0a6ec834ffd40efe345f86546cc6500",
+        "312af0503c323a52732b9176b3012a75bea7c451dcbc269c74127f43bf139c6b",
+        "ee60f673af9780d85922bc51584bc828045b2a3133d97bebf8ab87fa3ed5aa34"
+      ],
+      "memberVariantIds": [
+        "uibutton-push"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
       "candidateId": "candidate.interactivity.c69ad1a7a590",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
@@ -2638,7 +2665,6 @@
         "7037935641b34b6e3d1fe7bd989d8fa1a771f86bdd5c3e04d61ef8d08c7c1a94"
       ],
       "memberVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -2657,7 +2683,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "reuseCount": 18,
+      "reuseCount": 17,
       "documentedCategoryOrders": [
         3,
         4
@@ -3571,12 +3597,12 @@
       ]
     },
     {
-      "candidateId": "candidate.position.4253f8529ee6",
+      "candidateId": "candidate.position.3cb29d3efa19",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "4253f8529ee6abeb51ee952f1f015a70cac7fd1f254f2160199d91c2cd098cf1",
+      "capabilitySha256": "3cb29d3efa19517c9daf97c59abfd5f9b6e985b48b0f95340cbafcfc250d7093",
       "propertyPaths": [
         "Position",
         "InnerPosition",
@@ -3597,10 +3623,10 @@
         "05f67f320250d8cc0c7fee70dce314dce9ecbfe5c25ca2d3c4c293ae6b82ca4d",
         "bc64f4a224f0f4791bac1ebd8bb1c73dbf810150fdcdd801a668d1e8771d2920",
         "a1276131bbb293f50db6f06ad33a4e51d3d8cccca447fb852e2f5336b3e9cabf",
-        "29b6df7df7ed4d2519cee5a8c0c40c69cfe73fd38952710a4935c1b6c9ab5c77",
-        "b9ebd926227dea79f10e781808a0f19984141c7c8a750cd842fbfadd469d9f96",
-        "30b1d3ed7416bff2b1d3a316f1243af798b2851d14c7f035f8c7f71158a59120",
-        "39ab1902b4b350fd8f7dbf99f0cb1d5ec4ee6cc91d9ed33e69f4ba0b25f2c9e3",
+        "1db3131a3629574af1b695ad169f9a49c62e3a9868ca9d572d8e4b7bc4cc4579",
+        "dfe05886b68cc1ed666c5fec4ac0e050fe1a5f34ec561185a0920f8dece3a1d9",
+        "60e89ab00457e9fde5a8fcad3ecd9088dbc15ff7dfe96d19ba17865d44ed259c",
+        "834138f61838d2698306fa427b6927a44594ac9072035daaf2fd3694b46ecb19",
         "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
       ],
       "memberVariantIds": [
@@ -3637,6 +3663,47 @@
       "reuseCount": 2,
       "documentedCategoryOrders": [
         5
+      ]
+    },
+    {
+      "candidateId": "candidate.position.496c2385ee73",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "496c2385ee73abe359ba404858ab3caefc45a0b726b884e0586721c545da338a",
+      "propertyPaths": [
+        "OuterPosition",
+        "InnerPosition",
+        "Position",
+        "TightInset",
+        "PositionConstraint",
+        "Units",
+        "DataAspectRatio",
+        "DataAspectRatioMode",
+        "PlotBoxAspectRatio",
+        "PlotBoxAspectRatioMode",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "70d7805a40febe6a462819c7e3d8823ee7cf0a11e58bc2e631b69976c6e88d03",
+        "2ae8e3a1dcdecab2271510233e7cca774b21e9805390dfae597147a3acc70769",
+        "56330135eea4cfe67ad5ff763ed18b43c03ece111b845a3fe8910bbe40a96b58",
+        "05f67f320250d8cc0c7fee70dce314dce9ecbfe5c25ca2d3c4c293ae6b82ca4d",
+        "bc64f4a224f0f4791bac1ebd8bb1c73dbf810150fdcdd801a668d1e8771d2920",
+        "d64ff824b30cbf1fa495e551573cef153eef9f2a9e6e6b3fa55388009ae6fcd3",
+        "1db3131a3629574af1b695ad169f9a49c62e3a9868ca9d572d8e4b7bc4cc4579",
+        "dfe05886b68cc1ed666c5fec4ac0e050fe1a5f34ec561185a0920f8dece3a1d9",
+        "60e89ab00457e9fde5a8fcad3ecd9088dbc15ff7dfe96d19ba17865d44ed259c",
+        "834138f61838d2698306fa427b6927a44594ac9072035daaf2fd3694b46ecb19",
+        "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
+      ],
+      "memberVariantIds": [
+        "axes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        9
       ]
     },
     {
@@ -3968,47 +4035,6 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         4
-      ]
-    },
-    {
-      "candidateId": "candidate.position.bb40362aa238",
-      "categoryId": "position",
-      "categoryDisplayName": "Position",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "bb40362aa238dc810706ab8e6cd5e860b019058f832778741e5d4c6fbeffa6b5",
-      "propertyPaths": [
-        "OuterPosition",
-        "InnerPosition",
-        "Position",
-        "TightInset",
-        "PositionConstraint",
-        "Units",
-        "DataAspectRatio",
-        "DataAspectRatioMode",
-        "PlotBoxAspectRatio",
-        "PlotBoxAspectRatioMode",
-        "Layout"
-      ],
-      "propertyCapabilitySha256": [
-        "70d7805a40febe6a462819c7e3d8823ee7cf0a11e58bc2e631b69976c6e88d03",
-        "2ae8e3a1dcdecab2271510233e7cca774b21e9805390dfae597147a3acc70769",
-        "56330135eea4cfe67ad5ff763ed18b43c03ece111b845a3fe8910bbe40a96b58",
-        "05f67f320250d8cc0c7fee70dce314dce9ecbfe5c25ca2d3c4c293ae6b82ca4d",
-        "bc64f4a224f0f4791bac1ebd8bb1c73dbf810150fdcdd801a668d1e8771d2920",
-        "d64ff824b30cbf1fa495e551573cef153eef9f2a9e6e6b3fa55388009ae6fcd3",
-        "29b6df7df7ed4d2519cee5a8c0c40c69cfe73fd38952710a4935c1b6c9ab5c77",
-        "b9ebd926227dea79f10e781808a0f19984141c7c8a750cd842fbfadd469d9f96",
-        "30b1d3ed7416bff2b1d3a316f1243af798b2851d14c7f035f8c7f71158a59120",
-        "39ab1902b4b350fd8f7dbf99f0cb1d5ec4ee6cc91d9ed33e69f4ba0b25f2c9e3",
-        "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
-      ],
-      "memberVariantIds": [
-        "axes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        9
       ]
     },
     {
@@ -4818,12 +4844,12 @@
       ]
     },
     {
-      "candidateId": "candidate.toggletool.a15b1af746ad",
+      "candidateId": "candidate.toggletool.f2c745861734",
       "categoryId": "toggletool",
       "categoryDisplayName": "Toggle Tool",
       "sharingScope": "variantLocal",
       "scopeRationale": "Toggle Tool-specific settings.",
-      "capabilitySha256": "a15b1af746ad7ba7859d0e98e4ec70dd8d1b585736d96975896faa8bb9a7d432",
+      "capabilitySha256": "f2c745861734df8a716a36e873c0d9b59422b4022162a1df54904245ab57b6f1",
       "propertyPaths": [
         "State",
         "Icon",
@@ -4831,7 +4857,7 @@
         "Separator"
       ],
       "propertyCapabilitySha256": [
-        "e0df677b0e0f0a64dc3ed34325c9dffb5d6e3545d845aa8021155d2556841ec5",
+        "d4aa48c9e212e82582d55df91543a03e17a7aac509ff0582be855a6628f08239",
         "7989bc184e4fb5b2c1524a8fe973878e206459126bf49fdac387e2248bb35cf6",
         "7da534f957954737ab3cf49f00dc4cccb869f8d589ebe854a5ccb5995f9839fc",
         "12d906a77029cfd0f92dc4ea2cc1fe6968c52d80f68023a9c51a632e6f2f5cc5"
@@ -5114,12 +5140,12 @@
       ]
     },
     {
-      "candidateId": "candidate.view.b4b39644cb15",
+      "candidateId": "candidate.view.0d1669550fe6",
       "categoryId": "view",
       "categoryDisplayName": "View",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family view settings.",
-      "capabilitySha256": "b4b39644cb15e915c3070d5e18c8ae9e524a255300fdcb42ea5576f2dd5d8dba",
+      "capabilitySha256": "0d1669550fe69bb02b393a8e309ac87d3af9e657b2e5597c0b7ad27917b9d325",
       "propertyPaths": [
         "View",
         "Projection",
@@ -5133,16 +5159,16 @@
         "CameraViewAngleMode"
       ],
       "propertyCapabilitySha256": [
-        "8c731c2209c43cfdefc14f1c8d0a25e67c7a338c8b686fd5be304ac7be00b5ef",
-        "e9991443af6070945e42a61531c6bc665997332a8381013e28e5e18cb4a0b3d7",
-        "da67a7ec02ff5e87c6078fa01532827376d52f96482baf388c6edb73df6677d9",
-        "c553439debc85e01850b24f1ca57f6a603b1dd193bb143a9710bb157aed4403d",
-        "eadfc1f74d8bcd9de4a93ab943ad8863881d8b18da86a34f554cd2b0ad78ca00",
-        "5e029ac4741d2584f16737b0d2d88d34a3f5c64c04121cc55fe274f7340fadcf",
-        "29d70329bdd4ce0cfb5f2dc4656f8818fcd65023bbea0c2a256675ac9b5b58e2",
-        "7f945b146c1df67bb3fa37aa17388d928789f180a27e6fbaa4aaf0ab7788955c",
-        "7b13cb053f0abcc17dcc404b948e1ca15854430168bf19659c9b16830b2e2d71",
-        "a8023db865c73338a9886dc7745215279aa317127e39cd28111f8b7346692599"
+        "e03cf5e01e39f4c6004f5fdace05597420ebb2429a5f1afc05cb60dcd3b0d653",
+        "e8226733aa23ae6c2d93b47e892d90c23ef18b369d65b11c75a32dbb839e5047",
+        "199344f5d47bcae8239812ddb525c3f55104350e8aaa8533a89b56edc396032d",
+        "869dc45ded066870c3cca1ab80ff9c6e054bd673842d37aff08ff713f953eb68",
+        "5c66563a23a10549b14c89b06d243dc5566e5e3ef076798d4db7db85a88d5aa9",
+        "00b851b270066bb23c5d4725beb025d55abf4df8a7a573c703cc14b00e9eeef0",
+        "d58430c0e945e8c9414ba1c02f992e72ec53d05b7f385e948b53c3972e36d59f",
+        "cd0702426b451b8fa38daaed657492b8c33202a4fc4d2ebb217525e0ac5af055",
+        "e74d99894cee431678cc92b57dca070cf28ba2f8abc16d00ad4d421b24df6271",
+        "08add9eea214d9c727f9eaed48eff8dda6bb06e2747ed3f58b3054d56bcb844d"
       ],
       "memberVariantIds": [
         "axes",

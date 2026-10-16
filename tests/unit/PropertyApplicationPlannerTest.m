@@ -26,10 +26,15 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
         function previewFiltersLegacyExecutableConstructorPairs(testCase)
             % previewFiltersLegacyExecutableConstructorPairs Apply skip policy without occurrence metadata.
             registry = macd.model.ComponentRegistry.createDefault();
-            member = macd.model.ComponentRecord("label", "Label", "uilabel", "matlab.ui.control.Label");
-            member.CreationArguments = {"Text", "retained", "CreateFcn", @(~,~) error("MustNotExecute")};
+            for factory = ["uilabel", "uibutton"]
+                member = macd.model.ComponentRecord("owned", "Owned", factory, "matlab.ui.control.Label");
+                member.CreationArguments = {"Text", "retained", "CreateFcn", @(~,~) error("MustNotExecute")};
+                actual = macd.model.PropertyApplicationPlanner.forPreviewArguments(member, registry);
+                testCase.verifyEqual(actual, {"Text", "retained"});
+            end
+            member.CreationArguments = [{"push"}, member.CreationArguments];
             actual = macd.model.PropertyApplicationPlanner.forPreviewArguments(member, registry);
-            testCase.verifyEqual(actual, {"Text", "retained"});
+            testCase.verifyEqual(actual, {"push", "Text", "retained"});
         end
 
         function handlesEmptySubsetAndConservativeLegacyMetadata(testCase)

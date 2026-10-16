@@ -746,7 +746,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -767,7 +773,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -788,7 +800,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -809,7 +827,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -836,7 +860,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -857,7 +887,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -878,7 +914,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -899,7 +941,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -920,7 +968,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -941,7 +995,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -962,7 +1022,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -983,7 +1049,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -1004,7 +1076,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -1025,7 +1103,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3110,7 +3194,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3131,7 +3221,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3152,7 +3248,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3173,7 +3275,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3200,7 +3308,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3221,7 +3335,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3242,7 +3362,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3263,7 +3389,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3284,7 +3416,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3305,7 +3443,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3326,7 +3470,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3347,7 +3497,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3368,7 +3524,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3389,7 +3551,13 @@
             "PlotBoxAspectRatio",
             "PlotBoxAspectRatioMode",
             "Projection",
-            "View"
+            "View",
+            "XLim",
+            "XLimMode",
+            "YLim",
+            "YLimMode",
+            "ZLim",
+            "ZLimMode"
           ],
           "reason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
         },
@@ -3605,9 +3773,11 @@
         },
         {
           "path": "ContextMenu",
-          "status": "unknown",
-          "affectedPaths": [],
-          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          "status": "modeled",
+          "affectedPaths": [
+            "ContextMenu"
+          ],
+          "reason": "Owned push-button setters retain the ContextMenu handle without changing the other reviewed stored inputs or executing its opening callback. Existing source-only reference mapping validates ownership; no handle-editing UI is implied."
         },
         {
           "path": "Position",
@@ -11142,7 +11312,7 @@
           "path": "State",
           "status": "unsupported",
           "affectedPaths": [],
-          "reason": "Programmatic state changes can invoke OnCallback or OffCallback; callback effects are not evaluated."
+          "reason": "State assignment invokes owned callbacks under figure but not uifigure in the R2024a fixture. Context-dependent callback effects remain unsupported; independence is not asserted."
         },
         {
           "path": "Icon",

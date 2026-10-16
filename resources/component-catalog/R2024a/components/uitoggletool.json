@@ -56,7 +56,7 @@
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
-              "effectReason": "Programmatic state changes can invoke OnCallback or OffCallback; callback effects are not evaluated."
+              "effectReason": "State assignment invokes owned callbacks under figure but not uifigure in the R2024a fixture. Context-dependent callback effects remain unsupported; independence is not asserted."
             }
           }
         },

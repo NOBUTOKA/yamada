@@ -77,14 +77,14 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
             % laterLiteralOverridesEarlierOpaqueSettingWithoutDiscardingIt Separate source opacity from final certainty.
 
             source = testCase.fixture([ ...
-                "app.StatusLabel = uilabel(app.UIFigure, Text=initialText());", ...
+                "app.StatusLabel = uilabel(app.UIFigure, Text=""Initial"" + ""Text"");", ...
                 "app.StatusLabel.Text = ""Ready"";"]);
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("StatusLabel");
             settings = component.getSettings("Text");
             testCase.verifyNumElements(settings, 2);
-            testCase.verifyEqual(settings(1).SourceExpression, "initialText()");
+            testCase.verifyEqual(settings(1).SourceExpression, """Initial"" + ""Text""");
             testCase.verifyTrue(component.getProperty("Text").IsEditable);
             document.setProperty(component.Id, "Text", "Updated");
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), ...

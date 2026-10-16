@@ -15,6 +15,21 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
     end
 
     methods (Test)
+        function unreviewedAxesUpstreamKeepsLimitsUnknown(testCase)
+            % unreviewedAxesUpstreamKeepsLimitsUnknown Refuse to infer coupled limits through unaudited scale or aspect state.
+            for writes = {{"XScale", "log"; "XLim", [1 10]; "FontName", "Helvetica"}, ...
+                    {"DataAspectRatio", [1 1 1]; "XLim", [1 10]; "FontName", "Helvetica"}}
+                [component, definitions] = testCase.fixture("uiaxes", writes{1});
+                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                limits = testCase.state(states, "XLim");
+                testCase.verifyFalse(limits.IsKnown);
+                testCase.verifyFalse(limits.IsEditable);
+                testCase.verifyEqual(limits.RequestedValue, [1 10]);
+                testCase.verifyEqual(limits.ReasonCode, "unreviewed-effect");
+                testCase.verifyEqual(testCase.state(states, "FontName").EffectiveValue, "Helvetica");
+            end
+        end
+
         function clampingDoesNotRewriteExplicitOrRequestedValues(testCase)
             % clampingDoesNotRewriteExplicitOrRequestedValues Retain the Value slot while Limits changes its effect.
             [component, definitions] = testCase.fixture("uislider-slider", {"Value", 20; "Limits", [50 100]});
@@ -267,7 +282,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
                 {"Position", [1 1 200 100]; "Units", "normalized"}, "nameValue");
             states = macd.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyFalse(testCase.state(states, "Position").IsKnown);
-            testCase.verifySubstring(testCase.state(states, "Position").Reason, "Units changed");
+            testCase.verifyEqual(testCase.state(states, "Position").ReasonCode, "unit-conversion");
+            for alias = ["InnerPosition", "OuterPosition"]
+                testCase.verifyFalse(testCase.state(states, alias).IsKnown);
+                testCase.verifyEqual(testCase.state(states, alias).ReasonCode, "unit-conversion");
+            end
             [component, definitions] = testCase.fixture("uipanel", ...
                 {"Units", "normalized"; "Position", [0.1 0.1 0.5 0.5]}, "nameValue");
             states = macd.model.PropertyStateResolver.resolve(component, definitions);

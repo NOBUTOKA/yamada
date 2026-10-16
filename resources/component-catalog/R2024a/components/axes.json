@@ -4508,7 +4508,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4561,7 +4567,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4610,7 +4622,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4663,7 +4681,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4711,7 +4735,7 @@
       "entries": [
         {
           "path": "View",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "View",
@@ -4719,7 +4743,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 1,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4752,7 +4776,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4760,7 +4790,7 @@
         },
         {
           "path": "Projection",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Projection",
@@ -4768,7 +4798,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 2,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4805,7 +4835,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4813,7 +4849,7 @@
         },
         {
           "path": "CameraPosition",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraPosition",
@@ -4821,7 +4857,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 3,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4854,7 +4890,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4862,7 +4904,7 @@
         },
         {
           "path": "CameraPositionMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraPositionMode",
@@ -4870,7 +4912,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 4,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4907,7 +4949,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4915,7 +4963,7 @@
         },
         {
           "path": "CameraTarget",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraTarget",
@@ -4923,7 +4971,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 5,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -4956,7 +5004,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -4964,7 +5018,7 @@
         },
         {
           "path": "CameraTargetMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraTargetMode",
@@ -4972,7 +5026,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 6,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -5009,7 +5063,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -5017,7 +5077,7 @@
         },
         {
           "path": "CameraUpVector",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraUpVector",
@@ -5025,7 +5085,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 7,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -5058,7 +5118,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -5066,7 +5132,7 @@
         },
         {
           "path": "CameraUpVectorMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraUpVectorMode",
@@ -5074,7 +5140,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 8,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -5111,7 +5177,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -5119,7 +5191,7 @@
         },
         {
           "path": "CameraViewAngle",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraViewAngle",
@@ -5127,7 +5199,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 9,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -5162,7 +5234,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }
@@ -5170,7 +5248,7 @@
         },
         {
           "path": "CameraViewAngleMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraViewAngleMode",
@@ -5178,7 +5256,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 10,
-            "groupId": "exact.view.b4b39644cb15",
+            "groupId": "exact.view.0d1669550fe6",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -5215,7 +5293,13 @@
                 "PlotBoxAspectRatio",
                 "PlotBoxAspectRatioMode",
                 "Projection",
-                "View"
+                "View",
+                "XLim",
+                "XLimMode",
+                "YLim",
+                "YLimMode",
+                "ZLim",
+                "ZLimMode"
               ],
               "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
             }

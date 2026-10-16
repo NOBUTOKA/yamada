@@ -508,7 +508,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uitogglebutton.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -516,7 +516,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
-            "groupId": "standardInteractivity",
+            "groupId": "local.uitogglebutton.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",

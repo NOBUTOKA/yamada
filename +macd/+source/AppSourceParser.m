@@ -151,6 +151,7 @@ classdef AppSourceParser
                     end
                 end
                 if ~isSupported
+                    if ismember(index, initializationOrder), document.Metadata.HasUnresolvedInitialization = true; end
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "nonliteral-creation-argument", "warning", ...
                         "Component creation has an unsupported argument and was retained as source.", ...
@@ -179,6 +180,7 @@ classdef AppSourceParser
                 if strlength(parentName) > 0
                     parent = document.getComponentByName(parentName);
                     if isempty(parent)
+                        if ismember(index, initializationOrder), document.Metadata.HasUnresolvedInitialization = true; end
                         diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                             "missing-parent", "warning", ...
                             "Component parent is not available from supported prior source.", ...
@@ -208,6 +210,7 @@ classdef AppSourceParser
                             component.Id, statement.Span);
                     end
                 catch exception
+                    if ismember(index, initializationOrder), document.Metadata.HasUnresolvedInitialization = true; end
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "invalid-component-creation", "warning", exception.message, ...
                         creation.Name, statement.Span);
@@ -320,10 +323,26 @@ classdef AppSourceParser
 
             % Construction callbacks can mutate any previously created object.
             document.Metadata.HasUnresolvedLifecycleEffects = false;
+            document.Metadata.HasUnresolvedExecutableEffects = false;
             document.Metadata.HasUnrecognizedSetter = false;
             for member = document.Components
                 concrete = registry.get(member.Factory, member.CreationArguments);
                 for setting = member.Settings
+                    if setting.ValueKind == "expression"
+                        expression = strtrim(string(macd.source.ComponentNameRewriter.codeMask(setting.SourceExpression)));
+                        deferred = startsWith(expression, "@") || ...
+                            ~isempty(regexp(expression, '^createCallbackFcn\s*\(', 'once'));
+                        blocked = string({document.Metadata.InitializationContext.Layout.Methods.Name});
+                        inert = macd.source.InitializationSourceAnalyzer.isLiteralDataCall(setting.SourceExpression, blocked);
+                        if ~deferred && ~inert && ~isempty(regexp(expression, '(?<![\w.@])(?:\w+\.)*\w+\s*\(', 'once'))
+                            document.Metadata.HasUnresolvedExecutableEffects = true;
+                        end
+                    end
+                    % Audited execution triggers can mutate other components, not only this setter's receiver.
+                    if (member.Factory == "uitoggletool" && setting.Path == "State") || ...
+                            (member.Factory == "uihtml" && any(setting.Path == ["HTMLSource", "Data"]))
+                        document.Metadata.HasUnresolvedExecutableEffects = true;
+                    end
                     if setting.Path == "CreateFcn" && setting.Method == "nameValue" && ...
                             ~(setting.ValueKind == "literal" && isempty(setting.LiteralValue))
                         document.Metadata.HasUnresolvedLifecycleEffects = true;

@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "813af8a562a277ebd1f4d9bc9de2875fe2e0a90f",
-  "inputSha256": "b45fc03ffb97f99fd27e452d5f7e8271e8ab245096091ffaf19ac08f943a5475",
+  "ledgerBaselineGitCommit": "2b4c0ed1e5bbd5c0d0aa3ce31d932872f3ce95de",
+  "inputSha256": "beac540a6bc8d195b49d6cfe83040fb2bc74bd5c1610784cc69e6f052d1259cd",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -77,7 +77,7 @@
     },
     {
       "path": "components/axes.json",
-      "sha256": "937cc5a69da230d8a44ff72dadc731e58cc76e0322d40d3385bc520193e891c8"
+      "sha256": "d585345f5e7a79bbe96b68e13fbd8e64a839c7d9a223793ccb9f5f3e21939db0"
     },
     {
       "path": "components/geoaxes.json",
@@ -89,11 +89,11 @@
     },
     {
       "path": "components/uiaxes.json",
-      "sha256": "08968bd78d362fd51ad63fb1787392b540dc54d962f2543a56c578b0c6420547"
+      "sha256": "df821f6b240fae635f7f78b10f95e9a944fa8cd5acaac698bcd3372d5e77b349"
     },
     {
       "path": "components/uibutton-push.json",
-      "sha256": "6b1cabf6fedf993fe076b05b2b9354708e9fa3032e5306e74d9c7adbdd4b071f"
+      "sha256": "b8703f968d2f689190f0e0f8d0117460dd441ed86a67d7cf93f6f2da9bbdfa23"
     },
     {
       "path": "components/uibutton-state.json",
@@ -249,7 +249,7 @@
     },
     {
       "path": "components/uitoggletool.json",
-      "sha256": "f91653f80dd64d7c17341efc8ec1d40fe495fa64b2e92fd90cd8cb48d7ca4180"
+      "sha256": "951b457a4c7ba7e0b2858e0bb96ee79aab955055a948e5adc2a1a86c9a3bae8f"
     },
     {
       "path": "components/uitoolbar.json",

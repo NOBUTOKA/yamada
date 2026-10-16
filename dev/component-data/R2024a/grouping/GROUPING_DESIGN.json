@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "404bc3f47d7db829599844a98c006514f0448180ae9d127fefef5a902d728c7c",
+  "inputSha256": "6f0a8da2f5a467c415d3da83b19f35d6c671564cdd3f730d1f635fba5f738d74",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -5217,7 +5217,7 @@
       ]
     },
     {
-      "id": "exact.view.b4b39644cb15",
+      "id": "exact.view.0d1669550fe6",
       "kind": "exactCategory",
       "categoryId": "view",
       "capabilities": [
@@ -5259,7 +5259,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5306,7 +5312,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5349,7 +5361,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5396,7 +5414,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5439,7 +5463,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5486,7 +5516,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5529,7 +5565,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5576,7 +5618,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5621,7 +5669,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -5668,7 +5722,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -7063,7 +7123,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -7110,7 +7176,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -7153,7 +7225,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -7200,7 +7278,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -14281,7 +14365,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -14328,7 +14418,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -14371,7 +14467,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -14418,7 +14520,13 @@
               "PlotBoxAspectRatio",
               "PlotBoxAspectRatioMode",
               "Projection",
-              "View"
+              "View",
+              "XLim",
+              "XLimMode",
+              "YLim",
+              "YLimMode",
+              "ZLim",
+              "ZLimMode"
             ],
             "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
           }
@@ -14754,6 +14862,47 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uibutton-push"
+      ]
+    },
+    {
+      "id": "local.uibutton-push.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "componentReference",
+            "effectStatus": "modeled",
+            "affectedPaths": [
+              "ContextMenu"
+            ],
+            "effectReason": "Owned push-button setters retain the ContextMenu handle without changing the other reviewed stored inputs or executing its opening callback. Existing source-only reference mapping validates ownership; no handle-editing UI is implied."
           }
         }
       ],
@@ -15278,6 +15427,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uibutton-state"
+      ]
+    },
+    {
+      "id": "local.uibutton-state.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -16670,6 +16858,45 @@
       ]
     },
     {
+      "id": "local.uicheckbox.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uicheckbox"
+      ]
+    },
+    {
       "id": "local.uicheckbox.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -17169,6 +17396,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uicolorpicker"
+      ]
+    },
+    {
+      "id": "local.uicolorpicker.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -18111,6 +18377,35 @@
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
           }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
         }
       ],
       "memberVariantIds": [
@@ -18787,6 +19082,35 @@
             "affectedPaths": [],
             "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
           }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
         }
       ],
       "memberVariantIds": [
@@ -19232,6 +19556,35 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -20002,6 +20355,35 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -22198,6 +22580,45 @@
       ]
     },
     {
+      "id": "local.uigauge-circular.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uigauge-circular"
+      ]
+    },
+    {
       "id": "local.uigauge-circular.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -22719,6 +23140,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uigauge-linear"
+      ]
+    },
+    {
+      "id": "local.uigauge-linear.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -23290,6 +23750,45 @@
       ]
     },
     {
+      "id": "local.uigauge-ninetydegree.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uigauge-ninetydegree"
+      ]
+    },
+    {
       "id": "local.uigauge-ninetydegree.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -23845,6 +24344,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uigauge-semicircular"
+      ]
+    },
+    {
+      "id": "local.uigauge-semicircular.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -27268,6 +27806,45 @@
       ]
     },
     {
+      "id": "local.uiknob-continuous.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uiknob-continuous"
+      ]
+    },
+    {
       "id": "local.uiknob-continuous.knob",
       "kind": "variantLocal",
       "categoryId": "knob",
@@ -27741,6 +28318,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uiknob-discrete"
+      ]
+    },
+    {
+      "id": "local.uiknob-discrete.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -28252,6 +28868,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uilabel"
+      ]
+    },
+    {
+      "id": "local.uilabel.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -31829,6 +32484,45 @@
       ]
     },
     {
+      "id": "local.uiradiobutton.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uiradiobutton"
+      ]
+    },
+    {
       "id": "local.uiradiobutton.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -32222,6 +32916,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uislider-range"
+      ]
+    },
+    {
+      "id": "local.uislider-range.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -32833,6 +33566,45 @@
       ]
     },
     {
+      "id": "local.uislider-slider.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uislider-slider"
+      ]
+    },
+    {
       "id": "local.uislider-slider.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -33410,6 +34182,35 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -34144,6 +34945,45 @@
       ]
     },
     {
+      "id": "local.uiswitch-rocker.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uiswitch-rocker"
+      ]
+    },
+    {
       "id": "local.uiswitch-rocker.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -34547,6 +35387,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uiswitch-slider"
+      ]
+    },
+    {
+      "id": "local.uiswitch-slider.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -35127,6 +36006,45 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uiswitch-toggle"
+      ]
+    },
+    {
+      "id": "local.uiswitch-toggle.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -38556,6 +39474,35 @@
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
           }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
         }
       ],
       "memberVariantIds": [
@@ -39185,6 +40132,45 @@
       ]
     },
     {
+      "id": "local.uitogglebutton.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "capabilities": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "uitogglebutton"
+      ]
+    },
+    {
       "id": "local.uitogglebutton.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -39717,7 +40703,7 @@
             "effectPolicy": "none",
             "effectStatus": "unsupported",
             "affectedPaths": [],
-            "effectReason": "Programmatic state changes can invoke OnCallback or OffCallback; callback effects are not evaluated."
+            "effectReason": "State assignment invokes owned callbacks under figure but not uifigure in the R2024a fixture. Context-dependent callback effects remain unsupported; independence is not asserted."
           }
         },
         {
@@ -40617,6 +41603,35 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "nameValue": "unknown",
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -42229,35 +43244,6 @@
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
           }
-        },
-        {
-          "path": "ContextMenu",
-          "valueContract": {
-            "kind": "componentReference",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "deferredComponentReference"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "nameValue": "unknown",
-            "effectPolicy": "none",
-            "effectStatus": "unknown",
-            "affectedPaths": [],
-            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
-          }
         }
       ],
       "memberVariantIds": [
@@ -43134,52 +44120,52 @@
       "propertyOwners": [
         {
           "path": "View",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Projection",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraPosition",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraPositionMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraTarget",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraTargetMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraUpVector",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraUpVectorMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraViewAngle",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraViewAngleMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         }
       ]
@@ -45636,52 +46622,52 @@
       "propertyOwners": [
         {
           "path": "View",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Projection",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraPosition",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraPositionMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraTarget",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraTargetMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraUpVector",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraUpVectorMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraViewAngle",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         },
         {
           "path": "CameraViewAngleMode",
-          "groupId": "exact.view.b4b39644cb15",
+          "groupId": "exact.view.0d1669550fe6",
           "runtimeSetAccess": "public"
         }
       ]
@@ -45963,7 +46949,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uibutton-push.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -46227,7 +47213,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uibutton-state.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -46824,7 +47810,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uicheckbox.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -47028,7 +48014,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uicolorpicker.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -47400,7 +48386,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uidatepicker.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -47664,7 +48650,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uidropdown.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -47958,7 +48944,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uieditfield-numeric.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -48216,7 +49202,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uieditfield-text.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -48906,7 +49892,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uigauge-circular.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -49197,7 +50183,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uigauge-linear.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -49494,7 +50480,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uigauge-ninetydegree.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -49791,7 +50777,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uigauge-semicircular.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -50949,7 +51935,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uiknob-continuous.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -51195,7 +52181,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uiknob-discrete.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -51447,7 +52433,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uilabel.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -52818,7 +53804,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uiradiobutton.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -53097,7 +54083,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uislider-range.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -53382,7 +54368,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uislider-slider.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -53676,7 +54662,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uispinner.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -53928,7 +54914,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uiswitch-rocker.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -54174,7 +55160,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uiswitch-slider.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -54420,7 +55406,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uiswitch-toggle.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -55527,7 +56513,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uitextarea.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -55779,7 +56765,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uitogglebutton.interactivity",
           "runtimeSetAccess": "public"
         }
       ]
@@ -56649,7 +57635,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uitree-checkbox.interactivity",
           "runtimeSetAccess": "unresolved"
         }
       ]

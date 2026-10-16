@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "b45fc03ffb97f99fd27e452d5f7e8271e8ab245096091ffaf19ac08f943a5475",
+  "inputSha256": "beac540a6bc8d195b49d6cfe83040fb2bc74bd5c1610784cc69e6f052d1259cd",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -306,7 +306,7 @@
       ],
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "surfaceCount": 23,
+      "surfaceCount": 24,
       "affectedVariantIds": [
         "axes",
         "geoaxes",
@@ -734,6 +734,33 @@
           ]
         },
         {
+          "candidateId": "candidate.interactivity.c3b502f08578",
+          "categoryId": "interactivity",
+          "categoryDisplayName": "Interactivity",
+          "sharingScope": "crossCutting",
+          "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+          "capabilitySha256": "c3b502f08578411d2f177fbae513d21f946c38899fdc28dd4098cc6f3284deab",
+          "propertyPaths": [
+            "Visible",
+            "Enable",
+            "Tooltip",
+            "ContextMenu"
+          ],
+          "propertyCapabilitySha256": [
+            "b68b6c9096ced5ca15a0f501189ae1fcfe5dfc25ae0b3ebc77cc0a8513290f9c",
+            "06335f3c91ca373ff594e9f07cc8ec9ee0a6ec834ffd40efe345f86546cc6500",
+            "312af0503c323a52732b9176b3012a75bea7c451dcbc269c74127f43bf139c6b",
+            "ee60f673af9780d85922bc51584bc828045b2a3133d97bebf8ab87fa3ed5aa34"
+          ],
+          "memberVariantIds": [
+            "uibutton-push"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            3
+          ]
+        },
+        {
           "candidateId": "candidate.interactivity.c69ad1a7a590",
           "categoryId": "interactivity",
           "categoryDisplayName": "Interactivity",
@@ -811,7 +838,6 @@
             "7037935641b34b6e3d1fe7bd989d8fa1a771f86bdd5c3e04d61ef8d08c7c1a94"
           ],
           "memberVariantIds": [
-            "uibutton-push",
             "uibutton-state",
             "uicheckbox",
             "uicolorpicker",
@@ -830,7 +856,7 @@
             "uiswitch-toggle",
             "uitogglebutton"
           ],
-          "reuseCount": 18,
+          "reuseCount": 17,
           "documentedCategoryOrders": [
             3,
             4
@@ -1045,7 +1071,7 @@
         },
         {
           "path": "ContextMenu",
-          "presentInSurfaceCount": 23,
+          "presentInSurfaceCount": 24,
           "presentInCandidateIds": [
             "candidate.interactivity.055b46d78563",
             "candidate.interactivity.0df741b8d3ad",
@@ -1060,6 +1086,7 @@
             "candidate.interactivity.76577bd29f3f",
             "candidate.interactivity.84b2bd81dcf0",
             "candidate.interactivity.8ea0a29ba30b",
+            "candidate.interactivity.c3b502f08578",
             "candidate.interactivity.c69ad1a7a590",
             "candidate.interactivity.cc89581ce323",
             "candidate.interactivity.d2758e7deb05",
@@ -1115,7 +1142,7 @@
         },
         {
           "path": "Enable",
-          "presentInSurfaceCount": 11,
+          "presentInSurfaceCount": 12,
           "presentInCandidateIds": [
             "candidate.interactivity.055b46d78563",
             "candidate.interactivity.21eb8c698ff1",
@@ -1123,6 +1150,7 @@
             "candidate.interactivity.65b8c182efe4",
             "candidate.interactivity.76577bd29f3f",
             "candidate.interactivity.84b2bd81dcf0",
+            "candidate.interactivity.c3b502f08578",
             "candidate.interactivity.d2758e7deb05",
             "candidate.interactivity.d8ff64bdfc9a",
             "candidate.interactivity.f04fc99fde8f",
@@ -1211,7 +1239,7 @@
         },
         {
           "path": "Tooltip",
-          "presentInSurfaceCount": 12,
+          "presentInSurfaceCount": 13,
           "presentInCandidateIds": [
             "candidate.interactivity.055b46d78563",
             "candidate.interactivity.21eb8c698ff1",
@@ -1219,6 +1247,7 @@
             "candidate.interactivity.65b8c182efe4",
             "candidate.interactivity.76577bd29f3f",
             "candidate.interactivity.84b2bd81dcf0",
+            "candidate.interactivity.c3b502f08578",
             "candidate.interactivity.d2758e7deb05",
             "candidate.interactivity.d8ff64bdfc9a",
             "candidate.interactivity.ddb69c33ee2a",
@@ -1244,7 +1273,7 @@
         },
         {
           "path": "Visible",
-          "presentInSurfaceCount": 21,
+          "presentInSurfaceCount": 22,
           "presentInCandidateIds": [
             "candidate.interactivity.055b46d78563",
             "candidate.interactivity.0df741b8d3ad",
@@ -1258,6 +1287,7 @@
             "candidate.interactivity.76577bd29f3f",
             "candidate.interactivity.84b2bd81dcf0",
             "candidate.interactivity.8ea0a29ba30b",
+            "candidate.interactivity.c3b502f08578",
             "candidate.interactivity.c69ad1a7a590",
             "candidate.interactivity.cc89581ce323",
             "candidate.interactivity.d2758e7deb05",
@@ -5072,12 +5102,12 @@
           ]
         },
         {
-          "candidateId": "candidate.position.4253f8529ee6",
+          "candidateId": "candidate.position.3cb29d3efa19",
           "categoryId": "position",
           "categoryDisplayName": "Position",
           "sharingScope": "familyScoped",
           "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-          "capabilitySha256": "4253f8529ee6abeb51ee952f1f015a70cac7fd1f254f2160199d91c2cd098cf1",
+          "capabilitySha256": "3cb29d3efa19517c9daf97c59abfd5f9b6e985b48b0f95340cbafcfc250d7093",
           "propertyPaths": [
             "Position",
             "InnerPosition",
@@ -5098,10 +5128,10 @@
             "05f67f320250d8cc0c7fee70dce314dce9ecbfe5c25ca2d3c4c293ae6b82ca4d",
             "bc64f4a224f0f4791bac1ebd8bb1c73dbf810150fdcdd801a668d1e8771d2920",
             "a1276131bbb293f50db6f06ad33a4e51d3d8cccca447fb852e2f5336b3e9cabf",
-            "29b6df7df7ed4d2519cee5a8c0c40c69cfe73fd38952710a4935c1b6c9ab5c77",
-            "b9ebd926227dea79f10e781808a0f19984141c7c8a750cd842fbfadd469d9f96",
-            "30b1d3ed7416bff2b1d3a316f1243af798b2851d14c7f035f8c7f71158a59120",
-            "39ab1902b4b350fd8f7dbf99f0cb1d5ec4ee6cc91d9ed33e69f4ba0b25f2c9e3",
+            "1db3131a3629574af1b695ad169f9a49c62e3a9868ca9d572d8e4b7bc4cc4579",
+            "dfe05886b68cc1ed666c5fec4ac0e050fe1a5f34ec561185a0920f8dece3a1d9",
+            "60e89ab00457e9fde5a8fcad3ecd9088dbc15ff7dfe96d19ba17865d44ed259c",
+            "834138f61838d2698306fa427b6927a44594ac9072035daaf2fd3694b46ecb19",
             "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
           ],
           "memberVariantIds": [
@@ -5138,6 +5168,47 @@
           "reuseCount": 2,
           "documentedCategoryOrders": [
             5
+          ]
+        },
+        {
+          "candidateId": "candidate.position.496c2385ee73",
+          "categoryId": "position",
+          "categoryDisplayName": "Position",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+          "capabilitySha256": "496c2385ee73abe359ba404858ab3caefc45a0b726b884e0586721c545da338a",
+          "propertyPaths": [
+            "OuterPosition",
+            "InnerPosition",
+            "Position",
+            "TightInset",
+            "PositionConstraint",
+            "Units",
+            "DataAspectRatio",
+            "DataAspectRatioMode",
+            "PlotBoxAspectRatio",
+            "PlotBoxAspectRatioMode",
+            "Layout"
+          ],
+          "propertyCapabilitySha256": [
+            "70d7805a40febe6a462819c7e3d8823ee7cf0a11e58bc2e631b69976c6e88d03",
+            "2ae8e3a1dcdecab2271510233e7cca774b21e9805390dfae597147a3acc70769",
+            "56330135eea4cfe67ad5ff763ed18b43c03ece111b845a3fe8910bbe40a96b58",
+            "05f67f320250d8cc0c7fee70dce314dce9ecbfe5c25ca2d3c4c293ae6b82ca4d",
+            "bc64f4a224f0f4791bac1ebd8bb1c73dbf810150fdcdd801a668d1e8771d2920",
+            "d64ff824b30cbf1fa495e551573cef153eef9f2a9e6e6b3fa55388009ae6fcd3",
+            "1db3131a3629574af1b695ad169f9a49c62e3a9868ca9d572d8e4b7bc4cc4579",
+            "dfe05886b68cc1ed666c5fec4ac0e050fe1a5f34ec561185a0920f8dece3a1d9",
+            "60e89ab00457e9fde5a8fcad3ecd9088dbc15ff7dfe96d19ba17865d44ed259c",
+            "834138f61838d2698306fa427b6927a44594ac9072035daaf2fd3694b46ecb19",
+            "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
+          ],
+          "memberVariantIds": [
+            "axes"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            9
           ]
         },
         {
@@ -5472,47 +5543,6 @@
           ]
         },
         {
-          "candidateId": "candidate.position.bb40362aa238",
-          "categoryId": "position",
-          "categoryDisplayName": "Position",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-          "capabilitySha256": "bb40362aa238dc810706ab8e6cd5e860b019058f832778741e5d4c6fbeffa6b5",
-          "propertyPaths": [
-            "OuterPosition",
-            "InnerPosition",
-            "Position",
-            "TightInset",
-            "PositionConstraint",
-            "Units",
-            "DataAspectRatio",
-            "DataAspectRatioMode",
-            "PlotBoxAspectRatio",
-            "PlotBoxAspectRatioMode",
-            "Layout"
-          ],
-          "propertyCapabilitySha256": [
-            "70d7805a40febe6a462819c7e3d8823ee7cf0a11e58bc2e631b69976c6e88d03",
-            "2ae8e3a1dcdecab2271510233e7cca774b21e9805390dfae597147a3acc70769",
-            "56330135eea4cfe67ad5ff763ed18b43c03ece111b845a3fe8910bbe40a96b58",
-            "05f67f320250d8cc0c7fee70dce314dce9ecbfe5c25ca2d3c4c293ae6b82ca4d",
-            "bc64f4a224f0f4791bac1ebd8bb1c73dbf810150fdcdd801a668d1e8771d2920",
-            "d64ff824b30cbf1fa495e551573cef153eef9f2a9e6e6b3fa55388009ae6fcd3",
-            "29b6df7df7ed4d2519cee5a8c0c40c69cfe73fd38952710a4935c1b6c9ab5c77",
-            "b9ebd926227dea79f10e781808a0f19984141c7c8a750cd842fbfadd469d9f96",
-            "30b1d3ed7416bff2b1d3a316f1243af798b2851d14c7f035f8c7f71158a59120",
-            "39ab1902b4b350fd8f7dbf99f0cb1d5ec4ee6cc91d9ed33e69f4ba0b25f2c9e3",
-            "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
-          ],
-          "memberVariantIds": [
-            "axes"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            9
-          ]
-        },
-        {
           "candidateId": "candidate.position.c09fd5fd5b55",
           "categoryId": "position",
           "categoryDisplayName": "Position",
@@ -5663,16 +5693,16 @@
           "path": "DataAspectRatio",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.position.4253f8529ee6",
-            "candidate.position.bb40362aa238"
+            "candidate.position.3cb29d3efa19",
+            "candidate.position.496c2385ee73"
           ]
         },
         {
           "path": "DataAspectRatioMode",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.position.4253f8529ee6",
-            "candidate.position.bb40362aa238"
+            "candidate.position.3cb29d3efa19",
+            "candidate.position.496c2385ee73"
           ]
         },
         {
@@ -5696,8 +5726,9 @@
           "presentInSurfaceCount": 20,
           "presentInCandidateIds": [
             "candidate.position.2264799e46a3",
-            "candidate.position.4253f8529ee6",
+            "candidate.position.3cb29d3efa19",
             "candidate.position.464084a32dfa",
+            "candidate.position.496c2385ee73",
             "candidate.position.4c571a0cdbcb",
             "candidate.position.546e14e2782e",
             "candidate.position.6e594d2ef21c",
@@ -5709,7 +5740,6 @@
             "candidate.position.a6f24dba5d39",
             "candidate.position.af70ad521fc3",
             "candidate.position.b57d340cc0f6",
-            "candidate.position.bb40362aa238",
             "candidate.position.c09fd5fd5b55",
             "candidate.position.d579f77f023d",
             "candidate.position.d647d71b3d53",
@@ -5721,7 +5751,8 @@
           "path": "Layout",
           "presentInSurfaceCount": 14,
           "presentInCandidateIds": [
-            "candidate.position.4253f8529ee6",
+            "candidate.position.3cb29d3efa19",
+            "candidate.position.496c2385ee73",
             "candidate.position.4c571a0cdbcb",
             "candidate.position.546e14e2782e",
             "candidate.position.6e594d2ef21c",
@@ -5730,7 +5761,6 @@
             "candidate.position.a09082ab77e1",
             "candidate.position.a6f24dba5d39",
             "candidate.position.af70ad521fc3",
-            "candidate.position.bb40362aa238",
             "candidate.position.c09fd5fd5b55",
             "candidate.position.d579f77f023d",
             "candidate.position.d647d71b3d53",
@@ -5742,8 +5772,9 @@
           "presentInSurfaceCount": 20,
           "presentInCandidateIds": [
             "candidate.position.2264799e46a3",
-            "candidate.position.4253f8529ee6",
+            "candidate.position.3cb29d3efa19",
             "candidate.position.464084a32dfa",
+            "candidate.position.496c2385ee73",
             "candidate.position.4c571a0cdbcb",
             "candidate.position.546e14e2782e",
             "candidate.position.6e594d2ef21c",
@@ -5755,7 +5786,6 @@
             "candidate.position.a6f24dba5d39",
             "candidate.position.af70ad521fc3",
             "candidate.position.b57d340cc0f6",
-            "candidate.position.bb40362aa238",
             "candidate.position.c09fd5fd5b55",
             "candidate.position.d579f77f023d",
             "candidate.position.d647d71b3d53",
@@ -5767,16 +5797,16 @@
           "path": "PlotBoxAspectRatio",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.position.4253f8529ee6",
-            "candidate.position.bb40362aa238"
+            "candidate.position.3cb29d3efa19",
+            "candidate.position.496c2385ee73"
           ]
         },
         {
           "path": "PlotBoxAspectRatioMode",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.position.4253f8529ee6",
-            "candidate.position.bb40362aa238"
+            "candidate.position.3cb29d3efa19",
+            "candidate.position.496c2385ee73"
           ]
         },
         {
@@ -5784,8 +5814,9 @@
           "presentInSurfaceCount": 20,
           "presentInCandidateIds": [
             "candidate.position.2264799e46a3",
-            "candidate.position.4253f8529ee6",
+            "candidate.position.3cb29d3efa19",
             "candidate.position.464084a32dfa",
+            "candidate.position.496c2385ee73",
             "candidate.position.4c571a0cdbcb",
             "candidate.position.546e14e2782e",
             "candidate.position.6e594d2ef21c",
@@ -5797,7 +5828,6 @@
             "candidate.position.a6f24dba5d39",
             "candidate.position.af70ad521fc3",
             "candidate.position.b57d340cc0f6",
-            "candidate.position.bb40362aa238",
             "candidate.position.c09fd5fd5b55",
             "candidate.position.d579f77f023d",
             "candidate.position.d647d71b3d53",
@@ -5809,20 +5839,20 @@
           "path": "PositionConstraint",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.position.4253f8529ee6",
+            "candidate.position.3cb29d3efa19",
+            "candidate.position.496c2385ee73",
             "candidate.position.4c571a0cdbcb",
-            "candidate.position.9cfb1fd5b4c4",
-            "candidate.position.bb40362aa238"
+            "candidate.position.9cfb1fd5b4c4"
           ]
         },
         {
           "path": "TightInset",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.position.4253f8529ee6",
+            "candidate.position.3cb29d3efa19",
+            "candidate.position.496c2385ee73",
             "candidate.position.4c571a0cdbcb",
-            "candidate.position.9cfb1fd5b4c4",
-            "candidate.position.bb40362aa238"
+            "candidate.position.9cfb1fd5b4c4"
           ]
         },
         {
@@ -5830,12 +5860,12 @@
           "presentInSurfaceCount": 8,
           "presentInCandidateIds": [
             "candidate.position.2264799e46a3",
-            "candidate.position.4253f8529ee6",
+            "candidate.position.3cb29d3efa19",
             "candidate.position.464084a32dfa",
+            "candidate.position.496c2385ee73",
             "candidate.position.4c571a0cdbcb",
             "candidate.position.915917643fac",
             "candidate.position.9cfb1fd5b4c4",
-            "candidate.position.bb40362aa238",
             "candidate.position.dbb9bb5e7b67"
           ]
         },
@@ -8172,7 +8202,6 @@
       "sharingScope": "crossCutting",
       "baseCandidateId": "candidate.interactivity.d2758e7deb05",
       "baseVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -8191,7 +8220,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "baseReuseCount": 18,
+      "baseReuseCount": 17,
       "extendedCandidateId": "candidate.interactivity.055b46d78563",
       "extendedVariantIds": [
         "uidatepicker",
@@ -8220,7 +8249,6 @@
       "sharingScope": "crossCutting",
       "baseCandidateId": "candidate.interactivity.d2758e7deb05",
       "baseVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -8239,7 +8267,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "baseReuseCount": 18,
+      "baseReuseCount": 17,
       "extendedCandidateId": "candidate.interactivity.21eb8c698ff1",
       "extendedVariantIds": [
         "uidropdown"
@@ -8263,7 +8291,6 @@
       "sharingScope": "crossCutting",
       "baseCandidateId": "candidate.interactivity.d2758e7deb05",
       "baseVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -8282,7 +8309,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "baseReuseCount": 18,
+      "baseReuseCount": 17,
       "extendedCandidateId": "candidate.interactivity.65b8c182efe4",
       "extendedVariantIds": [
         "uilistbox"
@@ -8306,7 +8333,6 @@
       "sharingScope": "crossCutting",
       "baseCandidateId": "candidate.interactivity.d2758e7deb05",
       "baseVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -8325,7 +8351,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "baseReuseCount": 18,
+      "baseReuseCount": 17,
       "extendedCandidateId": "candidate.interactivity.f04fc99fde8f",
       "extendedVariantIds": [
         "uihyperlink"
@@ -8406,7 +8432,6 @@
       "baseReuseCount": 1,
       "extendedCandidateId": "candidate.interactivity.d2758e7deb05",
       "extendedVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -8425,7 +8450,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "extendedReuseCount": 18,
+      "extendedReuseCount": 17,
       "extensionPropertyPaths": [
         "Enable"
       ],
@@ -8566,7 +8591,6 @@
       "baseReuseCount": 2,
       "extendedCandidateId": "candidate.interactivity.d2758e7deb05",
       "extendedVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -8585,7 +8609,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "extendedReuseCount": 18,
+      "extendedReuseCount": 17,
       "extensionPropertyPaths": [
         "Enable",
         "Tooltip"
@@ -8702,7 +8726,6 @@
       "sharingScope": "crossCutting",
       "baseCandidateId": "candidate.interactivity.d2758e7deb05",
       "baseVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -8721,7 +8744,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "baseReuseCount": 18,
+      "baseReuseCount": 17,
       "extendedCandidateId": "candidate.interactivity.84b2bd81dcf0",
       "extendedVariantIds": [
         "uitree"
@@ -8750,7 +8773,6 @@
       "sharingScope": "crossCutting",
       "baseCandidateId": "candidate.interactivity.d2758e7deb05",
       "baseVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -8769,7 +8791,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "baseReuseCount": 18,
+      "baseReuseCount": 17,
       "extendedCandidateId": "candidate.interactivity.d8ff64bdfc9a",
       "extendedVariantIds": [
         "uiimage"
@@ -8994,7 +9016,6 @@
       "baseReuseCount": 1,
       "extendedCandidateId": "candidate.interactivity.d2758e7deb05",
       "extendedVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -9013,7 +9034,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "extendedReuseCount": 18,
+      "extendedReuseCount": 17,
       "extensionPropertyPaths": [
         "Visible",
         "Enable"
@@ -9299,7 +9320,6 @@
       "baseReuseCount": 1,
       "extendedCandidateId": "candidate.interactivity.d2758e7deb05",
       "extendedVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -9318,7 +9338,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "extendedReuseCount": 18,
+      "extendedReuseCount": 17,
       "extensionPropertyPaths": [
         "Visible",
         "Enable",
@@ -12394,7 +12414,7 @@
         "polaraxes"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.position.bb40362aa238",
+      "extendedCandidateId": "candidate.position.496c2385ee73",
       "extendedVariantIds": [
         "axes"
       ],

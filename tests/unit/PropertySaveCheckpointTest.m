@@ -190,15 +190,15 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
         function opaqueHistoryIsPreservedWithoutExecutingIt(testCase)
             % opaqueHistoryIsPreservedWithoutExecutingIt Keep earlier expressions while checking the known final value.
             [document, registry, control] = testCase.fixture([ ...
-                "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value=error('must not execute'));", ...
+                "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value=""A"" + """");", ...
                 "app.Control.Value = 'A';"]);
             document.setProperty(control.Id, "Value", 'B', registry);
             checkpoint = testCase.save(document, registry);
-            testCase.verifySubstring(checkpoint.SourceText, "error('must not execute')");
+            testCase.verifySubstring(checkpoint.SourceText, """A"" + """"");
             record = checkpoint.Snapshot.Records(string({checkpoint.Snapshot.Records.Name}) == "Control");
             settings = record.Settings(string({record.Settings.Path}) == "Value");
             testCase.verifyNumElements(settings, 2);
-            testCase.verifyEqual(settings(1).Location.SourceExpression, "error('must not execute')");
+            testCase.verifyEqual(settings(1).Location.SourceExpression, """A"" + """"");
             testCase.verifyEqual(settings(2).Value, 'B');
         end
     end

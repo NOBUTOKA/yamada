@@ -778,7 +778,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uispinner.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -786,7 +786,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 5,
-            "groupId": "standardInteractivity",
+            "groupId": "local.uispinner.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",

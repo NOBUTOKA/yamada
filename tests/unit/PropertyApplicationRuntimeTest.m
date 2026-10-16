@@ -1,9 +1,55 @@
 classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) PropertyApplicationRuntimeTest < matlab.unittest.TestCase
     % PropertyApplicationRuntimeTest Check reviewed rules against owned R2024a controls.
-    %   Only test-authored factory arguments and literals reach native setters.
+    %   Only test-authored factory arguments and settings reach native setters.
     %   These tests never execute opened app source or undocumented callbacks.
 
     methods (Test)
+        function pushButtonContextMenuRegistrationKeepsStoredInputs(testCase)
+            % pushButtonContextMenuRegistrationKeepsStoredInputs Verify bounded registration without opening callbacks.
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() delete(figure));
+            setappdata(figure, "ContextOpened", false);
+            menu = uicontextmenu(figure, ContextMenuOpeningFcn=@(~,~) setappdata(figure, "ContextOpened", true));
+            button = uibutton(figure, Text="retained", Position=[10 20 130 35]);
+            drawnow;
+            property = findprop(button, "ContextMenu");
+            testCase.verifyEqual(string(property.SetAccess), "public");
+            before = get(button);
+            button.ContextMenu = menu;
+            drawnow;
+            testCase.verifyEqual(button.ContextMenu, menu);
+            after = get(button);
+            fields = intersect(fieldnames(before), {'ContextMenu', 'UIContextMenu'});
+            testCase.verifyEqual(rmfield(after, fields), rmfield(before, fields));
+            testCase.verifyFalse(getappdata(figure, "ContextOpened"));
+            button.ContextMenu = [];
+            testCase.verifyEmpty(button.ContextMenu);
+            testCase.verifyFalse(getappdata(figure, "ContextOpened"));
+        end
+
+        function toggleToolCallbacksDependOnFigureContext(testCase)
+            % toggleToolCallbacksDependOnFigureContext Distinguish native context behavior from registration.
+            for factory = ["uifigure", "figure"]
+                parent = feval(factory, "Visible", "off");
+                cleanup = onCleanup(@() delete(parent));
+                tools = uitoolbar(parent);
+                setappdata(parent, "CallbackCount", 0);
+                tool = uitoggletool(tools, OnCallback=@(~,~) setappdata(parent, "CallbackCount", ...
+                    getappdata(parent, "CallbackCount") + 1));
+                drawnow;
+                tool.State = "on";
+                drawnow;
+                count = getappdata(parent, "CallbackCount");
+                testCase.verifyEqual(string(tool.State), "on");
+                testCase.verifyTrue(any(count == [0 1]));
+                fprintf("TOGGLE_CALLBACK_CONTEXT Factory=%s Count=%d\n", factory, count);
+                % Readiness-dependent execution is not promoted to a static callback policy.
+                feval(tool.OnCallback, tool, []);
+                testCase.verifyEqual(getappdata(parent, "CallbackCount"), count + 1);
+                clear cleanup
+            end
+        end
+
         function gridTracksSupportConstructorsAndOccupancyPadding(testCase)
             % gridTracksSupportConstructorsAndOccupancyPadding Verify constructor tokens and occupied-track release.
             [figure, ~] = testCase.environment();

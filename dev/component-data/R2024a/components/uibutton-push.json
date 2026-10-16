@@ -554,13 +554,25 @@
         ]
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.button-properties.html",
+          "detail": "ContextMenu registration is bounded to the stored handle on the reviewed push-button surface. Owned pushButtonContextMenuRegistrationKeepsStoredInputs verifies setter access, unchanged other getters, clearing, and deferred opening callbacks. Existing subtree reference mapping handles source-owned references; constructor support remains unknown."
+        }
+      ],
+      "runtimeObservations": [
+        "tests/unit/PropertyApplicationRuntimeTest.m#pushButtonContextMenuRegistrationKeepsStoredInputs: Owned push-button assignment/clearing retains other getter inputs and does not invoke the owned ContextMenuOpeningFcn. This setter-only observation does not grant constructor support."
+      ],
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
-        "effectPolicy": "none",
-        "effectStatus": "unknown",
-        "affectedPaths": [],
-        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+        "effectPolicy": "componentReference",
+        "effectStatus": "modeled",
+        "affectedPaths": [
+          "ContextMenu"
+        ],
+        "effectReason": "Owned push-button setters retain the ContextMenu handle without changing the other reviewed stored inputs or executing its opening callback. Existing source-only reference mapping validates ownership; no handle-editing UI is implied."
       }
     },
     {

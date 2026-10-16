@@ -107,7 +107,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
         function unresolvedAliasesInvalidateEveryGetterUntilAWriteRestoresThem(testCase)
             % unresolvedAliasesInvalidateEveryGetterUntilAWriteRestoresThem Avoid falling back to an earlier numeric position.
             body = ["app.Control = uibutton(app.Left);", "app.Control.Position = [10 20 130 35];", ...
-                "app.Control.InnerPosition = userPosition();"];
+                "app.Control.InnerPosition = [10 20 130 35] + [0 0 0 0];"];
             [document, registry, control] = testCase.fixture(body);
             for path = ["Position", "InnerPosition", "OuterPosition"]
                 state = testCase.state(document, registry, control, path);
@@ -224,7 +224,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 "app.Control.InnerPosition = [30 40 150 45];"], "uibutton-push", [30 40 150 45]; ...
                 "app.Control = uilamp(app.Left, InnerPosition=[10 20 130 35]);", "uilamp", [10 20 35 35]; ...
                 ["app.Control = uibutton(app.Left);", "app.Control.Position = [10 20 130 35];", ...
-                "app.Control.InnerPosition = userPosition();"], "uibutton-push", []};
+                "app.Control.InnerPosition = [10 20 130 35] + [0 0 0 0];"], "uibutton-push", []};
             for index = 1:size(cases, 1)
                 [document, registry, control] = testCase.fixture(cases{index, 1}, cases{index, 2});
                 [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, figure);

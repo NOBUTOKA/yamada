@@ -9,6 +9,26 @@ classdef PropertyApplicationPlanner
     %           component, document, registry);
 
     methods (Static)
+        function first = nameValueStart(definition, values)
+            % nameValueStart Locate named pairs after actual optional style or grid-size arguments.
+            arguments (Input)
+                definition (1, 1) macd.model.ComponentDefinition
+                values cell
+            end
+            arguments (Output)
+                first (1, 1) double
+            end
+            first = 1;
+            if isempty(values), return, end
+            value = values{1};
+            text = (ischar(value) && isrow(value)) || (isstring(value) && isscalar(value));
+            if text && any(string(value) == definition.SupportedStyles)
+                first = 2;
+            elseif definition.Factory == "uigridlayout" && isnumeric(value) && numel(value) == 2
+                first = 2;
+            end
+        end
+
         function values = forPreviewArguments(component, registry)
             % forPreviewArguments Remove source-owned skipped properties before native construction.
             arguments (Input)
@@ -22,7 +42,7 @@ classdef PropertyApplicationPlanner
             definition = registry.get(component.Factory, values);
             removed = false(size(values));
             % Legacy generated pairs have no source-setting records but obey the same policy.
-            first = numel(definition.CreationArguments) + 1;
+            first = macd.model.PropertyApplicationPlanner.nameValueStart(definition, values);
             for index = first:2:numel(values) - 1
                 if ~((ischar(values{index}) && isrow(values{index})) || ...
                         (isstring(values{index}) && isscalar(values{index}))), continue, end
@@ -148,7 +168,7 @@ classdef PropertyApplicationPlanner
                 reaches = reaches | (reaches(:, intermediate) & reaches(intermediate, :));
             end
 
-            % Omitted prerequisites retain defaults; unknown entries stay independent.
+            % Omitted prerequisites keep defaults; uncataloged entries add no graph edges.
             entryCount = numel(entries);
             edges = false(entryCount, entryCount);
             [known, indices] = ismember(entryPaths, paths);

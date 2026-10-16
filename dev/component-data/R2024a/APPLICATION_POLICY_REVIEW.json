@@ -1409,6 +1409,15 @@
       "path": "Orientation",
       "kind": "documentation",
       "detail": "The default slider orientation is horizontal. Changing orientation requires separate native geometry resolution."
+    },
+    {
+      "variants": [
+        "uibutton-push"
+      ],
+      "path": "ContextMenu",
+      "effectPolicy": "componentReference",
+      "kind": "inference",
+      "detail": "ContextMenu registration is bounded to the stored handle on the reviewed push-button surface. Owned pushButtonContextMenuRegistrationKeepsStoredInputs verifies setter access, unchanged other getters, clearing, and deferred opening callbacks. Existing subtree reference mapping handles source-owned references; constructor support remains unknown."
     }
   ],
   "initialValues": [

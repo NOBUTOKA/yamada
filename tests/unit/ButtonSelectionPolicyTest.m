@@ -60,11 +60,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
 
         function unresolvedReferenceInvalidatesChildrenUntilDefiniteSelection(testCase)
             % unresolvedReferenceInvalidatesChildrenUntilDefiniteSelection Never fall back to stale literals.
-            [document, registry] = fixture("app.Group.SelectedObject = chooseButton();");
+            [document, registry] = fixture("app.Group.SelectedObject = [app.First];");
             first = document.getComponentByName("First");
             states = document.getEffectivePropertyStates(registry, first.Id);
             testCase.verifyFalse(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.IsKnown);
-            [document, registry] = fixture(["app.Group.SelectedObject = chooseButton();"; "app.First.Value = 1;"]);
+            [document, registry] = fixture(["app.Group.SelectedObject = [app.First];"; "app.First.Value = 1;"]);
             testCase.verifyEqual(values(document, registry), [1 0]);
         end
 

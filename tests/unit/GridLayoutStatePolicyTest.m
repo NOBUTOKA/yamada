@@ -7,7 +7,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
         function unreviewedMemberEffectKeepsCoupledTracksUnknown(testCase)
             % unreviewedMemberEffectKeepsCoupledTracksUnknown Do not overwrite conservative shared state.
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
-                "app.First = uibutton(app.Grid);", "app.First.ContextMenu = [];"]);
+                "app.First = uibutton(app.Grid);", "app.First.Layout = layoutValue;"]);
             result = testCase.state(document, registry, grid, "RowHeight");
             testCase.verifyFalse(result.IsKnown);
             testCase.verifyEqual(result.ReasonCode, "unreviewed-effect");
@@ -130,7 +130,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
         function uncertainPlacementInvalidatesOnlyAffectedTracks(testCase)
             % uncertainPlacementInvalidatesOnlyAffectedTracks Do not replace unknown expressions with earlier literals.
             body = ["app.Grid = uigridlayout(app.UIFigure, RowHeight={100}, ColumnWidth={200});", ...
-                "app.First = uibutton(app.Grid);", "app.First.Layout.Row = userRow();"];
+                "app.First = uibutton(app.Grid);", "app.First.Layout.Row = 1 + 0;"];
             [document, registry, grid] = testCase.fixture(body);
             first = document.getComponentByName("First");
             testCase.verifyFalse(testCase.state(document, registry, grid, "RowHeight").IsKnown);

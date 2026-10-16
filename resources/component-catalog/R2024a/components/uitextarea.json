@@ -553,7 +553,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uitextarea.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -561,7 +561,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 5,
-            "groupId": "standardInteractivity",
+            "groupId": "local.uitextarea.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",

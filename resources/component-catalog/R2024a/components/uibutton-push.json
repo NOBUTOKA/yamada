@@ -480,7 +480,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "standardInteractivity",
+          "groupId": "local.uibutton-push.interactivity",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -488,7 +488,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
-            "groupId": "standardInteractivity",
+            "groupId": "local.uibutton-push.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -504,10 +504,12 @@
             "application": {
               "applyAfter": [],
               "nameValue": "unknown",
-              "effectPolicy": "none",
-              "effectStatus": "unknown",
-              "affectedPaths": [],
-              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+              "effectPolicy": "componentReference",
+              "effectStatus": "modeled",
+              "affectedPaths": [
+                "ContextMenu"
+              ],
+              "effectReason": "Owned push-button setters retain the ContextMenu handle without changing the other reviewed stored inputs or executing its opening callback. Existing source-only reference mapping validates ownership; no handle-editing UI is implied."
             }
           }
         }

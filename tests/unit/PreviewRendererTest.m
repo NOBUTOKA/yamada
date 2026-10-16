@@ -112,7 +112,11 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 testCase.renderFixture(registry, fixtureFolder, "NavigationDataApp", previewFigure);
             navigationCleanup = onCleanup(@() deleteIfValid(navigationPanel));
             testCase.verifyEmpty(navigationDocument.Diagnostics);
-            testCase.verifyEmpty(navigationDiagnostics);
+            testCase.verifyTrue(navigationDocument.Metadata.HasUnresolvedExecutableEffects);
+            testCase.assertNotEmpty(navigationDiagnostics);
+            testCase.verifyTrue(all(string({navigationDiagnostics.Severity}) == "warning"));
+            testCase.verifyTrue(all(ismember(string({navigationDiagnostics.Code}), ...
+                ["preview-position-unknown", "preview-grid-unknown"])));
             testCase.verifyEqual(string(navigationHandles("parsed-CatalogTable").ColumnName), ...
                 ["Title"; "Rating"]);
             clear navigationCleanup
@@ -122,7 +126,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 testCase.renderFixture(registry, fixtureFolder, "FigureToolsApp", previewFigure);
             toolsCleanup = onCleanup(@() deleteIfValid(toolsPanel));
             testCase.verifyEmpty(toolsDocument.Diagnostics);
-            testCase.verifyEmpty(toolsDiagnostics);
+            testCase.verifyEqual(string({toolsDiagnostics.Code}), "preview-position-unknown");
+            testCase.verifyEqual(string({toolsDiagnostics.Severity}), "warning");
             testCase.verifyEqual(double(toolsHandles.Count), 1);
             testCase.verifyTrue(isKey(toolsHandles, "parsed-PreviewLabel"));
             testCase.verifyEqual(string(toolsHandles("parsed-PreviewLabel").Text), ...

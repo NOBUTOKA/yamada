@@ -209,11 +209,11 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
         function opaqueNamedArgumentsAreKeptWithoutEvaluation(testCase)
             % opaqueNamedArgumentsAreKeptWithoutEvaluation Do not rebuild a constructor from its safe literal subset.
             [document, component] = testCase.fixture( ...
-                "app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""], ItemsData=[10 20], Tooltip=makeHint());");
+                "app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""], ItemsData=[10 20], Tooltip=""Opaque"" + ""Hint"");");
             component.setProperty("Value", 20);
             plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
-            testCase.verifySubstring(plan.Document.OriginalText, "Tooltip=makeHint()");
-            testCase.verifyEqual(plan.Component.getProperty("Tooltip").SourceExpression, "makeHint()");
+            testCase.verifySubstring(plan.Document.OriginalText, "Tooltip=""Opaque"" + ""Hint""");
+            testCase.verifyEqual(plan.Component.getProperty("Tooltip").SourceExpression, """Opaque"" + ""Hint""");
             testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 20);
         end
     end

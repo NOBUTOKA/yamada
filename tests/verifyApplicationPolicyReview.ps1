@@ -121,7 +121,11 @@ try {
         switch ($case) {
             'unpassed' { $runtime.setterAccess[-1].result = 'pending' }
             'unknownAccess' { $runtime.setterAccess[-1].runtimeSetAccess = 'unresolved' }
-            'documentedReadOnly' { $runtime.setterAccess[-1].runtimeSetAccess = 'public' }
+            'documentedReadOnly' {
+                $restricted = @($runtime.setterAccess | Where-Object path -CEQ 'OuterPosition')
+                Assert-Condition ($restricted.Count -eq 1) 'Expected one documented read-only alias observation.'
+                $restricted[0].runtimeSetAccess = 'public'
+            }
             'duplicateTarget' { $runtime.setterAccess += $runtime.setterAccess[0] }
             'arrayMethod' { $runtime.setterAccess[-1].testMethod = @('positionAliasesExposeNativeSetterAccess') }
             'missingProperty' { $runtime.setterAccess[-1].path = 'MissingNativeProperty' }

@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "verifiedOn": "2026-10-16",
+  "verifiedOn": "2026-10-17",
   "status": "partial",
   "scope": "Owned native controls only. These checks verify constructor support and agreement with the canonical setter order for the listed literal clusters. They do not validate arbitrary property combinations, parsed insertion positions, or the complete effective-state resolver.",
   "testSource": "tests/unit/PropertyApplicationRuntimeTest.m",
@@ -454,6 +454,16 @@
       "runtimeSetAccess": "restricted",
       "result": "passed",
       "detail": "Owned R2024a fixtures report restricted meta.property SetAccess and reject direct literal assignment with MATLAB:class:SetProhibited. Read-only getters can still equal Position; getter equivalence does not authorize a setter."
+    },
+    {
+      "testMethod": "pushButtonContextMenuRegistrationKeepsStoredInputs",
+      "variants": [
+        "uibutton-push"
+      ],
+      "path": "ContextMenu",
+      "runtimeSetAccess": "public",
+      "result": "passed",
+      "detail": "Owned push-button assignment/clearing retains other getter inputs and does not invoke the owned ContextMenuOpeningFcn. This setter-only observation does not grant constructor support."
     }
   ]
 }

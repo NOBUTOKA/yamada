@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "404bc3f47d7db829599844a98c006514f0448180ae9d127fefef5a902d728c7c",
+  "inputSha256": "6f0a8da2f5a467c415d3da83b19f35d6c671564cdd3f730d1f635fba5f738d74",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -3676,7 +3676,7 @@
       ]
     },
     {
-      "id": "exact.view.b4b39644cb15",
+      "id": "exact.view.0d1669550fe6",
       "kind": "exactCategory",
       "categoryId": "view",
       "entries": [
@@ -10364,6 +10364,34 @@
       ]
     },
     {
+      "id": "local.uibutton-push.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uibutton-push.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -10739,6 +10767,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uibutton-state.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -11754,6 +11810,34 @@
       ]
     },
     {
+      "id": "local.uicheckbox.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uicheckbox.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -12117,6 +12201,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uicolorpicker.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -12805,6 +12917,27 @@
             "kind": "editable",
             "reasonCodes": []
           }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
         }
       ]
     },
@@ -13285,6 +13418,27 @@
             "kind": "editable",
             "reasonCodes": []
           }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
         }
       ]
     },
@@ -13603,6 +13757,27 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -14147,6 +14322,27 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -15743,6 +15939,34 @@
       ]
     },
     {
+      "id": "local.uigauge-circular.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uigauge-circular.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -16115,6 +16339,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uigauge-linear.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -16525,6 +16777,34 @@
       ]
     },
     {
+      "id": "local.uigauge-ninetydegree.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uigauge-ninetydegree.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -16923,6 +17203,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uigauge-semicircular.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -19401,6 +19709,34 @@
       ]
     },
     {
+      "id": "local.uiknob-continuous.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uiknob-continuous.knob",
       "kind": "variantLocal",
       "categoryId": "knob",
@@ -19737,6 +20073,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uiknob-discrete.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -20097,6 +20461,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uilabel.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -22693,6 +23085,34 @@
       ]
     },
     {
+      "id": "local.uiradiobutton.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uiradiobutton.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -22980,6 +23400,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uislider-range.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -23417,6 +23865,34 @@
       ]
     },
     {
+      "id": "local.uislider-slider.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uislider-slider.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -23830,6 +24306,27 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -24346,6 +24843,34 @@
       ]
     },
     {
+      "id": "local.uiswitch-rocker.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "local.uiswitch-rocker.parentchild",
       "kind": "variantLocal",
       "categoryId": "parentchild",
@@ -24631,6 +25156,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uiswitch-slider.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -25040,6 +25593,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uiswitch-toggle.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -27522,6 +28103,27 @@
             "kind": "editable",
             "reasonCodes": []
           }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
+          }
         }
       ]
     },
@@ -27972,6 +28574,34 @@
             "reasonCodes": [
               "arbitraryData",
               "sourceOnly"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.uitogglebutton.interactivity",
+      "kind": "variantLocal",
+      "categoryId": "interactivity",
+      "entries": [
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
             ]
           }
         }
@@ -29027,6 +29657,27 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "valueContract": {
+            "kind": "componentReference",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "deferredComponentReference"
+            ]
           }
         }
       ]
@@ -30195,27 +30846,6 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
-          }
-        },
-        {
-          "path": "ContextMenu",
-          "valueContract": {
-            "kind": "componentReference",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "deferredComponentReference"
-            ]
           }
         }
       ]

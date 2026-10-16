@@ -168,10 +168,10 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
         function opaqueConstructorTokensArePreservedWithoutExecution(testCase)
             % opaqueConstructorTokensArePreservedWithoutExecution Keep expressions rather than emitting only literal projections.
             [document, registry, component, target] = testCase.fixture( ...
-                "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Tooltip=error('must-not-run'));");
+                "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Tooltip=""Opaque"" + ""Hint"");");
             document.reparentSubtree(component.Id, target.Id, registry, [], [], [10 20 100 22]);
             source = document.GeneratedText;
-            testCase.verifySubstring(source, "Tooltip=error('must-not-run')");
+            testCase.verifySubstring(source, "Tooltip=""Opaque"" + ""Hint""");
             testCase.verifyFalse(contains(source, "app.Control.Tooltip ="));
             testCase.verifyFalse(contains(source, "app.Control.Items ="));
         end

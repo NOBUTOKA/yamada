@@ -58,7 +58,7 @@
       "sourceSha256": "a467f1ee04e0792a32b6c65ff62d404c1be242a5f9852cd71c8e514a40a9d49b",
       "candidateCount": 8,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 3
+      "reviewedPolicyCount": 4
     },
     {
       "id": "uibutton-state",

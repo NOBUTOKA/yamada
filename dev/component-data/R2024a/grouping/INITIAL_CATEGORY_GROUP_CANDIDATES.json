@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "b45fc03ffb97f99fd27e452d5f7e8271e8ab245096091ffaf19ac08f943a5475",
+  "inputSha256": "beac540a6bc8d195b49d6cfe83040fb2bc74bd5c1610784cc69e6f052d1259cd",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
@@ -883,7 +883,6 @@
         "7037935641b34b6e3d1fe7bd989d8fa1a771f86bdd5c3e04d61ef8d08c7c1a94"
       ],
       "memberVariantIds": [
-        "uibutton-push",
         "uibutton-state",
         "uicheckbox",
         "uicolorpicker",
@@ -902,7 +901,7 @@
         "uiswitch-toggle",
         "uitogglebutton"
       ],
-      "reuseCount": 18,
+      "reuseCount": 17,
       "documentedCategoryOrders": [
         3,
         4
@@ -1611,12 +1610,12 @@
       ]
     },
     {
-      "candidateId": "candidate.view.b4b39644cb15",
+      "candidateId": "candidate.view.0d1669550fe6",
       "categoryId": "view",
       "categoryDisplayName": "View",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family view settings.",
-      "capabilitySha256": "b4b39644cb15e915c3070d5e18c8ae9e524a255300fdcb42ea5576f2dd5d8dba",
+      "capabilitySha256": "0d1669550fe69bb02b393a8e309ac87d3af9e657b2e5597c0b7ad27917b9d325",
       "propertyPaths": [
         "View",
         "Projection",
@@ -1630,16 +1629,16 @@
         "CameraViewAngleMode"
       ],
       "propertyCapabilitySha256": [
-        "8c731c2209c43cfdefc14f1c8d0a25e67c7a338c8b686fd5be304ac7be00b5ef",
-        "e9991443af6070945e42a61531c6bc665997332a8381013e28e5e18cb4a0b3d7",
-        "da67a7ec02ff5e87c6078fa01532827376d52f96482baf388c6edb73df6677d9",
-        "c553439debc85e01850b24f1ca57f6a603b1dd193bb143a9710bb157aed4403d",
-        "eadfc1f74d8bcd9de4a93ab943ad8863881d8b18da86a34f554cd2b0ad78ca00",
-        "5e029ac4741d2584f16737b0d2d88d34a3f5c64c04121cc55fe274f7340fadcf",
-        "29d70329bdd4ce0cfb5f2dc4656f8818fcd65023bbea0c2a256675ac9b5b58e2",
-        "7f945b146c1df67bb3fa37aa17388d928789f180a27e6fbaa4aaf0ab7788955c",
-        "7b13cb053f0abcc17dcc404b948e1ca15854430168bf19659c9b16830b2e2d71",
-        "a8023db865c73338a9886dc7745215279aa317127e39cd28111f8b7346692599"
+        "e03cf5e01e39f4c6004f5fdace05597420ebb2429a5f1afc05cb60dcd3b0d653",
+        "e8226733aa23ae6c2d93b47e892d90c23ef18b369d65b11c75a32dbb839e5047",
+        "199344f5d47bcae8239812ddb525c3f55104350e8aaa8533a89b56edc396032d",
+        "869dc45ded066870c3cca1ab80ff9c6e054bd673842d37aff08ff713f953eb68",
+        "5c66563a23a10549b14c89b06d243dc5566e5e3ef076798d4db7db85a88d5aa9",
+        "00b851b270066bb23c5d4725beb025d55abf4df8a7a573c703cc14b00e9eeef0",
+        "d58430c0e945e8c9414ba1c02f992e72ec53d05b7f385e948b53c3972e36d59f",
+        "cd0702426b451b8fa38daaed657492b8c33202a4fc4d2ebb217525e0ac5af055",
+        "e74d99894cee431678cc92b57dca070cf28ba2f8abc16d00ad4d421b24df6271",
+        "08add9eea214d9c727f9eaed48eff8dda6bb06e2747ed3f58b3054d56bcb844d"
       ],
       "memberVariantIds": [
         "axes",

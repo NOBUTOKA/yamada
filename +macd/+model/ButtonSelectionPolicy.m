@@ -106,9 +106,9 @@ classdef ButtonSelectionPolicy
                 return
             end
             members = [group children];
-            unresolved = macd.model.PropertyStateResolver.unresolvedSetting(members, ["Value", "SelectedObject"], registry);
-            if ~isempty(unresolved)
-                states(index) = states(index).withEffective([], false, unresolved.Id, ...
+            unresolved = macd.model.PropertyStateResolver.unresolvedEffectId(members, ["Value", "SelectedObject"], registry);
+            if strlength(unresolved) > 0
+                states(index) = states(index).withEffective([], false, unresolved, ...
                     "An unreviewed group member setter may affect selection.", "unreviewed-effect");
                 return
             end
@@ -236,7 +236,7 @@ classdef ButtonSelectionPolicy
                 if member.Origin ~= "parsed"
                     % Legacy constructor pairs precede canonical post-construction entries.
                     definition = registry.get(member.Factory, member.CreationArguments);
-                    first = numel(definition.CreationArguments) + 1;
+                    first = macd.model.PropertyApplicationPlanner.nameValueStart(definition, member.CreationArguments);
                     for argument = first:2:numel(member.CreationArguments) - 1
                         name = member.CreationArguments{argument};
                         if ~((ischar(name) && isrow(name)) || (isstring(name) && isscalar(name))) || string(name) ~= "Value", continue, end

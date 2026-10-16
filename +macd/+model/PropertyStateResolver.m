@@ -31,12 +31,23 @@ classdef PropertyStateResolver
             end
 
             % An unexpanded initializer may mutate any reachable object or its hierarchy.
-            if ~isempty(document) && any(cellfun(@(field) isfield(document.Metadata, field) && ...
-                    document.Metadata.(field), {"HasUnresolvedInitialization", ...
-                    "HasUnresolvedLifecycleEffects", "HasUnrecognizedSetter"}))
+            if ~isempty(document) && macd.model.PropertyStateResolver.hasUnresolvedExecution(document)
                 for index = 1:numel(states)
                     states(index) = states(index).withEffective([], false, "unresolved-call", ...
-                        "An initialization call, construction callback, or unrecognized setter requires application execution.", "initialization-call");
+                        "An initialization call, source-triggered callback, external HTML effect, or unrecognized setter requires application execution.", "initialization-call");
+                    states(index) = states(index).withReadOnly(states(index).Reason);
+                end
+                return
+            end
+
+            % Conditional or unvisited factories cannot prove that their object exists.
+            if ~isempty(document) && strlength(document.OriginalText) > 0 && component.Origin == "parsed" && ...
+                    (~isfield(component.Metadata, "InitializationCreationCertain") || ...
+                    ~component.Metadata.InitializationCreationCertain)
+                for index = 1:numel(states)
+                    states(index) = states(index).withEffective([], false, "creation:" + component.Id, ...
+                        "Component creation is conditional, repeated, or outside the proven initialization trace.", "source-creation");
+                    states(index) = states(index).withReadOnly(states(index).Reason);
                 end
                 return
             end
@@ -71,6 +82,9 @@ classdef PropertyStateResolver
                             effective.EffectSettingId, document, plan.Document);
                         states(index) = states(index).withEffective(effective.EffectiveValue, effective.IsKnown, ...
                             id, effective.Reason, effective.ReasonCode);
+                        if ~effective.IsEditable && strlength(effective.ReadOnlyReason) > 0
+                            states(index) = states(index).withReadOnly(effective.ReadOnlyReason);
+                        end
                     end
                 catch exception
                     diagnostics(end + 1) = macd.model.Diagnostic("unsafe-property-insertion", "error", ...
@@ -151,28 +165,48 @@ classdef PropertyStateResolver
                         "Button selection requires the owning document and sibling creation order.", "button-selection");
                 end
             end
+            states = macd.model.PropertyStateResolver.retainUnreviewedEffects(states, definitions, component, registry);
         end
 
-        function setting = unresolvedSetting(members, paths, registry)
-            % unresolvedSetting Find an unreviewed write that invalidates a coupled state family.
+        function result = hasUnresolvedExecution(document)
+            % hasUnresolvedExecution Return whether source execution prevents static value guarantees.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = any(cellfun(@(field) isfield(document.Metadata, field) && ...
+                document.Metadata.(field), {"HasUnresolvedInitialization", "HasUnresolvedLifecycleEffects", ...
+                "HasUnresolvedExecutableEffects", "HasUnrecognizedSetter"}));
+        end
+
+        function id = unresolvedEffectId(members, paths, registry)
+            % unresolvedEffectId Find an unreviewed coupled setter without adding history records.
             arguments (Input)
                 members macd.model.ComponentRecord
                 paths string
                 registry (1, 1) macd.model.ComponentRegistry
             end
             arguments (Output)
-                setting macd.model.PropertySetting
+                id (1, 1) string
             end
-            setting = macd.model.PropertySetting.empty;
-            for member = members
+            id = "";
+            for member = reshape(members, 1, [])
                 definition = registry.get(member.Factory, member.CreationArguments);
-                for candidate = member.Settings
-                    property = definition.getProperty(candidate.Path);
-                    if isempty(property), continue, end
+                names = macd.model.PropertyStateResolver.namedPaths(member, registry);
+                for property = reshape(definition.Properties, 1, [])
                     policy = property.Application;
-                    if ~any(policy.EffectStatus == ["independent", "modeled"]) && ...
-                            (isempty(policy.AffectedPaths) || any(ismember(policy.AffectedPaths, paths)))
-                        setting = candidate;
+                    if any(policy.EffectStatus == ["independent", "modeled"]) || ...
+                            (~isempty(policy.AffectedPaths) && ~any(ismember([property.Path policy.AffectedPaths], paths)))
+                        continue
+                    end
+                    settings = member.getSettings(property.Path);
+                    if ~isempty(settings)
+                        id = settings(end).Id;
+                        return
+                    elseif any(names == property.Path)
+                        id = "creation:" + member.Id;
                         return
                     end
                 end
@@ -278,6 +312,65 @@ classdef PropertyStateResolver
     end
 
     methods (Static, Access = private)
+        function names = namedPaths(component, registry)
+            % namedPaths Read legacy constructor names without inventing source occurrences.
+            arguments (Input)
+                component (1, 1) macd.model.ComponentRecord
+                registry macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                names (1, :) string
+            end
+            names = strings(1, 0);
+            if component.Origin == "parsed" || isempty(registry), return, end
+            definition = registry.get(component.Factory, component.CreationArguments);
+            first = macd.model.PropertyApplicationPlanner.nameValueStart(definition, component.CreationArguments);
+            for index = first:2:numel(component.CreationArguments) - 1
+                value = component.CreationArguments{index};
+                if (ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))
+                    names(end + 1) = string(value); %#ok<AGROW>
+                end
+            end
+        end
+
+        function states = retainUnreviewedEffects(states, definitions, component, registry)
+            % retainUnreviewedEffects Do not resolve coupled setters across unreviewed upstream state.
+            arguments (Input)
+                states macd.model.PropertyState
+                definitions macd.model.PropertyDefinition
+                component (1, 1) macd.model.ComponentRecord
+                registry macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                states macd.model.PropertyState
+            end
+            names = macd.model.PropertyStateResolver.namedPaths(component, registry);
+            paths = string({states.Path});
+            for definition = reshape(definitions, 1, [])
+                policy = definition.Application;
+                if any(policy.EffectStatus == ["independent", "modeled"]), continue, end
+                settings = component.getSettings(definition.Path);
+                raw = any(names == definition.Path);
+                if isempty(settings) && ~raw, continue, end
+                id = "creation:" + component.Id;
+                sequence = 0;
+                if ~isempty(settings), id = settings(end).Id; sequence = max([settings.Sequence]); end
+                affected = policy.AffectedPaths;
+                if isempty(affected), affected = paths; end
+                for index = find(ismember(paths, [definition.Path affected]))
+                    % A later confirmed independent write can restore its own stored input.
+                    restores = component.Settings(string({component.Settings.Id}) == states(index).EffectSettingId & ...
+                        string({component.Settings.Path}) == states(index).Path);
+                    if states(index).IsKnown && definitions(index).Application.EffectStatus == "independent" && ...
+                            ~isempty(restores) && restores(end).Sequence > sequence
+                        continue
+                    end
+                    states(index) = states(index).withEffective([], false, id, policy.EffectReason, "unreviewed-effect");
+                    states(index) = states(index).withReadOnly(policy.EffectReason);
+                end
+            end
+        end
+
         function [states, message] = apply(states, definitions, path, value, known, id, constructor)
             % apply Resolve one supported write and its allowlisted sibling effects.
             arguments (Input)

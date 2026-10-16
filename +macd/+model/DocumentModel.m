@@ -881,11 +881,20 @@ classdef DocumentModel < handle
                 targetPosition double {mustBeFinite} = []
             end
 
+            % Unexpanded execution cannot establish safe hierarchy or placement changes.
+            if macd.model.PropertyStateResolver.hasUnresolvedExecution(obj)
+                error("macd:DocumentModel:UnsafeSubtreeEdit", ...
+                    "Unresolved initialization effects prevent proving subtree relocation safety.");
+            end
             % Resolve a side-effect-free placement plan before preparing candidate data.
             snapshot = macd.model.SubtreeSnapshot(obj, id);
             ids = string({snapshot.Records.Id});
-            plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ids, ...
-                measuredPosition, [0 0], targetCell, targetPosition);
+            try
+                plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ids, ...
+                    measuredPosition, [0 0], targetCell, targetPosition);
+            catch exception
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", string(exception.message));
+            end
             root = obj.getComponent(id);
             if root.ParentId == parentId, return, end
             oldParent = obj.getComponent(root.ParentId);

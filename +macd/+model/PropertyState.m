@@ -87,6 +87,19 @@ classdef PropertyState
             end
         end
 
+        function obj = withReadOnly(obj, reason)
+            % withReadOnly Preserve catalog intent while exposing an implementation edit boundary.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyState
+                reason (1, 1) string
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.PropertyState
+            end
+            obj.IsEditable = false;
+            obj.ReadOnlyReason = reason;
+        end
+
         function obj = withEffective(obj, value, known, settingId, reason, reasonCode)
             % withEffective Return a new state without changing explicit records or requests.
             arguments (Input)

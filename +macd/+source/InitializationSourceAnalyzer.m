@@ -5,6 +5,26 @@ classdef InitializationSourceAnalyzer
     %   Constructor-free fragments retain a diagnosed factory-owner fallback.
 
     methods (Static)
+        function result = isLiteralDataCall(source, blockedNames)
+            % isLiteralDataCall Recognize only reviewed data constructors with inert literal inputs.
+            arguments (Input)
+                source (1, 1) string
+                blockedNames string = strings(1, 0)
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            call = regexp(char(strtrim(source)), '^(?<name>[A-Za-z]\w*)\s*\((?<arguments>[\s\S]*)\)$', 'names', 'once');
+            if isempty(call) || any(blockedNames == string(call.name)), return, end
+            allowed = ["zeros", "ones", "eye", "linspace", "logspace", "NaN", "nan", "Inf", "inf", ...
+                "false", "true", "struct", "cell", "table", "string", "char", "double", "single", ...
+                "logical", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", ...
+                "datetime", "duration", "calendarDuration", "categorical", "sprintf", "disp", "fprintf"];
+            if ~any(allowed == string(call.name)), return, end
+            [~, result] = macd.source.MatlabLiteralParser.parse("{" + string(call.arguments) + "}");
+        end
+
         function [order, diagnostics, certain, returns] = analyze(statements, scopes, creationOffsets)
             % analyze Return statement visits in conservative constructor call order.
             arguments (Input)
@@ -20,6 +40,18 @@ classdef InitializationSourceAnalyzer
             end
 
             names = unique(scopes.InstanceNames, 'stable');
+            declarations = false(1, numel(statements));
+            insideArguments = false;
+            for declarationIndex = 1:numel(statements)
+                code = strtrim(statements(declarationIndex).Text);
+                if ~isempty(regexp(code, '^arguments\s*(?:\(\s*(?:Input|Output|Repeating)\s*\))?\s*$', 'once'))
+                    insideArguments = true;
+                end
+                declarations(declarationIndex) = insideArguments;
+                if insideArguments && code == "end", insideArguments = false; end
+            end
+            blockedNames = names;
+            if isfield(scopes, "Methods"), blockedNames = unique([names string({scopes.Methods.Name})]); end
             roots = scopes.ClassName;
             diagnostics = macd.model.Diagnostic.empty;
             order = [];
@@ -62,7 +94,9 @@ classdef InitializationSourceAnalyzer
                     end
                     continue
                 end
-                [target, reason] = macd.source.InitializationSourceAnalyzer.callTarget(statements(index).Text, names);
+                % Registered outer factories are decoded separately, including opaque argument effects.
+                if ismember(statements(index).Span.StartOffset, creationOffsets) || declarations(index), continue, end
+                [target, reason] = macd.source.InitializationSourceAnalyzer.callTarget(statements(index).Text, names, blockedNames);
                 if strlength(target) > 0 && any(string({queue.Name}) == target)
                     reason = "Recursive initialization cannot be expanded safely.";
                     target = "";
@@ -81,11 +115,12 @@ classdef InitializationSourceAnalyzer
     end
 
     methods (Static, Access = private)
-        function [target, reason] = callTarget(source, names)
+        function [target, reason] = callTarget(source, names, blockedNames)
             % callTarget Resolve supported direct calls while excluding deferred callback bodies.
             arguments (Input)
                 source (1, 1) string
                 names string
+                blockedNames string
             end
             arguments (Output)
                 target (1, 1) string
@@ -110,7 +145,7 @@ classdef InitializationSourceAnalyzer
                 end
                 return
             end
-            if ~isempty(regexp(code, '^runStartupFcn\s*\(|^(?:(?:\[[^\]]*\]|\w+)\s*=\s*)?(?:feval\s*\(|app\s*\.\s*\()', 'once'))
+            if ~isempty(regexp(code, '^runStartupFcn\s*\(|^(?:(?:\[[^\]]*\]|\w+|app\s*\.\s*\w+)\s*=\s*)?(?:feval\s*\(|app\s*\.\s*\()', 'once'))
                 reason = "Dynamic initialization dispatch cannot be resolved statically.";
                 return
             end
@@ -118,15 +153,23 @@ classdef InitializationSourceAnalyzer
                 reason = "Dynamic initialization dispatch cannot be resolved statically.";
                 return
             end
-            pattern = '^(?:(?:\[[^\]]*\]|\w+)\s*=\s*)?(?<receiver>app\s*\.\s*)?(?<name>\w+)\s*\((?<arguments>[\s\S]*)\)$';
+            pattern = '^(?:(?:\[[^\]]*\]|\w+|app\s*\.\s*\w+)\s*=\s*)?(?<receiver>app\s*\.\s*)?(?<name>\w+)\s*\((?<arguments>[\s\S]*)\)$';
             call = regexp(code, pattern, 'names', 'once');
             if isempty(call)
                 % Registration and anonymous bodies are deferred; outer direct calls are not.
                 if contains(code, "@"), return, end
-                call = regexp(code, '^(?:(?:\[[^\]]*\]|\w+)\s*=\s*)?(?<receiver>app\s*\.\s*)(?<name>\w+)$', 'names', 'once');
+                call = regexp(code, '^(?:(?:\[[^\]]*\]|\w+|app\s*\.\s*\w+)\s*=\s*)?(?<receiver>app\s*\.\s*)(?<name>\w+)$', 'names', 'once');
                 if ~isempty(call), call.arguments = ''; end
             end
             if isempty(call)
+                % Event pumps and unknown command forms can execute callbacks without an app argument.
+                command = regexp(code, '^([A-Za-z]\w*)\s*$', 'tokens', 'once');
+                structural = ["end", "else", "otherwise", "try", "catch", "return", "break", "continue", "tic", "toc", "clc"];
+                if (~isempty(command) && ~any(string(command{1}) == structural)) || ...
+                        ~isempty(regexp(code, '^(drawnow|pause|waitfor|uiwait)(?!\w)', 'once'))
+                    reason = "An initialization command requires an explicit effect review.";
+                    return
+                end
                 % Do not silently drop same-class calls embedded in unsupported expressions.
                 for name = names
                     pattern = '(?<![\w.])app\s*\.\s*' + name + '\s*\(|(?<![\w.@])' + name + '\s*\(\s*app(?!\w)';
@@ -160,8 +203,15 @@ classdef InitializationSourceAnalyzer
             instance = ~isempty(call.receiver) || ~isempty(regexp(strtrim(call.arguments), '^app\s*(?:,|$)', 'once'));
             if ~instance
                 % Passing an owned component permits arbitrary mutation by an opaque callee.
-                if ~contains(code, "@") && ~isempty(regexp(call.arguments, '(?<!\w)app\s*\.\s*\w+', 'once'))
+                if ~isempty(regexp(call.arguments, '(?<!\w)app\s*\.\s*\w+', 'once'))
                     reason = "A call receiving a component handle cannot be expanded statically.";
+                else
+                    raw = regexp(char(strtrim(source)), pattern, 'names', 'once');
+                    inert = ~isempty(raw) && macd.source.InitializationSourceAnalyzer.isLiteralDataCall( ...
+                        string(raw.name) + "(" + string(raw.arguments) + ")", blockedNames);
+                    if ~inert
+                        reason = "Initialization call '" + string(call.name) + "' has no reviewed effect contract.";
+                    end
                 end
                 return
             end
