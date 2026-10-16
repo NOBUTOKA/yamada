@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "2362f0adcbd85af2943bc9e59966cf1c20982ac2",
-  "inputSha256": "32cc6563e011c8f016829089f0650a6ced7c0e5808b7c03ecff1d871b89c3f86",
+  "ledgerBaselineGitCommit": "c7267acb370715312c48f6654c414a049af0cb58",
+  "inputSha256": "a41c5ccda29ee96fe9fb1a6e9a35f5ada854af685cd52358dd0a17d67dbba8c5",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -93,11 +93,11 @@
     },
     {
       "path": "components/uibutton-push.json",
-      "sha256": "e00b26f0a076395cd416c5452d91eb9877c93b322d31a604dc7b19c05bf7085c"
+      "sha256": "2f9afc82a9721774454af9689f682b81decbf7fd3bac4f163b7ec51c58dd71d1"
     },
     {
       "path": "components/uibutton-state.json",
-      "sha256": "c140af9b50603467b20825195b1986df8b502cfb6b61ecce7afe3bf896d716b0"
+      "sha256": "07e421bded9c346021af98f54549af089c7ea92600e770ac7c389e504a6678a6"
     },
     {
       "path": "components/uibuttongroup.json",
@@ -105,11 +105,11 @@
     },
     {
       "path": "components/uicheckbox.json",
-      "sha256": "1ce6ff59d1846c9b64aae2c0b8c7435b90ff55810142fd42667f5cdb1cdeae51"
+      "sha256": "42ebbe453e544ac7b03c505886acee4d3ef92cfdb1283e67a0690ba96c751717"
     },
     {
       "path": "components/uicolorpicker.json",
-      "sha256": "d17f6d34c60ea194033996b097fe27875a67b616c7a921d786973abdfb6b9546"
+      "sha256": "5034469b923670048d662e1de227b3ce6922388293638ae24d1604c39ecbfdab"
     },
     {
       "path": "components/uicontextmenu.json",
@@ -157,15 +157,15 @@
     },
     {
       "path": "components/uihtml.json",
-      "sha256": "4be633fae0e568ad5eff65ce30bc2fe4c3d821de20242654a35f9d475381334b"
+      "sha256": "9294542f18f8d9ea1d449dafe2f2edc1c4726d51ad1c64bf10634a352383b395"
     },
     {
       "path": "components/uihyperlink.json",
-      "sha256": "e79409c4988ddafd5a5c702407ab57aa6749be25d1c19b79a46c886a7aac6cbf"
+      "sha256": "234b68a27d6a73bd418f78b3665876262c65dbfc072956eb2ec822eb06dfc3eb"
     },
     {
       "path": "components/uiimage.json",
-      "sha256": "9ec566bf80e35e4663fe54069bfc609355bb86300ca99ade740eb8405656e91c"
+      "sha256": "8f4599c2ae4bf45b13160d4663d64b848d6af8b334bc197930b29ae0ff02cc90"
     },
     {
       "path": "components/uiknob-continuous.json",
@@ -177,11 +177,11 @@
     },
     {
       "path": "components/uilabel.json",
-      "sha256": "e6bda0212698ce1f305a64712f1a6d372f39a15a45652a15e65876ae6fee592c"
+      "sha256": "d19245005d6d55578fe37ad63865f9a3ae6f26aa4bc4a73b7cb4de864ab29870"
     },
     {
       "path": "components/uilamp.json",
-      "sha256": "0054811d6614ee0d6cff48e8f00293811dfeee43e71d42bb6686a7ccb16a4b8b"
+      "sha256": "f52288237867e9b6d2206c2e752859b52c1f752eab4e3c38389d001b9fc2babf"
     },
     {
       "path": "components/uilistbox.json",
@@ -201,7 +201,7 @@
     },
     {
       "path": "components/uiradiobutton.json",
-      "sha256": "7e8a277db2dba78f8aa8b517fb02a47d530e29b7ea732b35cd7749bc02da6f57"
+      "sha256": "ec3289a50ebf32abea7ebda78bbbc39f566dc7558de8f48000caa105e7cdea73"
     },
     {
       "path": "components/uislider-range.json",
@@ -241,11 +241,11 @@
     },
     {
       "path": "components/uitextarea.json",
-      "sha256": "442b008692c9c487392f3673aa6caa951852bbe3ea31960c87f60d99e7f6f074"
+      "sha256": "31ba2574fbb14623fb88c12855c23fb784ec49a8f64b00595cfb5f4c96768c4f"
     },
     {
       "path": "components/uitogglebutton.json",
-      "sha256": "ea543dfb836c1963bba2c8dc09ef9f8a6c8b3c44826dfce482e63bb72779d623"
+      "sha256": "645e5d39daf2233b27d52876aea9e9a4a913dddfd177a695f9b6d663327842dc"
     },
     {
       "path": "components/uitoggletool.json",
@@ -257,11 +257,11 @@
     },
     {
       "path": "components/uitree-checkbox.json",
-      "sha256": "46b6cf664d4d0d34cbdf4ac7f6f56887b0a3b54accace240889b857d9ef4c22a"
+      "sha256": "6a9aa28cbdcbce7f006cb10137e371f2086d28a799c01714e7bb1885f27f070a"
     },
     {
       "path": "components/uitree.json",
-      "sha256": "dfcd6da5c9842ba650b98c1210e27b54acbd573b74ac2c6aa0729d2c8455fde6"
+      "sha256": "b1a09126e0b9a1b5e2fab260469e9649a85ac0fc37fa1786485e54645c29642d"
     },
     {
       "path": "components/uitreenode.json",
@@ -273,7 +273,7 @@
     },
     {
       "path": "schema.json",
-      "sha256": "eb03045b8d3b4fd9526d516f2c511402af7a268f3dffbfa2102b6da926094259"
+      "sha256": "54fbaf16fb3901f911786bce053367012ed576001c56ffa5a4147e63ec2ee3a9"
     }
   ],
   "validation": {

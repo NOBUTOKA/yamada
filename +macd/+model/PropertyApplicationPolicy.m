@@ -71,7 +71,8 @@ classdef PropertyApplicationPolicy
             if isfield(data, "effectPolicy")
                 obj.EffectPolicy = obj.identifier(data.effectPolicy, ...
                     ["none", "itemSelection", "boundedValue", "numericValue", ...
-                    "tickMode", "valueMode", "modeFlag", "axisWidth", "textValue", "componentReference", "layout"], context + ".effectPolicy");
+                    "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", ...
+                    "textValue", "componentReference", "layout"], context + ".effectPolicy");
             end
             if isfield(data, "defaultLiteral")
                 raw = data.defaultLiteral;

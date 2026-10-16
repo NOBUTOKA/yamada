@@ -614,6 +614,83 @@
 - このschema合格は、全propertyの依存関係監査や全計画の完了を示さない。
   位置の別名効果・Lamp補正・その他の残る効果、全variant監査、full profile、完了条件監査は継続する。
 
+## 位置別名の実効値・Preview・複製（2026-10-16）
+
+根拠:
+
+- R2024a固定の[Button Properties](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.button-properties.html)など、
+  先行する14具体variantの位置節の監査に基づく。Position/InnerPositionは公開setter、
+  OuterPositionは同じ値を返す読み取り専用getterとして区別する。
+- [Lamp Properties](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.lamp-properties.html)は
+  幅と高さの独立変更を制限する。小さい側を採る補正は資料から断定せず、所有native fixtureで補足した。
+- 14種類×6ケースの追加観測で、ゼロ・小数を保持し、負のサイズを拒否することを確認した。
+  Lampのゼロ・小数も同じ正方形補正に従う。結果は`testResults/position-alias-boundaries.json`へ記録した。
+  native座標には約1 ulpの丸め差があり、native比較だけに1e-12 pixelの許容を使う。
+  ソース値や一般的な値比較を丸めたり、全プロパティの比較を緩めたりはしない。
+
+実装済み:
+
+- `positionAlias`を13種類、`squarePositionAlias`をLampへ適用した。42プロパティのpolicyを
+  schema・grouping・runtime・loaderへ通し、公開28プロパティのconstructor指定も確認して対応を記録した。
+  部分監査は41具体variant・315プロパティ。policy reviewはpartial 41/pending 7であり、完了扱いにはしない。
+- `PositionAliasPolicy`は最後の公開setterの値と原因設定IDを全getterへ投影する。
+  明示値・設定場所・ID・方式はそのまま保持する。未知の別名式はグループを未知にし、後の確実なリテラルで復帰する。
+  Grid管理下の別名はリテラルがあってもgeometryの根拠にせず、layout-managedの理由を返す。
+- 既存Positionが後の別名に上書きされる場合、元位置で要求を満たせない編集を原子的に拒否する。
+  Positionを新規追加する場合は、代入形式と両名前-値構文で候補ソースを検証し、要求が残る位置を選ぶ。
+- Previewでは既知のPositionを1回投影し、未知の場合は診断を出す。
+  解析済みconstructorのskipプロパティはnative生成前に除外し、元ソース・生成時引数の所有記録は変更しない。
+  名前-値のImageSourceはconstructorへ直接渡さず、代入と同じローカルアセット処理で適用する。
+- Copyの元snapshotは全出現を保持し、独立したコピー設定だけを1つの実効Positionへ集約する。
+  配置plannerはその凍結値を使い、再解析後はoffsetを含む配置変更も照合する。
+  Gridでは無効な別名をコピー設定から除き、Grid座標または渡された実測geometryを使う。
+- 親変更は元の別名文を保持し、必要なPositionを配置する。Undo/Redoでも元の履歴と生成結果を維持する。
+
+検証:
+
+- nativeの公開setter 28ケース・読み取り専用14ケースと、両constructor順を共通resolverと照合して合格した。
+  さらに84ケースの境界比較も合格した。`testResults/position-alias-native-results.mat`へ記録した。
+- 実装中に、親別surfaceが列ベクトルになる経路で反映処理が配列の向きを仮定していた不具合を検出し、
+  向きを揃えて修正した。その後、挿入・複製・親変更・resolverの関連67件が全件合格した。
+- Previewを含む追加の25件が全件合格した。所有sentinelでCreateFcn/DeleteFcnが生成・破棄のいずれでも
+  実行されないこと、HTMLSourceがPreview引数から除かれること、名前-値画像が既存adapterを通ることを確認した。
+  `testResults/position-alias-focused-results.mat`と`testResults/position-alias-preview-results.mat`へ記録した。
+- `verifyApplicationPolicyReview.ps1`、`verifyApplicationPolicy.ps1`、`verifyComponentLedgerSchema.ps1`が合格。
+  台帳全48文書のschema検証、再適用・昇格の再現性、readonly aliasへのconstructor対応の不付与を含む。
+- groupingのintrinsic parityは48/48、parent-effective parityは144/144で合格。
+- 関連area 465件が全件合格した。Failed=0、Incomplete=0、実測合計906.987秒。
+  `testResults/position-alias-area.log`へ記録した。これ以降に下記の仕上げを加えたため、最終状態の根拠は
+  仕上げ後の専用テストとfull profileで区別して記録する。
+- 仕上げでは、解析済みの位置別名をPreviewのconstructorからも除き、解決済みPositionの投影と二重適用しない。
+  また、コピーの既知ゼロサイズを配置とModelValidatorで同じ条件に揃えた。ゼロを拒否していた既存の
+  不正geometry fixtureは、nativeでも拒否される負の幅へ変更し、不正geometryの検出契約を保った。
+- 追加ケースで、親変更の配置要求が後続別名に上書きされても移動が確定されることを検出した。
+  生成ソースの再解析後に配置要求の既知実効値を照合し、確定前に原子的に拒否する処理を追加した。
+- 仕上げ後のモデル・配置・親変更・Previewの関連76件は全件合格した。
+  Failed=0、Incomplete=0、実測合計136.399秒。`testResults/position-alias-final-focused-results.mat`へ記録した。
+- 変更MATLABファイル13件のcheckcodeは警告なし。初回full profileは512件中511件が合格し、
+  テスト選択契約のUI総数固定値136と、現在の160件との不一致だけが失敗した。
+  quickの対象集合と限定UI smokeの2つの照合は合格していた。
+- full UIの増加とquickのUI startup制限を混同しないよう、総数の固定値を除いた。
+  quickが全non-UIテストと指定UI smokeだけを含む契約は維持する。
+  初回fullの記録を`testResults/position-alias-full-initial.log`へ保存した。
+- 選択契約3件の再実行が合格した後、最終状態のfull profile 512件が全件合格した。
+  Failed=0、Incomplete=0、実測合計1327.060秒。
+  `testResults/position-alias-full.log`と`testResults/position-alias-full-results.mat`へ記録した。
+  最終の変更MATLABファイル14件のcheckcode、UTF-8 BOMなし・CRLF、`git diff --check`も合格した。
+
+残作業:
+
+- この14種類の規則を、OuterPositionが装飾を含むSlider/Knob/Switchや、Container/Axesへ自動的に広げない。
+- 未着手7種類はContextMenu、GridLayout、Menu、PushTool、ToggleTool、Toolbar、TreeNode。
+  [GridLayout資料](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.gridlayout-properties.html)には
+  occupied tracksによるRowHeight/ColumnWidth保持、[ToggleTool資料](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.toolbar.toggletool-properties.html)にはStateによるcallback実行がある。
+  このほか、
+  Icon/CDataやMenu.Checkedの描画上の優先・無効条件がある。順序依存と描画条件を分けて監査する。
+- Axesの縦横比・カメラ・地理TickDir、コンポーネント間の選択効果などの残る監査・実装を続ける。
+- この時点のfull profileは合格した。全variantの残る監査・効果の実装と、最終状態での完了条件監査は未完了。
+  ItemsDataの長さ差は引き続き対象外とする。
+
 ## 対象範囲の変更（2026-10-16）
 
 - ItemsとItemsDataの長さが異なる場合の対応は、データ編集UIの大きな変更を伴うため、

@@ -304,8 +304,25 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "positionAlias"
+      },
       "runtimeObservations": [
         "tests/unit/PropertyApplicationRuntimeTest.m#positionAliasesExposeNativeSetterAccess: Owned R2024a fixtures report public meta.property SetAccess and accept literal assignment. Position, InnerPosition, and OuterPosition getters agree after drawnow; both constructor orders were checked. Lamp obeys an additional square constraint; this observation does not implement alias effects or grant constructor policy support."
+      ],
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.colorpicker-properties.html",
+          "detail": "These simple UI controls document identical Position, InnerPosition, and OuterPosition getters. Public Position/InnerPosition setters change the shared geometry in source order; OuterPosition stays read-only. This family excludes decorated containers and axes. Grid-managed geometry is not inferred from explicit alias literals."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#positionAliasesExposeNativeSetterAccess",
+          "detail": "Owned R2024a fixtures compare all shared getters with the common resolver after each public alias write and both constructor orders. Lamp keeps its coerced square while explicit input vectors remain intact. Supplemental positionAliasBoundariesMatchNative verifies 84 zero, fractional, positive, and invalid-negative cases; native comparison allows 1e-12 pixel floating roundoff."
+        }
       ]
     },
     {
@@ -336,8 +353,25 @@
         ]
       },
       "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "positionAlias"
+      },
       "runtimeObservations": [
         "tests/unit/PropertyApplicationRuntimeTest.m#positionAliasesExposeNativeSetterAccess: Owned R2024a fixtures report public meta.property SetAccess and accept literal assignment. Position, InnerPosition, and OuterPosition getters agree after drawnow; both constructor orders were checked. Lamp obeys an additional square constraint; this observation does not implement alias effects or grant constructor policy support."
+      ],
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.colorpicker-properties.html",
+          "detail": "These simple UI controls document identical Position, InnerPosition, and OuterPosition getters. Public Position/InnerPosition setters change the shared geometry in source order; OuterPosition stays read-only. This family excludes decorated containers and axes. Grid-managed geometry is not inferred from explicit alias literals."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#positionAliasesExposeNativeSetterAccess",
+          "detail": "Owned R2024a fixtures compare all shared getters with the common resolver after each public alias write and both constructor orders. Lamp keeps its coerced square while explicit input vectors remain intact. Supplemental positionAliasBoundariesMatchNative verifies 84 zero, fractional, positive, and invalid-negative cases; native comparison allows 1e-12 pixel floating roundoff."
+        }
       ]
     },
     {
@@ -368,6 +402,18 @@
         ]
       },
       "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "unknown",
+        "effectPolicy": "positionAlias"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.colorpicker-properties.html",
+          "detail": "These simple UI controls document identical Position, InnerPosition, and OuterPosition getters. Public Position/InnerPosition setters change the shared geometry in source order; OuterPosition stays read-only. This family excludes decorated containers and axes. Grid-managed geometry is not inferred from explicit alias literals."
+        }
+      ],
       "runtimeObservations": [
         "tests/unit/PropertyApplicationRuntimeTest.m#positionAliasesExposeNativeSetterAccess: Owned R2024a fixtures report restricted meta.property SetAccess and reject direct literal assignment with MATLAB:class:SetProhibited. Read-only getters can still equal Position; getter equivalence does not authorize a setter."
       ]

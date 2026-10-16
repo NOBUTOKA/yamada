@@ -1261,6 +1261,96 @@
       "effectPolicy": "axisWidth",
       "kind": "inference",
       "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+    },
+    {
+      "variants": [
+        "uibutton-push",
+        "uibutton-state",
+        "uitogglebutton",
+        "uicheckbox",
+        "uicolorpicker",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uiradiobutton",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "path": "Position",
+      "effectPolicy": "positionAlias",
+      "kind": "documentation",
+      "detail": "These simple UI controls document identical Position, InnerPosition, and OuterPosition getters. Public Position/InnerPosition setters change the shared geometry in source order; OuterPosition stays read-only. This family excludes decorated containers and axes. Grid-managed geometry is not inferred from explicit alias literals."
+    },
+    {
+      "variants": [
+        "uilamp"
+      ],
+      "path": "Position",
+      "effectPolicy": "squarePositionAlias",
+      "kind": "inference",
+      "detail": "The Lamp documentation states identical position getters and coupled width/height. Owned R2024a fixtures supplement that contract: finite nonnegative dimensions become a square using the smaller dimension, including zero and fractional sizes. Keep explicit vectors unchanged and resolve the coerced getter separately."
+    },
+    {
+      "variants": [
+        "uibutton-push",
+        "uibutton-state",
+        "uitogglebutton",
+        "uicheckbox",
+        "uicolorpicker",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uiradiobutton",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "path": "InnerPosition",
+      "effectPolicy": "positionAlias",
+      "kind": "documentation",
+      "detail": "These simple UI controls document identical Position, InnerPosition, and OuterPosition getters. Public Position/InnerPosition setters change the shared geometry in source order; OuterPosition stays read-only. This family excludes decorated containers and axes. Grid-managed geometry is not inferred from explicit alias literals."
+    },
+    {
+      "variants": [
+        "uilamp"
+      ],
+      "path": "InnerPosition",
+      "effectPolicy": "squarePositionAlias",
+      "kind": "inference",
+      "detail": "The Lamp documentation states identical position getters and coupled width/height. Owned R2024a fixtures supplement that contract: finite nonnegative dimensions become a square using the smaller dimension, including zero and fractional sizes. Keep explicit vectors unchanged and resolve the coerced getter separately."
+    },
+    {
+      "variants": [
+        "uibutton-push",
+        "uibutton-state",
+        "uitogglebutton",
+        "uicheckbox",
+        "uicolorpicker",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uiradiobutton",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "path": "OuterPosition",
+      "effectPolicy": "positionAlias",
+      "kind": "documentation",
+      "detail": "These simple UI controls document identical Position, InnerPosition, and OuterPosition getters. Public Position/InnerPosition setters change the shared geometry in source order; OuterPosition stays read-only. This family excludes decorated containers and axes. Grid-managed geometry is not inferred from explicit alias literals."
+    },
+    {
+      "variants": [
+        "uilamp"
+      ],
+      "path": "OuterPosition",
+      "effectPolicy": "squarePositionAlias",
+      "kind": "inference",
+      "detail": "The Lamp documentation states identical position getters and coupled width/height. Owned R2024a fixtures supplement that contract: finite nonnegative dimensions become a square using the smaller dimension, including zero and fractional sizes. Keep explicit vectors unchanged and resolve the coerced getter separately."
     }
   ],
   "initialValues": [
@@ -1640,7 +1730,7 @@
         "uitree-checkbox"
       ],
       "path": "Position",
-      "detail": "The release-fixed pages describe InnerPosition and OuterPosition getters as equal to Position. Owned fixtures verify writable Position/InnerPosition, restricted OuterPosition, and last-applied writable alias behavior in both constructor orders. A shared alias resolver, layout-managed geometry, Preview projection, and copy canonicalization are still pending. Lamp additionally coerces size to a square; do not treat its input vector as an unchanged getter."
+      "detail": "The reviewed simple-control families use finite positionAlias/squarePositionAlias policies. They do not establish equivalence for decorated sliders, knobs, switches, containers, or axes. Grid-managed geometry stays unknown; OuterPosition remains a getter and never gains a setter through alias equivalence."
     },
     {
       "variants": [

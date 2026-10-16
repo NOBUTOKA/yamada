@@ -53,21 +53,23 @@
       "id": "uibutton-push",
       "propertyCount": 31,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.button-properties.html",
       "sourceSha256": "a467f1ee04e0792a32b6c65ff62d404c1be242a5f9852cd71c8e514a40a9d49b",
       "candidateCount": 8,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uibutton-state",
       "propertyCount": 32,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.statebutton-properties.html",
       "sourceSha256": "e8fcbb848fe6c310e371cbfad728e9a2472374fd1b8e040da5d720208cf1a771",
       "candidateCount": 8,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uibuttongroup",
@@ -84,21 +86,23 @@
       "id": "uicheckbox",
       "propertyCount": 27,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.checkbox-properties.html",
       "sourceSha256": "b45c80895a821685bd7985db4c607556d0f7aa3ca6bdef1627a7f725df922f23",
       "candidateCount": 5,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uicolorpicker",
       "propertyCount": 22,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.colorpicker-properties.html",
       "sourceSha256": "37e07c972778b6e56ff50aa00868fbd0bc9f0e8631edf7e7db9fcbf1a698f15d",
       "candidateCount": 4,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uicontextmenu",
@@ -223,31 +227,34 @@
       "id": "uihtml",
       "propertyCount": 21,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.html-properties.html",
       "sourceSha256": "cf9b2af40a789167278ad278d47e5958ccd27a669365e6aa595536e6de9043cf",
       "candidateCount": 12,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uihyperlink",
       "propertyCount": 31,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.hyperlink-properties.html",
       "sourceSha256": "cc226cead153598d5100df3dc2afc53f1b0aa70034a8c577515bc1661c4694ee",
       "candidateCount": 5,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uiimage",
       "propertyCount": 26,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.image-properties.html",
       "sourceSha256": "fac0c150b7d000bc365d697f7e658a6a6c18522bebf7310b6839de539a6389a7",
       "candidateCount": 11,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uiknob-continuous",
@@ -275,21 +282,23 @@
       "id": "uilabel",
       "propertyCount": 29,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.label-properties.html",
       "sourceSha256": "4c3891451cd0e3eb6aea6cd02aa957c45aef8566c941cc9d3c8c0fa1d124ae9e",
       "candidateCount": 5,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uilamp",
       "propertyCount": 19,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.lamp-properties.html",
       "sourceSha256": "8798fe9e4ef23d259d40c49f2e2a145daeb50d62395d248d9e09cc0f2a508f89",
       "candidateCount": 3,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uilistbox",
@@ -337,11 +346,12 @@
       "id": "uiradiobutton",
       "propertyCount": 26,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.radiobutton-properties.html",
       "sourceSha256": "be44580743073f5f1c56600749f27cbf973b3d9d4e8b2173da19ab5cff4e445e",
       "candidateCount": 6,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uislider-range",
@@ -446,21 +456,23 @@
       "id": "uitextarea",
       "propertyCount": 31,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.textarea-properties.html",
       "sourceSha256": "bd861443893f34f96baa473740bca8896d9b09bd4f3abeaae1f4dca6499ddafc",
       "candidateCount": 15,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uitogglebutton",
       "propertyCount": 30,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.togglebutton-properties.html",
       "sourceSha256": "9b7592eab133bf133051d5e35b5fb03aa8b70fdc2443a64454aad8f7df6db8b4",
       "candidateCount": 8,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uitoggletool",
@@ -486,21 +498,23 @@
       "id": "uitree",
       "propertyCount": 35,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.tree-properties.html",
       "sourceSha256": "e9dc3500ad53234a39e26a8c7f069194b975784752a2ae1ce8757df0d1edb7e4",
       "candidateCount": 7,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uitree-checkbox",
       "propertyCount": 36,
       "documentationStatus": "collected",
-      "policyReviewStatus": "pending",
+      "policyReviewStatus": "partial",
       "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
       "sourceSha256": "0bb87efb8c5fde91953b60bfe7ed319be5e9691bb81ba8b5717e88d320edb1ba",
       "candidateCount": 6,
-      "runtimeVerificationStatus": "partial"
+      "runtimeVerificationStatus": "partial",
+      "reviewedPolicyCount": 3
     },
     {
       "id": "uitreenode",

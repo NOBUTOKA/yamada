@@ -13,6 +13,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             output = string(tempname) + ".json";
             fileCleanup = onCleanup(@() delete(output));
             results = ProbePositionAliasInteractions(output);
+            registry = macd.model.ComponentRegistry.createDefault();
             testCase.assertNumElements(results, 42);
             testCase.verifyNumElements(unique(string({results.Id})), 14);
             for result = results
@@ -38,6 +39,57 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 testCase.verifyEqual(result.Outer, first, context);
                 testCase.verifyEqual(result.PositionFirst, second, context);
                 testCase.verifyEqual(result.AliasFirst, first, context);
+                definition = registry.getById(result.Id);
+                [states, component] = testCase.positionStates(definition, {result.Path, result.Requested});
+                for getterPath = ["Position", "InnerPosition", "OuterPosition"]
+                    state = states(string({states.Path}) == getterPath);
+                    testCase.verifyTrue(state.IsKnown, context);
+                    testCase.verifyEqual(state.EffectiveValue, first, context);
+                    testCase.verifyEqual(state.EffectSettingId, component.getSettings(result.Path).Id);
+                end
+                testCase.verifyEqual(component.getProperty(result.Path).LiteralValue, result.Requested);
+                if result.Path == "InnerPosition"
+                    states = testCase.positionStates(definition, {"Position", result.Requested; "InnerPosition", [30 40 150 45]}, "nameValue");
+                    testCase.verifyEqual(states(string({states.Path}) == "Position").EffectiveValue, result.PositionFirst);
+                    states = testCase.positionStates(definition, {"InnerPosition", [30 40 150 45]; "Position", result.Requested}, "nameValue");
+                    testCase.verifyEqual(states(string({states.Path}) == "Position").EffectiveValue, result.AliasFirst);
+                end
+            end
+        end
+
+        function positionAliasBoundariesMatchNative(testCase)
+            % positionAliasBoundariesMatchNative Check zero, fractional, and negative sizes on all reviewed controls.
+            [figure, registry] = testCase.environment();
+            ids = ["uibutton-push", "uibutton-state", "uitogglebutton", "uicheckbox", "uicolorpicker", ...
+                "uihtml", "uihyperlink", "uiimage", "uilabel", "uilamp", "uiradiobutton", "uitextarea", "uitree", "uitree-checkbox"];
+            vectors = [10 20 0 0; 10 20 0 35; 10 20 35 0; 10 20 -1 20; 10.1 20.2 0.5 2.3; 10 20 1 1];
+            for id = ids
+                definition = registry.getById(id);
+                parent = figure;
+                if any(definition.AllowedParentFactories == "uibuttongroup") && ...
+                        ~any(definition.AllowedParentFactories == "uifigure")
+                    parent = uibuttongroup(figure);
+                end
+                for index = 1:size(vectors, 1)
+                    value = vectors(index, :);
+                    [states, ~, diagnostics] = testCase.positionStates(definition, {"Position", value});
+                    target = feval(definition.Factory, parent, definition.CreationArguments{:});
+                    if value(3) < 0
+                        testCase.verifyError(@() set(target, "Position", value), "MATLAB:hg:set_chck:DimensionsOutsideRange");
+                        testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+                        testCase.verifyFalse(states(string({states.Path}) == "Position").IsKnown);
+                    else
+                        target.Position = value;
+                        drawnow;
+                        for getterPath = ["Position", "InnerPosition", "OuterPosition"]
+                            testCase.verifyEqual(states(string({states.Path}) == getterPath).EffectiveValue, ...
+                                target.(getterPath), "AbsTol", 1e-12, id + "." + getterPath);
+                        end
+                        testCase.verifyEmpty(diagnostics);
+                    end
+                    delete(target);
+                end
+                if parent ~= figure, delete(parent); end
             end
         end
 
@@ -319,6 +371,30 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
     end
 
     methods (Static, Access = private)
+        function [states, component, diagnostics] = positionStates(definition, writes, method)
+            % positionStates Build owned setting occurrences for native position comparisons.
+            arguments (Input)
+                definition (1, 1) macd.model.ComponentDefinition
+                writes cell
+                method (1, 1) string = "assignment"
+            end
+            arguments (Output)
+                states macd.model.PropertyState
+                component (1, 1) macd.model.ComponentRecord
+                diagnostics macd.model.Diagnostic
+            end
+            component = macd.model.ComponentRecord("owned-position", "OwnedPosition", definition.Factory, definition.DeclaredType, "parsed");
+            component.CreationArguments = definition.CreationArguments;
+            for index = 1:size(writes, 1)
+                span = macd.model.SourceSpan(index * 10, index * 10 + 1);
+                location = struct("Method", method, "Syntax", "dot", "Sequence", index, ...
+                    "SourceSnapshotId", "owned-position", "StatementId", "owned-constructor", "SourceSpan", span, "ValueSpan", span);
+                if method == "nameValue", location.Syntax = "quotedPair"; end
+                component.recordSetting(macd.model.PropertySetting(writes{index, 1}, writes{index, 2}, location));
+            end
+            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definition.Properties);
+        end
+
         function target = apply(figure, registry, factory, creationArguments, entries)
             % apply Run only owned literal setters in the shared planner's order.
             arguments (Input)

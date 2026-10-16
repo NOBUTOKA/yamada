@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "32cc6563e011c8f016829089f0650a6ced7c0e5808b7c03ecff1d871b89c3f86",
+  "inputSha256": "a41c5ccda29ee96fe9fb1a6e9a35f5ada854af685cd52358dd0a17d67dbba8c5",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -3613,6 +3613,31 @@
       ]
     },
     {
+      "candidateId": "candidate.position.21462f3cc25a",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "21462f3cc25aa92016f41d387b11651aa6dcc706812aa067bc93324ed4680d2d",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition"
+      ],
+      "propertyCapabilitySha256": [
+        "e8eac2849121ce7fe7d5913c06fe3d74be784ecd3a75721514c86fa37468d630",
+        "54d69c283bfb0a16e02c481e05fda1fa97d45e54867d459bb583b11f1c47ee1f",
+        "f15523b34c437a14a50fabb7dda49455e5cc036c94f8c90e011b29a4513758eb"
+      ],
+      "memberVariantIds": [
+        "uiradiobutton"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        4
+      ]
+    },
+    {
       "candidateId": "candidate.position.372f63cd93d2",
       "categoryId": "position",
       "categoryDisplayName": "Position",
@@ -3637,37 +3662,6 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         5
-      ]
-    },
-    {
-      "candidateId": "candidate.position.3b6ca3865d57",
-      "categoryId": "position",
-      "categoryDisplayName": "Position",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "3b6ca3865d572517b69dbcdded1a154a8974a21a198e40272a1ada89c9c2cbd2",
-      "propertyPaths": [
-        "Position",
-        "InnerPosition",
-        "OuterPosition",
-        "HorizontalAlignment",
-        "VerticalAlignment",
-        "IconAlignment"
-      ],
-      "propertyCapabilitySha256": [
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
-        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "929a01fa209e71eafe547e8b3511e11ae3199506ebaf61aec7a34cb8c5d00a17",
-        "852050b38ed1f1cb6f023fba7d31604b49ca08ba6b4ce4867292a249ebaab562",
-        "74143635cc12df7e6f6dac1acbb4cb842bf9cf414124509bc8eb7e63d40c1fdf",
-        "fd3d00a84a466dc29ab40525b123d5ed2eaf588e1ad84a4f6455081db1f0c9fc"
-      ],
-      "memberVariantIds": [
-        "uitogglebutton"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        4
       ]
     },
     {
@@ -3701,6 +3695,68 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         9
+      ]
+    },
+    {
+      "candidateId": "candidate.position.43c7473b22c9",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "43c7473b22c9ad4eb5dca40541e7808066bf9a28975f003c418d6278d1d1a1fb",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "e8eac2849121ce7fe7d5913c06fe3d74be784ecd3a75721514c86fa37468d630",
+        "54d69c283bfb0a16e02c481e05fda1fa97d45e54867d459bb583b11f1c47ee1f",
+        "f15523b34c437a14a50fabb7dda49455e5cc036c94f8c90e011b29a4513758eb",
+        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+      ],
+      "memberVariantIds": [
+        "uicheckbox",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "reuseCount": 8,
+      "documentedCategoryOrders": [
+        3,
+        4
+      ]
+    },
+    {
+      "candidateId": "candidate.position.4606c4c8450b",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "4606c4c8450b479c4dce99bdace7f138011660c206f20d4785bf995bfa6f726e",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "e8eac2849121ce7fe7d5913c06fe3d74be784ecd3a75721514c86fa37468d630",
+        "54d69c283bfb0a16e02c481e05fda1fa97d45e54867d459bb583b11f1c47ee1f",
+        "e234d88a9defa63fcddd8c60ce38c61919f50786ebf7bf7114ba4fb8dac0950f",
+        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+      ],
+      "memberVariantIds": [
+        "uicolorpicker"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        4
       ]
     },
     {
@@ -3818,7 +3874,6 @@
         "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
       ],
       "memberVariantIds": [
-        "uicheckbox",
         "uidropdown",
         "uieditfield-numeric",
         "uieditfield-text",
@@ -3826,63 +3881,20 @@
         "uigauge-linear",
         "uigauge-ninetydegree",
         "uigauge-semicircular",
-        "uihtml",
-        "uihyperlink",
-        "uiimage",
         "uiknob-continuous",
         "uiknob-discrete",
-        "uilabel",
-        "uilamp",
         "uilistbox",
         "uislider-range",
         "uislider-slider",
         "uispinner",
         "uiswitch-rocker",
         "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitextarea",
-        "uitree",
-        "uitree-checkbox"
+        "uiswitch-toggle"
       ],
-      "reuseCount": 25,
+      "reuseCount": 16,
       "documentedCategoryOrders": [
-        3,
         4,
         5
-      ]
-    },
-    {
-      "candidateId": "candidate.position.769fbf38f89e",
-      "categoryId": "position",
-      "categoryDisplayName": "Position",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "769fbf38f89eae8c1d76002a8196681bd06dc070e6aecba2f0b148ccee2d2c02",
-      "propertyPaths": [
-        "Position",
-        "InnerPosition",
-        "OuterPosition",
-        "HorizontalAlignment",
-        "VerticalAlignment",
-        "IconAlignment",
-        "Layout"
-      ],
-      "propertyCapabilitySha256": [
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
-        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "929a01fa209e71eafe547e8b3511e11ae3199506ebaf61aec7a34cb8c5d00a17",
-        "852050b38ed1f1cb6f023fba7d31604b49ca08ba6b4ce4867292a249ebaab562",
-        "74143635cc12df7e6f6dac1acbb4cb842bf9cf414124509bc8eb7e63d40c1fdf",
-        "fd3d00a84a466dc29ab40525b123d5ed2eaf588e1ad84a4f6455081db1f0c9fc",
-        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
-      ],
-      "memberVariantIds": [
-        "uibutton-push",
-        "uibutton-state"
-      ],
-      "reuseCount": 2,
-      "documentedCategoryOrders": [
-        4
       ]
     },
     {
@@ -3905,10 +3917,9 @@
         "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
       ],
       "memberVariantIds": [
-        "uicolorpicker",
         "uidatepicker"
       ],
-      "reuseCount": 2,
+      "reuseCount": 1,
       "documentedCategoryOrders": [
         4
       ]
@@ -3947,6 +3958,37 @@
       ]
     },
     {
+      "candidateId": "candidate.position.a9435699992d",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "a9435699992d6b5026427e292b6a2279e7ae55712a1139774ad8b75e6f6f8129",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "HorizontalAlignment",
+        "VerticalAlignment",
+        "IconAlignment"
+      ],
+      "propertyCapabilitySha256": [
+        "e8eac2849121ce7fe7d5913c06fe3d74be784ecd3a75721514c86fa37468d630",
+        "54d69c283bfb0a16e02c481e05fda1fa97d45e54867d459bb583b11f1c47ee1f",
+        "f15523b34c437a14a50fabb7dda49455e5cc036c94f8c90e011b29a4513758eb",
+        "852050b38ed1f1cb6f023fba7d31604b49ca08ba6b4ce4867292a249ebaab562",
+        "74143635cc12df7e6f6dac1acbb4cb842bf9cf414124509bc8eb7e63d40c1fdf",
+        "fd3d00a84a466dc29ab40525b123d5ed2eaf588e1ad84a4f6455081db1f0c9fc"
+      ],
+      "memberVariantIds": [
+        "uitogglebutton"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        4
+      ]
+    },
+    {
       "candidateId": "candidate.position.d29a3c13cc79",
       "categoryId": "position",
       "categoryDisplayName": "Position",
@@ -3974,28 +4016,64 @@
       ]
     },
     {
-      "candidateId": "candidate.position.e48c9e511644",
+      "candidateId": "candidate.position.d9582482690e",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "e48c9e511644c4d5adf1dbf4e2105ac072550f0b908c2be7e45c82b10a27d316",
+      "capabilitySha256": "d9582482690e1a64b5a18bd1baccb6ddd6f7589d9ec52dd0b1906487b6654cc7",
       "propertyPaths": [
         "Position",
         "InnerPosition",
-        "OuterPosition"
+        "OuterPosition",
+        "HorizontalAlignment",
+        "VerticalAlignment",
+        "IconAlignment",
+        "Layout"
       ],
       "propertyCapabilitySha256": [
-        "833d22f0b04d5c3ed06236c10cb903e1828651c7e2c7efd906b45054537fba70",
-        "d05b029d879175bb146e9bccf0a450cbf0f9acfcf722eff48c273013c177c8f6",
-        "929a01fa209e71eafe547e8b3511e11ae3199506ebaf61aec7a34cb8c5d00a17"
+        "e8eac2849121ce7fe7d5913c06fe3d74be784ecd3a75721514c86fa37468d630",
+        "54d69c283bfb0a16e02c481e05fda1fa97d45e54867d459bb583b11f1c47ee1f",
+        "f15523b34c437a14a50fabb7dda49455e5cc036c94f8c90e011b29a4513758eb",
+        "852050b38ed1f1cb6f023fba7d31604b49ca08ba6b4ce4867292a249ebaab562",
+        "74143635cc12df7e6f6dac1acbb4cb842bf9cf414124509bc8eb7e63d40c1fdf",
+        "fd3d00a84a466dc29ab40525b123d5ed2eaf588e1ad84a4f6455081db1f0c9fc",
+        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
       ],
       "memberVariantIds": [
-        "uiradiobutton"
+        "uibutton-push",
+        "uibutton-state"
+      ],
+      "reuseCount": 2,
+      "documentedCategoryOrders": [
+        4
+      ]
+    },
+    {
+      "candidateId": "candidate.position.d9ecd5be6d5e",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "d9ecd5be6d5e83fee5618f383aa3ef61897f84284d7e7ac70c373d0f42e19541",
+      "propertyPaths": [
+        "Position",
+        "InnerPosition",
+        "OuterPosition",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "b90208c127e89f818d3cfc78b1c8669562607fd5fba1dd938058016b06143685",
+        "ad0e4c280c4696ea3156f903bab901bf7d0d31e80fcba0a67c16fe68650b9191",
+        "c08c773677bf4f38d0ca0ca5969c4ad2e3ae18238801c044b064fbdb0d8c51ab",
+        "523a0dc9acebf698a7ad537b40ddd33ca55fcb37c72c073c10cbc33e1871eea1"
+      ],
+      "memberVariantIds": [
+        "uilamp"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
-        4
+        3
       ]
     },
     {

@@ -235,10 +235,30 @@ promotion. Detailed `runtimeObservations` remain development evidence. Checkbox
 Tree Position is publicly writable; InnerPosition is also writable in source but
 remains omitted from the Inspector. OuterPosition has a restricted setter.
 
-The owned position probe checks 14 concrete variants, including both constructor
-orders and Lamp's observed square coercion. Shared alias effects, layout-managed
-geometry, copy canonicalization, and a general Lamp coercion rule still need a
-resolver policy. Access evidence alone does not implement those effects.
+`positionAlias` and `squarePositionAlias` select finite getter effects for 14
+reviewed simple-control variants. `PositionAliasPolicy` propagates a public
+setter's value and setting identity across the shared getters without changing
+their explicit inputs. Lamp uses the smaller finite nonnegative size component
+for both dimensions. Unknown aliases invalidate the group; a later certain
+literal restores it. Grid-managed aliases remain unknown with a layout reason.
+This family does not describe decorated sliders, knobs, containers, or axes.
+
+Preview filters skipped named arguments before invoking native factories and
+projects known alias geometry once through Position. Unknown geometry produces a
+diagnostic instead of silently treating an earlier value as the effective one.
+Named ImageSource values use the existing asset adapter after construction.
+Original constructor arguments and setting ownership stay unchanged.
+
+Copies keep the full original snapshot but collapse its effective configuration
+to one Position. Placement uses that frozen result, and copy verification checks
+placement changes, including offsets, rather than excluding them. Grid copy
+configuration omits ignored aliases and uses layout coordinates or supplied
+measured geometry when moving to an absolute parent. Source relocation continues
+to retain the original alias statements. It reparses generated output and checks
+each requested placement before committing; an earlier Position overwritten by
+a preserved later alias cannot silently determine a different destination.
+Native-verified zero sizes remain valid for these alias families in both model
+validation and placement. Other families retain their existing size constraints.
 
 The Inspector begins with `DocumentModel.getEffectivePropertyStates`, which joins
 catalog definitions with explicit instance entries. Source-only assignments that

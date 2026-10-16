@@ -346,6 +346,31 @@
       ],
       "result": "passed",
       "detail": "Owned fixtures verify 0.5 defaults, 13 sequential setter steps per factory, manual holds, auto restoration, and a canonical five-property constructor. Both manual-hold constructor orders retain the initial minor width, demonstrating deferred synchronization distinct from post-construction assignments."
+    },
+    {
+      "testMethod": "positionAliasesExposeNativeSetterAccess",
+      "variants": [
+        "uibutton-push",
+        "uibutton-state",
+        "uitogglebutton",
+        "uicheckbox",
+        "uicolorpicker",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uilamp",
+        "uiradiobutton",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "nameValuePaths": [
+        "Position",
+        "InnerPosition"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a fixtures compare all shared getters with the common resolver after each public alias write and both constructor orders. Lamp keeps its coerced square while explicit input vectors remain intact. Supplemental positionAliasBoundariesMatchNative verifies 84 zero, fractional, positive, and invalid-negative cases; native comparison allows 1e-12 pixel floating roundoff."
     }
   ],
   "setterAccess": [

@@ -122,8 +122,12 @@ classdef PreviewRenderer < handle
 
             % Isolate unsupported preview assignments as nonblocking diagnostics.
             definition = obj.Registry.get(component.Factory, component.CreationArguments);
-            entries = macd.model.PropertyApplicationPlanner.forPreview( ...
+            [entries, positionReason] = macd.model.PropertyApplicationPlanner.forPreview( ...
                 component, document, obj.Registry);
+            if strlength(positionReason) > 0
+                obj.Diagnostics(end + 1) = macd.model.Diagnostic("preview-position-unknown", "warning", ...
+                    "Preview position is uncertain for " + component.Name + ": " + positionReason, component.Id);
+            end
             for index = 1:numel(entries)
                 entry = entries(index);
                 if entry.ValueKind ~= "literal" || ~entry.IsEditable
@@ -243,13 +247,14 @@ classdef PreviewRenderer < handle
         function preview = createPreviewComponent(obj, component, parent)
             % createPreviewComponent Create one ordinary control on the preview surface.
             arguments (Input)
-                obj (1, 1) macd.ui.PreviewRenderer %#ok<INUSA>
+                obj (1, 1) macd.ui.PreviewRenderer
                 component (1, 1) macd.model.ComponentRecord
                 parent
             end
             % Figure-only controls are filtered before this safe factory call.
+            factoryArguments = macd.model.PropertyApplicationPlanner.forPreviewArguments(component, obj.Registry);
             preview = feval(char(component.Factory), parent, ...
-                component.CreationArguments{:});
+                factoryArguments{:});
         end
 
         function setProperty(obj, target, path, value, component)

@@ -117,7 +117,7 @@ classdef ModelValidator
                             end
                         end
                         geometryDiagnostic = macd.validation.ModelValidator.validateGeometry( ...
-                            entry, component.Id, component.Factory);
+                            entry, component.Id, component.Factory, definition);
                         if ~isempty(geometryDiagnostic)
                             diagnostics(end + 1) = geometryDiagnostic; %#ok<AGROW>
                         end
@@ -188,12 +188,13 @@ classdef ModelValidator
                 "uipushtool", "uitoggletool"]);
         end
 
-        function diagnostic = validateGeometry(entry, componentId, factory)
+        function diagnostic = validateGeometry(entry, componentId, factory, definition)
             % validateGeometry Check literal Position and grid coordinates.
             arguments (Input)
                 entry (1, 1) macd.model.PropertyEntry
                 componentId string
                 factory (1, 1) string
+                definition (1, 1) macd.model.PropertyDefinition
             end
             arguments (Output)
                 diagnostic macd.model.Diagnostic
@@ -202,11 +203,15 @@ classdef ModelValidator
             diagnostic = macd.model.Diagnostic.empty;
             value = entry.LiteralValue;
             if entry.Path == "Position"
-                if ~isnumeric(value) || ~isequal(size(value), [1 4]) || ...
-                        any(~isfinite(value)) || any(value(3:4) <= 0)
+                % Reviewed aliases have native support for zero-sized controls.
+                zeroAllowed = macd.model.PositionAliasPolicy.applies(definition);
+                sizeRequirement = "positive";
+                if zeroAllowed, sizeRequirement = "nonnegative"; end
+                if ~isnumeric(value) || ~isreal(value) || ~isequal(size(value), [1 4]) || ...
+                        any(~isfinite(value)) || any(value(3:4) < 0) || (~zeroAllowed && any(value(3:4) == 0))
                     diagnostic = macd.validation.ModelValidator.error( ...
                         "invalid-position", ...
-                        "Position must be a finite numeric 1-by-4 value with positive size.", ...
+                        "Position must be a finite real numeric 1-by-4 value with " + sizeRequirement + " size.", ...
                         componentId);
                 end
             elseif any(entry.Path == ["Layout.Row", "Layout.Column"])

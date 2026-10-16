@@ -35,11 +35,10 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
                 "EditorInteractionTest/gridOverlayTrackActionCommitsOneValidatedTrackChange", ...
                 "EditorInteractionTest/fontStyleButtonCommitsCatalogChoice"];
 
-            % Keep all model and source checks in quick while bounding UI startup.
+            % Bound quick's explicit UI smoke list; the full UI suite may grow.
             testCase.verifyEqual(sort(quickNames), sort([ ...
                 setdiff(allNames, [uiNames, contractNames]), expectedUiSmoke]));
             testCase.verifyEqual(sort(intersect(quickNames, uiNames)), sort(expectedUiSmoke));
-            testCase.verifyEqual(numel(uiNames), 136);
         end
 
         function areaTagsAlwaysAddToQuickCoverage(testCase)

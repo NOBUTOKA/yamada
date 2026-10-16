@@ -54,6 +54,15 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
   current values in manual mode. New upstream assignments preserve existing
   manual hold points. Reviewed color/alpha modes keep stored values separate
   from the rendered appearance.
+- Reviewed simple controls share `Position`, `InnerPosition`, and read-only
+  `OuterPosition` getters. Later writable aliases determine the effective
+  geometry while original inputs retain their own source tokens. Lamp's getters
+  use the smaller requested dimension for both width and height. These reviewed
+  controls support finite nonnegative sizes, including zero-sized copies. An earlier
+  `Position` edit shadowed by a later alias is rejected without changing history.
+  Copies emit one effective `Position` and verify their placement offset. Grid
+  layout geometry remains managed by the layout rather than an alias literal.
+  Parent changes also verify the requested geometry before committing history.
 - Compare the original and generated source, then save to a new path or to an explicitly confirmed path.
 - Show diagnostics for unsupported or ambiguous structures.
 - Track unsaved edits in the editor title. New, Open, and closing the editor offer
@@ -162,6 +171,10 @@ Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolo
 - It does not call the input class constructor, callbacks, or helper methods.
 - It does not evaluate arbitrary MATLAB expressions through `eval` or an equivalent mechanism.
 - Safe Preview applies only catalog-approved components and values that can be interpreted safely.
+- Parsed constructor arguments obey the same Preview policy as assignments.
+  Skipped properties, including executable callbacks and HTML sources, remain in
+  source and do not reach Preview construction. Named image sources use the
+  existing local-asset adapter after construction.
 - Safe Preview draws the root UIFigure client area at its model pixel width and
   height, using its supported Color value. A dark gray area marks the space
   outside the figure, with a visible dark margin even at scroll limits. A fixed

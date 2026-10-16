@@ -38,8 +38,24 @@ classdef SubtreeCopyPlanner
                 end
                 values = record.Properties;
                 expected = struct("Path", {}, "Value", {});
+                % Freeze one canonical Position, preserving all alias occurrences in Records.
+                aliases = arrayfun(@(item) macd.model.PositionAliasPolicy.applies(item.Definition), states);
+                aliasPaths = string(arrayfun(@(item) item.Definition.Path, states(aliases)));
+                if any(ismember(string({values.Path}), aliasPaths))
+                    position = find(arrayfun(@(item) item.Definition.Path == "Position", states), 1);
+                    values = values(~ismember(string({values.Path}), aliasPaths));
+                    if ~isempty(position)
+                        resolution = states(position).Resolution;
+                        if ~resolution.IsKnown
+                            error("macd:DocumentModel:UnsafeSubtreeCopy", "Cannot reproduce position: %s", resolution.Reason);
+                        end
+                        entry = macd.model.PropertyEntry("Position", resolution.EffectiveValue, "generated");
+                        values(end + 1) = entry.toStruct(); %#ok<AGROW>
+                        expected(end + 1) = struct("Path", "Position", "Value", {resolution.EffectiveValue}); %#ok<AGROW>
+                    end
+                end
                 % Copy the resulting values, keeping expression references for the existing remapping policy.
-                for property = record.Properties
+                for property = values
                     if property.ValueKind == "expression", continue, end
                     state = find(arrayfun(@(item) item.Definition.Path == property.Path, states), 1);
                     if isempty(state)
@@ -56,6 +72,7 @@ classdef SubtreeCopyPlanner
                 end
                 % Implicit setter effects may determine properties with no explicit source write.
                 for state = states
+                    if macd.model.PositionAliasPolicy.applies(state.Definition), continue, end
                     resolution = state.Resolution;
                     explicit = any(string({record.Properties.Path}) == state.Definition.Path);
                     affected = strlength(resolution.EffectSettingId) > 0;
@@ -107,8 +124,17 @@ classdef SubtreeCopyPlanner
                     error("macd:DocumentModel:UnsafeSubtreeEdit", "The generated copy is missing.");
                 end
                 states = document.getEffectivePropertyStates(registry, component.Id);
-                for expected = configuration(index).Expected
-                    if index == 1 && any(string({changes.Path}) == expected.Path), continue, end
+                checks = configuration(index).Expected;
+                if index == 1
+                    % Verify placement changes too; an emitted alias must not undo an offset.
+                    for change = changes
+                        checks = checks(string({checks.Path}) ~= change.Path);
+                        if ~change.Remove
+                            checks(end + 1) = struct("Path", change.Path, "Value", {change.Value}); %#ok<AGROW>
+                        end
+                    end
+                end
+                for expected = checks
                     state = find(arrayfun(@(item) item.Definition.Path == expected.Path, states), 1);
                     if isempty(state) || ~macd.model.PropertyStateResolver.matchesRequested(states(state).Resolution, expected.Value)
                         error("macd:DocumentModel:UnsafeSubtreeEdit", ...

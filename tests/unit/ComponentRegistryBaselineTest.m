@@ -463,7 +463,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             for path = ["Position", "InnerPosition"]
                 testCase.verifyFalse(registry.isReadOnlyProperty("uitree", path, {"checkbox"}));
                 property = definition.Properties([definition.Properties.Path] == path);
-                testCase.verifyEqual(property.Application.NameValue, "unknown");
+                testCase.verifyEqual(property.Application.NameValue, "supported");
                 testCase.verifyFalse(isfield(property.Metadata, "runtimeObservations"));
             end
         end

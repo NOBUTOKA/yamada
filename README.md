@@ -18,6 +18,8 @@
   adding properties, including supported axes value/Mode pairs
 - Preserve manual grid-width holds when adding upstream axes widths, and track
   stored color values separately from automatic rendering modes
+- Resolve reviewed position aliases consistently in the Inspector, Safe Preview,
+  and subtree copies, including Lamp's square size constraint
 - Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
 - Rename component properties in the hierarchy, including static source references and default callback names
 - Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion

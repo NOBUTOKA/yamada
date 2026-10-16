@@ -194,6 +194,14 @@ classdef PropertyStateResolver
             previous = states;
             states(index) = states(index).withEffective(value, known, id, "The source value or its execution is uncertain.", "source");
             if known, states(index) = states(index).withEffective(value, true, id); end
+            % Read-only getter writes are cleaned by the existing generation policy.
+            if macd.model.PositionAliasPolicy.applies(definitions(index))
+                if ~definitions(index).IsEditable
+                    states(index) = previous(index);
+                    return
+                end
+                [states, message] = macd.model.PositionAliasPolicy.apply(states, definitions, path, id);
+            end
             valueIndex = find(paths == "Value", 1);
             family = "none";
             if ~isempty(valueIndex), family = definitions(valueIndex).Application.EffectPolicy; end

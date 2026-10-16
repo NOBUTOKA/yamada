@@ -9,7 +9,34 @@ classdef PropertyApplicationPlanner
     %           component, document, registry);
 
     methods (Static)
-        function entries = forPreview(component, document, registry)
+        function values = forPreviewArguments(component, registry)
+            % forPreviewArguments Remove source-owned skipped properties before native construction.
+            arguments (Input)
+                component (1, 1) macd.model.ComponentRecord
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                values cell
+            end
+            values = component.CreationArguments;
+            definition = registry.get(component.Factory, values);
+            removed = false(size(values));
+            for setting = component.Settings
+                index = setting.FactoryArgumentIndex;
+                if index < 2 || index > numel(values), continue, end
+                property = definition.getProperty(setting.Path);
+                allowed = ~isempty(property) && property.IsEditable && ...
+                    ~any(property.PreviewPolicy == ["skip", "notRendered"]);
+                % Assets and reviewed aliases are adapted once after construction.
+                if ~allowed || setting.Path == "ImageSource" || ...
+                        (~isempty(property) && macd.model.PositionAliasPolicy.applies(property))
+                    removed(index - 1:index) = true;
+                end
+            end
+            values = values(~removed);
+        end
+
+        function [entries, positionReason] = forPreview(component, document, registry)
             % forPreview Replay parsed literal writes and canonically order pending additions.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
@@ -18,12 +45,14 @@ classdef PropertyApplicationPlanner
             end
             arguments (Output)
                 entries macd.model.PropertyEntry
+                positionReason (1, 1) string
             end
 
             % Native preview construction already consumes projected name-value arguments.
             canonical = macd.model.PropertyApplicationPlanner.forComponent(component, document, registry);
             if component.Origin ~= "parsed" || isempty(canonical)
                 entries = canonical;
+                [entries, positionReason] = macd.model.PositionAliasPolicy.forPreview(entries, component, document, registry);
                 return
             end
             entries = macd.model.PropertyEntry.empty;
@@ -47,6 +76,12 @@ classdef PropertyApplicationPlanner
             % Source ownership is fixed; pending source placement is planned separately.
             pending = canonical([canonical.Origin] == "generated");
             entries = [entries pending];
+            image = canonical(string({canonical.Path}) == "ImageSource");
+            if ~isempty(image) && ~any(string({entries.Path}) == "ImageSource")
+                % Named image values follow the same asset checks as assignment values.
+                entries(end + 1) = image;
+            end
+            [entries, positionReason] = macd.model.PositionAliasPolicy.forPreview(entries, component, document, registry);
         end
 
         function entries = forComponent(component, document, registry)

@@ -79,10 +79,16 @@ try {
     Assert-Condition ($inner.runtimeSetAccess -ceq 'public' -and $inner.disposition.kind -ceq 'omitted') 'A source alias was confused with inspector editability.'
     Assert-Condition ($outer.runtimeSetAccess -ceq 'restricted' -and $outer.disposition.kind -ceq 'omitted') 'A read-only alias gained a public setter.'
     Assert-Condition ($inner.runtimeObservations.Count -eq 1) 'Runtime setter evidence is missing or duplicated.'
-    Assert-Condition ($null -eq $inner.PSObject.Properties['application']) 'Setter access was mistaken for constructor or resolver support.'
+    Assert-Condition ($inner.application.effectPolicy -ceq 'positionAlias') 'The documented position alias policy was lost.'
+    Assert-Condition ($inner.application.nameValue -ceq 'supported') 'Verified alias constructor support was lost.'
+    Assert-Condition ($outer.application.nameValue -ceq 'unknown') 'A read-only alias gained constructor support.'
+    $lamp = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uilamp.json') -Raw | ConvertFrom-Json
+    $lampPosition = $lamp.properties | Where-Object path -CEQ 'Position'
+    Assert-Condition ($lampPosition.application.effectPolicy -ceq 'squarePositionAlias') 'Lamp square coercion was generalized to ordinary aliases.'
     $audit = Get-Content -LiteralPath $auditPath -Raw | ConvertFrom-Json
     $treeAudit = $audit.variants | Where-Object id -CEQ 'uitree-checkbox'
-    Assert-Condition ($treeAudit.policyReviewStatus -ceq 'pending' -and $treeAudit.runtimeVerificationStatus -ceq 'partial') 'A native access check completed the policy review.'
+    Assert-Condition ($treeAudit.policyReviewStatus -ceq 'partial' -and $treeAudit.runtimeVerificationStatus -ceq 'partial' -and
+        $treeAudit.reviewedPolicyCount -eq 3) 'The three reviewed aliases completed the whole policy review.'
 
     # Validate the newly written fields against their actual ledger schema fragments.
     $schema = Get-Content -LiteralPath (Join-Path $releaseRoot 'schema.json') -Raw | ConvertFrom-Json
@@ -121,8 +127,8 @@ try {
             'missingProperty' { $runtime.setterAccess[-1].path = 'MissingNativeProperty' }
             'unreviewedConstructor' {
                 $runtime.coverage += [pscustomobject]@{
-                    testMethod = 'positionAliasesExposeNativeSetterAccess'; variants = @('uitree-checkbox')
-                    nameValuePaths = @('Position'); result = 'passed'; detail = 'A setter check is not a policy review.'
+                    testMethod = 'positionAliasesExposeNativeSetterAccess'; variants = @('uitreenode')
+                    nameValuePaths = @('Text'); result = 'passed'; detail = 'A setter check is not a policy review.'
                 }
             }
         }
@@ -138,7 +144,7 @@ try {
     # A late invalid rule must not partially rewrite earlier validated components.
     $reviewPath = Join-Path $releaseRoot 'APPLICATION_POLICY_REVIEW.json'
     $review = Get-Content -LiteralPath $reviewPath -Raw | ConvertFrom-Json
-    $review.rules[-1].applyAfter = @('MissingDependency')
+    $review.rules[-1] | Add-Member -NotePropertyName applyAfter -NotePropertyValue @('MissingDependency') -Force
     [IO.File]::WriteAllText($reviewPath, ($review | ConvertTo-Json -Depth 100), [Text.UTF8Encoding]::new($false))
     $failed = $false
     try { & $apply -ReleaseDirectory $releaseRoot | Out-Null } catch { $failed = $true }

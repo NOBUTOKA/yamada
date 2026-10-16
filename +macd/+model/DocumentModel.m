@@ -892,6 +892,21 @@ classdef DocumentModel < handle
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
+            % A preserved later setter must not undo the requested destination geometry.
+            [placedDocument, placedDiagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            if macd.validation.ModelValidator.hasErrors(placedDiagnostics)
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({placedDiagnostics.Message}), newline));
+            end
+            placedRoot = placedDocument.getComponentByName(root.Name);
+            if isempty(placedRoot)
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "The relocated component is missing from generated source.");
+            end
+            try
+                placedStates = placedDocument.getEffectivePropertyStates(registry, placedRoot.Id);
+                obj.assertRequestedStates(placedStates, plan.Changes(~[plan.Changes.Remove]));
+            catch exception
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", string(exception.message));
+            end
             afterSnapshot = macd.model.SubtreeSnapshot(candidate, id);
             afterRoot = afterSnapshot.Records(1);
             afterParents = struct("Id", {oldParent.Id, newParent.Id}, ...
@@ -1009,6 +1024,7 @@ classdef DocumentModel < handle
             if isempty(configuration)
                 configuration = macd.model.SubtreeCopyPlanner.prepare(obj, snapshot, registry);
             end
+            snapshot = snapshot.withCopyConfiguration(configuration);
             plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ...
                 strings(1, 0), measuredPosition, offset);
             candidate = obj.structuralCandidate();

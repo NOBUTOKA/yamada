@@ -115,11 +115,27 @@ classdef SubtreePlacementPlanner
                 changes = macd.model.SubtreePlacementPlanner.removeIfPresent(changes, root.Properties, "Layout.Column");
                 if any(paths == "Position") && definitions(find(paths == "Position", 1)).IsEditable
                     position = macd.model.SubtreePlacementPlanner.literal(root.Properties, "Position", []);
+                    if macd.model.PositionAliasPolicy.applies(definitions(find(paths == "Position", 1))) && ...
+                            ~wasGrid && ~hasGridPlacement
+                        if ~isempty(snapshot.CopyConfiguration)
+                            position = macd.model.SubtreePlacementPlanner.literal( ...
+                                snapshot.CopyConfiguration(1).Properties, "Position", []);
+                        else
+                            states = document.getEffectivePropertyStates(registry, root.Id);
+                            state = states(arrayfun(@(item) item.Definition.Path == "Position", states)).Resolution;
+                            if ~state.IsKnown
+                                error("macd:SubtreePlacementPlanner:MissingGeometry", "Cannot place unresolved position: %s", state.Reason);
+                            end
+                            position = state.EffectiveValue;
+                        end
+                    end
                     if wasGrid || hasGridPlacement
                         if ~isempty(measuredPosition), position = measuredPosition; end
                     end
                     if ~isempty(targetPosition), position = targetPosition; end
-                    if numel(position) ~= 4 || ~isnumeric(position) || any(~isfinite(position)) || any(position(3:4) <= 0)
+                    zeroAllowed = macd.model.PositionAliasPolicy.applies(definitions(find(paths == "Position", 1)));
+                    if numel(position) ~= 4 || ~isnumeric(position) || any(~isfinite(position)) || ...
+                            any(position(3:4) < 0) || (~zeroAllowed && any(position(3:4) == 0))
                         error("macd:SubtreePlacementPlanner:MissingGeometry", "A verified position is required for absolute placement.");
                     end
                     position = reshape(double(position), 1, 4);

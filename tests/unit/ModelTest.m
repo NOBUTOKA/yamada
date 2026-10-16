@@ -286,12 +286,12 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function geometryValidationRejectsUnsafeLiterals(testCase)
             % geometryValidationRejectsUnsafeLiterals Verify canvas geometry checks.
 
-            % Invalid Position and grid coordinates must block generation safely.
+            % Negative size and invalid grid coordinates must block generation safely.
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
-            label.setProperty("Position", [10 10 0 30]);
+            label.setProperty("Position", [10 10 -1 30]);
             grid = document.insertComponent(registry, "uigridlayout", ...
                 document.RootComponentId);
             gridLabel = document.insertComponent(registry, "uilabel", grid.Id);
