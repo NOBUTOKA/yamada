@@ -204,6 +204,35 @@ Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolo
 
 Because of this limitation, Safe Preview may not reproduce the input application's appearance completely. It displays the model that could be parsed safely and is not a substitute for running the input application.
 
+## Property Setting Effects
+
+- Property histories retain constructor name-value arguments and later assignments,
+  including earlier occurrences, comments, and source positions. Existing values
+  are replaced at their original occurrence. New settings normally use an
+  assignment at a proven insertion point; a verified constructor-only component
+  may keep the name-value form.
+- The catalog distinguishes reviewed independent inputs, finite modeled effects,
+  unsupported effects, and unaudited effects. Missing effect metadata does not
+  prove independence. Unsupported or unaudited edits are refused before mutation;
+  their existing source can still be preserved unchanged.
+- RadioButton and ToggleButton selection uses the owning ButtonGroup and sibling
+  creation order. Generated and copied values are applied after sibling creation.
+  Mixed RadioButton/ToggleButton groups and unresolved selection references remain
+  outside the supported contract. No handle-reference editor is provided.
+- Nonempty construction callbacks, unresolved initialization calls, uncataloged
+  setters, and unsupported Parent/Children assignments prevent guarantees about
+  initial values, including those of destination siblings. Unknown explicit calls
+  without an app argument are also bounded; reviewed data calls require inert
+  literal inputs. Callback registration alone does not imply that its body executed.
+- Finite geometry rules cover reviewed stored Position inputs, slider thickness,
+  and selected knob/gauge square adjustments. Decoration-dependent getters and
+  child positions affected by later ancestor resizing remain unknown. Axes
+  aspect/camera coupling and unresolved tree/tab references are explicitly bounded
+  rather than approximated as independent values.
+- Copy, move, generation, and save preflight use the same state contract. Reparsed
+  output verifies supported rules; it does not prove arbitrary MATLAB behavior.
+  Items/ItemsData length differences remain outside this implementation.
+
 ## Editing and Source Preservation
 
 - New and existing applications use the same component model, validation, Preview, and generation pipeline.

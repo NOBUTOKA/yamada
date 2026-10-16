@@ -22,6 +22,10 @@
   and subtree copies, including Lamp's square size constraint
 - Resolve Grid Layout tracks and implicit child placements from initialization
   order, and reject track edits whose requested size would be lost to occupancy
+- Resolve RadioButton/ToggleButton selection using the owning group and sibling
+  initialization order, including copied groups
+- Keep unaudited and unsupported setter effects explicit, and refuse edits whose
+  resulting values cannot be established within the supported contract
 - Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
 - Rename component properties in the hierarchy, including static source references and default callback names
 - Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion
@@ -209,6 +213,8 @@ See the [product specification](SPECIFICATION.md) for the current supported beha
 - [Product specification](SPECIFICATION.md) - Current scope, input and output contract, and safety limitations
 - [Roadmap](ROADMAP.md) - Independent tasks planned beyond the current supported behavior
 - [Architecture reference](doc/ARCHITECTURE.md) - Implemented layers, data flow, safety boundaries, and extension points
+- [Property setting coverage](PROPERTY_SETTING_COVERAGE.md) - Reviewed effects, unsupported boundaries, and acceptance mapping
+- [Property setting verification](PROPERTY_SETTING_VERIFICATION.md) - Implementation commits, owned fixtures, and final validation evidence
 - [Contributing guide](CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
 
 ## Feedback and Contributions

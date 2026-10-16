@@ -774,19 +774,162 @@
 - 復元先は`a7ab303`であり、その実装は上記の関連area 405件で検証済み。
   今回は対象範囲を記録する文書のみを変更し、MATLABの動作変更は加えていない。
 
-## 未完了の段階（更新）
+## 現在の完了判定と残る境界（2026-10-17）
 
-- Stage 1: 共通契約と`PropertyInsertionPlanner.plan(document, component, registry)`は実装済み。
-  全variantの監査状況は`dev/component-data/R2024a/APPLICATION_POLICY_AUDIT.json`で管理する。
-  残りは保留variantと部分監査variantの未確認property・効果の監査。
-- Stage 2: 設定履歴、initializerの実行順・確実性、生成イベントをresolver・plannerへ接続済み。
-  最終監査では、未対応構文を含む所有・未知状態・原文保持の境界を再確認する。
-- Stage 3: 挿入診断・編集前候補検証・保存checkpointは実装・専用検証済み。
-  複数pending planの全体候補への接続と、未対応の効果を未知とする境界を完了条件の監査に含める。
-- Stage 4: 保留6 variant・部分監査42 variantの残る監査、Axes等の追加効果と共通resolverの拡充。
-  ItemsData長の契約修正は今回の対象外。
-- Stage 5: 独立した設定snapshot・実効copy計画・保存checkpointは実装・回帰検証済み。
-  残る共通効果ポリシーを加えるたび、複製・移動・保存への反映を確認する。
-- Stage 6: 全体テスト、公開仕様と完了条件の最終監査。
+現在の対応表は[PROPERTY_SETTING_COVERAGE.md](PROPERTY_SETTING_COVERAGE.md)を正本とする。
+前節までの「未完了」は各記録時点の状態であり、現在の残作業を重複して示すものではない。
 
-この記録に部分的なテスト合格を追記しても、全体完了の扱いにはしない。
+- Stage 1–3: 共通履歴、初期化順、元位置更新、挿入、原子的な候補検証は実装済み。
+- Stage 4: 全48 variant・1,825 propertyの状態を明示した。未確認・未対応を安全な独立setterとして扱わない。
+  全native動作の実装や未監査368件の独立確認は、今回の完了条件に追加しない。
+- Stage 5: 新しい契約・選択連動を生成・Preview・複製・移動・保存へ接続済み。
+- Stage 6: `b7307f6`のfull 571件、関連area 526件の包含・合格、静的解析と公開文書の更新を完了。
+  今回の有限の対応範囲と未対応境界に対する完了条件を満たした。
+
+## 未確認境界・ボタン選択・有限の位置規則（2026-10-17）
+
+実装コミット:
+
+- `2b4c0ed`: property別effect status、台帳全体の再生成、選択連動と生成順序、有限のPosition規則。
+- `2f10c77`: 未展開呼び出し、生成時CreateFcn、未知のsetter、後続の親サイズ変更の境界。
+- `834e2ce`: 連動policyによる未知状態の上書きを防ぎ、途中の不正なSelectedObjectを保持。
+- `3bc06b4`: 新規部分木を親の幾何初期化後へ生成し、helper間の実行順を共通anchorへ反映。
+- `b3ef3e5`: 未監査の上流効果を保持し、不明な明示呼び出し・条件付き生成を制限。
+  ContextMenuの限定監査、旧fixtureの条件分離、配列方向の修正を含む。
+- `09f0e2c`: Native layoutの再入で古いoverlay payloadが新しい更新を上書きしないようにする。
+- `b7307f6`: 未対応のParent/Children設定を文書単位で制限し、移動先の状態を誤って既知にしない。
+
+契約:
+
+- `effectStatus`を`independent` / `modeled` / `unsupported` / `unknown`に分離した。
+  `none`や旧catalogの省略から独立性を推定しない。影響先と理由をschema・grouping・昇格・loaderで共有する。
+- 製品のeditable意図を維持し、実装上保証できない要求・複製は確定前に拒否する。
+  非編集ソースの保持と、編集結果の意味を保証することを分ける。
+- Radio/ToggleButtonは同種の兄弟の生成順、Value、親SelectedObjectを再生する。
+  Value=0の単独代入は途中エラーとし、constructorの同じ指定とは区別する。
+  混在group、空SelectedObject、未生成の子への参照を後続Valueで隠さない。
+- 新規・複製では兄弟の生成後にValueを適用する。既存の値は元位置に保持する。
+  追加Valueの挿入位置も、確認済みの兄弟生成・選択イベントを用いて決める。
+  Copyは子の実効Valueを凍結し、親のsource-only handleを新たな参照UIに変換しない。
+- Slider固定厚さと一部knob/gaugeの正方形補正はnative fixtureで確認した。
+  装飾getter、Axesの縦横比・カメラ、GeoAxesのTickDir、Tree/Tabの未対応参照は未知の境界を保つ。
+  親の後続位置変更で子が再配置される可能性を未知とし、精密なlayout計算は行わない。
+
+専用検証:
+
+- `effect-final-focused-results.mat`: 92件合格。初期共通契約、台帳、選択、挿入、Copy、移動、GridLayout。
+- `effect-hardening-results.mat`: 55件合格。追加境界と履歴・パーサ・Copy・移動。
+- `effect-hardening-tail-results.mat`: 20件合格。旧生成時引数、選択の再解析、native縦slider、Preview引数のcallback除外。
+- `effect-unknown-family-results.mat`: 39件合格。連動familyが未知状態を解決済みにしない境界。
+- `effect-forward-selection-results.mat`: 1件合格。未生成の子への参照が途中の失敗として残る。
+- `effect-ancestor-insertion-results.mat`: 55件合格。Cut/Paste、GridLayout、選択、局所生成。
+- `effect-ancestor-native-results.mat`: 15件合格。親の初期化後にPasteしたPanelのnative位置とhelperの実行順。
+- いずれもFailed=0、Incomplete=0。これらの件数は重複を含み、合計を全体テスト件数とはしない。
+- `verifyApplicationPolicy.ps1`、`verifyApplicationPolicyReview.ps1`、`verifyComponentLedgerSchema.ps1`が合格。
+  48文書のschema、再生成、intrinsic 48/48・effective 144/144のparity、24件の原子的な不正入力拒否を含む。
+- `b7307f6`の変更MATLAB 37ファイルはcheckcode警告ゼロ、UTF-8 BOMなし・CRLF。
+  `effect-parent-boundary.log`、`effect-final-matlab-files.json`、`effect-final-manifest.json`に記録した。
+  manifestは`813af8a`から`b7307f6`までの実装・台帳155ファイルのSHA-256を保持する。
+- 最初のfull起動はrootの検索パス不足で中断し、areaの初回指定はchar連結の誤りで開始前に失敗した。
+  次のareaは未知状態の上書き境界を補完するため中断した。
+  その後のareaで、親のPosition設定前に新規部分木を挿入するCut/Pasteの失敗3件を検出して中断した。
+  `effect-validation-before-ancestor-fix.log`に保持した。安全境界を緩めず、生成位置を修正した。
+  これらの中断結果はいずれも最終合格の根拠には含めない。
+- 絶対パスでproject rootとtestsを登録した`3bc06b4`のareaは514件を選択した。
+  `effect-final-validation.log`へ結果を保存したが、次節に記す失敗があり最終合格ではない。
+
+計画書は保持する。ItemsとItemsDataの長さ不一致、新しい履歴UI・参照編集UI、
+MATLABの全setter・描画依存値の再現は今回の範囲外。
+
+### 広域検証で見つかった境界の仕上げ
+
+- `3bc06b4`のarea 514件はPassed=507、Failed=7、Incomplete=2、2035.026秒だった。
+  失敗は補助Mファイルの規約2件、診断文言への依存1件、ContextMenu参照コピー2件、
+  移動拒否の内部例外1件、不確実性を通知するPreviewに対する旧期待1件。
+  この実行を全件合格の根拠には含めない。
+- 補助Mファイルを関数・英語help・GPL・CRLFへ揃えた。診断は文言ではなくReasonCodeを確認する。
+  ContextMenuはPush Buttonに限定した所有native fixtureを根拠に、参照以外の保存値を変えず、
+  opening callbackを実行しないことを確認した。constructor対応は推定しない。
+- 共通groupのContextMenuをvariant固有部分へ分け、異なる監査状態を共有groupで上書きしない。
+  再生成後のintrinsic 48/48、effective 144/144が一致した。
+- ToggleToolは[State資料](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.toolbar.toggletool-properties.html)の記載に対し、
+  所有する4条件（uifigure/figure × 表示/非表示）のprobeを行った。
+  準備後のfigureではOn/Off callbackが各1回、uifigureでは0回だった。
+  別の未準備fixtureではfigureでも0回だったため、この結果を一般的な実行policyへ昇格しない。
+  callbackの手動実行をpositive controlとし、`toggle-state-callback-probe.json`へ観測を保存した。
+- 仕上げの最初の専用回帰144件は139件合格・5件失敗だった。条件付き生成の内部例外と、
+  不明な関数呼び出しを使っていた旧データを修正した。
+  不活性な式の保持・後続設定の復元は呼び出しのない式で確認し、
+  不明な呼び出しは別の拒否テストで検証する。初回結果は最終合格に数えない。
+- 台帳のPowerShell検証3本が再度合格した。read-only観測の拒否テストは一覧末尾ではなくOuterPositionを明示した。
+- 最終fullには、quickと関連areaの全テスト名を照合し、同じfull結果から関連areaの合格範囲を抽出する。
+  追加の独立したarea再実行と混同しない。
+
+- 仕上げ後のquick 412件は408件合格・4件失敗・Incomplete=3、1326.730秒だった。
+  3件は位置別名・移動・保存の旧fixtureが不活性な未評価値と実行呼び出しを兼ねていたためで、
+  呼び出しのない式へ分けた。生成時のerror呼び出しが後続リテラルで隠れず、
+  編集・Copyを原子的に拒否して原文を保つ回帰を追加した。
+  残る1件はCheckbox Treeの列方向のproperty配列を新しい監査処理が正しく走査できない不具合で、
+  向きに依存しないreshapeによる走査へ修正した。初回quickは最終合格の根拠に含めない。
+
+- 修正後の関連6クラス81件はPassed=81、Failed=0、Incomplete=0。
+  `effect-quick-fixes-results.mat`と同logへ保存した。生成時error呼び出しの新規拒否テストを含む。
+  同じ実行で最終変更MATLAB 37ファイルのcheckcode警告ゼロを確認した。
+- 最終実装を`b3ef3e5`へコミットし、同じ状態のfull 569件を開始した。
+  `effect-final-full.log`、`effect-final-full-results.mat`、
+  `effect-final-area-from-full-results.mat`を最終結果の保存先とする。
+
+- `b3ef3e5`の最初のfull 569件はPassed=568、Failed=1、Incomplete=0、2009.086秒だった。
+  `effect-full-before-overlay-fix.log`へ保持した。失敗はnested GridLayoutを移動した後の範囲変更1件。
+  所有アプリの診断で、同じ画面ハンドルの公開payloadはrevision=19、受け側は20であり、
+  最新の配置計算自体は編集可能と確認した。タイマー例外は観測されなかった。
+  再入した更新より古いpayloadを公開する経路を修正し、更新前の番号を全セクションで共有して、
+  新しい更新が始まった場合は古い結果を破棄する。古いイベントの拒否は維持する。
+  診断補助のinteractive検証はunit testの合格件数に含めない。
+
+- 公開順修正後の関連11件はPassed=11、Failed=0、Incomplete=0。
+  nested GridLayoutの移動後の範囲変更は3回合格し、古いイベントの拒否、選択同期、
+  track変更、Tab切替、root resize、規約検証も合格した。
+  `effect-overlay-publication-results.mat`と同logへ保存した。
+  同じ実行で変更MATLAB 37ファイルのcheckcode警告ゼロを確認した。
+- 修正を`09f0e2c`へコミットし、同じ状態のfull 569件を再実行した（以下のParent境界確認により中断）。
+  実装・台帳155ファイルのmanifestを更新した。前回の失敗を今回の最終合格へ合算しない。
+
+- `09f0e2c`のfull再実行中、未対応Parent設定が移動先の状態へ届かない漏れを所有fixtureで確認した。
+  RadioButtonを別groupへ移してValue=trueにすると、移動先の兄弟Valueはnativeではfalseだが、
+  constructor階層だけの解析ではknown=true/value=trueとされていた。
+  `effect-parent-boundary-probe.log`へ観測を保存した。
+  fullを中断し、`effect-full-interrupted-parent-boundary.log`へ途中結果を保持した。
+  この中断実行は最終合格の根拠に含めない。
+- 既存のParent/Children設定は文書横断の未対応境界とし、移動先の状態も未知にする。
+  元ソースの保持、編集・Copyの原子的拒否、所有native fixtureによる移動先選択の変化を回帰に追加した。
+  台帳のParent/Childrenを独立・対応済みへ昇格する変更ではない。
+
+- 親子参照境界の関連6クラス74件はPassed=74、Failed=0、Incomplete=0。
+  `effect-parent-boundary-results.mat`と同logへ保存した。通常のCopy・移動・親変更も合格した。
+  同じ実行で変更MATLAB 37ファイルのcheckcode警告ゼロを確認した。
+- 最終実装を`b7307f6`へコミットし、回帰2件を追加したfull 571件を開始した。最終結果は次節。
+  manifestは同じ実装・台帳155ファイルを記録した。台帳の監査分類件数は変更しない。
+
+## 最終状態の検証と完了判定（2026-10-17）
+
+実装コミット: `b7307f6`（`b7307f6215d3807a7528b7f18711935447563468`）。検証後の変更は公開文書のみ。
+
+| 検証 | 結果 | 証拠 |
+|---|---|---|
+| full | 571件合格、Failed=0、Incomplete=0、1966.694秒 | `testResults/effect-final-full.log` / `effect-final-full-results.mat` |
+| 関連area | 526件の全テスト名がfullに含まれ、全件合格 | `effect-final-area-from-full-results.mat`、同logのAREA_COVERAGE_FROM_FULL |
+| 静的解析 | 変更MATLAB 37ファイル、警告ゼロ | `effect-parent-boundary.log` / `effect-final-matlab-files.json` |
+| 台帳契約・監査再適用・schema | PowerShell 3本合格、48文書、intrinsic 48/48、effective 144/144 | 本節前の台帳検証記録。以後の台帳変更なし |
+| ソース固定・形式 | 実装・台帳155ファイルのSHA-256一致、MATLABはUTF-8 BOMなし・CRLF | `effect-final-manifest.json` |
+
+関連areaはquickとparser/catalog/model/generation/preview/inspector/lifecycleの和集合である。
+同じfull結果から抽出・照合しており、別のarea再実行や追加の合格件数として合算しない。
+6パターン、元位置更新、未確認拒否、複数設定、Copy/Paste・移動、保存、Undo/Redo、
+所有native fixtureによる有限規則を、この最終状態のfullで横断確認した。
+
+全48 variant・1,825 propertyの状態と理由を明示し、対応範囲では編集・生成を検証し、
+未対応・未監査の範囲では保証できない変更を確定前に拒否するという完了条件を満たした。
+独立確認済み936、有限policy328、未対応193、未監査368という区別を維持する。
+MATLAB全体の再現、新しい設定履歴・参照編集UI、ItemsとItemsDataの長さ不一致は対象外。
+計画書は保持し、古い未完了記録は当時の履歴として扱う。

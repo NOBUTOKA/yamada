@@ -292,6 +292,39 @@ catalog definitions with explicit instance entries. Source-only assignments that
 are outside the effective catalog surface are appended as read-only rows instead
 of being dropped.
 
+The application contract distinguishes `independent`, `modeled`, `unsupported`,
+and `unknown` effect status, separately from constructor support and product
+editability. Legacy catalogs default to unknown. The exact per-property review
+artifact passes through schema validation, grouping, promotion, and loader;
+`effectPolicy: none` alone never grants independence. Unresolved writes invalidate
+the declared paths, or all same-component states when the scope is unbounded.
+Unexpanded initialization, nonempty constructor CreateFcn, uncataloged setters,
+and unsupported Parent/Children writes invalidate document-level guarantees while
+retaining original source. Source hierarchy writes can affect destination siblings
+outside the constructor ownership graph, so a local unknown state is insufficient.
+Later coupled setters do not erase unreviewed upstream effects. A later reviewed
+independent setter can restore its own stored input. Unknown explicit calls are
+bounded even without an app argument; only allowlisted data constructors with
+inert literal arguments bypass the execution barrier.
+
+`ButtonSelectionPolicy` replays parent SelectedObject references, sibling creation,
+and Value events. Source occurrences remain intact. New/copy generators defer
+selection assignments until siblings exist; the insertion planner admits proven
+same-group creation boundaries. Copy materializes child values and omits the
+source-only parent handle. Preview selects the resolved child after rendering all
+siblings. Mixed radio/toggle families and unresolved handles are not generalized.
+
+`AncestorGeometryPolicy` invalidates child geometry after later ancestor position
+writes unless prior AutoResizeChildren is explicitly off. It does not calculate
+native reflow. Stored position, slider thickness, and selected square control
+rules keep decoration-dependent aliases unknown. Pending ancestor changes use
+the same complete emitted candidate as other cross-component policies.
+
+New subtree creation shares an execution-order anchor with grid event replay.
+The anchor follows proven ancestor geometry initialization. A later ancestor
+setter in a different unresolved insertion context causes refusal; existing
+source settings are not moved to accommodate the new component.
+
 `PropertyStateResolver` keeps original explicit values, replacement requests,
 and effective values separate. The allowlisted `valueMode` policy covers
 individually reviewed axes font, tick, limit, and map value/mode pairs. An explicit
@@ -470,6 +503,11 @@ and child rectangles stabilize, including when no grid is selected. On a Tab
 switch it immediately removes controls belonging to the hidden Tab, then
 refreshes settled geometry. Visibility must be checked through every enclosing
 Tab Group; a selected grid on a hidden Tab does not remain active on the canvas.
+
+Overlay publication reserves one revision before native layout can reenter the
+update. Every payload section uses that revision. A superseded update discards
+its result instead of overwriting newer geometry; stale incoming actions still
+fail the revision check.
 
 ## Validation and Diagnostics
 

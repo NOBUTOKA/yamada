@@ -376,3 +376,39 @@ when all of the following are true:
 Properties that do not pass the promotion gate remain represented in the
 development audit. Their product disposition is not rewritten to conceal an
 implementation gap.
+
+## Application effect review
+
+`APPLICATION_EFFECT_REVIEW.json` enumerates every concrete variant and property.
+Its status is separate from product `auditDisposition`, constructor support,
+Preview policy, and the legacy partial/pending document review count.
+
+- `independent`: the reviewed setter retains its stored input within the supported
+  value contract, without a modeled cross-property effect.
+- `modeled`: an allowlisted finite policy or value validator handles its reviewed
+  interaction; rendering-derived results can still be unknown.
+- `unsupported`: an interaction is identified but cannot be resolved in the current
+  implementation. Record the affected paths and a concrete reason.
+- `unknown`: the setter interaction has not been established. This is the default
+  for older catalogs and never grants independence.
+
+`effectPolicy: none` is not evidence. Public setter access, a default getter,
+constructor success, schema validity, or successful self-reparsing cannot establish
+independence. Nonempty `affectedPaths` bounds unresolved state within the same
+component; an empty array invalidates that component's complete state surface.
+Cross-component effects require document-level handling or an explicit refusal.
+Preserve the intended product disposition and expose implementation limitations
+through effect reasons. Keep constructor timing, callback registration/execution,
+source-only handles, stored getter values, and rendering priority distinct.
+
+Every review has a release-fixed source and property-level status/reason. Validate
+full coverage and affected-path references before regeneration. Owned MATLAB
+fixtures establish finite setter behavior; exact enumeration of unknown rows is
+coverage bookkeeping, not completion of their native audit. New policies must
+reach parsing, source planning, Preview, Copy, relocation, and saved checkpoints.
+
+Unsupported hierarchy setters can affect objects outside constructor ownership.
+Existing Parent/Children writes stop document-wide guarantees, including those for
+destination siblings. Managed reparenting updates factory parents and proven
+insertion positions through its own preflight. A local native observation does
+not establish independent Parent/Children setters for every variant.
