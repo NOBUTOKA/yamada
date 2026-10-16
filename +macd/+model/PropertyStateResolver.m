@@ -34,7 +34,7 @@ classdef PropertyStateResolver
             if ~isempty(document) && macd.model.PropertyStateResolver.hasUnresolvedExecution(document)
                 for index = 1:numel(states)
                     states(index) = states(index).withEffective([], false, "unresolved-call", ...
-                        "An initialization call, source-triggered callback, external HTML effect, or unrecognized setter requires application execution.", "initialization-call");
+                        "An initialization call, source-triggered callback, hierarchy setter, external HTML effect, or unrecognized setter requires application execution.", "initialization-call");
                     states(index) = states(index).withReadOnly(states(index).Reason);
                 end
                 return

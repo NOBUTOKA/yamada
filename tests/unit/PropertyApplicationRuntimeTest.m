@@ -27,6 +27,21 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             testCase.verifyFalse(getappdata(figure, "ContextOpened"));
         end
 
+        function parentReassignmentChangesDestinationGroupSelection(testCase)
+            % parentReassignmentChangesDestinationGroupSelection Confirm cross-component effects outside the modeled constructor hierarchy.
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() delete(figure));
+            left = uibuttongroup(figure);
+            right = uibuttongroup(figure);
+            moved = uiradiobutton(left);
+            other = uiradiobutton(right);
+            testCase.verifyTrue(other.Value);
+            moved.Parent = right;
+            moved.Value = true;
+            testCase.verifyFalse(other.Value);
+            testCase.verifyEqual(right.SelectedObject, moved);
+        end
+
         function toggleToolCallbacksDependOnFigureContext(testCase)
             % toggleToolCallbacksDependOnFigureContext Distinguish native context behavior from registration.
             for factory = ["uifigure", "figure"]

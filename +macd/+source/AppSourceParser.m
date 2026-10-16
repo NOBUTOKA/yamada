@@ -339,7 +339,8 @@ classdef AppSourceParser
                         end
                     end
                     % Audited execution triggers can mutate other components, not only this setter's receiver.
-                    if (member.Factory == "uitoggletool" && setting.Path == "State") || ...
+                    if any(setting.Path == ["Parent", "Children"]) || ...
+                            (member.Factory == "uitoggletool" && setting.Path == "State") || ...
                             (member.Factory == "uihtml" && any(setting.Path == ["HTMLSource", "Data"]))
                         document.Metadata.HasUnresolvedExecutableEffects = true;
                     end

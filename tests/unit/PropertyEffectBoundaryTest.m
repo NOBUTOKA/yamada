@@ -162,6 +162,31 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyFalse(document.IsDirty);
         end
 
+        function hierarchyWritesInvalidateDestinationStateAndRejectEdits(testCase)
+            % hierarchyWritesInvalidateDestinationStateAndRejectEdits Bound Parent and Children effects across modeled ownership.
+            registry = macd.model.ComponentRegistry.createDefault();
+            prefix = ["app.Left = uibuttongroup(app.UIFigure);"; "app.Right = uibuttongroup(app.UIFigure);"; ...
+                "app.Moved = uiradiobutton(app.Left);"; "app.Other = uiradiobutton(app.Right);"];
+            for tail = { [prefix; "app.Moved.Parent = app.Right;"; "app.Moved.Value = true;"]; ...
+                    [prefix; "app.Right.Children = [app.Moved app.Other];"] }'
+                source = PropertyEffectBoundaryTest.fixture(tail{1});
+                document = macd.source.AppSourceParser.parseText(source, registry);
+                other = document.getComponentByName("Other");
+                states = document.getEffectivePropertyStates(registry, other.Id);
+                value = states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution;
+                testCase.verifyFalse(value.IsKnown);
+                testCase.verifyFalse(value.IsEditable);
+                testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                testCase.verifyError(@() document.setProperty(other.Id, "Value", true, registry), ...
+                    "macd:DocumentModel:UnsafePropertyEdit");
+                testCase.verifyError(@() document.copySubtree(other.Id, registry), ...
+                    "macd:DocumentModel:UnsafeSubtreeCopy");
+                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+                testCase.verifyEqual(document.HistoryIndex, 0);
+                testCase.verifyFalse(document.IsDirty);
+            end
+        end
+
         function conditionalCreationDoesNotProveDefaultOrLaterValues(testCase)
             % conditionalCreationDoesNotProveDefaultOrLaterValues Keep uncertain object existence explicit.
             registry = macd.model.ComponentRegistry.createDefault();
