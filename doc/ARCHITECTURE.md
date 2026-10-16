@@ -216,6 +216,20 @@ component/style-specific resize constraint before committing a candidate.
 
 ## Property Inspector
 
+Native setter access and product disposition are separate catalog facts. The
+review applicator can retain passed, release-specific `setterAccess` evidence
+without granting constructor support or completing a policy review. It validates
+all observations before writing any ledger, rejects duplicate targets and
+documented read-only conflicts, and carries runtime access through grouping and
+promotion. Detailed `runtimeObservations` remain development evidence. Checkbox
+Tree Position is publicly writable; InnerPosition is also writable in source but
+remains omitted from the Inspector. OuterPosition has a restricted setter.
+
+The owned position probe checks 14 concrete variants, including both constructor
+orders and Lamp's observed square coercion. Shared alias effects, layout-managed
+geometry, copy canonicalization, and a general Lamp coercion rule still need a
+resolver policy. Access evidence alone does not implement those effects.
+
 The Inspector begins with `DocumentModel.getEffectivePropertyStates`, which joins
 catalog definitions with explicit instance entries. Source-only assignments that
 are outside the effective catalog surface are appended as read-only rows instead

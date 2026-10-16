@@ -28,6 +28,13 @@
 解決する`axisWidth`を追加した。生成時引数全体での同期と生成後代入の即時追従を区別し、
 既存manual保持点の前へ新しい上流設定を挿入しない。Copy時のauto保持と手動既定値の再現も検証した。
 この変更後の計画指定関連area 449件は全件合格。残る全variant監査と追加効果・fullの完了条件は未達成。
+2026-10-16追記: 14具体variantの位置setterと別名getterを所有fixtureで確認した。
+アクセス観測を台帳の再適用・grouping・runtime昇格へ通し、Checkbox Treeの未確認だった
+Position/InnerPositionをpublic、OuterPositionをrestrictedへ修正した。
+別名同士の実効値解決、Previewへの反映、Copy時のPositionへの集約、Lampの補正規則は引き続き未実装。
+setter観測からconstructor policyの対応可否やpolicy reviewの完了は推定しない。
+この変更後の計画指定関連area 452件は全件合格。追加監査で、全台帳schemaに既存の
+serialization・まとめ見出し・未収録フィールドの不整合が見つかったため、次の是正対象とする。
 
 この文書は、名前-値引数と生成後代入を共通の設定履歴として扱い、台帳の設定順序を
 パーサー・コード生成器・Safe Previewへ接続する実装計画である。

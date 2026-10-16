@@ -189,6 +189,9 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - New and existing applications use the same component model, validation, Preview, and generation pipeline.
 - Generating an existing source file without edits does not change its original text.
 - Edits make localized changes only to declarations, creation statements, and assignments whose ownership can be determined safely.
+- Checkbox Tree supports literal `Position` edits in its original assignment or
+  constructor argument. Existing writable `InnerPosition` settings are preserved;
+  the Inspector continues to use `Position` as its geometry editing surface.
 - If an insertion point or ownership range required for addition or deletion is ambiguous, the edit or save is rejected with a diagnostic.
 - Failed validation of a supported value restricts Preview or saving as necessary for safety.
 - Deletion occurs only after an explicit user action.

@@ -4,6 +4,43 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
     %   These tests never execute opened app source or undocumented callbacks.
 
     methods (Test)
+        function positionAliasesExposeNativeSetterAccess(testCase)
+            % positionAliasesExposeNativeSetterAccess Separate writable aliases, read-only getters, and constructor order.
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            oldPath = path;
+            pathCleanup = onCleanup(@() path(oldPath));
+            addpath(fullfile(projectRoot, "dev", "component-data"));
+            output = string(tempname) + ".json";
+            fileCleanup = onCleanup(@() delete(output));
+            results = ProbePositionAliasInteractions(output);
+            testCase.assertNumElements(results, 42);
+            testCase.verifyNumElements(unique(string({results.Id})), 14);
+            for result = results
+                context = result.Id + "." + result.Path;
+                if result.Path == "OuterPosition"
+                    testCase.verifyEqual(result.SetAccess, "restricted", context);
+                    testCase.verifyFalse(result.SetterAccepted, context);
+                    testCase.verifyTrue(startsWith(result.Error, "MATLAB:class:SetProhibited:"), context);
+                    continue
+                end
+                testCase.verifyEqual(result.SetAccess, "public", context);
+                testCase.verifyTrue(result.SetterAccepted, context);
+                testCase.verifyEqual(result.Error, "", context);
+                first = [10 20 130 35];
+                second = [30 40 150 45];
+                % Lamp's square constraint is observed only for these owned examples.
+                if result.Id == "uilamp"
+                    first = [10 20 35 35];
+                    second = [30 40 45 45];
+                end
+                testCase.verifyEqual(result.Position, first, context);
+                testCase.verifyEqual(result.Inner, first, context);
+                testCase.verifyEqual(result.Outer, first, context);
+                testCase.verifyEqual(result.PositionFirst, second, context);
+                testCase.verifyEqual(result.AliasFirst, first, context);
+            end
+        end
+
         function itemDomainsAreEstablishedBeforeSelection(testCase)
             % itemDomainsAreEstablishedBeforeSelection Verify all six item-backed variants.
             [figure, registry] = testCase.environment();

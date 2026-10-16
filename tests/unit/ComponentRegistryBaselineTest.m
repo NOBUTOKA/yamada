@@ -440,6 +440,30 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             testCase.verifyGreaterThan(count, 0);
         end
 
+        function checkboxTreeGeometryRetainsNativeAndProductAccessBoundaries(testCase)
+            % checkboxTreeGeometryRetainsNativeAndProductAccessBoundaries Keep writable source aliases distinct from inspector capabilities.
+            registry = macd.model.ComponentRegistry.createDefault();
+            definition = registry.getById("uitree-checkbox");
+            position = definition.Properties([definition.Properties.Path] == "Position");
+            inner = definition.Properties([definition.Properties.Path] == "InnerPosition");
+            outer = definition.Properties([definition.Properties.Path] == "OuterPosition");
+            testCase.verifyTrue(position.IsEditable);
+            testCase.verifyEqual(position.AuditDisposition, "editable");
+            testCase.verifyEqual(position.Editor, "numericVector");
+            testCase.verifyTrue(inner.IsEditable);
+            testCase.verifyEqual(inner.AuditDisposition, "omitted");
+            testCase.verifyEqual(inner.Editor, "readOnly");
+            testCase.verifyFalse(outer.IsEditable);
+            testCase.verifyEqual(outer.AuditDisposition, "omitted");
+            testCase.verifyTrue(registry.isReadOnlyProperty("uitree", "OuterPosition", {"checkbox"}));
+            for path = ["Position", "InnerPosition"]
+                testCase.verifyFalse(registry.isReadOnlyProperty("uitree", path, {"checkbox"}));
+                property = definition.Properties([definition.Properties.Path] == path);
+                testCase.verifyEqual(property.Application.NameValue, "unknown");
+                testCase.verifyFalse(isfield(property.Metadata, "runtimeObservations"));
+            end
+        end
+
         function effectivePropertiesRemainUniqueForEveryConcreteVariant(testCase)
             % effectivePropertiesRemainUniqueForEveryConcreteVariant Check all direct-parent projections.
 

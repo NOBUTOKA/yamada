@@ -347,5 +347,76 @@
       "result": "passed",
       "detail": "Owned fixtures verify 0.5 defaults, 13 sequential setter steps per factory, manual holds, auto restoration, and a canonical five-property constructor. Both manual-hold constructor orders retain the initial minor width, demonstrating deferred synchronization distinct from post-construction assignments."
     }
+  ],
+  "setterAccess": [
+    {
+      "testMethod": "positionAliasesExposeNativeSetterAccess",
+      "variants": [
+        "uibutton-push",
+        "uibutton-state",
+        "uitogglebutton",
+        "uicheckbox",
+        "uicolorpicker",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uilamp",
+        "uiradiobutton",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "path": "Position",
+      "runtimeSetAccess": "public",
+      "result": "passed",
+      "detail": "Owned R2024a fixtures report public meta.property SetAccess and accept literal assignment. Position, InnerPosition, and OuterPosition getters agree after drawnow; both constructor orders were checked. Lamp obeys an additional square constraint; this observation does not implement alias effects or grant constructor policy support."
+    },
+    {
+      "testMethod": "positionAliasesExposeNativeSetterAccess",
+      "variants": [
+        "uibutton-push",
+        "uibutton-state",
+        "uitogglebutton",
+        "uicheckbox",
+        "uicolorpicker",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uilamp",
+        "uiradiobutton",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "path": "InnerPosition",
+      "runtimeSetAccess": "public",
+      "result": "passed",
+      "detail": "Owned R2024a fixtures report public meta.property SetAccess and accept literal assignment. Position, InnerPosition, and OuterPosition getters agree after drawnow; both constructor orders were checked. Lamp obeys an additional square constraint; this observation does not implement alias effects or grant constructor policy support."
+    },
+    {
+      "testMethod": "positionAliasesExposeNativeSetterAccess",
+      "variants": [
+        "uibutton-push",
+        "uibutton-state",
+        "uitogglebutton",
+        "uicheckbox",
+        "uicolorpicker",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uilamp",
+        "uiradiobutton",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "path": "OuterPosition",
+      "runtimeSetAccess": "restricted",
+      "result": "passed",
+      "detail": "Owned R2024a fixtures report restricted meta.property SetAccess and reject direct literal assignment with MATLAB:class:SetProhibited. Read-only getters can still equal Position; getter equivalence does not authorize a setter."
+    }
   ]
 }

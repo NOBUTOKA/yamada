@@ -1621,6 +1621,33 @@
       ],
       "path": "PlotBoxAspectRatio",
       "detail": "Aspect ratios and camera modes remain pending separate review. With manual limits and DataAspectRatio, the native getter can replace an explicit PlotBoxAspectRatio even while its mode is manual. Grid-width followers are handled separately by axisWidth."
+    },
+    {
+      "variants": [
+        "uibutton-push",
+        "uibutton-state",
+        "uitogglebutton",
+        "uicheckbox",
+        "uicolorpicker",
+        "uihtml",
+        "uihyperlink",
+        "uiimage",
+        "uilabel",
+        "uilamp",
+        "uiradiobutton",
+        "uitextarea",
+        "uitree",
+        "uitree-checkbox"
+      ],
+      "path": "Position",
+      "detail": "The release-fixed pages describe InnerPosition and OuterPosition getters as equal to Position. Owned fixtures verify writable Position/InnerPosition, restricted OuterPosition, and last-applied writable alias behavior in both constructor orders. A shared alias resolver, layout-managed geometry, Preview projection, and copy canonicalization are still pending. Lamp additionally coerces size to a square; do not treat its input vector as an unchanged getter."
+    },
+    {
+      "variants": [
+        "uicolorpicker"
+      ],
+      "path": "OuterPosition",
+      "detail": "The R2024a page describes this alias with specified wording, but native meta.property SetAccess is restricted and direct assignment raises MATLAB:class:SetProhibited. Preserve the documented wording and the separate runtime observation; getter equivalence must not grant a setter or constructor policy support."
     }
   ]
 }

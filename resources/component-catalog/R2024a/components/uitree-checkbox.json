@@ -439,7 +439,7 @@
         {
           "path": "Position",
           "groupId": "local.uitree-checkbox.position",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
             "description": "Location and size",
@@ -464,7 +464,7 @@
         {
           "path": "InnerPosition",
           "groupId": "local.uitree-checkbox.position",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InnerPosition",
             "description": "Location and size",
@@ -489,7 +489,7 @@
         {
           "path": "OuterPosition",
           "groupId": "local.uitree-checkbox.position",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "OuterPosition",
             "description": "Location and size",

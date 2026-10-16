@@ -104,6 +104,40 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             testCase.verifyTrue(any([diagnostics.Code] == "ambiguous-component-deletion"));
         end
 
+        function checkboxTreePreservesWritableGeometrySettings(testCase)
+            % checkboxTreePreservesWritableGeometrySettings Keep owned public geometry writes and edit the existing Position token.
+            registry = macd.model.ComponentRegistry.createDefault();
+            bodies = {["app.Tree = uitree(app.UIFigure, 'checkbox');", ...
+                "app.Tree.InnerPosition = [10 20 150 200];", "app.Tree.Position = [30 40 160 210];"], ...
+                "app.Tree = uitree(app.UIFigure, 'checkbox', InnerPosition=[10 20 150 200], Position=[30 40 160 210]);", ...
+                "app.Tree = uitree(app.UIFigure, 'checkbox', 'InnerPosition', [10 20 150 200], 'Position', [30 40 160 210]);"};
+            for body = bodies
+                original = strjoin(["classdef GeometryFixture < matlab.apps.AppBase", "properties", ...
+                    "UIFigure matlab.ui.Figure", "Tree matlab.ui.container.CheckBoxTree", "end", "methods", ...
+                    "function app = GeometryFixture", "createComponents(app);", "end", ...
+                    "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                    body{1}, "end", "end", "end"], sprintf('\r\n'));
+                document = macd.source.AppSourceParser.parseText(original, registry);
+                generator = macd.source.RoundTripGenerator(registry);
+                [source, diagnostics] = generator.generate(document);
+                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                testCase.verifyEqual(source, original);
+                tree = document.getComponentByName("Tree");
+                testCase.assertNumElements(tree.getSettings("InnerPosition"), 1);
+                target = tree.getSettings("Position");
+                document.setProperty(tree.Id, "Position", [50 60 170 220], registry);
+                [source, diagnostics] = generator.generate(document);
+                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                testCase.verifyEqual(source, replace(original, "[30 40 160 210]", "[50 60 170 220]"));
+                testCase.verifyEqual(tree.getSettings("Position").Id, target.Id);
+                reopened = macd.source.AppSourceParser.parseText(source, registry);
+                other = reopened.getComponentByName("Tree");
+                testCase.verifyEqual(other.getProperty("Position").LiteralValue, [50 60 170 220]);
+                testCase.verifyEqual(other.getSettings("Position").Method, target.Method);
+                testCase.verifyNumElements(other.getSettings("InnerPosition"), 1);
+            end
+        end
+
         function ownedLeafDeletionRemovesOnlyOwnedSource(testCase)
             % ownedLeafDeletionRemovesOnlyOwnedSource Remove an unreferenced leaf.
 

@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "ebda1ef5d947db14f15e3b9e1f9ce8b96b11c074fbf8ada17fb48667cc179812",
+  "inputSha256": "3e5d7180561bb36944c8169fd2ba30945a5a49455f455c3762cf5792d1a7ca90",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -46849,17 +46849,17 @@
         {
           "path": "Position",
           "groupId": "local.uitree-checkbox.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "InnerPosition",
           "groupId": "local.uitree-checkbox.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "OuterPosition",
           "groupId": "local.uitree-checkbox.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         },
         {
           "path": "Layout",

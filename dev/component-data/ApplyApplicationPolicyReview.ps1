@@ -109,10 +109,58 @@ foreach ($seed in $review.initialValues) {
 $runtimePath = Join-Path $ReleaseDirectory 'APPLICATION_POLICY_RUNTIME_REVIEW.json'
 $runtime = Get-Content -LiteralPath $runtimePath -Raw | ConvertFrom-Json
 if ($runtime.matlabRelease -cne $review.matlabRelease) { throw 'Runtime review release does not match the ledger.' }
+# Access observations do not by themselves complete a documentation policy review.
+$policyDocuments = @($documents.Keys)
+if ($null -ne $runtime.PSObject.Properties['setterAccess']) {
+    $accessTargets = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($observation in $runtime.setterAccess) {
+        if ($observation.result -isnot [string] -or $observation.result -cne 'passed' -or
+            $observation.runtimeSetAccess -isnot [string] -or
+            $observation.runtimeSetAccess -cnotin @('public', 'restricted') -or
+            $observation.variants -isnot [array] -or $observation.variants.Count -eq 0 -or
+            $observation.path -isnot [string] -or
+            $observation.path -cnotmatch '^[A-Za-z]\w*(\.[A-Za-z]\w*)*$' -or
+            $observation.testMethod -isnot [string] -or
+            $observation.testMethod -cnotmatch '^[A-Za-z]\w*$' -or
+            $observation.detail -isnot [string] -or [string]::IsNullOrWhiteSpace($observation.detail)) {
+            throw 'Setter access needs passed runtime evidence, a concrete access class, and a rationale.'
+        }
+        foreach ($id in $observation.variants) {
+            if ($id -isnot [string] -or $id -cnotmatch '^[a-z][a-z0-9-]*$' -or -not $accessTargets.Add("$id.$($observation.path)")) {
+                throw 'A setter-access target must be unique and use a valid component ID.'
+            }
+            if (-not $documents.Contains($id)) {
+                $documents[$id] = Get-Content -LiteralPath (Join-Path $ReleaseDirectory "components/$id.json") -Raw | ConvertFrom-Json
+            }
+            $ledger = $documents[$id]
+            $source = @($ledger.sources | Where-Object scope -CEQ 'Public properties.')
+            $collected = @($audit.variants | Where-Object id -CEQ $id)
+            if ($source.Count -ne 1 -or $collected.Count -ne 1 -or
+                $source[0].url -cne $collected[0].source -or
+                $source[0].url -cnotmatch '^https://www\.mathworks\.com/help/releases/r2024a/') {
+                throw "Missing or mismatched release-fixed source for $id."
+            }
+            $property = @($ledger.properties | Where-Object path -CEQ $observation.path)
+            if ($property.Count -ne 1) { throw "Expected one setter-access target $id.$($observation.path)." }
+            if ($observation.runtimeSetAccess -ceq 'public' -and
+                $null -ne $property[0].PSObject.Properties['documentedReadOnly'] -and $property[0].documentedReadOnly) {
+                throw "Runtime access cannot override documented read-only property $id.$($observation.path)."
+            }
+            $property[0].runtimeSetAccess = $observation.runtimeSetAccess
+            $evidence = $runtime.testSource + '#' + $observation.testMethod + ': ' + $observation.detail
+            $observations = @()
+            if ($null -ne $property[0].PSObject.Properties['runtimeObservations']) {
+                $observations = @($property[0].runtimeObservations | Where-Object { $_ -cne $evidence })
+            }
+            $property[0] | Add-Member -NotePropertyName runtimeObservations -NotePropertyValue @($observations + $evidence) -Force
+            $collected[0].runtimeVerificationStatus = 'partial'
+        }
+    }
+}
 foreach ($coverage in $runtime.coverage) {
     if ($coverage.result -cne 'passed') { throw 'Only verified runtime coverage may grant constructor support.' }
     foreach ($id in $coverage.variants) {
-        if (-not $documents.Contains($id)) { throw "Runtime review has no documentation-reviewed variant $id." }
+        if ($id -cnotin $policyDocuments) { throw "Runtime review has no documentation-reviewed variant $id." }
         $ledger = $documents[$id]
         foreach ($path in $coverage.nameValuePaths) {
             $property = @($ledger.properties | Where-Object path -CEQ $path)
@@ -143,10 +191,12 @@ foreach ($id in $documents.Keys) {
     [IO.File]::WriteAllText($path, ($documents[$id] | ConvertTo-Json -Depth 100) + [Environment]::NewLine,
         [Text.UTF8Encoding]::new($false))
     $variant = $audit.variants | Where-Object id -CEQ $id
-    $variant.policyReviewStatus = 'partial'
-    $count = @($documents[$id].properties | Where-Object { $null -ne $_.PSObject.Properties['application'] }).Count
-    $variant | Add-Member -NotePropertyName reviewedPolicyCount -NotePropertyValue $count -Force
+    if ($id -cin $policyDocuments) {
+        $variant.policyReviewStatus = 'partial'
+        $count = @($documents[$id].properties | Where-Object { $null -ne $_.PSObject.Properties['application'] }).Count
+        $variant | Add-Member -NotePropertyName reviewedPolicyCount -NotePropertyValue $count -Force
+    }
 }
 [IO.File]::WriteAllText($auditPath, ($audit | ConvertTo-Json -Depth 100) + [Environment]::NewLine,
     [Text.UTF8Encoding]::new($false))
-Write-Output "Applied reviewed rules to $($documents.Count) variants. Full review and runtime verification remain pending."
+Write-Output "Applied reviewed rules to $($policyDocuments.Count) variants and retained runtime evidence for $($documents.Count) variants. Full review and runtime verification remain pending."

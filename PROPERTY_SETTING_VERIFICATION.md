@@ -509,6 +509,70 @@
 - 縦横比・カメラ・地理TickDirの残る監査と、コンポーネント間の選択連動等を続ける。
 - 残る全variantの監査、full profile、計画全体の完了条件の監査は未完了。
 
+## 位置setterのアクセス観測とCheckbox Treeの修正（2026-10-16）
+
+根拠:
+
+- R2024a固定の14具体variantの位置節は、InnerPosition/OuterPositionのgetterとPositionの同一性を記載する。
+  例: [Checkbox Tree Properties](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html)、
+  [Lamp Properties](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.lamp-properties.html)。
+  これはgetterの関係であり、setter可否や別名同士を独立に扱えることの根拠にはしない。
+- 所有fixtureはpush/state/toggle Button、Checkbox、ColorPicker、HTML、Hyperlink、Image、Label、Lamp、
+  RadioButton、TextArea、Tree、Checkbox Treeを対象とし、外部HTML・画像・アプリ・callbackを実行しない。
+  各3プロパティについてmeta.property SetAccessと直接代入を独立に確認した。
+- 公開setter 28ケースは受理され、OuterPositionの14ケースはrestrictedかつ
+  `MATLAB:class:SetProhibited`で拒否された。受理された28ケースはdrawnow後の3 getterが一致し、
+  Positionと別名の両constructor順でも最後の指定が反映された。
+- [ColorPicker Properties](https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.colorpicker-properties.html)の
+  OuterPositionにはspecifiedという記載があるが、native setterはrestrictedだった。
+  原文を変更せず、観測を別の根拠として保持する。
+- Lampの補足観測では、初期20×20から80×20、20×80を指定しても20×20のままで警告された。
+  35×130は35×35、80×80は80×80、130×35は35×35となった。
+  これらの例は指定幅・高さの小さい側への補正と一致するが、一般的な補正policyはまだ導入していない。
+
+実装済み:
+
+- runtime reviewに独立した`setterAccess`観測を追加した。再適用時は全件を検証してから書き込み、
+  不合格・不明access・重複target・documentedReadOnlyとの衝突を拒否する。
+  setter観測だけではconstructor supportを付与せず、documentation policy reviewも完了扱いにしない。
+- 詳細なruntimeObservationsは開発台帳だけに保持し、groupingからruntimeへはアクセス区分を伝搬した。
+  Checkbox TreeのPosition/InnerPositionをunresolvedからpublicへ、OuterPositionをrestrictedへ修正した。
+  Positionは従来のnumericVector編集、InnerPosition/OuterPositionは従来どおりInspectorでomittedとする。
+- Checkbox Treeの既存Position/InnerPositionを往復時に保持し、既存Positionの値トークンだけを更新する。
+  代入文、Name=Value、'Name',Valueの3形式を回帰検証した。設定IDと方式を保持し、再解析後も値が一致する。
+- application policyは27具体variant・273プロパティのまま。policy reviewはpartial 27/pending 21、
+  native runtime verificationはpartial 36/pending 12となる。アクセス観測を全propertyの監査完了とは扱わない。
+
+検証:
+
+- nativeアクセスの専用1件と、その後の関連5 suite・56件が全件合格。
+  Failed=0、Incomplete=0、関連suiteの実測合計120.473秒。
+  `testResults/position-access-native.log`と`testResults/position-access-focused-results.mat`へ記録した。
+- `verifyApplicationPolicyReview.ps1`が、再適用の再現性、観測の隔離、不正な観測・constructor指定の
+  原子的な拒否を確認した。新しいアクセス区分・観測42件も実際のschemaの該当部分との照合に合格した。
+  `verifyApplicationPolicy.ps1`のapplication schema・grouping・昇格の検証も合格した。
+- groupingのintrinsic parityは48/48、parent-effective parityは144/144で合格。
+- 変更MATLABファイル4件のcheckcodeは警告なし。Lampの補足観測は
+  `testResults/lamp-position-constraint.json`へ記録した。そこでのnative警告は無視せず上記の制約として記録する。
+- 計画指定の関連area 452件が全件合格。Failed=0、Incomplete=0、実測合計856.848秒。
+  `testResults/position-access-area.log`と`testResults/position-access-area-results.mat`へ記録した。
+- 全台帳をschema.jsonと照合する追加監査では、今回の変更前からの不整合により48文書が不合格だった。
+  クラス名リスト602項目の単一文字列化、Axes/UIAxesのまとめ見出し64項目の空summaryを確認した。
+  さらに、既存の`deferredComponentReference` reason codeとListBoxの`multiselectProperty`がschemaに未収録だった。
+  前記PowerShellテストのschema合格はapplication契約の範囲であり、台帳全体のschema合格を意味しない。
+  `testResults/ledger-schema-audit.json`へ記録した。カタログ固定中のarea実行には変更を加えていない。
+
+残作業:
+
+- 同一alias groupの最後のsetterを実効値・原因設定IDへ反映する共通policyを追加する。
+  未評価の別名式は全getterを未知とし、後続の確実なリテラルで復帰させる必要がある。
+- Previewのskip対象別名を単に無視せず、共有した既知のPositionへ投影する。
+- Copyでは別名をPositionへ集約し、配置offsetが後から別名で上書きされることを防ぐ。
+  `SubtreePlacementPlanner`が生のPositionを読む経路と、placement changesを照合から除外する経路も確認する。
+- Grid配下のlayout-managed geometry、Lampの補正、残るコンポーネント間の効果、全variant監査、
+  full profile、計画全体の完了条件監査は引き続き未完了。
+- 上記の台帳serialization・summary・schemaの不整合を別の変更として是正し、48文書全体をschemaで検証する。
+
 ## 対象範囲の変更（2026-10-16）
 
 - ItemsとItemsDataの長さが異なる場合の対応は、データ編集UIの大きな変更を伴うため、

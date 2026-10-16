@@ -32,6 +32,8 @@ try {
     $first = Get-LedgerHashes $releaseRoot
     & $apply -ReleaseDirectory $releaseRoot | Out-Null
     Assert-Condition ($first -ceq (Get-LedgerHashes $releaseRoot)) 'Reviewed rules are not reproducible.'
+    $auditPath = Join-Path $releaseRoot 'APPLICATION_POLICY_AUDIT.json'
+    $auditHash = (Get-FileHash -LiteralPath $auditPath -Algorithm SHA256).Hash
 
     # Assert actual reviewed contracts rather than duplicating the graph algorithm.
     $dropdown = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uidropdown.json') -Raw | ConvertFrom-Json
@@ -68,6 +70,71 @@ try {
         Assert-Condition (@($gaugeValue.valueContract.constraints | Where-Object kind -CEQ 'withinLimitsOf').Count -eq 0) 'Gauge inherited a slider constraint.'
     }
 
+    # Native setter access must survive promotion without changing the product disposition.
+    $tree = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uitree-checkbox.json') -Raw | ConvertFrom-Json
+    $position = $tree.properties | Where-Object path -CEQ 'Position'
+    $inner = $tree.properties | Where-Object path -CEQ 'InnerPosition'
+    $outer = $tree.properties | Where-Object path -CEQ 'OuterPosition'
+    Assert-Condition ($position.runtimeSetAccess -ceq 'public' -and $position.disposition.kind -ceq 'editable') 'Checkbox Tree Position access was not corrected.'
+    Assert-Condition ($inner.runtimeSetAccess -ceq 'public' -and $inner.disposition.kind -ceq 'omitted') 'A source alias was confused with inspector editability.'
+    Assert-Condition ($outer.runtimeSetAccess -ceq 'restricted' -and $outer.disposition.kind -ceq 'omitted') 'A read-only alias gained a public setter.'
+    Assert-Condition ($inner.runtimeObservations.Count -eq 1) 'Runtime setter evidence is missing or duplicated.'
+    Assert-Condition ($null -eq $inner.PSObject.Properties['application']) 'Setter access was mistaken for constructor or resolver support.'
+    $audit = Get-Content -LiteralPath $auditPath -Raw | ConvertFrom-Json
+    $treeAudit = $audit.variants | Where-Object id -CEQ 'uitree-checkbox'
+    Assert-Condition ($treeAudit.policyReviewStatus -ceq 'pending' -and $treeAudit.runtimeVerificationStatus -ceq 'partial') 'A native access check completed the policy review.'
+
+    # Validate the newly written fields against their actual ledger schema fragments.
+    $schema = Get-Content -LiteralPath (Join-Path $releaseRoot 'schema.json') -Raw | ConvertFrom-Json
+    $accessSchema = [ordered]@{
+        type = 'object'; additionalProperties = $false
+        required = @('runtimeSetAccess', 'runtimeObservations')
+        properties = [ordered]@{
+            runtimeSetAccess = $schema.'$defs'.property.properties.runtimeSetAccess
+            runtimeObservations = $schema.'$defs'.property.properties.runtimeObservations
+        }
+    } | ConvertTo-Json -Depth 20
+    $runtimePath = Join-Path $releaseRoot 'APPLICATION_POLICY_RUNTIME_REVIEW.json'
+    $originalRuntime = Get-Content -LiteralPath $runtimePath -Raw
+    $runtime = $originalRuntime | ConvertFrom-Json
+    foreach ($observation in $runtime.setterAccess) {
+        foreach ($id in $observation.variants) {
+            $ledger = Get-Content -LiteralPath (Join-Path $releaseRoot "components/$id.json") -Raw | ConvertFrom-Json
+            $property = $ledger.properties | Where-Object path -CEQ $observation.path
+            $fields = [ordered]@{
+                runtimeSetAccess = $property.runtimeSetAccess; runtimeObservations = $property.runtimeObservations
+            } | ConvertTo-Json -Depth 10
+            Assert-Condition (Test-Json -Json $fields -Schema $accessSchema) "Access evidence violates the schema for $id.$($observation.path)."
+        }
+    }
+
+    # Reject late invalid observations atomically, including documentation conflicts.
+    foreach ($case in @('unpassed', 'unknownAccess', 'documentedReadOnly', 'duplicateTarget',
+            'unreviewedConstructor', 'arrayMethod', 'missingProperty')) {
+        $runtime = $originalRuntime | ConvertFrom-Json
+        switch ($case) {
+            'unpassed' { $runtime.setterAccess[-1].result = 'pending' }
+            'unknownAccess' { $runtime.setterAccess[-1].runtimeSetAccess = 'unresolved' }
+            'documentedReadOnly' { $runtime.setterAccess[-1].runtimeSetAccess = 'public' }
+            'duplicateTarget' { $runtime.setterAccess += $runtime.setterAccess[0] }
+            'arrayMethod' { $runtime.setterAccess[-1].testMethod = @('positionAliasesExposeNativeSetterAccess') }
+            'missingProperty' { $runtime.setterAccess[-1].path = 'MissingNativeProperty' }
+            'unreviewedConstructor' {
+                $runtime.coverage += [pscustomobject]@{
+                    testMethod = 'positionAliasesExposeNativeSetterAccess'; variants = @('uitree-checkbox')
+                    nameValuePaths = @('Position'); result = 'passed'; detail = 'A setter check is not a policy review.'
+                }
+            }
+        }
+        [IO.File]::WriteAllText($runtimePath, ($runtime | ConvertTo-Json -Depth 100), [Text.UTF8Encoding]::new($false))
+        $failed = $false
+        try { & $apply -ReleaseDirectory $releaseRoot | Out-Null } catch { $failed = $true }
+        Assert-Condition $failed "Invalid setter observation $case was accepted."
+        Assert-Condition ($first -ceq (Get-LedgerHashes $releaseRoot)) "Setter observation $case changed a ledger."
+        Assert-Condition ($auditHash -ceq (Get-FileHash -LiteralPath $auditPath -Algorithm SHA256).Hash) "Setter observation $case changed the audit."
+    }
+    [IO.File]::WriteAllText($runtimePath, $originalRuntime, [Text.UTF8Encoding]::new($false))
+
     # A late invalid rule must not partially rewrite earlier validated components.
     $reviewPath = Join-Path $releaseRoot 'APPLICATION_POLICY_REVIEW.json'
     $review = Get-Content -LiteralPath $reviewPath -Raw | ConvertFrom-Json
@@ -77,7 +144,8 @@ try {
     try { & $apply -ReleaseDirectory $releaseRoot | Out-Null } catch { $failed = $true }
     Assert-Condition $failed 'A missing dependency was accepted.'
     Assert-Condition ($first -ceq (Get-LedgerHashes $releaseRoot)) 'Validation failure changed a ledger.'
-    Write-Output 'APPLICATION_POLICY_REVIEW Passed: reviewed rules, conservative constructor support, gauge exception, reproducibility, atomic validation failure.'
+    Assert-Condition ($auditHash -ceq (Get-FileHash -LiteralPath $auditPath -Algorithm SHA256).Hash) 'Validation failure changed the audit.'
+    Write-Output 'APPLICATION_POLICY_REVIEW Passed: reviewed rules, native setter access, conservative constructor support, gauge exception, reproducibility, atomic validation failures.'
 }
 finally {
     $resolvedRoot = [IO.Path]::GetFullPath($temporaryRoot)

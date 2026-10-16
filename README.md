@@ -12,7 +12,8 @@
 - Statically parse an existing `.m` class that follows a common App Designer-like structure
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
 - Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
-- Add and delete components and edit supported properties
+- Add and delete components and edit supported properties, including literal
+  Checkbox Tree `Position` settings
 - Preserve existing initialization settings and apply reviewed dependencies when
   adding properties, including supported axes value/Mode pairs
 - Preserve manual grid-width holds when adding upstream axes widths, and track

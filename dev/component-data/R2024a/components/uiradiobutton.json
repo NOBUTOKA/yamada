@@ -477,7 +477,10 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "tests/unit/PropertyApplicationRuntimeTest.m#positionAliasesExposeNativeSetterAccess: Owned R2024a fixtures report public meta.property SetAccess and accept literal assignment. Position, InnerPosition, and OuterPosition getters agree after drawnow; both constructor orders were checked. Lamp obeys an additional square constraint; this observation does not implement alias effects or grant constructor policy support."
+      ]
     },
     {
       "path": "InnerPosition",
@@ -504,7 +507,10 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "tests/unit/PropertyApplicationRuntimeTest.m#positionAliasesExposeNativeSetterAccess: Owned R2024a fixtures report public meta.property SetAccess and accept literal assignment. Position, InnerPosition, and OuterPosition getters agree after drawnow; both constructor orders were checked. Lamp obeys an additional square constraint; this observation does not implement alias effects or grant constructor policy support."
+      ]
     },
     {
       "path": "OuterPosition",
@@ -532,7 +538,10 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "restricted"
+      "runtimeSetAccess": "restricted",
+      "runtimeObservations": [
+        "tests/unit/PropertyApplicationRuntimeTest.m#positionAliasesExposeNativeSetterAccess: Owned R2024a fixtures report restricted meta.property SetAccess and reject direct literal assignment with MATLAB:class:SetProhibited. Read-only getters can still equal Position; getter equivalence does not authorize a setter."
+      ]
     },
     {
       "path": "CreateFcn",
