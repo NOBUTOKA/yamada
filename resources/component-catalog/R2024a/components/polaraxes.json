@@ -1206,6 +1206,11 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
@@ -1236,6 +1241,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "RColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -1263,6 +1276,11 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
@@ -1293,6 +1311,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -1534,6 +1560,11 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
@@ -1564,6 +1595,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -1591,6 +1630,11 @@
               "constraints": [],
               "minimum": 0,
               "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
@@ -1621,6 +1665,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridAlpha"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -1735,6 +1787,11 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
@@ -1765,6 +1822,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "MinorGridColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -1792,6 +1857,11 @@
               "constraints": [],
               "minimum": 0,
               "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
@@ -1822,6 +1892,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "MinorGridAlpha"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         }

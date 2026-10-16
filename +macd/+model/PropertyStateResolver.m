@@ -80,10 +80,16 @@ classdef PropertyStateResolver
                         value = entry.LiteralValue;
                     end
                     [states, message] = macd.model.PropertyStateResolver.apply( ...
-                        states, definitions, setting.Path, value, known, setting.Id);
+                        states, definitions, setting.Path, value, known, setting.Id, setting.Method == "nameValue");
                     if strlength(message) > 0
                         diagnostics(end + 1) = macd.model.Diagnostic("invalid-property-sequence", "error", ...
                             setting.Path + ": " + message, component.Id, setting.SourceSpan); %#ok<AGROW>
+                    end
+                end
+                if settings(cursor).Method == "nameValue"
+                    widthPaths = string({definitions(arrayfun(@(item) item.Application.EffectPolicy == "axisWidth", definitions)).Path});
+                    if any(ismember(string({group.Path}), widthPaths))
+                        states = macd.model.PropertyStateResolver.constructorWidths(states, group);
                     end
                 end
                 cursor = groupEnd + 1;
@@ -166,7 +172,7 @@ classdef PropertyStateResolver
             end
         end
 
-        function [states, message] = apply(states, definitions, path, value, known, id)
+        function [states, message] = apply(states, definitions, path, value, known, id, constructor)
             % apply Resolve one supported write and its allowlisted sibling effects.
             arguments (Input)
                 states macd.model.PropertyState
@@ -175,6 +181,7 @@ classdef PropertyStateResolver
                 value
                 known (1, 1) logical
                 id (1, 1) string
+                constructor (1, 1) logical = false
             end
             arguments (Output)
                 states macd.model.PropertyState
@@ -203,9 +210,14 @@ classdef PropertyStateResolver
                 [states, message] = macd.model.PropertyStateResolver.text(states, path, id);
             end
 
+            % Width followers hold manual values or derive them through known auto modes.
+            if definitions(index).Application.EffectPolicy == "axisWidth"
+                [states, message] = macd.model.PropertyStateResolver.widths(states, path, known, id, constructor);
+            end
+
             % Audited value setters force manual mode; auto values remain runtime-derived.
             modePolicies = ["tickMode", "valueMode"];
-            if any(definitions(index).Application.EffectPolicy == modePolicies)
+            if any(definitions(index).Application.EffectPolicy == [modePolicies, "modeFlag"])
                 target = find(paths == path + "Mode", 1);
                 if ~isempty(target)
                     reason = "";
@@ -244,6 +256,90 @@ classdef PropertyStateResolver
                     states(target) = states(target).withEffective([], false, id, ...
                         path + " changed after " + targetPath + "; native unit conversion is not statically resolved.", "unit-conversion");
                 end
+            end
+        end
+
+        function [states, message] = widths(states, path, known, id, constructor)
+            % widths Resolve reviewed LineWidth and grid-width followers without changing explicit inputs.
+            arguments (Input)
+                states macd.model.PropertyState
+                path (1, 1) string
+                known (1, 1) logical
+                id (1, 1) string
+                constructor (1, 1) logical
+            end
+            arguments (Output)
+                states macd.model.PropertyState
+                message (1, 1) string
+            end
+            message = "";
+            values = ["LineWidth", "GridLineWidth", "MinorGridLineWidth"];
+            if any(path == values) && known
+                [value, ~] = stateValue(states, path);
+                if ~isnumeric(value) || ~isscalar(value) || ~isreal(value) || ~isfinite(value) || value <= 0
+                    message = "Line widths must be positive finite numeric scalars.";
+                    states = setUnknown(states, path, id, message, "constraint");
+                    return
+                end
+            end
+            if any(path == values(2:3))
+                mode = path + "Mode";
+                if known
+                    states = setEffective(states, mode, "manual", id);
+                else
+                    states = setUnknown(states, mode, id, "An uncertain width setter may select manual mode.", "source");
+                end
+            end
+
+            % A manual hold is an effective dependency even when it freezes an audited default.
+            if any(path == ["GridLineWidthMode", "MinorGridLineWidthMode"]) && known
+                [mode, ~] = stateValue(states, path);
+                if ((ischar(mode) && isrow(mode)) || (isstring(mode) && isscalar(mode))) && string(mode) == "manual"
+                    receiver = extractBefore(path, strlength(path) - 3);
+                    [held, heldKnown] = stateValue(states, receiver);
+                    if heldKnown, states = setEffective(states, receiver, held, id); end
+                end
+            end
+            if constructor, return, end
+
+            % A manual receiver holds its current getter value, including prior implicit values.
+            if any(path == ["LineWidth", "GridLineWidth", "GridLineWidthMode"])
+                propagated = path == "GridLineWidth";
+                if path ~= "GridLineWidth"
+                    [states, propagated] = followWidth(states, "LineWidth", "GridLineWidth", id);
+                end
+                if propagated, states = followWidth(states, "GridLineWidth", "MinorGridLineWidth", id); end
+            elseif path == "MinorGridLineWidthMode"
+                states = followWidth(states, "GridLineWidth", "MinorGridLineWidth", id);
+            end
+        end
+
+        function states = constructorWidths(states, group)
+            % constructorWidths Finalize native constructor followers after all explicit values and mode flags.
+            arguments (Input)
+                states macd.model.PropertyState
+                group macd.model.PropertySetting
+            end
+            arguments (Output)
+                states macd.model.PropertyState
+            end
+            paths = string({states.Path});
+            pairs = ["LineWidth" "GridLineWidth"; "GridLineWidth" "MinorGridLineWidth"];
+            for index = 1:size(pairs, 1)
+                upstream = pairs(index, 1);
+                receiver = pairs(index, 2);
+                mode = states(paths == receiver + "Mode");
+                parent = states(paths == upstream);
+                if isempty(mode) || isempty(parent), continue, end
+                id = mode.EffectSettingId;
+                if mode.IsKnown
+                    candidates = [mode.EffectSettingId, parent.EffectSettingId];
+                    id = "";
+                    for setting = group
+                        if any(candidates == setting.Id), id = setting.Id; end
+                    end
+                end
+                states = followWidth(states, upstream, receiver, id);
             end
         end
 
@@ -499,6 +595,36 @@ index = find(string({states.Path}) == path, 1);
 known = ~isempty(index) && states(index).IsKnown;
 value = [];
 if known, value = states(index).EffectiveValue; end
+end
+
+function [states, applied] = followWidth(states, upstream, receiver, id)
+% followWidth Copy a known upstream width only when the receiver's mode is automatic.
+arguments (Input)
+    states macd.model.PropertyState
+    upstream (1, 1) string
+    receiver (1, 1) string
+    id (1, 1) string
+end
+arguments (Output)
+    states macd.model.PropertyState
+    applied (1, 1) logical
+end
+applied = true;
+[mode, known] = stateValue(states, receiver + "Mode");
+if ~known || ~((ischar(mode) && isrow(mode)) || (isstring(mode) && isscalar(mode)))
+    states = setUnknown(states, receiver, id, "An uncertain mode may change this width.", "uncertain-mode");
+elseif string(mode) == "auto"
+    [value, valueKnown] = stateValue(states, upstream);
+    if valueKnown
+        states = setEffective(states, receiver, value, id);
+    else
+        states = setUnknown(states, receiver, id, upstream + " is not known.", "width-follower");
+    end
+elseif string(mode) ~= "manual"
+    states = setUnknown(states, receiver, id, "The width mode is not supported.", "uncertain-mode");
+else
+    applied = false;
+end
 end
 
 function [value, known] = stateSwitch(states, path)

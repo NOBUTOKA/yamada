@@ -2195,7 +2195,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "YColor",
@@ -2220,7 +2237,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "ZColor",
@@ -2253,7 +2287,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "XColorMode",
@@ -2285,7 +2336,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "XColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "YColorMode",
@@ -2317,7 +2393,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "YColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "ZColorMode",
@@ -2349,7 +2450,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "ZColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "XDir",
@@ -2717,7 +2843,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "LineWidth"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "axisWidth",
+        "defaultLiteral": "0.5"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The R2024a pages document 0.5 for line and grid widths and automatic grid-width modes. These inert seeds support conditional follower resolution without inventing source settings."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisWidthFollowersAgreeWithEveryNativeStep",
+          "detail": "Owned fixtures verify 0.5 defaults, 13 sequential setter steps per factory, manual holds, auto restoration, and a canonical five-property constructor. Both manual-hold constructor orders retain the initial minor width, demonstrating deferred synchronization distinct from post-construction assignments."
+        }
+      ]
     },
     {
       "path": "GridLineWidthMode",
@@ -2744,7 +2895,32 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "GridLineWidth"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "axisWidth",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The R2024a pages document 0.5 for line and grid widths and automatic grid-width modes. These inert seeds support conditional follower resolution without inventing source settings."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisWidthFollowersAgreeWithEveryNativeStep",
+          "detail": "Owned fixtures verify 0.5 defaults, 13 sequential setter steps per factory, manual holds, auto restoration, and a canonical five-property constructor. Both manual-hold constructor orders retain the initial minor width, demonstrating deferred synchronization distinct from post-construction assignments."
+        }
+      ]
     },
     {
       "path": "GridColor",
@@ -2777,7 +2953,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "GridColorMode",
@@ -2809,7 +3002,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "GridColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "GridAlpha",
@@ -2836,7 +3054,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "GridAlphaMode",
@@ -2868,7 +3103,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "GridAlpha"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "XMinorGrid",
@@ -3012,7 +3272,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "GridLineWidth"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "axisWidth",
+        "defaultLiteral": "0.5"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The R2024a pages document 0.5 for line and grid widths and automatic grid-width modes. These inert seeds support conditional follower resolution without inventing source settings."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisWidthFollowersAgreeWithEveryNativeStep",
+          "detail": "Owned fixtures verify 0.5 defaults, 13 sequential setter steps per factory, manual holds, auto restoration, and a canonical five-property constructor. Both manual-hold constructor orders retain the initial minor width, demonstrating deferred synchronization distinct from post-construction assignments."
+        }
+      ]
     },
     {
       "path": "MinorGridLineWidthMode",
@@ -3039,7 +3324,33 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "GridLineWidthMode",
+          "MinorGridLineWidth"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "axisWidth",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The R2024a pages document 0.5 for line and grid widths and automatic grid-width modes. These inert seeds support conditional follower resolution without inventing source settings."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisWidthFollowersAgreeWithEveryNativeStep",
+          "detail": "Owned fixtures verify 0.5 defaults, 13 sequential setter steps per factory, manual holds, auto restoration, and a canonical five-property constructor. Both manual-hold constructor orders retain the initial minor width, demonstrating deferred synchronization distinct from post-construction assignments."
+        }
+      ]
     },
     {
       "path": "MinorGridColor",
@@ -3072,7 +3383,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "MinorGridColorMode",
@@ -3104,7 +3432,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MinorGridColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "MinorGridAlpha",
@@ -3131,7 +3484,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "MinorGridAlphaMode",
@@ -3163,7 +3533,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "MinorGridAlpha"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "Title",
@@ -4002,7 +4397,30 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "axisWidth",
+        "defaultLiteral": "0.5"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The R2024a pages document 0.5 for line and grid widths and automatic grid-width modes. These inert seeds support conditional follower resolution without inventing source settings."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisWidthFollowersAgreeWithEveryNativeStep",
+          "detail": "Owned fixtures verify 0.5 defaults, 13 sequential setter steps per factory, manual holds, auto restoration, and a canonical five-property constructor. Both manual-hold constructor orders retain the initial minor width, demonstrating deferred synchronization distinct from post-construction assignments."
+        }
+      ]
     },
     {
       "path": "Box",

@@ -231,6 +231,20 @@ Copy retains audited automatic-mode inputs and their mode without claiming a
 computed getter value. This rule is not generalized to color modes, coupled
 aspect ratios, grid-width followers, or unreviewed geographic behavior.
 
+`modeFlag` separately models reviewed color/alpha setters that select manual
+mode while preserving the stored getter when auto is restored. `axisWidth`
+resolves LineWidth -> GridLineWidth -> MinorGridLineWidth using audited defaults,
+automatic followers, and manual holds. Constructor arguments set explicit values
+and flags before follower synchronization; assignments update followers at each
+setter. Held defaults carry their determining mode occurrence without becoming
+explicit source writes. The insertion planner preserves existing manual hold
+points before new upstream assignments and verified constructor additions.
+
+Copy omits implicit automatic width setters that would otherwise select manual
+mode, and checks the derived getters after reparsing. A manually held constructor
+default is materialized in the copied configuration before emitting assignments.
+The source snapshot retains its original history and getter inputs.
+
 [`DefaultValueProvider`](../+macd/+ui/+inspector/DefaultValueProvider.m) resolves
 implicit values without changing the document. It first uses catalog or MATLAB
 class metadata and then, when required, constructs one hidden, editor-owned

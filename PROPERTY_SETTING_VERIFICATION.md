@@ -459,6 +459,56 @@
   out指定直後のgetterもinとなるため保留した。他variantのTickDir規則を流用しない。
 - 残る台帳監査・コンポーネント間効果・full profile・計画全体の完了監査は未完了。
 
+## Stage 4追加: 描画Modeと線幅の条件付き追従（2026-10-16）
+
+根拠と範囲:
+
+- 上記R2024aの4種類の公式プロパティ資料を根拠に、色・alphaの22組を`modeFlag`へ分けた。
+  保存getterと描画色・透明度の選択を混同せず、autoへの復帰で保存値を計算し直したと扱わない。
+- Axes/UIAxesのLineWidth、GridLineWidth、MinorGridLineWidthと2つのModeを`axisWidth`で扱う。
+  公式資料はautoでの上流追従とmanualでの保持、値の指定でmanualになることを記載している。
+- 資料だけで判断できなかった生成時引数は所有fixtureで補足した。
+  `GridLineWidth=4, MinorGridLineWidthMode=manual`は、引数順を逆にしてもminor幅が初期値0.5となる。
+  constructorは各値とModeの指定後に追従値を同期し、代入文を順に実行する場合とは異なる。
+  これを一般的なgetterの再計算や全コンポーネントの生成規則へ拡張しない。
+
+実装済み:
+
+- 両ポリシーを開発schema・正規化・grouping/hash・runtime・loaderへ伝搬した。
+  部分監査の適用メタデータは27具体variant・273プロパティとなった。
+  全variantのpolicy/runtime reviewは引き続きpartial/pendingを維持する。
+- 線幅はautoなら既知の上流値を追従し、manualなら直前のgetterを保持する。
+  不明なMode・上流値は理由付き未知状態として伝搬し、明示的な受け側の指定で復帰できる。
+  保持した既定値にも原因ModeのIDを対応付けるが、元ソースの明示設定を増やさない。
+- 名前-値引数では値・Modeだけを順に反映し、引数全体の後に追従値を同期する。
+  生成後代入は各setterの直後に追従する。元の引数・代入順は変更しない。
+- 新規の上流線幅を挿入する際、元ソースにあるmanual保持指定より後の位置を選ぶ。
+  生成時指定が確認できる場合は同じconstructor内でも保持点を越えて追記し、書式を維持する。
+- Copyでは暗黙のauto追従幅を明示代入してmanualへ変えてしまうことを避ける。
+  一方、constructorで手動保持された既定値はコピー側へ明示し、代入方式への変換後も同じ値を再現する。
+  再解析後の既知値を照合し、元の設定履歴・位置・IDは維持する。
+
+検証:
+
+- 所有native fixtureで色Mode 22組のgetter保持・render後の値・両constructor順・canonical順を確認した。
+  Axes/UIAxesでは各13ステップのsetterを共通resolverと逐次照合し、既定値・manual保持・auto復帰、
+  5プロパティのcanonical constructorと手動保持の両constructor順も確認した。
+- 専用の関連52件が合格。実効値の元位置編集、名前-値追加、保持点の後への代入追加、
+  constructorの同期、Copy、保存、Undo/Redo、不明なModeと上流の扱いを含む。
+- `verifyApplicationPolicyReview.ps1`と`verifyApplicationPolicy.ps1`が合格。
+  2つのポリシーの伝搬、Modeの依存辺、0.5 seed、constructor根拠、再適用・昇格の再現性を確認した。
+- groupingのintrinsic parityは48/48、parent-effective parityは144/144で合格。
+- 変更MATLABファイル7件のcheckcodeは警告なし。UTF-8 BOMなし・CRLFと`git diff --check`も確認した。
+- 計画指定のparser/catalog/model/generation/preview/inspector/lifecycleの関連area 449件が全件合格。
+  Failed=0、Incomplete=0、実測合計872.395秒。
+  `testResults/axis-render-area.log`と`testResults/axis-render-area-results.mat`へ記録した。
+  この結果は、未監査の効果、full profile、計画全体の完了根拠にはしない。
+
+残作業:
+
+- 縦横比・カメラ・地理TickDirの残る監査と、コンポーネント間の選択連動等を続ける。
+- 残る全variantの監査、full profile、計画全体の完了条件の監査は未完了。
+
 ## 対象範囲の変更（2026-10-16）
 
 - ItemsとItemsDataの長さが異なる場合の対応は、データ編集UIの大きな変更を伴うため、

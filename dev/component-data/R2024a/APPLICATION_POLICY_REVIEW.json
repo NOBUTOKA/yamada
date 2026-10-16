@@ -955,6 +955,312 @@
       ],
       "kind": "inference",
       "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "GridColor",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "GridColorMode",
+      "applyAfter": [
+        "GridColor"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "GridAlpha",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "path": "GridAlphaMode",
+      "applyAfter": [
+        "GridAlpha"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XColor",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XColorMode",
+      "applyAfter": [
+        "XColor"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YColor",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YColorMode",
+      "applyAfter": [
+        "YColor"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZColor",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZColorMode",
+      "applyAfter": [
+        "ZColor"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "MinorGridColor",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "MinorGridColorMode",
+      "applyAfter": [
+        "MinorGridColor"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "MinorGridAlpha",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "MinorGridAlphaMode",
+      "applyAfter": [
+        "MinorGridAlpha"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RColor",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "RColorMode",
+      "applyAfter": [
+        "RColor"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "ThetaColor",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "ThetaColorMode",
+      "applyAfter": [
+        "ThetaColor"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "MinorGridColor",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "MinorGridColorMode",
+      "applyAfter": [
+        "MinorGridColor"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "MinorGridAlpha",
+      "effectPolicy": "modeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "path": "MinorGridAlphaMode",
+      "applyAfter": [
+        "MinorGridAlpha"
+      ],
+      "kind": "inference",
+      "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "LineWidth",
+      "applyAfter": [],
+      "effectPolicy": "axisWidth",
+      "kind": "inference",
+      "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "GridLineWidth",
+      "applyAfter": [
+        "LineWidth"
+      ],
+      "effectPolicy": "axisWidth",
+      "kind": "inference",
+      "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "MinorGridLineWidth",
+      "applyAfter": [
+        "GridLineWidth"
+      ],
+      "effectPolicy": "axisWidth",
+      "kind": "inference",
+      "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "GridLineWidthMode",
+      "applyAfter": [
+        "GridLineWidth"
+      ],
+      "effectPolicy": "axisWidth",
+      "kind": "inference",
+      "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "MinorGridLineWidthMode",
+      "applyAfter": [
+        "MinorGridLineWidth",
+        "GridLineWidthMode"
+      ],
+      "effectPolicy": "axisWidth",
+      "kind": "inference",
+      "detail": "GridLineWidth follows LineWidth in auto mode, and MinorGridLineWidth follows GridLineWidth in auto mode. Explicit grid-width setters select manual mode; a manual receiver holds its current getter. Initialize upstream widths before downstream values and restore requested final modes. Preserved manual hold points require state-aware insertion. In constructors, follower synchronization is deferred until all arguments are applied; a manual receiver retains its explicit value or initial getter even when its mode argument follows an upstream width."
     }
   ],
   "initialValues": [
@@ -1182,6 +1488,59 @@
         "ZoomLevelMode": "'auto'"
       },
       "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes",
+        "polaraxes",
+        "geoaxes"
+      ],
+      "values": {
+        "GridColorMode": "'auto'",
+        "GridAlphaMode": "'auto'"
+      },
+      "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "values": {
+        "XColorMode": "'auto'",
+        "YColorMode": "'auto'",
+        "ZColorMode": "'auto'",
+        "MinorGridColorMode": "'auto'",
+        "MinorGridAlphaMode": "'auto'"
+      },
+      "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+    },
+    {
+      "variants": [
+        "polaraxes"
+      ],
+      "values": {
+        "RColorMode": "'auto'",
+        "ThetaColorMode": "'auto'",
+        "MinorGridColorMode": "'auto'",
+        "MinorGridAlphaMode": "'auto'"
+      },
+      "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "values": {
+        "LineWidth": "0.5",
+        "GridLineWidth": "0.5",
+        "MinorGridLineWidth": "0.5",
+        "GridLineWidthMode": "'auto'",
+        "MinorGridLineWidthMode": "'auto'"
+      },
+      "detail": "The R2024a pages document 0.5 for line and grid widths and automatic grid-width modes. These inert seeds support conditional follower resolution without inventing source settings."
     }
   ],
   "contractCorrections": [
@@ -1253,7 +1612,7 @@
         "geoaxes"
       ],
       "path": "GridColor",
-      "detail": "Color modes control rendered grid colors without universally resetting the stored color getter. Grid/axis colors and alpha modes need separate reviewed adapters; do not treat every property ending in Mode as a runtime-computed base value."
+      "detail": "Rendering color modes are modeled as modeFlag, not valueMode. They affect appearance while retaining the stored getter; do not fabricate a recomputed RGB value when auto is restored."
     },
     {
       "variants": [
@@ -1261,7 +1620,7 @@
         "uiaxes"
       ],
       "path": "PlotBoxAspectRatio",
-      "detail": "Aspect ratios and camera modes remain pending separate review. With manual limits and DataAspectRatio, the native getter can replace an explicit PlotBoxAspectRatio even while its mode is manual. GridLineWidth also has mode-conditional follower effects and is not an independent mode pair."
+      "detail": "Aspect ratios and camera modes remain pending separate review. With manual limits and DataAspectRatio, the native getter can replace an explicit PlotBoxAspectRatio even while its mode is manual. Grid-width followers are handled separately by axisWidth."
     }
   ]
 }

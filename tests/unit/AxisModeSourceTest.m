@@ -83,6 +83,98 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(control.getSettings("XTick").LiteralValue, [0 1]);
         end
 
+        function insertedWidthFollowsAnExistingManualHoldPoint(testCase)
+            % insertedWidthFollowsAnExistingManualHoldPoint Keep a previously held default minor width during assignment insertion.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", ...
+                "app.Control.MinorGridLineWidthMode = 'manual'; % hold default"]);
+            document.setProperty(control.Id, "GridLineWidth", 4, registry);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            other = reopened.getComponentByName("Control");
+            states = reopened.getEffectivePropertyStates(registry, other.Id);
+            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 4);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
+            testCase.verifyGreaterThan(other.getSettings("GridLineWidth").Sequence, ...
+                other.getSettings("MinorGridLineWidthMode").Sequence);
+            testCase.verifySubstring(source, "'manual'; % hold default");
+        end
+
+        function constructorInsertionPreservesAnExistingManualHoldPoint(testCase)
+            % constructorInsertionPreservesAnExistingManualHoldPoint Insert verified name-value widths after a protected manual mode.
+            [document, registry, control] = testCase.fixture( ...
+                "app.Control = uiaxes(app.UIFigure, MinorGridLineWidthMode='manual', Units='pixels', Position=[10 20 200 100]);");
+            document.setProperty(control.Id, "GridLineWidth", 4, registry);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            other = reopened.getComponentByName("Control");
+            setting = other.getSettings("GridLineWidth");
+            testCase.verifyEqual(setting.Method, "nameValue");
+            testCase.verifyGreaterThan(setting.ValueSpan.StartOffset, other.getSettings("MinorGridLineWidthMode").ValueSpan.StartOffset);
+            states = reopened.getEffectivePropertyStates(registry, other.Id);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
+        end
+
+        function implicitWidthsRemainSeparateThroughEditCopyAndSave(testCase)
+            % implicitWidthsRemainSeparateThroughEditCopyAndSave Update the bound upstream token while retaining earlier receiver inputs.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100]);", ...
+                "app.Control.LineWidth = 1;", "app.Control.GridLineWidth = 4;", ...
+                "app.Control.MinorGridLineWidth = 3;", "app.Control.MinorGridLineWidthMode = 'auto';"]);
+            original = control.settingSnapshot();
+            document.setProperty(control.Id, "GridLineWidth", 6, registry);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(source, "app.Control.MinorGridLineWidth = 3;");
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 6);
+            checkpoint = macd.model.SavedSourceCheckpoint(document, source, "AxisModeFixture.m", registry);
+            document.confirmSavedSource(checkpoint, registry);
+            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
+            testCase.verifyEqual(copy.getProperty("MinorGridLineWidth").LiteralValue, 6);
+            testCase.verifyEqual(control.settingSnapshot(), original);
+            document.undo();
+            document.undo();
+            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            document.redo();
+            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+        end
+
+        function copyPreservesDefaultAutoFollowersAndConstructorHolds(testCase)
+            % copyPreservesDefaultAutoFollowersAndConstructorHolds Avoid setters that would silently change a copied automatic mode.
+            [document, registry, control] = testCase.fixture( ...
+                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100], LineWidth=2);");
+            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
+            testCase.verifyEmpty(copy.getProperty("GridLineWidth"));
+            testCase.verifyEmpty(copy.getProperty("MinorGridLineWidth"));
+            states = document.getEffectivePropertyStates(registry, copy.Id);
+            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 2);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 2);
+            testCase.verifyEqual(string(testCase.state(states, "GridLineWidthMode").EffectiveValue), "auto");
+            testCase.verifyEqual(string(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue), "auto");
+            [document, registry, control] = testCase.fixture( ...
+                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100], GridLineWidth=4, MinorGridLineWidthMode='manual');");
+            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
+            testCase.verifyEqual(copy.getProperty("MinorGridLineWidth").LiteralValue, 0.5);
+            states = document.getEffectivePropertyStates(registry, copy.Id);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
+            testCase.verifyEqual(string(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue), "manual");
+        end
+
+        function storedColorCanBeEditedUnderAFinalAutomaticRenderingMode(testCase)
+            % storedColorCanBeEditedUnderAFinalAutomaticRenderingMode Keep getter data known without claiming a rendered grid color.
+            [document, registry, control] = testCase.fixture( ...
+                "app.Control = uiaxes(app.UIFigure, GridColor=[0.3 0.5 0.7], GridColorMode='auto');");
+            document.setProperty(control.Id, "GridColor", [0.6 0.2 0.1], registry);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            other = reopened.getComponentByName("Control");
+            states = reopened.getEffectivePropertyStates(registry, other.Id);
+            testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.6 0.2 0.1]);
+            testCase.verifyEqual(string(testCase.state(states, "GridColorMode").EffectiveValue), "auto");
+            testCase.verifyNumElements(other.getSettings("GridColor"), 1);
+            testCase.verifyEqual(other.getSettings("GridColor").Method, "nameValue");
+        end
+
         function laterAutomaticModePreventsPretendedLiteralEdits(testCase)
             % laterAutomaticModePreventsPretendedLiteralEdits Keep the original target when a later auto mode makes the requested value uncertain.
             [document, registry, control] = testCase.fixture([ ...

@@ -1099,7 +1099,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "GridColorMode",
@@ -1131,7 +1148,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "GridColor"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "GridAlpha",
@@ -1158,7 +1200,24 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "nameValue": "supported",
+        "effectPolicy": "modeFlag"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+          "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "GridAlphaMode",
@@ -1190,7 +1249,32 @@
         "kind": "editable",
         "reasonCodes": []
       },
-      "runtimeSetAccess": "public"
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [
+          "GridAlpha"
+        ],
+        "nameValue": "supported",
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'"
+      },
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+          "detail": "Restore an explicitly requested final rendering mode after its corresponding color or alpha setter. Existing source order is preserved and must be checked separately."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+          "detail": "These reviewed color and alpha modes document automatic defaults. The mode does not define the stored color or alpha getter; no computed appearance value is seeded."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
+          "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        }
+      ]
     },
     {
       "path": "Title",

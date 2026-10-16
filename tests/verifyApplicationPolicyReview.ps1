@@ -50,6 +50,14 @@ try {
     Assert-Condition (($mode.application.applyAfter -join ',') -ceq 'XTick') 'A final axes mode must follow its value.'
     Assert-Condition ($mode.application.defaultLiteral -ceq "'auto'") 'The documented automatic mode seed was lost.'
     Assert-Condition ($mode.application.nameValue -ceq 'supported') 'Verified axes constructor mode support was lost.'
+    $width = $axes.properties | Where-Object path -CEQ 'MinorGridLineWidth'
+    $widthMode = $axes.properties | Where-Object path -CEQ 'MinorGridLineWidthMode'
+    $color = $axes.properties | Where-Object path -CEQ 'GridColor'
+    Assert-Condition ($width.application.effectPolicy -ceq 'axisWidth') 'Width follower semantics were lost.'
+    Assert-Condition (($widthMode.application.applyAfter -join ',') -ceq 'GridLineWidthMode,MinorGridLineWidth') 'Final width mode ordering was lost.'
+    Assert-Condition ($width.application.defaultLiteral -ceq '0.5') 'The audited width seed was lost.'
+    Assert-Condition ($width.application.nameValue -ceq 'supported') 'Verified width constructor support was lost.'
+    Assert-Condition ($color.application.effectPolicy -ceq 'modeFlag') 'Stored color semantics were confused with computed auto values.'
     $geographic = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/geoaxes.json') -Raw | ConvertFrom-Json
     $direction = $geographic.properties | Where-Object path -CEQ 'TickDir'
     Assert-Condition ($null -eq $direction.PSObject.Properties['application'] -or

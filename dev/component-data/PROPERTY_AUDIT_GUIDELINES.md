@@ -191,6 +191,17 @@ Axis color modes can affect rendered grid colors while retaining the stored
 color, and aspect-ratio or grid-width setters have additional coupled effects.
 Review those separately instead of labeling them independent computed pairs.
 
+`modeFlag` covers reviewed rendering modes whose setters select manual mode but
+whose automatic mode does not replace the stored getter. It does not claim the
+rendered color or alpha equals that getter. `axisWidth` resolves the reviewed
+LineWidth -> GridLineWidth -> MinorGridLineWidth chain: automatic receivers
+follow upstream values and manual receivers hold their current getter.
+Native constructors defer follower synchronization until all arguments are set;
+post-construction assignments update followers immediately. Preserve existing
+manual hold points when inserting new upstream assignments. Copy must retain
+default auto followers without explicit setters that would select manual mode,
+and materialize held defaults when converting constructor settings to assignments.
+
 Represent parent dependency as changes to the effective property surface, not
 as a boolean attached indiscriminately to every property.
 

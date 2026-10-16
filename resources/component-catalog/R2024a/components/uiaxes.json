@@ -1216,7 +1216,7 @@
       "entries": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLim",
@@ -1224,7 +1224,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 1,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1246,7 +1246,7 @@
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLim",
@@ -1254,7 +1254,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 2,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1276,7 +1276,7 @@
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLim",
@@ -1284,7 +1284,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 3,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1307,7 +1307,7 @@
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimMode",
@@ -1315,7 +1315,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 4,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1345,7 +1345,7 @@
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimMode",
@@ -1353,7 +1353,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 5,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1383,7 +1383,7 @@
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLimMode",
@@ -1391,7 +1391,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 6,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1421,7 +1421,7 @@
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimitMethod",
@@ -1429,7 +1429,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 7,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1452,7 +1452,7 @@
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimitMethod",
@@ -1460,7 +1460,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 8,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1483,7 +1483,7 @@
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLimitMethod",
@@ -1491,7 +1491,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 9,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1514,7 +1514,7 @@
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxis",
@@ -1522,7 +1522,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 10,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -1539,7 +1539,7 @@
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "YAxis",
@@ -1547,7 +1547,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 11,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -1564,7 +1564,7 @@
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZAxis",
@@ -1572,7 +1572,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 12,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -1589,7 +1589,7 @@
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxisLocation",
@@ -1597,7 +1597,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 13,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1620,7 +1620,7 @@
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YAxisLocation",
@@ -1628,7 +1628,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 14,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1651,7 +1651,7 @@
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColor",
@@ -1659,7 +1659,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 15,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1673,12 +1673,17 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColor",
@@ -1686,7 +1691,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 16,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1700,12 +1705,17 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZColor",
@@ -1713,7 +1723,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 17,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1727,12 +1737,17 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColorMode",
@@ -1740,7 +1755,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 18,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1757,12 +1772,20 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "XColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColorMode",
@@ -1770,7 +1793,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 19,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1787,12 +1810,20 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "YColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZColorMode",
@@ -1800,7 +1831,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 20,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1817,12 +1848,20 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "ZColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XDir",
@@ -1830,7 +1869,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 21,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1852,7 +1891,7 @@
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YDir",
@@ -1860,7 +1899,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 22,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1882,7 +1921,7 @@
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZDir",
@@ -1890,7 +1929,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 23,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1912,7 +1951,7 @@
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XScale",
@@ -1920,7 +1959,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 24,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1942,7 +1981,7 @@
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YScale",
@@ -1950,7 +1989,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 25,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -1972,7 +2011,7 @@
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.9e9813d3c1e2",
+          "groupId": "exact.rulers.02b40eb8adf3",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZScale",
@@ -1980,7 +2019,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 26,
-            "groupId": "exact.rulers.9e9813d3c1e2",
+            "groupId": "exact.rulers.02b40eb8adf3",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2009,7 +2048,7 @@
       "entries": [
         {
           "path": "XGrid",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XGrid",
@@ -2017,7 +2056,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 1,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2036,7 +2075,7 @@
         },
         {
           "path": "YGrid",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YGrid",
@@ -2044,7 +2083,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 2,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2063,7 +2102,7 @@
         },
         {
           "path": "ZGrid",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZGrid",
@@ -2071,7 +2110,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 3,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2090,7 +2129,7 @@
         },
         {
           "path": "Layer",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Layer",
@@ -2098,7 +2137,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 4,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2120,7 +2159,7 @@
         },
         {
           "path": "GridLineStyle",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineStyle",
@@ -2128,7 +2167,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 5,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2153,7 +2192,7 @@
         },
         {
           "path": "GridLineWidth",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineWidth",
@@ -2161,7 +2200,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 6,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2175,12 +2214,20 @@
               "constraints": [],
               "minimum": 0,
               "exclusiveMinimum": true
+            },
+            "application": {
+              "applyAfter": [
+                "LineWidth"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "axisWidth",
+              "defaultLiteral": "0.5"
             }
           }
         },
         {
           "path": "GridLineWidthMode",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineWidthMode",
@@ -2188,7 +2235,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 7,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -2200,12 +2247,20 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "GridLineWidth"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "axisWidth",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "GridColor",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridColor",
@@ -2213,7 +2268,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 8,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2227,12 +2282,17 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
         {
           "path": "GridColorMode",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridColorMode",
@@ -2240,7 +2300,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 9,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2257,12 +2317,20 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "GridAlpha",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridAlpha",
@@ -2270,7 +2338,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 10,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2284,12 +2352,17 @@
               "constraints": [],
               "minimum": 0,
               "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
         {
           "path": "GridAlphaMode",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridAlphaMode",
@@ -2297,7 +2370,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 11,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2314,12 +2387,20 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridAlpha"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "XMinorGrid",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XMinorGrid",
@@ -2327,7 +2408,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 12,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2346,7 +2427,7 @@
         },
         {
           "path": "YMinorGrid",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YMinorGrid",
@@ -2354,7 +2435,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 13,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2373,7 +2454,7 @@
         },
         {
           "path": "ZMinorGrid",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZMinorGrid",
@@ -2381,7 +2462,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 14,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "onOff",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2400,7 +2481,7 @@
         },
         {
           "path": "MinorGridLineStyle",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineStyle",
@@ -2408,7 +2489,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 15,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2433,7 +2514,7 @@
         },
         {
           "path": "MinorGridLineWidth",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineWidth",
@@ -2441,7 +2522,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 16,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2455,12 +2536,20 @@
               "constraints": [],
               "minimum": 0,
               "exclusiveMinimum": true
+            },
+            "application": {
+              "applyAfter": [
+                "GridLineWidth"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "axisWidth",
+              "defaultLiteral": "0.5"
             }
           }
         },
         {
           "path": "MinorGridLineWidthMode",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineWidthMode",
@@ -2468,7 +2557,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 17,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -2480,12 +2569,21 @@
               "shape": "any",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "GridLineWidthMode",
+                "MinorGridLineWidth"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "axisWidth",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "MinorGridColor",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridColor",
@@ -2493,7 +2591,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 18,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "color",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2507,12 +2605,17 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
         {
           "path": "MinorGridColorMode",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridColorMode",
@@ -2520,7 +2623,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 19,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2537,12 +2640,20 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "MinorGridColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
         {
           "path": "MinorGridAlpha",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridAlpha",
@@ -2550,7 +2661,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 20,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "number",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2564,12 +2675,17 @@
               "constraints": [],
               "minimum": 0,
               "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
         {
           "path": "MinorGridAlphaMode",
-          "groupId": "exact.grids.d1c9b4a9ab90",
+          "groupId": "exact.grids.cdc3df92da79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridAlphaMode",
@@ -2577,7 +2693,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 21,
-            "groupId": "exact.grids.d1c9b4a9ab90",
+            "groupId": "exact.grids.cdc3df92da79",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -2594,6 +2710,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "MinorGridAlpha"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         }
@@ -3356,6 +3480,12 @@
               "constraints": [],
               "minimum": 0,
               "exclusiveMinimum": true
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "axisWidth",
+              "defaultLiteral": "0.5"
             }
           }
         },

@@ -167,6 +167,100 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             testCase.verifyEqual(testCase.state(states, "XLimMode").EffectiveValue, "manual");
         end
 
+        function automaticWidthFollowersRetainExplicitHistory(testCase)
+            % automaticWidthFollowersRetainExplicitHistory Resolve chained getters without replacing earlier explicit inputs.
+            [component, definitions] = testCase.fixture("uiaxes", {"LineWidth", 2; ...
+                "GridLineWidth", 4; "MinorGridLineWidth", 3; "MinorGridLineWidthMode", "auto"});
+            before = component.settingSnapshot();
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            minor = testCase.state(states, "MinorGridLineWidth");
+            testCase.verifyEqual(minor.ExplicitValue, 3);
+            testCase.verifyEqual(minor.EffectiveValue, 4);
+            testCase.verifyEqual(minor.EffectSettingId, component.getSettings("MinorGridLineWidthMode").Id);
+            component.recordSetting(testCase.setting("GridLineWidthMode", "auto", 5));
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 2);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 2);
+            testCase.verifyEqual(component.getProperty("MinorGridLineWidth").LiteralValue, 3);
+            after = component.settingSnapshot();
+            testCase.verifyEqual(after(1:numel(before)), before);
+        end
+
+        function manualWidthModesProtectValuesFromUnknownUpstreamWrites(testCase)
+            % manualWidthModesProtectValuesFromUnknownUpstreamWrites Hold prior implicit values and preserve their determining occurrence.
+            [component, definitions] = testCase.fixture("uiaxes", {"LineWidth", 2; "GridLineWidthMode", "manual"});
+            location = testCase.setting("LineWidth", [], 3).toStruct().Location;
+            location.SourceExpression = "readWidth()";
+            component.recordSetting(macd.model.PropertySetting("LineWidth", [], location));
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyFalse(testCase.state(states, "LineWidth").IsKnown);
+            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 2);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 2);
+            settings = component.getSettings("LineWidth");
+            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectSettingId, component.getSettings("GridLineWidthMode").Id);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectSettingId, settings(1).Id);
+        end
+
+        function uncertainWidthModesPropagateUntilAnExplicitReceiverWrite(testCase)
+            % uncertainWidthModesPropagateUntilAnExplicitReceiverWrite Never invent a held or followed getter when the mode is unknown.
+            [component, definitions] = testCase.fixture("axes", {"GridLineWidth", 4});
+            location = testCase.setting("GridLineWidthMode", [], 2).toStruct().Location;
+            location.SourceExpression = "chooseMode()";
+            component.recordSetting(macd.model.PropertySetting("GridLineWidthMode", [], location));
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyFalse(testCase.state(states, "GridLineWidth").IsKnown);
+            testCase.verifyFalse(testCase.state(states, "MinorGridLineWidth").IsKnown);
+            component.recordSetting(testCase.setting("MinorGridLineWidth", 3, 3));
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 3);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue, "manual");
+        end
+
+        function constructorWidthsSynchronizeAfterAllArguments(testCase)
+            % constructorWidthsSynchronizeAfterAllArguments Keep held defaults distinct from immediate assignment followers.
+            for id = ["axes", "uiaxes"]
+                for writes = {{"GridLineWidth", 4; "MinorGridLineWidthMode", "manual"}, ...
+                        {"MinorGridLineWidthMode", "manual"; "GridLineWidth", 4}}
+                    [component, definitions] = testCase.fixture(id, writes{1}, "nameValue");
+                    states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                    testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 4);
+                    testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
+                    testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectSettingId, ...
+                        component.getSettings("MinorGridLineWidthMode").Id);
+                end
+                [component, definitions] = testCase.fixture(id, {"GridLineWidth", 4; ...
+                    "MinorGridLineWidth", 3; "MinorGridLineWidthMode", "auto"}, "nameValue");
+                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 4);
+                [component, definitions] = testCase.fixture(id, {"GridLineWidth", 4; ...
+                    "MinorGridLineWidthMode", "auto"; "MinorGridLineWidth", 3}, "nameValue");
+                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 3);
+            end
+        end
+
+        function renderingModesKeepStoredColorAndAlphaValues(testCase)
+            % renderingModesKeepStoredColorAndAlphaValues Separate rendering decisions from stored getter values.
+            for id = ["axes", "uiaxes", "polaraxes", "geoaxes"]
+                [component, definitions] = testCase.fixture(id, {"GridColor", [0.3 0.5 0.7]; ...
+                    "GridColorMode", "auto"; "GridAlphaMode", "auto"; "GridAlpha", 0.4});
+                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.3 0.5 0.7]);
+                testCase.verifyEqual(testCase.state(states, "GridColorMode").EffectiveValue, "auto");
+                testCase.verifyEqual(testCase.state(states, "GridAlpha").EffectiveValue, 0.4);
+                testCase.verifyEqual(testCase.state(states, "GridAlphaMode").EffectiveValue, "manual");
+                testCase.verifyNumElements(component.Settings, 4);
+            end
+        end
+
+        function invalidWidthIsAnInitializationError(testCase)
+            % invalidWidthIsAnInitializationError Reject a nonpositive scalar before claiming an effective width.
+            [component, definitions] = testCase.fixture("uiaxes", {"GridLineWidth", 0});
+            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyNotEmpty(diagnostics);
+            testCase.verifyFalse(testCase.state(states, "GridLineWidth").IsKnown);
+        end
+
         function constructorUnitConversionsAreNotReplacedByRawNumbers(testCase)
             % constructorUnitConversionsAreNotReplacedByRawNumbers Respect source argument order for position units.
             [component, definitions] = testCase.fixture("uipanel", ...

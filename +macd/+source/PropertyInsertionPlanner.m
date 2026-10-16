@@ -110,6 +110,8 @@ classdef PropertyInsertionPlanner
                 accepted = false;
                 failure = "No safe interval is available before an initialization boundary.";
                 prerequisites = paths(reaches(:, paths == entry.Path));
+                protectors = macd.source.PropertyInsertionPlanner.protectedWidths( ...
+                    component, definitions(paths == entry.Path), entry.Path);
                 for placement = plan.Placements
                     if any(prerequisites == placement.Path) && placement.Method == "assignment", nv(index) = false; end
                 end
@@ -119,7 +121,8 @@ classdef PropertyInsertionPlanner
                     lower = 0;
                     prerequisites = paths(reaches(:, paths == entry.Path));
                     for argument = 1:numel(constructor)
-                        if any(prerequisites == constructor(argument).Path), lower = argument; end
+                        if any(prerequisites == constructor(argument).Path) || ...
+                                any(string({protectors.Id}) == constructor(argument).Id), lower = argument; end
                     end
                     for slot = lower:numel(constructor)
                         before = macd.model.PropertySetting.empty;
@@ -146,7 +149,7 @@ classdef PropertyInsertionPlanner
                 prerequisites = paths(reaches(:, paths == entry.Path));
                 lower = created;
                 for setting = sourceSettings
-                    if any(prerequisites == setting.Path)
+                    if any(prerequisites == setting.Path) || any(string({protectors.Id}) == setting.Id)
                         visits = find(arrayfun(@(statement) statement.Span.StartOffset, statements(order)) == ...
                             setting.SourceSpan.StartOffset);
                         if ~isempty(visits), lower = max(lower, max(visits)); end
@@ -197,6 +200,36 @@ classdef PropertyInsertionPlanner
             reaches = false(count, count);
             for index = 1:count, reaches(ismember(paths, definitions(index).Application.ApplyAfter), index) = true; end
             for index = 1:count, reaches = reaches | (reaches(:, index) & reaches(index, :)); end
+        end
+
+        function settings = protectedWidths(component, definition, path)
+            % protectedWidths Retain existing manual hold points before newly inserted upstream width writes.
+            arguments (Input)
+                component (1, 1) macd.model.ComponentRecord
+                definition (1, 1) macd.model.PropertyDefinition
+                path (1, 1) string
+            end
+            arguments (Output)
+                settings macd.model.PropertySetting
+            end
+            settings = macd.model.PropertySetting.empty;
+            if definition.Application.EffectPolicy ~= "axisWidth", return, end
+            modes = strings(1, 0);
+            if path == "LineWidth", modes = ["GridLineWidthMode", "MinorGridLineWidthMode"]; end
+            if path == "GridLineWidth", modes = "MinorGridLineWidthMode"; end
+            for setting = component.Settings
+                if ~any(modes == setting.Path) || setting.Method == "generated" || ...
+                        ~setting.IsCertain || setting.ValueKind ~= "literal", continue, end
+                value = setting.LiteralValue;
+                entry = component.getProperty(setting.Path);
+                if ~isempty(entry) && entry.ValueKind == "literal" && isfield(entry.Metadata, "SourceSettingId") && ...
+                        string(entry.Metadata.SourceSettingId) == setting.Id
+                    value = entry.LiteralValue;
+                end
+                if ((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && string(value) == "manual"
+                    settings(end + 1) = setting; %#ok<AGROW>
+                end
+            end
         end
 
         function [anchors, boundary] = anchors(source, statements, order, certain, returns, layout, created, settings)

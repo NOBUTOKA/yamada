@@ -69,7 +69,8 @@ classdef SubtreeCopyPlanner
                         error("macd:DocumentModel:UnsafeSubtreeCopy", ...
                             "Cannot reproduce %s: %s", state.Definition.Path, resolution.Reason);
                     end
-                    if ~any(string({values.Path}) == state.Definition.Path) && state.Definition.IsEditable
+                    if ~any(string({values.Path}) == state.Definition.Path) && state.Definition.IsEditable && ...
+                            ~macd.model.SubtreeCopyPlanner.isDerivedWidth(state, states)
                         entry = macd.model.PropertyEntry(state.Definition.Path, resolution.EffectiveValue, "generated");
                         values(end + 1) = entry.toStruct(); %#ok<AGROW>
                     end
@@ -119,6 +120,24 @@ classdef SubtreeCopyPlanner
     end
 
     methods (Static, Access = private)
+        function result = isDerivedWidth(state, states)
+            % isDerivedWidth Avoid freezing an implicit auto width with a setter that would select manual mode.
+            arguments (Input)
+                state (1, 1) struct
+                states (1, :) struct
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            if state.Definition.Application.EffectPolicy ~= "axisWidth" || ...
+                    ~any(state.Definition.Path == ["GridLineWidth", "MinorGridLineWidth"]), return, end
+            mode = find(arrayfun(@(item) item.Definition.Path == state.Definition.Path + "Mode", states), 1);
+            if isempty(mode) || ~states(mode).Resolution.IsKnown, return, end
+            value = states(mode).Resolution.EffectiveValue;
+            result = ((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && string(value) == "auto";
+        end
+
         function result = isAutomatic(state, states)
             % isAutomatic Recognize audited runtime-computed data controlled by a known automatic mode.
             arguments (Input)

@@ -116,6 +116,99 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             testCase.verifyEqual(checked, 49);
         end
 
+        function axisStoredColorModesPreserveGetterValues(testCase)
+            % axisStoredColorModesPreserveGetterValues Check all reviewed rendering-mode flags against owned native axes.
+            [figure, registry] = testCase.environment();
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            oldPath = path;
+            pathCleanup = onCleanup(@() path(oldPath));
+            addpath(fullfile(projectRoot, "dev", "component-data"));
+            output = string(tempname) + ".json";
+            fileCleanup = onCleanup(@() delete(output));
+            results = ProbeAxisModeInteractions(output);
+            checked = 0;
+            for result = results
+                definition = registry.getById(result.Factory);
+                property = definition.Properties(string({definition.Properties.Path}) == result.Path);
+                if property.Application.EffectPolicy ~= "modeFlag", continue, end
+                testCase.verifyEqual(result.Error, "");
+                testCase.verifyEqual(result.DefaultMode, "auto");
+                testCase.verifyEqual(result.ManualMode, "manual");
+                testCase.verifyTrue(result.ManualMatches);
+                testCase.verifyTrue(result.AutomaticMatches);
+                testCase.verifyTrue(result.AutomaticRenderedMatches);
+                testCase.verifyEqual(result.ConstructorValueLastMode, "manual");
+                testCase.verifyEqual(result.ConstructorModeLastMode, "auto");
+                entries = [macd.model.PropertyEntry(result.Path + "Mode", "auto"), ...
+                    macd.model.PropertyEntry(result.Path, result.RequestedValue)];
+                creation = {};
+                if result.Factory == "geoaxes", creation = {"Basemap", "none"}; end
+                target = testCase.apply(figure, registry, result.Factory, creation, entries);
+                testCase.verifyEqual(target.(result.Path), result.RequestedValue);
+                testCase.verifyEqual(string(target.(result.Path + "Mode")), "auto");
+                delete(target);
+                checked = checked + 1;
+            end
+            testCase.verifyEqual(checked, 22);
+        end
+
+        function axisWidthFollowersAgreeWithEveryNativeStep(testCase)
+            % axisWidthFollowersAgreeWithEveryNativeStep Verify manual holds, automatic restoration, and canonical constructor order.
+            [figure, registry] = testCase.environment();
+            writes = {"LineWidth", 2; "GridLineWidth", 4; "MinorGridLineWidth", 3; ...
+                "MinorGridLineWidthMode", "auto"; "GridLineWidthMode", "auto"; ...
+                "GridLineWidthMode", "manual"; "LineWidth", 5; ...
+                "MinorGridLineWidthMode", "manual"; "GridLineWidth", 6; ...
+                "MinorGridLineWidthMode", "auto"; "MinorGridLineWidth", 7; ...
+                "GridLineWidthMode", "auto"; "MinorGridLineWidthMode", "auto"};
+            paths = ["LineWidth", "GridLineWidth", "MinorGridLineWidth", "GridLineWidthMode", "MinorGridLineWidthMode"];
+            for factory = ["axes", "uiaxes"]
+                definition = registry.get(factory);
+                component = macd.model.ComponentRecord("native-widths", "OwnedAxes", factory, definition.DeclaredType, "parsed");
+                target = feval(factory, figure);
+                testCase.verifyEqual([target.LineWidth target.GridLineWidth target.MinorGridLineWidth], [0.5 0.5 0.5]);
+                testCase.verifyEqual(string(target.GridLineWidthMode), "auto");
+                testCase.verifyEqual(string(target.MinorGridLineWidthMode), "auto");
+                for index = 1:size(writes, 1)
+                    name = writes{index, 1};
+                    value = writes{index, 2};
+                    target.(name) = value;
+                    location = struct("Method", "assignment", "Syntax", "dot", "SourceSnapshotId", "native-widths", ...
+                        "Sequence", index, "SourceSpan", macd.model.SourceSpan(index, index));
+                    component.recordSetting(macd.model.PropertySetting(name, value, location));
+                    states = macd.model.PropertyStateResolver.resolve(component, definition.Properties);
+                    for path = paths
+                        state = states(string({states.Path}) == path);
+                        testCase.verifyTrue(state.IsKnown);
+                        actual = target.(path);
+                        expected = state.EffectiveValue;
+                        if endsWith(path, "Mode"), actual = string(actual); expected = string(expected); end
+                        testCase.verifyEqual(actual, expected, factory + "." + path + " step " + index);
+                    end
+                end
+                delete(target);
+
+                % Explicit auto requests run after the values that otherwise force manual mode.
+                entries = [macd.model.PropertyEntry("MinorGridLineWidthMode", "auto"), ...
+                    macd.model.PropertyEntry("GridLineWidthMode", "auto"), ...
+                    macd.model.PropertyEntry("MinorGridLineWidth", 3), ...
+                    macd.model.PropertyEntry("GridLineWidth", 4), macd.model.PropertyEntry("LineWidth", 2)];
+                target = testCase.apply(figure, registry, factory, {}, entries);
+                testCase.verifyEqual([target.LineWidth target.GridLineWidth target.MinorGridLineWidth], [2 2 2]);
+                testCase.verifyEqual(string(target.GridLineWidthMode), "auto");
+                testCase.verifyEqual(string(target.MinorGridLineWidthMode), "auto");
+                delete(target);
+
+                % Constructor followers synchronize after all arguments; manual modes hold defaults in both orders.
+                target = feval(factory, figure, "MinorGridLineWidthMode", "manual", "GridLineWidth", 4);
+                testCase.verifyEqual(target.MinorGridLineWidth, 0.5);
+                delete(target);
+                target = feval(factory, figure, "GridLineWidth", 4, "MinorGridLineWidthMode", "manual");
+                testCase.verifyEqual(target.MinorGridLineWidth, 0.5);
+                delete(target);
+            end
+        end
+
         function unitsAreEstablishedBeforeCoordinatesAndFontSize(testCase)
             % unitsAreEstablishedBeforeCoordinatesAndFontSize Avoid conversion of values assigned in old units.
             [figure, registry] = testCase.environment();

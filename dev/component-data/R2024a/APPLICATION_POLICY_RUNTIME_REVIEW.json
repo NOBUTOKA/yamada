@@ -246,6 +246,106 @@
       ],
       "result": "passed",
       "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+    },
+    {
+      "testMethod": "axisStoredColorModesPreserveGetterValues",
+      "variants": [
+        "axes"
+      ],
+      "nameValuePaths": [
+        "GridAlpha",
+        "GridAlphaMode",
+        "GridColor",
+        "GridColorMode",
+        "MinorGridAlpha",
+        "MinorGridAlphaMode",
+        "MinorGridColor",
+        "MinorGridColorMode",
+        "XColor",
+        "XColorMode",
+        "YColor",
+        "YColorMode",
+        "ZColor",
+        "ZColorMode"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+    },
+    {
+      "testMethod": "axisStoredColorModesPreserveGetterValues",
+      "variants": [
+        "uiaxes"
+      ],
+      "nameValuePaths": [
+        "GridAlpha",
+        "GridAlphaMode",
+        "GridColor",
+        "GridColorMode",
+        "MinorGridAlpha",
+        "MinorGridAlphaMode",
+        "MinorGridColor",
+        "MinorGridColorMode",
+        "XColor",
+        "XColorMode",
+        "YColor",
+        "YColorMode",
+        "ZColor",
+        "ZColorMode"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+    },
+    {
+      "testMethod": "axisStoredColorModesPreserveGetterValues",
+      "variants": [
+        "polaraxes"
+      ],
+      "nameValuePaths": [
+        "GridAlpha",
+        "GridAlphaMode",
+        "GridColor",
+        "GridColorMode",
+        "MinorGridAlpha",
+        "MinorGridAlphaMode",
+        "MinorGridColor",
+        "MinorGridColorMode",
+        "RColor",
+        "RColorMode",
+        "ThetaColor",
+        "ThetaColorMode"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+    },
+    {
+      "testMethod": "axisStoredColorModesPreserveGetterValues",
+      "variants": [
+        "geoaxes"
+      ],
+      "nameValuePaths": [
+        "GridAlpha",
+        "GridAlphaMode",
+        "GridColor",
+        "GridColorMode"
+      ],
+      "result": "passed",
+      "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+    },
+    {
+      "testMethod": "axisWidthFollowersAgreeWithEveryNativeStep",
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "nameValuePaths": [
+        "LineWidth",
+        "GridLineWidth",
+        "MinorGridLineWidth",
+        "GridLineWidthMode",
+        "MinorGridLineWidthMode"
+      ],
+      "result": "passed",
+      "detail": "Owned fixtures verify 0.5 defaults, 13 sequential setter steps per factory, manual holds, auto restoration, and a canonical five-property constructor. Both manual-hold constructor orders retain the initial minor width, demonstrating deferred synchronization distinct from post-construction assignments."
     }
   ]
 }

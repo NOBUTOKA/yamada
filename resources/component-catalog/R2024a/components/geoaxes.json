@@ -893,6 +893,11 @@
               "shape": "fixedLengthVector",
               "allowsEmpty": false,
               "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
@@ -923,6 +928,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridColor"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         },
@@ -950,6 +963,11 @@
               "constraints": [],
               "minimum": 0,
               "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "nameValue": "supported",
+              "effectPolicy": "modeFlag"
             }
           }
         },
@@ -980,6 +998,14 @@
                 "auto",
                 "manual"
               ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridAlpha"
+              ],
+              "nameValue": "supported",
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'"
             }
           }
         }

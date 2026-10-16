@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "76a7074e74bb4e56d6ff65d98bd82f246fcbfc1368cb4cb3a9f68cd4411ceb6e",
+  "inputSha256": "6835c0cc277fb31e015df92a584c2c605d5797e9abc82d4d490fbdf91c91f6f9",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5ac43387dcba",
@@ -31,12 +31,45 @@
       ]
     },
     {
-      "candidateId": "candidate.boxstyling.72c4d6b62276",
+      "candidateId": "candidate.boxstyling.6244f18bd1e8",
       "categoryId": "boxstyling",
       "categoryDisplayName": "Box Styling",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family visual styling.",
-      "capabilitySha256": "72c4d6b6227687d4abd9f55b041a1fd688d98d01fde91639d2c19532a2d686c3",
+      "capabilitySha256": "6244f18bd1e8c321700c737a2885a1c8028d24dfcec41449558b15b0fd79d0e1",
+      "propertyPaths": [
+        "Color",
+        "LineWidth",
+        "Box",
+        "BoxStyle",
+        "Clipping",
+        "ClippingStyle",
+        "AmbientLightColor"
+      ],
+      "propertyCapabilitySha256": [
+        "6fd52dc1c107ca7b3b1a363298874ac9f935e106aa4d194db9f86addc52158ef",
+        "b476cc926d582806083c9bf68f0f154289db4279416326296970ffa7f47bac11",
+        "16c4489a2fe1816658de0e8ca6035edbce8a0de105f3464ec88abbd73d442783",
+        "3efb210aef7327efe44f20ddaa99a455fef80293b3510d5acc453b3df096bfd1",
+        "34ca928464968d9e1bb848e3e589bac6f3ed15069395fd1301472abe6bd86512",
+        "d7611037cf2ec54c140415ca2104c1954c1d5b1c269d58bdb3de1f8baadb103a",
+        "5c2a0b76a18c43683d02b24de4c39cc6f8f4c457dd083430338a93eba0990988"
+      ],
+      "memberVariantIds": [
+        "axes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        8
+      ]
+    },
+    {
+      "candidateId": "candidate.boxstyling.7c9cdce00bc2",
+      "categoryId": "boxstyling",
+      "categoryDisplayName": "Box Styling",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes-family visual styling.",
+      "capabilitySha256": "7c9cdce00bc244faf1e3e3fe779ed02ab5c77bfd21129dd7046989551a2eb212",
       "propertyPaths": [
         "Color",
         "BackgroundColor",
@@ -50,7 +83,7 @@
       "propertyCapabilitySha256": [
         "6fd52dc1c107ca7b3b1a363298874ac9f935e106aa4d194db9f86addc52158ef",
         "5136e7ef41e76ba93123f220c1ec79d769373308f1cf904e725f6a02dfad5ba3",
-        "4dc3b0793596efdd5d495c1315746a3adbc511abd6d58bdf13a160f08eca4c1f",
+        "b476cc926d582806083c9bf68f0f154289db4279416326296970ffa7f47bac11",
         "16c4489a2fe1816658de0e8ca6035edbce8a0de105f3464ec88abbd73d442783",
         "3efb210aef7327efe44f20ddaa99a455fef80293b3510d5acc453b3df096bfd1",
         "34ca928464968d9e1bb848e3e589bac6f3ed15069395fd1301472abe6bd86512",
@@ -59,39 +92,6 @@
       ],
       "memberVariantIds": [
         "uiaxes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        8
-      ]
-    },
-    {
-      "candidateId": "candidate.boxstyling.8892f5f55e97",
-      "categoryId": "boxstyling",
-      "categoryDisplayName": "Box Styling",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Axes-family visual styling.",
-      "capabilitySha256": "8892f5f55e97e07b0c564aaade43eef7d477ce2619fedae4a1e367482ca09a5b",
-      "propertyPaths": [
-        "Color",
-        "LineWidth",
-        "Box",
-        "BoxStyle",
-        "Clipping",
-        "ClippingStyle",
-        "AmbientLightColor"
-      ],
-      "propertyCapabilitySha256": [
-        "6fd52dc1c107ca7b3b1a363298874ac9f935e106aa4d194db9f86addc52158ef",
-        "4dc3b0793596efdd5d495c1315746a3adbc511abd6d58bdf13a160f08eca4c1f",
-        "16c4489a2fe1816658de0e8ca6035edbce8a0de105f3464ec88abbd73d442783",
-        "3efb210aef7327efe44f20ddaa99a455fef80293b3510d5acc453b3df096bfd1",
-        "34ca928464968d9e1bb848e3e589bac6f3ed15069395fd1301472abe6bd86512",
-        "d7611037cf2ec54c140415ca2104c1954c1d5b1c269d58bdb3de1f8baadb103a",
-        "5c2a0b76a18c43683d02b24de4c39cc6f8f4c457dd083430338a93eba0990988"
-      ],
-      "memberVariantIds": [
-        "axes"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [
@@ -1829,12 +1829,12 @@
       ]
     },
     {
-      "candidateId": "candidate.gridlines.3dce10028c26",
+      "candidateId": "candidate.gridlines.b363c4d93ed2",
       "categoryId": "gridlines",
       "categoryDisplayName": "Grid Lines",
       "sharingScope": "variantLocal",
       "scopeRationale": "Polar axes-specific grid-line settings.",
-      "capabilitySha256": "3dce10028c26a9f12f390097724151b1a8e52e1dbe3738d49f49cecbc466f911",
+      "capabilitySha256": "b363c4d93ed272809d69c0fa66e0fea4f8cb2b3d5ab40c19e454b91d38286e73",
       "propertyPaths": [
         "RGrid",
         "ThetaGrid",
@@ -1857,17 +1857,17 @@
         "e6872d9119c2c8f9974549964efdcf5be8d6ee1ac6bf20f98f0d322fda8282bc",
         "e643a8d78816ff688ab1744d7f92ddedd0b6ae28b16ddab74be9376c6d2ce407",
         "3d9119e1ef47d2bf610574117f4a926c014448002f8f70ffa3d37cd3915de781",
-        "9377e0089e894dbebdd863deb320902a61bca33377672db0112dfdec736068f6",
-        "26535e0b227c70d7a144ab1a565a10cfdfff95bb55f95d6e84d032fc7630c6c1",
-        "e1a2948cde5aa72d7342f436ff04a7717230db42a31274284a3fc1812e30b7ae",
-        "8c0916fe6fc9b92a701f59d9eee6892e1df0a10352716c50692e42d460a30c69",
+        "67736483ce391fd268a3420aa0847c02320f5c010cab72ba7b248766caa7b5b9",
+        "bd3720fa67843bbbf7d63470fd35862a931e3500e56758441208587a5807cb12",
+        "3040e0dbebaee6dc4ef2d19c767f4816de744230fe94f69529ebfda008f9f6dc",
+        "500ede8cebbe21f782ad1300139a76411c34d92cfaf1bf0daac2f815332c3618",
         "03943447b62deea99e8974aa7fbc4a1422d7c7ff3f0d0c01d5f7feb2432374a3",
         "b697bd56696cbeb9a398b1ba8137e1faec934f0c75c27633d79e536ebea1514c",
         "678ead20b13712a45c3c1d16ef27546a318556d72a8ac49d63d0df7839a36b85",
-        "59f32ad54990104d497571b58a9746b93e293a86f40257f33b872047b3d4de99",
-        "b9cdf8e327a975361f94c85c8229680d89ee18f39f86e00600ed8e7126feba88",
-        "89464bb20613c74db68ef2115cad34faa118db53f7672cf3af5bd8ca8226e384",
-        "974429fa9670594cb46dd866ea62675a8827e9d38f1c33d2773328aabf43917b"
+        "690795b20c0d92afce321925a9a584ae1d16ea58b846ce28e191d5e3d0c8f0d9",
+        "7130df952023dd7d03b546e8a33687d1b38b331ab758eccca7824058984b6a16",
+        "d12825690ffcd0f800e7475d2a39ffe32c9f04733ef9b5225b73cd422f54aa44",
+        "cfbf29237e46d139172e892e3d5090021bd1b8370851377a5f682c2d254dbb3c"
       ],
       "memberVariantIds": [
         "polaraxes"
@@ -1878,12 +1878,12 @@
       ]
     },
     {
-      "candidateId": "candidate.grids.6d9f7198e13e",
+      "candidateId": "candidate.grids.ad12222e93ad",
       "categoryId": "grids",
       "categoryDisplayName": "Grids",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family grid settings.",
-      "capabilitySha256": "6d9f7198e13efb5d99a90f9bb5dedb35b782ca5a7ea5ff57664d1459e35aba21",
+      "capabilitySha256": "ad12222e93ad530a916c10f87879f4cd771b5ca8ccd46308c68acec899b1620f",
       "propertyPaths": [
         "Grid",
         "GridLineStyle",
@@ -1895,10 +1895,10 @@
       "propertyCapabilitySha256": [
         "b07d22f69cdf9c09e7e1e4862b94110707ced66c14a3a245d822fe77dd61e2ee",
         "3d9119e1ef47d2bf610574117f4a926c014448002f8f70ffa3d37cd3915de781",
-        "9377e0089e894dbebdd863deb320902a61bca33377672db0112dfdec736068f6",
-        "26535e0b227c70d7a144ab1a565a10cfdfff95bb55f95d6e84d032fc7630c6c1",
-        "e1a2948cde5aa72d7342f436ff04a7717230db42a31274284a3fc1812e30b7ae",
-        "8c0916fe6fc9b92a701f59d9eee6892e1df0a10352716c50692e42d460a30c69"
+        "67736483ce391fd268a3420aa0847c02320f5c010cab72ba7b248766caa7b5b9",
+        "bd3720fa67843bbbf7d63470fd35862a931e3500e56758441208587a5807cb12",
+        "3040e0dbebaee6dc4ef2d19c767f4816de744230fe94f69529ebfda008f9f6dc",
+        "500ede8cebbe21f782ad1300139a76411c34d92cfaf1bf0daac2f815332c3618"
       ],
       "memberVariantIds": [
         "geoaxes"
@@ -1909,12 +1909,12 @@
       ]
     },
     {
-      "candidateId": "candidate.grids.d1c9b4a9ab90",
+      "candidateId": "candidate.grids.cdc3df92da79",
       "categoryId": "grids",
       "categoryDisplayName": "Grids",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family grid settings.",
-      "capabilitySha256": "d1c9b4a9ab900732440de9655cbb5a4b9c6b8d475122d09df29baf931f3a2847",
+      "capabilitySha256": "cdc3df92da794759ac38e39011b8d0356f8085832ccc1637e8b0f5699179320a",
       "propertyPaths": [
         "XGrid",
         "YGrid",
@@ -1944,22 +1944,22 @@
         "b19d37a84547bbed646cf91556e1b819255b73a46b89e8b13dce34cac7b90556",
         "e643a8d78816ff688ab1744d7f92ddedd0b6ae28b16ddab74be9376c6d2ce407",
         "3d9119e1ef47d2bf610574117f4a926c014448002f8f70ffa3d37cd3915de781",
-        "24ffaeceebc82a91d69ea3570139164b84d6ee4cd0496253d51a6b30d2e8ce77",
-        "160edde84253153ed3ec8dea7dac473b2fe78f1dc88525a86ae56ff0a34946b0",
-        "9377e0089e894dbebdd863deb320902a61bca33377672db0112dfdec736068f6",
-        "26535e0b227c70d7a144ab1a565a10cfdfff95bb55f95d6e84d032fc7630c6c1",
-        "e1a2948cde5aa72d7342f436ff04a7717230db42a31274284a3fc1812e30b7ae",
-        "8c0916fe6fc9b92a701f59d9eee6892e1df0a10352716c50692e42d460a30c69",
+        "c0f821aaafa5dda73205c91180fe9d7bad762d4f68c3011e1414b9a2ddc8f064",
+        "13966cc8e87f762a994a755a4dde138c4c39b96c47ba40e4756420452dfea424",
+        "67736483ce391fd268a3420aa0847c02320f5c010cab72ba7b248766caa7b5b9",
+        "bd3720fa67843bbbf7d63470fd35862a931e3500e56758441208587a5807cb12",
+        "3040e0dbebaee6dc4ef2d19c767f4816de744230fe94f69529ebfda008f9f6dc",
+        "500ede8cebbe21f782ad1300139a76411c34d92cfaf1bf0daac2f815332c3618",
         "0d940019a3984966a2756ac019ae0687ccc9757631602ea4f9b5a186e9c32315",
         "9dae2d84255d3e3a753622079e2b5d806f546317065b2b7278c9be3df1b04e9b",
         "6745d3ab49f4b68118f01a4e6b76bed62737e2a5b217087f31cd79f038b6e4eb",
         "678ead20b13712a45c3c1d16ef27546a318556d72a8ac49d63d0df7839a36b85",
-        "c2f0f4e8e3402bf6041ce2cd6344985aad53664f8152cacc791f1f26309103e7",
-        "d4cc67b0def7a00fa968619aadb412397e6104da42f2340029678c26ad294f20",
-        "59f32ad54990104d497571b58a9746b93e293a86f40257f33b872047b3d4de99",
-        "b9cdf8e327a975361f94c85c8229680d89ee18f39f86e00600ed8e7126feba88",
-        "89464bb20613c74db68ef2115cad34faa118db53f7672cf3af5bd8ca8226e384",
-        "974429fa9670594cb46dd866ea62675a8827e9d38f1c33d2773328aabf43917b"
+        "c89037de6576020fa81c184d319ea53e50bf5c2b9cfa7783b33ac73f25665801",
+        "288bcfd64211ed2e1e4487d91312798994cb6b67e5e72e79475bfb0f928b0b22",
+        "690795b20c0d92afce321925a9a584ae1d16ea58b846ce28e191d5e3d0c8f0d9",
+        "7130df952023dd7d03b546e8a33687d1b38b331ab758eccca7824058984b6a16",
+        "d12825690ffcd0f800e7475d2a39ffe32c9f04733ef9b5225b73cd422f54aa44",
+        "cfbf29237e46d139172e892e3d5090021bd1b8370851377a5f682c2d254dbb3c"
       ],
       "memberVariantIds": [
         "axes",
@@ -4024,86 +4024,12 @@
       ]
     },
     {
-      "candidateId": "candidate.rulers.76aad3726f10",
+      "candidateId": "candidate.rulers.02b40eb8adf3",
       "categoryId": "rulers",
       "categoryDisplayName": "Rulers",
       "sharingScope": "familyScoped",
       "scopeRationale": "Axes-family ruler settings.",
-      "capabilitySha256": "76aad3726f100566c535ee9ba632b2c05925218e7271899198e5b090a3257da4",
-      "propertyPaths": [
-        "RLim",
-        "RLimMode",
-        "ThetaLim",
-        "ThetaLimMode",
-        "RAxis",
-        "ThetaAxis",
-        "RAxisLocation",
-        "RAxisLocationMode",
-        "RColor",
-        "RColorMode",
-        "ThetaColor",
-        "ThetaColorMode",
-        "RDir",
-        "ThetaDir",
-        "ThetaAxisUnits"
-      ],
-      "propertyCapabilitySha256": [
-        "a4de00b71367d34b46a664bc912248054ff24a9f46b7b3eccebc2d3f3016486e",
-        "6f493080eb2ae09b4b86abd32b91900a4a5a5736e177c35e10a20da0d0280004",
-        "a0495746087a1cffd7ab9adcadb4481cbd2fe334c454ff049f395e1870f4b145",
-        "7529fa8d8ee79656b0cba8a6c3f50ad950358e43ae4552bdd21196255f289472",
-        "00c66dcd940abc111b016074777a4be21080fb4a3ec4613da820965539db7c4a",
-        "6fc41d05ecb4f063953e2016a89a3e8af9aee0c76e12fc6082287a82dc5e9707",
-        "615bbaa9f00405bdef44792421cca95685a829fed009f7fa0e69fb68ad4f300d",
-        "375095290dd658f8bdde88312360676cf797bf851466f04d1082ac1b0f792981",
-        "5878671e51f695af9ed6af22bd432b5c6991228ff27b6c9cbd12de2aa723f809",
-        "8036d1a2b5c6fd400ec785572ebfde339fcdf90cddf04c9cee3ea2c1dbbe4446",
-        "b996fb7bdd3c4be5193ba51f399c155ffaaf0fc436858d382766ad18330742bf",
-        "f45fa4654481eafad16ab2d3d9e36b3af434d5429103f1cd6dd72cc583651abb",
-        "7d3b0bdeb1b395eecca864e012e7d77f5080c0642a170870af365b09db5ef81f",
-        "59ac2b321f892a6a9d32bc45b72e74d5afd0ad697afe6341171694f651339225",
-        "5a4cdcf638fc6b1be803d03356b69c4641fc1b89ab604e5a1351d6121a244f36"
-      ],
-      "memberVariantIds": [
-        "polaraxes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        3
-      ]
-    },
-    {
-      "candidateId": "candidate.rulers.9b812e737206",
-      "categoryId": "rulers",
-      "categoryDisplayName": "Rulers",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Axes-family ruler settings.",
-      "capabilitySha256": "9b812e737206ce255e14b11a36743b3a3b0a9fe7dc4bdd28eca983a55c2b137b",
-      "propertyPaths": [
-        "LatitudeAxis",
-        "LongitudeAxis",
-        "AxisColor"
-      ],
-      "propertyCapabilitySha256": [
-        "7fcb12adf8ea84a3ea7e5323771c20a8f8d5627d8520419a7433e3541b0fa189",
-        "94918cc67abfaeb25e4b015f247e9e1b95ab650e3175a3c2395463aa24d45733",
-        "a10467566c1ee6447ff20ff955659052d33f2a1d0715959e441d4b369cb3f6ef"
-      ],
-      "memberVariantIds": [
-        "geoaxes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        4
-      ]
-    },
-    {
-      "candidateId": "candidate.rulers.9e9813d3c1e2",
-      "categoryId": "rulers",
-      "categoryDisplayName": "Rulers",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Axes-family ruler settings.",
-      "capabilitySha256": "9e9813d3c1e2049861b300bfbf8a1027db45b8faf0cc81f982781fa4ee51af8f",
+      "capabilitySha256": "02b40eb8adf35848357c7a3a3e42d2960484fa9537f61830f92190418febdd5b",
       "propertyPaths": [
         "XLim",
         "YLim",
@@ -4147,12 +4073,12 @@
         "c754023641b9215b5ab6586b17ec8032d77c4dfd04edd5c06c57407e1e9d76c5",
         "98b1d7440334b7d2d99955c7f9c009d466c1c7744bbf67290a8c638754fafd9e",
         "c1c8aa0efff941d7b2c96d148ce73b76a46a573a5f335720b0073246519d1177",
-        "da789a6afaae1ab2df27bc688bea57a696ef9795b6785678947893e33f83d7f9",
-        "367a9312976f8edcdb60c2ceb77f5c01b1a9c99437488ece862f4b0e87b6b832",
-        "5e0c1acaf30783502becca36c7e9c0c33f5932c5f8f9f49001bd747c8bd7cc13",
-        "2aa047388dde63a5325c1aa39a149aaf718d64607c31a29c62daa842b35b2423",
-        "43a4bd28e85e43ab875c4965e27ad21408c95e11087abd4d435ad9fa33da5fc8",
-        "028d5690b873f40531d3622c66835348fd6859f43f6949e3a271cc2d0333ab39",
+        "c794359af434bcee1a371a27e149dfff679d00c08aec737186858e484b85d052",
+        "da56f4a009e2fded5a2a9ef1c4cadb2b4ee2f99b3ce3f618a748ee331228c5dd",
+        "01fb0ad5c9141707be2dbf557218b99845e6f412d2c66722a056d0eb9fd40964",
+        "4b557c1f1a7cb580c784fb7427c7063ada8d1733ca6f187fe35800d375818c5b",
+        "0914811f13f5dfd39b6364a98330918167668cd157eb6d63ee11a23a0df8cd92",
+        "65ee97eed8e3e15f130f6798d78bd43a64637a503c9a1503b736aec943a60835",
         "7f23b23101dff383f7292831ab4f49e65a9a5f1ab3c7835aa26d20c3851849ab",
         "3797eb9ef3649a21f61483d06a4db551e94281a1237bb54a9c5c5945d7b80f88",
         "ae5af49df5f80ad171ce46d3c9c9ae44871765c3b3f73ddd90b552594b413834",
@@ -4167,6 +4093,80 @@
       "reuseCount": 2,
       "documentedCategoryOrders": [
         3
+      ]
+    },
+    {
+      "candidateId": "candidate.rulers.0ca03bddf06e",
+      "categoryId": "rulers",
+      "categoryDisplayName": "Rulers",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes-family ruler settings.",
+      "capabilitySha256": "0ca03bddf06ec19cae14665a88caebd84c2197f0e8a764d2a2e4ce33a0527559",
+      "propertyPaths": [
+        "RLim",
+        "RLimMode",
+        "ThetaLim",
+        "ThetaLimMode",
+        "RAxis",
+        "ThetaAxis",
+        "RAxisLocation",
+        "RAxisLocationMode",
+        "RColor",
+        "RColorMode",
+        "ThetaColor",
+        "ThetaColorMode",
+        "RDir",
+        "ThetaDir",
+        "ThetaAxisUnits"
+      ],
+      "propertyCapabilitySha256": [
+        "a4de00b71367d34b46a664bc912248054ff24a9f46b7b3eccebc2d3f3016486e",
+        "6f493080eb2ae09b4b86abd32b91900a4a5a5736e177c35e10a20da0d0280004",
+        "a0495746087a1cffd7ab9adcadb4481cbd2fe334c454ff049f395e1870f4b145",
+        "7529fa8d8ee79656b0cba8a6c3f50ad950358e43ae4552bdd21196255f289472",
+        "00c66dcd940abc111b016074777a4be21080fb4a3ec4613da820965539db7c4a",
+        "6fc41d05ecb4f063953e2016a89a3e8af9aee0c76e12fc6082287a82dc5e9707",
+        "615bbaa9f00405bdef44792421cca95685a829fed009f7fa0e69fb68ad4f300d",
+        "375095290dd658f8bdde88312360676cf797bf851466f04d1082ac1b0f792981",
+        "3b9c08921d76487ff06501ada03c8ddddbaac7efbe563036532dc20b5b254d3f",
+        "d098a1a395d8efa38eebe34bef9e745c1f383defee6890561ece52f2f4b1fa0e",
+        "078512329967cb1cbc3e02c33893125402b40661c8ea4d38cd61a6eeb0729773",
+        "01d8065b8ca97a2ad7fb297377207a65cee3848aaff449ccc4e9c07fe06ffa8d",
+        "7d3b0bdeb1b395eecca864e012e7d77f5080c0642a170870af365b09db5ef81f",
+        "59ac2b321f892a6a9d32bc45b72e74d5afd0ad697afe6341171694f651339225",
+        "5a4cdcf638fc6b1be803d03356b69c4641fc1b89ab604e5a1351d6121a244f36"
+      ],
+      "memberVariantIds": [
+        "polaraxes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
+      "candidateId": "candidate.rulers.9b812e737206",
+      "categoryId": "rulers",
+      "categoryDisplayName": "Rulers",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes-family ruler settings.",
+      "capabilitySha256": "9b812e737206ce255e14b11a36743b3a3b0a9fe7dc4bdd28eca983a55c2b137b",
+      "propertyPaths": [
+        "LatitudeAxis",
+        "LongitudeAxis",
+        "AxisColor"
+      ],
+      "propertyCapabilitySha256": [
+        "7fcb12adf8ea84a3ea7e5323771c20a8f8d5627d8520419a7433e3541b0fa189",
+        "94918cc67abfaeb25e4b015f247e9e1b95ab650e3175a3c2395463aa24d45733",
+        "a10467566c1ee6447ff20ff955659052d33f2a1d0715959e441d4b369cb3f6ef"
+      ],
+      "memberVariantIds": [
+        "geoaxes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        4
       ]
     },
     {
