@@ -4,6 +4,15 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     %   default child placement, copy configuration, and Preview projection.
 
     methods (Test, TestTags = {'fast', 'model', 'parser', 'generation', 'roundtrip'})
+        function unreviewedMemberEffectKeepsCoupledTracksUnknown(testCase)
+            % unreviewedMemberEffectKeepsCoupledTracksUnknown Do not overwrite conservative shared state.
+            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
+                "app.First = uibutton(app.Grid);", "app.First.ContextMenu = [];"]);
+            result = testCase.state(document, registry, grid, "RowHeight");
+            testCase.verifyFalse(result.IsKnown);
+            testCase.verifyEqual(result.ReasonCode, "unreviewed-effect");
+        end
+
         function generatedConstructorTracksSurviveOtherGeneratedSettings(testCase)
             % generatedConstructorTracksSurviveOtherGeneratedSettings Retain legacy named inputs when unrelated setters exist.
             registry = macd.model.ComponentRegistry.createDefault();

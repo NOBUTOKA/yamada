@@ -153,6 +153,32 @@ classdef PropertyStateResolver
             end
         end
 
+        function setting = unresolvedSetting(members, paths, registry)
+            % unresolvedSetting Find an unreviewed write that invalidates a coupled state family.
+            arguments (Input)
+                members macd.model.ComponentRecord
+                paths string
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                setting macd.model.PropertySetting
+            end
+            setting = macd.model.PropertySetting.empty;
+            for member = members
+                definition = registry.get(member.Factory, member.CreationArguments);
+                for candidate = member.Settings
+                    property = definition.getProperty(candidate.Path);
+                    if isempty(property), continue, end
+                    policy = property.Application;
+                    if ~any(policy.EffectStatus == ["independent", "modeled"]) && ...
+                            (isempty(policy.AffectedPaths) || any(ismember(policy.AffectedPaths, paths)))
+                        setting = candidate;
+                        return
+                    end
+                end
+            end
+        end
+
         function transaction = transaction(states)
             % transaction Copy only resolved effective values into a validator snapshot.
             arguments (Input)

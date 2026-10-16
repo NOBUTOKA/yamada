@@ -106,6 +106,12 @@ classdef ButtonSelectionPolicy
                 return
             end
             members = [group children];
+            unresolved = macd.model.PropertyStateResolver.unresolvedSetting(members, ["Value", "SelectedObject"], registry);
+            if ~isempty(unresolved)
+                states(index) = states(index).withEffective([], false, unresolved.Id, ...
+                    "An unreviewed group member setter may affect selection.", "unreviewed-effect");
+                return
+            end
             events = macd.model.ButtonSelectionPolicy.events(members, document, registry);
             present = false(1, numel(children));
             creationCertain = false(1, numel(children));
@@ -147,12 +153,22 @@ classdef ButtonSelectionPolicy
                 elseif event.Path == "SelectedObject" && child == 0
                     selected = 0;
                     known = false;
+                    if event.Known && isempty(event.Value) && any(present)
+                        diagnostics(end + 1) = macd.model.Diagnostic("invalid-property-sequence", "error", ...
+                            "SelectedObject cannot be empty while selectable children exist.", group.Id); %#ok<AGROW>
+                    end
                     if strlength(event.Expression) > 0
                         target = regexp(char(strtrim(event.Expression)), '^app\.([A-Za-z]\w*)$', 'tokens', 'once');
                         if ~isempty(target)
                             originalNames = arrayfun(@(item) document.sourceComponentName(item.Id), children);
-                            match = find((string({children.Name}) == string(target{1}) | originalNames == string(target{1})) & present, 1);
-                            if ~isempty(match), selected = match; known = all(creationCertain(present)); end
+                            match = find(string({children.Name}) == string(target{1}) | originalNames == string(target{1}), 1);
+                            if ~isempty(match) && ~present(match)
+                                diagnostics(end + 1) = macd.model.Diagnostic("invalid-property-sequence", "error", ...
+                                    "SelectedObject refers to a child before its creation.", group.Id); %#ok<AGROW>
+                            elseif ~isempty(match)
+                                selected = match;
+                                known = all(creationCertain(present));
+                            end
                         end
                     end
                     effectId = event.Id;

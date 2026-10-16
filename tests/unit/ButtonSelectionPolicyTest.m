@@ -3,6 +3,29 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
     %   Fixtures are parsed as data; native contracts live in the separate UI test.
 
     methods (Test)
+        function unreviewedGroupSetterCannotBeResolvedAsKnown(testCase)
+            % unreviewedGroupSetterCannotBeResolvedAsKnown Preserve the common unknown-effect contract.
+            [document, registry] = fixture("app.Group.ContextMenu = [];");
+            testCase.verifyTrue(all(isnan(values(document, registry))));
+        end
+
+        function invalidIntermediateSelectionIsNotHidden(testCase)
+            % invalidIntermediateSelectionIsNotHidden Retain proven errors even when a later Value selects a child.
+            [document, registry] = fixture(["app.Group.SelectedObject = [];"; "app.First.Value = 1;"]);
+            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+            testCase.verifyTrue(any(string({diagnostics.Code}) == "invalid-property-sequence"));
+        end
+
+        function forwardSelectionReferenceRetainsItsFailure(testCase)
+            % forwardSelectionReferenceRetainsItsFailure A later valid Value cannot repair an earlier invalid handle.
+            [~, registry, source] = fixture("app.Second.Value = 1;");
+            source = replace(source, "app.Second = uiradiobutton(app.Group);", ...
+                "app.Group.SelectedObject = app.Second;" + newline + "app.Second = uiradiobutton(app.Group);");
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+            testCase.verifyTrue(any(string({diagnostics.Code}) == "invalid-property-sequence"));
+        end
+
         function firstCreatedChildIsSelectedWithoutExplicitValue(testCase)
             % firstCreatedChildIsSelectedWithoutExplicitValue Use creation order instead of Children order.
             [document, registry] = fixture("");

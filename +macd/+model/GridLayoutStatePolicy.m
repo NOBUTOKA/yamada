@@ -47,6 +47,18 @@ classdef GridLayoutStatePolicy
                 definition = registry.get(grid.Factory, grid.CreationArguments);
                 property = definition.getProperty("RowHeight");
                 if isempty(property) || property.Application.EffectPolicy ~= "gridTracks", continue, end
+                members = document.Components(string({document.Components.ParentId}) == grid.Id | ...
+                    string({document.Components.Id}) == grid.Id);
+                unresolved = macd.model.PropertyStateResolver.unresolvedSetting(members, ...
+                    ["RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column"], registry);
+                if ~isempty(unresolved)
+                    for index = 1:numel(states)
+                        if ~any(states(index).Path == ["RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column"]), continue, end
+                        states(index) = states(index).withEffective([], false, unresolved.Id, ...
+                            "An unreviewed grid member setter may affect placement or tracks.", "unreviewed-effect");
+                    end
+                    continue
+                end
                 result = macd.model.GridLayoutStatePolicy.configuration(grid, document, registry);
                 for axis = 1:2
                     if component.Id == grid.Id
