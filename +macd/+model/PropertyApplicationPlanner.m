@@ -21,6 +21,18 @@ classdef PropertyApplicationPlanner
             values = component.CreationArguments;
             definition = registry.get(component.Factory, values);
             removed = false(size(values));
+            % Legacy generated pairs have no source-setting records but obey the same policy.
+            first = numel(definition.CreationArguments) + 1;
+            for index = first:2:numel(values) - 1
+                if ~((ischar(values{index}) && isrow(values{index})) || ...
+                        (isstring(values{index}) && isscalar(values{index}))), continue, end
+                property = definition.getProperty(string(values{index}));
+                if isempty(property) || ~property.IsEditable || ...
+                        any(property.PreviewPolicy == ["skip", "notRendered"]) || ...
+                        property.Path == "ImageSource" || macd.model.PositionAliasPolicy.applies(property)
+                    removed(index:index + 1) = true;
+                end
+            end
             for setting = component.Settings
                 index = setting.FactoryArgumentIndex;
                 if index < 2 || index > numel(values), continue, end

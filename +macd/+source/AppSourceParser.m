@@ -318,6 +318,23 @@ classdef AppSourceParser
                 end
             end
 
+            % Construction callbacks can mutate any previously created object.
+            document.Metadata.HasUnresolvedLifecycleEffects = false;
+            document.Metadata.HasUnrecognizedSetter = false;
+            for member = document.Components
+                concrete = registry.get(member.Factory, member.CreationArguments);
+                for setting = member.Settings
+                    if setting.Path == "CreateFcn" && setting.Method == "nameValue" && ...
+                            ~(setting.ValueKind == "literal" && isempty(setting.LiteralValue))
+                        document.Metadata.HasUnresolvedLifecycleEffects = true;
+                    end
+                    if ~any(string({concrete.Properties.Path}) == setting.Path) && ...
+                            ~any(setting.Path == ["Layout.Row", "Layout.Column"])
+                        document.Metadata.HasUnrecognizedSetter = true;
+                    end
+                end
+            end
+
             % Combine parser findings with shared model validation diagnostics.
             validationDiagnostics = macd.validation.ModelValidator.validate( ...
                 document, registry);

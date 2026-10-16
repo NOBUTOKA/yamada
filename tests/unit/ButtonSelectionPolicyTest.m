@@ -73,7 +73,9 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
 
         function copiesEffectiveSelectionAfterAllSiblingCreations(testCase)
             % copiesEffectiveSelectionAfterAllSiblingCreations Freeze implicit values and avoid a sole-child zero assignment.
-            [document, registry] = fixture(["app.Group.Position = [10 20 200 120];"; "app.Second.Value = 1;"]);
+            [~, registry, source] = fixture("app.Second.Value = 1;");
+            source = replace(source, "uibuttongroup(app.UIFigure)", "uibuttongroup(app.UIFigure, Position=[10 20 200 120])");
+            document = macd.source.AppSourceParser.parseText(source, registry);
             group = document.getComponentByName("Group");
             snapshot = document.copySubtree(group.Id, registry);
             pasted = document.pasteSubtree(snapshot, document.RootComponentId, registry);
@@ -87,6 +89,23 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             source = macd.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyLessThan(strfind(source, "app." + second.Name + " = uiradiobutton"), ...
                 strfind(source, "app." + first.Name + ".Value = 0;"));
+        end
+
+        function generatedLegacyConstructorValueParticipates(testCase)
+            % generatedLegacyConstructorValueParticipates Replay raw constructor pairs before final assignments.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("LegacySelection", registry);
+            group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);
+            document.insertComponent(registry, "uiradiobutton", group.Id);
+            second = document.insertComponent(registry, "uiradiobutton", group.Id);
+            second.CreationArguments = {"Value", 1};
+            states = document.getEffectivePropertyStates(registry, second.Id);
+            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.EffectiveValue, 1);
+            source = macd.source.NewAppGenerator(registry).generate(document);
+            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            copied = parsed.getComponentByName(second.Name);
+            states = parsed.getEffectivePropertyStates(registry, copied.Id);
+            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.EffectiveValue, 1);
         end
 
         function toggleChildrenParticipateInTheSameSelection(testCase)

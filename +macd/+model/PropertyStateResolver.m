@@ -31,11 +31,12 @@ classdef PropertyStateResolver
             end
 
             % An unexpanded initializer may mutate any reachable object or its hierarchy.
-            if ~isempty(document) && isfield(document.Metadata, "HasUnresolvedInitialization") && ...
-                    document.Metadata.HasUnresolvedInitialization
+            if ~isempty(document) && any(cellfun(@(field) isfield(document.Metadata, field) && ...
+                    document.Metadata.(field), {"HasUnresolvedInitialization", ...
+                    "HasUnresolvedLifecycleEffects", "HasUnrecognizedSetter"}))
                 for index = 1:numel(states)
                     states(index) = states(index).withEffective([], false, "unresolved-call", ...
-                        "An initialization call cannot be expanded without executing application code.", "initialization-call");
+                        "An initialization call, construction callback, or unrecognized setter requires application execution.", "initialization-call");
                 end
                 return
             end
@@ -44,7 +45,8 @@ classdef PropertyStateResolver
             combined = false;
             if ~isempty(document) && ~isempty(registry)
                 combined = (macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document) || ...
-                    macd.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document)) && ...
+                    macd.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document) || ...
+                    macd.model.AncestorGeometryPolicy.requiresCombinedPlan(component, document)) && ...
                     ~(isfield(document.Metadata, "ResolvingCombinedPropertySource") && ...
                     document.Metadata.ResolvingCombinedPropertySource);
             end
@@ -141,6 +143,7 @@ classdef PropertyStateResolver
                 states = macd.model.GridLayoutStatePolicy.resolve(states, component, document, registry);
                 [states, selectionDiagnostics] = macd.model.ButtonSelectionPolicy.resolve(states, component, document, registry);
                 diagnostics = [diagnostics selectionDiagnostics];
+                states = macd.model.AncestorGeometryPolicy.resolve(states, component, document);
             else
                 for index = 1:numel(definitions)
                     if definitions(index).Application.EffectPolicy ~= "buttonSelection", continue, end
@@ -380,14 +383,15 @@ classdef PropertyStateResolver
 
             % Unit conversion depends on native parent geometry and display metrics.
             if any(path == ["Units", "FontUnits"])
-                targetPath = "Position";
-                if path == "FontUnits", targetPath = "FontSize"; end
-                target = find(paths == targetPath, 1);
+                targetPaths = ["Position", "InnerPosition", "OuterPosition"];
+                if path == "FontUnits", targetPaths = "FontSize"; end
                 same = known && previous(index).IsKnown && ...
                     macd.model.PropertyStateResolver.equivalent(value, previous(index).EffectiveValue);
-                if ~isempty(target) && ~same
-                    states(target) = states(target).withEffective([], false, id, ...
-                        path + " changed after " + targetPath + "; native unit conversion is not statically resolved.", "unit-conversion");
+                if ~same
+                    for targetPath = targetPaths
+                        states = setUnknown(states, targetPath, id, ...
+                            path + " requires native unit conversion.", "unit-conversion");
+                    end
                 end
             end
         end

@@ -47,6 +47,63 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyEqual(label.getProperty("Text").LiteralValue, "original");
         end
 
+        function componentHandleCallIsAnExecutionBarrier(testCase)
+            % componentHandleCallIsAnExecutionBarrier Do not assume an external handle consumer is pure.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture("externalSetup(app.Label);"), registry);
+            label = document.getComponentByName("Label");
+            testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+            testCase.verifyFalse(document.IsDirty);
+        end
+
+        function constructionCallbackKeepsEarlierComponentsUnknown(testCase)
+            % constructionCallbackKeepsEarlierComponentsUnknown Preserve source and refuse unproven callback effects.
+            registry = macd.model.ComponentRegistry.createDefault();
+            source = PropertyEffectBoundaryTest.fixture("");
+            source = replace(source, "uilabel(app.UIFigure)", "uilabel(app.UIFigure, CreateFcn=@(~,~) externalSetup(app))");
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            label = document.getComponentByName("Label");
+            testCase.verifyTrue(document.Metadata.HasUnresolvedLifecycleEffects);
+            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+        end
+
+        function unrecognizedSetterCannotDisappearFromProof(testCase)
+            % unrecognizedSetterCannotDisappearFromProof Refuse edits when an uncataloged setter is present.
+            registry = macd.model.ComponentRegistry.createDefault();
+            source = PropertyEffectBoundaryTest.fixture("app.Label.FutureProperty = 1;");
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            label = document.getComponentByName("Label");
+            testCase.verifyTrue(document.Metadata.HasUnrecognizedSetter);
+            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+        end
+
+        function ancestorResizeInvalidatesOnlyGeometry(testCase)
+            % ancestorResizeInvalidatesOnlyGeometry Do not equate a stored child input with reflowed layout.
+            registry = macd.model.ComponentRegistry.createDefault();
+            source = PropertyEffectBoundaryTest.fixture(["app.Label.Position = [10 20 100 30];"; ...
+                "app.UIFigure.Position = [50 50 800 600];"]);
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            label = document.getComponentByName("Label");
+            states = document.getEffectivePropertyStates(registry, label.Id);
+            position = states(arrayfun(@(item) item.Definition.Path == "Position", states)).Resolution;
+            text = states(arrayfun(@(item) item.Definition.Path == "Text", states)).Resolution;
+            testCase.verifyFalse(position.IsKnown);
+            testCase.verifyEqual(position.ReasonCode, "ancestor-geometry");
+            testCase.verifyTrue(text.IsKnown);
+            source = replace(source, "app.UIFigure.Position =", "app.UIFigure.AutoResizeChildren = 'off';" + newline + "app.UIFigure.Position =");
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            label = document.getComponentByName("Label");
+            states = document.getEffectivePropertyStates(registry, label.Id);
+            position = states(arrayfun(@(item) item.Definition.Path == "Position", states)).Resolution;
+            testCase.verifyTrue(position.IsKnown);
+            testCase.verifyEqual(position.EffectiveValue, [10 20 100 30]);
+        end
+
         function deferredCallbackRegistrationIsNotAnExecutionBarrier(testCase)
             % deferredCallbackRegistrationIsNotAnExecutionBarrier Keep anonymous callback bodies unexecuted.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -62,7 +119,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
         function source = fixture(tail)
             % fixture Return owned source without evaluating its initializer or callback.
             arguments (Input)
-                tail (1, 1) string
+                tail string
             end
             arguments (Output)
                 source (1, 1) string
@@ -72,7 +129,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
                 "methods"; "function app = EffectApp"; "createComponents(app);"; "end"; ...
                 "function createComponents(app)"; "app.UIFigure = uifigure(Visible='off');"; ...
                 "app.Label = uilabel(app.UIFigure);"; "app.Label.Text = ""original"";"; ...
-                tail; "end"; "end"; "end"], newline) + newline;
+                reshape(tail, [], 1); "end"; "end"; "end"], newline) + newline;
         end
     end
 end

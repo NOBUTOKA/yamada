@@ -158,7 +158,13 @@ classdef InitializationSourceAnalyzer
                 return
             end
             instance = ~isempty(call.receiver) || ~isempty(regexp(strtrim(call.arguments), '^app\s*(?:,|$)', 'once'));
-            if ~instance, return, end
+            if ~instance
+                % Passing an owned component permits arbitrary mutation by an opaque callee.
+                if ~contains(code, "@") && ~isempty(regexp(call.arguments, '(?<!\w)app\s*\.\s*\w+', 'once'))
+                    reason = "A call receiving a component handle cannot be expanded statically.";
+                end
+                return
+            end
             if any(names == string(call.name))
                 target = string(call.name);
             elseif ~any(string(call.name) == [string(methods("matlab.apps.AppBase"))', "registerApp", "runStartupFcn", "createCallbackFcn"])

@@ -217,6 +217,20 @@ classdef ButtonSelectionPolicy
                 end
                 events(end + 1) = struct("Sequence", sequence, "Member", index, "Path", "creation", ...
                     "Value", [], "Known", known, "Expression", "", "Id", "creation:" + member.Id, "Constructor", true); %#ok<AGROW>
+                if member.Origin ~= "parsed"
+                    % Legacy constructor pairs precede canonical post-construction entries.
+                    definition = registry.get(member.Factory, member.CreationArguments);
+                    first = numel(definition.CreationArguments) + 1;
+                    for argument = first:2:numel(member.CreationArguments) - 1
+                        name = member.CreationArguments{argument};
+                        if ~((ischar(name) && isrow(name)) || (isstring(name) && isscalar(name))) || string(name) ~= "Value", continue, end
+                        value = member.CreationArguments{argument + 1};
+                        tail = tail + 1;
+                        events(end + 1) = struct("Sequence", tail, "Member", index, "Path", "Value", ...
+                            "Value", {value}, "Known", isValidValue(value), "Expression", "", ...
+                            "Id", "creation:" + member.Id, "Constructor", true); %#ok<AGROW>
+                    end
+                end
                 for setting = member.Settings
                     if setting.Method == "generated" || ~any(setting.Path == ["Value", "SelectedObject"]), continue, end
                     value = setting.LiteralValue;

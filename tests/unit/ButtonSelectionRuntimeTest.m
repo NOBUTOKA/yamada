@@ -21,7 +21,7 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
                 testCase.verifyEqual(double([first.Value second.Value]), [1 0]);
                 testCase.verifyError(@() set(group, 'SelectedObject', []), 'MATLAB:hg:InvalidSelectedObjectType');
                 delete(second);
-                                expectedError = "MATLAB:ui:RadioButton:noButtonSelected";
+                expectedError = "MATLAB:ui:RadioButton:noButtonSelected";
                 if factory == "uitogglebutton", expectedError = "MATLAB:ui:ToggleButton:noButtonSelected"; end
                 testCase.verifyError(@() set(first, 'Value', 0), expectedError);
                 testCase.verifyEqual(double(first.Value), 1);
@@ -29,8 +29,20 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
             end
         end
 
-        function constructorsAndMixedChildrenUseTheSameGroup(testCase)
-            % constructorsAndMixedChildrenUseTheSameGroup Verify constructor values and state-button exclusion.
+        function verticalSliderRetainsItsNativeFixedWidth(testCase)
+            % verticalSliderRetainsItsNativeFixedWidth Verify the finite vertical position normalization.
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() delete(figure));
+            for style = ["slider", "range"]
+                slider = uislider(figure, style, Orientation="vertical");
+                slider.Position = [10 20 130 35];
+                testCase.verifyEqual(slider.Position, [10 20 3 35]);
+                delete(slider);
+            end
+        end
+
+        function constructorsRejectMixedFamiliesAndExcludeStateButtons(testCase)
+            % constructorsRejectMixedFamiliesAndExcludeStateButtons Verify constructor values and state-button exclusion.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             group = uibuttongroup(figure);
