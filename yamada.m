@@ -1438,6 +1438,9 @@ classdef yamada < matlab.apps.AppBase
                     ~isa(app.PreviewHandles, "containers.Map")
                 return
             end
+            % Reserve one version before native layout can reenter publication.
+            revision = app.InteractionOverlayRevision + 1;
+            app.InteractionOverlayRevision = revision;
             app.layoutPreviewCanvas();
             components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
                 "height", {}, "shape", {}, "selected", {}, "tabGroup", {}, ...
@@ -1522,10 +1525,9 @@ classdef yamada < matlab.apps.AppBase
                     ~app.isVisibleInSelectedTab(app.ActiveGridId)
                 app.ActiveGridId = "";
             end
-            app.InteractionOverlayRevision = app.InteractionOverlayRevision + 1;
             gridEditor = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, app.ActiveGridId, ...
-                app.SelectedComponentId, app.InteractionOverlayRevision, app.Registry);
+                app.SelectedComponentId, revision, app.Registry);
             % A selected nested grid edits its tracks while moving in its parent grid.
             placementGridId = "";
             selected = app.Document.getComponent(app.SelectedComponentId);
@@ -1538,7 +1540,7 @@ classdef yamada < matlab.apps.AppBase
             end
             gridPlacement = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, placementGridId, ...
-                app.SelectedComponentId, app.InteractionOverlayRevision, app.Registry);
+                app.SelectedComponentId, revision, app.Registry);
             innerPosition = double(app.PreviewCanvas.InnerPosition);
             root = app.Document.getComponent(app.Document.RootComponentId);
             rootPosition = root.getProperty("Position");
@@ -1558,7 +1560,11 @@ classdef yamada < matlab.apps.AppBase
             end
             [dragSource, reparentTargets] = macd.ui.ReparentOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, app.SelectedComponentId, app.DropStates, ...
-                app.InteractionOverlayRevision, @(id) app.isVisibleInSelectedTab(id));
+                revision, @(id) app.isVisibleInSelectedTab(id));
+            % A newer callback owns publication if layout reentered this update.
+            if revision ~= app.InteractionOverlayRevision
+                return
+            end
             app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
                 "height", innerPosition(4), "surfaceBounds", app.PreviewEditingBounds, ...
                 "components", components, ...
