@@ -335,22 +335,15 @@ classdef GridLayoutStatePolicy
             end
             generated = string({members.Origin}) ~= "parsed";
             if any(generated) && any(~generated)
-                % RoundTripGenerator appends generated blocks at the last parsed creation span.
-                parsed = document.Components(string({document.Components.Origin}) == "parsed");
-                spansKnown = arrayfun(@(member) ~isempty(member.SourceSpans.Creation) && ...
-                    member.SourceSpans.Creation.isKnown(), parsed);
-                certain = false;
-                if all(spansKnown)
-                    ends = arrayfun(@(member) member.SourceSpans.Creation.EndOffset, parsed);
-                    [~, last] = max(ends);
-                    anchor = parsed(last);
-                    certain = isfield(anchor.Metadata, "InitializationCreationSequence") && ...
-                        anchor.Metadata.InitializationCreationCertain;
+                % Use the generator's shared anchor, including later ancestor geometry.
+                certain = true;
+                sequence = 0;
+                try
+                    [~, sequence] = macd.model.AncestorGeometryPolicy.creationAnchor(document);
+                catch
+                    certain = false;
                 end
                 if certain
-                    sequence = anchor.Metadata.InitializationCreationSequence;
-                    named = anchor.Settings(string({anchor.Settings.Method}) == "nameValue");
-                    if ~isempty(named), sequence = max(sequence, max([named.Sequence])); end
                     inserted = find(generated([events.Member]));
                     for index = 1:numel(inserted)
                         events(inserted(index)).Sequence = sequence + index / (numel(inserted) + 1);

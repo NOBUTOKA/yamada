@@ -2,6 +2,29 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
     % RoundTripGeneratorTest Verify conservative source-preserving rewrites.
 
     methods (Test)
+        function newChildFollowsParentCreationAcrossHelpers(testCase)
+            % newChildFollowsParentCreationAcrossHelpers Use execution visits when helper file order differs.
+            registry = macd.model.ComponentRegistry.createDefault();
+            source = strjoin(["classdef AnchorApp < matlab.apps.AppBase"; "properties"; ...
+                "UIFigure matlab.ui.Figure"; "EarlyPanel matlab.ui.container.Panel"; ...
+                "LatePanel matlab.ui.container.Panel"; "end"; "methods"; ...
+                "function app = AnchorApp"; "createEarly(app);"; "createLate(app);"; "end"; ...
+                "function createLate(app)"; "app.LatePanel = uipanel(app.UIFigure);"; "end"; ...
+                "function createEarly(app)"; "app.UIFigure = uifigure(Visible='off');"; ...
+                "app.EarlyPanel = uipanel(app.UIFigure);"; "end"; "end"; "end"], newline) + newline;
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            parent = document.getComponentByName("LatePanel");
+            child = macd.model.ComponentRecord("new-child", "NewChild", "uilabel", "matlab.ui.control.Label");
+            child.setProperty("Text", "retained");
+            document.addComponent(child, parent.Id);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            testCase.assertGreaterThan(strlength(source), 0);
+            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            actual = parsed.getComponentByName("NewChild");
+            testCase.assertNotEmpty(actual);
+            testCase.verifyEqual(actual.ParentId, parsed.getComponentByName("LatePanel").Id);
+        end
+
         function noEditRoundTripPreservesExactSource(testCase)
             % noEditRoundTripPreservesExactSource Keep parsed bytes unchanged.
 

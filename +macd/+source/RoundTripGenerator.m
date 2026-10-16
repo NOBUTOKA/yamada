@@ -272,6 +272,14 @@ classdef RoundTripGenerator
             end
             declarationOffset = max([declarationSpans.EndOffset]);
             creationOffset = max([creationSpans.EndOffset relocationAnchor]);
+            if ~initializationEmitted
+                try
+                    creationOffset = macd.model.AncestorGeometryPolicy.creationAnchor(document);
+                catch exception
+                    diagnostic = macd.model.Diagnostic("ambiguous-component-insertion", "error", string(exception.message));
+                    return
+                end
+            end
             eol = obj.lineEnding(document);
             declarationsText = "";
             creationText = "";

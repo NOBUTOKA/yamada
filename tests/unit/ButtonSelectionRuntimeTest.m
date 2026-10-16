@@ -29,6 +29,40 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
             end
         end
 
+        function pastedPanelRetainsPositionAfterParentInitialization(testCase)
+            % pastedPanelRetainsPositionAfterParentInitialization Execute only an owned copied-container fixture.
+            registry = macd.model.ComponentRegistry.createDefault();
+            className = "OwnedAncestor" + erase(string(java.util.UUID.randomUUID()), "-");
+            original = macd.model.NewAppFactory.createEmpty(className, registry);
+            original.getComponent(original.RootComponentId).setProperty("Visible", "off");
+            left = original.insertComponent(registry, "uipanel", original.RootComponentId);
+            left.setProperty("Position", [20 20 100 80]);
+            original.insertComponent(registry, "uilabel", left.Id);
+            right = original.insertComponent(registry, "uipanel", original.RootComponentId);
+            right.setProperty("Position", [200 20 300 200]);
+            source = macd.source.NewAppGenerator(registry).generate(original);
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            left = document.getComponentByName(left.Name);
+            right = document.getComponentByName(right.Name);
+            snapshot = document.copySubtree(left.Id, registry);
+            pasted = document.pasteSubtree(snapshot, right.Id, registry);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyLessThan(strfind(source, "app." + right.Name + ".Position ="), ...
+                strfind(source, "app." + pasted.Name + " = uipanel"));
+            folder = string(tempname());
+            mkdir(folder);
+            originalPath = string(path);
+            cleanup = onCleanup(@() cleanupOwnedFolder(folder, originalPath));
+            addpath(folder);
+            macd.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
+            app = feval(className);
+            appCleanup = onCleanup(@() delete(app));
+            drawnow;
+            testCase.verifyEqual(app.(pasted.Name).Position, pasted.getProperty("Position").LiteralValue);
+            % Release native handles before removing the owned source directory.
+            clear appCleanup cleanup
+        end
+
         function verticalSliderRetainsItsNativeFixedWidth(testCase)
             % verticalSliderRetainsItsNativeFixedWidth Verify the finite vertical position normalization.
             figure = uifigure("Visible", "off");
@@ -59,6 +93,16 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
             testCase.verifyTrue(state.Value);
         end
     end
+end
+
+function cleanupOwnedFolder(folder, originalPath)
+% cleanupOwnedFolder Restore the path and remove only the test-owned fixture directory.
+arguments (Input)
+    folder (1, 1) string
+    originalPath (1, 1) string
+end
+path(char(originalPath));
+if isfolder(folder), rmdir(folder, "s"); end
 end
 
 %{

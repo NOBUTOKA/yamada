@@ -3,6 +3,59 @@ classdef AncestorGeometryPolicy
     %   It preserves explicit inputs while leaving native child reflow unresolved.
 
     methods (Static)
+        function [offset, sequence] = creationAnchor(document)
+            % creationAnchor Place new blocks after proven geometry of existing ancestors.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                offset (1, 1) double
+                sequence (1, 1) double
+            end
+            parsed = document.Components(string({document.Components.Origin}) == "parsed");
+            visits = arrayfun(@(item) item.Metadata.InitializationCreationSequence, parsed);
+            [~, last] = max(visits);
+            anchor = parsed(last);
+            offset = anchor.SourceSpans.Creation.EndOffset;
+            if ~isfield(anchor.Metadata, "InitializationCreationSequence") || ...
+                    ~anchor.Metadata.InitializationCreationCertain
+                error("macd:AncestorGeometryPolicy:UnsafeAnchor", "New component creation requires a certain initialization anchor.");
+            end
+            sequence = anchor.Metadata.InitializationCreationSequence;
+            named = anchor.Settings(string({anchor.Settings.Method}) == "nameValue");
+            if ~isempty(named), sequence = max(sequence, max([named.Sequence])); end
+            methods = document.Metadata.InitializationContext.Layout.Methods;
+            containing = arrayfun(@(item) item.Span.StartOffset <= offset && item.Span.EndOffset >= offset, methods);
+            if nnz(containing) ~= 1
+                error("macd:AncestorGeometryPolicy:UnsafeAnchor", "The creation method is ambiguous.");
+            end
+            scope = methods(containing).Name;
+            generated = document.Components(string({document.Components.Origin}) == "generated");
+            for member = generated
+                parent = document.getComponent(member.ParentId);
+                while ~isempty(parent)
+                    for setting = parent.Settings
+                        if ~any(setting.Path == ["Position", "InnerPosition", "OuterPosition"]) || ...
+                                setting.Method == "generated" || setting.Sequence <= sequence, continue, end
+                        if ~setting.IsCertain || setting.OwnerMethod ~= scope || ...
+                                isempty(setting.SourceSpan) || setting.SourceSpan.EndOffset < offset
+                            error("macd:AncestorGeometryPolicy:UnsafeAnchor", ...
+                                "Later ancestor geometry has no proven insertion point in the creation method.");
+                        end
+                        offset = setting.SourceSpan.EndOffset;
+                        sequence = setting.Sequence;
+                    end
+                    parent = document.getComponent(parent.ParentId);
+                end
+            end
+            % Keep an inline comment attached to its original source statement.
+            tail = extractAfter(document.OriginalText, offset);
+            lineEnd = regexp(char(tail), '\r?\n', 'start', 'once');
+            if isempty(lineEnd), lineEnd = strlength(tail) + 1; end
+            suffix = extractBefore(tail, lineEnd);
+            if ~isempty(regexp(suffix, '^\s*(%[^\r\n]*)?$', 'once')), offset = offset + strlength(suffix); end
+        end
+
         function result = requiresCombinedPlan(component, document)
             % requiresCombinedPlan Use emitted ordering for pending ancestor geometry.
             arguments (Input)
