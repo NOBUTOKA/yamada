@@ -8,6 +8,11 @@ classdef ComponentRegistry < handle
     %       registry = macd.model.ComponentRegistry.createDefault();
     %       labelDefinition = registry.get("uilabel");
 
+    properties (SetAccess = private)
+        % Revision - Monotonic version of capability and presentation definitions.
+        Revision uint64 = uint64(0)
+    end
+
     properties (Access = private)
         Definitions containers.Map
         FactoryVariantIds containers.Map
@@ -58,6 +63,7 @@ classdef ComponentRegistry < handle
                 end
             end
             obj.Definitions(variantKey) = definition;
+            obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
             if ~isKey(obj.FactoryVariantIds, factoryKey)
                 obj.FactoryVariantIds(factoryKey) = string(definition.Id);
@@ -171,6 +177,7 @@ classdef ComponentRegistry < handle
                 rules macd.model.ParentContextRule
             end
             obj.ParentContextRules = rules(:);
+            obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
@@ -187,6 +194,7 @@ classdef ComponentRegistry < handle
                     "Inspector row template IDs must be unique.");
             end
             obj.InspectorRowDefinitions = definitions(:);
+            obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
         end
 

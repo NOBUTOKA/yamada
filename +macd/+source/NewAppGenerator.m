@@ -41,6 +41,7 @@ classdef NewAppGenerator
             end
 
             % Block generation when shared validation finds unsafe state.
+            evaluationScope = document.evaluationContext(obj.Registry).readScope(); %#ok<NASGU>
             diagnostics = macd.validation.ModelValidator.validate( ...
                 document, obj.Registry);
             source = "";

@@ -82,13 +82,45 @@ classdef ComponentClipboard < handle
                 state (1, 1) struct
             end
             state = struct("Enabled", false, "Reason", "", "ParentId", "");
+            context = document.evaluationContext(registry);
+            records = struct([]);
+            configuration = struct([]);
+            if ~isempty(obj.Snapshot)
+                records = obj.Snapshot.Records;
+                configuration = obj.Snapshot.CopyConfiguration;
+            end
+            input = struct("Contents", obj.hasContents(document), "Records", records, ...
+                "Configuration", configuration, "Cut", obj.IsCut, "Count", obj.PasteCount, ...
+                "MeasuredPosition", obj.MeasuredPosition);
+            key = "clipboard:" + action + ":" + id;
+            [cached, found] = context.lookup(key);
+            if found && isequaln(cached.Input, input)
+                state = cached.State;
+                return
+            end
             try
-                if action == "Copy"
-                    document.copySubtree(id, registry);
-                elseif action == "Cut"
-                    document.copySubtree(id, registry);
-                    candidate = document.structuralCandidate();
-                    candidate.removeSubtree(id, registry);
+                if any(action == ["Copy", "Cut"])
+                    copyKey = "copy:" + id;
+                    [copyState, copied] = context.lookup(copyKey);
+                    if ~copied
+                        copyState = struct("Enabled", false, "Reason", "");
+                        try
+                            document.copySubtree(id, registry);
+                            copyState.Enabled = true;
+                        catch exception
+                            copyState.Reason = string(exception.message);
+                        end
+                        context.remember(copyKey, copyState);
+                    end
+                    if ~copyState.Enabled
+                        error("macd:ComponentClipboard:UnavailableCopy", "%s", copyState.Reason);
+                    end
+                    if action == "Cut"
+                        deletion = macd.model.DocumentEditAvailability.deletion(document, id, registry);
+                        if ~deletion.Enabled
+                            error("macd:ComponentClipboard:UnavailableCut", "%s", deletion.Reason);
+                        end
+                    end
                 else
                     if ~obj.hasContents(document)
                         error("macd:ComponentClipboard:Empty", "No subtree is available for this document.");
@@ -102,6 +134,7 @@ classdef ComponentClipboard < handle
             catch exception
                 state.Reason = string(exception.message);
             end
+            context.remember(key, struct("Input", input, "State", state));
         end
 
         function parentId = destination(obj, document, targetId, registry)

@@ -16,6 +16,7 @@ classdef ModelValidator
             end
 
             % Validate the class identity before traversing component records.
+            evaluationScope = document.evaluationContext(registry).readScope(); %#ok<NASGU>
             diagnostics = macd.model.Diagnostic.empty;
             if ~isvarname(document.ClassName) || iskeyword(document.ClassName)
                 diagnostics(end + 1) = macd.model.Diagnostic( ...

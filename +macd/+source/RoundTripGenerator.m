@@ -31,6 +31,7 @@ classdef RoundTripGenerator
             end
 
             % New documents keep the canonical generator as their source owner.
+            evaluationScope = document.evaluationContext(obj.Registry).readScope(); %#ok<NASGU>
             if strlength(document.OriginalText) == 0
                 [source, diagnostics] = macd.source.NewAppGenerator(obj.Registry).generate(document);
                 return

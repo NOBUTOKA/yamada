@@ -18,6 +18,41 @@ classdef PropertyStateResolver
                 states macd.model.PropertyState
                 diagnostics macd.model.Diagnostic
             end
+            context = macd.model.EvaluationContext.empty;
+            if ~isempty(document) && ~isempty(registry)
+                owned = document.getComponent(component.Id);
+                if ~isempty(owned) && owned == component
+                    context = document.evaluationContext(registry);
+                    evaluationScope = context.readScope(); %#ok<NASGU>
+                    [cached, found] = context.lookup("states:" + component.Id);
+                    if found && isequaln(cached.Definitions, definitions)
+                        states = cached.States;
+                        diagnostics = cached.Diagnostics;
+                        return
+                    end
+                end
+            end
+            [states, diagnostics] = macd.model.PropertyStateResolver.evaluate(component, definitions, document, registry);
+            if ~isempty(context)
+                context.remember("states:" + component.Id, struct("Definitions", definitions, ...
+                    "States", states, "Diagnostics", diagnostics));
+            end
+        end
+    end
+
+    methods (Static, Access = private)
+        function [states, diagnostics] = evaluate(component, definitions, document, registry)
+            % evaluate Resolve one uncached input using the established finite policies.
+            arguments (Input)
+                component (1, 1) macd.model.ComponentRecord
+                definitions macd.model.PropertyDefinition
+                document macd.model.DocumentModel = macd.model.DocumentModel.empty
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
+            end
+            arguments (Output)
+                states macd.model.PropertyState
+                diagnostics macd.model.Diagnostic
+            end
 
             % Defaults are audited seeds, never new PropertyEntry objects.
             states = macd.model.PropertyState.empty;
@@ -168,6 +203,9 @@ classdef PropertyStateResolver
             states = macd.model.PropertyStateResolver.retainUnreviewedEffects(states, definitions, component, registry);
         end
 
+    end
+
+    methods (Static)
         function result = hasUnresolvedExecution(document)
             % hasUnresolvedExecution Return whether source execution prevents static value guarantees.
             arguments (Input)

@@ -54,11 +54,28 @@ classdef DocumentModel < handle
     end
 
     properties (Access = private)
+        Evaluation macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
     end
 
     methods
+        function context = evaluationContext(obj, registry)
+            % evaluationContext Reuse evaluations only while all semantic inputs remain equal.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                context (1, 1) macd.model.EvaluationContext
+            end
+            if isempty(obj.Evaluation) || (~obj.Evaluation.isReading(registry) && ...
+                    ~obj.Evaluation.matches(obj, registry))
+                obj.Evaluation = macd.model.EvaluationContext(obj, registry);
+            end
+            context = obj.Evaluation;
+        end
+
         function obj = DocumentModel(className)
             % DocumentModel Create a shared document for new or parsed apps.
             arguments (Input)
@@ -254,9 +271,10 @@ classdef DocumentModel < handle
             requested = changes;
             historyChanges(unchanged) = [];
             changes(unchanged) = [];
+            prepared = macd.model.DocumentModel.empty;
             if ~isempty(registry)
                 if ~isempty(changes)
-                    obj.preflightPropertyChanges(componentId, requested, registry);
+                    prepared = obj.preflightPropertyChanges(componentId, requested, registry);
                 else
                     states = obj.getEffectivePropertyStates(registry, componentId);
                     obj.assertRequestedStates(states, requested);
@@ -281,6 +299,9 @@ classdef DocumentModel < handle
             if ~isempty(historyChanges)
                 obj.recordHistory(struct("Kind", "property-batch", ...
                     "ComponentId", componentId, "Changes", historyChanges));
+            end
+            if ~isempty(prepared)
+                obj.evaluationContext(registry).rememberConfiguration("combined", prepared);
             end
         end
 
@@ -1197,13 +1218,16 @@ classdef DocumentModel < handle
     end
 
     methods (Access = private)
-        function preflightPropertyChanges(obj, componentId, changes, registry)
+        function parsed = preflightPropertyChanges(obj, componentId, changes, registry)
             % preflightPropertyChanges Validate generated candidate source before mutating live records.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 componentId (1, 1) string
                 changes (1, :) struct
                 registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                parsed (1, 1) macd.model.DocumentModel
             end
 
             % Use independent records and avoid recording candidate-only user history.

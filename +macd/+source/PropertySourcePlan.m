@@ -14,6 +14,9 @@ classdef PropertySourcePlan
             arguments (Output)
                 plan (1, 1) struct
             end
+            context = document.evaluationContext(registry);
+            [plan, found] = context.configuration("combined", component.Name);
+            if found, return, end
             % The detached candidate may use conservative states during generation.
             candidate = document.structuralCandidate();
             candidate.Metadata.ResolvingCombinedPropertySource = true;
@@ -30,6 +33,7 @@ classdef PropertySourcePlan
                 error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "The configured component was not retained.");
             end
             plan = struct("Document", parsed, "Component", configured);
+            context.rememberConfiguration("combined", parsed);
         end
 
         function result = needsPlan(document, component)
@@ -56,6 +60,10 @@ classdef PropertySourcePlan
             arguments (Output)
                 plan (1, 1) struct
             end
+            context = document.evaluationContext(registry);
+            [plan, found] = context.configuration("placement:" + component.Id, ...
+                document.sourceComponentName(component.Id));
+            if found, return, end
             if macd.source.SubtreeReparentSourceEdits.contains(document, component.Id)
                 [~, ~, candidate] = macd.source.SubtreeReparentSourceEdits.build(document, registry);
                 configured = candidate.getComponentByName(document.sourceComponentName(component.Id));
@@ -63,6 +71,7 @@ classdef PropertySourcePlan
             else
                 plan = macd.source.PropertyInsertionPlanner.plan(document, component, registry);
             end
+            context.rememberConfiguration("placement:" + component.Id, plan.Document);
         end
     end
 end
