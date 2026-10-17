@@ -14,9 +14,107 @@ classdef PreviewRenderer < handle
         PreviewMargin double = 12
         CombinedConfiguration macd.model.DocumentModel = macd.model.DocumentModel.empty
         UsesCombinedConfiguration logical = false
+        RenderedInputs struct = struct()
+        RenderedRegistryRevision uint64 = uint64(0)
+        RenderCount double = 0
+        SynchronizationCount double = 0
+        FallbackReason string = ""
     end
 
     methods
+        function [applied, diagnostics, geometryChanged] = synchronize(obj, document, handles, request)
+            % synchronize Apply audited independent label changes without replacing native handles.
+            %   Any unrelated input change or uncertain setter uses the existing renderer.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                document (1, 1) macd.model.DocumentModel
+                handles containers.Map
+                request (1, 1) macd.ui.RefreshRequest
+            end
+            arguments (Output)
+                applied (1, 1) logical
+                diagnostics macd.model.Diagnostic
+                geometryChanged (1, 1) logical
+            end
+            applied = false;
+            diagnostics = macd.model.Diagnostic.empty;
+            geometryChanged = false;
+            obj.FallbackReason = "unsupported-change";
+            if request.Kind ~= "properties" || isempty(request.Paths) || numel(request.ComponentIds) ~= 1
+                return
+            end
+            [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
+            if ~safe || isempty(fieldnames(obj.RenderedInputs)) || ...
+                    obj.RenderedRegistryRevision ~= obj.Registry.Revision
+                obj.FallbackReason = "untracked-inputs";
+                return
+            end
+            if isequaln(inputs, obj.RenderedInputs)
+                obj.FallbackReason = "";
+                applied = true;
+                return
+            end
+            before = obj.maskRequestedInputs(obj.RenderedInputs, request);
+            after = obj.maskRequestedInputs(inputs, request);
+            if ~isequaln(before, after)
+                obj.FallbackReason = "unrelated-inputs";
+                return
+            end
+            id = request.ComponentIds(1);
+            component = document.getComponent(id);
+            allowed = ["Text", "FontSize", "FontName", "FontWeight", "FontAngle", ...
+                "FontColor", "BackgroundColor", "HorizontalAlignment", "VerticalAlignment", ...
+                "WordWrap", "Visible", "Enable", "Tooltip"];
+            if isempty(component) || component.Factory ~= "uilabel" || ...
+                    ~all(ismember(request.Paths, allowed)) || ~isKey(handles, char(id))
+                return
+            end
+            preview = handles(char(id));
+            if ~isvalid(preview)
+                obj.FallbackReason = "stale-handle";
+                return
+            end
+            states = document.getEffectivePropertyStates(obj.Registry, id);
+            paths = string(arrayfun(@(item) item.Definition.Path, states));
+            [found, indices] = ismember(request.Paths, paths);
+            if ~all(found), return, end
+            for index = indices
+                state = states(index);
+                if state.Definition.Application.EffectStatus ~= "independent" || ...
+                        state.Definition.PreviewPolicy ~= "apply" || ~state.Resolution.IsKnown || ...
+                        ~state.Resolution.IsEditable
+                    obj.FallbackReason = "unsupported-effect";
+                    return
+                end
+            end
+            try
+                for index = indices
+                    state = states(index);
+                    obj.setProperty(preview, state.Definition.Path, state.Resolution.EffectiveValue, component);
+                end
+            catch
+                obj.FallbackReason = "native-setter";
+                return
+            end
+            obj.RenderedInputs = inputs;
+            obj.SynchronizationCount = obj.SynchronizationCount + 1;
+            obj.FallbackReason = "";
+            geometryChanged = request.affectsGeometry();
+            applied = true;
+        end
+
+        function value = statistics(obj)
+            % statistics Return bounded diagnostic counters for developer measurements.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+            end
+            arguments (Output)
+                value (1, 1) struct
+            end
+            value = struct("renders", obj.RenderCount, "synchronizations", obj.SynchronizationCount, ...
+                "fallbackReason", obj.FallbackReason);
+        end
+
         function obj = PreviewRenderer(registry)
             % PreviewRenderer Create a renderer backed by one component registry.
             arguments (Input)
@@ -45,6 +143,8 @@ classdef PreviewRenderer < handle
             end
 
             % Dispose stale editor-owned controls before constructing the new tree.
+            obj.RenderCount = obj.RenderCount + 1;
+            obj.RenderedInputs = struct();
             delete(parent.Children);
             handles = containers.Map("KeyType", "char", "ValueType", "any");
             diagnostics = macd.model.Diagnostic.empty;
@@ -80,6 +180,9 @@ classdef PreviewRenderer < handle
             end
             diagnostics = obj.Diagnostics;
             obj.Diagnostics = macd.model.Diagnostic.empty;
+            [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
+            if safe, obj.RenderedInputs = inputs; end
+            obj.RenderedRegistryRevision = obj.Registry.Revision;
         end
     end
 
@@ -88,6 +191,29 @@ classdef PreviewRenderer < handle
     end
 
     methods (Access = private)
+        function inputs = maskRequestedInputs(~, inputs, request)
+            % maskRequestedInputs Prove that every other source and model input stayed unchanged.
+            arguments (Input)
+                ~
+                inputs (1, 1) struct
+                request (1, 1) macd.ui.RefreshRequest
+            end
+            arguments (Output)
+                inputs (1, 1) struct
+            end
+            for index = 1:numel(inputs.Components)
+                component = inputs.Components(index);
+                if ~any(request.ComponentIds == component.Id), continue, end
+                if ~isempty(component.Properties)
+                    component.Properties(ismember(string({component.Properties.Path}), request.Paths)) = [];
+                end
+                if ~isempty(component.Settings)
+                    component.Settings(ismember(string({component.Settings.Path}), request.Paths)) = [];
+                end
+                inputs.Components(index) = component;
+            end
+        end
+
         function renderComponent(obj, document, componentId, parent, handles)
             % renderComponent Construct one safe component and all of its children.
             arguments (Input)

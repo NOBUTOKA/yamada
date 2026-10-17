@@ -5,10 +5,12 @@ arguments (Input)
     options.OutputFolder (1, 1) string = fullfile(pwd, "testResults", "performance")
     options.Case (1, 1) string {mustBeMember(options.Case, ...
         ["absolute", "flatgrid", "nestedgrid", "gallery", "navigation"])} = "absolute"
-    options.ComponentCount (1, 1) double {mustBeInteger, mustBePositive} = 12
+    options.ComponentCount (1, 1) double {mustBeInteger, mustBeGreaterThanOrEqual(options.ComponentCount, 2)} = 12
     options.Samples (1, 1) double {mustBeInteger, mustBePositive} = 4
     options.Profile (1, 1) logical = false
     options.RenderAck (1, 1) logical = true
+    options.RepeatedSelections (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
+    options.DocumentCycles (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
 end
 arguments (Output)
     results (1, :) struct
@@ -22,8 +24,10 @@ progress = fullfile(options.OutputFolder, "progress.jsonl");
 publishProgress(progress, "start", "fixture");
 registry = macd.model.ComponentRegistry.createDefault();
 fixture = makeFixture(projectRoot, registry, options);
-service = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture)));
-results = struct("action", {}, "sample", {}, "callbackSeconds", {}, "settledSeconds", {});
+service = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture), ...
+    "ConfirmUnsavedChangesFcn", @() "Discard"));
+results = struct("action", {}, "phase", {}, "sample", {}, "callbackSeconds", {}, ...
+    "settledSeconds", {}, "nativeObjects", {}, "timers", {}, "payloadBytes", {});
 started = tic;
 app = yamada(service);
 cleanup = onCleanup(@() delete(app));
@@ -31,52 +35,164 @@ figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
 setappdata(figure, "macdPerformanceMeasurement", options.RenderAck);
 menus = findall(figure, "Type", "uimenu");
 open = menus(erase(string({menus.Text}), "&") == "Open...");
-results = measure(results, "startup", 1, toc(started), toc(started));
+results = measure(results, "startup", 1, toc(started), toc(started), figure, "first");
+persist(options, results);
 publishProgress(progress, "start", "open");
 started = tic;
 open.MenuSelectedFcn(open, struct());
 callback = toc(started);
 settle(figure, options.RenderAck);
-results = measure(results, "open", 1, callback, toc(started));
+results = measure(results, "open", 1, callback, toc(started), figure, "first");
+options.ModelComponents = numel(app.Document.Components);
 persist(options, results);
 publishProgress(progress, "complete", "open");
 
 % Exercise identical controls across separate parents whenever available.
-labels = app.Document.Components([app.Document.Components.Factory] == "uilabel");
-assert(numel(labels) >= 2, "The benchmark requires two label targets.");
-ids = [labels(1).Id, labels(ceil(numel(labels) / 2)).Id];
+targets = measurementTargets(app.Document, registry);
+assert(numel(targets) >= 2, "The benchmark requires two font-capable targets.");
+ids = [targets(1).Id, targets(max(2, ceil(numel(targets) / 2))).Id];
 for index = 1:options.Samples
     publishProgress(progress, "start", "selection");
     started = tic;
     selectId(figure, ids(1 + mod(index, 2)));
     callback = toc(started);
     settle(figure, options.RenderAck);
-    results = measure(results, "selection", index, callback, toc(started));
+    phase = "revisit";
+    if index <= 2, phase = "first-target"; end
+    results = measure(results, "selection", index, callback, toc(started), figure, phase);
     persist(options, results);
     publishProgress(progress, "complete", "selection");
 end
+% Separate unchanged selection and warmed revisits from first-target work.
 for index = 1:options.Samples
+    publishProgress(progress, "start", "same-selection");
+    started = tic;
+    selectId(figure, app.SelectedComponentId);
+    callback = toc(started);
+    settle(figure, options.RenderAck);
+    results = measure(results, "same-selection", index, callback, toc(started), figure, "same-target");
+    persist(options, results);
+    publishProgress(progress, "complete", "same-selection");
+end
+propertySamples = options.Samples;
+[editable, reason] = canCommitFontSize(figure);
+if ~editable
+    assert(any(options.Case == ["gallery", "navigation"]), reason);
+    propertySamples = 0;
+    fid = fopen(fullfile(options.OutputFolder, "excluded-operations.json"), "w", "n", "UTF-8");
+    assert(fid >= 0, "Cannot record the read-only fixture boundary.");
+    fprintf(fid, "%s", jsonencode(struct("action", "property", "path", "FontSize", "reason", reason)));
+    fclose(fid);
+end
+for index = 1:propertySamples
     publishProgress(progress, "start", "property");
     started = tic;
     commitFontSize(figure, 12 + index);
     callback = toc(started);
     settle(figure, options.RenderAck);
     assert(app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue == 12 + index);
-    results = measure(results, "property", index, callback, toc(started));
+    phase = "warm";
+    if index == 1, phase = "first"; end
+    results = measure(results, "property", index, callback, toc(started), figure, phase);
     persist(options, results);
     publishProgress(progress, "complete", "property");
 end
+if isappdata(figure, "macdPreviewStatistics")
+    fid = fopen(fullfile(options.OutputFolder, "preview-statistics.json"), "w", "n", "UTF-8");
+    assert(fid >= 0, "Cannot write preview counters.");
+    fprintf(fid, "%s", jsonencode(struct("phase", "after-normal-properties", ...
+        "counters", getappdata(figure, "macdPreviewStatistics"))));
+    fclose(fid);
+end
 if options.Profile
-    publishProgress(progress, "start", "profile");
+    publishProgress(progress, "start", "profile-selection");
     profile clear; profile on;
     selectId(figure, ids(1 + (app.SelectedComponentId == ids(1))));
     settle(figure, options.RenderAck);
     profile off;
     profileData = profile("info");
-    save(fullfile(options.OutputFolder, "profile.mat"), "profileData");
+    save(fullfile(options.OutputFolder, "profile-selection.mat"), "profileData");
+    if editable
+        publishProgress(progress, "start", "profile-property");
+        profile clear; profile on;
+        commitFontSize(figure, 13 + options.Samples);
+        settle(figure, options.RenderAck);
+        profile off;
+        profileData = profile("info");
+        save(fullfile(options.OutputFolder, "profile-property.mat"), "profileData");
+    end
     persist(options, results);
 end
+% Keep endurance work separate from the latency distribution and normal history.
+for index = 1:options.RepeatedSelections
+    publishProgress(progress, "start", "retention-selection");
+    started = tic;
+    selectId(figure, app.SelectedComponentId);
+    callback = toc(started);
+    settle(figure, options.RenderAck);
+    results = measure(results, "retention-selection", index, callback, toc(started), figure, "same-target");
+    persist(options, results);
+    publishProgress(progress, "complete", "retention-selection");
+end
+for index = 1:options.DocumentCycles
+    publishProgress(progress, "start", "document-cycle");
+    previousSnapshot = app.Document.Metadata.SourceSnapshotId;
+    started = tic;
+    open.MenuSelectedFcn(open, struct());
+    callback = toc(started);
+    settle(figure, options.RenderAck);
+    assert(app.Document.Metadata.SourceSnapshotId ~= previousSnapshot && ~app.Document.IsDirty, ...
+        "The benchmark document transition was not completed.");
+    results = measure(results, "document-cycle", index, callback, toc(started), figure, "reopen");
+    persist(options, results);
+    publishProgress(progress, "complete", "document-cycle");
+end
 publishProgress(progress, "complete", "fixture");
+end
+
+function targets = measurementTargets(document, registry)
+% measurementTargets Prefer matched labels and allow real fixtures with other font-capable controls.
+arguments (Input)
+    document (1, 1) macd.model.DocumentModel
+    registry (1, 1) macd.model.ComponentRegistry
+end
+arguments (Output)
+    targets macd.model.ComponentRecord
+end
+targets = document.Components([document.Components.Factory] == "uilabel");
+if numel(targets) >= 2, return, end
+targets = macd.model.ComponentRecord.empty;
+for component = document.Components
+    if component.Id == document.RootComponentId || ~registry.contains(component.Factory), continue, end
+    parent = document.getComponent(component.ParentId);
+    parentFactory = "";
+    if ~isempty(parent), parentFactory = parent.Factory; end
+    definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+    font = definitions(string({definitions.Path}) == "FontSize");
+    if ~isempty(font) && font.IsEditable && font.PreviewPolicy == "apply"
+        targets(end + 1) = component; %#ok<AGROW>
+    end
+end
+end
+
+function [editable, reason] = canCommitFontSize(figure)
+% canCommitFontSize Respect the actual Inspector's source-safety boundary in preserved fixtures.
+arguments (Input)
+    figure (1, 1) matlab.ui.Figure
+end
+arguments (Output)
+    editable (1, 1) logical
+    reason (1, 1) string
+end
+editable = false;
+reason = "No editable FontSize row is available in the current fixture state.";
+labels = findall(figure, "Tag", "macd-inspector-property-label");
+label = labels(string({labels.Text}) == "FontSize");
+if isempty(label), return, end
+editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+if isempty(editor), return, end
+editable = string(editor.Enable) == "on";
+if ~editable && strlength(string(editor.Tooltip)) > 0, reason = string(editor.Tooltip); end
 end
 
 function fixture = makeFixture(projectRoot, registry, options)
@@ -190,7 +306,7 @@ while true
 end
 end
 
-function results = measure(results, action, sample, callback, settled)
+function results = measure(results, action, sample, callback, settled, figure, phase)
 % measure Append one completed measurement without including profiler overhead.
 arguments (Input)
     results (1, :) struct
@@ -198,12 +314,18 @@ arguments (Input)
     sample (1, 1) double
     callback (1, 1) double
     settled (1, 1) double
+    figure (1, 1) matlab.ui.Figure
+    phase (1, 1) string
 end
 arguments (Output)
     results (1, :) struct
 end
-results(end + 1) = struct("action", action, "sample", sample, ...
-    "callbackSeconds", callback, "settledSeconds", settled);
+overlay = findall(figure, "Tag", "macd-interaction-overlay");
+bytes = 0;
+if ~isempty(overlay), bytes = numel(unicode2native(jsonencode(overlay.Data), "UTF-8")); end
+results(end + 1) = struct("action", action, "phase", phase, "sample", sample, ...
+    "callbackSeconds", callback, "settledSeconds", settled, ...
+    "nativeObjects", numel(findall(figure)), "timers", numel(timerfindall), "payloadBytes", bytes);
 end
 
 function persist(options, results)
@@ -215,8 +337,31 @@ end
 fid = fopen(fullfile(options.OutputFolder, "measurements.json"), "w", "n", "UTF-8");
 assert(fid >= 0, "Cannot write performance measurements.");
 cleanup = onCleanup(@() fclose(fid));
+modelComponents = NaN;
+if isfield(options, "ModelComponents"), modelComponents = options.ModelComponents; end
 fprintf(fid, "%s", jsonencode(struct("matlab", version, "case", options.Case, ...
-    "componentCount", options.ComponentCount, "renderAck", options.RenderAck, "samples", results)));
+    "componentCount", options.ComponentCount, "modelComponents", modelComponents, "renderAck", options.RenderAck, ...
+    "samples", results, "summary", summarize(results))));
+end
+
+function summary = summarize(results)
+% summarize Report median and nearest-rank p95 without requiring a statistics toolbox.
+arguments (Input)
+    results (1, :) struct
+end
+arguments (Output)
+    summary (1, :) struct
+end
+summary = struct("action", {}, "phase", {}, "count", {}, "medianSeconds", {}, "p95Seconds", {});
+for action = unique(string({results.action}), "stable")
+    matching = results(string({results.action}) == action);
+    for phase = unique(string({matching.phase}), "stable")
+        samples = matching(string({matching.phase}) == phase);
+        values = sort([samples.settledSeconds]);
+        summary(end + 1) = struct("action", action, "phase", phase, "count", numel(values), ...
+            "medianSeconds", median(values), "p95Seconds", values(ceil(0.95 * numel(values)))); %#ok<AGROW>
+    end
+end
 end
 
 function publishProgress(path, phase, action)

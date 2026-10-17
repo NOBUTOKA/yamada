@@ -63,6 +63,8 @@ classdef yamada < matlab.apps.AppBase
         PreviewHorizontalDivider matlab.ui.container.Panel
         PreviewCanvas matlab.ui.container.Panel
         PreviewEditingBounds double = [0 0 1 1]
+        PreviewGeometry struct = struct()
+        LastOverlayValue struct = struct()
         InspectorPanel matlab.ui.container.Panel
         InspectorGrid matlab.ui.container.GridLayout
         InspectorView macd.ui.inspector.InspectorView
@@ -533,6 +535,47 @@ classdef yamada < matlab.apps.AppBase
             app.updateInteractionOverlay();
         end
 
+        function refreshViews(app, request)
+            % refreshViews Update only invalidated surfaces after an accepted property transaction.
+            arguments (Input)
+                app (1, 1) yamada
+                request (1, 1) macd.ui.RefreshRequest
+            end
+            if request.Kind ~= "properties" || isempty(app.PreviewHandles)
+                app.refreshShell();
+                return
+            end
+            % Invalidate gestures before applying setters that can trigger native layout.
+            app.ReparentRevision = app.ReparentRevision + 1;
+            app.InteractionComponentId = "";
+            app.InteractionKind = "";
+            app.DropSourceId = "";
+            if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
+            if ~isempty(app.Document.CallbackEdits) || ~isempty(app.Document.RenameEdits) || ...
+                    any(cellfun(@(edit) any(edit.Kind == ["callback", "rename"]), app.Document.History))
+                app.generateSource();
+            end
+            [applied, diagnostics, geometryChanged] = app.PreviewRenderer.synchronize( ...
+                app.Document, app.PreviewHandles, request);
+            if ~applied
+                app.refreshPreview();
+            elseif ~isempty(diagnostics)
+                app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
+            end
+            app.refreshInspector();
+            app.refreshDiagnostics(app.Document.Diagnostics);
+            app.refreshEditCommands();
+            app.refreshTitle();
+            if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog), app.CallbackDialog.refresh(); end
+            % Publish settled geometry once; only layout-changing setters need polling.
+            drawnow;
+            app.updateInteractionOverlay();
+            if applied && geometryChanged, app.scheduleOverlayRefresh(); end
+            if isappdata(app.UIFigure, "macdPerformanceMeasurement") && getappdata(app.UIFigure, "macdPerformanceMeasurement")
+                setappdata(app.UIFigure, "macdPreviewStatistics", app.PreviewRenderer.statistics());
+            end
+        end
+
         function refreshPalette(app)
             % refreshPalette Populate the palette from eligible registry definitions.
             arguments (Input)
@@ -737,6 +780,12 @@ classdef yamada < matlab.apps.AppBase
             states = struct("Id", {}, "Name", {}, "Enabled", {}, "Reason", {});
             source = app.Document.getComponent(id);
             measured = app.clipboardPosition(id);
+            context = app.Document.evaluationContext(app.Registry);
+            [cached, found] = context.lookup("reparent:" + id);
+            if found && isequaln(cached.Measured, measured)
+                states = cached.States;
+                return
+            end
             definition = app.Registry.get(source.Factory, source.CreationArguments);
             for parent = app.Document.Components
                 state = struct("Id", parent.Id, "Name", parent.Name, "Enabled", false, "Reason", "");
@@ -755,6 +804,7 @@ classdef yamada < matlab.apps.AppBase
                 end
                 states(end + 1) = state; %#ok<AGROW>
             end
+            context.remember("reparent:" + id, struct("Measured", measured, "States", states));
         end
 
         function undoButtonPushed(app)
@@ -1031,12 +1081,8 @@ classdef yamada < matlab.apps.AppBase
             canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
                 component.IsEditable;
             if canDelete
-                try
-                    candidate = app.Document.structuralCandidate();
-                    candidate.removeSubtree(component.Id, app.Registry);
-                catch
-                    canDelete = false;
-                end
+                deletion = macd.model.DocumentEditAvailability.deletion(app.Document, component.Id, app.Registry);
+                canDelete = deletion.Enabled;
             end
             app.DeleteMenuItem.Enable = "off";
             if canDelete
@@ -1238,6 +1284,7 @@ classdef yamada < matlab.apps.AppBase
             arguments (Input)
                 app (1, 1) yamada
             end
+            app.PreviewGeometry = struct();
             app.DropSourceId = "";
             app.DropStates = struct([]);
             app.ReparentRevision = app.ReparentRevision + 1;
@@ -1352,7 +1399,7 @@ classdef yamada < matlab.apps.AppBase
                             ~app.isVisibleInSelectedTab(string(keys{index}))
                         continue
                     end
-                    rectangle = app.previewDisplayPosition(preview);
+                    rectangle = app.previewBounds(string(keys{index}));
                     if any(~isfinite(rectangle)) || any(rectangle(3:4) <= 0)
                         continue
                     end
@@ -1375,6 +1422,7 @@ classdef yamada < matlab.apps.AppBase
             end
 
             % The overlay owns pointer capture and never changes preview controls.
+            app.LastOverlayValue = struct();
             overlayPath = fullfile(fileparts(mfilename("fullpath")), ...
                 "resources", "EditorInteractionOverlay.html");
             app.InteractionOverlay = uihtml(app.PreviewCanvas.Parent.Parent, ...
@@ -1439,8 +1487,10 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             % Reserve one version before native layout can reenter publication.
-            revision = app.InteractionOverlayRevision + 1;
+            previousRevision = app.InteractionOverlayRevision;
+            revision = previousRevision + 1;
             app.InteractionOverlayRevision = revision;
+            app.capturePreviewGeometry();
             app.layoutPreviewCanvas();
             components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
                 "height", {}, "shape", {}, "selected", {}, "tabGroup", {}, ...
@@ -1460,7 +1510,7 @@ classdef yamada < matlab.apps.AppBase
                 parent = app.Document.getComponent(component.ParentId);
                 position = component.getProperty("Position");
                 if ~isempty(parent) && parent.Factory == "uigridlayout"
-                    rectangle = app.previewDisplayPosition(app.PreviewHandles(keys{index}));
+                    rectangle = app.previewBounds(component.Id);
                     if all(isfinite(rectangle)) && all(rectangle(3:4) > 0)
                         gridSelectionTargets(end + 1) = struct( ...
                             "id", char(component.Id), "gridId", char(parent.Id), ...
@@ -1475,7 +1525,7 @@ classdef yamada < matlab.apps.AppBase
                         ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
                     continue
                 end
-                rectangle = app.previewDisplayPosition(app.PreviewHandles(keys{index}));
+                rectangle = app.previewBounds(componentId);
                 if componentId == app.InteractionComponentId
                     rectangle = app.interactionDisplayPosition(componentId, rectangle);
                 end
@@ -1525,9 +1575,7 @@ classdef yamada < matlab.apps.AppBase
                     ~app.isVisibleInSelectedTab(app.ActiveGridId)
                 app.ActiveGridId = "";
             end
-            gridEditor = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
-                app.PreviewHandles, app.PreviewCanvas, app.ActiveGridId, ...
-                app.SelectedComponentId, revision, app.Registry);
+            gridEditor = app.gridOverlayData(app.ActiveGridId, revision);
             % A selected nested grid edits its tracks while moving in its parent grid.
             placementGridId = "";
             selected = app.Document.getComponent(app.SelectedComponentId);
@@ -1538,34 +1586,31 @@ classdef yamada < matlab.apps.AppBase
                     placementGridId = parent.Id;
                 end
             end
-            gridPlacement = app.GridLayoutOverlayDataBuilder.build(app.Document, ...
-                app.PreviewHandles, app.PreviewCanvas, placementGridId, ...
-                app.SelectedComponentId, revision, app.Registry);
+            gridPlacement = app.gridOverlayData(placementGridId, revision);
             innerPosition = double(app.PreviewCanvas.InnerPosition);
             root = app.Document.getComponent(app.Document.RootComponentId);
             rootPosition = root.getProperty("Position");
             rootEditable = root.IsEditable && ~isempty(rootPosition) && ...
                 rootPosition.IsEditable && rootPosition.ValueKind == "literal" && ...
                 isnumeric(rootPosition.LiteralValue) && numel(rootPosition.LiteralValue) == 4;
-            if app.DropSourceId ~= app.SelectedComponentId
-                app.DropStates = struct([]);
-                app.DropSourceId = app.SelectedComponentId;
-                if ~isempty(selected) && selected.Id ~= root.Id
-                    try
-                        app.DropStates = app.reparentStates(selected.Id);
-                    catch
-                        app.DropStates = struct([]);
-                    end
+            app.DropSourceId = app.SelectedComponentId;
+            app.DropStates = struct([]);
+            if ~isempty(selected) && selected.Id ~= root.Id
+                try
+                    app.DropStates = app.reparentStates(selected.Id);
+                catch
+                    app.DropStates = struct([]);
                 end
             end
             [dragSource, reparentTargets] = macd.ui.ReparentOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, app.SelectedComponentId, app.DropStates, ...
-                revision, @(id) app.isVisibleInSelectedTab(id));
+                revision, @(id) app.isVisibleInSelectedTab(id), ...
+                @(id) app.gridOverlayData(id, revision), @(id) app.previewBounds(id));
             % A newer callback owns publication if layout reentered this update.
             if revision ~= app.InteractionOverlayRevision
                 return
             end
-            app.InteractionOverlay.Data = struct("width", innerPosition(3), ...
+            data = struct("width", innerPosition(3), ...
                 "height", innerPosition(4), "surfaceBounds", app.PreviewEditingBounds, ...
                 "components", components, ...
                 "gridSelectionTargets", gridSelectionTargets, "gridEditor", gridEditor, ...
@@ -1577,6 +1622,107 @@ classdef yamada < matlab.apps.AppBase
                 "selectedComponentId", char(app.SelectedComponentId), ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);
+            comparable = data;
+            comparable.gridEditor.revision = 0;
+            comparable.gridPlacement.revision = 0;
+            for index = 1:numel(comparable.reparentTargets)
+                if isfield(comparable.reparentTargets(index).grid, "revision")
+                    comparable.reparentTargets(index).grid.revision = 0;
+                end
+            end
+            if isequaln(comparable, app.LastOverlayValue)
+                app.InteractionOverlayRevision = previousRevision;
+                return
+            end
+            app.LastOverlayValue = comparable;
+            app.InteractionOverlay.Data = data;
+        end
+
+        function capturePreviewGeometry(app)
+            % capturePreviewGeometry Reuse canvas-relative transforms while native layout inputs match.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            keys = app.PreviewHandles.keys();
+            stamp = cell(1, numel(keys));
+            for index = 1:numel(keys)
+                preview = app.PreviewHandles(keys{index});
+                if ~isvalid(preview) || ~isprop(preview, "Position")
+                    stamp{index} = struct("id", string(keys{index}), "position", []);
+                    continue
+                end
+                item = struct("id", string(keys{index}), "position", double(preview.Position));
+                if isprop(preview, "InnerPosition"), item.inner = double(preview.InnerPosition); end
+                if isprop(preview, "Units"), item.units = string(preview.Units); end
+                if isprop(preview, "SelectedTab")
+                    item.tab = 0;
+                    if ~isempty(preview.SelectedTab), item.tab = find(preview.Children == preview.SelectedTab, 1); end
+                end
+                stamp{index} = item;
+            end
+            stamp{end + 1} = double(app.PreviewCanvas.Position);
+            geometry = app.PreviewGeometry;
+            changed = ~isfield(geometry, "Stamp") || ~isequaln(geometry.Stamp, stamp);
+            if changed
+                geometry = struct("Stamp", {stamp}, ...
+                    "Bounds", containers.Map("KeyType", "char", "ValueType", "any"), ...
+                    "Grids", containers.Map("KeyType", "char", "ValueType", "any"));
+                for index = 1:numel(keys)
+                    preview = app.PreviewHandles(keys{index});
+                    if isvalid(preview) && isprop(preview, "Position")
+                        geometry.Bounds(keys{index}) = app.previewDisplayPosition(preview);
+                    end
+                end
+            end
+            [inputs, safe] = app.Document.evaluationContext(app.Registry).inputs();
+            if ~safe || ~isfield(geometry, "Inputs") || ~isequaln(geometry.Inputs, inputs)
+                geometry.Grids = containers.Map("KeyType", "char", "ValueType", "any");
+            end
+            geometry.Inputs = inputs;
+            app.PreviewGeometry = geometry;
+        end
+
+        function rectangle = previewBounds(app, id)
+            % previewBounds Return a measured rectangle without repeating ancestor transforms.
+            arguments (Input)
+                app (1, 1) yamada
+                id (1, 1) string
+            end
+            arguments (Output)
+                rectangle (1, 4) double
+            end
+            if isfield(app.PreviewGeometry, "Bounds") && isKey(app.PreviewGeometry.Bounds, char(id))
+                rectangle = app.PreviewGeometry.Bounds(char(id));
+            else
+                rectangle = app.previewDisplayPosition(app.PreviewHandles(char(id)));
+            end
+        end
+
+        function data = gridOverlayData(app, id, revision)
+            % gridOverlayData Share grid measurements and update transient selection and version fields.
+            arguments (Input)
+                app (1, 1) yamada
+                id (1, 1) string
+                revision (1, 1) double
+            end
+            arguments (Output)
+                data (1, 1) struct
+            end
+            cached = strlength(id) > 0 && isfield(app.PreviewGeometry, "Grids") && ...
+                isKey(app.PreviewGeometry.Grids, char(id));
+            if cached
+                data = app.PreviewGeometry.Grids(char(id));
+            else
+                data = app.GridLayoutOverlayDataBuilder.build(app.Document, app.PreviewHandles, ...
+                    app.PreviewCanvas, id, app.SelectedComponentId, revision, app.Registry);
+                if strlength(id) > 0 && isfield(app.PreviewGeometry, "Grids")
+                    app.PreviewGeometry.Grids(char(id)) = data;
+                end
+            end
+            data.revision = revision;
+            for index = 1:numel(data.children)
+                data.children(index).selected = string(data.children(index).id) == app.SelectedComponentId;
+            end
         end
 
         function interactionOverlayEvent(app, event)
@@ -2741,9 +2887,9 @@ classdef yamada < matlab.apps.AppBase
                 app.setStatus(message);
                 return
             end
-            % Revalidate and refresh exactly once after an accepted complete batch.
+            % Revalidate and dispatch the accepted property impact without rebuilding the shell.
             macd.validation.ModelValidator.validate(app.Document, app.Registry);
-            app.refreshShell();
+            app.refreshViews(macd.ui.RefreshRequest("properties", component.Id, string({changes.Path})));
         end
 
         function reconcileItemSelectionValues(app, transaction, definitions)
@@ -2812,10 +2958,17 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             surfaceKey = app.inspectorSurfaceKey(component);
-            if component.Id ~= app.InspectorComponentId || ...
-                    surfaceKey ~= app.InspectorSurfaceKey
+            if surfaceKey ~= app.InspectorSurfaceKey
                 app.rebuildInspector(component, surfaceKey);
             else
+                if component.Id ~= app.InspectorComponentId
+                    app.saveInspectorViewState();
+                    for row = app.InspectorRows, row.rebind(component.Id); end
+                    app.InspectorComponentId = component.Id;
+                    app.refreshInspectorValues(component);
+                    app.restoreInspectorViewState(component.Id);
+                    return
+                end
                 app.refreshInspectorValues(component);
             end
         end
@@ -3144,7 +3297,7 @@ classdef yamada < matlab.apps.AppBase
                 key (1, 1) string
             end
 
-            % Include identity, parent context, style, and all definition-owned rows.
+            % Include catalog version, parent context, style, and all definition-owned rows.
             parentFactory = "";
             if strlength(component.ParentId) > 0
                 parent = app.Document.getComponent(component.ParentId);
@@ -3165,7 +3318,7 @@ classdef yamada < matlab.apps.AppBase
                 end
             end
             sourcePaths = sourcePaths(1:sourcePathCount);
-            key = strjoin([component.Id, component.Factory, parentFactory, style, ...
+            key = strjoin([string(app.Registry.Revision), component.Factory, parentFactory, style, ...
                 paths, sourcePaths], "|");
         end
         function refreshDiagnostics(app, diagnostics)

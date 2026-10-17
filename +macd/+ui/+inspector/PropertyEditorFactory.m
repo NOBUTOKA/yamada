@@ -4,6 +4,76 @@ classdef PropertyEditorFactory
     %   never evaluates catalog text as MATLAB code.
 
     methods (Static)
+        function bind(control, definition, commitFcn, batchCommitFcn)
+            % bind Replace callbacks without replacing controls or retaining an obsolete target.
+            arguments (Input)
+                control
+                definition
+                commitFcn (1, 1) function_handle
+                batchCommitFcn (1, 1) function_handle
+            end
+            if isstruct(definition) && isfield(definition, "IsComposite") && definition.IsComposite
+                switch string(definition.Editor)
+                    case "fontStyle"
+                        parts = control.UserData;
+                        parts.Weight.ValueChangedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.commitFontStyle( ...
+                            source, "FontWeight", "bold", "normal", batchCommitFcn);
+                        parts.Angle.ValueChangedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.commitFontStyle( ...
+                            source, "FontAngle", "italic", "normal", batchCommitFcn);
+                    case "items"
+                        control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.openItemsEditor(source, batchCommitFcn);
+                    case "columnSettings"
+                        control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.openColumnSettingsEditor(source, batchCommitFcn);
+                    case "tableData"
+                        control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.openTableDataEditor(source, batchCommitFcn);
+                end
+                return
+            end
+            switch definition.Editor
+                case {"logical", "onOff", "number"}
+                    control.ValueChangedFcn = @(source, ~) commitFcn(source.Value);
+                case "enum"
+                    control.ValueChangedFcn = @(source, ~) commitFcn(macd.source.LiteralEncoder.encode(char(source.Value)));
+                case "text"
+                    control.ValueChangedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.commitText(source, commitFcn);
+                case "multilineText"
+                    control.ValueChangedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.commitTextArea(source, commitFcn);
+                case {"literal", "numericVector"}
+                    control.ValueChangedFcn = @(source, ~) commitFcn(string(source.Value));
+                case "url"
+                    control.ValueChangedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.commitUrl(source, commitFcn);
+                case "itemSelection"
+                    control.ValueChangedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.commitItemSelection(source, commitFcn);
+                case "color"
+                    control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.pickColor(source, commitFcn);
+                case "asset"
+                    parts = control.UserData;
+                    parts.Edit.ValueChangedFcn = @(source, ~) commitFcn(string(source.Value));
+                    parts.Browse.ButtonPushedFcn = @(~, ~) macd.ui.inspector.PropertyEditorFactory.browseAsset(control, commitFcn);
+                case "stringList"
+                    control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.StringListEditorDialog.open(source.UserData, definition.Path, batchCommitFcn);
+                case "structuredData"
+                    if macd.ui.inspector.PropertyEditorFactory.isDayOfWeekSchema(definition)
+                        control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.openDayOfWeekEditor(source, definition.Path, batchCommitFcn);
+                    else
+                        control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.openStructuredDataEditor(source.UserData, definition.Path, batchCommitFcn);
+                    end
+                case "tableData"
+                    control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.openTableDataEditor(source, batchCommitFcn);
+                case "dateTime"
+                    shape = string(definition.ValueSchema.shape);
+                    if shape == "scalar"
+                        control.ValueChangedFcn = @(source, ~) commitFcn(source.Value);
+                    elseif shape == "fixedLengthVector"
+                        parts = control.UserData;
+                        parts.Start.ValueChangedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.commitDateLimits(source, commitFcn);
+                        parts.End.ValueChangedFcn = @(source, ~) macd.ui.inspector.PropertyEditorFactory.commitDateLimits(source, commitFcn);
+                    else
+                        control.ButtonPushedFcn = @(source, ~) macd.ui.inspector.DateListEditorDialog.open(source.UserData, definition.Path, batchCommitFcn);
+                    end
+            end
+        end
+
         function control = create(parent, definition, commitFcn, batchCommitFcn)
             % create Construct one editor control for a typed property definition.
             arguments (Input)

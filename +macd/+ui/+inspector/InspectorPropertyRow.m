@@ -14,6 +14,7 @@ classdef InspectorPropertyRow < handle
         Path string
         Row struct = struct()
         IsComposite logical = false
+        BindingGeneration uint64 = uint64(0)
     end
 
     methods
@@ -73,8 +74,86 @@ classdef InspectorPropertyRow < handle
             end
             obj.Editor.Layout.Column = 2;
             obj.captureNormalBackgroundColor();
+            obj.rebind(componentId);
         end
 
+        function rebind(obj, componentId)
+            % rebind Retarget controls while invalidating queued callbacks and open dialog commits.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                componentId (1, 1) string
+            end
+            obj.ComponentId = componentId;
+            obj.BindingGeneration = obj.BindingGeneration + 1;
+            generation = obj.BindingGeneration;
+            definition = obj.Definition;
+            if obj.IsComposite, definition = obj.Row; end
+            macd.ui.inspector.PropertyEditorFactory.bind(obj.Editor, definition, ...
+                @(value) obj.commitBound(generation, value), ...
+                @(changes) obj.commitBatchBound(generation, changes));
+            % Guard queued native events before adapters can change current draft state.
+            controls = findall(obj.Editor);
+            for index = 1:numel(controls)
+                control = controls(index);
+                for name = ["ValueChangedFcn", "ValueChangingFcn", "ButtonPushedFcn"]
+                    if ~isprop(control, name), continue, end
+                    callback = control.(name);
+                    if isa(callback, "function_handle")
+                        control.(name) = @(source, event) obj.invokeBound(generation, callback, source, event);
+                    end
+                end
+            end
+            obj.prepareCommit();
+        end
+
+    end
+
+    methods (Access = private)
+        function invokeBound(obj, generation, callback, source, event)
+            % invokeBound Suppress a queued native event from an obsolete component binding.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                generation (1, 1) uint64
+                callback (1, 1) function_handle
+                source
+                event
+            end
+            if generation == obj.BindingGeneration && isvalid(obj.Editor)
+                callback(source, event);
+            end
+        end
+
+        function commitBound(obj, generation, value)
+            % commitBound Ignore an input event captured before the row changed targets.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                generation (1, 1) uint64
+                value
+            end
+            if generation == obj.BindingGeneration && isvalid(obj.Editor)
+                obj.commit(value);
+            end
+        end
+
+        function message = commitBatchBound(obj, generation, changes)
+            % commitBatchBound Reject a dialog belonging to an obsolete row binding.
+            arguments (Input)
+                obj (1, 1) macd.ui.inspector.InspectorPropertyRow
+                generation (1, 1) uint64
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+            message = "Selection changed before the edit could be applied.";
+            if generation == obj.BindingGeneration && isvalid(obj.Editor)
+                message = obj.commitBatch(changes);
+            end
+        end
+
+    end
+
+    methods
         function synchronize(obj, value, isEditable, rawValue, relatedValues)
             % synchronize Load a current value and editability presentation.
             arguments (Input)

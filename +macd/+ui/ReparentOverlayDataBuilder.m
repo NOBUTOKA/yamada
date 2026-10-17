@@ -4,7 +4,7 @@ classdef ReparentOverlayDataBuilder
     %   geometry. It does not mutate the model or run an opened application.
 
     methods (Static)
-        function [source, targets] = build(document, handles, canvas, id, states, revision, visibleFcn)
+        function [source, targets] = build(document, handles, canvas, id, states, revision, visibleFcn, gridFcn, boundsFcn)
             % build Describe the selected source and visible container destinations.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
@@ -14,6 +14,8 @@ classdef ReparentOverlayDataBuilder
                 states struct
                 revision (1, 1) double
                 visibleFcn (1, 1) function_handle
+                gridFcn = []
+                boundsFcn = []
             end
             arguments (Output)
                 source (1, 1) struct
@@ -27,7 +29,11 @@ classdef ReparentOverlayDataBuilder
             if isempty(component) || id == document.RootComponentId || ~isKey(handles, char(id)), return, end
             preview = handles(char(id));
             if ~isvalid(preview) || ~isprop(preview, "Position"), return, end
-            bounds = macd.ui.ReparentOverlayDataBuilder.bounds(preview, canvas);
+            if isempty(boundsFcn)
+                bounds = macd.ui.ReparentOverlayDataBuilder.bounds(preview, canvas);
+            else
+                bounds = boundsFcn(id);
+            end
             if any(~isfinite(bounds)) || any(bounds(3:4) <= 0), return, end
             snapshot = macd.model.SubtreeSnapshot(document, id);
             subtreeIds = string({snapshot.Records.Id});
@@ -51,7 +57,11 @@ classdef ReparentOverlayDataBuilder
                     if ~isKey(handles, char(parent.Id)), continue, end
                     parentPreview = handles(char(parent.Id));
                     if ~isvalid(parentPreview) || ~isprop(parentPreview, "InnerPosition"), continue, end
-                    rectangle = macd.ui.ReparentOverlayDataBuilder.bounds(parentPreview, canvas);
+                    if isempty(boundsFcn)
+                        rectangle = macd.ui.ReparentOverlayDataBuilder.bounds(parentPreview, canvas);
+                    else
+                        rectangle = boundsFcn(parent.Id);
+                    end
                     if isprop(parentPreview, "Units") && string(parentPreview.Units) ~= "pixels", continue, end
                     inner = double(parentPreview.InnerPosition);
                     position = double(parentPreview.Position);
@@ -64,7 +74,11 @@ classdef ReparentOverlayDataBuilder
                 reason = state.Reason;
                 if parent.Id == component.ParentId, enabled = component.IsEditable && parent.IsEditable; end
                 if parent.Factory == "uigridlayout"
-                    grid = builder.build(document, handles, canvas, parent.Id, id, revision);
+                    if isempty(gridFcn)
+                        grid = builder.build(document, handles, canvas, parent.Id, id, revision);
+                    else
+                        grid = gridFcn(parent.Id);
+                    end
                     if ~grid.geometryAvailable
                         enabled = false;
                         reason = grid.readOnlyReason;

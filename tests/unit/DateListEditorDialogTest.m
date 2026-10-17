@@ -50,6 +50,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < m
             cleanup = onCleanup(@() deleteIfValid(owner));
             dialog = macd.ui.inspector.DateListEditorDialog.open( ...
                 datetime(2024, 3, 1), "DisabledDates", @(~) "", false);
+            testCase.addTeardown(@() deleteIfValid(dialog));
             drawnow;
             picker = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
             deleteButton = findall(dialog, "Tag", "macd-inspector-date-list-delete");

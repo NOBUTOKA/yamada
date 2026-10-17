@@ -19,6 +19,7 @@ body { position: relative; }
 svg { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: hidden; background: transparent; }
 #tab-controls { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
 #grid-controls { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.grid-controls-layer { position: absolute; inset: 0; pointer-events: none; }
 .tab-selector { position: absolute; box-sizing: border-box; height: 22px; pointer-events: auto; font: 11px Arial; }
 .grid-frame { position: absolute; box-sizing: border-box; border: 1px solid rgba(34, 100, 199, 0.55); pointer-events: none; }
 .grid-separator { position: absolute; box-sizing: border-box; z-index: 1; border-color: rgba(34, 100, 199, 0.20); border-style: dotted; pointer-events: none; }
@@ -98,6 +99,21 @@ var currentData = { width: 1, height: 1, components: [], gridSelectionTargets: [
 var gridGesture = null;
 var absoluteGesture = null;
 var reparentGuide = null;
+var outlineNodes = new Map();
+var selectionLayer = null;
+var rootLayer = null;
+var outlineOrder = "";
+var selectionKey = "";
+var rootKey = "";
+var tabControlsKey = "";
+var gridControlsKey = "";
+var trackControlsKey = "";
+var gridChildHost = null;
+var gridTrackHost = null;
+var renderedGridEditor = null;
+var renderedGridPlacement = null;
+var renderedChildGridEditor = null;
+var receivedRevision = -1;
 
 function setup(htmlComponent) {
   component = htmlComponent;
@@ -105,7 +121,11 @@ function setup(htmlComponent) {
   document.addEventListener("keydown", deleteSelectionKey);
   document.addEventListener("keydown", clipboardSelectionKey);
   htmlComponent.addEventListener("DataChanged", function(event) {
-    currentData = htmlComponent.Data || currentData;
+    var incoming = htmlComponent.Data || currentData;
+    var version = incoming.gridEditor && incoming.gridEditor.revision;
+    if (Number.isFinite(version) && version < receivedRevision) return;
+    if (Number.isFinite(version)) receivedRevision = version;
+    currentData = incoming;
     if (absoluteGesture && absoluteGesture.modelRevision !== currentData.reparentRevision) {
       absoluteGesture = null;
       clearReparentGuide();
@@ -126,6 +146,9 @@ function setup(htmlComponent) {
   svg.addEventListener("pointermove", sendPointerEvent);
   svg.addEventListener("pointerup", sendPointerEvent);
   svg.addEventListener("pointercancel", sendPointerEvent);
+  var initialData = htmlComponent.Data || currentData;
+  var initialRevision = initialData.gridEditor && initialData.gridEditor.revision;
+  if (Number.isFinite(initialRevision)) receivedRevision = initialRevision;
   currentData = htmlComponent.Data || currentData;
   render();
 }
@@ -302,7 +325,7 @@ function renderTabControls(components) {
 }
 
 function renderGridSelectionTargets(targets, gridData, placementData) {
-  var controls = document.getElementById("grid-controls");
+  var controls = gridChildHost || document.getElementById("grid-controls");
   componentArray(targets).sort(function(first, second) {
     return Number(first.depth || 0) - Number(second.depth || 0);
   }).forEach(function(target) {
@@ -340,7 +363,7 @@ function renderGridSelectionTargets(targets, gridData, placementData) {
 }
 
 function renderNestedGridComponents(components) {
-  var controls = document.getElementById("grid-controls");
+  var controls = gridChildHost || document.getElementById("grid-controls");
   componentArray(components).filter(function(item) { return !!item.inGrid; }).forEach(function(item) {
     var x = Number(item.x);
     var y = Number(item.y);
@@ -405,11 +428,11 @@ function renderGridPlacement(data) {
     });
     frame.appendChild(handle);
   });
-  document.getElementById("grid-controls").appendChild(frame);
+  (gridChildHost || document.getElementById("grid-controls")).appendChild(frame);
 }
 
-function renderGridEditor(data) {
-  var controls = document.getElementById("grid-controls");
+function renderGridEditor(data, headersOnly) {
+  var controls = gridTrackHost || document.getElementById("grid-controls");
   if (!data || !data.activeGridId || !data.outerBounds || data.outerBounds.length !== 4) return;
   var outer = data.outerBounds;
   var inner = data.innerBounds;
@@ -527,6 +550,22 @@ function renderGridEditor(data) {
   }
   componentArray(data.rowTracks).forEach(function(track) { addHeader("row", track); });
   componentArray(data.columnTracks).forEach(function(track) { addHeader("column", track); });
+  if (!headersOnly) renderGridChildren(data);
+  if (data.readOnlyReason) {
+    var status = document.createElement("div");
+    status.className = "grid-status";
+    status.style.left = Math.max(0, outer[0]) + "px";
+    status.style.top = Math.min(currentData.height - 24, currentData.height - outer[1] + 4) + "px";
+    status.textContent = String(data.readOnlyReason);
+    controls.appendChild(status);
+  }
+}
+
+function renderGridChildren(data) {
+  if (!data || !data.activeGridId || !data.outerBounds || !data.innerBounds) return;
+  if (data.outerBounds[2] <= 0 || data.outerBounds[3] <= 0 ||
+      data.innerBounds[2] <= 0 || data.innerBounds[3] <= 0) return;
+  var controls = gridChildHost || document.getElementById("grid-controls");
   componentArray(data.children).forEach(function(child) {
     if (!child.bounds || child.bounds.length !== 4 || child.bounds[2] <= 0 || child.bounds[3] <= 0) return;
     var childBox = document.createElement("div");
@@ -559,14 +598,6 @@ function renderGridEditor(data) {
     }
     controls.appendChild(childBox);
   });
-  if (data.readOnlyReason) {
-    var status = document.createElement("div");
-    status.className = "grid-status";
-    status.style.left = Math.max(0, outer[0]) + "px";
-    status.style.top = Math.min(currentData.height - 24, currentData.height - outer[1] + 4) + "px";
-    status.textContent = String(data.readOnlyReason);
-    controls.appendChild(status);
-  }
 }
 
 function gridPoint(event) {
@@ -1033,7 +1064,7 @@ function outline(componentData) {
   return svgElement("rect", withAttributes(common, { x: x, y: y, width: w, height: h, rx: componentData.shape === "roundedRectangle" ? 8 : 0 }));
 }
 
-function addHandles(componentData) {
+function addHandles(componentData, parent) {
   if (!componentData.selected) return;
   var x = componentData.x;
   var y = currentData.height - componentData.y - componentData.height;
@@ -1044,11 +1075,11 @@ function addHandles(componentData) {
   for (name in positions) {
     if (componentData.resizeConstraint === "fixedHeight" && (name === "n" || name === "s")) continue;
     var point = positions[name];
-    svg.appendChild(svgElement("rect", { class: "handle", x: point[0] - 4, y: point[1] - 4, width: 8, height: 8, "data-component-id": componentData.id, "data-handle": name, "data-resize-constraint": componentData.resizeConstraint || "" }));
+    (parent || svg).appendChild(svgElement("rect", { class: "handle", x: point[0] - 4, y: point[1] - 4, width: 8, height: 8, "data-component-id": componentData.id, "data-handle": name, "data-resize-constraint": componentData.resizeConstraint || "" }));
   }
 }
 
-function addRootHandles() {
+function addRootHandles(parent) {
   if (!currentData.rootId || (!currentData.rootEditable && !currentData.rootSelected)) return;
   var width = Number(currentData.width);
   var height = Number(currentData.height);
@@ -1067,7 +1098,7 @@ function addRootHandles() {
     title.textContent = currentData.rootEditable ? "Resize UIFigure" :
       "UIFigure Position cannot be edited safely";
     handle.appendChild(title);
-    svg.appendChild(handle);
+    (parent || svg).appendChild(handle);
   });
 }
 
@@ -1087,20 +1118,99 @@ function render() {
     layer.style.height = currentData.height + "px";
     layer.style.transform = "translate(" + (-Number(bounds[0])) + "px," + (-top) + "px)";
   });
-  closeTrackPopover();
-  svg.innerHTML = "";
-  document.getElementById("grid-controls").innerHTML = "";
-  renderTabControls(componentArray(currentData.components));
-  renderGridSelectionTargets(componentArray(currentData.gridSelectionTargets), currentData.gridEditor,
-    currentData.gridPlacement);
-  renderGridEditor(currentData.gridEditor);
-  renderNestedGridComponents(componentArray(currentData.components));
-  renderGridPlacement(currentData.gridPlacement);
-  svg.setAttribute("viewBox", bounds[0] + " " + top + " " + bounds[2] + " " + bounds[3]);
   var components = componentArray(currentData.components);
-  components.forEach(function(componentData) { svg.appendChild(outline(componentData)); });
-  components.forEach(function(componentData) { addHandles(componentData); });
-  addRootHandles();
+  var tabKey = JSON.stringify([currentData.height, components.filter(function(item) { return item.tabGroup; })],
+    function(key, value) { return key === "selected" ? undefined : value; });
+  if (tabKey !== tabControlsKey) {
+    renderTabControls(components);
+    tabControlsKey = tabKey;
+  }
+  var gridEditor = currentData.gridEditor;
+  if (!gridChildHost && gridEditor && gridEditor.activeGridId) {
+    document.getElementById("grid-controls").innerHTML = "";
+    gridChildHost = document.createElement("div");
+    gridTrackHost = document.createElement("div");
+    gridChildHost.className = gridTrackHost.className = "grid-controls-layer";
+    document.getElementById("grid-controls").appendChild(gridChildHost);
+    document.getElementById("grid-controls").appendChild(gridTrackHost);
+    gridControlsKey = trackControlsKey = "";
+  }
+  var trackKey = JSON.stringify([currentData.height, currentData.surfaceBounds, gridEditor],
+    function(key, value) { return key === "revision" || key === "selected" ? undefined : value; });
+  if (trackKey !== trackControlsKey) {
+    closeTrackPopover();
+    if (gridTrackHost) gridTrackHost.innerHTML = "";
+    renderGridEditor(gridEditor, true);
+    renderedGridEditor = gridEditor;
+    trackControlsKey = trackKey;
+  } else if (renderedGridEditor && gridEditor) {
+    // Preserve focused track controls while advancing their event revision.
+    renderedGridEditor.revision = gridEditor.revision;
+  }
+  var gridKey = JSON.stringify([currentData.height, currentData.gridSelectionTargets,
+    currentData.gridEditor, currentData.gridPlacement, components.filter(function(item) { return item.inGrid; })],
+    function(key, value) { return key === "revision" ? undefined : value; });
+  if (gridKey !== gridControlsKey) {
+    if (gridChildHost) gridChildHost.innerHTML = "";
+    else document.getElementById("grid-controls").innerHTML = "";
+    renderGridSelectionTargets(componentArray(currentData.gridSelectionTargets), currentData.gridEditor,
+      currentData.gridPlacement);
+    renderGridChildren(currentData.gridEditor);
+    renderNestedGridComponents(components);
+    renderGridPlacement(currentData.gridPlacement);
+    renderedChildGridEditor = currentData.gridEditor;
+    renderedGridPlacement = currentData.gridPlacement;
+    gridControlsKey = gridKey;
+  } else {
+    // Existing event closures must use the current revision without losing native focus.
+    if (renderedChildGridEditor && currentData.gridEditor) renderedChildGridEditor.revision = currentData.gridEditor.revision;
+    if (renderedGridPlacement && currentData.gridPlacement) renderedGridPlacement.revision = currentData.gridPlacement.revision;
+  }
+  svg.setAttribute("viewBox", bounds[0] + " " + top + " " + bounds[2] + " " + bounds[3]);
+  if (!selectionLayer && (components.length || currentData.rootId)) {
+    selectionLayer = svgElement("g", {"data-layer": "selection"});
+    rootLayer = svgElement("g", {"data-layer": "root"});
+    svg.appendChild(selectionLayer);
+    svg.appendChild(rootLayer);
+  }
+  var ids = new Set(components.map(function(item) { return item.id; }));
+  outlineNodes.forEach(function(entry, id) {
+    if (!ids.has(id)) { entry.node.remove(); outlineNodes.delete(id); }
+  });
+  components.forEach(function(item) {
+    var key = JSON.stringify([currentData.height, item], function(name, value) {
+      return name === "selected" ? undefined : value;
+    });
+    var entry = outlineNodes.get(item.id);
+    if (!entry || entry.key !== key) {
+      var node = outline(item);
+      if (entry) entry.node.replaceWith(node);
+      else if (svg.insertBefore) svg.insertBefore(node, selectionLayer);
+      else svg.appendChild(node);
+      entry = {node: node, key: key};
+      outlineNodes.set(item.id, entry);
+    }
+    setOutlineSelection(entry.node, !!item.selected);
+  });
+  var order = JSON.stringify(components.map(function(item) { return item.id; }));
+  if (order !== outlineOrder && svg.insertBefore) {
+    components.forEach(function(item) { svg.insertBefore(outlineNodes.get(item.id).node, selectionLayer); });
+    outlineOrder = order;
+  }
+  var selected = components.filter(function(item) { return item.selected; });
+  var handlesKey = JSON.stringify([currentData.height, selected]);
+  if (selectionLayer && handlesKey !== selectionKey) {
+    selectionLayer.innerHTML = "";
+    selected.forEach(function(item) { addHandles(item, selectionLayer); });
+    selectionKey = handlesKey;
+  }
+  var rootHandlesKey = JSON.stringify([currentData.width, currentData.height, currentData.rootId,
+    currentData.rootEditable, currentData.rootSelected]);
+  if (rootLayer && rootHandlesKey !== rootKey) {
+    rootLayer.innerHTML = "";
+    addRootHandles(rootLayer);
+    rootKey = rootHandlesKey;
+  }
   if (currentData.measureRender) {
     var revision = currentData.gridEditor && currentData.gridEditor.revision;
     requestAnimationFrame(function() {
@@ -1111,6 +1221,11 @@ function render() {
       });
     });
   }
+}
+
+function setOutlineSelection(node, selected) {
+  if (node.classList && node.classList.contains("silhouette")) node.classList.toggle("selected", selected);
+  Array.prototype.forEach.call(node.children || [], function(child) { setOutlineSelection(child, selected); });
 }
 </script>
 </head>
