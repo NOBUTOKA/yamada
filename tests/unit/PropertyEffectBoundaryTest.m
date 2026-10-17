@@ -1,20 +1,69 @@
 classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) PropertyEffectBoundaryTest < matlab.unittest.TestCase
-    % PropertyEffectBoundaryTest Verify missing effect evidence never proves native independence.
+    % PropertyEffectBoundaryTest Separate unaudited editability from proven unsupported effects.
     %   Owned records and source fixtures exercise atomic refusal and exact preservation.
 
     methods (Test)
-        function missingPolicyDoesNotProveLiteralEffectiveValue(testCase)
-            % missingPolicyDoesNotProveLiteralEffectiveValue Keep legacy metadata readable and unresolved.
+        function missingPolicyAllowsStoredLiteralWithoutClaimingIndependence(testCase)
+            % missingPolicyAllowsStoredLiteralWithoutClaimingIndependence Retain legacy editability while keeping its audit status unknown.
             component = macd.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label", "parsed");
             component.setProperty("Text", "literal");
             state = macd.model.PropertyStateResolver.resolve(component, macd.model.PropertyDefinition("Text"));
-            testCase.verifyFalse(state.IsKnown);
+            testCase.verifyTrue(state.IsKnown);
+            testCase.verifyTrue(state.IsEditable);
+            testCase.verifyEqual(state.EffectStatus, "unknown");
             testCase.verifyEqual(state.RequestedValue, "literal");
-            testCase.verifyEqual(state.ReasonCode, "unreviewed-effect");
+            testCase.verifyEqual(state.EffectiveValue, "literal");
         end
 
-        function unknownSetterInvalidatesOnlyDeclaredAffectedPaths(testCase)
-            % unknownSetterInvalidatesOnlyDeclaredAffectedPaths Preserve independent unaffected stored inputs.
+        function unknownLiteralPreservesOtherStatesAndCatalogRestrictions(testCase)
+            % unknownLiteralPreservesOtherStatesAndCatalogRestrictions Keep review status separate from product intent.
+            component = macd.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label");
+            component.setProperty("Unreviewed", 2);
+            definitions = [macd.model.PropertyDefinition("Unreviewed"), ...
+                macd.model.PropertyDefinition("Text", "kept", true, true, ...
+                struct("application", struct("effectStatus", "independent"))), ...
+                macd.model.PropertyDefinition("ReadOnly", 1, true, false), ...
+                macd.model.PropertyDefinition("Omitted", 1, true, true, struct("auditDisposition", "omitted"))];
+            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyTrue(states(1).IsEditable);
+            testCase.verifyEqual(states(1).EffectiveValue, 2);
+            testCase.verifyEqual(states(2).EffectiveValue, "kept");
+            testCase.verifyFalse(states(3).IsEditable);
+            testCase.verifyFalse(states(4).IsEditable);
+        end
+
+        function unreviewedDateOptionsSupportEditCopyAndHistory(testCase)
+            % unreviewedDateOptionsSupportEditCopyAndHistory Exercise both date options through document preflight.
+            registry = macd.model.ComponentRegistry.createDefault();
+            source = PropertyEffectBoundaryTest.fixture(["app.Date = uidatepicker(app.UIFigure);"; ...
+                "app.Date.Position = [10 20 150 22];"]);
+            source = replace(source, "Label matlab.ui.control.Label", ...
+                "Label matlab.ui.control.Label" + newline + "Date matlab.ui.control.DatePicker");
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            picker = document.getComponentByName("Date");
+            dates = datetime(2026, 10, [17; 18]);
+            document.setProperty(picker.Id, "DisabledDates", dates, registry);
+            document.setProperty(picker.Id, "DisabledDaysOfWeek", [1 7], registry);
+            emitted = macd.source.RoundTripGenerator(registry).generate(document);
+            parsed = macd.source.AppSourceParser.parseText(emitted, registry);
+            target = parsed.getComponentByName("Date");
+            testCase.verifyEqual(target.getProperty("DisabledDates").LiteralValue, dates);
+            testCase.verifyEqual(target.getProperty("DisabledDaysOfWeek").LiteralValue, [1 7]);
+            snapshot = document.copySubtree(picker.Id, registry);
+            testCase.verifyNotEmpty(snapshot);
+            document.undo();
+            testCase.verifyEmpty(document.getComponent(picker.Id).getProperty("DisabledDaysOfWeek"));
+            document.redo();
+            testCase.verifyEqual(document.getComponent(picker.Id).getProperty("DisabledDaysOfWeek").LiteralValue, [1 7]);
+            checkpoint = macd.model.SavedSourceCheckpoint(document, emitted, fullfile(tempdir, "EffectApp.m"), registry);
+            testCase.verifyEqual(checkpoint.SourceText, emitted);
+            document.setProperty(picker.Id, "DisabledDaysOfWeek", [2 6], registry);
+            updated = macd.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(updated, "app.Date.DisabledDaysOfWeek = [2 6];");
+        end
+
+        function unsupportedSetterInvalidatesOnlyDeclaredAffectedPaths(testCase)
+            % unsupportedSetterInvalidatesOnlyDeclaredAffectedPaths Preserve independent unaffected stored inputs.
             component = macd.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label", "parsed");
             component.setProperty("Text", "retained");
             component.setProperty("Geometry", [1 2]);

@@ -3,10 +3,13 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
     %   Fixtures are parsed as data; native contracts live in the separate UI test.
 
     methods (Test)
-        function unreviewedGroupSetterCannotBeResolvedAsKnown(testCase)
-            % unreviewedGroupSetterCannotBeResolvedAsKnown Preserve the common unknown-effect contract.
+        function unreviewedLiteralDoesNotInvalidateGroupSelection(testCase)
+            % unreviewedLiteralDoesNotInvalidateGroupSelection Allow unaudited stored literals without poisoning modeled selection.
             [document, registry] = fixture("app.Group.ContextMenu = [];");
-            testCase.verifyTrue(all(isnan(values(document, registry))));
+            testCase.verifyEqual(values(document, registry), [1 0]);
+            second = document.getComponentByName("Second");
+            document.setProperty(second.Id, "Value", 1, registry);
+            testCase.verifyEqual(values(document, registry), [0 1]);
         end
 
         function invalidIntermediateSelectionIsNotHidden(testCase)

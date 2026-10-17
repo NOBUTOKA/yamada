@@ -182,7 +182,7 @@ classdef PropertyStateResolver
         end
 
         function id = unresolvedEffectId(members, paths, registry)
-            % unresolvedEffectId Find an unreviewed coupled setter without adding history records.
+            % unresolvedEffectId Find unsupported or uncertain coupled writes without adding history.
             arguments (Input)
                 members macd.model.ComponentRecord
                 paths string
@@ -197,11 +197,13 @@ classdef PropertyStateResolver
                 names = macd.model.PropertyStateResolver.namedPaths(member, registry);
                 for property = reshape(definition.Properties, 1, [])
                     policy = property.Application;
-                    if any(policy.EffectStatus == ["independent", "modeled"]) || ...
+                    settings = member.getSettings(property.Path);
+                    uncertain = policy.EffectStatus == "unknown" && ...
+                        any(arrayfun(@(item) item.ValueKind ~= "literal" || ~item.IsCertain, settings));
+                    if (policy.EffectStatus ~= "unsupported" && ~uncertain) || ...
                             (~isempty(policy.AffectedPaths) && ~any(ismember([property.Path policy.AffectedPaths], paths)))
                         continue
                     end
-                    settings = member.getSettings(property.Path);
                     if ~isempty(settings)
                         id = settings(end).Id;
                         return
@@ -334,7 +336,7 @@ classdef PropertyStateResolver
         end
 
         function states = retainUnreviewedEffects(states, definitions, component, registry)
-            % retainUnreviewedEffects Do not resolve coupled setters across unreviewed upstream state.
+            % retainUnreviewedEffects Retain unsupported and source-uncertain upstream effects.
             arguments (Input)
                 states macd.model.PropertyState
                 definitions macd.model.PropertyDefinition
@@ -348,8 +350,10 @@ classdef PropertyStateResolver
             paths = string({states.Path});
             for definition = reshape(definitions, 1, [])
                 policy = definition.Application;
-                if any(policy.EffectStatus == ["independent", "modeled"]), continue, end
                 settings = component.getSettings(definition.Path);
+                uncertain = policy.EffectStatus == "unknown" && ...
+                    any(arrayfun(@(item) item.ValueKind ~= "literal" || ~item.IsCertain, settings));
+                if policy.EffectStatus ~= "unsupported" && ~uncertain, continue, end
                 raw = any(names == definition.Path);
                 if isempty(settings) && ~raw, continue, end
                 id = "creation:" + component.Id;
@@ -392,7 +396,7 @@ classdef PropertyStateResolver
             if isempty(index), return, end
             previous = states;
             policy = definitions(index).Application;
-            if ~any(policy.EffectStatus == ["independent", "modeled"])
+            if policy.EffectStatus == "unsupported" || (policy.EffectStatus == "unknown" && ~known)
                 affected = policy.AffectedPaths;
                 if isempty(affected), affected = paths; end
                 affected = unique([path affected]);
@@ -401,6 +405,7 @@ classdef PropertyStateResolver
                 end
                 return
             end
+            % Unreviewed literal setters retain their input without asserting audited independence.
             states(index) = states(index).withEffective(value, known, id, "The source value or its execution is uncertain.", "source");
             if known, states(index) = states(index).withEffective(value, true, id); end
             if policy.EffectPolicy == "buttonSelection" && path == "Value" && known && ...

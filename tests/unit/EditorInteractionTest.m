@@ -1422,6 +1422,41 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "Font Style", "FontColor", "BackgroundColor", "Visible", "Editable", ...
                 "Enable", "Tooltip", "ContextMenu", "Position", "Interruptible", "BusyAction"];
             testCase.verifyTrue(all(ismember(expected, actual)));
+
+            % Unaudited defaults still initialize editable date and weekday dialogs.
+            dates = findall(figure, "Tag", "macd-inspector-date-list-editor");
+            days = findall(figure, "Tag", "macd-inspector-day-of-week-editor");
+            testCase.verifyEqual(string(dates.Enable), "on");
+            testCase.verifyClass(dates.UserData, "datetime");
+            testCase.verifyEqual(string(days.Enable), "on");
+            days.ButtonPushedFcn(days, struct());
+            dialog = findall(0, "Tag", "macd-inspector-day-of-week-dialog");
+            testCase.addTeardown(@() deleteIfValid(dialog));
+            buttons = findall(dialog, "Tag", "macd-inspector-day-of-week-button");
+            sunday = buttons(string({buttons.Text}) == "Sun");
+            sunday.Value = true;
+            apply = findall(dialog, "Tag", "macd-inspector-day-of-week-apply");
+            apply.ButtonPushedFcn(apply, struct());
+            component = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEqual(component.getProperty("DisabledDaysOfWeek").LiteralValue, 1);
+
+            % Commit a date through the same live Inspector and related calendar state.
+            dates = findall(figure, "Tag", "macd-inspector-date-list-editor");
+            dates.ButtonPushedFcn(dates, struct());
+            dialog = findall(0, "Tag", "macd-inspector-date-list-dialog");
+            testCase.addTeardown(@() deleteIfValid(dialog));
+            add = findall(dialog, "Tag", "macd-inspector-date-list-add");
+            add.ButtonPushedFcn(add, struct());
+            picker = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
+            selected = datetime(2026, 10, 17);
+            picker.Value = selected;
+            picker.ValueChangedFcn(picker, struct());
+            apply = findall(dialog, "Tag", "macd-inspector-date-list-apply");
+            apply.ButtonPushedFcn(apply, struct());
+            testCase.verifyEqual(component.getProperty("DisabledDates").LiteralValue, selected);
+            editor = findall(figure, "Tag", "macd-inspector-date-picker-editor");
+            testCase.verifyEqual(editor.DisabledDates, selected);
+            testCase.verifyEqual(editor.DisabledDaysOfWeek, 1);
             clear cleanup
         end
 

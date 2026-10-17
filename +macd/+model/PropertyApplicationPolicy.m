@@ -17,7 +17,7 @@ classdef PropertyApplicationPolicy
         EffectPolicy string = "none"
         % EffectStatus - Unknown, independent, modeled, or explicitly unsupported setter semantics.
         EffectStatus string = "unknown"
-        % AffectedPaths - Stored states invalidated by an unresolved setter; empty means all.
+        % AffectedPaths - States invalidated by unsupported or uncertain writes; empty means all.
         AffectedPaths string = strings(1, 0)
         % EffectReason - Audited explanation of an unresolved setter boundary.
         EffectReason string = "Setter effects have not been reviewed."

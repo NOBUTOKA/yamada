@@ -9,6 +9,8 @@ classdef PropertyState
         Path string = ""
         % EffectPolicy - Audited application family selected by the property definition.
         EffectPolicy string = "none"
+        % EffectStatus - Review status; unknown literals use a stored-input assumption.
+        EffectStatus string = "unknown"
         % LastSettingId - Last original occurrence or pending-setting identity.
         LastSettingId string = ""
         % ExplicitKind - absent, pending, literal, or expression source form.
@@ -23,7 +25,7 @@ classdef PropertyState
         HasRequestedValue logical = false
         % EffectiveValue - Resolved initial value, meaningful only when IsKnown is true.
         EffectiveValue = []
-        % IsKnown - Whether supported evidence determines the effective value.
+        % IsKnown - Whether the finite model resolves a value, including unaudited stored inputs.
         IsKnown logical = false
         % EffectSettingId - Occurrence or pending intent that last determined the state.
         EffectSettingId string = ""
@@ -52,18 +54,19 @@ classdef PropertyState
             % Seed from inert audited data without materializing an explicit property.
             obj.Path = definition.Path;
             obj.EffectPolicy = definition.Application.EffectPolicy;
+            obj.EffectStatus = definition.Application.EffectStatus;
             obj.IsEditable = definition.IsEditable && definition.AuditDisposition == "editable";
             if ~obj.IsEditable, obj.ReadOnlyReason = "The catalog marks this property as read-only."; end
-            if ~any(definition.Application.EffectStatus == ["independent", "modeled"])
+            if definition.Application.EffectStatus == "unsupported"
                 obj.IsEditable = false;
                 obj.ReadOnlyReason = definition.Application.EffectReason;
             end
-            if any(definition.Application.EffectStatus == ["independent", "modeled"]) && definition.Application.HasInitialValue
+            if definition.Application.EffectStatus ~= "unsupported" && definition.Application.HasInitialValue
                 obj.EffectiveValue = definition.Application.InitialValue;
                 obj.IsKnown = true;
                 obj.Reason = "";
                 obj.ReasonCode = "";
-            elseif any(definition.Application.EffectStatus == ["independent", "modeled"]) && definition.HasDefault
+            elseif definition.Application.EffectStatus ~= "unsupported" && definition.HasDefault
                 obj.EffectiveValue = definition.DefaultValue;
                 obj.IsKnown = true;
                 obj.Reason = "";

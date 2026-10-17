@@ -15,10 +15,9 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
     end
 
     methods (Test)
-        function unreviewedAxesUpstreamKeepsLimitsUnknown(testCase)
-            % unreviewedAxesUpstreamKeepsLimitsUnknown Refuse to infer coupled limits through unaudited scale or aspect state.
-            for writes = {{"XScale", "log"; "XLim", [1 10]; "FontName", "Helvetica"}, ...
-                    {"DataAspectRatio", [1 1 1]; "XLim", [1 10]; "FontName", "Helvetica"}}
+        function unsupportedAspectKeepsLimitsUnknown(testCase)
+            % unsupportedAspectKeepsLimitsUnknown Retain the identified unsupported aspect interaction across later limits.
+            for writes = {{"DataAspectRatio", [1 1 1]; "XLim", [1 10]; "FontName", "Helvetica"}}
                 [component, definitions] = testCase.fixture("uiaxes", writes{1});
                 states = macd.model.PropertyStateResolver.resolve(component, definitions);
                 limits = testCase.state(states, "XLim");

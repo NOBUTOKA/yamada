@@ -3049,7 +3049,7 @@ classdef yamada < matlab.apps.AppBase
                     values{index} = resolved.EffectiveValue;
                     known(index) = true;
                 elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index) && ...
-                        any(states(index).Definition.Application.EffectStatus == ["independent", "modeled"])
+                        states(index).Definition.Application.EffectStatus ~= "unsupported"
                     values{index} = defaults.Values{index};
                     known(index) = true;
                 end
@@ -3094,7 +3094,7 @@ classdef yamada < matlab.apps.AppBase
                     rawValue = resolved.EffectiveValue;
                     isKnown = true;
                 elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index) && ...
-                        any(states(index).Definition.Application.EffectStatus == ["independent", "modeled"])
+                        states(index).Definition.Application.EffectStatus ~= "unsupported"
                     rawValue = defaults.Values{index};
                     isKnown = true;
                 end
