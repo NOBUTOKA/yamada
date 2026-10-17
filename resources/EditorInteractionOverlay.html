@@ -1101,6 +1101,16 @@ function render() {
   components.forEach(function(componentData) { svg.appendChild(outline(componentData)); });
   components.forEach(function(componentData) { addHandles(componentData); });
   addRootHandles();
+  if (currentData.measureRender) {
+    var revision = currentData.gridEditor && currentData.gridEditor.revision;
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        if (component && currentData.gridEditor && currentData.gridEditor.revision === revision) {
+          component.sendEventToMATLAB("Rendered", {revision: revision});
+        }
+      });
+    });
+  }
 }
 </script>
 </head>

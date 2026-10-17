@@ -1572,6 +1572,8 @@ classdef yamada < matlab.apps.AppBase
                 "gridPlacement", gridPlacement, ...
                 "dragSource", dragSource, "reparentTargets", reparentTargets, ...
                 "reparentRevision", app.ReparentRevision, ...
+                "measureRender", isappdata(app.UIFigure, "macdPerformanceMeasurement") && ...
+                    getappdata(app.UIFigure, "macdPerformanceMeasurement"), ...
                 "selectedComponentId", char(app.SelectedComponentId), ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);
@@ -1585,6 +1587,16 @@ classdef yamada < matlab.apps.AppBase
             end
 
             eventName = string(event.HTMLEventName);
+            if eventName == "Rendered"
+                data = event.HTMLEventData;
+                if isappdata(app.UIFigure, "macdPerformanceMeasurement") && ...
+                        getappdata(app.UIFigure, "macdPerformanceMeasurement") && ...
+                        isstruct(data) && isfield(data, "revision") && ...
+                        isequal(data.revision, app.InteractionOverlayRevision)
+                    setappdata(app.UIFigure, "macdRenderedRevision", data.revision);
+                end
+                return
+            end
             if eventName == "Reparent"
                 app.reparentDropEvent(event.HTMLEventData);
                 return
@@ -3140,8 +3152,9 @@ classdef yamada < matlab.apps.AppBase
             end
             definition = app.Registry.get(component.Factory, component.CreationArguments);
             style = definition.styleFor(component.CreationArguments);
-            states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
-            paths = arrayfun(@(state) state.Definition.Path, states);
+            definitions = app.Registry.getEffectiveProperties(component.Factory, ...
+                parentFactory, component.CreationArguments);
+            paths = string({definitions.Path});
             sourcePaths = strings(1, numel(component.Properties));
             sourcePathCount = 0;
             for index = 1:numel(component.Properties)

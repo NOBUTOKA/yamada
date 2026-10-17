@@ -11,6 +11,7 @@ classdef ComponentRegistry < handle
     properties (Access = private)
         Definitions containers.Map
         FactoryVariantIds containers.Map
+        EffectiveProperties containers.Map
         ParentContextRules macd.model.ParentContextRule = macd.model.ParentContextRule.empty
         InspectorRowDefinitions macd.model.InspectorRowDefinition = ...
             macd.model.InspectorRowDefinition.empty
@@ -26,6 +27,7 @@ classdef ComponentRegistry < handle
             % Store definitions by factory without coupling the model to types.
             obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
             obj.FactoryVariantIds = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
             obj.ParentContextRules = [macd.model.ParentContextRule.grid(); macd.model.ParentContextRule.absolute()];
             obj.InspectorRowDefinitions = macd.model.InspectorRowDefinition.empty;
         end
@@ -56,6 +58,7 @@ classdef ComponentRegistry < handle
                 end
             end
             obj.Definitions(variantKey) = definition;
+            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
             if ~isKey(obj.FactoryVariantIds, factoryKey)
                 obj.FactoryVariantIds(factoryKey) = string(definition.Id);
             else
@@ -168,6 +171,7 @@ classdef ComponentRegistry < handle
                 rules macd.model.ParentContextRule
             end
             obj.ParentContextRules = rules(:);
+            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
         function setInspectorRowDefinitions(obj, definitions)
@@ -183,6 +187,7 @@ classdef ComponentRegistry < handle
                     "Inspector row template IDs must be unique.");
             end
             obj.InspectorRowDefinitions = definitions(:);
+            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
         function definitions = inspectorRows(obj)
@@ -211,6 +216,11 @@ classdef ComponentRegistry < handle
 
             % Compose only the parent rule selected by the direct parent factory.
             definition = obj.get(factory, creationArguments);
+            key = char(definition.Id + "|" + parentFactory);
+            if isKey(obj.EffectiveProperties, key)
+                properties = obj.EffectiveProperties(key);
+                return
+            end
             properties = definition.Properties;
             suppressedPaths = strings(1, 0);
             for index = 1:numel(obj.ParentContextRules)
@@ -234,6 +244,7 @@ classdef ComponentRegistry < handle
             end
             macd.model.PropertyApplicationPolicy.orderDefinitions(properties, ...
                 definition.Id + " under " + parentFactory, suppressedPaths);
+            obj.EffectiveProperties(key) = properties;
         end
 
         function result = isReadOnlyProperty(obj, factory, path, creationArguments)

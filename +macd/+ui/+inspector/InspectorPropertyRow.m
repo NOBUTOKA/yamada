@@ -139,6 +139,9 @@ classdef InspectorPropertyRow < handle
             end
 
             id = obj.Path;
+            if ~obj.IsComposite
+                id = "property:" + id;
+            end
         end
 
         function state = snapshotTransientState(obj)

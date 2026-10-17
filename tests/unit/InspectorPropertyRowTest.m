@@ -26,6 +26,38 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
     end
 
     methods (Test)
+        function acceptedInspectorEditRetainsNativeEditor(testCase)
+            % acceptedInspectorEditRetainsNativeEditor Avoid replacing rows during a value-only refresh.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Tag", "macd-yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(item) any(string(item.ColumnName) == "Category"), tables));
+            index = find(string(palette.Data(:, 1)) == "Label", 1);
+            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", index)));
+            labels = findall(figure, "Tag", "macd-inspector-property-label");
+            label = labels(string({labels.Text}) == "FontSize");
+            editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+            editor.Value = 19;
+            editor.ValueChangedFcn(editor, struct());
+            testCase.verifyTrue(isvalid(editor));
+            testCase.verifyEqual(app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue, 19);
+        end
+
+        function singletonIdentifierMatchesProjectedRow(testCase)
+            % singletonIdentifierMatchesProjectedRow Keep property binding separate from row identity.
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            grid = uigridlayout(figure, [1 1]);
+            definition = macd.model.PropertyDefinition("Position", [], false, true, ...
+                struct("editor", "numericVector"));
+            row = macd.ui.inspector.InspectorPropertyRow(grid, 1, "component-1", ...
+                definition, @(~, ~, ~) "");
+            testCase.verifyEqual(row.identifier(), "property:Position");
+            state = row.snapshotTransientState();
+            testCase.verifyEqual(state.Path, "Position");
+        end
+
         function restoresRejectedDraftAcrossRowReplacement(testCase)
             % restoresRejectedDraftAcrossRowReplacement Restore view-only invalid text.
 

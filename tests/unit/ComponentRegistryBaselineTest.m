@@ -5,6 +5,22 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
     %   deterministic across the complete audited R2024a catalog.
 
     methods (Test)
+        function cachedParentProjectionIsInvalidatedByRulesAndRegistration(testCase)
+            % cachedParentProjectionIsInvalidatedByRulesAndRegistration Observe changes after a cache hit.
+            registry = macd.model.ComponentRegistry.createDefault();
+            first = registry.getEffectiveProperties("uilabel", "uigridlayout");
+            testCase.verifyTrue(any(string({first.Path}) == "Layout.Row"));
+            testCase.verifyEqual(registry.getEffectiveProperties("uilabel", "uigridlayout"), first);
+            registry.setParentContextRules(macd.model.ParentContextRule.empty);
+            plain = registry.getEffectiveProperties("uilabel", "uigridlayout");
+            testCase.verifyFalse(any(string({plain.Path}) == "Layout.Row"));
+            replacement = macd.model.ComponentDefinition("uilabel", "matlab.ui.control.Label", ...
+                "uifigure", false, {}, macd.model.PropertyDefinition("Custom", 7, true, true));
+            registry.register(replacement);
+            replaced = registry.getEffectiveProperties("uilabel", "uigridlayout");
+            testCase.verifyEqual(string({replaced.Path}), "Custom");
+        end
+
         function runtimeRegistryMatchesAuditedR2024aLedger(testCase)
             % runtimeRegistryMatchesAuditedR2024aLedger Compare every variant with the audited ledger.
 
