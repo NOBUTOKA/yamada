@@ -81,6 +81,29 @@ classdef DocumentModel < handle
         end
     end
 
+    methods (Access = private)
+        function noteInput(obj, value)
+            % noteInput Notify the token only after evaluation has attached it to a complete object.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            % Construction and materialization run without an attached token.
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function noteInputCollection(obj, value)
+            % noteInputCollection Attach new owned records before recording their collection write.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value macd.model.ComponentRecord
+            end
+            if isempty(obj.InputClock), return, end
+            for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
+            obj.InputClock.touch([]);
+        end
+    end
+
     methods
         function set.ClassName(obj, value)
             % set.ClassName Track assignments that affect semantic evaluation inputs.
@@ -89,7 +112,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.ClassName = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.FilePath(obj, value)
@@ -99,7 +122,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.FilePath = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.OriginalText(obj, value)
@@ -109,7 +132,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.OriginalText = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Components(obj, value)
@@ -119,10 +142,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.Components = value;
-            if ~isempty(obj.InputClock)
-                for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
-                obj.InputClock.touch([]);
-            end
+            obj.noteInputCollection(obj.Components);
         end
 
         function set.RootComponentId(obj, value)
@@ -132,7 +152,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.RootComponentId = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.UnknownRegions(obj, value)
@@ -142,7 +162,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.UnknownRegions = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.PendingEdits(obj, value)
@@ -152,7 +172,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.PendingEdits = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Encoding(obj, value)
@@ -162,7 +182,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.Encoding = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.LineEnding(obj, value)
@@ -172,7 +192,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.LineEnding = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Metadata(obj, value)
@@ -182,7 +202,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.Metadata = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.RenameEdits(obj, value)
@@ -192,7 +212,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.RenameEdits = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.CallbackEdits(obj, value)
@@ -202,7 +222,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.CallbackEdits = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function context = evaluationContext(obj, registry)

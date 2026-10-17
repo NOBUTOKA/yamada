@@ -71,6 +71,29 @@ classdef ComponentRecord < handle
         end
     end
 
+    methods (Access = private)
+        function noteInput(obj, value)
+            % noteInput Notify the token only after evaluation has attached it to a complete object.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            % Construction and materialization run without an attached token.
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function noteInputCollection(obj, value)
+            % noteInputCollection Attach new owned records before recording their collection write.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value macd.model.PropertyEntry
+            end
+            if isempty(obj.InputClock), return, end
+            for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
+            obj.InputClock.touch([]);
+        end
+    end
+
     methods
         function set.Id(obj, value)
             % set.Id Track assignments that affect semantic evaluation inputs.
@@ -79,7 +102,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Id = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Factory(obj, value)
@@ -89,7 +112,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Factory = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.DeclaredType(obj, value)
@@ -99,7 +122,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.DeclaredType = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Origin(obj, value)
@@ -109,7 +132,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Origin = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Children(obj, value)
@@ -119,7 +142,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Children = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Properties(obj, value)
@@ -129,10 +152,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Properties = value;
-            if ~isempty(obj.InputClock)
-                for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
-                obj.InputClock.touch([]);
-            end
+            obj.noteInputCollection(obj.Properties);
         end
 
         function set.Settings(obj, value)
@@ -142,7 +162,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Settings = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Name(obj, value)
@@ -152,7 +172,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Name = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.ParentId(obj, value)
@@ -162,7 +182,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.ParentId = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.IsEditable(obj, value)
@@ -172,7 +192,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.IsEditable = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.SourceSpans(obj, value)
@@ -182,7 +202,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.SourceSpans = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Metadata(obj, value)
@@ -192,7 +212,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Metadata = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.CreationArgumentData(obj, value)
@@ -202,7 +222,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.CreationArgumentData = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function records = settingSnapshot(obj)

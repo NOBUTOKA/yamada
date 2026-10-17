@@ -50,6 +50,18 @@ classdef PropertyEntry < handle
         end
     end
 
+    methods (Access = private)
+        function noteInput(obj, value)
+            % noteInput Notify the token only after evaluation has attached it to a complete object.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            % Construction and materialization run without an attached token.
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+    end
+
     methods
         function set.Path(obj, value)
             % set.Path Track assignments that affect semantic evaluation inputs.
@@ -58,7 +70,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.Path = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.ValueKind(obj, value)
@@ -68,7 +80,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.ValueKind = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.LiteralValue(obj, value)
@@ -78,7 +90,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.LiteralValue = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.SourceExpression(obj, value)
@@ -88,7 +100,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.SourceExpression = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.IsEditable(obj, value)
@@ -98,7 +110,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.IsEditable = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Origin(obj, value)
@@ -108,7 +120,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.Origin = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.SourceSpan(obj, value)
@@ -118,7 +130,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.SourceSpan = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function set.Metadata(obj, value)
@@ -128,7 +140,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.Metadata = value;
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            obj.noteInput(value);
         end
 
         function record = toStruct(obj)
