@@ -16,6 +16,19 @@ classdef SubtreeReparentSourceEdits
                 candidate macd.model.DocumentModel
             end
 
+            context = document.evaluationContext(registry);
+            key = "relocation";
+            [data, found] = context.lookup(key);
+            if found
+                [configuration, found] = context.configuration(key, ...
+                    document.sourceComponentName(document.RootComponentId));
+                if found
+                    edits = data.Edits;
+                    movedIds = data.MovedIds;
+                    candidate = configuration.Document;
+                    return
+                end
+            end
             edits = struct("Start", {}, "End", {}, "Text", {});
             movedIds = strings(1, 0);
             candidate = macd.model.DocumentModel.empty;
@@ -158,6 +171,8 @@ classdef SubtreeReparentSourceEdits
             [block, candidate] = macd.source.SubtreeReparentSourceEdits.placePending( ...
                 document, registry, edits, anchor, block, movedIds);
             edits(end + 1) = struct("Start", anchor + 1, "End", anchor, "Text", block);
+            context.rememberConfiguration(key, candidate);
+            context.remember(key, struct("Edits", edits, "MovedIds", movedIds));
         end
 
         function result = contains(document, componentId)

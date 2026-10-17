@@ -15,6 +15,21 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
     end
 
     methods (Test)
+        function cachedPlansRemainIndependentAndInvalidateOnDirectChange(testCase)
+            % cachedPlansRemainIndependentAndInvalidateOnDirectChange Keep shared proofs private and exact.
+            [document, component] = testCase.fixture("app.Control = uidropdown(app.UIFigure);");
+            component.setProperty("Tooltip", "first");
+            first = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            source = first.Edits;
+            first.Component.setProperty("Tooltip", "private mutation");
+            second = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            testCase.verifyEqual(second.Edits, source);
+            testCase.verifyEqual(string(second.Component.getProperty("Tooltip").LiteralValue), "first");
+            component.setProperty("Tooltip", "second");
+            third = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            testCase.verifyEqual(string(third.Component.getProperty("Tooltip").LiteralValue), "second");
+        end
+
         function sourceGenerationAndEffectiveStateUseTheSamePlacement(testCase)
             % sourceGenerationAndEffectiveStateUseTheSamePlacement Keep transactional edits and source output aligned.
             [document, component] = testCase.fixture(["app.Control = uidropdown(app.UIFigure);", ...

@@ -39,6 +39,37 @@ classdef PropertyInsertionPlanner
             arguments (Output)
                 plan (1, 1) struct
             end
+            context = document.evaluationContext(registry);
+            scope = context.readScope(); %#ok<NASGU>
+            key = "insertion:" + component.Id;
+            [data, found] = context.lookup(key);
+            if found
+                [plan, found] = context.configuration(key, document.sourceComponentName(component.Id));
+                if found
+                    plan.Edits = data.Edits;
+                    plan.Placements = data.Placements;
+                    return
+                end
+            end
+            plan = macd.source.PropertyInsertionPlanner.evaluate(document, component, registry);
+            if ~isempty(plan.Document)
+                context.rememberConfiguration(key, plan.Document);
+                context.remember(key, rmfield(plan, ["Document", "Component"]));
+            end
+        end
+    end
+
+    methods (Static, Access = private)
+        function plan = evaluate(document, component, registry)
+            % evaluate Prepare one uncached source insertion using the established ownership proof.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                plan (1, 1) struct
+            end
             plan = struct("Edits", struct("Start", {}, "End", {}, "Text", {}), ...
                 "Placements", struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {}), ...
                 "Document", macd.model.DocumentModel.empty, "Component", macd.model.ComponentRecord.empty);

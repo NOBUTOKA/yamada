@@ -168,18 +168,22 @@ classdef EvaluationContext < handle
                 key (1, 1) struct
                 safe (1, 1) logical
             end
+            [components, ownedSafe] = macd.model.EvaluationContext.freeze(document.Components, true);
             key = struct("ClassName", document.ClassName, "FilePath", document.FilePath, ...
                 "OriginalText", document.OriginalText, "RootComponentId", document.RootComponentId, ...
+                "Encoding", document.Encoding, "LineEnding", document.LineEnding, ...
                 "Metadata", document.Metadata, "UnknownRegions", document.UnknownRegions, ...
                 "PendingEdits", {document.PendingEdits}, "CallbackEdits", document.CallbackEdits, ...
-                "RenameEdits", document.RenameEdits, "Components", document.Components);
+                "RenameEdits", document.RenameEdits, "Components", components);
             [key, safe] = macd.model.EvaluationContext.freeze(key);
+            safe = safe && ownedSafe;
         end
 
-        function [value, safe] = freeze(value)
+        function [value, safe] = freeze(value, owned)
             % freeze Convert known records by value and bypass caching for unrecognized live data.
             arguments (Input)
                 value
+                owned (1, 1) logical = false
             end
             arguments (Output)
                 value
@@ -187,20 +191,25 @@ classdef EvaluationContext < handle
             end
             safe = true;
             if isa(value, "macd.model.ComponentRecord")
+                if ~owned, value = []; safe = false; return, end
                 records = struct([]);
                 for index = 1:numel(value)
                     component = value(index);
+                    [properties, independent] = macd.model.EvaluationContext.freeze(component.Properties, true);
+                    safe = safe && independent;
                     record = struct("Id", component.Id, "Name", component.Name, ...
                         "Factory", component.Factory, "DeclaredType", component.DeclaredType, ...
                         "Origin", component.Origin, "ParentId", component.ParentId, ...
                         "Children", component.Children, "CreationArguments", {component.CreationArguments}, ...
                         "IsEditable", component.IsEditable, "Metadata", component.Metadata, ...
-                        "SourceSpans", component.SourceSpans, "Properties", component.Properties, ...
+                        "SourceSpans", component.SourceSpans, "Properties", properties, ...
                         "Settings", component.settingSnapshot());
                     if isempty(records), records = record; else, records(end + 1) = record; end %#ok<AGROW>
                 end
-                [value, safe] = macd.model.EvaluationContext.freeze(records);
+                [value, independent] = macd.model.EvaluationContext.freeze(records);
+                safe = safe && independent;
             elseif isa(value, "macd.model.PropertyEntry")
+                if ~owned, value = []; safe = false; return, end
                 records = struct([]);
                 for index = 1:numel(value)
                     record = value(index).toStruct();
@@ -228,6 +237,7 @@ classdef EvaluationContext < handle
                     isa(value, "macd.model.UnknownSourceRegion") || isa(value, "macd.model.Diagnostic") || ...
                     isa(value, "macd.model.PropertyState") || isa(value, "macd.model.PropertyDefinition") || ...
                     isa(value, "macd.model.CallbackEdit");
+                if ~safe, value = []; end
             end
         end
     end

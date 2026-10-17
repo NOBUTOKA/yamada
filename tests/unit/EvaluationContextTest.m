@@ -66,6 +66,38 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             registry.register(registry.get("uilabel"));
             testCase.verifyFalse(context.matches(document, registry));
         end
+
+        function cyclicLiveMetadataBypassesWithoutRetainingHandles(testCase)
+            % cyclicLiveMetadataBypassesWithoutRetainingHandles Do not recursively snapshot arbitrary model references.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            root = document.getComponent(document.RootComponentId);
+            root.Metadata.Live = root;
+            context = document.evaluationContext(registry);
+            [inputs, safe] = context.inputs();
+            testCase.verifyFalse(safe);
+            testCase.verifyEmpty(fieldnames(inputs));
+            testCase.verifyFalse(context.matches(document, registry));
+            root.Metadata = struct();
+        end
+
+        function historyBranchAndSourceConventionsInvalidateContext(testCase)
+            % historyBranchAndSourceConventionsInvalidateContext Never identify input by history index alone.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            document.setProperty(label.Id, "FontSize", 17, registry);
+            previous = document.evaluationContext(registry);
+            previous.remember("sample", 17);
+            index = document.HistoryIndex;
+            document.undo();
+            document.setProperty(label.Id, "FontSize", 21, registry);
+            testCase.verifyEqual(document.HistoryIndex, index);
+            testCase.verifyFalse(previous.matches(document, registry));
+            current = document.evaluationContext(registry);
+            document.LineEnding = "LF";
+            testCase.verifyFalse(current.matches(document, registry));
+        end
     end
 end
 
