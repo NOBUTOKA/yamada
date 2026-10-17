@@ -213,8 +213,11 @@ Because of this limitation, Safe Preview may not reproduce the input application
   may keep the name-value form.
 - The catalog distinguishes reviewed independent inputs, finite modeled effects,
   unsupported effects, and unaudited effects. Missing effect metadata does not
-  prove independence. Unsupported or unaudited edits are refused before mutation;
-  their existing source can still be preserved unchanged.
+  prove independence. Unaudited (`unknown`) literals remain editable under existing
+  product, value-schema, and source-ownership rules, using a stored-input assumption.
+  Identified unsupported effects still prevent affected edits before mutation.
+  Omitted/read-only properties and nonliteral source values keep their separate
+  restrictions; unknown constructor support still falls back to assignment.
 - RadioButton and ToggleButton selection uses the owning ButtonGroup and sibling
   creation order. Generated and copied values are applied after sibling creation.
   Mixed RadioButton/ToggleButton groups and unresolved selection references remain

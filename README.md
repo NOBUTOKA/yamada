@@ -24,8 +24,8 @@
   order, and reject track edits whose requested size would be lost to occupancy
 - Resolve RadioButton/ToggleButton selection using the owning group and sibling
   initialization order, including copied groups
-- Keep unaudited and unsupported setter effects explicit, and refuse edits whose
-  resulting values cannot be established within the supported contract
+- Allow unaudited (`unknown`) properties under existing product and source-edit
+  rules, using their stored literal inputs; refuse identified unsupported effects
 - Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
 - Rename component properties in the hierarchy, including static source references and default callback names
 - Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion

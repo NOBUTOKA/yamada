@@ -933,3 +933,32 @@ MATLABの全setter・描画依存値の再現は今回の範囲外。
 独立確認済み936、有限policy328、未対応193、未監査368という区別を維持する。
 MATLAB全体の再現、新しい設定履歴・参照編集UI、ItemsとItemsDataの長さ不一致は対象外。
 計画書は保持し、古い未完了記録は当時の履歴として扱う。
+
+## unknown編集方針の改訂と検証（2026-10-17）
+
+実装コミット: `92b47fd`（`92b47fd782417ad78188b3f4f03bdf28516d2fcb`）。基点は`b4af8de`。
+ユーザーの方針改訂に合わせ、監査状態`unknown`だけでは編集を禁止しない契約へ変更した。
+確実なリテラルとcatalog既定値は保存入力として解決するが、監査状態はunknownのまま保持する。
+未対応効果、不確実なソース設定、式、未展開初期化の境界と、製品上のomitted/readOnlyは維持した。
+Inspectorの未設定値・関連値にも、従来の安全な既定値取得を同じ条件で使用する。
+台帳・runtime catalogの分類は変更せず、Switch各種・半円ゲージのPosition対応は保留した。
+
+| 検証 | 結果 | 証拠 |
+|---|---|---|
+| 中核の関連13クラス | 142件合格、Failed=0、Incomplete=0 | `testResults/unknown-edit-regression.log` / `unknown-edit-regression-results.mat` |
+| 実InspectorのDatePicker | 4件合格。disabled系の有効化、ダイアログの確定、関連カレンダーへの反映 | `unknown-edit-inspector.log` / `unknown-edit-inspector-results.mat` |
+| quick | 全416件を包含し全件合格。追加実行は先行結果と重複しない278件 | `unknown-edit-quick-tail.log` / `unknown-edit-quick-tail-results.mat` / `unknown-edit-quick-coverage-results.mat` |
+| 重複除外した総数 | 424件合格、Failed=0、Incomplete=0 | 同logのUNKNOWN_EDIT_UNIQUE_COVERAGE |
+| 静的解析・形式 | 変更MATLAB 8ファイル、checkcode警告ゼロ。UTF-8 BOMなし・CRLF、SHA-256一致 | 同logのUNKNOWN_EDIT_STATIC / `unknown-edit-source-manifest.json` |
+| 台帳検証 | verifyApplicationPolicy、verifyApplicationPolicyReview、verifyComponentLedgerSchemaの3本合格 | 各検証スクリプトの実行結果。以後の台帳・catalog変更なし |
+
+中核の回帰には旧catalogのunknown、表示対象外・読み取り専用、未対応の影響保持、
+未評価式、文書初期化、ボタン選択、GridLayout、元位置更新と追加、複製、保存後の再編集、
+Undo/Redo、移動を含む。DatePickerのDisabledDates/DisabledDaysOfWeekは実ソースでの編集と
+実UIの操作の両方を確認した。リテラルの保存入力保持という仮定を、nativeの独立性の証明とは扱わない。
+
+quick 416件は、先行142件に含まれる138件と追加278件の和集合である。
+UI 4件と先行の非quick 4件を含めた総数が424件であり、合格数を重複加算しない。
+初回のfixture宣言不足と、対応済み参照式を未監査式へ含めた条件を修正した。
+中断・テスト選択失敗を含む試行は合格数へ含めず、上記の完了実行を採用した。
+fullは再実行していない。以前の571件合格は方針改訂前の実装`b7307f6`の結果として区別する。

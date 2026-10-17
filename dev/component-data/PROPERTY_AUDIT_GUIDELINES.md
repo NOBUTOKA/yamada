@@ -390,12 +390,18 @@ Preview policy, and the legacy partial/pending document review count.
 - `unsupported`: an interaction is identified but cannot be resolved in the current
   implementation. Record the affected paths and a concrete reason.
 - `unknown`: the setter interaction has not been established. This is the default
-  for older catalogs and never grants independence.
+  for older catalogs and never grants independence. Certain literal inputs remain
+  editable under the existing product disposition, schema, and source-ownership
+  rules. The resolver assumes stored-input retention without promoting the audit
+  status; investigate and model or bound individual interactions as they arise.
 
 `effectPolicy: none` is not evidence. Public setter access, a default getter,
 constructor success, schema validity, or successful self-reparsing cannot establish
-independence. Nonempty `affectedPaths` bounds unresolved state within the same
-component; an empty array invalidates that component's complete state surface.
+independence. For unsupported effects or source-uncertain unknown writes, nonempty
+`affectedPaths` bounds unresolved state within the same component; an empty array
+invalidates that component's complete state surface. Review status unknown alone
+does not invalidate other stored literals. Product omissions/read-only access and
+unknown constructor support remain separate from this permissive edit policy.
 Cross-component effects require document-level handling or an explicit refusal.
 Preserve the intended product disposition and expose implementation limitations
 through effect reasons. Keep constructor timing, callback registration/execution,

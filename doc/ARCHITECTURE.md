@@ -296,13 +296,22 @@ The application contract distinguishes `independent`, `modeled`, `unsupported`,
 and `unknown` effect status, separately from constructor support and product
 editability. Legacy catalogs default to unknown. The exact per-property review
 artifact passes through schema validation, grouping, promotion, and loader;
-`effectPolicy: none` alone never grants independence. Unresolved writes invalidate
-the declared paths, or all same-component states when the scope is unbounded.
+`effectPolicy: none` alone never grants independence. An unknown review status
+does not disable editing or invalidate other states for certain literal writes.
+The resolver projects their stored inputs and catalog defaults while retaining
+`PropertyState.EffectStatus == "unknown"`; `IsKnown` is a finite-model result,
+not proof of reviewed native independence. Untouched Inspector values and related
+editor transactions may also use the existing owned default fixture for unknown
+properties, without materializing source settings. Product omissions/read-only
+access, value validation, and source ownership remain separate gates. Unsupported writes
+and source-uncertain unknown writes invalidate the declared paths, or all
+same-component states when the scope is unbounded.
 Unexpanded initialization, nonempty constructor CreateFcn, uncataloged setters,
 and unsupported Parent/Children writes invalidate document-level guarantees while
 retaining original source. Source hierarchy writes can affect destination siblings
 outside the constructor ownership graph, so a local unknown state is insufficient.
-Later coupled setters do not erase unreviewed upstream effects. A later reviewed
+Later coupled setters do not erase identified unsupported or source-uncertain
+upstream effects. A later reviewed
 independent setter can restore its own stored input. Unknown explicit calls are
 bounded even without an app argument; only allowlisted data constructors with
 inert literal arguments bypass the execution barrier.
