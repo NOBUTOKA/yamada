@@ -28,7 +28,109 @@ classdef PropertyEntry < handle
         Metadata struct = struct()
     end
 
+    properties (Access = private)
+        InputClock macd.model.InputChangeClock = macd.model.InputChangeClock.empty
+    end
+
+    methods (Access = ?macd.model.ComponentRecord)
+        function bindInputClock(obj, clock)
+            % bindInputClock Track owned writes without retaining the owning document.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                clock (1, 1) macd.model.InputChangeClock
+            end
+            if ~isempty(obj.InputClock)
+                if obj.InputClock ~= clock
+                    obj.InputClock.disable();
+                    clock.disable();
+                end
+                return
+            end
+            obj.InputClock = clock;
+        end
+    end
+
     methods
+        function set.Path(obj, value)
+            % set.Path Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            obj.Path = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.ValueKind(obj, value)
+            % set.ValueKind Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            obj.ValueKind = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.LiteralValue(obj, value)
+            % set.LiteralValue Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            obj.LiteralValue = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.SourceExpression(obj, value)
+            % set.SourceExpression Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            obj.SourceExpression = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.IsEditable(obj, value)
+            % set.IsEditable Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            obj.IsEditable = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Origin(obj, value)
+            % set.Origin Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            obj.Origin = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.SourceSpan(obj, value)
+            % set.SourceSpan Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            obj.SourceSpan = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Metadata(obj, value)
+            % set.Metadata Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertyEntry
+                value
+            end
+            obj.Metadata = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
         function record = toStruct(obj)
             % toStruct Retain independent current-value and source-binding snapshot data.
             arguments (Input)

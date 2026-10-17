@@ -60,10 +60,6 @@ classdef PropertySourcePlan
             arguments (Output)
                 plan (1, 1) struct
             end
-            context = document.evaluationContext(registry);
-            [plan, found] = context.configuration("placement:" + component.Id, ...
-                document.sourceComponentName(component.Id));
-            if found, return, end
             if macd.source.SubtreeReparentSourceEdits.contains(document, component.Id)
                 [~, ~, candidate] = macd.source.SubtreeReparentSourceEdits.build(document, registry);
                 configured = candidate.getComponentByName(document.sourceComponentName(component.Id));
@@ -71,7 +67,6 @@ classdef PropertySourcePlan
             else
                 plan = macd.source.PropertyInsertionPlanner.plan(document, component, registry);
             end
-            context.rememberConfiguration("placement:" + component.Id, plan.Document);
         end
     end
 end

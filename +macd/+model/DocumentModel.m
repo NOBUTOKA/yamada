@@ -54,12 +54,157 @@ classdef DocumentModel < handle
     end
 
     properties (Access = private)
+        InputClock macd.model.InputChangeClock = macd.model.InputChangeClock.empty
         Evaluation macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
     end
 
+    methods (Access = ?macd.model.EvaluationContext)
+        function [clock, revision, tracked] = inputStamp(obj)
+            % inputStamp Attach one acyclic write token and return its current state.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                clock (1, 1) macd.model.InputChangeClock
+                revision (1, 1) uint64
+                tracked (1, 1) logical
+            end
+            if isempty(obj.InputClock)
+                obj.InputClock = macd.model.InputChangeClock();
+                for component = reshape(obj.Components, 1, []), component.bindInputClock(obj.InputClock); end
+            end
+            clock = obj.InputClock;
+            revision = clock.Revision;
+            tracked = clock.IsTracked;
+        end
+    end
+
     methods
+        function set.ClassName(obj, value)
+            % set.ClassName Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.ClassName = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.FilePath(obj, value)
+            % set.FilePath Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.FilePath = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.OriginalText(obj, value)
+            % set.OriginalText Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.OriginalText = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Components(obj, value)
+            % set.Components Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.Components = value;
+            if ~isempty(obj.InputClock)
+                for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
+                obj.InputClock.touch([]);
+            end
+        end
+
+        function set.RootComponentId(obj, value)
+            % set.RootComponentId Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.RootComponentId = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.UnknownRegions(obj, value)
+            % set.UnknownRegions Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.UnknownRegions = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.PendingEdits(obj, value)
+            % set.PendingEdits Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.PendingEdits = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Encoding(obj, value)
+            % set.Encoding Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.Encoding = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.LineEnding(obj, value)
+            % set.LineEnding Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.LineEnding = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Metadata(obj, value)
+            % set.Metadata Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.Metadata = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.RenameEdits(obj, value)
+            % set.RenameEdits Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.RenameEdits = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.CallbackEdits(obj, value)
+            % set.CallbackEdits Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                value
+            end
+            obj.CallbackEdits = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
         function context = evaluationContext(obj, registry)
             % evaluationContext Reuse evaluations only while all semantic inputs remain equal.
             arguments (Input)
@@ -71,7 +216,9 @@ classdef DocumentModel < handle
             end
             if isempty(obj.Evaluation) || (~obj.Evaluation.isReading(registry) && ...
                     ~obj.Evaluation.matches(obj, registry))
+                previous = obj.Evaluation;
                 obj.Evaluation = macd.model.EvaluationContext(obj, registry);
+                if ~isempty(previous), obj.Evaluation.inheritStates(previous); end
             end
             context = obj.Evaluation;
         end

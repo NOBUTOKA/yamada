@@ -2,6 +2,179 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
     % EvaluationContextTest Verify exact-input caching without shared mutable results.
     %   Direct changes and history branching must not reuse an obsolete evaluation.
     methods (Test)
+        function writesInvalidateAnAccidentallyHeldReadScope(testCase)
+            % writesInvalidateAnAccidentallyHeldReadScope Do not hide tracked writes behind a read lease.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            context = document.evaluationContext(registry);
+            lease = context.readScope(); %#ok<NASGU>
+            document.Metadata.Changed = true;
+            testCase.verifyFalse(context.isReading(registry));
+            testCase.verifyNotEqual(document.evaluationContext(registry), context);
+        end
+
+        function buttonGroupSiblingChangesDiscardResolverValues(testCase)
+            % buttonGroupSiblingChangesDiscardResolverValues Preserve the exclusive-selection dependency scope.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);
+            first = document.insertComponent(registry, "uiradiobutton", group.Id);
+            second = document.insertComponent(registry, "uiradiobutton", group.Id);
+            definitions = registry.getEffectiveProperties(second.Factory, group.Factory, second.CreationArguments);
+            macd.model.PropertyStateResolver.resolve(second, definitions, document, registry);
+            first.setProperty("Value", true);
+            context = document.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + second.Id);
+            testCase.verifyFalse(found);
+        end
+
+        function sourceChangesDiscardAllResolverValues(testCase)
+            % sourceChangesDiscardAllResolverValues Keep source and global initialization inputs authoritative.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            root = document.getComponent(document.RootComponentId);
+            definitions = registry.getEffectiveProperties(root.Factory, "", root.CreationArguments);
+            macd.model.PropertyStateResolver.resolve(root, definitions, document, registry);
+            document.Metadata.HasUnresolvedInitialization = true;
+            context = document.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + root.Id);
+            testCase.verifyFalse(found);
+            states = macd.model.PropertyStateResolver.resolve(root, definitions, document, registry);
+            testCase.verifyFalse(any([states.IsKnown]));
+        end
+
+        function unchangedAbsoluteSiblingRetainsResolverValues(testCase)
+            % unchangedAbsoluteSiblingRetainsResolverValues Reuse an unchanged dependency scope after a local write.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            first = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            second = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            definitions = registry.getEffectiveProperties(second.Factory, document.getComponent(second.ParentId).Factory, second.CreationArguments);
+            [expected, diagnostics] = macd.model.PropertyStateResolver.resolve(second, definitions, document, registry);
+            before = document.evaluationContext(registry);
+            [~, found] = before.lookup("states:" + second.Id);
+            testCase.verifyTrue(found);
+            first.setProperty("FontSize", 19);
+            after = document.evaluationContext(registry);
+            [cached, found] = after.lookup("states:" + second.Id);
+            testCase.verifyTrue(found);
+            testCase.verifyEqual(cached.States, expected);
+            testCase.verifyEqual(cached.Diagnostics, diagnostics);
+        end
+
+        function ancestorAndCoupledSiblingChangesDiscardResolverValues(testCase)
+            % ancestorAndCoupledSiblingChangesDiscardResolverValues Include geometry and grid members in invalidation.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            first = document.insertComponent(registry, "uilabel", grid.Id);
+            second = document.insertComponent(registry, "uilabel", grid.Id);
+            definitions = registry.getEffectiveProperties(second.Factory, document.getComponent(second.ParentId).Factory, second.CreationArguments);
+            macd.model.PropertyStateResolver.resolve(second, definitions, document, registry);
+            first.setProperty("FontSize", 19);
+            context = document.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + second.Id);
+            testCase.verifyFalse(found);
+            macd.model.PropertyStateResolver.resolve(second, definitions, document, registry);
+            document.getComponent(document.RootComponentId).setProperty("Position", [1 1 900 700]);
+            context = document.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + second.Id);
+            testCase.verifyFalse(found);
+        end
+
+        function changedThenRestoredValueStillInvalidatesRevision(testCase)
+            % changedThenRestoredValueStillInvalidatesRevision Observe writes without rescanning equal final values.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            context = document.evaluationContext(registry);
+            document.ClassName = "TemporaryName";
+            document.ClassName = "CacheFixture";
+            testCase.verifyFalse(context.matches(document, registry));
+        end
+
+        function nestedAssignmentsInvalidateAllOwners(testCase)
+            % nestedAssignmentsInvalidateAllOwners Observe public struct and cell subscript writes.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            root = document.getComponent(document.RootComponentId);
+            entry = root.getProperty("Name");
+            context = document.evaluationContext(registry);
+            root.Metadata.Nested.Value = 1;
+            testCase.verifyFalse(context.matches(document, registry));
+            context = document.evaluationContext(registry);
+            entry.Metadata.Nested.Value = 2;
+            testCase.verifyFalse(context.matches(document, registry));
+            context = document.evaluationContext(registry);
+            document.PendingEdits{end + 1} = struct("Example", 3);
+            testCase.verifyFalse(context.matches(document, registry));
+        end
+
+        function collectionChangesAttachNewEntries(testCase)
+            % collectionChangesAttachNewEntries Track entries introduced after the first evaluation.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            root = document.getComponent(document.RootComponentId);
+            previous = document.evaluationContext(registry);
+            entry = root.setProperty("Tooltip", "first");
+            testCase.verifyFalse(previous.matches(document, registry));
+            current = document.evaluationContext(registry);
+            entry.setLiteral("second");
+            testCase.verifyFalse(current.matches(document, registry));
+            current = document.evaluationContext(registry);
+            root.removeProperty("Tooltip");
+            testCase.verifyFalse(current.matches(document, registry));
+            % Public component collections accept either array orientation.
+            document.addComponent(macd.model.ComponentRecord("column-label", "ColumnLabel", ...
+                "uilabel", "matlab.ui.control.Label"), root.Id);
+            document.Components = reshape(document.Components, [], 1);
+            current = document.evaluationContext(registry);
+            root.setProperty("Name", "After collection replacement");
+            testCase.verifyFalse(current.matches(document, registry));
+        end
+
+        function sharedRecordsUseExactComparisonForBothDocuments(testCase)
+            % sharedRecordsUseExactComparisonForBothDocuments Do not lose writes through another owner.
+            registry = macd.model.ComponentRegistry.createDefault();
+            first = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            old = first.evaluationContext(registry);
+            second = macd.model.DocumentModel("CacheFixture");
+            second.Components = first.Components;
+            second.RootComponentId = first.RootComponentId;
+            other = second.evaluationContext(registry);
+            testCase.verifyTrue(old.matches(first, registry));
+            root = first.getComponent(first.RootComponentId);
+            root.Name = "SharedRoot";
+            testCase.verifyFalse(old.matches(first, registry));
+            testCase.verifyFalse(other.matches(second, registry));
+        end
+
+        function candidateWritesDoNotInvalidateOriginal(testCase)
+            % candidateWritesDoNotInvalidateOriginal Keep revision ownership separate across deep copies.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            original = document.evaluationContext(registry);
+            candidate = document.structuralCandidate();
+            candidate.evaluationContext(registry);
+            candidate.getComponent(candidate.RootComponentId).setProperty("Name", "Candidate");
+            testCase.verifyTrue(original.matches(document, registry));
+        end
+
+        function liveDataIntroducedAfterCaptureRejectsFastReuse(testCase)
+            % liveDataIntroducedAfterCaptureRejectsFastReuse Reject hidden mutations even after a value is restored.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            previous = document.evaluationContext(registry);
+            document.Metadata.Live = containers.Map("a", 1);
+            testCase.verifyFalse(previous.matches(document, registry));
+            unsafe = document.evaluationContext(registry);
+            testCase.verifyFalse(unsafe.matches(document, registry));
+            document.Metadata = struct();
+            safe = document.evaluationContext(registry);
+            testCase.verifyTrue(safe.matches(document, registry));
+            document.Metadata.After = 1;
+            testCase.verifyFalse(safe.matches(document, registry));
+        end
+
         function detectsDirectEntryChangesWithoutHistory(testCase)
             % detectsDirectEntryChangesWithoutHistory Compare current values even outside document commands.
             registry = macd.model.ComponentRegistry.createDefault();

@@ -6,6 +6,8 @@ classdef EvaluationContext < handle
     %   Example:
     %       context = document.evaluationContext(registry);
     properties (Access = private)
+        InputClock macd.model.InputChangeClock
+        InputRevision uint64
         Key struct
         Registry macd.model.ComponentRegistry
         RegistryRevision uint64
@@ -16,6 +18,35 @@ classdef EvaluationContext < handle
     end
 
     methods
+        function inheritStates(obj, previous)
+            % inheritStates Reuse only resolver values whose complete dependency scope is unchanged.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                previous (1, 1) macd.model.EvaluationContext
+            end
+            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+                    obj.RegistryRevision ~= previous.RegistryRevision || ...
+                    ~isequaln(rmfield(obj.Key, "Components"), rmfield(previous.Key, "Components"))
+                return
+            end
+            before = previous.Key.Components;
+            after = obj.Key.Components;
+            if isempty(before) || numel(before) ~= numel(after), return, end
+            % Structural changes may alter event ordering and source-name resolution.
+            fields = ["Id", "Name", "Factory", "DeclaredType", "Origin", "ParentId", "Children"];
+            for field = fields
+                if ~isequaln({before.(field)}, {after.(field)}), return, end
+            end
+            for name = string(keys(previous.Values))
+                if ~startsWith(name, "states:"), continue, end
+                id = extractAfter(name, "states:");
+                indices = macd.model.EvaluationContext.stateScope(after, id);
+                if ~isempty(indices) && isequaln(before(indices), after(indices))
+                    obj.Values(char(name)) = previous.Values(char(name));
+                end
+            end
+        end
+
         function [inputs, safe] = inputs(obj)
             % inputs Return independent semantic inputs for conservative view invalidation.
             arguments (Input)
@@ -40,7 +71,8 @@ classdef EvaluationContext < handle
                 result (1, 1) logical
             end
             result = obj.Cacheable && obj.ReadDepth > 0 && ...
-                obj.Registry == registry && obj.RegistryRevision == registry.Revision;
+                obj.Registry == registry && obj.RegistryRevision == registry.Revision && ...
+                obj.InputClock.IsTracked && obj.InputClock.Revision == obj.InputRevision;
         end
 
         function cleanup = readScope(obj)
@@ -63,6 +95,7 @@ classdef EvaluationContext < handle
                 registry (1, 1) macd.model.ComponentRegistry
             end
             [obj.Key, obj.Cacheable] = macd.model.EvaluationContext.capture(document);
+            [obj.InputClock, obj.InputRevision] = document.inputStamp();
             obj.Registry = registry;
             obj.RegistryRevision = registry.Revision;
             obj.Values = containers.Map("KeyType", "char", "ValueType", "any");
@@ -81,8 +114,14 @@ classdef EvaluationContext < handle
             end
             result = obj.Cacheable && obj.Registry == registry && obj.RegistryRevision == registry.Revision;
             if result
-                [key, cacheable] = macd.model.EvaluationContext.capture(document);
-                result = cacheable && isequaln(obj.Key, key);
+                [clock, revision, tracked] = document.inputStamp();
+                if tracked && obj.InputClock == clock
+                    result = obj.InputRevision == revision;
+                else
+                    % Shared ownership and live inputs retain exact comparison.
+                    [key, cacheable] = macd.model.EvaluationContext.capture(document);
+                    result = cacheable && isequaln(obj.Key, key);
+                end
             end
         end
 
@@ -174,9 +213,46 @@ classdef EvaluationContext < handle
                 "Encoding", document.Encoding, "LineEnding", document.LineEnding, ...
                 "Metadata", document.Metadata, "UnknownRegions", document.UnknownRegions, ...
                 "PendingEdits", {document.PendingEdits}, "CallbackEdits", document.CallbackEdits, ...
-                "RenameEdits", document.RenameEdits, "Components", components);
+                "RenameEdits", document.RenameEdits);
             [key, safe] = macd.model.EvaluationContext.freeze(key);
+            key.Components = components;
             safe = safe && ownedSafe;
+        end
+
+        function indices = stateScope(components, id)
+            % stateScope Include ancestors and complete coupled grid or button-group subtrees.
+            arguments (Input)
+                components struct
+                id (1, 1) string
+            end
+            arguments (Output)
+                indices (1, :) double
+            end
+            indices = zeros(1, 0);
+            if isempty(components), return, end
+            ids = string({components.Id});
+            parents = string({components.ParentId});
+            current = find(ids == id, 1);
+            ancestors = zeros(1, 0);
+            while ~isempty(current)
+                if any(ancestors == current)
+                    indices = 1:numel(components); return
+                end
+                ancestors(end + 1) = current; %#ok<AGROW>
+                current = find(ids == parents(current), 1);
+            end
+            indices = ancestors;
+            for ancestor = ancestors
+                if ~any(components(ancestor).Factory == ["uigridlayout", "uibuttongroup"]), continue, end
+                subtree = ancestor;
+                while true
+                    expanded = union(subtree, find(ismember(parents, ids(subtree))));
+                    if numel(expanded) == numel(subtree), break, end
+                    subtree = expanded;
+                end
+                indices = union(indices, subtree);
+            end
+            indices = reshape(sort(indices), 1, []);
         end
 
         function [value, safe] = freeze(value, owned)
@@ -202,12 +278,14 @@ classdef EvaluationContext < handle
                         "Origin", component.Origin, "ParentId", component.ParentId, ...
                         "Children", component.Children, "CreationArguments", {component.CreationArguments}, ...
                         "IsEditable", component.IsEditable, "Metadata", component.Metadata, ...
-                        "SourceSpans", component.SourceSpans, "Properties", properties, ...
+                        "SourceSpans", component.SourceSpans, ...
                         "Settings", component.settingSnapshot());
+                    [record, valid] = macd.model.EvaluationContext.freeze(record);
+                    safe = safe && valid;
+                    record.Properties = properties;
                     if isempty(records), records = record; else, records(end + 1) = record; end %#ok<AGROW>
                 end
-                [value, independent] = macd.model.EvaluationContext.freeze(records);
-                safe = safe && independent;
+                value = records;
             elseif isa(value, "macd.model.PropertyEntry")
                 if ~owned, value = []; safe = false; return, end
                 records = struct([]);
@@ -237,6 +315,9 @@ classdef EvaluationContext < handle
                     isa(value, "macd.model.UnknownSourceRegion") || isa(value, "macd.model.Diagnostic") || ...
                     isa(value, "macd.model.PropertyState") || isa(value, "macd.model.PropertyDefinition") || ...
                     isa(value, "macd.model.CallbackEdit");
+                if safe && isobject(value)
+                    safe = macd.model.InputChangeClock.isValueData(value);
+                end
                 if ~safe, value = []; end
             end
         end

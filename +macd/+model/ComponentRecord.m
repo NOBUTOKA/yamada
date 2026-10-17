@@ -48,10 +48,163 @@ classdef ComponentRecord < handle
     end
 
     properties (Access = private)
+        InputClock macd.model.InputChangeClock = macd.model.InputChangeClock.empty
         CreationArgumentData cell = {}
     end
 
+    methods (Access = ?macd.model.DocumentModel)
+        function bindInputClock(obj, clock)
+            % bindInputClock Track owned writes without retaining the owning document.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                clock (1, 1) macd.model.InputChangeClock
+            end
+            if ~isempty(obj.InputClock)
+                if obj.InputClock ~= clock
+                    obj.InputClock.disable();
+                    clock.disable();
+                end
+                return
+            end
+            obj.InputClock = clock;
+            for entry = reshape(obj.Properties, 1, []), entry.bindInputClock(clock); end
+        end
+    end
+
     methods
+        function set.Id(obj, value)
+            % set.Id Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.Id = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Factory(obj, value)
+            % set.Factory Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.Factory = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.DeclaredType(obj, value)
+            % set.DeclaredType Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.DeclaredType = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Origin(obj, value)
+            % set.Origin Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.Origin = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Children(obj, value)
+            % set.Children Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.Children = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Properties(obj, value)
+            % set.Properties Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.Properties = value;
+            if ~isempty(obj.InputClock)
+                for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
+                obj.InputClock.touch([]);
+            end
+        end
+
+        function set.Settings(obj, value)
+            % set.Settings Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.Settings = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Name(obj, value)
+            % set.Name Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.Name = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.ParentId(obj, value)
+            % set.ParentId Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.ParentId = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.IsEditable(obj, value)
+            % set.IsEditable Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.IsEditable = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.SourceSpans(obj, value)
+            % set.SourceSpans Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.SourceSpans = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.Metadata(obj, value)
+            % set.Metadata Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.Metadata = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
+        function set.CreationArgumentData(obj, value)
+            % set.CreationArgumentData Track assignments that affect semantic evaluation inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                value
+            end
+            obj.CreationArgumentData = value;
+            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+        end
+
         function records = settingSnapshot(obj)
             % settingSnapshot Serialize all immutable occurrences for reversible document operations.
             arguments (Input)
