@@ -998,10 +998,11 @@ classdef DocumentModel < handle
             obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after));
         end
 
-        function candidate = structuralCandidate(obj)
-            % structuralCandidate Clone mutable document data for isolated source preflight.
+        function candidate = structuralCandidate(obj, registry)
+            % structuralCandidate Clone mutable data and optionally inherit unchanged value resolutions.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
             arguments (Output)
                 candidate (1, 1) macd.model.DocumentModel
@@ -1018,6 +1019,12 @@ classdef DocumentModel < handle
             % Pending deletion records are read-only inputs to generation.
             candidate.PendingEdits = obj.PendingEdits;
             candidate.SourceAnalysisData = obj.SourceAnalysisData;
+            % Resolver entries are independent values; mutation invalidates their normal scopes.
+            if ~isempty(registry) && ~isempty(obj.Evaluation)
+                previous = obj.evaluationContext(registry);
+                current = candidate.evaluationContext(registry);
+                current.inheritStates(previous);
+            end
         end
 
         function removeSubtree(obj, id, registry)
@@ -1427,7 +1434,7 @@ classdef DocumentModel < handle
             end
 
             % Use independent records and avoid recording candidate-only user history.
-            candidate = obj.structuralCandidate();
+            candidate = obj.structuralCandidate(registry);
             component = candidate.getComponent(componentId);
             for change = changes
                 component.setProperty(string(change.Path), change.Value);

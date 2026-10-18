@@ -2,6 +2,52 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
     % EvaluationContextTest Verify exact-input caching without shared mutable results.
     %   Direct changes and history branching must not reuse an obsolete evaluation.
     methods (Test)
+        function isolatedCandidatesRetainOnlyUnaffectedStates(testCase)
+            % isolatedCandidatesRetainOnlyUnaffectedStates Reuse value resolutions without sharing editable records.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CandidateFixture", registry);
+            first = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            second = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            first.setProperty("FontSize", 13);
+            document.getEffectivePropertyStates(registry, first.Id);
+            document.getEffectivePropertyStates(registry, second.Id);
+            history = document.HistoryIndex;
+            dirty = document.IsDirty;
+            candidate = document.structuralCandidate(registry);
+            context = candidate.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + second.Id);
+            testCase.verifyTrue(found);
+            candidate.getComponent(first.Id).setProperty("FontSize", 21);
+            context = candidate.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + first.Id);
+            testCase.verifyFalse(found);
+            [~, found] = context.lookup("states:" + second.Id);
+            testCase.verifyTrue(found);
+            testCase.verifyEqual(first.getProperty("FontSize").LiteralValue, 13);
+            testCase.verifyEqual(candidate.getComponent(first.Id).getProperty("FontSize").LiteralValue, 21);
+            testCase.verifyEqual(document.HistoryIndex, history);
+            testCase.verifyEqual(document.IsDirty, dirty);
+        end
+
+        function candidateGridChangesDiscardCoupledStates(testCase)
+            % candidateGridChangesDiscardCoupledStates Preserve the existing conservative grid dependency scope.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CandidateGridFixture", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            grid.setProperty("RowHeight", {"1x", "1x"});
+            label = document.insertComponent(registry, "uilabel", grid.Id);
+            document.getEffectivePropertyStates(registry, label.Id);
+            candidate = document.structuralCandidate(registry);
+            context = candidate.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + label.Id);
+            testCase.verifyTrue(found);
+            candidate.getComponent(grid.Id).setProperty("RowHeight", {40, 80});
+            context = candidate.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + label.Id);
+            testCase.verifyFalse(found);
+            testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, {"1x", "1x"});
+        end
+
         function liveDefinitionDataCannotBorrowAnIndependentProof(testCase)
             % liveDefinitionDataCannotBorrowAnIndependentProof Reject live metadata behind the same property path.
             registry = macd.model.ComponentRegistry.createDefault();
