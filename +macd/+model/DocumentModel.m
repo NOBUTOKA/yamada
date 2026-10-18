@@ -57,6 +57,10 @@ classdef DocumentModel < handle
         SourceAnalysisData macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
         InputClock macd.model.InputChangeClock = macd.model.InputChangeClock.empty
         Evaluation macd.model.EvaluationContext = macd.model.EvaluationContext.empty
+        PropertyCheckpoint macd.model.DocumentModel = macd.model.DocumentModel.empty
+        PropertyCheckpointContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
+        PropertyCheckpointId string = ""
+        PropertyCheckpointPaths string = strings(1, 0)
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
     end
@@ -417,7 +421,7 @@ classdef DocumentModel < handle
                 "Path", path, "HadOldValue", hadOldValue, "OldValue", {oldValue}, ...
                 "NewValue", {value}, "TargetSettingId", obj.propertySettingId(entry)));
             if ~isempty(prepared)
-                obj.evaluationContext(registry).rememberConfiguration("combined", prepared);
+                obj.rememberPropertyCheckpoint(prepared, componentId, path, registry);
             end
         end
 
@@ -500,7 +504,7 @@ classdef DocumentModel < handle
                     "ComponentId", componentId, "Changes", historyChanges));
             end
             if ~isempty(prepared)
-                obj.evaluationContext(registry).rememberConfiguration("combined", prepared);
+                obj.rememberPropertyCheckpoint(prepared, componentId, string({requested.Path}), registry);
             end
         end
 
@@ -1437,6 +1441,10 @@ classdef DocumentModel < handle
                 parsed (1, 1) macd.model.DocumentModel
             end
 
+            % Re-edit proven inserted or existing numeric tokens without replaying the document.
+            parsed = obj.localPropertyCandidate(componentId, changes, registry);
+            if ~isempty(parsed), return, end
+
             % Use independent records and avoid recording candidate-only user history.
             candidate = obj.structuralCandidate(registry);
             component = candidate.getComponent(componentId);
@@ -1468,6 +1476,98 @@ classdef DocumentModel < handle
                 end
             end
             obj.assertRequestedStates(states, changes);
+        end
+
+        function rememberPropertyCheckpoint(obj, prepared, componentId, paths, registry)
+            % rememberPropertyCheckpoint Retain private validated records at the exact committed input.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                prepared (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+                paths string
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            context = obj.evaluationContext(registry);
+            context.rememberConfiguration("combined", prepared);
+            obj.PropertyCheckpoint = prepared;
+            obj.PropertyCheckpointContext = context;
+            obj.PropertyCheckpointId = componentId;
+            obj.PropertyCheckpointPaths = paths;
+        end
+
+        function parsed = localPropertyCandidate(obj, componentId, changes, registry)
+            % localPropertyCandidate Validate independent numeric replacements in a private proven source plan.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+                changes (1, :) struct
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                parsed macd.model.DocumentModel
+            end
+            parsed = macd.model.DocumentModel.empty;
+            if isempty(obj.PropertyCheckpointContext) || obj.PropertyCheckpointId ~= componentId || ...
+                    ~all(ismember(string({changes.Path}), obj.PropertyCheckpointPaths)) || ...
+                    ~obj.PropertyCheckpointContext.matches(obj, registry)
+                return
+            end
+
+            % A successful full preflight already established occurrence ownership and placement.
+            live = obj.getComponent(componentId);
+            checkpoint = obj.PropertyCheckpoint;
+            component = checkpoint.getComponentByName(live.Name);
+            states = checkpoint.getEffectivePropertyStates(registry, component.Id);
+            definitions = [states.Definition];
+            paths = string({changes.Path});
+            transaction = macd.model.PropertyTransaction(paths, {changes.Value});
+            for change = changes
+                index = find([definitions.Path] == string(change.Path), 1);
+                if isempty(index), return, end
+                definition = definitions(index);
+                entry = component.getProperty(string(change.Path));
+                schema = definition.ValueSchema;
+                if definition.Application.EffectStatus ~= "independent" || ...
+                        definition.Application.EffectPolicy ~= "none" || ...
+                        ~isempty(definition.Application.ApplyAfter) || ...
+                        ~isfield(schema, "kind") || string(schema.kind) ~= "number" || ...
+                        (isfield(schema, "constraints") && ~isempty(schema.constraints)) || ...
+                        isempty(entry) || isempty(entry.SourceSpan) || ~entry.IsEditable || ...
+                        entry.ValueKind ~= "literal" || ~states(index).Resolution.IsKnown || ...
+                        ~isa(change.Value, "double") || ~isscalar(change.Value) || ...
+                        ~isreal(change.Value) || ~isfinite(change.Value)
+                    return
+                end
+                for other = definitions
+                    if any(ismember(other.Application.ApplyAfter, paths)), return, end
+                end
+                [decoded, literal] = macd.source.MatlabLiteralParser.parse( ...
+                    macd.source.LiteralEncoder.encode(change.Value));
+                if ~literal || ~isequaln(decoded, change.Value), return, end
+                transaction.stage(string(change.Path), change.Value);
+            end
+            message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
+            if strlength(message) > 0
+                error("macd:DocumentModel:UnsafePropertyEdit", "%s", message);
+            end
+
+            % Only private candidate records change; preserve every original span and occurrence.
+            obj.PropertyCheckpointContext = macd.model.EvaluationContext.empty;
+            oldValues = cell(1, numel(changes));
+            for index = 1:numel(changes)
+                oldValues{index} = component.getProperty(string(changes(index).Path)).LiteralValue;
+                component.setProperty(string(changes(index).Path), changes(index).Value);
+            end
+            try
+                states = checkpoint.getEffectivePropertyStates(registry, component.Id);
+                obj.assertRequestedStates(states, changes);
+            catch exception
+                for index = 1:numel(changes)
+                    component.setProperty(string(changes(index).Path), oldValues{index});
+                end
+                rethrow(exception)
+            end
+            parsed = checkpoint;
         end
 
         function assertRequestedStates(~, states, changes)

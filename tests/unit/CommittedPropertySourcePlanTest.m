@@ -4,6 +4,119 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
     %   consumers while direct writes and catalog changes invalidate that input.
 
     methods (Test)
+        function repeatedNumericEditsAvoidWholeSourcePreflight(testCase)
+            % repeatedNumericEditsAvoidWholeSourcePreflight Reuse proven placement for saved and unsaved settings.
+            registry = macd.model.ComponentRegistry.createDefault();
+            for inGrid = [false true]
+                for sourceBacked = [false true]
+                    for batch = [false true]
+                        [document, label] = CommittedPropertySourcePlanTest.fixture(registry, inGrid);
+                        if sourceBacked
+                            label.setProperty("FontSize", 17);
+                            source = macd.source.RoundTripGenerator(registry).generate(document);
+                            document = macd.source.AppSourceParser.parseText(source, registry);
+                            label = document.getComponentByName(label.Name);
+                        end
+                        original = document.OriginalText;
+                        document.setProperty(label.Id, "FontSize", 23, registry);
+                        settings = label.Settings;
+                        previousContext = document.evaluationContext(registry);
+
+                        % Measure the complete model transaction, including committed source sharing.
+                        profile clear;
+                        profile on;
+                        cleanup = onCleanup(@() profile('off'));
+                        if batch
+                            document.setPropertyBatch(label.Id, ...
+                                macd.model.PropertyTransaction.singleChange("FontSize", 37), registry);
+                        else
+                            document.setProperty(label.Id, "FontSize", 37, registry);
+                        end
+                        profile off;
+                        info = profile('info');
+                        clear cleanup
+                        functions = info.FunctionTable;
+                        names = string({functions.FunctionName});
+                        wholeSource = contains(names, "AppSourceParser.parseText") | ...
+                            contains(names, "RoundTripGenerator.generate");
+                        testCase.verifyEqual(sum([functions(wholeSource).NumCalls]), 0);
+                        cloning = contains(names, "DocumentModel.structuralCandidate");
+                        testCase.verifyLessThanOrEqual(sum([functions(cloning).NumCalls]), 1);
+                        testCase.verifyEqual(document.OriginalText, original);
+                        testCase.verifyEqual(label.Settings, settings);
+                        testCase.verifyEqual(document.HistoryIndex, 2);
+                        [previousPlan, found] = previousContext.configuration("combined", label.Name);
+                        testCase.verifyTrue(found);
+                        testCase.verifyEqual(previousPlan.Component.getProperty("FontSize").LiteralValue, 23);
+                        states = document.getEffectivePropertyStates(registry, label.Id);
+                        font = states(arrayfun(@(item) item.Definition.Path == "FontSize", states)).Resolution;
+                        testCase.verifyTrue(font.IsKnown);
+                        testCase.verifyEqual(font.EffectiveValue, 37);
+
+                        % Compare emission against a fresh full-preflight reference and exercise history.
+                        reference = macd.source.AppSourceParser.parseText(original, registry);
+                        referenceLabel = reference.getComponentByName(label.Name);
+                        reference.setProperty(referenceLabel.Id, "FontSize", 37, registry);
+                        source = macd.source.RoundTripGenerator(registry).generate(document);
+                        testCase.verifyEqual(source, macd.source.RoundTripGenerator(registry).generate(reference));
+                        parsed = macd.source.AppSourceParser.parseText(source, registry);
+                        testCase.verifyEqual(parsed.getComponentByName(label.Name).getProperty("FontSize").LiteralValue, 37);
+                        document.undo();
+                        testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 23);
+                        document.redo();
+                        testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 37);
+                    end
+                end
+            end
+        end
+
+        function localNumericEditsRejectInvalidValuesAtomically(testCase)
+            % localNumericEditsRejectInvalidValuesAtomically Keep range failures outside the live model and history.
+            registry = macd.model.ComponentRegistry.createDefault();
+            [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
+            document.setProperty(label.Id, "FontSize", 23, registry);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyError(@() document.setPropertyBatch(label.Id, ...
+                macd.model.PropertyTransaction.singleChange("FontSize", -1), registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+            testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 23);
+            testCase.verifyEqual(document.HistoryIndex, 1);
+            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            document.setProperty(label.Id, "FontSize", 31, registry);
+            testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 31);
+        end
+
+        function numericCheckpointInvalidatesAfterExternalChanges(testCase)
+            % numericCheckpointInvalidatesAfterExternalChanges Require full preflight after writes or catalog/history changes.
+            for kind = ["metadata", "entry", "registry", "history"]
+                registry = macd.model.ComponentRegistry.createDefault();
+                [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
+                document.setProperty(label.Id, "FontSize", 23, registry);
+                switch kind
+                    case "metadata"
+                        document.Metadata.LocalProofInvalidation = true;
+                    case "entry"
+                        label.setProperty("Text", "Direct write");
+                    case "registry"
+                        registry.register(registry.get("uilabel"));
+                    case "history"
+                        document.undo();
+                        document.redo();
+                end
+                profile clear;
+                profile on;
+                cleanup = onCleanup(@() profile('off'));
+                document.setProperty(label.Id, "FontSize", 31, registry);
+                profile off;
+                info = profile('info');
+                clear cleanup
+                functions = info.FunctionTable;
+                parsing = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
+                testCase.verifyGreaterThan(sum([functions(parsing).NumCalls]), 0, kind);
+                testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 31);
+            end
+        end
+
         function siblingStateReadsDoNotClonePerChild(testCase)
             % siblingStateReadsDoNotClonePerChild Bound document copies when siblings read one grid result.
             registry = macd.model.ComponentRegistry.createDefault();

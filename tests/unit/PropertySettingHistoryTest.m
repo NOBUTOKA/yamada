@@ -4,6 +4,37 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
     %   the represented application and check immutable occurrence ownership.
 
     methods (Test)
+        function repeatedNumericEditsRetainEverySourceOccurrence(testCase)
+            % repeatedNumericEditsRetainEverySourceOccurrence Replace only the final owned value in either syntax.
+            registry = macd.model.ComponentRegistry.createDefault();
+            for assignments = [false true]
+                statements = "app.StatusLabel = uilabel(app.UIFigure, FontSize=17); % constructor";
+                target = "FontSize=17";
+                replacement = "FontSize=31";
+                if assignments
+                    statements = [statements, ...
+                        "app.StatusLabel.FontSize = 19; % earlier", ...
+                        "app.StatusLabel.FontSize = 21; % final"]; %#ok<AGROW>
+                    target = "FontSize = 21";
+                    replacement = "FontSize = 31";
+                end
+                source = testCase.fixture(statements);
+                document = macd.source.AppSourceParser.parseText(source, registry);
+                label = document.getComponentByName("StatusLabel");
+                settings = label.Settings;
+                document.setProperty(label.Id, "FontSize", 23, registry);
+                document.setPropertyBatch(label.Id, ...
+                    macd.model.PropertyTransaction.singleChange("FontSize", 31), registry);
+                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), ...
+                    replace(source, target, replacement));
+                testCase.verifyEqual(label.Settings, settings);
+                testCase.verifyEqual(document.OriginalText, source);
+                document.undo();
+                document.undo();
+                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            end
+        end
+
         function subtreeDeletionRemovesAllHistoricalAssignments(testCase)
             % subtreeDeletionRemovesAllHistoricalAssignments Avoid leaving shadowed settings after deletion.
 
