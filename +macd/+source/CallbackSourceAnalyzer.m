@@ -4,6 +4,19 @@ classdef CallbackSourceAnalyzer
     %   methods. Unsupported scope, constructor bindings, sharing, and dynamic
     %   references remain visible with both mutation actions unavailable.
 
+    methods (Static, Access = ?macd.source.SourceAnalysis)
+        function layout = sourceLayout(statements)
+            % sourceLayout Expose the pure layout compiler only to the derived source cache.
+            arguments (Input)
+                statements macd.source.SourceStatement
+            end
+            arguments (Output)
+                layout (1, 1) struct
+            end
+            layout = macd.source.CallbackSourceAnalyzer.layout(statements);
+        end
+    end
+
     methods (Static)
         function [order, diagnostics, certain, layout, returns] = initializationStatements(statements, creationOffsets)
             % initializationStatements Trace constructor-reachable initializers without executing source.
@@ -45,8 +58,9 @@ classdef CallbackSourceAnalyzer
             end
             definitions = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
             source = document.OriginalText;
-            statements = macd.source.MatlabLexicalScanner.splitStatements(source);
-            layout = macd.source.CallbackSourceAnalyzer.layout(statements);
+            analysis = document.sourceAnalysis();
+            statements = analysis.Statements;
+            layout = analysis.Layout;
 
             % Classify each binding using source occurrences rather than the last parsed value.
             for index = 1:numel(definitions)

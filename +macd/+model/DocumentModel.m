@@ -54,6 +54,7 @@ classdef DocumentModel < handle
     end
 
     properties (Access = private)
+        SourceAnalysisData macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
         InputClock macd.model.InputChangeClock = macd.model.InputChangeClock.empty
         Evaluation macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         SavedHistoryIndex double = NaN
@@ -104,7 +105,34 @@ classdef DocumentModel < handle
         end
     end
 
+    methods (Access = ?macd.source.AppSourceParser)
+        function rememberSourceAnalysis(obj, analysis)
+            % rememberSourceAnalysis Attach parser-owned derived data for the exact current source.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                analysis (1, 1) macd.source.SourceAnalysis
+            end
+            assert(analysis.matches(obj.OriginalText), "macd:DocumentModel:SourceAnalysisMismatch", ...
+                "Derived analysis must match the current source text.");
+            obj.SourceAnalysisData = analysis;
+        end
+    end
+
     methods
+        function analysis = sourceAnalysis(obj)
+            % sourceAnalysis Return read-only derived data without changing semantic inputs.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                analysis (1, 1) macd.source.SourceAnalysis
+            end
+            if isempty(obj.SourceAnalysisData) || ~obj.SourceAnalysisData.matches(obj.OriginalText)
+                obj.SourceAnalysisData = macd.source.SourceAnalysis(obj.OriginalText);
+            end
+            analysis = obj.SourceAnalysisData;
+        end
+
         function set.ClassName(obj, value)
             % set.ClassName Track assignments that affect semantic evaluation inputs.
             arguments (Input)
@@ -989,6 +1017,7 @@ classdef DocumentModel < handle
             if isprop(obj, "RenameEdits"), candidate.("RenameEdits") = obj.("RenameEdits"); end
             % Pending deletion records are read-only inputs to generation.
             candidate.PendingEdits = obj.PendingEdits;
+            candidate.SourceAnalysisData = obj.SourceAnalysisData;
         end
 
         function removeSubtree(obj, id, registry)

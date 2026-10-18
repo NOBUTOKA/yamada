@@ -46,11 +46,14 @@ classdef SubtreeReparentSourceEdits
             end
             if isempty(movedIds), return, end
             source = document.OriginalText;
-            statements = macd.source.MatlabLexicalScanner.splitStatements(source);
+            analysis = document.sourceAnalysis();
+            statements = analysis.Statements;
             [direct, methodSpan] = macd.source.SubtreeReparentSourceEdits.directScope(statements);
             parsed = document.Components([document.Components.Origin] == "parsed");
             offsets = arrayfun(@(item) item.SourceSpans.Creation.StartOffset, parsed);
-            [order, ~, certain] = macd.source.CallbackSourceAnalyzer.initializationStatements(statements, offsets);
+            initialization = analysis.initialization(offsets);
+            order = initialization.Order;
+            certain = initialization.Certain;
             spans = macd.model.SourceSpan.empty;
             names = strings(1, 0);
             for record = originals
@@ -431,7 +434,8 @@ classdef SubtreeReparentSourceEdits
                 document.OriginalText, macd.model.SourceSpan(1, anchor), removals);
             suffix = extractAfter(document.OriginalText, anchor);
             source = prefix + block + suffix;
-            candidate = macd.source.AppSourceParser.parseText(source, registry);
+            [candidate, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            hasPending = false;
             additions = struct("Start", {}, "End", {}, "Text", {});
             % All candidates share one source version; only their owned insertions are combined.
             for id = movedIds
@@ -442,6 +446,7 @@ classdef SubtreeReparentSourceEdits
                     ~isfield(entry.Metadata, "SubtreeReferenceId"), pending));
                 for entry = pending, configured.setProperty(entry.Path, entry.LiteralValue); end
                 if isempty(pending), continue, end
+                hasPending = true;
                 plan = macd.source.PropertyInsertionPlanner.plan(candidate, configured, registry);
                 additions = [additions plan.Edits]; %#ok<AGROW>
             end
@@ -452,7 +457,10 @@ classdef SubtreeReparentSourceEdits
                 error("macd:SubtreeReparentSourceEdits:UnsafeSource", "A pending property escapes the relocated initialization block.");
             end
             block = macd.source.SubtreeReparentSourceEdits.applyRange(source, macd.model.SourceSpan(first, last), additions);
-            [candidate, diagnostics] = macd.source.AppSourceParser.parseText(prefix + block + suffix, registry);
+            emitted = prefix + block + suffix;
+            if hasPending || ~isequaln(emitted, source)
+                [candidate, diagnostics] = macd.source.AppSourceParser.parseText(emitted, registry);
+            end
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:SubtreeReparentSourceEdits:UnsafeSource", "%s", strjoin(string({diagnostics.Message}), newline));
             end

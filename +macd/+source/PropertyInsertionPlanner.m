@@ -95,7 +95,8 @@ classdef PropertyInsertionPlanner
             end
 
             % Acquire the same constructor-reachable trace used by the parser.
-            statements = macd.source.MatlabLexicalScanner.splitStatements(source);
+            analysis = document.sourceAnalysis();
+            statements = analysis.Statements;
             creation = find(arrayfun(@(statement) statement.Span.StartOffset == ...
                 component.SourceSpans.Creation.StartOffset, statements));
             if ~isscalar(creation)
@@ -103,8 +104,11 @@ classdef PropertyInsertionPlanner
             end
             parsed = document.Components([document.Components.Origin] == "parsed");
             offsets = arrayfun(@(record) record.SourceSpans.Creation.StartOffset, parsed);
-            [order, ~, certain, layout, returns] = ...
-                macd.source.CallbackSourceAnalyzer.initializationStatements(statements, offsets);
+            initialization = analysis.initialization(offsets);
+            order = initialization.Order;
+            certain = initialization.Certain;
+            layout = analysis.Layout;
+            returns = initialization.Returns;
             created = find(order == creation);
             if ~isscalar(created) || ~certain(created) || ~layout.Valid
                 error("macd:PropertyInsertionPlanner:UnsafePlacement", "The factory is conditional, repeated, or outside a proven initializer.");
