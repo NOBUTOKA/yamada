@@ -121,6 +121,34 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             testCase.verifyTrue(clipboard.hasContents(document));
         end
 
+        function measuredGeometryParticipatesInReparentConditions(testCase)
+            % measuredGeometryParticipatesInReparentConditions Do not reuse a missing-geometry result for measured bounds.
+            [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(false);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            document.reparentSubtree(leaf.Id, grid.Id, registry);
+            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
+            testCase.verifyFalse(states(string({states.Id}) == right.Id).Enabled);
+            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry, [10 20 90 25]);
+            testCase.verifyTrue(states(string({states.Id}) == right.Id).Enabled);
+            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
+            testCase.verifyFalse(states(string({states.Id}) == right.Id).Enabled);
+        end
+
+        function constructorConditionsSurviveDiagnosticRefresh(testCase)
+            % constructorConditionsSurviveDiagnosticRefresh Base eligibility on preserved tokens rather than UI warnings.
+            [original, registry, ~, ~, leaf] = EditAvailabilityTest.fixture(true);
+            source = replace(original.OriginalText, "app." + leaf.Name + " = uilabel(app.Panel);", ...
+                "app." + leaf.Name + " = uilabel(app.Panel, 'UnknownSetting', 17);");
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            leaf = document.getComponentByName(leaf.Name);
+            before = macd.model.DocumentEditAvailability.copying(document, leaf.Id, registry);
+            document.Diagnostics = macd.model.Diagnostic.empty;
+            state = macd.model.DocumentEditAvailability.copying(document, leaf.Id, registry);
+            testCase.verifyFalse(state.Enabled);
+            testCase.verifyNotEmpty(state.Reason);
+            testCase.verifyEqual(state, before);
+        end
+
         function chosenCommandsRemainAtomicAndUndoable(testCase)
             % chosenCommandsRemainAtomicAndUndoable Execute permitted edits only after the query returns.
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(true);

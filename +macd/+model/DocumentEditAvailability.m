@@ -14,6 +14,11 @@ classdef DocumentEditAvailability
             arguments (Output)
                 state (1, 1) struct
             end
+            % Reuse only a small value result for the exact current semantic input.
+            context = document.evaluationContext(registry);
+            key = "eligibility:delete:" + id;
+            [state, found] = context.lookup(key);
+            if found, return, end
             state = struct("Enabled", false, "Reason", "");
             try
                 snapshot = macd.model.DocumentEditAvailability.inspect(document, id);
@@ -40,6 +45,7 @@ classdef DocumentEditAvailability
             catch exception
                 state.Reason = string(exception.message);
             end
+            context.remember(key, state);
         end
 
         function state = copying(document, id, registry)
@@ -52,6 +58,11 @@ classdef DocumentEditAvailability
             arguments (Output)
                 state (1, 1) struct
             end
+            % Reuse only a small value result for the exact current semantic input.
+            context = document.evaluationContext(registry);
+            key = "eligibility:copy:" + id;
+            [state, found] = context.lookup(key);
+            if found, return, end
             state = struct("Enabled", false, "Reason", "");
             try
                 if id == document.RootComponentId
@@ -86,14 +97,25 @@ classdef DocumentEditAvailability
                             macd.source.LiteralEncoder.encode(entry.LiteralValue);
                         end
                     end
-                    if any(arrayfun(@(item) item.ComponentId == record.Id && item.Code == "source-creation-property", document.Diagnostics))
-                        error("macd:DocumentEditAvailability:Constructor", "The constructor contains preserved unsupported properties.");
+                    % Constructor ownership comes from source tokens, not replaceable display diagnostics.
+                    if record.Origin == "parsed"
+                        analysis = document.sourceAnalysis();
+                        statements = analysis.Statements;
+                        span = record.SourceSpans.Creation;
+                        match = arrayfun(@(item) item.Span.StartOffset == span.StartOffset && ...
+                            item.Span.EndOffset == span.EndOffset, statements);
+                        [~, ~, ~, skipped, supported] = macd.source.PropertySettingSyntax.factory( ...
+                            statements(match), definition, "availability");
+                        if ~supported || ~isempty(skipped)
+                            error("macd:DocumentEditAvailability:Constructor", "The constructor contains preserved unsupported properties.");
+                        end
                     end
                 end
                 state.Enabled = true;
             catch exception
                 state.Reason = string(exception.message);
             end
+            context.remember(key, state);
         end
 
         function states = reparenting(document, id, registry, measuredPosition)
@@ -106,6 +128,14 @@ classdef DocumentEditAvailability
             end
             arguments (Output)
                 states struct
+            end
+            % Geometry participates in eligibility even when document inputs are unchanged.
+            context = document.evaluationContext(registry);
+            key = "eligibility:reparent:" + id;
+            [cached, found] = context.lookup(key);
+            if found && isequaln(cached.Measured, measuredPosition)
+                states = cached.States;
+                return
             end
             states = struct("Id", {}, "Name", {}, "Enabled", {}, "Reason", {});
             source = document.getComponent(id);
@@ -153,6 +183,7 @@ classdef DocumentEditAvailability
                 end
                 states(end + 1) = state; %#ok<AGROW>
             end
+            context.remember(key, struct("Measured", measuredPosition, "States", states));
         end
 
         function state = pasting(document, snapshot, parentId, registry, measuredPosition, offset)
