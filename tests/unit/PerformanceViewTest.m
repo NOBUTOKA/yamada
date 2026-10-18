@@ -2,6 +2,52 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
     % PerformanceViewTest Verify view reuse without stale bindings or skipped model changes.
     %   Tests assert behavior and handle identity instead of machine-dependent timings.
     methods (Test)
+        function obsoleteLayoutCallbackCannotStopNewPreviewWork(testCase)
+            % obsoleteLayoutCallbackCannotStopNewPreviewWork Ignore notifications from a replaced layout request.
+            app = yamada();
+            cleanup = onCleanup(@() delete(app));
+            figure = findall(0, "Tag", "macd-yamada-editor");
+            palette = findall(figure, "Type", "uitable");
+            palette = palette(arrayfun(@(item) ~isempty(item.DoubleClickedFcn), palette));
+            row = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
+            gridId = app.SelectedComponentId;
+            timers = timerfindall();
+            timers = timers(arrayfun(@(item) isa(item.TimerFcn, "function_handle") && ...
+                contains(string(func2str(item.TimerFcn)), "refreshOverlayAfterTabLayout"), timers));
+            testCase.assertNumElements(timers, 1);
+            layoutTimer = timers(1);
+            obsoleteCallback = layoutTimer.TimerFcn;
+            obsoleteErrorCallback = layoutTimer.ErrorFcn;
+
+            % Rebuild through a real command, then retain its current polling callback.
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            data = overlay.Data.gridEditor;
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "GridAction", ...
+                "HTMLEventData", struct("action", "set-track", "revision", data.revision, ...
+                "activeGridId", gridId, "axis", "row", "index", 1, "mode", "fixed", "value", 40)));
+            currentCallback = layoutTimer.TimerFcn;
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            before = overlay.Data;
+            stop(layoutTimer);
+            layoutTimer.StartDelay = 30;
+            setappdata(figure, "layoutRequestStopped", false);
+            layoutTimer.StopFcn = @(~, ~) setappdata(figure, "layoutRequestStopped", true);
+            start(layoutTimer);
+
+            % Exceed the polling cap: stale work must neither stop nor publish the new request.
+            for index = 1:45, obsoleteCallback(layoutTimer, []); end
+            obsoleteErrorCallback(layoutTimer, []);
+            testCase.verifyEqual(string(layoutTimer.Running), "on");
+            testCase.verifyFalse(getappdata(figure, "layoutRequestStopped"));
+            testCase.verifyEqual(overlay.Data, before);
+            for index = 1:45, currentCallback(layoutTimer, []); end
+            testCase.verifyEqual(string(layoutTimer.Running), "off");
+            testCase.verifyTrue(getappdata(figure, "layoutRequestStopped"));
+            testCase.verifyEqual(app.Document.getComponent(gridId).getProperty("RowHeight").LiteralValue{1}, 40);
+            layoutTimer.StopFcn = [];
+        end
+
         function preservedNavigationHandlesNonvisualTreeNodes(testCase)
             % preservedNavigationHandlesNonvisualTreeNodes Exclude records without pixel bounds from geometry.
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));

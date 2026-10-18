@@ -75,6 +75,7 @@ classdef yamada < matlab.apps.AppBase
         PreviewHandles
         PreviewTabSelections containers.Map
         TabLayoutTimer timer = timer.empty
+        TabLayoutGeneration uint64 = uint64(0)
         TabLayoutSignature string = ""
         TabLayoutStableCount double = 0
         TabLayoutPollCount double = 0
@@ -135,6 +136,7 @@ classdef yamada < matlab.apps.AppBase
 
             % Stop deferred UI work before releasing the editor figure.
             app.IsClosingProgrammatically = true;
+            app.cancelOverlayRefresh();
             app.closeCallbackDialog();
             if ~isempty(app.HierarchyContextMenu), delete(app.HierarchyContextMenu), end
             if ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer)
@@ -1258,6 +1260,8 @@ classdef yamada < matlab.apps.AppBase
             arguments (Input)
                 app (1, 1) yamada
             end
+            % Invalidate queued work before any of its native handles are released.
+            app.cancelOverlayRefresh();
             app.PreviewGeometry = struct();
             app.DropSourceId = "";
             app.DropStates = struct([]);
@@ -2141,46 +2145,86 @@ classdef yamada < matlab.apps.AppBase
                 app (1, 1) yamada
             end
 
+            app.cancelOverlayRefresh();
             if isempty(app.Document) || (~any([app.Document.Components.Factory] == "uitabgroup") && ...
                     ~any([app.Document.Components.Factory] == "uigridlayout"))
                 return
             end
             if isempty(app.TabLayoutTimer) || ~isvalid(app.TabLayoutTimer)
                 app.TabLayoutTimer = timer("ExecutionMode", "fixedSpacing", ...
-                    "Period", 0.05, "TasksToExecute", 40, ...
-                    "TimerFcn", @(timerObject, ~) ...
-                    app.refreshOverlayAfterTabLayout(timerObject), ...
-                    "ErrorFcn", @(timerObject, ~) stop(timerObject));
-            elseif strcmp(app.TabLayoutTimer.Running, "on")
-                stop(app.TabLayoutTimer);
+                    "Period", 0.05, "TasksToExecute", 40);
             end
+            generation = app.TabLayoutGeneration;
+            app.TabLayoutTimer.TimerFcn = @(timerObject, ~) ...
+                app.refreshOverlayAfterTabLayout(timerObject, generation);
+            app.TabLayoutTimer.ErrorFcn = @(timerObject, ~) ...
+                app.stopOverlayRefresh(timerObject, generation);
             app.TabLayoutSignature = "";
             app.TabLayoutStableCount = 0;
             app.TabLayoutPollCount = 0;
             start(app.TabLayoutTimer);
         end
 
-        function refreshOverlayAfterTabLayout(app, timerObject)
+        function cancelOverlayRefresh(app)
+            % cancelOverlayRefresh Invalidate queued layout notifications before stopping their timer.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            app.TabLayoutGeneration = app.TabLayoutGeneration + 1;
+            if ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer) && ...
+                    strcmp(app.TabLayoutTimer.Running, "on")
+                stop(app.TabLayoutTimer);
+            end
+        end
+
+        function result = isCurrentOverlayRefresh(app, timerObject, generation)
+            % isCurrentOverlayRefresh Identify the live request without trusting reused timer identity.
+            arguments (Input)
+                app (1, 1) yamada
+                timerObject (1, 1) timer
+                generation (1, 1) uint64
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = ~app.IsClosingProgrammatically && ...
+                ~isempty(app.UIFigure) && isvalid(app.UIFigure) && ...
+                ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer) && ...
+                isequal(timerObject, app.TabLayoutTimer) && generation == app.TabLayoutGeneration;
+        end
+
+        function stopOverlayRefresh(app, timerObject, generation)
+            % stopOverlayRefresh Stop only the request that owns the notification.
+            arguments (Input)
+                app (1, 1) yamada
+                timerObject (1, 1) timer
+                generation (1, 1) uint64
+            end
+            if app.isCurrentOverlayRefresh(timerObject, generation), stop(timerObject); end
+        end
+
+        function refreshOverlayAfterTabLayout(app, timerObject, generation)
             % refreshOverlayAfterTabLayout Update geometry after deferred tab or grid layout.
             arguments (Input)
                 app (1, 1) yamada
-                timerObject timer
+                timerObject (1, 1) timer
+                generation (1, 1) uint64
             end
 
-            if isempty(app.UIFigure) || ~isvalid(app.UIFigure) || ...
-                    isempty(app.TabLayoutTimer) || ~isvalid(app.TabLayoutTimer) || ...
-                    ~isequal(timerObject, app.TabLayoutTimer)
+            if ~app.isCurrentOverlayRefresh(timerObject, generation) || ...
+                    ~strcmp(timerObject.Running, "on")
                 return
             end
             try
                 drawnow;
+                % Native dispatch may rebuild the Preview or schedule a newer request.
+                if ~app.isCurrentOverlayRefresh(timerObject, generation), return, end
                 signature = app.activeTabGeometrySignature();
             catch
-                if isvalid(timerObject)
-                    stop(timerObject);
-                end
+                app.stopOverlayRefresh(timerObject, generation);
                 return
             end
+            if ~app.isCurrentOverlayRefresh(timerObject, generation), return, end
             app.TabLayoutPollCount = app.TabLayoutPollCount + 1;
             if signature == app.TabLayoutSignature
                 app.TabLayoutStableCount = app.TabLayoutStableCount + 1;
@@ -2189,8 +2233,8 @@ classdef yamada < matlab.apps.AppBase
                 app.TabLayoutStableCount = 0;
             end
             if app.TabLayoutStableCount >= 2 || app.TabLayoutPollCount >= 40
-                stop(timerObject);
-                app.updateInteractionOverlay();
+                app.stopOverlayRefresh(timerObject, generation);
+                if app.isCurrentOverlayRefresh(timerObject, generation), app.updateInteractionOverlay(); end
             end
         end
 
