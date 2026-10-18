@@ -20,8 +20,10 @@ processes idle when comparing elapsed time.
 & tests/performance/runYamadaPerformance.ps1 -Samples 20 `
     -OutputFolder testResults/performance/distribution
 & tests/performance/runYamadaPerformance.ps1 -Samples 4 `
-    -RepeatedSelections 100 -DocumentCycles 5 `
+    -RepeatedSelections 100 -AlternatingSelections 100 -DocumentCycles 5 `
     -OutputFolder testResults/performance/endurance
+& tests/performance/runYamadaPerformance.ps1 -EnduranceOnly -DocumentCycles 100 `
+    -OutputFolder testResults/performance/document-endurance
 
 # Bound larger-fixture exploration before increasing its sample count.
 & tests/performance/runYamadaPerformance.ps1 -ComponentCount 50 -Samples 1 `
@@ -79,3 +81,10 @@ Repeated selections and document reopenings are excluded from the normal latency
 distribution. Use their object/timer counts together with resource trends to
 investigate retention. Process allocation alone does not prove a memory leak or
 the absence of retained MATLAB objects.
+
+`-RepeatedSelections` repeats the current target. `-AlternatingSelections` changes
+between two different targets and exercises retained Inspector rebinding.
+`-EnduranceOnly` omits normal selection/property samples so document retention can
+be explored within the same five-minute case limit. It still measures startup
+and Open and cannot be combined with profiling. Incomplete cycles remain partial
+results rather than being treated as a completed endurance test.

@@ -10,12 +10,19 @@ arguments (Input)
     options.Profile (1, 1) logical = false
     options.RenderAck (1, 1) logical = true
     options.RepeatedSelections (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
+    options.AlternatingSelections (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
     options.DocumentCycles (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
+    options.EnduranceOnly (1, 1) logical = false
 end
 arguments (Output)
     results (1, :) struct
 end
 
+assert(~options.EnduranceOnly || (~options.Profile && ...
+    options.RepeatedSelections + options.AlternatingSelections + options.DocumentCycles > 0), ...
+    "EnduranceOnly requires retention operations and cannot include profiling.");
+normalSamples = options.Samples;
+if options.EnduranceOnly, normalSamples = 0; end
 % Keep tests and factories on the path when MATLAB changes the current folder.
 projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
 addpath(projectRoot);
@@ -51,7 +58,7 @@ publishProgress(progress, "complete", "open");
 targets = measurementTargets(app.Document, registry);
 assert(numel(targets) >= 2, "The benchmark requires two font-capable targets.");
 ids = [targets(1).Id, targets(max(2, ceil(numel(targets) / 2))).Id];
-for index = 1:options.Samples
+for index = 1:normalSamples
     publishProgress(progress, "start", "selection");
     started = tic;
     selectId(figure, ids(1 + mod(index, 2)));
@@ -64,7 +71,7 @@ for index = 1:options.Samples
     publishProgress(progress, "complete", "selection");
 end
 % Separate unchanged selection and warmed revisits from first-target work.
-for index = 1:options.Samples
+for index = 1:normalSamples
     publishProgress(progress, "start", "same-selection");
     started = tic;
     selectId(figure, app.SelectedComponentId);
@@ -74,9 +81,11 @@ for index = 1:options.Samples
     persist(options, results);
     publishProgress(progress, "complete", "same-selection");
 end
-propertySamples = options.Samples;
-[editable, reason] = canCommitFontSize(figure);
-if ~editable
+propertySamples = normalSamples;
+editable = false;
+reason = "";
+if propertySamples > 0, [editable, reason] = canCommitFontSize(figure); end
+if propertySamples > 0 && ~editable
     assert(any(options.Case == ["gallery", "navigation"]), reason);
     propertySamples = 0;
     fid = fopen(fullfile(options.OutputFolder, "excluded-operations.json"), "w", "n", "UTF-8");
@@ -133,6 +142,16 @@ for index = 1:options.RepeatedSelections
     results = measure(results, "retention-selection", index, callback, toc(started), figure, "same-target");
     persist(options, results);
     publishProgress(progress, "complete", "retention-selection");
+end
+for index = 1:options.AlternatingSelections
+    publishProgress(progress, "start", "retention-alternating-selection");
+    started = tic;
+    selectId(figure, ids(1 + (app.SelectedComponentId == ids(1))));
+    callback = toc(started);
+    settle(figure, options.RenderAck);
+    results = measure(results, "retention-alternating-selection", index, callback, toc(started), figure, "alternating-target");
+    persist(options, results);
+    publishProgress(progress, "complete", "retention-alternating-selection");
 end
 for index = 1:options.DocumentCycles
     publishProgress(progress, "start", "document-cycle");

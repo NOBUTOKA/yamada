@@ -6,7 +6,9 @@ param(
     [int]$ComponentCount = 12,
     [int]$Samples = 4,
     [int]$RepeatedSelections = 0,
+    [int]$AlternatingSelections = 0,
     [int]$DocumentCycles = 0,
+    [switch]$EnduranceOnly,
     [switch]$Profile,
     [string]$OutputFolder = '',
     [int]$OperationTimeoutSeconds = 30,
@@ -33,7 +35,8 @@ $manifest = @($tracked + $added | Sort-Object -Unique | ForEach-Object {
 })
 [pscustomobject]@{commit = (git -C $projectRoot rev-parse HEAD); status = @(git -C $projectRoot status --short);
     count = $ComponentCount; samples = $Samples; profile = [bool]$Profile;
-    repeatedSelections = $RepeatedSelections; documentCycles = $DocumentCycles; sources = $manifest} |
+    repeatedSelections = $RepeatedSelections; alternatingSelections = $AlternatingSelections;
+    documentCycles = $DocumentCycles; enduranceOnly = [bool]$EnduranceOnly; sources = $manifest} |
     ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $OutputFolder 'source-manifest.json') -Encoding utf8
 $outcomes = @()
 foreach ($case in $Cases) {
@@ -45,7 +48,8 @@ foreach ($case in $Cases) {
     $quoteRoot = $projectRoot.Replace("'", "''")
     $quoteOutput = $caseFolder.Replace("'", "''")
     $profileLiteral = if ($Profile) { 'true' } else { 'false' }
-    $expression = "cd('$quoteRoot'); addpath(pwd,fullfile(pwd,'tests','performance')); runYamadaPerformance(OutputFolder=string('$quoteOutput'),Case=string('$case'),ComponentCount=$ComponentCount,Samples=$Samples,Profile=$profileLiteral,RepeatedSelections=$RepeatedSelections,DocumentCycles=$DocumentCycles);"
+    $enduranceLiteral = if ($EnduranceOnly) { 'true' } else { 'false' }
+    $expression = "cd('$quoteRoot'); addpath(pwd,fullfile(pwd,'tests','performance')); runYamadaPerformance(OutputFolder=string('$quoteOutput'),Case=string('$case'),ComponentCount=$ComponentCount,Samples=$Samples,Profile=$profileLiteral,RepeatedSelections=$RepeatedSelections,AlternatingSelections=$AlternatingSelections,DocumentCycles=$DocumentCycles,EnduranceOnly=$enduranceLiteral);"
     $log = Join-Path $caseFolder 'matlab.log'
     $arguments = @('-wait', '-nosplash', '-logfile', ('"' + $log + '"'), '-batch', ('"' + $expression + '"'))
     $process = Start-Process -FilePath $Matlab -ArgumentList $arguments -PassThru -WindowStyle Hidden
