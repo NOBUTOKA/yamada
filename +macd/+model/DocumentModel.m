@@ -407,14 +407,18 @@ classdef DocumentModel < handle
                     return
                 end
             end
+            prepared = macd.model.DocumentModel.empty;
             if ~isempty(registry)
-                obj.preflightPropertyChanges(componentId, ...
+                prepared = obj.preflightPropertyChanges(componentId, ...
                     macd.model.PropertyTransaction.singleChange(path, value), registry);
             end
             entry = component.setProperty(path, value);
             obj.recordHistory(struct("Kind", "property", "ComponentId", componentId, ...
                 "Path", path, "HadOldValue", hadOldValue, "OldValue", {oldValue}, ...
                 "NewValue", {value}, "TargetSettingId", obj.propertySettingId(entry)));
+            if ~isempty(prepared)
+                obj.evaluationContext(registry).rememberConfiguration("combined", prepared);
+            end
         end
 
         function entries = setPropertyBatch(obj, componentId, changes, registry)
