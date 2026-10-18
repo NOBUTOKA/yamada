@@ -2,6 +2,30 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
     % EvaluationContextTest Verify exact-input caching without shared mutable results.
     %   Direct changes and history branching must not reuse an obsolete evaluation.
     methods (Test)
+        function liveDefinitionDataCannotBorrowAnIndependentProof(testCase)
+            % liveDefinitionDataCannotBorrowAnIndependentProof Reject live metadata behind the same property path.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            context = document.evaluationContext(registry);
+            independent = macd.model.PropertyDefinition("Example", 1, true);
+            context.remember("independent", struct("Definitions", independent));
+            [~, found] = context.lookup("independent");
+            testCase.verifyTrue(found);
+            live = containers.Map("a", 1);
+            definition = macd.model.PropertyDefinition("Example", 1, true, true, struct("Live", live));
+            context.remember("live", struct("Definitions", definition));
+            [~, found] = context.lookup("live");
+            testCase.verifyFalse(found);
+            live("a") = 2;
+            context.remember("live", struct("Definitions", definition));
+            [~, found] = context.lookup("live");
+            testCase.verifyFalse(found);
+            document.Metadata.Definition = definition;
+            context = document.evaluationContext(registry);
+            [~, safe] = context.inputs();
+            testCase.verifyFalse(safe);
+        end
+
         function writesInvalidateAnAccidentallyHeldReadScope(testCase)
             % writesInvalidateAnAccidentallyHeldReadScope Do not hide tracked writes behind a read lease.
             registry = macd.model.ComponentRegistry.createDefault();

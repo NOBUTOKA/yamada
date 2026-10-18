@@ -147,8 +147,9 @@ classdef EvaluationContext < handle
                 name (1, 1) string
                 value
             end
-            [independent, safe] = macd.model.EvaluationContext.freeze(value);
-            if obj.Cacheable && safe
+            if ~obj.Cacheable, return, end
+            [independent, safe] = macd.model.EvaluationContext.freeze(value, false, obj.Registry);
+            if safe
                 obj.Values(char(name)) = independent;
             end
         end
@@ -255,11 +256,12 @@ classdef EvaluationContext < handle
             indices = reshape(sort(indices), 1, []);
         end
 
-        function [value, safe] = freeze(value, owned)
+        function [value, safe] = freeze(value, owned, registry)
             % freeze Convert known records by value and bypass caching for unrecognized live data.
             arguments (Input)
                 value
                 owned (1, 1) logical = false
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
             arguments (Output)
                 value
@@ -271,7 +273,7 @@ classdef EvaluationContext < handle
                 records = struct([]);
                 for index = 1:numel(value)
                     component = value(index);
-                    [properties, independent] = macd.model.EvaluationContext.freeze(component.Properties, true);
+                    [properties, independent] = macd.model.EvaluationContext.freeze(component.Properties, true, registry);
                     safe = safe && independent;
                     record = struct("Id", component.Id, "Name", component.Name, ...
                         "Factory", component.Factory, "DeclaredType", component.DeclaredType, ...
@@ -280,7 +282,7 @@ classdef EvaluationContext < handle
                         "IsEditable", component.IsEditable, "Metadata", component.Metadata, ...
                         "SourceSpans", component.SourceSpans, ...
                         "Settings", component.settingSnapshot());
-                    [record, valid] = macd.model.EvaluationContext.freeze(record);
+                    [record, valid] = macd.model.EvaluationContext.freeze(record, false, registry);
                     safe = safe && valid;
                     record.Properties = properties;
                     if isempty(records), records = record; else, records(end + 1) = record; end %#ok<AGROW>
@@ -294,18 +296,18 @@ classdef EvaluationContext < handle
                     record = rmfield(record, "Diagnostics");
                     if isempty(records), records = record; else, records(end + 1) = record; end %#ok<AGROW>
                 end
-                [value, safe] = macd.model.EvaluationContext.freeze(records);
+                [value, safe] = macd.model.EvaluationContext.freeze(records, false, registry);
             elseif isstruct(value)
                 fields = fieldnames(value);
                 for index = 1:numel(value)
                     for field = 1:numel(fields)
-                        [value(index).(fields{field}), valid] = macd.model.EvaluationContext.freeze(value(index).(fields{field}));
+                        [value(index).(fields{field}), valid] = macd.model.EvaluationContext.freeze(value(index).(fields{field}), false, registry);
                         safe = safe && valid;
                     end
                 end
             elseif iscell(value)
                 for index = 1:numel(value)
-                    [value{index}, valid] = macd.model.EvaluationContext.freeze(value{index});
+                    [value{index}, valid] = macd.model.EvaluationContext.freeze(value{index}, false, registry);
                     safe = safe && valid;
                 end
             else
@@ -315,7 +317,9 @@ classdef EvaluationContext < handle
                     isa(value, "macd.model.UnknownSourceRegion") || isa(value, "macd.model.Diagnostic") || ...
                     isa(value, "macd.model.PropertyState") || isa(value, "macd.model.PropertyDefinition") || ...
                     isa(value, "macd.model.CallbackEdit");
-                if safe && isobject(value)
+                if safe && isa(value, "macd.model.PropertyDefinition") && ~isempty(registry)
+                    safe = registry.areIndependentDefinitions(value);
+                elseif safe && isobject(value)
                     safe = macd.model.InputChangeClock.isValueData(value);
                 end
                 if ~safe, value = []; end

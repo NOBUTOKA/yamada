@@ -17,9 +17,38 @@ classdef ComponentRegistry < handle
         Definitions containers.Map
         FactoryVariantIds containers.Map
         EffectiveProperties containers.Map
+        IndependentDefinitions containers.Map
         ParentContextRules macd.model.ParentContextRule = macd.model.ParentContextRule.empty
         InspectorRowDefinitions macd.model.InspectorRowDefinition = ...
             macd.model.InspectorRowDefinition.empty
+    end
+
+    methods (Access = ?macd.model.EvaluationContext)
+        function result = areIndependentDefinitions(obj, definitions)
+            % areIndependentDefinitions Reuse bounded proofs for equal immutable catalog values.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRegistry
+                definitions macd.model.PropertyDefinition
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = true;
+            if isempty(definitions), return, end
+            definitions = reshape(definitions, 1, []);
+            key = char("definitions:" + strjoin(string({definitions.Path}), "|"));
+            if isKey(obj.IndependentDefinitions, key)
+                previous = obj.IndependentDefinitions(key);
+                if isequaln(previous, definitions), return, end
+            end
+            % Only independent values enter this map; rejected live data is never retained.
+            result = macd.model.InputChangeClock.isValueData(definitions);
+            if ~result, return, end
+            if obj.IndependentDefinitions.Count >= 128 && ~isKey(obj.IndependentDefinitions, key)
+                obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            end
+            obj.IndependentDefinitions(key) = definitions;
+        end
     end
 
     methods
@@ -33,6 +62,7 @@ classdef ComponentRegistry < handle
             obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
             obj.FactoryVariantIds = containers.Map("KeyType", "char", "ValueType", "any");
             obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
             obj.ParentContextRules = [macd.model.ParentContextRule.grid(); macd.model.ParentContextRule.absolute()];
             obj.InspectorRowDefinitions = macd.model.InspectorRowDefinition.empty;
         end
@@ -65,6 +95,7 @@ classdef ComponentRegistry < handle
             obj.Definitions(variantKey) = definition;
             obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
             if ~isKey(obj.FactoryVariantIds, factoryKey)
                 obj.FactoryVariantIds(factoryKey) = string(definition.Id);
             else
@@ -179,6 +210,7 @@ classdef ComponentRegistry < handle
             obj.ParentContextRules = rules(:);
             obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
         function setInspectorRowDefinitions(obj, definitions)
@@ -196,6 +228,7 @@ classdef ComponentRegistry < handle
             obj.InspectorRowDefinitions = definitions(:);
             obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
         function definitions = inspectorRows(obj)
