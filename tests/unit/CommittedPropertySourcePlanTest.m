@@ -4,6 +4,100 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
     %   consumers while direct writes and catalog changes invalidate that input.
 
     methods (Test)
+        function siblingStateReadsDoNotClonePerChild(testCase)
+            % siblingStateReadsDoNotClonePerChild Bound document copies when siblings read one grid result.
+            registry = macd.model.ComponentRegistry.createDefault();
+            for count = [2 8]
+                [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, count);
+                document.setPropertyBatch(children(1).Id, ...
+                    macd.model.PropertyTransaction.singleChange("FontSize", 23), registry);
+                original = document.OriginalText;
+                rows = zeros(1, count);
+                effects = strings(1, count);
+
+                % Profile only value consumers; mutable-document callers retain their copy contract.
+                profile clear;
+                profile on;
+                cleanup = onCleanup(@() profile('off'));
+                document.getEffectivePropertyStates(registry, grid.Id);
+                for index = 1:count
+                    states = document.getEffectivePropertyStates(registry, children(index).Id);
+                    resolution = states(arrayfun(@(item) item.Definition.Path == "Layout.Row", states)).Resolution;
+                    rows(index) = resolution.EffectiveValue;
+                    effects(index) = resolution.EffectSettingId;
+                end
+                profile off;
+                info = profile('info');
+                clear cleanup
+                functions = info.FunctionTable;
+                cloning = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate");
+                cloneCount = sum([functions(cloning).NumCalls]);
+                fprintf("GRID_RESULT_READS children=%d clones=%d\n", count, cloneCount);
+                testCase.verifyLessThanOrEqual(cloneCount, 2, ...
+                    "Reading one grid must not clone a full document for every sibling.");
+                testCase.verifyEqual(rows, 1:count);
+                for index = 1:count
+                    testCase.verifyEqual(effects(index), children(index).getSettings("Layout.Row").Id);
+                end
+                testCase.verifyEqual(document.OriginalText, original);
+                testCase.verifyEqual(document.HistoryIndex, 1);
+
+                % Compare finite values with independently generated and reparsed initialization.
+                source = macd.source.RoundTripGenerator(registry).generate(document);
+                parsed = macd.source.AppSourceParser.parseText(source, registry);
+                expected = parsed.getComponentByName(grid.Name);
+                actualStates = document.getEffectivePropertyStates(registry, grid.Id);
+                expectedStates = parsed.getEffectivePropertyStates(registry, expected.Id);
+                for path = ["RowHeight", "ColumnWidth"]
+                    actual = actualStates(arrayfun(@(item) item.Definition.Path == path, actualStates)).Resolution;
+                    expectedState = expectedStates(arrayfun(@(item) item.Definition.Path == path, expectedStates)).Resolution;
+                    testCase.verifyEqual(actual.EffectiveValue, expectedState.EffectiveValue);
+                    testCase.verifyEqual(actual.IsKnown, expectedState.IsKnown);
+                end
+            end
+        end
+
+        function gridValuesInvalidateAcrossWritesAndHistory(testCase)
+            % gridValuesInvalidateAcrossWritesAndHistory Keep cached tracks and coordinates tied to current input.
+            registry = macd.model.ComponentRegistry.createDefault();
+            [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, 2);
+            document.setPropertyBatch(children(1).Id, ...
+                macd.model.PropertyTransaction.singleChange("FontSize", 23), registry);
+            document.getEffectivePropertyStates(registry, grid.Id);
+
+            % Direct changes must replace cached geometry even without a history entry.
+            grid.setProperty("RowHeight", {40, 80});
+            children(2).setProperty("Layout.Row", 3);
+            states = document.getEffectivePropertyStates(registry, grid.Id);
+            value = states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue;
+            testCase.verifyEqual(value, {40, 80, "1x"});
+            value{1} = 999; %#ok<NASGU>
+            states = document.getEffectivePropertyStates(registry, grid.Id);
+            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
+                {40, 80, "1x"});
+
+            % Undo and Redo change the pending source plan while preserving direct writes.
+            document.undo();
+            document.redo();
+            states = document.getEffectivePropertyStates(registry, grid.Id);
+            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
+                {40, 80, "1x"});
+            previous = document.evaluationContext(registry);
+            registry.register(registry.get("uigridlayout"));
+            testCase.verifyNotEqual(document.evaluationContext(registry), previous);
+            states = document.getEffectivePropertyStates(registry, grid.Id);
+            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
+                {40, 80, "1x"});
+            document.Metadata.HasUnresolvedInitialization = true;
+            states = document.getEffectivePropertyStates(registry, grid.Id);
+            testCase.verifyFalse(any(arrayfun(@(item) item.Resolution.IsKnown, states)));
+            document.Metadata.HasUnresolvedInitialization = false;
+            states = document.getEffectivePropertyStates(registry, grid.Id);
+            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
+                {40, 80, "1x"});
+            testCase.verifyEqual(document.HistoryIndex, 1);
+        end
+
         function committedEditsDoNotReparseForStateConsumers(testCase)
             % committedEditsDoNotReparseForStateConsumers Reuse complete source for single and batch edits.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -71,6 +165,37 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
     end
 
     methods (Static, Access = private)
+        function [document, grid, children] = gridFixture(registry, count)
+            % gridFixture Parse a grid with explicit independent child coordinates.
+            arguments (Input)
+                registry (1, 1) macd.model.ComponentRegistry
+                count (1, 1) double {mustBePositive, mustBeInteger}
+            end
+            arguments (Output)
+                document (1, 1) macd.model.DocumentModel
+                grid (1, 1) macd.model.ComponentRecord
+                children (1, :) macd.model.ComponentRecord
+            end
+            document = macd.model.NewAppFactory.createEmpty("SharedGridFixture", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            grid.setProperty("RowHeight", repmat({"1x"}, 1, count));
+            grid.setProperty("ColumnWidth", {"1x"});
+            children = macd.model.ComponentRecord.empty;
+            for index = 1:count
+                child = document.insertComponent(registry, "uilabel", grid.Id);
+                child.setProperty("Layout.Row", index);
+                child.setProperty("Layout.Column", 1);
+                children(end + 1) = child; %#ok<AGROW>
+            end
+            names = string({children.Name});
+            gridName = grid.Name;
+            source = macd.source.NewAppGenerator(registry).generate(document);
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            grid = document.getComponentByName(gridName);
+            children = macd.model.ComponentRecord.empty;
+            for name = names, children(end + 1) = document.getComponentByName(name); end %#ok<AGROW>
+        end
+
         function [document, label] = fixture(registry, inGrid)
             % fixture Create parsed controls with no explicit font setting in either parent layout.
             arguments (Input)

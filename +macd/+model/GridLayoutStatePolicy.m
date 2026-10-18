@@ -144,7 +144,28 @@ classdef GridLayoutStatePolicy
 
     methods (Static, Access = private)
         function result = configuration(grid, document, registry)
-            % configuration Replay one grid and its direct children in initialization order.
+            % configuration Share one independent grid result for the current document inputs.
+            arguments (Input)
+                grid (1, 1) macd.model.ComponentRecord
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            context = document.evaluationContext(registry);
+            key = "grid-configuration:" + grid.Id;
+            [result, found] = context.lookup(key);
+            if found, return, end
+
+            % Cache value data only; direct writes and catalog changes replace the context.
+            scope = context.readScope(); %#ok<NASGU>
+            result = macd.model.GridLayoutStatePolicy.evaluateConfiguration(grid, document, registry);
+            context.remember(key, result);
+        end
+
+        function result = evaluateConfiguration(grid, document, registry)
+            % evaluateConfiguration Replay one grid and its direct children in initialization order.
             arguments (Input)
                 grid (1, 1) macd.model.ComponentRecord
                 document (1, 1) macd.model.DocumentModel
