@@ -769,7 +769,7 @@ classdef yamada < matlab.apps.AppBase
         end
 
         function states = reparentStates(app, id)
-            % reparentStates Preflight every explicit destination without changing the document.
+            % reparentStates Check declared placement conditions without rehearsing source edits.
             arguments (Input)
                 app (1, 1) yamada
                 id (1, 1) string
@@ -777,34 +777,8 @@ classdef yamada < matlab.apps.AppBase
             arguments (Output)
                 states struct
             end
-            states = struct("Id", {}, "Name", {}, "Enabled", {}, "Reason", {});
-            source = app.Document.getComponent(id);
-            measured = app.clipboardPosition(id);
-            context = app.Document.evaluationContext(app.Registry);
-            [cached, found] = context.lookup("reparent:" + id);
-            if found && isequaln(cached.Measured, measured)
-                states = cached.States;
-                return
-            end
-            definition = app.Registry.get(source.Factory, source.CreationArguments);
-            for parent = app.Document.Components
-                state = struct("Id", parent.Id, "Name", parent.Name, "Enabled", false, "Reason", "");
-                if source.ParentId == parent.Id
-                    state.Reason = "Current parent.";
-                elseif ~any(definition.AllowedParentFactories == parent.Factory)
-                    state.Reason = "This component type cannot use that parent.";
-                else
-                    try
-                        candidate = app.Document.structuralCandidate();
-                        candidate.reparentSubtree(id, parent.Id, app.Registry, measured);
-                        state.Enabled = true;
-                    catch exception
-                        state.Reason = string(exception.message);
-                    end
-                end
-                states(end + 1) = state; %#ok<AGROW>
-            end
-            context.remember("reparent:" + id, struct("Measured", measured, "States", states));
+            states = macd.model.DocumentEditAvailability.reparenting( ...
+                app.Document, id, app.Registry, app.clipboardPosition(id));
         end
 
         function undoButtonPushed(app)

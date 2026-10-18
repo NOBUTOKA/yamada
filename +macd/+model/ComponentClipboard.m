@@ -70,7 +70,7 @@ classdef ComponentClipboard < handle
         end
 
         function state = availability(obj, action, document, id, registry)
-            % availability Run the same model preflight used by each command without live edits.
+            % availability Inspect command conditions without copying, deleting or pasting a candidate.
             arguments (Input)
                 obj (1, 1) macd.model.ComponentClipboard
                 action (1, 1) string {mustBeMember(action, ["Copy", "Cut", "Paste"])}
@@ -82,59 +82,28 @@ classdef ComponentClipboard < handle
                 state (1, 1) struct
             end
             state = struct("Enabled", false, "Reason", "", "ParentId", "");
-            context = document.evaluationContext(registry);
-            records = struct([]);
-            configuration = struct([]);
-            if ~isempty(obj.Snapshot)
-                records = obj.Snapshot.Records;
-                configuration = obj.Snapshot.CopyConfiguration;
+            if any(action == ["Copy", "Cut"])
+                result = macd.model.DocumentEditAvailability.copying(document, id, registry);
+                if result.Enabled && action == "Cut"
+                    result = macd.model.DocumentEditAvailability.deletion(document, id, registry);
+                end
+                state.Enabled = result.Enabled;
+                state.Reason = result.Reason;
+                return
             end
-            input = struct("Contents", obj.hasContents(document), "Records", records, ...
-                "Configuration", configuration, "Cut", obj.IsCut, "Count", obj.PasteCount, ...
-                "MeasuredPosition", obj.MeasuredPosition);
-            key = "clipboard:" + action + ":" + id;
-            [cached, found] = context.lookup(key);
-            if found && isequaln(cached.Input, input)
-                state = cached.State;
+            if ~obj.hasContents(document)
+                state.Reason = "No subtree is available for this document.";
                 return
             end
             try
-                if any(action == ["Copy", "Cut"])
-                    copyKey = "copy:" + id;
-                    [copyState, copied] = context.lookup(copyKey);
-                    if ~copied
-                        copyState = struct("Enabled", false, "Reason", "");
-                        try
-                            document.copySubtree(id, registry);
-                            copyState.Enabled = true;
-                        catch exception
-                            copyState.Reason = string(exception.message);
-                        end
-                        context.remember(copyKey, copyState);
-                    end
-                    if ~copyState.Enabled
-                        error("macd:ComponentClipboard:UnavailableCopy", "%s", copyState.Reason);
-                    end
-                    if action == "Cut"
-                        deletion = macd.model.DocumentEditAvailability.deletion(document, id, registry);
-                        if ~deletion.Enabled
-                            error("macd:ComponentClipboard:UnavailableCut", "%s", deletion.Reason);
-                        end
-                    end
-                else
-                    if ~obj.hasContents(document)
-                        error("macd:ComponentClipboard:Empty", "No subtree is available for this document.");
-                    end
-                    state.ParentId = obj.destination(document, id, registry);
-                    candidate = document.structuralCandidate();
-                    candidate.pasteSubtree(obj.Snapshot, state.ParentId, registry, obj.MeasuredPosition, ...
-                        [10 10] * (obj.PasteCount + 1), obj.IsCut);
-                end
-                state.Enabled = true;
+                state.ParentId = obj.destination(document, id, registry);
+                result = macd.model.DocumentEditAvailability.pasting(document, obj.Snapshot, state.ParentId, ...
+                    registry, obj.MeasuredPosition, [10 10] * (obj.PasteCount + 1));
+                state.Enabled = result.Enabled;
+                state.Reason = result.Reason;
             catch exception
                 state.Reason = string(exception.message);
             end
-            context.remember(key, struct("Input", input, "State", state));
         end
 
         function parentId = destination(obj, document, targetId, registry)
