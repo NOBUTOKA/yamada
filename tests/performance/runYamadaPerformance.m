@@ -7,6 +7,7 @@ arguments (Input)
         ["absolute", "flatgrid", "nestedgrid", "gallery", "navigation"])} = "absolute"
     options.ComponentCount (1, 1) double {mustBeInteger, mustBeGreaterThanOrEqual(options.ComponentCount, 2)} = 12
     options.NestedDepth (1, 1) double {mustBeInteger, mustBeGreaterThanOrEqual(options.NestedDepth, 2)} = 2
+    options.PropertyPath (1, 1) string {mustBeMember(options.PropertyPath, ["FontSize", "Text"])} = "FontSize"
     options.Samples (1, 1) double {mustBeInteger, mustBePositive} = 4
     options.Profile (1, 1) logical = false
     options.RenderAck (1, 1) logical = true
@@ -60,8 +61,8 @@ persist(options, results);
 publishProgress(progress, "complete", "open");
 
 % Exercise identical controls across separate parents whenever available.
-targets = measurementTargets(app.Document, registry);
-assert(numel(targets) >= 2, "The benchmark requires two font-capable targets.");
+targets = measurementTargets(app.Document, registry, options.PropertyPath);
+assert(numel(targets) >= 2, "The benchmark requires two targets supporting the requested property.");
 ids = [targets(1).Id, targets(max(2, ceil(numel(targets) / 2))).Id];
 for index = 1:normalSamples
     publishProgress(progress, "start", "selection");
@@ -89,22 +90,23 @@ end
 propertySamples = normalSamples;
 editable = false;
 reason = "";
-if propertySamples > 0, [editable, reason] = canCommitFontSize(figure); end
+if propertySamples > 0, [editable, reason] = canCommitProperty(figure, options.PropertyPath); end
 if propertySamples > 0 && ~editable
     assert(any(options.Case == ["gallery", "navigation"]), reason);
     propertySamples = 0;
     fid = fopen(fullfile(options.OutputFolder, "excluded-operations.json"), "w", "n", "UTF-8");
     assert(fid >= 0, "Cannot record the read-only fixture boundary.");
-    fprintf(fid, "%s", jsonencode(struct("action", "property", "path", "FontSize", "reason", reason)));
+    fprintf(fid, "%s", jsonencode(struct("action", "property", "path", options.PropertyPath, "reason", reason)));
     fclose(fid);
 end
 for index = 1:propertySamples
     publishProgress(progress, "start", "property");
     started = tic;
-    commitFontSize(figure, 12 + index);
+    value = measurementValue(options.PropertyPath, 12 + index);
+    commitProperty(figure, options.PropertyPath, value);
     callback = toc(started);
     settle(figure, options.RenderAck);
-    assert(app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue == 12 + index);
+    verifyPropertyValue(app.Document, app.SelectedComponentId, options.PropertyPath, value);
     phase = "warm";
     if index == 1, phase = "first"; end
     results = measure(results, "property", index, callback, toc(started), figure, phase);
@@ -120,12 +122,12 @@ if isappdata(figure, "macdPreviewStatistics")
 end
 % Profile the actual repeated edit before changing selection for cold profiles.
 if options.Profile && editable && propertySamples >= 2
-    profileContext = struct("Phase", "warm-same-component", "ComponentId", app.SelectedComponentId, ...
-        "Before", app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue, ...
-        "After", 13 + options.Samples);
+    profileContext = struct("Phase", "warm-same-component", "PropertyPath", options.PropertyPath, "ComponentId", app.SelectedComponentId, ...
+        "Before", app.Document.getComponent(app.SelectedComponentId).getProperty(options.PropertyPath).LiteralValue, ...
+        "After", measurementValue(options.PropertyPath, 13 + options.Samples));
     publishProgress(progress, "start", "profile-property-warm");
     profile clear; profile on;
-    commitFontSize(figure, profileContext.After);
+    commitProperty(figure, options.PropertyPath, profileContext.After);
     settle(figure, options.RenderAck);
     profile off;
     profileData = profile("info");
@@ -143,7 +145,7 @@ if options.Profile
     if editable
         publishProgress(progress, "start", "profile-property");
         profile clear; profile on;
-        commitFontSize(figure, 13 + options.Samples);
+        commitProperty(figure, options.PropertyPath, measurementValue(options.PropertyPath, 13 + options.Samples));
         settle(figure, options.RenderAck);
         profile off;
         profileData = profile("info");
@@ -163,15 +165,14 @@ if options.AlternatingPropertyChanges > 0
         callback = toc(started);
         settle(figure, options.RenderAck);
         results = measure(results, "alternating-property-selection", index, callback, toc(started), figure, "switch-target");
-        [editable, reason] = canCommitFontSize(figure);
+        [editable, reason] = canCommitProperty(figure, options.PropertyPath);
         assert(editable, reason);
         started = tic;
-        value = 13 + mod(index, 5);
-        commitFontSize(figure, value);
+        value = measurementValue(options.PropertyPath, 13 + mod(index, 5));
+        commitProperty(figure, options.PropertyPath, value);
         callback = toc(started);
         settle(figure, options.RenderAck);
-        edited = app.Document.getComponent(app.SelectedComponentId);
-        assert(edited.getProperty("FontSize").LiteralValue == value);
+        verifyPropertyValue(app.Document, app.SelectedComponentId, options.PropertyPath, value);
         phase = "multiple-pending";
         if index == 1, phase = "first-target"; end
         results = measure(results, "alternating-property", index, callback, toc(started), figure, phase);
@@ -181,11 +182,11 @@ if options.AlternatingPropertyChanges > 0
     if options.Profile
         selectId(figure, editIds(1));
         settle(figure, options.RenderAck);
-        profileContext = struct("ComponentIds", editIds, "SelectedId", app.SelectedComponentId, ...
-            "Before", app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue, "After", 18);
+        profileContext = struct("PropertyPath", options.PropertyPath, "ComponentIds", editIds, "SelectedId", app.SelectedComponentId, ...
+            "Before", app.Document.getComponent(app.SelectedComponentId).getProperty(options.PropertyPath).LiteralValue, "After", measurementValue(options.PropertyPath, 18));
         publishProgress(progress, "start", "profile-alternating-property");
         profile clear; profile on;
-        commitFontSize(figure, 18);
+        commitProperty(figure, options.PropertyPath, profileContext.After);
         settle(figure, options.RenderAck);
         profile off; profileData = profile("info");
         save(fullfile(options.OutputFolder, "profile-property-multiple.mat"), "profileData", "profileContext");
@@ -195,17 +196,17 @@ end
 if options.PropertyChanges > 0
     selectId(figure, ids(1));
     settle(figure, options.RenderAck);
-    [editable, reason] = canCommitFontSize(figure);
+    [editable, reason] = canCommitProperty(figure, options.PropertyPath);
     assert(editable, reason);
 end
 for index = 1:options.PropertyChanges
     publishProgress(progress, "start", "retention-property");
-    value = 13 + mod(index, 5);
+    value = measurementValue(options.PropertyPath, 13 + mod(index, 5));
     started = tic;
-    commitFontSize(figure, value);
+    commitProperty(figure, options.PropertyPath, value);
     callback = toc(started);
     settle(figure, options.RenderAck);
-    assert(app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue == value);
+    verifyPropertyValue(app.Document, app.SelectedComponentId, options.PropertyPath, value);
     phase = "warm";
     if index == 1, phase = "first"; end
     results = measure(results, "retention-property", index, callback, toc(started), figure, phase);
@@ -286,11 +287,12 @@ lifetime.destroyed(end + 1) = snapshot;
 setappdata(figure, "macdDocumentLifetime", lifetime);
 end
 
-function targets = measurementTargets(document, registry)
-% measurementTargets Prefer matched labels and allow real fixtures with other font-capable controls.
+function targets = measurementTargets(document, registry, propertyPath)
+% measurementTargets Prefer matched labels and allow other controls supporting the measured property.
 arguments (Input)
     document (1, 1) macd.model.DocumentModel
     registry (1, 1) macd.model.ComponentRegistry
+    propertyPath (1, 1) string
 end
 arguments (Output)
     targets macd.model.ComponentRecord
@@ -304,30 +306,32 @@ for component = document.Components
     parentFactory = "";
     if ~isempty(parent), parentFactory = parent.Factory; end
     definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
-    font = definitions(string({definitions.Path}) == "FontSize");
-    if ~isempty(font) && font.IsEditable && font.PreviewPolicy == "apply"
+    property = definitions(string({definitions.Path}) == propertyPath);
+    if ~isempty(property) && property.IsEditable && property.PreviewPolicy == "apply"
         targets(end + 1) = component; %#ok<AGROW>
     end
 end
 end
 
-function [editable, reason] = canCommitFontSize(figure)
-% canCommitFontSize Respect the actual Inspector's source-safety boundary in preserved fixtures.
+function [editable, reason] = canCommitProperty(figure, propertyPath)
+% canCommitProperty Respect the actual Inspector's source-safety boundary in preserved fixtures.
 arguments (Input)
     figure (1, 1) matlab.ui.Figure
+    propertyPath (1, 1) string
 end
 arguments (Output)
     editable (1, 1) logical
     reason (1, 1) string
 end
 editable = false;
-reason = "No editable FontSize row is available in the current fixture state.";
+reason = "No editable " + propertyPath + " row is available in the current fixture state.";
 labels = findall(figure, "Tag", "macd-inspector-property-label");
-label = labels(string({labels.Text}) == "FontSize");
+label = labels(string({labels.Text}) == propertyPath);
 if isempty(label), return, end
 editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
 if isempty(editor), return, end
 editable = string(editor.Enable) == "on";
+if isprop(editor, "Editable"), editable = editable && string(editor.Editable) == "on"; end
 if ~editable && strlength(string(editor.Tooltip)) > 0, reason = string(editor.Tooltip); end
 end
 
@@ -413,21 +417,53 @@ tree.SelectedNodes = node;
 tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
 end
 
-function commitFontSize(figure, value)
-% commitFontSize Commit an actual numeric Inspector edit.
+function commitProperty(figure, propertyPath, value)
+% commitProperty Commit a numeric or text change through the actual Inspector.
 arguments (Input)
     figure (1, 1) matlab.ui.Figure
-    value (1, 1) double
+    propertyPath (1, 1) string
+    value
 end
 labels = findall(figure, "Tag", "macd-inspector-property-label");
-label = labels(string({labels.Text}) == "FontSize");
+label = labels(string({labels.Text}) == propertyPath);
 editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
-if isa(editor, "matlab.ui.control.EditField")
+if isa(editor, "matlab.ui.control.EditField") || isa(editor, "matlab.ui.control.TextArea")
     editor.Value = char(string(value));
 else
     editor.Value = value;
 end
 editor.ValueChangedFcn(editor, struct());
+end
+
+function value = measurementValue(propertyPath, number)
+% measurementValue Preserve numeric edit sequences and provide distinct bounded text values.
+arguments (Input)
+    propertyPath (1, 1) string
+    number (1, 1) double
+end
+arguments (Output)
+    value (1, 1)
+end
+value = number;
+if propertyPath == "Text", value = "Text edit " + string(number); end
+end
+
+function verifyPropertyValue(document, id, propertyPath, expected)
+% verifyPropertyValue Reject missing edits without coercing numeric settings into text.
+arguments (Input)
+    document (1, 1) macd.model.DocumentModel
+    id (1, 1) string
+    propertyPath (1, 1) string
+    expected
+end
+entry = document.getComponent(id).getProperty(propertyPath);
+assert(~isempty(entry), "The requested property edit was not recorded.");
+actual = entry.LiteralValue;
+if propertyPath == "Text"
+    actual = string(actual);
+    expected = string(expected);
+end
+assert(isequaln(actual, expected), "The requested property edit was not applied.");
 end
 
 function settle(figure, renderAck)
@@ -494,7 +530,7 @@ modelComponents = NaN;
 if isfield(options, "ModelComponents"), modelComponents = options.ModelComponents; end
 fprintf(fid, "%s", jsonencode(struct("matlab", version, "case", options.Case, ...
     "componentCount", options.ComponentCount, "modelComponents", modelComponents, "renderAck", options.RenderAck, ...
-    "nestedDepth", options.NestedDepth, ...
+    "nestedDepth", options.NestedDepth, "propertyPath", options.PropertyPath, ...
     "samples", results, "summary", summarize(results))));
 end
 

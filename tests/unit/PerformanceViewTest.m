@@ -2,6 +2,67 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
     % PerformanceViewTest Verify view reuse without stale bindings or skipped model changes.
     %   Tests assert behavior and handle identity instead of machine-dependent timings.
     methods (Test)
+        function multilineTextCommitsPlainScalarAndMultipleLines(testCase)
+            % multilineTextCommitsPlainScalarAndMultipleLines Preserve char/string text through real Inspector commits.
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
+            fixture = string(fullfile(folder.Folder, "TextInputFixture.m"));
+            forms = ["'Initial'", macd.source.LiteralEncoder.encode("Initial")];
+            registry = macd.model.ComponentRegistry.createDefault();
+            for index = 1:numel(forms)
+                source = strjoin(["classdef TextInputFixture < matlab.apps.AppBase", "properties", ...
+                    "UIFigure matlab.ui.Figure", "Label matlab.ui.control.Label", "end", "methods", ...
+                    "function app = TextInputFixture", "createComponents(app);", "end", ...
+                    "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                    "app.Label = uilabel(app.UIFigure);", "app.Label.Text = " + forms(index) + ";", ...
+                    "end", "end", "end"], sprintf('\r\n'));
+                macd.source.SourceWriter.write(fixture, source, "CRLF");
+                lifecycle = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture)));
+                app = yamada(lifecycle);
+                cleanup = onCleanup(@() delete(app));
+                figure = findall(0, "Tag", "macd-yamada-editor");
+                menus = findall(figure, "Type", "uimenu");
+                open = menus(erase(string({menus.Text}), "&") == "Open...");
+                open.MenuSelectedFcn(open, struct());
+                label = app.Document.getComponentByName("Label");
+                trees = findall(figure, "Type", "uitree");
+                tree = trees(arrayfun(@(item) ~isempty(item.SelectionChangedFcn), trees));
+                nodes = findall(tree, "Type", "uitreenode");
+                node = nodes(arrayfun(@(item) string(item.NodeData) == label.Id, nodes));
+                tree.SelectedNodes = node;
+                tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+
+                % Plain text, including quote characters, is data rather than source syntax.
+                labels = findall(figure, "Tag", "macd-inspector-property-label");
+                row = labels(string({labels.Text}) == "Text");
+                editor = findall(row.Parent, "Tag", "macd-inspector-property-editor");
+                draft = "literal(1) + 'quoted'";
+                editor.Value = {char(draft)};
+                editor.ValueChangedFcn(editor, struct());
+                expected = draft;
+                if index == 1, expected = char(draft); end
+                testCase.assertEqual(label.getProperty("Text").LiteralValue, expected);
+                testCase.verifyEqual(app.Document.HistoryIndex, 1);
+                emitted = macd.source.RoundTripGenerator(registry).generate(app.Document);
+                parsed = macd.source.AppSourceParser.parseText(emitted, registry);
+                testCase.verifyEqual(parsed.getComponentByName("Label").getProperty("Text").LiteralValue, expected);
+                app.Document.undo();
+                testCase.verifyEqual(string(label.getProperty("Text").LiteralValue), "Initial");
+                app.Document.redo();
+                testCase.verifyEqual(label.getProperty("Text").LiteralValue, expected);
+
+                % Existing multiline cell values remain supported after a scalar edit.
+                labels = findall(figure, "Tag", "macd-inspector-property-label");
+                row = labels(string({labels.Text}) == "Text");
+                editor = findall(row.Parent, "Tag", "macd-inspector-property-editor");
+                lines = cellstr(["First line"; "Second line"]);
+                editor.Value = lines;
+                editor.ValueChangedFcn(editor, struct());
+                testCase.verifyEqual(label.getProperty("Text").LiteralValue, reshape(lines, 1, []));
+                testCase.verifyEqual(app.Document.HistoryIndex, 2);
+                clear cleanup
+            end
+        end
+
         function obsoleteLayoutCallbackCannotStopNewPreviewWork(testCase)
             % obsoleteLayoutCallbackCannotStopNewPreviewWork Ignore notifications from a replaced layout request.
             app = yamada();

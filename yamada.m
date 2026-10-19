@@ -2840,7 +2840,8 @@ classdef yamada < matlab.apps.AppBase
                     app.setStatus(message);
                     return
                 end
-            elseif ~isAllowedEmpty && (ischar(value) || (isstring(value) && isscalar(value)))
+            elseif ~isAllowedEmpty && definition.Editor ~= "multilineText" && ...
+                    (ischar(value) || (isstring(value) && isscalar(value)))
                 [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(value));
                 if ~isLiteral
                     message = "Enter a supported MATLAB literal.";

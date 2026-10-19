@@ -67,6 +67,18 @@ separately from each change. `-Profile` additionally records a later change in
 `profile-property-multiple.mat`; profile durations are excluded from ordinary
 samples. This option requires two font-capable siblings in the selected fixture.
 
+`-PropertyPath Text` measures actual Label Text edits instead of FontSize.
+The default remains FontSize with the same numeric sequences. Text edits exercise
+the full validation path; keep them separate from numeric local re-edits. Both
+the manifest and measurement JSON record the property. Startup, Open, selection,
+and property callbacks remain separate, and every ordinary edit verifies the
+recorded value. For example:
+
+```powershell
+& tests/performance/runYamadaPerformance.ps1 -PropertyPath Text -Samples 4 `
+    -OutputFolder testResults/performance/text-comparison
+```
+
 ## Measurements and limits
 
 - `source-manifest.json`: target commit, working-tree status, options, and SHA-256
