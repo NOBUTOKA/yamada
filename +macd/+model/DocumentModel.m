@@ -1519,6 +1519,11 @@ classdef DocumentModel < handle
             end
             context = obj.evaluationContext(registry);
             context.rememberConfiguration("combined", prepared);
+            component = obj.getComponent(componentId);
+            if carryValidation && component.Factory == "uilabel" && all(paths == "FontSize")
+                % Safe scalar font literals change neither ownership nor logical placement permissions.
+                context.inheritEligibility(obj.PropertyValidationContext);
+            end
             obj.PropertyCheckpoint = prepared;
             obj.PropertyCheckpointContext = context;
             obj.PropertyCheckpointId = componentId;

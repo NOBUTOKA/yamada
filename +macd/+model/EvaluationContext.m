@@ -188,6 +188,26 @@ classdef EvaluationContext < handle
         end
     end
 
+    methods (Access = ?macd.model.DocumentModel)
+        function inheritEligibility(obj, previous)
+            % inheritEligibility Carry immutable condition answers after a document-proven label font edit.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                previous (1, 1) macd.model.EvaluationContext
+            end
+            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+                    obj.RegistryRevision ~= previous.RegistryRevision
+                return
+            end
+            % Reparent answers retain their measured-rectangle guard; no native geometry is copied.
+            for name = string(keys(previous.Values))
+                if startsWith(name, "eligibility:")
+                    obj.Values(char(name)) = previous.Values(char(name));
+                end
+            end
+        end
+    end
+
     methods (Access = private)
         function finishRead(obj)
             % finishRead Release a synchronous evaluation scope, including on errors.

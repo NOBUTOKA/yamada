@@ -4,6 +4,94 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
     %   consumers while direct writes and catalog changes invalidate that input.
 
     methods (Test)
+        function independentFontEditsRetainConditionResults(testCase)
+            % independentFontEditsRetainConditionResults Reuse conditions without freezing native placement or command data.
+            registry = macd.model.ComponentRegistry.createDefault();
+            [document, ~, children] = CommittedPropertySourcePlanTest.gridFixture(registry, 2);
+            label = children(1);
+            document.setProperty(label.Id, "FontSize", 23, registry);
+            document.validatePropertyCommit(registry);
+            measured = [20 20 100 22];
+            beforeCopy = macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
+            beforeDelete = macd.model.DocumentEditAvailability.deletion(document, label.Id, registry);
+            beforeParents = macd.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
+            testCase.assertTrue(beforeCopy.Enabled);
+            testCase.assertTrue(beforeDelete.Enabled);
+            document.setPropertyBatch(label.Id, ...
+                macd.model.PropertyTransaction.singleChange("FontSize", 31), registry);
+            document.validatePropertyCommit(registry);
+
+            % Condition reads must use immutable prior answers for the same measured rectangle.
+            profile clear;
+            profile on;
+            cleanup = onCleanup(@() profile('off'));
+            afterCopy = macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
+            afterDelete = macd.model.DocumentEditAvailability.deletion(document, label.Id, registry);
+            afterParents = macd.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
+            profile off;
+            info = profile('info');
+            clear cleanup
+            functions = info.FunctionTable;
+            names = string({functions.FunctionName});
+            inspecting = contains(names, "DocumentEditAvailability.inspect") | ...
+                contains(names, "SubtreePlacementPlanner.prepare");
+            testCase.verifyEqual(sum([functions(inspecting).NumCalls]), 0);
+            testCase.verifyEqual(afterCopy, beforeCopy);
+            testCase.verifyEqual(afterDelete, beforeDelete);
+            testCase.verifyEqual(afterParents, beforeParents);
+
+            % Changed fit geometry must still recompute destination conditions.
+            profile clear;
+            profile on;
+            cleanup = onCleanup(@() profile('off'));
+            macd.model.DocumentEditAvailability.reparenting(document, label.Id, registry, [20 20 100 40]);
+            profile off;
+            info = profile('info');
+            clear cleanup
+            functions = info.FunctionTable;
+            placement = contains(string({functions.FunctionName}), "SubtreePlacementPlanner.prepare");
+            testCase.verifyGreaterThan(sum([functions(placement).NumCalls]), 0);
+            snapshot = document.copySubtree(label.Id, registry);
+            font = snapshot.Records(1).Properties(string({snapshot.Records(1).Properties.Path}) == "FontSize");
+            testCase.verifyEqual(font.LiteralValue, 31);
+            document.removeSubtree(label.Id, registry);
+            document.undo();
+            testCase.verifyEqual(document.getComponent(label.Id).getProperty("FontSize").LiteralValue, 31);
+        end
+
+        function inheritedConditionsInvalidateOnSemanticChanges(testCase)
+            % inheritedConditionsInvalidateOnSemanticChanges Reject stale permissions after ownership and catalog changes.
+            for kind = ["readonly", "metadata", "registry"]
+                registry = macd.model.ComponentRegistry.createDefault();
+                [document, label] = CommittedPropertySourcePlanTest.fixture(registry, false);
+                document.setProperty(label.Id, "FontSize", 23, registry);
+                document.validatePropertyCommit(registry);
+                macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
+                document.setProperty(label.Id, "FontSize", 31, registry);
+                document.validatePropertyCommit(registry);
+                macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
+                switch kind
+                    case "readonly"
+                        label.IsEditable = false;
+                    case "metadata"
+                        document.Metadata.EligibilityInvalidation = true;
+                    case "registry"
+                        registry.register(registry.get("uilabel"));
+                end
+                profile clear;
+                profile on;
+                cleanup = onCleanup(@() profile('off'));
+                state = macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
+                profile off;
+                info = profile('info');
+                clear cleanup
+                functions = info.FunctionTable;
+                inspecting = contains(string({functions.FunctionName}), "DocumentEditAvailability.inspect");
+                testCase.verifyGreaterThan(sum([functions(inspecting).NumCalls]), 0, kind);
+                if kind == "readonly", testCase.verifyFalse(state.Enabled); end
+            end
+        end
+
         function localCommitReusesOnlyProvenModelValidation(testCase)
             % localCommitReusesOnlyProvenModelValidation Avoid duplicate checks while retaining full save verification.
             registry = macd.model.ComponentRegistry.createDefault();

@@ -1162,7 +1162,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         end
     end
 
-    methods (Test, TestTags = {'inspector', 'fast', 'ui'})
+    methods (Test, TestTags = {'inspector', 'ui'})
         function repeatedNumericInspectorEditsRetainPreviewAndHistory(testCase)
             % repeatedNumericInspectorEditsRetainPreviewAndHistory Reuse validation through real numeric callbacks.
             source = strjoin(["classdef LocalValidationUI < matlab.apps.AppBase", "properties", ...
@@ -1242,6 +1242,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+    end
+
+    methods (Test, TestTags = {'inspector', 'fast', 'ui'})
         function fontStyleButtonCommitsCatalogChoice(testCase)
             % fontStyleButtonCommitsCatalogChoice Commit a typographic style toggle through the live inspector.
 
