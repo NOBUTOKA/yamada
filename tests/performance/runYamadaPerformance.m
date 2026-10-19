@@ -399,7 +399,15 @@ started = tic;
 while true
     drawnow;
     timers = timerfindall;
-    active = ~isempty(timers) && any(string({timers.Running}) == "on");
+    % Layout callbacks may delete timers between enumeration and state access.
+    active = false;
+    for current = reshape(timers, 1, [])
+        try
+            if isvalid(current), active = active || string(current.Running) == "on"; end
+        catch exception
+            if isvalid(current), rethrow(exception), end
+        end
+    end
     overlay = findall(figure, "Tag", "macd-interaction-overlay");
     acknowledged = ~renderAck || (~isempty(overlay) && ...
         isappdata(figure, "macdRenderedRevision") && ...

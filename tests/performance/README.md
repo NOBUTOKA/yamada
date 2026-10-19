@@ -99,7 +99,10 @@ stable p95 or a release latency guarantee.
 
 Repeated selections and document reopenings are excluded from the normal latency
 distribution. Use their object/timer counts together with resource trends to
-investigate retention. Process allocation alone does not prove a memory leak or
+investigate retention. Resource discovery rejects processes created before the
+owned invocation, since Windows can leave a reused parent PID in an older process.
+Layout polling tolerates timers deleted by completed callbacks between discovery
+and state access. Process allocation alone does not prove a memory leak or
 the absence of retained MATLAB objects.
 
 `-RepeatedSelections` repeats the current target. `-AlternatingSelections` changes

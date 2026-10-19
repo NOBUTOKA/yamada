@@ -55,6 +55,7 @@ foreach ($case in $Cases) {
     $log = Join-Path $caseFolder 'matlab.log'
     $arguments = @('-wait', '-nosplash', '-logfile', ('"' + $log + '"'), '-batch', ('"' + $expression + '"'))
     $process = Start-Process -FilePath $Matlab -ArgumentList $arguments -PassThru -WindowStyle Hidden
+    $createdAfter = $process.StartTime.ToUniversalTime()
     $started = [DateTimeOffset]::UtcNow
     $status = 'running'
     $action = 'startup'
@@ -63,8 +64,8 @@ foreach ($case in $Cases) {
     while (!$process.HasExited) {
         $now = [DateTimeOffset]::UtcNow
         if ($now -ge $nextResources) {
-            # Discover only descendants of this invocation, then sample their process resources.
-            $children = @(Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -in $ownedIds })
+            # Ignore stale parent IDs belonging to processes created before this invocation.
+            $children = @(Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -in $ownedIds -and $_.CreationDate.ToUniversalTime() -ge $createdAfter })
             $ownedIds = @($ownedIds + @($children | ForEach-Object { [int]$_.ProcessId }) | Sort-Object -Unique)
             foreach ($ownedId in $ownedIds) {
                 $owned = Get-Process -Id $ownedId -ErrorAction SilentlyContinue
