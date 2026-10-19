@@ -2906,7 +2906,7 @@ classdef yamada < matlab.apps.AppBase
                 return
             end
             % Revalidate and dispatch the accepted property impact without rebuilding the shell.
-            macd.validation.ModelValidator.validate(app.Document, app.Registry);
+            app.Document.validatePropertyCommit(app.Registry);
             app.refreshViews(macd.ui.RefreshRequest("properties", component.Id, string({changes.Path})));
         end
 

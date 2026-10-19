@@ -4,6 +4,96 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
     %   consumers while direct writes and catalog changes invalidate that input.
 
     methods (Test)
+        function localCommitReusesOnlyProvenModelValidation(testCase)
+            % localCommitReusesOnlyProvenModelValidation Avoid duplicate checks while retaining full save verification.
+            registry = macd.model.ComponentRegistry.createDefault();
+            for inGrid = [false true]
+                for batch = [false true]
+                    [document, label] = CommittedPropertySourcePlanTest.fixture(registry, inGrid);
+                    document.setProperty(label.Id, "FontSize", 23, registry);
+                    baseline = document.validatePropertyCommit(registry);
+                    document.Diagnostics = macd.model.Diagnostic("preview-only", "warning", "Derived presentation data.");
+
+                    % Profile the accepted edit and its editor-level validation as one operation.
+                    profile clear;
+                    profile on;
+                    cleanup = onCleanup(@() profile('off'));
+                    if batch
+                        document.setPropertyBatch(label.Id, ...
+                            macd.model.PropertyTransaction.singleChange("FontSize", 31), registry);
+                    else
+                        document.setProperty(label.Id, "FontSize", 31, registry);
+                    end
+                    actual = document.validatePropertyCommit(registry);
+                    profile off;
+                    info = profile('info');
+                    clear cleanup
+                    functions = info.FunctionTable;
+                    names = string({functions.FunctionName});
+                    repeated = contains(names, "ModelValidator.validate") | ...
+                        contains(names, "AppSourceParser.parseText") | contains(names, "RoundTripGenerator.generate");
+                    testCase.verifyEqual(sum([functions(repeated).NumCalls]), 0);
+                    testCase.verifyEqual(actual, baseline);
+                    testCase.verifyEqual(document.Diagnostics, baseline);
+                    testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 31);
+                    testCase.verifyEqual(document.HistoryIndex, 2);
+
+                    % Direct validation and the save checkpoint retain their complete checks.
+                    profile clear;
+                    profile on;
+                    cleanup = onCleanup(@() profile('off'));
+                    expected = macd.validation.ModelValidator.validate(document, registry);
+                    source = macd.source.RoundTripGenerator(registry).generate(document);
+                    checkpoint = macd.model.SavedSourceCheckpoint(document, source, ...
+                        fullfile(tempdir, document.ClassName + ".m"), registry);
+                    profile off;
+                    info = profile('info');
+                    clear cleanup
+                    functions = info.FunctionTable;
+                    names = string({functions.FunctionName});
+                    testCase.verifyGreaterThan(sum([functions(contains(names, "ModelValidator.validate")).NumCalls]), 0);
+                    testCase.verifyGreaterThan(sum([functions(contains(names, "AppSourceParser.parseText")).NumCalls]), 0);
+                    testCase.verifyEqual(actual, expected);
+                    testCase.verifyEqual(checkpoint.SourceText, source);
+                end
+            end
+        end
+
+        function commitValidationRejectsStaleProofs(testCase)
+            % commitValidationRejectsStaleProofs Revalidate semantic, catalog, history, and unpreflighted changes.
+            for kind = ["metadata", "entry", "registry", "history", "unproven", "structure"]
+                registry = macd.model.ComponentRegistry.createDefault();
+                [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
+                document.setProperty(label.Id, "FontSize", 23, registry);
+                document.validatePropertyCommit(registry);
+                switch kind
+                    case "metadata"
+                        document.Metadata.ValidationProofInvalidation = true;
+                    case "entry"
+                        label.setProperty("Text", "Direct write");
+                    case "registry"
+                        registry.register(registry.get("uilabel"));
+                    case "history"
+                        document.undo();
+                    case "unproven"
+                        document.setProperty(label.Id, "FontSize", 31);
+                    case "structure"
+                        document.insertComponent(registry, "uilabel", document.RootComponentId);
+                end
+                profile clear;
+                profile on;
+                cleanup = onCleanup(@() profile('off'));
+                actual = document.validatePropertyCommit(registry);
+                profile off;
+                info = profile('info');
+                clear cleanup
+                functions = info.FunctionTable;
+                checking = contains(string({functions.FunctionName}), "ModelValidator.validate");
+                testCase.verifyGreaterThan(sum([functions(checking).NumCalls]), 0, kind);
+                testCase.verifyEqual(actual, macd.validation.ModelValidator.validate(document, registry));
+            end
+        end
+
         function repeatedNumericEditsAvoidWholeSourcePreflight(testCase)
             % repeatedNumericEditsAvoidWholeSourcePreflight Reuse proven placement for saved and unsaved settings.
             registry = macd.model.ComponentRegistry.createDefault();

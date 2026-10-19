@@ -1163,6 +1163,85 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'inspector', 'fast', 'ui'})
+        function repeatedNumericInspectorEditsRetainPreviewAndHistory(testCase)
+            % repeatedNumericInspectorEditsRetainPreviewAndHistory Reuse validation through real numeric callbacks.
+            source = strjoin(["classdef LocalValidationUI < matlab.apps.AppBase", "properties", ...
+                "UIFigure matlab.ui.Figure", "StatusLabel matlab.ui.control.Label", "end", "methods", ...
+                "function app = LocalValidationUI", "createComponents(app);", "end", ...
+                "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                "app.StatusLabel = uilabel(app.UIFigure, Text=""Local validation label"");", ...
+                "end", "end", "end"], sprintf("\r\n"));
+            fixture = string(tempname()) + ".m";
+            macd.source.SourceWriter.write(fixture, source);
+            testCase.addTeardown(@() delete(fixture));
+            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure.Visible = "off";
+            menus = findall(figure, "Type", "uimenu");
+            open = menus(erase(string({menus.Text}), "&") == "Open...");
+            open.MenuSelectedFcn(open, struct());
+            component = app.Document.getComponentByName("StatusLabel");
+            tree = findall(figure, "Type", "uitree");
+            node = tree.Children(1).Children(string({tree.Children(1).Children.NodeData}) == component.Id);
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+            drawnow;
+
+            % The first edit establishes source placement; the second retains real Preview behavior.
+            for value = [23 31]
+                labels = findall(figure, "Tag", "macd-inspector-property-label");
+                label = labels(string({labels.Text}) == "FontSize");
+                editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+                testCase.assertEqual(numel(editor), 1);
+                if value == 31
+                    profile clear;
+                    profile on;
+                    profileCleanup = onCleanup(@() profile('off'));
+                end
+                if isa(editor, "matlab.ui.control.EditField")
+                    editor.Value = char(string(value));
+                else
+                    editor.Value = value;
+                end
+                editor.ValueChangedFcn(editor, struct());
+                drawnow;
+                if value == 31
+                    profile off;
+                    info = profile('info');
+                    clear profileCleanup
+                    functions = info.FunctionTable;
+                    names = string({functions.FunctionName});
+                    checking = contains(names, "ModelValidator.validate") | ...
+                        contains(names, "AppSourceParser.parseText") | contains(names, "RoundTripGenerator.generate");
+                    testCase.verifyEqual(sum([functions(checking).NumCalls]), 0);
+                end
+                native = findall(figure, "Type", "uilabel", "Text", "Local validation label");
+                testCase.assertEqual(numel(native), 1);
+                testCase.verifyEqual(native.FontSize, value);
+                testCase.verifyEqual(component.getProperty("FontSize").LiteralValue, value);
+            end
+            testCase.verifyEqual(app.Document.OriginalText, source);
+            testCase.verifyEqual(app.Document.HistoryIndex, 2);
+
+            % History callbacks must invalidate the proof and restore native values atomically.
+            menus = findall(figure, "Type", "uimenu");
+            for action = ["Undo", "Redo"]
+                item = menus(erase(string({menus.Text}), "&") == action);
+                item.MenuSelectedFcn(item, struct());
+                drawnow;
+                expected = 23;
+                if action == "Redo", expected = 31; end
+                native = findall(figure, "Type", "uilabel", "Text", "Local validation label");
+                testCase.assertEqual(numel(native), 1);
+                testCase.verifyEqual(native.FontSize, expected);
+                testCase.verifyEqual(component.getProperty("FontSize").LiteralValue, expected);
+            end
+            clear cleanup
+        end
+
         function fontStyleButtonCommitsCatalogChoice(testCase)
             % fontStyleButtonCommitsCatalogChoice Commit a typographic style toggle through the live inspector.
 
