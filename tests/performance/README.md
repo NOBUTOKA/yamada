@@ -15,6 +15,14 @@ grid. `-ComponentCount` changes the number of labels, not the total model count.
 Use a new output directory for every run. Keep other MATLAB test and benchmark
 processes idle when comparing elapsed time.
 
+`-NestedDepth` sets the maximum number of grid ancestors in `nestedgrid` (default
+two). Values four and eight add a chain of one-cell outer grids above the same
+three panels; labels and panel counts stay fixed, while total grid/model counts
+increase and must be reported. The option does not change `absolute` or
+`flatgrid`. Startup, Open, selection, first edits, and repeated edits remain
+separate observations. Do not attribute a total-time change to rendering without
+examining the corresponding profile.
+
 ```powershell
 # Higher sample counts and a separate endurance exercise.
 & tests/performance/runYamadaPerformance.ps1 -Samples 20 `
@@ -30,6 +38,10 @@ processes idle when comparing elapsed time.
     -OutputFolder testResults/performance/scale-50
 & tests/performance/runYamadaPerformance.ps1 -ComponentCount 200 -Samples 1 `
     -OutputFolder testResults/performance/scale-200
+& tests/performance/runYamadaPerformance.ps1 -Cases nestedgrid -ComponentCount 50 `
+    -NestedDepth 8 -Samples 3 -Profile -OutputFolder testResults/performance/depth-8
+& tests/performance/runYamadaPerformance.ps1 -EnduranceOnly -PropertyChanges 100 `
+    -OutputFolder testResults/performance/property-endurance
 
 # Profiler samples are saved separately and excluded from elapsed-time statistics.
 & tests/performance/runYamadaPerformance.ps1 -Samples 2 -Profile `
@@ -62,6 +74,14 @@ Do not compare a different component count as though only the grid changed.
   after normal property samples, before profiling or endurance operations.
 - `profile-selection.mat` and `profile-property.mat`: raw MATLAB profiles when
   `-Profile` is enabled. Inclusive times must not be added across parent/child calls.
+- `profile-property-warm.mat`: when at least two normal property samples completed,
+  profiles a further edit on that same component before the selection changes.
+  Its context records component and before/after values. Profiler times are not
+  substitutes for ordinary latency samples.
+- `document-lifetime.json`: observed source snapshot identities and destruction
+  events for documents installed by Open/reopen. Listeners capture only the editor
+  figure and snapshot string; no old document or listener handles are saved.
+  This checks observed document lifetimes, not all internal object allocations.
 - `outcomes.json` and `<case>/matlab.log`: success, failure, or timeout and diagnostics.
 
 Settled time includes pending editor layout timers and the current HTML revision's
@@ -88,3 +108,10 @@ between two different targets and exercises retained Inspector rebinding.
 be explored within the same five-minute case limit. It still measures startup
 and Open and cannot be combined with profiling. Incomplete cycles remain partial
 results rather than being treated as a completed endurance test.
+
+`-PropertyChanges` performs actual Inspector edits cycling five finite FontSize
+values, records them as `retention-property`, and checks that each requested value
+was committed. It also works with `-EnduranceOnly`, which selects a font-capable
+target first. The first edit and subsequent edits are separate phases. Document
+cycles reopen the fixture through the normal unsaved-change guard with Discard;
+each installed document gets a fresh snapshot identity.

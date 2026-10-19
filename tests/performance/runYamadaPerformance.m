@@ -6,12 +6,14 @@ arguments (Input)
     options.Case (1, 1) string {mustBeMember(options.Case, ...
         ["absolute", "flatgrid", "nestedgrid", "gallery", "navigation"])} = "absolute"
     options.ComponentCount (1, 1) double {mustBeInteger, mustBeGreaterThanOrEqual(options.ComponentCount, 2)} = 12
+    options.NestedDepth (1, 1) double {mustBeInteger, mustBeGreaterThanOrEqual(options.NestedDepth, 2)} = 2
     options.Samples (1, 1) double {mustBeInteger, mustBePositive} = 4
     options.Profile (1, 1) logical = false
     options.RenderAck (1, 1) logical = true
     options.RepeatedSelections (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
     options.AlternatingSelections (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
     options.DocumentCycles (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
+    options.PropertyChanges (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
     options.EnduranceOnly (1, 1) logical = false
 end
 arguments (Output)
@@ -19,7 +21,7 @@ arguments (Output)
 end
 
 assert(~options.EnduranceOnly || (~options.Profile && ...
-    options.RepeatedSelections + options.AlternatingSelections + options.DocumentCycles > 0), ...
+    options.RepeatedSelections + options.AlternatingSelections + options.DocumentCycles + options.PropertyChanges > 0), ...
     "EnduranceOnly requires retention operations and cannot include profiling.");
 normalSamples = options.Samples;
 if options.EnduranceOnly, normalSamples = 0; end
@@ -51,6 +53,8 @@ callback = toc(started);
 settle(figure, options.RenderAck);
 results = measure(results, "open", 1, callback, toc(started), figure, "first");
 options.ModelComponents = numel(app.Document.Components);
+options.GridCount = sum([app.Document.Components.Factory] == "uigridlayout");
+watchDocument(figure, app.Document);
 persist(options, results);
 publishProgress(progress, "complete", "open");
 
@@ -113,6 +117,20 @@ if isappdata(figure, "macdPreviewStatistics")
         "counters", getappdata(figure, "macdPreviewStatistics"))));
     fclose(fid);
 end
+% Profile the actual repeated edit before changing selection for cold profiles.
+if options.Profile && editable && propertySamples >= 2
+    profileContext = struct("Phase", "warm-same-component", "ComponentId", app.SelectedComponentId, ...
+        "Before", app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue, ...
+        "After", 13 + options.Samples);
+    publishProgress(progress, "start", "profile-property-warm");
+    profile clear; profile on;
+    commitFontSize(figure, profileContext.After);
+    settle(figure, options.RenderAck);
+    profile off;
+    profileData = profile("info");
+    save(fullfile(options.OutputFolder, "profile-property-warm.mat"), "profileData", "profileContext");
+    assert(app.SelectedComponentId == profileContext.ComponentId);
+end
 if options.Profile
     publishProgress(progress, "start", "profile-selection");
     profile clear; profile on;
@@ -131,6 +149,27 @@ if options.Profile
         save(fullfile(options.OutputFolder, "profile-property.mat"), "profileData");
     end
     persist(options, results);
+end
+% Exercise real bounded value changes separately from ordinary latency samples.
+if options.PropertyChanges > 0
+    selectId(figure, ids(1));
+    settle(figure, options.RenderAck);
+    [editable, reason] = canCommitFontSize(figure);
+    assert(editable, reason);
+end
+for index = 1:options.PropertyChanges
+    publishProgress(progress, "start", "retention-property");
+    value = 13 + mod(index, 5);
+    started = tic;
+    commitFontSize(figure, value);
+    callback = toc(started);
+    settle(figure, options.RenderAck);
+    assert(app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue == value);
+    phase = "warm";
+    if index == 1, phase = "first"; end
+    results = measure(results, "retention-property", index, callback, toc(started), figure, phase);
+    persist(options, results);
+    publishProgress(progress, "complete", "retention-property");
 end
 % Keep endurance work separate from the latency distribution and normal history.
 for index = 1:options.RepeatedSelections
@@ -162,11 +201,48 @@ for index = 1:options.DocumentCycles
     settle(figure, options.RenderAck);
     assert(app.Document.Metadata.SourceSnapshotId ~= previousSnapshot && ~app.Document.IsDirty, ...
         "The benchmark document transition was not completed.");
+    watchDocument(figure, app.Document);
     results = measure(results, "document-cycle", index, callback, toc(started), figure, "reopen");
     persist(options, results);
     publishProgress(progress, "complete", "document-cycle");
 end
+if isappdata(figure, "macdDocumentLifetime")
+    lifetime = getappdata(figure, "macdDocumentLifetime");
+    lifetime.active = app.Document.Metadata.SourceSnapshotId;
+    fid = fopen(fullfile(options.OutputFolder, "document-lifetime.json"), "w", "n", "UTF-8");
+    assert(fid >= 0, "Cannot record document lifetime.");
+    fprintf(fid, "%s", jsonencode(lifetime));
+    fclose(fid);
+end
 publishProgress(progress, "complete", "fixture");
+end
+
+function watchDocument(figure, document)
+% watchDocument Observe destruction without retaining documents or listener handles.
+arguments (Input)
+    figure (1, 1) matlab.ui.Figure
+    document (1, 1) macd.model.DocumentModel
+end
+if ~isappdata(figure, "macdDocumentLifetime")
+    setappdata(figure, "macdDocumentLifetime", struct("observed", strings(1, 0), "destroyed", strings(1, 0)));
+end
+snapshot = document.Metadata.SourceSnapshotId;
+lifetime = getappdata(figure, "macdDocumentLifetime");
+lifetime.observed(end + 1) = snapshot;
+setappdata(figure, "macdDocumentLifetime", lifetime);
+addlistener(document, "ObjectBeingDestroyed", @(~, ~) recordDestroyedDocument(figure, snapshot));
+end
+
+function recordDestroyedDocument(figure, snapshot)
+% recordDestroyedDocument Record a snapshot identity without holding its model.
+arguments (Input)
+    figure (1, 1) matlab.ui.Figure
+    snapshot (1, 1) string
+end
+if ~isvalid(figure), return, end
+lifetime = getappdata(figure, "macdDocumentLifetime");
+lifetime.destroyed(end + 1) = snapshot;
+setappdata(figure, "macdDocumentLifetime", lifetime);
 end
 
 function targets = measurementTargets(document, registry)
@@ -234,10 +310,19 @@ end
 document = macd.model.NewAppFactory.createEmpty("PerformanceFixture", registry);
 parentId = document.RootComponentId;
 if options.Case == "nestedgrid"
-    outer = document.insertComponent(registry, "uigridlayout", parentId);
-    outer.setProperty("RowHeight", {"1x"});
-    outer.setProperty("ColumnWidth", {"1x", "1x", "1x"});
-    parentId = outer.Id;
+    for depth = 1:options.NestedDepth - 1
+        outer = document.insertComponent(registry, "uigridlayout", parentId);
+        outer.setProperty("RowHeight", {"1x"});
+        outer.setProperty("ColumnWidth", {"1x"});
+        if depth > 1
+            outer.setProperty("Layout.Row", 1);
+            outer.setProperty("Layout.Column", 1);
+        end
+        if depth == options.NestedDepth - 1
+            outer.setProperty("ColumnWidth", {"1x", "1x", "1x"});
+        end
+        parentId = outer.Id;
+    end
 end
 perGroup = ceil(options.ComponentCount / 3);
 for group = 1:3
@@ -360,6 +445,7 @@ modelComponents = NaN;
 if isfield(options, "ModelComponents"), modelComponents = options.ModelComponents; end
 fprintf(fid, "%s", jsonencode(struct("matlab", version, "case", options.Case, ...
     "componentCount", options.ComponentCount, "modelComponents", modelComponents, "renderAck", options.RenderAck, ...
+    "nestedDepth", options.NestedDepth, ...
     "samples", results, "summary", summarize(results))));
 end
 
