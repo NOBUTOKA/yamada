@@ -13,6 +13,7 @@ arguments (Input)
     options.RepeatedSelections (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
     options.AlternatingSelections (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
     options.DocumentCycles (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
+    options.AlternatingPropertyChanges (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
     options.PropertyChanges (1, 1) double {mustBeInteger, mustBeNonnegative} = 0
     options.EnduranceOnly (1, 1) logical = false
 end
@@ -20,9 +21,9 @@ arguments (Output)
     results (1, :) struct
 end
 
-assert(~options.EnduranceOnly || (~options.Profile && ...
-    options.RepeatedSelections + options.AlternatingSelections + options.DocumentCycles + options.PropertyChanges > 0), ...
-    "EnduranceOnly requires retention operations and cannot include profiling.");
+assert(~options.EnduranceOnly || ((~options.Profile || options.AlternatingPropertyChanges > 0) && ...
+    options.RepeatedSelections + options.AlternatingSelections + options.DocumentCycles + options.PropertyChanges + options.AlternatingPropertyChanges > 0), ...
+    "EnduranceOnly requires retention operations; profiling also requires alternating property changes.");
 normalSamples = options.Samples;
 if options.EnduranceOnly, normalSamples = 0; end
 % Keep tests and factories on the path when MATLAB changes the current folder.
@@ -149,6 +150,46 @@ if options.Profile
         save(fullfile(options.OutputFolder, "profile-property.mat"), "profileData");
     end
     persist(options, results);
+end
+% Measure pending additions across two components in the same parent.
+if options.AlternatingPropertyChanges > 0
+    siblings = targets([targets.ParentId] == targets(1).ParentId);
+    assert(numel(siblings) >= 2, "Alternating property changes require two editable siblings.");
+    editIds = [siblings(1).Id, siblings(2).Id];
+    for index = 1:options.AlternatingPropertyChanges
+        publishProgress(progress, "start", "alternating-property");
+        started = tic;
+        selectId(figure, editIds(1 + mod(index - 1, 2)));
+        callback = toc(started);
+        settle(figure, options.RenderAck);
+        results = measure(results, "alternating-property-selection", index, callback, toc(started), figure, "switch-target");
+        [editable, reason] = canCommitFontSize(figure);
+        assert(editable, reason);
+        started = tic;
+        value = 13 + mod(index, 5);
+        commitFontSize(figure, value);
+        callback = toc(started);
+        settle(figure, options.RenderAck);
+        edited = app.Document.getComponent(app.SelectedComponentId);
+        assert(edited.getProperty("FontSize").LiteralValue == value);
+        phase = "multiple-pending";
+        if index == 1, phase = "first-target"; end
+        results = measure(results, "alternating-property", index, callback, toc(started), figure, phase);
+        persist(options, results);
+        publishProgress(progress, "complete", "alternating-property");
+    end
+    if options.Profile
+        selectId(figure, editIds(1));
+        settle(figure, options.RenderAck);
+        profileContext = struct("ComponentIds", editIds, "SelectedId", app.SelectedComponentId, ...
+            "Before", app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue, "After", 18);
+        publishProgress(progress, "start", "profile-alternating-property");
+        profile clear; profile on;
+        commitFontSize(figure, 18);
+        settle(figure, options.RenderAck);
+        profile off; profileData = profile("info");
+        save(fullfile(options.OutputFolder, "profile-property-multiple.mat"), "profileData", "profileContext");
+    end
 end
 % Exercise real bounded value changes separately from ordinary latency samples.
 if options.PropertyChanges > 0

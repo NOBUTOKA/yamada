@@ -43,6 +43,10 @@ examining the corresponding profile.
 & tests/performance/runYamadaPerformance.ps1 -EnduranceOnly -PropertyChanges 100 `
     -OutputFolder testResults/performance/property-endurance
 
+# New unsaved settings on two siblings in the same grid (or no-grid control).
+& tests/performance/runYamadaPerformance.ps1 -EnduranceOnly -AlternatingPropertyChanges 6 `
+    -OutputFolder testResults/performance/pending-siblings
+
 # Profiler samples are saved separately and excluded from elapsed-time statistics.
 & tests/performance/runYamadaPerformance.ps1 -Samples 2 -Profile `
     -OutputFolder testResults/performance/profile
@@ -54,6 +58,14 @@ safety makes the selected property read-only, `excluded-operations.json` records
 the boundary and property samples are omitted. Disabled controls are never forced
 through a commit. The matched generated cases are the controls for layout comparisons.
 Do not compare a different component count as though only the grid changed.
+
+`-AlternatingPropertyChanges` alternates FontSize changes between two siblings.
+Run it with `-EnduranceOnly` to begin without normal property edits. The first
+change introduces one setting; the second introduces a setting on the other
+component, and later changes revisit both unsaved settings. Selection is recorded
+separately from each change. `-Profile` additionally records a later change in
+`profile-property-multiple.mat`; profile durations are excluded from ordinary
+samples. This option requires two font-capable siblings in the selected fixture.
 
 ## Measurements and limits
 

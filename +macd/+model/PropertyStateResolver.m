@@ -90,7 +90,7 @@ classdef PropertyStateResolver
             % Source additions use the same actual placement as generation and Preview.
             combined = false;
             if ~isempty(document) && ~isempty(registry)
-                combined = (macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document) || ...
+                combined = (macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document, registry) || ...
                     macd.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document) || ...
                     macd.model.AncestorGeometryPolicy.requiresCombinedPlan(component, document)) && ...
                     ~(isfield(document.Metadata, "ResolvingCombinedPropertySource") && ...
@@ -105,7 +105,7 @@ classdef PropertyStateResolver
                         plan = macd.source.PropertySourcePlan.plan(document, component, registry);
                     end
                     resolved = macd.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, registry);
-                    incomplete = ~combined && macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document);
+                    incomplete = ~combined && macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document, registry);
                     for index = 1:numel(states)
                         effective = resolved(index);
                         if incomplete && any(effective.Path == ["RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column"])

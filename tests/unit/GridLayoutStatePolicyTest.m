@@ -4,6 +4,86 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     %   default child placement, copy configuration, and Preview projection.
 
     methods (Test, TestTags = {'fast', 'model', 'parser', 'generation', 'roundtrip'})
+        function independentPendingSettingsDoNotCombineGridSource(testCase)
+            % independentPendingSettingsDoNotCombineGridSource Keep independent additions out of shared placement plans.
+            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
+                "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);"]);
+            first = document.getComponentByName("First");
+            second = document.getComponentByName("Second");
+            document.setProperty(first.Id, "FontSize", 14, registry);
+            document.setProperty(second.Id, "FontSize", 15, registry);
+            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document, registry));
+            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document));
+            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
+            testCase.verifyEqual(testCase.state(document, registry, second, "Layout.Column").EffectiveValue, 2);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyEqual(count(source, "app.First.FontSize"), 1);
+            testCase.verifyEqual(count(source, "app.Second.FontSize"), 1);
+            testCase.verifyEqual(document.HistoryIndex, 2);
+            document.undo();
+            testCase.verifyEmpty(second.getProperty("FontSize"));
+            document.redo();
+            testCase.verifyEqual(second.getProperty("FontSize").LiteralValue, 15);
+            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyEqual(parsed.getComponentByName("First").getProperty("FontSize").LiteralValue, 14);
+            testCase.verifyEqual(parsed.getComponentByName("Second").getProperty("FontSize").LiteralValue, 15);
+        end
+
+        function logicalChangesInvalidateIndependentGridPlan(testCase)
+            % logicalChangesInvalidateIndependentGridPlan Recompute shared plans when coupled settings are introduced.
+            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
+                "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);"]);
+            first = document.getComponentByName("First");
+            second = document.getComponentByName("Second");
+            first.setProperty("FontSize", 14);
+            second.setProperty("FontSize", 15);
+            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            first.setProperty("Layout.Row", 3);
+            second.setProperty("Layout.Column", 3);
+            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            actual = parsed.getComponentByName("Grid");
+            for path = ["RowHeight", "ColumnWidth"]
+                before = testCase.state(document, registry, grid, path);
+                after = testCase.state(parsed, registry, actual, path);
+                testCase.verifyTrue(before.IsKnown && after.IsKnown);
+                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(before.EffectiveValue, after.EffectiveValue));
+            end
+        end
+
+        function independentSettingWithNewSiblingKeepsPlacementKnown(testCase)
+            % independentSettingWithNewSiblingKeepsPlacementKnown Preserve creation-anchor effects after unrelated insertions.
+            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
+                "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);", "app.First.Layout.Row = 4;"]);
+            first = document.getComponentByName("First");
+            first.setProperty("FontSize", 14);
+            third = macd.model.ComponentRecord("new-third", "Third", "uibutton", "matlab.ui.control.Button", "generated");
+            document.addComponent(third, grid.Id);
+            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            before = testCase.state(document, registry, third, "Layout.Row");
+            testCase.verifyTrue(before.IsKnown);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            after = testCase.state(parsed, registry, parsed.getComponentByName("Third"), "Layout.Row");
+            testCase.verifyTrue(after.IsKnown);
+            testCase.verifyEqual(before.EffectiveValue, after.EffectiveValue);
+        end
+
+        function unknownPendingSettingsRetainCombinedFallback(testCase)
+            % unknownPendingSettingsRetainCombinedFallback Never infer independence for unregistered setter semantics.
+            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
+                "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);"]);
+            first = document.getComponentByName("First");
+            second = document.getComponentByName("Second");
+            first.setProperty("FontSize", 14);
+            second.setProperty("FontSize", 15);
+            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            first.setProperty("UnregisteredSetting", 1);
+            second.setProperty("UnregisteredSetting", 2);
+            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+        end
+
         function unreviewedMemberEffectKeepsCoupledTracksUnknown(testCase)
             % unreviewedMemberEffectKeepsCoupledTracksUnknown Do not overwrite conservative shared state.
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...

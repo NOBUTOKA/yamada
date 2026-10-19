@@ -9,6 +9,7 @@ param(
     [int]$RepeatedSelections = 0,
     [int]$AlternatingSelections = 0,
     [int]$DocumentCycles = 0,
+    [int]$AlternatingPropertyChanges = 0,
     [int]$PropertyChanges = 0,
     [switch]$EnduranceOnly,
     [switch]$Profile,
@@ -38,7 +39,7 @@ $manifest = @($tracked + $added | Sort-Object -Unique | ForEach-Object {
 [pscustomobject]@{commit = (git -C $projectRoot rev-parse HEAD); status = @(git -C $projectRoot status --short);
     count = $ComponentCount; samples = $Samples; profile = [bool]$Profile;
     repeatedSelections = $RepeatedSelections; alternatingSelections = $AlternatingSelections;
-    documentCycles = $DocumentCycles; propertyChanges = $PropertyChanges; nestedDepth = $NestedDepth; enduranceOnly = [bool]$EnduranceOnly; sources = $manifest} |
+    documentCycles = $DocumentCycles; alternatingPropertyChanges = $AlternatingPropertyChanges; propertyChanges = $PropertyChanges; nestedDepth = $NestedDepth; enduranceOnly = [bool]$EnduranceOnly; sources = $manifest} |
     ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $OutputFolder 'source-manifest.json') -Encoding utf8
 $outcomes = @()
 foreach ($case in $Cases) {
@@ -51,7 +52,7 @@ foreach ($case in $Cases) {
     $quoteOutput = $caseFolder.Replace("'", "''")
     $profileLiteral = if ($Profile) { 'true' } else { 'false' }
     $enduranceLiteral = if ($EnduranceOnly) { 'true' } else { 'false' }
-    $expression = "cd('$quoteRoot'); addpath(pwd,fullfile(pwd,'tests','performance')); runYamadaPerformance(OutputFolder=string('$quoteOutput'),Case=string('$case'),ComponentCount=$ComponentCount,NestedDepth=$NestedDepth,PropertyChanges=$PropertyChanges,Samples=$Samples,Profile=$profileLiteral,RepeatedSelections=$RepeatedSelections,AlternatingSelections=$AlternatingSelections,DocumentCycles=$DocumentCycles,EnduranceOnly=$enduranceLiteral);"
+    $expression = "cd('$quoteRoot'); addpath(pwd,fullfile(pwd,'tests','performance')); runYamadaPerformance(OutputFolder=string('$quoteOutput'),Case=string('$case'),ComponentCount=$ComponentCount,NestedDepth=$NestedDepth,AlternatingPropertyChanges=$AlternatingPropertyChanges,PropertyChanges=$PropertyChanges,Samples=$Samples,Profile=$profileLiteral,RepeatedSelections=$RepeatedSelections,AlternatingSelections=$AlternatingSelections,DocumentCycles=$DocumentCycles,EnduranceOnly=$enduranceLiteral);"
     $log = Join-Path $caseFolder 'matlab.log'
     $arguments = @('-wait', '-nosplash', '-logfile', ('"' + $log + '"'), '-batch', ('"' + $expression + '"'))
     $process = Start-Process -FilePath $Matlab -ArgumentList $arguments -PassThru -WindowStyle Hidden

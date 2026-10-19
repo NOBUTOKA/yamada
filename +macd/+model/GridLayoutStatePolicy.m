@@ -5,11 +5,12 @@ classdef GridLayoutStatePolicy
     %   1x padding. Computed pixel geometry and fit measurements are not inferred.
 
     methods (Static)
-        function result = requiresCombinedPlan(component, document)
+        function result = requiresCombinedPlan(component, document, registry)
             % requiresCombinedPlan Identify grid states needing a complete emitted candidate.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
                 document (1, 1) macd.model.DocumentModel
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
             arguments (Output)
                 result (1, 1) logical
@@ -20,9 +21,8 @@ classdef GridLayoutStatePolicy
             if ~isempty(parent) && parent.Factory == "uigridlayout", grids(end + 1) = parent; end
             result = false;
             for grid = grids
-                members = document.Components(string({document.Components.ParentId}) == grid.Id | ...
-                    string({document.Components.Id}) == grid.Id);
-                planned = arrayfun(@(member) macd.source.PropertySourcePlan.needsPlan(document, member), members);
+                members = [grid, document.Components(string({document.Components.ParentId}) == grid.Id)];
+                planned = macd.model.GridLayoutStatePolicy.pendingGridPlans(members, document, registry);
                 result = result || nnz(planned) > 1 || ...
                     (any(planned) && any(string({members.Origin}) ~= "parsed"));
             end
@@ -176,7 +176,7 @@ classdef GridLayoutStatePolicy
             end
             children = document.Components(string({document.Components.ParentId}) == grid.Id);
             members = [grid children];
-            planned = arrayfun(@(member) macd.source.PropertySourcePlan.needsPlan(document, member), members);
+            planned = macd.model.GridLayoutStatePolicy.pendingGridPlans(members, document, registry);
             if nnz(planned) == 1 && all(string({members.Origin}) == "parsed")
                 % Reuse actual source placement when a different member owns the pending setting.
                 try
@@ -377,6 +377,60 @@ classdef GridLayoutStatePolicy
             events = events(order);
         end
     end
+    methods (Static, Access = private)
+        function planned = pendingGridPlans(members, document, registry)
+            % pendingGridPlans Retain source plans that may change shared logical grid state.
+            arguments (Input)
+                members (1, :) macd.model.ComponentRecord
+                document (1, 1) macd.model.DocumentModel
+                registry macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                planned (1, :) logical
+            end
+            % Unchanged source and calls without a catalog keep the original cheap path.
+            planned = arrayfun(@(member) macd.source.PropertySourcePlan.needsPlan(document, member), members);
+            if isempty(registry) || ~any(planned), return, end
+            context = document.evaluationContext(registry);
+            key = "grid-source-plans:" + members(1).Id;
+            [cached, found] = context.lookup(key);
+            if found, planned = cached; return, end
+            scope = context.readScope(); %#ok<NASGU>
+            for index = find(planned)
+                member = members(index);
+                if macd.source.SubtreeReparentSourceEdits.contains(document, member.Id) || ...
+                        ~registry.contains(member.Factory)
+                    continue
+                end
+                % Individual insertion checks still validate ownership, literals, and source order.
+                entries = member.Properties;
+                entries = entries(arrayfun(@(entry) entry.Origin == "generated" && ...
+                    isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
+                    ~isfield(entry.Metadata, "SubtreeReferenceId"), entries));
+                if isempty(entries), continue, end
+                parent = document.getComponent(member.ParentId);
+                parentFactory = "";
+                if ~isempty(parent), parentFactory = parent.Factory; end
+                definitions = registry.getEffectiveProperties(member.Factory, parentFactory, member.CreationArguments);
+                independent = true;
+                for entry = entries
+                    definition = definitions(string({definitions.Path}) == entry.Path);
+                    if numel(definition) ~= 1 || ~entry.IsEditable || ~definition.IsEditable || ...
+                            definition.Application.EffectStatus ~= "independent" || ...
+                            definition.Application.EffectPolicy ~= "none" || ...
+                            ~isempty(definition.Application.ApplyAfter) || ...
+                            any(arrayfun(@(other) any(other.Application.ApplyAfter == entry.Path), definitions))
+                        independent = false;
+                        break
+                    end
+                end
+                % Font and text can affect native fit geometry without changing logical track events.
+                if independent, planned(index) = false; end
+            end
+            context.remember(key, planned);
+        end
+    end
+
 end
 
 %{
