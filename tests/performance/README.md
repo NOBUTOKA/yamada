@@ -233,3 +233,33 @@ boundary data directly at several settled times, records native positions and
 outer bounds, and compares measured fit/fixed minimum height plus spacing with
 available height. This distinguishes a persistent reconstruction limitation from
 application geometry-cache retention; it does not change editor behavior.
+
+## Callback anchor indexing comparison
+
+The first implementation after the distribution study is production commit
+`cd18537`. Reuse the earlier `update-scale200-tall-20261020` and
+`update-scale50-20261020` baseline runs, as authorized by the user. Compare each
+case with its own matching fixture and operation sequence; the 200-control
+flexible-track cases and the 50-control fit case are different conditions.
+Verify production and fixture hashes before interpreting timings. The interrupted
+`callback-index-before-20261020` run is excluded from comparisons.
+
+```powershell
+& tests/performance/runYamadaUpdateDistribution.ps1 -Cases absolute,nestedgrid -ComponentCount 200 -NestedDepth 8 -SurfaceHeight 1400 -Samples 2 -Additions 2 -Comparisons:$true -Fit:$false -Profile -OperationTimeoutSeconds 600 -ProfileTimeoutSeconds 1200 -CaseTimeoutSeconds 7200 -OutputFolder testResults/performance/callback-index-after-repeat
+& tests/performance/runYamadaUpdateDistribution.ps1 -Cases flatgrid -ComponentCount 50 -NestedDepth 8 -Samples 6 -Additions 3 -Comparisons:$true -Fit:$true -Profile -OutputFolder testResults/performance/callback-index-flat50-after-repeat
+```
+
+Use a fresh output directory for each invocation. In the older 50-control helper,
+SurfaceHeight was fixed at 650 and the current explicit-value and per-addition
+parent-selection defaults were unconditional. The newer alternating-value loop
+is disabled in this comparison. Check these defaults, actual fixture bytes and
+action/index pairs rather than demanding identical option field sets. The added
+pendingValueOwners observation runs after elapsed time and profiler capture;
+final source auditing now checks every numeric field. The layout settling and
+HTML acknowledgement paths are unchanged.
+
+Results and verification evidence are under the matching callback-index output
+folders in testResults/performance. The implementation plan records ordinary
+operation times separately from inclusive profiler times and lists remaining
+selection, source-generation, Preview and geometry work. These runs do not prove
+small-fixture targets, p95, long-term resource stability or complete native paint.
