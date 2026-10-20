@@ -357,6 +357,58 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyNotEqual(second.Component.getProperty("Name").LiteralValue, "Changed privately");
         end
 
+        function configurationStatesKeepStoredAndReturnedValuesIndependent(testCase)
+            % configurationStatesKeepStoredAndReturnedValuesIndependent Read immutable values without cloning model records.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ValueReadFixture", registry);
+            root = document.getComponent(document.RootComponentId);
+            definitions = registry.getEffectiveProperties(root.Factory, "", root.CreationArguments);
+            context = document.evaluationContext(registry);
+            context.rememberConfiguration("plan", document);
+            expected = macd.model.PropertyStateResolver.resolve(root, definitions, document, registry);
+            profile clear; profile on;
+            cleanup = onCleanup(@() profile("off"));
+            [states, ids, found] = context.configurationStates("plan", root, definitions, document);
+            profile off; functions = profile("info").FunctionTable; clear cleanup
+            testCase.assertTrue(found);
+            testCase.verifyEqual(states, expected);
+            testCase.verifySize(ids, size(states));
+            cloned = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate");
+            testCase.verifyEqual(sum([functions(cloned).NumCalls]), 0);
+
+            % Public document retrieval remains independently mutable after value reads.
+            [copy, found] = context.configuration("plan", root.Name);
+            testCase.assertTrue(found);
+            copy.Component.setProperty("Name", "Caller mutation");
+            states(1) = states(1).withEffective("Caller value", true, "", "", "");
+            [again, ~, found] = context.configurationStates("plan", root, definitions, document);
+            testCase.verifyTrue(found);
+            testCase.verifyEqual(states(1).EffectiveValue, "Caller value");
+            testCase.verifyEqual(again, expected);
+        end
+
+        function configurationStatesRejectStaleInputsAndForeignRecords(testCase)
+            % configurationStatesRejectStaleInputsAndForeignRecords Require current document ownership and catalog revision.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("StaleReadFixture", registry);
+            root = document.getComponent(document.RootComponentId);
+            definitions = registry.getEffectiveProperties(root.Factory, "", root.CreationArguments);
+            context = document.evaluationContext(registry);
+            context.rememberConfiguration("plan", document);
+            copy = document.structuralCandidate();
+            [states, ids, found] = context.configurationStates("plan", copy.getComponent(root.Id), definitions, document);
+            testCase.verifyFalse(found);
+            testCase.verifyEmpty(states); testCase.verifyEmpty(ids);
+            root.setProperty("Name", "Direct edit");
+            [~, ~, found] = context.configurationStates("plan", root, definitions, document);
+            testCase.verifyFalse(found);
+            context = document.evaluationContext(registry);
+            context.rememberConfiguration("plan", document);
+            registry.register(registry.get("uifigure"));
+            [~, ~, found] = context.configurationStates("plan", root, definitions, document);
+            testCase.verifyFalse(found);
+        end
+
         function liveMetadataBypassesCache(testCase)
             % liveMetadataBypassesCache Do not assume unrecognized mutable metadata is immutable.
             registry = macd.model.ComponentRegistry.createDefault();

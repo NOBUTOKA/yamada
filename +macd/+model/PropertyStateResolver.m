@@ -99,12 +99,21 @@ classdef PropertyStateResolver
             if ~isempty(document) && ~isempty(registry) && ...
                     (combined || macd.source.PropertySourcePlan.needsPlan(document, component))
                 try
-                    if combined
-                        plan = macd.source.PropertySourcePlan.combined(document, component, registry);
-                    else
-                        plan = macd.source.PropertySourcePlan.plan(document, component, registry);
+                    context = document.evaluationContext(registry);
+                    [resolved, effectIds, found] = context.configurationStates("combined", component, definitions, document);
+                    if ~found
+                        if combined
+                            plan = macd.source.PropertySourcePlan.combined(document, component, registry);
+                        else
+                            plan = macd.source.PropertySourcePlan.plan(document, component, registry);
+                        end
+                        resolved = macd.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, registry);
+                        effectIds = strings(size(resolved));
+                        for index = 1:numel(resolved)
+                            effectIds(index) = macd.model.PropertyStateResolver.originalEffectId(component, plan.Component, ...
+                                resolved(index).EffectSettingId, document, plan.Document);
+                        end
                     end
-                    resolved = macd.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, registry);
                     incomplete = ~combined && macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document, registry);
                     for index = 1:numel(states)
                         effective = resolved(index);
@@ -113,8 +122,7 @@ classdef PropertyStateResolver
                                 "Grid placement requires a combined emitted candidate for pending changes.", "grid-layout");
                             continue
                         end
-                        id = macd.model.PropertyStateResolver.originalEffectId(component, plan.Component, ...
-                            effective.EffectSettingId, document, plan.Document);
+                        id = effectIds(index);
                         states(index) = states(index).withEffective(effective.EffectiveValue, effective.IsKnown, ...
                             id, effective.Reason, effective.ReasonCode);
                         if ~effective.IsEditable && strlength(effective.ReadOnlyReason) > 0

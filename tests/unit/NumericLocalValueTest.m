@@ -46,6 +46,40 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
+        function checkpointStateReadsMatchIndependentPlans(testCase)
+            % checkpointStateReadsMatchIndependentPlans Preserve pending identities and values while avoiding read-only copies.
+            for layout = ["absolute", "flat", "nested"]
+                document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
+                first = document.getComponentByName("First");
+                document.setProperty(first.Id, "Value", 4, testCase.Registry);
+                context = document.evaluationContext(testCase.Registry);
+                parent = document.getComponent(first.ParentId);
+                definitions = testCase.Registry.getEffectiveProperties(first.Factory, parent.Factory, first.CreationArguments);
+                [plan, found] = context.configuration("combined", first.Name);
+                testCase.assertTrue(found);
+                expected = macd.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, testCase.Registry);
+                profile clear; profile on;
+                cleanup = onCleanup(@() profile("off"));
+                actual = document.getEffectivePropertyStates(testCase.Registry, first.Id);
+                actual = [actual.Resolution];
+                profile off; functions = profile("info").FunctionTable; clear cleanup
+                value = actual(string({actual.Path}) == "Value");
+                testCase.verifyEqual(value.EffectiveValue, 4);
+                settings = first.getSettings("Value");
+                testCase.verifyEqual(value.EffectSettingId, settings(end).Id);
+                testCase.verifyEqual([actual.IsKnown], [expected.IsKnown]);
+                testCase.verifyEqual({actual.EffectiveValue}, {expected.EffectiveValue});
+                if layout == "absolute"
+                    cloned = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate");
+                    testCase.verifyEqual(sum([functions(cloned).NumCalls]), 0);
+                end
+                plan.Component.setProperty("Value", 99);
+                again = document.getEffectivePropertyStates(testCase.Registry, first.Id);
+                again = [again.Resolution];
+                testCase.verifyEqual(again(string({again.Path}) == "Value").EffectiveValue, 4);
+            end
+        end
+
         function laterConstraintsDoNotHideAnEarlierInvalidAssignment(testCase)
             % laterConstraintsDoNotHideAnEarlierInvalidAssignment Validate every occurrence rather than final bounds alone.
             document = testCase.fixture("absolute", ...

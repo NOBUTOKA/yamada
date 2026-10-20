@@ -1,7 +1,8 @@
 classdef EvaluationContext < handle
     % EvaluationContext Cache independent results for one exact document input state.
     %   Publicly mutable records are compared by value, not history position.
-    %   Parsed configuration handles remain private and are copied on retrieval.
+    %   Parsed configuration handles remain private; public document retrieval copies them.
+    %   Internal state reads return immutable values without copying the document.
     %
     %   Example:
     %       context = document.evaluationContext(registry);
@@ -181,6 +182,40 @@ classdef EvaluationContext < handle
             component = document.getComponentByName(componentName);
             found = ~isempty(component);
             if found, plan = struct("Document", document, "Component", component); end
+        end
+
+        function [states, effectIds, found] = configurationStates(obj, name, original, definitions, document)
+            % configurationStates Read value states from a private plan without exposing its mutable records.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                name (1, 1) string
+                original (1, 1) macd.model.ComponentRecord
+                definitions macd.model.PropertyDefinition
+                document (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                states macd.model.PropertyState
+                effectIds string
+                found (1, 1) logical
+            end
+            states = macd.model.PropertyState.empty;
+            effectIds = strings(1, 0);
+            owned = document.getComponent(original.Id);
+            found = obj.matches(document, obj.Registry) && ~isempty(owned) && owned == original && ...
+                isKey(obj.Plans, char(name));
+            if ~found, return, end
+            saved = obj.Plans(char(name));
+            component = saved.getComponentByName(original.Name);
+            found = ~isempty(component);
+            if ~found, return, end
+
+            % Resolve synchronously and map source identities before returning immutable values.
+            states = macd.model.PropertyStateResolver.resolve(component, definitions, saved, obj.Registry);
+            effectIds = strings(size(states));
+            for index = 1:numel(states)
+                effectIds(index) = macd.model.PropertyStateResolver.originalEffectId(original, component, ...
+                    states(index).EffectSettingId, document, saved);
+            end
         end
 
         function rememberConfiguration(obj, name, document)
