@@ -1551,7 +1551,7 @@ classdef DocumentModel < handle
         end
 
         function parsed = localPropertyCandidate(obj, componentId, changes, registry)
-            % localPropertyCandidate Validate independent numeric replacements in a private proven source plan.
+            % localPropertyCandidate Validate bounded numeric replacements in a private proven source plan.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 componentId (1, 1) string
@@ -1562,8 +1562,7 @@ classdef DocumentModel < handle
                 parsed macd.model.DocumentModel
             end
             parsed = macd.model.DocumentModel.empty;
-            if isempty(obj.PropertyCheckpointContext) || obj.PropertyCheckpointId ~= componentId || ...
-                    ~all(ismember(string({changes.Path}), obj.PropertyCheckpointPaths)) || ...
+            if isempty(obj.PropertyCheckpointContext) || ...
                     ~obj.PropertyCheckpointContext.matches(obj, registry)
                 return
             end
@@ -1572,21 +1571,42 @@ classdef DocumentModel < handle
             live = obj.getComponent(componentId);
             checkpoint = obj.PropertyCheckpoint;
             component = checkpoint.getComponentByName(live.Name);
+            if isempty(component), return, end
+            paths = string({changes.Path});
+            numericValue = live.Factory == "uieditfield" && ...
+                component.DeclaredType == "matlab.ui.control.NumericEditField" && isequal(paths, "Value");
+            if ~numericValue && (obj.PropertyCheckpointId ~= componentId || ...
+                    ~all(ismember(paths, obj.PropertyCheckpointPaths)))
+                return
+            end
             states = checkpoint.getEffectivePropertyStates(registry, component.Id);
             definitions = [states.Definition];
-            paths = string({changes.Path});
-            transaction = macd.model.PropertyTransaction(paths, {changes.Value});
+            constraints = ["Value", "Limits", "AllowEmpty", "RoundFractionalValues", ...
+                "LowerLimitInclusive", "UpperLimitInclusive"];
+            if numericValue
+                % The complete checkpoint owns every constraint and the target's original setting order.
+                [found, indices] = ismember(constraints, string({definitions.Path}));
+                if ~all(found) || ~all(arrayfun(@(state) state.Resolution.IsKnown, states(indices)))
+                    return
+                end
+                transaction = macd.model.PropertyStateResolver.transaction([states.Resolution]);
+            else
+                transaction = macd.model.PropertyTransaction(paths, {changes.Value});
+            end
             for change = changes
                 index = find([definitions.Path] == string(change.Path), 1);
                 if isempty(index), return, end
                 definition = definitions(index);
                 entry = component.getProperty(string(change.Path));
                 schema = definition.ValueSchema;
-                if definition.Application.EffectStatus ~= "independent" || ...
-                        definition.Application.EffectPolicy ~= "none" || ...
-                        ~isempty(definition.Application.ApplyAfter) || ...
+                independent = definition.Application.EffectStatus == "independent" && ...
+                    definition.Application.EffectPolicy == "none" && isempty(definition.Application.ApplyAfter) && ...
+                    ~(isfield(schema, "constraints") && ~isempty(schema.constraints));
+                numeric = numericValue && definition.Application.EffectStatus == "modeled" && ...
+                    definition.Application.EffectPolicy == "numericValue" && ...
+                    all(ismember(definition.Application.ApplyAfter, constraints));
+                if ~(independent || numeric) || ...
                         ~isfield(schema, "kind") || string(schema.kind) ~= "number" || ...
-                        (isfield(schema, "constraints") && ~isempty(schema.constraints)) || ...
                         isempty(entry) || isempty(entry.SourceSpan) || ~entry.IsEditable || ...
                         entry.ValueKind ~= "literal" || ~states(index).Resolution.IsKnown || ...
                         ~isa(change.Value, "double") || ~isscalar(change.Value) || ...
@@ -1594,7 +1614,11 @@ classdef DocumentModel < handle
                     return
                 end
                 for other = definitions
-                    if any(ismember(other.Application.ApplyAfter, paths)), return, end
+                    if any(ismember(other.Application.ApplyAfter, paths)) && ...
+                            ~(numeric && any(constraints == other.Path) && ...
+                            other.Application.EffectPolicy == "numericValue")
+                        return
+                    end
                 end
                 [decoded, literal] = macd.source.MatlabLiteralParser.parse( ...
                     macd.source.LiteralEncoder.encode(change.Value));
@@ -1614,7 +1638,11 @@ classdef DocumentModel < handle
                 component.setProperty(string(changes(index).Path), changes(index).Value);
             end
             try
-                states = checkpoint.getEffectivePropertyStates(registry, component.Id);
+                [states, diagnostics] = checkpoint.getEffectivePropertyStates(registry, component.Id);
+                if numericValue && macd.validation.ModelValidator.hasErrors(diagnostics)
+                    errors = diagnostics(string({diagnostics.Severity}) == "error");
+                    error("macd:DocumentModel:UnsafePropertyEdit", "%s", strjoin(string({errors.Message}), newline));
+                end
                 obj.assertRequestedStates(states, changes);
             catch exception
                 for index = 1:numel(changes)
