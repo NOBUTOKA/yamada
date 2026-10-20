@@ -41,6 +41,8 @@ classdef PropertyInsertionPlanner
             end
             context = document.evaluationContext(registry);
             scope = context.readScope(); %#ok<NASGU>
+            [plan, found] = macd.source.PropertyInsertionPlanner.sharedBatch(document, component, registry, context);
+            if found, return, end
             key = "insertion:" + component.Id;
             [data, found] = context.lookup(key);
             if found
@@ -60,12 +62,132 @@ classdef PropertyInsertionPlanner
     end
 
     methods (Static, Access = private)
-        function plan = evaluate(document, component, registry)
-            % evaluate Prepare one uncached source insertion using the established ownership proof.
+        function [plan, found] = sharedBatch(document, component, registry, context)
+            % sharedBatch Retain one private candidate while returning independently owned public plans.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 component (1, 1) macd.model.ComponentRecord
                 registry (1, 1) macd.model.ComponentRegistry
+                context (1, 1) macd.model.EvaluationContext
+            end
+            arguments (Output)
+                plan (1, 1) struct
+                found (1, 1) logical
+            end
+            plan = struct();
+            found = false;
+            key = "insertion-batch";
+            [plans, cached] = context.lookup(key);
+            if cached
+                match = find(string({plans.ComponentId}) == component.Id, 1);
+                if ~isempty(match)
+                    [plan, found] = context.configuration(key, document.sourceComponentName(component.Id));
+                    if found
+                        plan.Edits = plans(match).Edits;
+                        plan.Placements = plans(match).Placements;
+                        return
+                    end
+                end
+            end
+            [~, attempted] = context.lookup(key + ":attempted");
+            if attempted, return, end
+            context.remember(key + ":attempted", true);
+            % Failed aggregation retains the established per-owner search and diagnostics.
+            try
+                [plans, parsed] = macd.source.PropertyInsertionPlanner.batch(document, registry);
+            catch
+                return
+            end
+            if isempty(parsed), return, end
+            context.rememberConfiguration(key, parsed);
+            context.remember(key, plans);
+            match = find(string({plans.ComponentId}) == component.Id, 1);
+            if isempty(match), return, end
+            configured = parsed.getComponentByName(document.sourceComponentName(component.Id));
+            plan = struct("Document", parsed, "Component", configured, ...
+                "Edits", plans(match).Edits, "Placements", plans(match).Placements);
+            found = ~isempty(configured);
+        end
+
+        function [plans, parsed] = batch(document, registry)
+            % batch Combine tentative owned insertions and validate every pending literal in one parse.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                plans struct
+                parsed macd.model.DocumentModel
+            end
+            plans = struct("ComponentId", {}, "Edits", {}, "Placements", {});
+            parsed = macd.model.DocumentModel.empty;
+            % Structural edits need the complete relocation and component-addition machinery.
+            if ~isempty(document.PendingEdits) || ~isempty(document.CallbackEdits) || ...
+                    ~isempty(document.RenameEdits) || any([document.Components.Origin] ~= "parsed")
+                return
+            end
+            owners = document.Components(arrayfun(@(record) ...
+                macd.source.PropertyInsertionPlanner.needsPlan(document, record), document.Components));
+            if numel(owners) < 2, return, end
+            edits = macd.source.PropertyInsertionPlanner.replacements(document);
+            for owner = reshape(owners, 1, [])
+                tentative = macd.source.PropertyInsertionPlanner.evaluate(document, owner, registry, true);
+                plans(end + 1) = struct("ComponentId", owner.Id, ...
+                    "Edits", tentative.Edits, "Placements", tentative.Placements); %#ok<AGROW>
+                edits = [edits tentative.Edits]; %#ok<AGROW>
+            end
+            [accepted, candidate] = macd.source.PropertyInsertionPlanner.candidate( ...
+                document.OriginalText, edits, document.sourceComponentName(owners(1).Id), ...
+                macd.model.PropertyEntry.empty, registry);
+            if ~accepted, return, end
+            % Final values of other unsaved requests must survive the same intermediate-state checks.
+            for original = reshape(document.Components, 1, [])
+                requested = macd.source.PropertyInsertionPlanner.batchRequests(original);
+                if isempty(requested), continue, end
+                configured = candidate.getComponentByName(document.sourceComponentName(original.Id));
+                if isempty(configured), return, end
+                states = candidate.getEffectivePropertyStates(registry, configured.Id);
+                for entry = reshape(requested, 1, [])
+                    match = find(arrayfun(@(state) state.Definition.Path == entry.Path, states), 1);
+                    if isempty(match) || ~macd.model.PropertyStateResolver.matchesRequested( ...
+                            states(match).Resolution, entry.LiteralValue)
+                        return
+                    end
+                end
+            end
+            parsed = candidate;
+        end
+
+        function entries = batchRequests(component)
+            % batchRequests Include new literals and changed source-owned values in the shared proof.
+            arguments (Input)
+                component (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                entries macd.model.PropertyEntry
+            end
+            entries = macd.model.PropertyEntry.empty;
+            for entry = reshape(component.Properties, 1, [])
+                if entry.ValueKind ~= "literal" || isfield(entry.Metadata, "SubtreeReferenceId"), continue, end
+                if entry.Origin == "generated" && isempty(entry.SourceSpan)
+                    entries(end + 1) = entry; %#ok<AGROW>
+                elseif isfield(entry.Metadata, "SourceSettingId")
+                    settings = component.getSettings(entry.Path);
+                    original = settings(string({settings.Id}) == string(entry.Metadata.SourceSettingId));
+                    if ~isempty(original) && ~isequaln(original(end).LiteralValue, entry.LiteralValue)
+                        entries(end + 1) = entry; %#ok<AGROW>
+                    end
+                end
+            end
+        end
+
+        function plan = evaluate(document, component, registry, deferValidation)
+            % evaluate Prepare owned syntax while optionally deferring candidate checks to a batch.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                registry (1, 1) macd.model.ComponentRegistry
+                deferValidation (1, 1) logical = false
             end
             arguments (Output)
                 plan (1, 1) struct
@@ -167,7 +289,7 @@ classdef PropertyInsertionPlanner
                         earlier = plan.Placements(ismember(string({plan.Placements.Path}), prerequisites));
                         if any([earlier.Offset] > edit.End), continue, end
                         [accepted, candidate, found, failure] = macd.source.PropertyInsertionPlanner.candidate( ...
-                            source, [base plan.Edits edit], name, requested, registry);
+                            source, [base plan.Edits edit], name, requested, registry, deferValidation);
                         if accepted
                             plan.Edits(end + 1) = edit;
                             plan.Placements(end + 1) = struct("Path", entry.Path, "Method", "nameValue", ...
@@ -202,7 +324,7 @@ classdef PropertyInsertionPlanner
                     text = macd.source.PropertyInsertionPlanner.assignment(source, document, name, entry, anchor);
                     edit = struct("Start", anchor.Offset + 1, "End", anchor.Offset, "Text", text);
                     [accepted, candidate, found, failure] = macd.source.PropertyInsertionPlanner.candidate( ...
-                        source, [base plan.Edits edit], name, requested, registry);
+                        source, [base plan.Edits edit], name, requested, registry, deferValidation);
                     if accepted
                         plan.Edits(end + 1) = edit;
                         plan.Placements(end + 1) = struct("Path", entry.Path, "Method", "assignment", ...
@@ -373,7 +495,7 @@ classdef PropertyInsertionPlanner
             end
         end
 
-        function [accepted, document, component, reason] = candidate(source, edits, name, requested, registry)
+        function [accepted, document, component, reason] = candidate(source, edits, name, requested, registry, deferValidation)
             % candidate Reparse an owned candidate and check intermediate and requested final states.
             arguments (Input)
                 source (1, 1) string
@@ -381,6 +503,7 @@ classdef PropertyInsertionPlanner
                 name (1, 1) string
                 requested macd.model.PropertyEntry
                 registry (1, 1) macd.model.ComponentRegistry
+                deferValidation (1, 1) logical = false
             end
             arguments (Output)
                 accepted (1, 1) logical
@@ -389,7 +512,11 @@ classdef PropertyInsertionPlanner
                 reason (1, 1) string
             end
             accepted = false;
+            document = macd.model.DocumentModel.empty;
             component = macd.model.ComponentRecord.empty;
+            reason = "";
+            % Tentative first slots are accepted only after the complete batch is reparsed.
+            if deferValidation, accepted = true; return, end
             edits = macd.source.CallbackSourceEdits.combineInsertions(edits);
             [~, order] = sort([edits.Start], 'descend');
             for index = order
