@@ -30,6 +30,29 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
             testCase.verifyNotEqual(analysis.Layout.Valid, layout.Valid);
         end
 
+        function callbackInsertionMatchesIndependentStatementSearch(testCase)
+            % callbackInsertionMatchesIndependentStatementSearch Preserve direct and uniquely owned anchors.
+            source = analysisSource();
+            sources = [source, replace(source, "app.Label = uilabel(app.UIFigure);", ...
+                "if true" + newline + "app.Label = uilabel(app.UIFigure);" + newline + "end"), ...
+                source + newline + "if true"];
+            for current = sources
+                analysis = macd.source.SourceAnalysis(current);
+                statements = analysis.Statements;
+                spans = [statements.Span];
+                offsets = [spans.StartOffset];
+                creations = offsets(contains(string({statements.Text}), "= uifigure") | ...
+                    contains(string({statements.Text}), "= uilabel"));
+                inputs = {[], creations, fliplr(creations), creations(1), ...
+                    [creations(1) creations(1)], [creations 0], [creations NaN], offsets, creations};
+                for input = inputs
+                    expected = originalCallbackInsertion(analysis, input{1});
+                    testCase.verifyEqual(analysis.canInsertGenerated(input{1}), expected);
+                    testCase.verifyEqual(analysis.canInsertGenerated(input{1}), expected);
+                end
+            end
+        end
+
         function candidatesShareDerivedInputButNotComponentValues(testCase)
             % candidatesShareDerivedInputButNotComponentValues Keep shared analysis independent of mutable records.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -78,6 +101,25 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
             end
         end
     end
+end
+
+function result = originalCallbackInsertion(analysis, offsets)
+% originalCallbackInsertion Retain the original exhaustive search as an independent reference.
+arguments (Input)
+    analysis (1, 1) macd.source.SourceAnalysis
+    offsets double
+end
+arguments (Output)
+    result (1, 1) logical
+end
+layout = analysis.Layout;
+statements = analysis.Statements;
+result = layout.Valid && layout.MethodAnchor > 0 && ~isempty(offsets);
+if ~result, return, end
+for offset = reshape(offsets, 1, [])
+    match = find(arrayfun(@(statement) statement.Span.StartOffset == offset, statements));
+    if numel(match) ~= 1 || ~layout.Direct(match), result = false; return, end
+end
 end
 
 function source = analysisSource()

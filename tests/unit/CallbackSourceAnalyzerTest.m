@@ -81,6 +81,43 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             testCase.verifyEqual(state.State, "unsupported");
         end
 
+        function generatedInsertionRechecksChangedParsedAnchors(testCase)
+            % generatedInsertionRechecksChangedParsedAnchors Share source analysis without sharing mutable eligibility.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseText( ...
+                CallbackSourceAnalyzerTest.fixture("", ""), registry);
+            generated = macd.model.ComponentRecord("new-button", "NewButton", "uibutton", ...
+                "matlab.ui.control.Button", "generated");
+            document.addComponent(generated, document.RootComponentId);
+            shared = document.sourceAnalysis();
+            states = macd.source.CallbackSourceAnalyzer.analyze(document, generated.Id, registry);
+            testCase.verifyTrue(all(string({states.State}) == "absent"));
+            candidate = document.structuralCandidate();
+            button = candidate.getComponentByName("Button");
+            original = button.SourceSpans;
+            for creation = {[], macd.model.SourceSpan(1, 1), macd.model.SourceSpan()}
+                changed = original;
+                changed.Creation = creation{1};
+                button.SourceSpans = changed;
+                rejected = macd.source.CallbackSourceAnalyzer.analyze(candidate, generated.Id, registry);
+                testCase.verifyTrue(all(string({rejected.State}) == "unsupported"));
+                testCase.verifyEqual(candidate.sourceAnalysis(), shared);
+                retained = macd.source.CallbackSourceAnalyzer.analyze(document, generated.Id, registry);
+                testCase.verifyEqual(retained, states);
+            end
+            button.SourceSpans = original;
+            testCase.verifyEqual(macd.source.CallbackSourceAnalyzer.analyze(candidate, generated.Id, registry), states);
+            reloaded = macd.source.AppSourceParser.parseText( ...
+                replace(document.OriginalText, "app.Button = uibutton(app.UIFigure);", ...
+                "if true" + newline + "app.Button = uibutton(app.UIFigure);" + newline + "end"), registry);
+            replacement = macd.model.ComponentRecord("new-button", "NewButton", "uibutton", ...
+                "matlab.ui.control.Button", "generated");
+            reloaded.addComponent(replacement, reloaded.RootComponentId);
+            rejected = macd.source.CallbackSourceAnalyzer.analyze(reloaded, replacement.Id, registry);
+            testCase.verifyTrue(all(string({rejected.State}) == "unsupported"));
+            testCase.verifyNotEqual(reloaded.sourceAnalysis(), shared);
+        end
+
         function newComponentCallbacksAreAbsentAndMissingHandlersAreUnsupported(testCase)
             % newComponentCallbacksAreAbsentAndMissingHandlersAreUnsupported Cover generated and unresolved records.
             registry = macd.model.ComponentRegistry.createDefault();

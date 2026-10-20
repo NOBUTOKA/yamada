@@ -62,6 +62,11 @@ classdef CallbackSourceAnalyzer
             statements = analysis.Statements;
             layout = analysis.Layout;
 
+            % Generated binding anchors are identical for every catalog callback on this component.
+            generatedInsertion = ~isempty(definitions) && strlength(source) > 0 && ...
+                component.Origin == "generated" && ...
+                macd.source.CallbackSourceAnalyzer.canInsertGenerated(document, analysis);
+
             % Classify each binding using source occurrences rather than the last parsed value.
             for index = 1:numel(definitions)
                 name = definitions(index).Path;
@@ -73,8 +78,7 @@ classdef CallbackSourceAnalyzer
                 bindingAnchor = 0;
                 methodAnchor = 0;
                 if strlength(source) > 0
-                    if component.Origin == "generated" && ...
-                            macd.source.CallbackSourceAnalyzer.canInsertGenerated(document, statements, layout)
+                    if generatedInsertion
                         methodAnchor = layout.MethodAnchor;
                     else
                         [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = ...
@@ -113,27 +117,26 @@ classdef CallbackSourceAnalyzer
     end
 
     methods (Static, Access = private)
-        function result = canInsertGenerated(document, statements, layout)
+        function result = canInsertGenerated(document, analysis)
             % canInsertGenerated Require direct initialization anchors for generated component bindings.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
-                statements macd.source.SourceStatement
-                layout (1, 1) struct
+                analysis (1, 1) macd.source.SourceAnalysis
             end
             arguments (Output)
                 result (1, 1) logical
             end
-            result = layout.Valid && layout.MethodAnchor > 0;
+            result = analysis.Layout.Valid && analysis.Layout.MethodAnchor > 0;
             if ~result, return, end
-            % Component insertion uses the latest parsed creation anchor, so all must be direct.
+            % Source spans are mutable, so capture the current parsed set before sharing its answer.
             parsed = document.Components([document.Components.Origin] == "parsed");
-            result = ~isempty(parsed);
-            for component = parsed(:)'
-                span = component.SourceSpans.Creation;
+            offsets = zeros(1, numel(parsed));
+            for index = 1:numel(parsed)
+                span = parsed(index).SourceSpans.Creation;
                 if isempty(span), result = false; return, end
-                index = find(arrayfun(@(statement) statement.Span.StartOffset == span.StartOffset, statements));
-                if numel(index) ~= 1 || ~layout.Direct(index), result = false; return, end
+                offsets(index) = span.StartOffset;
             end
+            result = analysis.canInsertGenerated(offsets);
         end
 
         function layout = layout(statements)

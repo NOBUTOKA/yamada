@@ -1,5 +1,5 @@
 classdef SourceAnalysis < handle
-    % SourceAnalysis Share read-only lexical input and a bounded initialization trace.
+    % SourceAnalysis Share read-only lexical input and bounded source proofs.
     %   This derived cache retains source values only, without document, record,
     %   registry, or native UI references. Trace results are keyed by exact factory
     %   offsets and returned by value. Input application code is never executed.
@@ -19,6 +19,11 @@ classdef SourceAnalysis < handle
         TraceOffsets double = []
         Trace struct = struct()
         HasTrace logical = false
+        CallbackDirectOffsets double = []
+        HasCallbackIndex logical = false
+        CallbackCreationOffsets double = []
+        CallbackInsertion logical = false
+        HasCallbackInsertion logical = false
     end
 
     methods
@@ -45,6 +50,38 @@ classdef SourceAnalysis < handle
                 result (1, 1) logical
             end
             result = isequaln(obj.Source, source);
+        end
+
+        function result = canInsertGenerated(obj, creationOffsets)
+            % canInsertGenerated Share direct-anchor eligibility for an exact parsed creation set.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+                creationOffsets double
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            if obj.HasCallbackInsertion && isequaln(obj.CallbackCreationOffsets, creationOffsets)
+                result = obj.CallbackInsertion;
+                return
+            end
+            result = obj.Layout.Valid && obj.Layout.MethodAnchor > 0 && ~isempty(creationOffsets);
+            if result
+                % Build a value-only index once; ambiguous statement offsets are excluded.
+                if ~obj.HasCallbackIndex
+                    spans = [obj.Statements.Span];
+                    [offsets, first, groups] = unique([spans.StartOffset]);
+                    counts = accumarray(groups(:), 1);
+                    direct = reshape(obj.Layout.Direct(first), 1, []);
+                    obj.CallbackDirectOffsets = offsets(counts(:)' == 1 & direct);
+                    obj.HasCallbackIndex = true;
+                end
+                result = all(ismember(creationOffsets, obj.CallbackDirectOffsets), "all");
+            end
+            % Retain only one scalar answer and its numeric key, never document handles.
+            obj.CallbackCreationOffsets = creationOffsets;
+            obj.CallbackInsertion = result;
+            obj.HasCallbackInsertion = true;
         end
 
         function trace = initialization(obj, creationOffsets)
