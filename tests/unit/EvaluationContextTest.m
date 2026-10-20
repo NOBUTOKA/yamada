@@ -2,6 +2,73 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
     % EvaluationContextTest Verify exact-input caching without shared mutable results.
     %   Direct changes and history branching must not reuse an obsolete evaluation.
     methods (Test)
+        function nestedGridInheritanceKeepsUnrelatedScopes(testCase)
+            % nestedGridInheritanceKeepsUnrelatedScopes Invalidate coupled descendants while retaining separate groups.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("NestedInheritanceFixture", registry);
+            outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            inner = document.insertComponent(registry, "uigridlayout", outer.Id);
+            first = document.insertComponent(registry, "uilabel", inner.Id);
+            sibling = document.insertComponent(registry, "uilabel", inner.Id);
+            separate = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            other = document.insertComponent(registry, "uilabel", separate.Id);
+            absolute = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            ids = [first.Id, sibling.Id, outer.Id, other.Id, absolute.Id];
+            for id = ids
+                document.getEffectivePropertyStates(registry, id);
+            end
+            history = document.HistoryIndex;
+            candidate = document.structuralCandidate(registry);
+            context = candidate.evaluationContext(registry);
+            for id = ids
+                [~, found] = context.lookup("states:" + id);
+                testCase.assertTrue(found);
+            end
+
+            % A local setter invalidates every overlapping grid scope, not independent siblings.
+            candidate.getComponent(first.Id).setProperty("FontSize", 19);
+            context = candidate.evaluationContext(registry);
+            for id = [first.Id, sibling.Id, outer.Id]
+                [~, found] = context.lookup("states:" + id);
+                testCase.verifyFalse(found);
+            end
+            for id = [other.Id, absolute.Id]
+                [~, found] = context.lookup("states:" + id);
+                testCase.verifyTrue(found);
+            end
+            testCase.verifyEmpty(first.getProperty("FontSize"));
+            testCase.verifyEqual(candidate.getComponent(first.Id).getProperty("FontSize").LiteralValue, 19);
+            testCase.verifyEqual(document.HistoryIndex, history);
+        end
+
+        function inheritedScopesPreserveNestedValueEquality(testCase)
+            % inheritedScopesPreserveNestedValueEquality Keep NaN equality and distinguish empty-array shapes.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("ValueInheritanceFixture", registry);
+            first = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            second = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            first.Metadata.EqualityFixture = struct("Samples", [NaN Inf], ...
+                "Empty", zeros(0, 2), "Cell", {{[], strings(0, 1)}});
+            document.getEffectivePropertyStates(registry, first.Id);
+            document.getEffectivePropertyStates(registry, second.Id);
+            candidate = document.structuralCandidate(registry);
+            copied = candidate.getComponent(first.Id);
+            copied.Metadata.EqualityFixture.Samples = [NaN Inf];
+            context = candidate.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + first.Id);
+            testCase.verifyTrue(found);
+
+            % Equal empty contents with a different shape still change the complete input.
+            copied.Metadata.EqualityFixture.Empty = zeros(0, 3);
+            context = candidate.evaluationContext(registry);
+            [~, found] = context.lookup("states:" + first.Id);
+            testCase.verifyFalse(found);
+            [~, found] = context.lookup("states:" + second.Id);
+            testCase.verifyTrue(found);
+            testCase.verifySize(first.Metadata.EqualityFixture.Empty, [0 2]);
+            testCase.verifySize(copied.Metadata.EqualityFixture.Empty, [0 3]);
+        end
+
         function isolatedCandidatesRetainOnlyUnaffectedStates(testCase)
             % isolatedCandidatesRetainOnlyUnaffectedStates Reuse value resolutions without sharing editable records.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -63,6 +130,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             [~, found] = context.lookup("live");
             testCase.verifyFalse(found);
             live("a") = 2;
+            testCase.verifyEqual(live("a"), 2);
             context.remember("live", struct("Definitions", definition));
             [~, found] = context.lookup("live");
             testCase.verifyFalse(found);

@@ -37,11 +37,19 @@ classdef EvaluationContext < handle
             for field = fields
                 if ~isequaln({before.(field)}, {after.(field)}), return, end
             end
-            for name = string(keys(previous.Values))
-                if ~startsWith(name, "states:"), continue, end
+            names = string(keys(previous.Values));
+            names = names(startsWith(names, "states:"));
+            if isempty(names), return, end
+
+            % Compare each component once instead of repeating overlapping scope snapshots.
+            changed = false(1, numel(after));
+            for index = 1:numel(after)
+                changed(index) = ~isequaln(before(index), after(index));
+            end
+            for name = names
                 id = extractAfter(name, "states:");
                 indices = macd.model.EvaluationContext.stateScope(after, id);
-                if ~isempty(indices) && isequaln(before(indices), after(indices))
+                if ~isempty(indices) && ~any(changed(indices))
                     obj.Values(char(name)) = previous.Values(char(name));
                 end
             end
