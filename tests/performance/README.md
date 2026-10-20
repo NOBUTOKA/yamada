@@ -147,3 +147,89 @@ was committed. It also works with `-EnduranceOnly`, which selects a font-capable
 target first. The first edit and subsequent edits are separate phases. Document
 cycles reopen the fixture through the normal unsaved-change guard with Discard;
 each installed document gets a fresh snapshot identity.
+
+
+## Display, insertion, and repeated Value updates
+
+`runYamadaUpdateDistribution.ps1` uses a separate synthetic numeric-control fixture
+and leaves production source unchanged. It compares absolute, flat-grid, and nested-grid
+layouts with three panels, the requested number of NumericEditFields, and one Label.
+All component declarations are typed so ordinary insertion anchors are present.
+
+```powershell
+& tests/performance/runYamadaUpdateDistribution.ps1 -ComponentCount 12 -NestedDepth 8 -Samples 12 -Additions 6 -Profile
+& tests/performance/runYamadaUpdateDistribution.ps1 -Cases flatgrid,nestedgrid -Samples 3 -Additions 2 -Trace:$true
+& tests/performance/runYamadaUpdateDistribution.ps1 -Cases absolute,nestedgrid -Samples 100 -Additions 0 -Comparisons:$false
+& tests/performance/runYamadaUpdateDistribution.ps1 -Samples 0 -Additions 12 -Comparisons:$false -Profile
+```
+
+`Samples` counts actual Value changes to the same NumericEditField. `Comparisons`
+also measures up to four Label FontSize and Text changes. `Additions` inserts Labels
+through the normal Palette callback; parent selection is timed separately. After
+insertions, the same original Value is edited again when `Samples` is positive.
+Each requested value and insertion count is checked. The final generated source
+is parsed and compared with the live document outside interactive timing.
+
+`Fit` defaults to true; false uses flexible tracks only. Root and panel dimensions
+are fixed across layout variants. At very large counts, fit tracks can overflow the
+available viewport; preserve that case as a geometry stress test rather than
+calling it a successful boundary reconstruction. `Profile` records separate
+Value, Label FontSize/Text, insertion, and post-insertion Value profiles where those
+operations are enabled. Profile overhead is excluded from ordinary distributions.
+
+`Trace` defaults to false. Enable it only for separate diagnostic runs: a 50ms
+measurement timer observes published geometry revisions and records the first
+observed unavailable/available states. Native event dispatch can delay sampling,
+so these are observed intervals, not exact screen-visible durations. The probe
+never changes editor callbacks or polling limits and is excluded from settling.
+
+Completed samples record callback and settled wall time, layout poll count, native
+object/timer count, history index, status, and geometry state. `grid-state.json`
+retains the final value-only grid payload. A rejected post-insertion edit is
+recorded in `rejected-operation.json` and must be excluded from successful edit
+latency. Final source audit failure makes the case fail even when earlier samples
+were saved. Preserve partial results and classify startup/harness failures separately.
+
+The supervisor saves source/fixture hashes, its exact harness, progress, profiles,
+and owned-process resource samples. Defaults are 300 seconds per operation,
+600 seconds per profile, and 3600 seconds per case. The inner settling loop has a
+separate 240-second limit after callback return. The extended 200-control study
+uses explicit 600/1200/7200-second supervisor limits. These limits do not establish
+latency goals. Small samples and nearest-rank p95 remain exploratory.
+
+The rendering acknowledgement belongs to the HTML overlay, not every native
+control. If an incremental change leaves the overlay payload unchanged, its
+revision and acknowledgement can be reused. Report these observations as MATLAB,
+layout, and overlay completion; they do not directly establish when each native
+widget or physical display finishes painting.
+
+`ParentEachAddition=false` keeps the newly added Label selected for subsequent
+Palette insertions. It measures consecutive sibling insertion with the existing
+Inspector surface reuse. The default true explicitly selects the parent before
+every insertion; selection latency is recorded separately, while the insertion
+itself changes Inspector type from the parent to a Label.
+
+`ExplicitValues=false` omits numeric Value assignments from the fixture so edits
+insert new settings. `AlternatingValueChanges` changes Field1 through the chosen
+`AlternatingTargetCount` repeatedly, timing selection separately and checking each
+committed value. Samples record `pendingValueOwners`, the number of numeric Value
+settings without an original source span. Final source audit compares every
+numeric field, including untouched fields at their known default zero.
+
+```powershell
+& tests/performance/runYamadaUpdateDistribution.ps1 -Samples 0 -Additions 12 -Comparisons:$false -ParentEachAddition:$false -Profile
+& tests/performance/runYamadaUpdateDistribution.ps1 -Cases absolute,nestedgrid -Samples 0 -Additions 0 -Comparisons:$false -ExplicitValues:$false -AlternatingValueChanges 24 -Profile
+```
+
+`SurfaceHeight` defaults to 650, with a 1000-pixel source width. The 200-control
+flexible-track comparison explicitly uses `SurfaceHeight=1400` for both layouts,
+keeping absolute-position controls inside their panels. The separate 200-control
+fit-overflow stress case retains 650. An earlier compact absolute-position pilot
+is excluded from this comparison.
+
+`probeYamadaGridGeometry(FixturePath=...,OutputFolder=...)` separately renders the
+registered fixture controls without running the AppBase class. It rebuilds grid
+boundary data directly at several settled times, records native positions and
+outer bounds, and compares measured fit/fixed minimum height plus spacing with
+available height. This distinguishes a persistent reconstruction limitation from
+application geometry-cache retention; it does not change editor behavior.
