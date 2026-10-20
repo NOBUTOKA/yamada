@@ -17,6 +17,7 @@ param(
     [switch]$Profile,
     [string]$OutputFolder = '',
     [int]$OperationTimeoutSeconds = 30,
+    [int]$ProfileTimeoutSeconds = 90,
     [int]$CaseTimeoutSeconds = 300
 )
 $ErrorActionPreference = 'Stop'
@@ -40,6 +41,7 @@ $manifest = @($tracked + $added | Sort-Object -Unique | ForEach-Object {
 })
 [pscustomobject]@{commit = (git -C $projectRoot rev-parse HEAD); status = @(git -C $projectRoot status --short);
     propertyPath = $PropertyPath; count = $ComponentCount; samples = $Samples; profile = [bool]$Profile;
+    operationTimeoutSeconds = $OperationTimeoutSeconds; profileTimeoutSeconds = $ProfileTimeoutSeconds; caseTimeoutSeconds = $CaseTimeoutSeconds;
     repeatedSelections = $RepeatedSelections; alternatingSelections = $AlternatingSelections;
     documentCycles = $DocumentCycles; alternatingPropertyChanges = $AlternatingPropertyChanges; propertyChanges = $PropertyChanges; nestedDepth = $NestedDepth; enduranceOnly = [bool]$EnduranceOnly; sources = $manifest} |
     ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $OutputFolder 'source-manifest.json') -Encoding utf8
@@ -90,7 +92,7 @@ foreach ($case in $Cases) {
                 $first = $lines[0] | ConvertFrom-Json
                 $action = $event.action
                 $elapsed = $now.ToUnixTimeMilliseconds() / 1000 - $event.timestamp
-                $limit = if ($action -like 'profile*') { 90 } elseif ($action -eq 'fixture') { $CaseTimeoutSeconds } else { $OperationTimeoutSeconds }
+                $limit = if ($action -like 'profile*') { $ProfileTimeoutSeconds } elseif ($action -eq 'fixture') { $CaseTimeoutSeconds } else { $OperationTimeoutSeconds }
                 if (($now.ToUnixTimeMilliseconds() / 1000 - $first.timestamp) -gt $CaseTimeoutSeconds) { $status = 'case-timeout'; break }
             }
         }

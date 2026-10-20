@@ -113,13 +113,18 @@ two-animation-frame acknowledgement. This measures the browser render pipeline,
 not physical display scanout. Acknowledgements are opt-in and disabled in ordinary
 editor use. MATLAB-only timing is available with `runYamadaPerformance(RenderAck=false)`.
 
-The external watchdog allows 30 seconds per ordinary operation, 90 seconds per
-profiled operation, and five minutes per case. It terminates only the process tree
-it created. A timeout is a failure/limit observation, never a zero-duration sample
-or a pass. Split long distributions across independent runs rather than silently
-raising these limits. Retain each run's manifest and distinguish first and warm
-samples when aggregating. Four samples are exploratory; they do not establish a
-stable p95 or a release latency guarantee.
+The external watchdog defaults to 30 seconds per ordinary operation, 90 seconds
+per profiled operation, and five minutes per case. Set `-OperationTimeoutSeconds`,
+`-ProfileTimeoutSeconds`, and `-CaseTimeoutSeconds` explicitly for longer runs;
+all three limits are recorded in the source manifest. The approved extended
+200-component comparison uses 120, 240, and 600 seconds respectively, with the
+same limits and harness on both versions. After a further 120-second timeout,
+the deepest ordinary case uses 240, 240, and 600 seconds in a separate matched
+run. Preserve the original capped runs and report the extended results separately.
+The watchdog terminates only the process tree it created. A timeout is a failure/limit observation, never a zero-duration
+sample or a pass. Retain each run's manifest and distinguish first and warm samples
+when aggregating. Four samples are exploratory; they do not establish a stable
+p95 or a release latency guarantee.
 
 Repeated selections and document reopenings are excluded from the normal latency
 distribution. Use their object/timer counts together with resource trends to

@@ -4,6 +4,93 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     %   default child placement, copy configuration, and Preview projection.
 
     methods (Test, TestTags = {'fast', 'model', 'parser', 'generation', 'roundtrip'})
+        function sharedUncertaintyFollowsDirectSourceChanges(testCase)
+            % sharedUncertaintyFollowsDirectSourceChanges Invalidate both empty and diagnostic group results.
+            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
+                "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);"]);
+            first = document.getComponentByName("First");
+            second = document.getComponentByName("Second");
+            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
+            testCase.verifyTrue(testCase.state(document, registry, second, "Layout.Column").IsKnown);
+            before = first.settingSnapshot();
+            uncertain = macd.model.PropertySetting("Layout", [], struct( ...
+                "SourceSnapshotId", "changed-layout", "SourceExpression", "layoutValue"));
+            first.restoreSettings([before, uncertain.toStruct()]);
+            for target = [grid, second]
+                path = "Layout.Row";
+                if target == grid, path = "RowHeight"; end
+                actual = testCase.state(document, registry, target, path);
+                testCase.verifyFalse(actual.IsKnown);
+                testCase.verifyEqual(actual.ReasonCode, "unreviewed-effect");
+                testCase.verifyEqual(actual.EffectSettingId, uncertain.Id);
+            end
+            first.restoreSettings(before);
+            testCase.verifyTrue(testCase.state(document, registry, second, "Layout.Column").IsKnown);
+            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
+            % Uncacheable metadata must retain the same uncached uncertainty behavior.
+            document.Metadata.Live = containers.Map("entry", 1);
+            first.restoreSettings([before, uncertain.toStruct()]);
+            actual = testCase.state(document, registry, grid, "RowHeight");
+            testCase.verifyFalse(actual.IsKnown);
+            testCase.verifyEqual(actual.EffectSettingId, uncertain.Id);
+            first.restoreSettings(before);
+            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
+            testCase.verifyEqual(document.HistoryIndex, 0);
+            testCase.verifyFalse(document.IsDirty);
+        end
+
+        function sharedUncertaintyFollowsCatalogRevisions(testCase)
+            % sharedUncertaintyFollowsCatalogRevisions Recompute a cached empty result after policy changes.
+            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
+                "app.First = uibutton(app.Grid);", "app.First.Text = 'before';"]);
+            first = document.getComponentByName("First");
+            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
+            original = registry.get("uibutton");
+            property = original.getProperty("Text");
+            metadata = property.Metadata;
+            metadata.application.effectStatus = "unsupported";
+            metadata.application.affectedPaths = {"RowHeight", "Layout.Row"};
+            metadata.application.effectReason = "Synthetic layout dependency for cache validation.";
+            replacement = macd.model.PropertyDefinition(property.Path, property.DefaultValue, ...
+                property.HasDefault, property.IsEditable, metadata);
+            testCase.replaceButtonProperty(registry, replacement);
+            actual = testCase.state(document, registry, grid, "RowHeight");
+            testCase.verifyFalse(actual.IsKnown);
+            setting = first.getSettings("Text");
+            testCase.verifyEqual(actual.EffectSettingId, setting(end).Id);
+            registry.register(original);
+            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
+        end
+
+        function sharedUncertaintyTracksMembershipAndOrder(testCase)
+            % sharedUncertaintyTracksMembershipAndOrder Keep separate grids and moved members tied to current records.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("GridMembershipFixture", registry);
+            firstGrid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            first = document.insertComponent(registry, "uibutton", firstGrid.Id);
+            secondGrid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            second = document.insertComponent(registry, "uibutton", secondGrid.Id);
+            firstEffect = macd.model.PropertySetting("Layout", [], struct( ...
+                "SourceSnapshotId", "first-layout", "SourceExpression", "firstLayout"));
+            secondEffect = macd.model.PropertySetting("Layout", [], struct( ...
+                "SourceSnapshotId", "second-layout", "SourceExpression", "secondLayout"));
+            first.restoreSettings([first.settingSnapshot(), firstEffect.toStruct()]);
+            second.restoreSettings([second.settingSnapshot(), secondEffect.toStruct()]);
+            testCase.verifyEqual(testCase.state(document, registry, firstGrid, "RowHeight").EffectSettingId, firstEffect.Id);
+            testCase.verifyEqual(testCase.state(document, registry, secondGrid, "RowHeight").EffectSettingId, secondEffect.Id);
+
+            % Moving the earlier record changes the first diagnostic in its destination group.
+            firstGrid.removeChild(first.Id);
+            secondGrid.addChild(first.Id);
+            first.ParentId = secondGrid.Id;
+            testCase.verifyTrue(testCase.state(document, registry, firstGrid, "RowHeight").IsKnown);
+            actual = testCase.state(document, registry, secondGrid, "RowHeight");
+            testCase.verifyEqual(actual.EffectSettingId, firstEffect.Id);
+            document.Components = fliplr(document.Components);
+            actual = testCase.state(document, registry, secondGrid, "RowHeight");
+            testCase.verifyEqual(actual.EffectSettingId, secondEffect.Id);
+        end
+
         function independentPendingSettingsDoNotCombineGridSource(testCase)
             % independentPendingSettingsDoNotCombineGridSource Keep independent additions out of shared placement plans.
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
@@ -453,6 +540,24 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     end
 
     methods (Static, Access = private)
+        function replaceButtonProperty(registry, property)
+            % replaceButtonProperty Change one immutable policy while preserving the component variant.
+            arguments (Input)
+                registry (1, 1) macd.model.ComponentRegistry
+                property (1, 1) macd.model.PropertyDefinition
+            end
+            original = registry.get("uibutton");
+            definitions = original.Properties;
+            definitions(string({definitions.Path}) == property.Path) = property;
+            replacement = macd.model.ComponentDefinition(original.Factory, original.DeclaredType, ...
+                original.AllowedParentFactories, original.IsRoot, original.CreationArguments, definitions, ...
+                original.DisplayName, original.Category, original.IsProgrammaticOnly, original.RequiresParentComponent, ...
+                original.SupportedStyles, original.DefaultStyle, original.DeclaredTypesByStyle, ...
+                original.OverlayShape, original.OverlayShapesByStyle, original.ResizeConstraint, ...
+                original.ResizeConstraintsByStyle, original.DefaultSize, original.Metadata);
+            registry.register(replacement);
+        end
+
         function [document, registry, grid] = fixture(body)
             % fixture Parse a literal owned AppBase initializer with up to three controls.
             arguments (Input)

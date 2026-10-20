@@ -47,10 +47,7 @@ classdef GridLayoutStatePolicy
                 definition = registry.get(grid.Factory, grid.CreationArguments);
                 property = definition.getProperty("RowHeight");
                 if isempty(property) || property.Application.EffectPolicy ~= "gridTracks", continue, end
-                members = document.Components(string({document.Components.ParentId}) == grid.Id | ...
-                    string({document.Components.Id}) == grid.Id);
-                unresolved = macd.model.PropertyStateResolver.unresolvedEffectId(members, ...
-                    ["RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column"], registry);
+                unresolved = macd.model.GridLayoutStatePolicy.unresolvedGridEffect(grid, document, registry);
                 if strlength(unresolved) > 0
                     for index = 1:numel(states)
                         if ~any(states(index).Path == ["RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column"]), continue, end
@@ -143,6 +140,30 @@ classdef GridLayoutStatePolicy
     end
 
     methods (Static, Access = private)
+        function id = unresolvedGridEffect(grid, document, registry)
+            % unresolvedGridEffect Share the unchanged member scan for one exact grid input.
+            arguments (Input)
+                grid (1, 1) macd.model.ComponentRecord
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                id (1, 1) string
+            end
+            context = document.evaluationContext(registry);
+            key = "grid-unresolved-effect:" + grid.Id;
+            [id, found] = context.lookup(key);
+            if found, return, end
+
+            % Preserve member order and all existing uncertainty checks.
+            scope = context.readScope(); %#ok<NASGU>
+            members = document.Components(string({document.Components.ParentId}) == grid.Id | ...
+                string({document.Components.Id}) == grid.Id);
+            id = macd.model.PropertyStateResolver.unresolvedEffectId(members, ...
+                ["RowHeight", "ColumnWidth", "Layout.Row", "Layout.Column"], registry);
+            context.remember(key, id);
+        end
+
         function result = configuration(grid, document, registry)
             % configuration Share one independent grid result for the current document inputs.
             arguments (Input)
