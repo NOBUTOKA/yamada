@@ -19,6 +19,34 @@ classdef (TestTags = {'fast', 'testInfrastructure'}) ProjectConventionsTest < ma
             end
         end
 
+        function excludesGeneratedRecordsWithoutExcludingSiblingSources(testCase)
+            % excludesGeneratedRecordsWithoutExcludingSiblingSources Keep output and preserved input outside ownership.
+            fixture = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
+            projectRoot = string(fixture.Folder);
+            owned = ["Owned.m", fullfile("+macd", "Owned.m"), ...
+                fullfile("tests", "unit", "OwnedTest.m"), ...
+                fullfile("tests", "fixturesExtra", "OwnedHelper.m"), ...
+                fullfile("testResultsExtra", "OwnedHelper.m")];
+            excluded = [fullfile("tests", "fixtures", "Preserved.m"), ...
+                fullfile("testResults", "nested", "UserOutput.m"), ...
+                fullfile("coverage", "Instrumented.m"), fullfile("slprj", "Generated.m"), ...
+                fullfile(".git", "Stored.m"), fullfile(".codex", "Scratch.m"), ...
+                fullfile(".agents", "Scratch.m")];
+            % Empty files are unexecuted directory-enumeration fixtures.
+            for relative = [owned excluded]
+                path = fullfile(projectRoot, relative);
+                parent = fileparts(path);
+                if ~isfolder(parent), mkdir(parent); end
+                fileId = fopen(path, "w");
+                testCase.assertGreaterThanOrEqual(fileId, 0);
+                fclose(fileId);
+            end
+            files = ProjectConventionsTest.projectMatlabFiles(projectRoot);
+            actual = string(fullfile(string({files.folder}), string({files.name})));
+            actual = erase(actual, projectRoot + filesep);
+            testCase.verifyEqual(sort(actual), sort(owned));
+        end
+
         function projectMatlabFilesCarryGplNotice(testCase)
             % projectMatlabFilesCarryGplNotice Check trailing license blocks.
 
@@ -46,21 +74,32 @@ classdef (TestTags = {'fast', 'testInfrastructure'}) ProjectConventionsTest < ma
     end
 
     methods (Static, Access = private)
-        function files = projectMatlabFiles()
-            % projectMatlabFiles Locate project-owned MATLAB files recursively.
+        function files = projectMatlabFiles(projectRoot)
+            % projectMatlabFiles Locate owned MATLAB files while pruning metadata and generated records.
+            arguments (Input)
+                projectRoot (1, 1) string = ""
+            end
             arguments (Output)
                 files (:, 1) struct
             end
 
-            % Resolve the project root relative to this unit test class.
-            testPath = mfilename("fullpath");
-            projectRoot = fileparts(fileparts(fileparts(testPath)));
-            files = dir(fullfile(projectRoot, "**", "*.m"));
+            % Resolve the default checkout without traversing stored output or cached snapshots.
+            if strlength(projectRoot) == 0
+                projectRoot = string(fileparts(fileparts(fileparts(mfilename("fullpath")))));
+            end
+            files = dir(fullfile(projectRoot, "*.m"));
+            folders = dir(projectRoot);
+            excluded = [".", "..", "testResults", "coverage", "slprj", ".git", ".codex", ".agents"];
+            for index = 1:numel(folders)
+                name = string(folders(index).name);
+                if ~folders(index).isdir || any(strcmpi(name, excluded)), continue, end
+                files = [files; dir(fullfile(projectRoot, name, "**", "*.m"))]; %#ok<AGROW>
+            end
 
-            % Preserved input fixtures retain their original source layout.
-            fixtureRoot = fullfile(projectRoot, "tests", "fixtures");
-            isFixture = startsWith({files.folder}, fixtureRoot);
-            files = files(~isFixture);
+            % Preserved fixtures are excluded by a directory boundary, not a shared prefix.
+            fixtureRoot = fullfile(projectRoot, "tests", "fixtures") + filesep;
+            isFixture = startsWith(string({files.folder}) + filesep, fixtureRoot, "IgnoreCase", ispc);
+            files = files(~isFixture & ~[files.isdir]);
         end
 
         function bytes = readBytes(filePath)
