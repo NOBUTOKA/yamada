@@ -23,7 +23,7 @@ classdef PreviewRenderer < handle
 
     methods
         function [applied, diagnostics, geometryChanged] = synchronize(obj, document, handles, request)
-            % synchronize Apply audited independent label changes without replacing native handles.
+            % synchronize Apply audited label and numeric Value changes without replacing native handles.
             %   Any unrelated input change or uncertain setter uses the existing renderer.
             arguments (Input)
                 obj (1, 1) macd.ui.PreviewRenderer
@@ -65,23 +65,44 @@ classdef PreviewRenderer < handle
             allowed = ["Text", "FontSize", "FontName", "FontWeight", "FontAngle", ...
                 "FontColor", "BackgroundColor", "HorizontalAlignment", "VerticalAlignment", ...
                 "WordWrap", "Visible", "Enable", "Tooltip"];
-            if isempty(component) || component.Factory ~= "uilabel" || ...
-                    ~all(ismember(request.Paths, allowed)) || ~isKey(handles, char(id))
-                return
-            end
+            if isempty(component) || ~isKey(handles, char(id)), return, end
+            label = component.Factory == "uilabel" && all(ismember(request.Paths, allowed));
+            numericValue = component.Factory == "uieditfield" && ...
+                component.DeclaredType == "matlab.ui.control.NumericEditField" && isequal(request.Paths, "Value");
+            if ~(label || numericValue), return, end
             preview = handles(char(id));
             if ~isvalid(preview)
                 obj.FallbackReason = "stale-handle";
+                return
+            end
+            if numericValue && ~isa(preview, "matlab.ui.control.NumericEditField")
+                obj.FallbackReason = "native-type";
                 return
             end
             states = document.getEffectivePropertyStates(obj.Registry, id);
             paths = string(arrayfun(@(item) item.Definition.Path, states));
             [found, indices] = ismember(request.Paths, paths);
             if ~all(found), return, end
+            if numericValue
+                % All non-requested inputs, including constraints, format, parent and constructor, must match.
+                constraints = ["Value", "Limits", "AllowEmpty", "RoundFractionalValues", ...
+                    "LowerLimitInclusive", "UpperLimitInclusive"];
+                [known, constraintIndices] = ismember(constraints, paths);
+                if ~all(known) || ~all(arrayfun(@(state) state.Resolution.IsKnown, states(constraintIndices)))
+                    obj.FallbackReason = "unknown-constraints";
+                    return
+                end
+            end
             for index = indices
                 state = states(index);
-                if state.Definition.Application.EffectStatus ~= "independent" || ...
-                        state.Definition.PreviewPolicy ~= "apply" || ~state.Resolution.IsKnown || ...
+                audited = label && state.Definition.Application.EffectStatus == "independent";
+                if numericValue
+                    value = state.Resolution.EffectiveValue;
+                    audited = state.Definition.Application.EffectStatus == "modeled" && ...
+                        state.Definition.Application.EffectPolicy == "numericValue" && ...
+                        isa(value, "double") && isscalar(value) && isreal(value) && isfinite(value);
+                end
+                if ~audited || state.Definition.PreviewPolicy ~= "apply" || ~state.Resolution.IsKnown || ...
                         ~state.Resolution.IsEditable
                     obj.FallbackReason = "unsupported-effect";
                     return
@@ -99,7 +120,8 @@ classdef PreviewRenderer < handle
             obj.RenderedInputs = inputs;
             obj.SynchronizationCount = obj.SynchronizationCount + 1;
             obj.FallbackReason = "";
-            geometryChanged = request.affectsGeometry();
+            % Keep fit/layout publication conservative while reusing the native numeric widget.
+            geometryChanged = request.affectsGeometry() || numericValue;
             applied = true;
         end
 
