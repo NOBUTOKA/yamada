@@ -21,7 +21,7 @@
   its `classdef` line. Include an H1 overview, a short description of the class's
   responsibilities and boundaries, and a concise usage example when it improves
   understanding. Test classes may omit the usage example when it adds no value.
-- Newly generated AppBase output needs only concise English class and method
+- Newly generated handle-class app output needs only concise English class and method
   doc-comment templates. Do not emit long class help, property help, or routine
   implementation comments. Project-owned source retains the documentation rules
   above; user output does not receive the editor project's GPL notice automatically.
@@ -61,7 +61,7 @@
 - Preserved input fixtures are exempt from the docstring and arguments-block
   rules because their original source structure is test data.
 - This project is a programmatic MATLAB application. Do not convert the application itself to `.mlapp`.
-- Preserve the input `matlab.apps.AppBase` class source; generated or modified source should remain reviewable as text.
+- Preserve the input handle-class app source; generated or modified source should remain reviewable as text.
 
 ## Commit discipline
 
@@ -112,5 +112,5 @@ along with yamada. If not, see <https://www.gnu.org/licenses/>.
 ```
 
 - Do not add or replace license notices in third-party files or preserved input fixtures. Keep their original notices and record their provenance when they are added.
-- AppBase classes created or opened as user output are not automatically licensed under the editor's GPL. Do not insert, replace, or remove a license notice in generated or user-supplied app source unless the user explicitly requests it.
+- App classes created or opened as user output are not automatically licensed under the editor's GPL. Do not insert, replace, or remove a license notice in generated or user-supplied app source unless the user explicitly requests it.
 
