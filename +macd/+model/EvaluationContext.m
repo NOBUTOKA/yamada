@@ -233,7 +233,7 @@ classdef EvaluationContext < handle
 
     methods (Access = ?macd.model.DocumentModel)
         function inheritEligibility(obj, previous)
-            % inheritEligibility Carry immutable condition answers after a document-proven label font edit.
+            % inheritEligibility Carry immutable condition answers after a document-proven local literal edit.
             arguments (Input)
                 obj (1, 1) macd.model.EvaluationContext
                 previous (1, 1) macd.model.EvaluationContext

@@ -46,6 +46,107 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
+        function localValueEditsRetainEquivalentAvailabilityAcrossOwners(testCase)
+            % localValueEditsRetainEquivalentAvailabilityAcrossOwners Reuse answers while commands retain current values.
+            for layout = ["absolute", "flat", "nested"]
+                document = testCase.availabilityFixture(layout);
+                first = document.getComponentByName("First");
+                second = document.getComponentByName("Second");
+                for id = [first.Id, second.Id]
+                    document.setProperty(id, "Value", 1, testCase.Registry);
+                    document.validatePropertyCommit(testCase.Registry);
+                end
+                measured = [10 20 100 22];
+                for id = [first.Id, second.Id]
+                    macd.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
+                    macd.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
+                    macd.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
+                end
+                for id = [first.Id, second.Id]
+                    document.setPropertyBatch(id, macd.model.PropertyTransaction.singleChange("Value", 4), testCase.Registry);
+                    document.validatePropertyCommit(testCase.Registry);
+                    profile clear; profile on;
+                    stopProfile = onCleanup(@() profile("off"));
+                    copied = macd.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
+                    deleted = macd.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
+                    parents = macd.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
+                    profile off; functions = profile("info").FunctionTable; clear stopProfile
+                    repeated = contains(string({functions.FunctionName}), "DocumentEditAvailability.inspect") | ...
+                        contains(string({functions.FunctionName}), "SubtreePlacementPlanner.prepare");
+                    testCase.verifyEqual(sum([functions(repeated).NumCalls]), 0, layout);
+                    fresh = document.structuralCandidate();
+                    testCase.verifyEqual(copied, macd.model.DocumentEditAvailability.copying(fresh, id, testCase.Registry));
+                    testCase.verifyEqual(deleted, macd.model.DocumentEditAvailability.deletion(fresh, id, testCase.Registry));
+                    testCase.verifyEqual(parents, macd.model.DocumentEditAvailability.reparenting(fresh, id, testCase.Registry, measured));
+                end
+                snapshot = document.copySubtree(second.Id, testCase.Registry);
+                value = snapshot.Records(1).Properties(string({snapshot.Records(1).Properties.Path}) == "Value");
+                testCase.verifyEqual(value.LiteralValue, 4);
+            end
+        end
+
+        function inheritedNumericAvailabilityRechecksGeometryAndHistory(testCase)
+            % inheritedNumericAvailabilityRechecksGeometryAndHistory Retain measured-rectangle guards and invalidate on undo.
+            document = testCase.availabilityFixture("flat");
+            first = document.getComponentByName("First");
+            destination = document.Components(string({document.Components.Factory}) == "uipanel");
+            document.setProperty(first.Id, "Value", 1, testCase.Registry);
+            document.validatePropertyCommit(testCase.Registry);
+            before = macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry);
+            testCase.assertFalse(before(string({before.Id}) == destination.Id).Enabled);
+            document.setProperty(first.Id, "Value", 2, testCase.Registry);
+            document.validatePropertyCommit(testCase.Registry);
+            testCase.verifyEqual(macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry), before);
+            measured = [10 20 100 30];
+            profile clear; profile on;
+            stopProfile = onCleanup(@() profile("off"));
+            after = macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
+            profile off; functions = profile("info").FunctionTable; clear stopProfile
+            placement = contains(string({functions.FunctionName}), "SubtreePlacementPlanner.prepare");
+            testCase.verifyGreaterThan(sum([functions(placement).NumCalls]), 0);
+            testCase.verifyTrue(after(string({after.Id}) == destination.Id).Enabled);
+            fresh = document.structuralCandidate();
+            testCase.verifyEqual(after, macd.model.DocumentEditAvailability.reparenting(fresh, first.Id, testCase.Registry, measured));
+            document.undo(); document.redo();
+            profile clear; profile on;
+            stopProfile = onCleanup(@() profile("off"));
+            restored = macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
+            profile off; functions = profile("info").FunctionTable; clear stopProfile
+            inspected = contains(string({functions.FunctionName}), "DocumentEditAvailability.inspect");
+            testCase.verifyGreaterThan(sum([functions(inspected).NumCalls]), 0);
+            testCase.verifyEqual(restored, after);
+        end
+
+        function inheritedNumericAvailabilityRejectsChangedInputs(testCase)
+            % inheritedNumericAvailabilityRejectsChangedInputs Recompute after ownership, constraints or catalog changes.
+            for kind = ["readonly", "limits", "registry"]
+                document = testCase.availabilityFixture("absolute");
+                first = document.getComponentByName("First");
+                document.setProperty(first.Id, "Value", 1, testCase.Registry);
+                document.validatePropertyCommit(testCase.Registry);
+                macd.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
+                document.setProperty(first.Id, "Value", 2, testCase.Registry);
+                document.validatePropertyCommit(testCase.Registry);
+                switch kind
+                    case "readonly"
+                        first.IsEditable = false;
+                    case "limits"
+                        document.setProperty(first.Id, "Limits", [-10 10], testCase.Registry);
+                    case "registry"
+                        testCase.Registry.register(testCase.Registry.get(first.Factory, first.CreationArguments));
+                end
+                profile clear; profile on;
+                stopProfile = onCleanup(@() profile("off"));
+                actual = macd.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
+                profile off; functions = profile("info").FunctionTable; clear stopProfile
+                inspected = contains(string({functions.FunctionName}), "DocumentEditAvailability.inspect");
+                testCase.verifyGreaterThan(sum([functions(inspected).NumCalls]), 0, kind);
+                fresh = document.structuralCandidate();
+                testCase.verifyEqual(actual, macd.model.DocumentEditAvailability.copying(fresh, first.Id, testCase.Registry));
+                if kind == "readonly", testCase.verifyFalse(actual.Enabled); end
+            end
+        end
+
         function checkpointStateReadsMatchIndependentPlans(testCase)
             % checkpointStateReadsMatchIndependentPlans Preserve pending identities and values while avoiding read-only copies.
             for layout = ["absolute", "flat", "nested"]
@@ -210,6 +311,21 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
     end
 
     methods (Access = private)
+        function document = availabilityFixture(testCase, layout)
+            % availabilityFixture Add a parsed absolute destination for testing actual numeric relocation conditions.
+            arguments (Input)
+                testCase (1, 1) NumericLocalValueTest
+                layout (1, 1) string
+            end
+            arguments (Output)
+                document (1, 1) macd.model.DocumentModel
+            end
+            document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
+            document.insertComponent(testCase.Registry, "uipanel", document.RootComponentId);
+            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+        end
+
         function document = fixture(testCase, layout, firstBody)
             % fixture Parse synthetic numeric initialization without executing application code.
             arguments (Input)

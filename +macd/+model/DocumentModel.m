@@ -1520,8 +1520,11 @@ classdef DocumentModel < handle
             context = obj.evaluationContext(registry);
             context.rememberConfiguration("combined", prepared);
             component = obj.getComponent(componentId);
-            if carryValidation && component.Factory == "uilabel" && all(paths == "FontSize")
-                % Safe scalar font literals change neither ownership nor logical placement permissions.
+            fontEdit = component.Factory == "uilabel" && all(paths == "FontSize");
+            numericEdit = component.Factory == "uieditfield" && ...
+                component.DeclaredType == "matlab.ui.control.NumericEditField" && isequal(paths, "Value");
+            if carryValidation && (fontEdit || numericEdit)
+                % Proven local literals retain ownership and logical placement; measured geometry stays guarded.
                 context.inheritEligibility(obj.PropertyValidationContext);
             end
             obj.PropertyCheckpoint = prepared;
