@@ -8,6 +8,16 @@ The [product specification](SPECIFICATION.md) remains authoritative for current
 behavior. A roadmap item becomes part of the supported public contract only after
 its implementation, tests, and user documentation are complete.
 
+## Migrate to Handle-Class Apps
+
+Replace AppBase dependencies in the editor, source parser, and generators with
+ordinary `handle` classes and documented callback registration. The agreed target
+has one `uifigure`, with all other UI components as its descendants. Descendant
+membership is a user precondition, without a new dedicated validation pass.
+See the [handle app migration plan](HANDLE_APP_MIGRATION_PLAN.md) for scope,
+implementation stages, lifecycle behavior, and verification criteria. The
+migration is planned; current AppBase behavior remains until implementation.
+
 ## Add Component-Reference Property Editors
 
 Ninety-five audited component-reference surfaces, including `ContextMenu`,
