@@ -147,6 +147,80 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
+        function numericEditsRetainOtherOwnerStates(testCase)
+            % numericEditsRetainOtherOwnerStates Reuse logical state values while matching a fresh complete resolution.
+            for layout = ["absolute", "flat", "nested"]
+                document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
+                first = document.getComponentByName("First");
+                second = document.getComponentByName("Second");
+                for id = [first.Id, second.Id]
+                    document.setProperty(id, "Value", 1, testCase.Registry);
+                    document.validatePropertyCommit(testCase.Registry);
+                end
+                for component = document.Components
+                    document.getEffectivePropertyStates(testCase.Registry, component.Id);
+                end
+                document.setProperty(first.Id, "Value", 4, testCase.Registry);
+                document.validatePropertyCommit(testCase.Registry);
+                profile clear; profile on;
+                stopProfile = onCleanup(@() profile("off"));
+                for component = document.Components(document.Components ~= first)
+                    document.getEffectivePropertyStates(testCase.Registry, component.Id);
+                end
+                profile off; functions = profile("info").FunctionTable; clear stopProfile
+                repeated = contains(string({functions.FunctionName}), "PropertyStateResolver.evaluate");
+                testCase.verifyEqual(sum([functions(repeated).NumCalls]), 0, layout);
+                fresh = document.structuralCandidate();
+                for component = document.Components
+                    [actual, actualDiagnostics] = document.getEffectivePropertyStates(testCase.Registry, component.Id);
+                    [expected, expectedDiagnostics] = fresh.getEffectivePropertyStates(testCase.Registry, component.Id);
+                    testCase.verifyEqual([actual.Resolution], [expected.Resolution], component.Name);
+                    testCase.verifyEqual(actualDiagnostics, expectedDiagnostics, component.Name);
+                end
+                states = document.getEffectivePropertyStates(testCase.Registry, first.Id);
+                definitions = [states.Definition];
+                testCase.verifyEqual(states(string({definitions.Path}) == "Value").Resolution.EffectiveValue, 4);
+            end
+        end
+
+        function numericStateReuseInvalidatesAfterHistoryAndGridChanges(testCase)
+            % numericStateReuseInvalidatesAfterHistoryAndGridChanges Discard inherited logical states on nonlocal input changes.
+            for kind = ["history", "tracks", "registry"]
+                document = testCase.fixture("flat", "app.First = uieditfield(PARENT,'numeric');");
+                first = document.getComponentByName("First");
+                grid = document.getComponentByName("Grid");
+                document.setProperty(first.Id, "Value", 1, testCase.Registry);
+                document.validatePropertyCommit(testCase.Registry);
+                document.setProperty(first.Id, "Value", 2, testCase.Registry);
+                document.validatePropertyCommit(testCase.Registry);
+                document.getEffectivePropertyStates(testCase.Registry, grid.Id);
+                switch kind
+                    case "history"
+                        document.undo();
+                    case "tracks"
+                        grid.setProperty("RowHeight", {25, 35});
+                    case "registry"
+                        testCase.Registry.register(testCase.Registry.get(grid.Factory, grid.CreationArguments));
+                end
+                profile clear; profile on;
+                stopProfile = onCleanup(@() profile("off"));
+                actual = document.getEffectivePropertyStates(testCase.Registry, grid.Id);
+                target = document.getEffectivePropertyStates(testCase.Registry, first.Id);
+                profile off; functions = profile("info").FunctionTable; clear stopProfile
+                repeated = contains(string({functions.FunctionName}), "PropertyStateResolver.evaluate");
+                testCase.verifyGreaterThan(sum([functions(repeated).NumCalls]), 0, kind);
+                fresh = document.structuralCandidate();
+                expected = fresh.getEffectivePropertyStates(testCase.Registry, grid.Id);
+                testCase.verifyEqual([actual.Resolution], [expected.Resolution]);
+                expectedTarget = fresh.getEffectivePropertyStates(testCase.Registry, first.Id);
+                testCase.verifyEqual([target.Resolution], [expectedTarget.Resolution]);
+                definitions = [target.Definition];
+                expectedValue = 2;
+                if kind == "history", expectedValue = 1; end
+                testCase.verifyEqual(target(string({definitions.Path}) == "Value").Resolution.EffectiveValue, expectedValue);
+            end
+        end
+
         function ownedCheckpointReadsAvoidDocumentMaterialization(testCase)
             % ownedCheckpointReadsAvoidDocumentMaterialization Keep local reads private and public copies independent.
             for layout = ["absolute", "flat", "nested"]

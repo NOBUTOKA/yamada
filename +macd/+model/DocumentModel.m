@@ -1577,6 +1577,7 @@ classdef DocumentModel < handle
             if carryValidation && (fontEdit || numericEdit)
                 % Proven local literals retain ownership and logical placement; measured geometry stays guarded.
                 context.inheritEligibility(obj.PropertyValidationContext);
+                if numericEdit, context.inheritNumericStates(obj.PropertyValidationContext, componentId); end
             end
             obj.PropertyCheckpoint = prepared;
             obj.PropertyCheckpointContext = context;

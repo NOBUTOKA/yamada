@@ -254,6 +254,42 @@ classdef EvaluationContext < handle
                 "Clock", clock, "Revision", revision, "Tracked", tracked);
         end
 
+        function inheritNumericStates(obj, previous, componentId)
+            % inheritNumericStates Retain other component states after a document-proven bounded Value replacement.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                previous (1, 1) macd.model.EvaluationContext
+                componentId (1, 1) string
+            end
+            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+                    obj.RegistryRevision ~= previous.RegistryRevision || ...
+                    ~isequaln(rmfield(obj.Key, "Components"), rmfield(previous.Key, "Components"))
+                return
+            end
+            before = previous.Key.Components;
+            after = obj.Key.Components;
+            target = find(string({after.Id}) == componentId, 1);
+            if isempty(target) || numel(before) ~= numel(after) || ...
+                    ~isequal(string({before.Id}), string({after.Id})) || ...
+                    after(target).Factory ~= "uieditfield" || ...
+                    after(target).DeclaredType ~= "matlab.ui.control.NumericEditField"
+                return
+            end
+            % Prove that only the owned Value literal changed; settings and every other input remain exact.
+            oldValue = find(string({before(target).Properties.Path}) == "Value", 1);
+            newValue = find(string({after(target).Properties.Path}) == "Value", 1);
+            if isempty(oldValue) || isempty(newValue), return, end
+            before(target).Properties(oldValue).LiteralValue = [];
+            after(target).Properties(newValue).LiteralValue = [];
+            if ~isequaln(before, after), return, end
+
+            % Numeric Value has no grid, button-selection, or ancestor-geometry effect on other owners.
+            names = string(keys(previous.Values));
+            for name = names(startsWith(names, "states:") & names ~= "states:" + componentId)
+                obj.Values(char(name)) = previous.Values(char(name));
+            end
+        end
+
         function inheritEligibility(obj, previous)
             % inheritEligibility Carry immutable condition answers after a document-proven local literal edit.
             arguments (Input)
