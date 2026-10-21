@@ -235,7 +235,7 @@ fit-overflow stress case retains 650. An earlier compact absolute-position pilot
 is excluded from this comparison.
 
 `probeYamadaGridGeometry(FixturePath=...,OutputFolder=...)` separately renders the
-registered fixture controls without running the AppBase class. It rebuilds grid
+registered fixture controls without running the input class. It rebuilds grid
 boundary data directly at several settled times, records native positions and
 outer bounds, and compares measured fit/fixed minimum height plus spacing with
 available height. This distinguishes a persistent reconstruction limitation from

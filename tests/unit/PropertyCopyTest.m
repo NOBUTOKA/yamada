@@ -160,7 +160,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
 
     methods (Static, Access = private)
         function [document, registry, component, target] = fixture(body, declaredType)
-            % fixture Build owned AppBase source with explicit geometry and independent destination.
+            % fixture Build owned handle-based source with explicit geometry and independent destination.
             arguments (Input)
                 body (1, :) string
                 declaredType (1, 1) string = ""
@@ -177,7 +177,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
                 if any(contains(body, "uidropdown")), declaredType = "matlab.ui.control.DropDown"; end
                 if any(contains(body, "uieditfield")), declaredType = "matlab.ui.control.NumericEditField"; end
             end
-            source = strjoin(["classdef PropertyCopyApp < matlab.apps.AppBase", "properties", ...
+            source = strjoin(["classdef PropertyCopyApp < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Left matlab.ui.container.Panel", "Right matlab.ui.container.Panel", ...
                 "Control " + declaredType, "end", "methods", "function app = PropertyCopyApp", "createComponents(app);", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...

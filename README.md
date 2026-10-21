@@ -1,6 +1,18 @@
 # yamada - Yet Another MATLAB App Designer Alternative
 
-`yamada` is a visual editor for `matlab.apps.AppBase` applications. It is similar in purpose to MATLAB App Designer, but **instead of using the dedicated binary `.mlapp` format**, it treats ordinary MATLAB class files (`.m`) as source. You can create a new application or open an existing AppBase class and inspect, arrange, and edit its UI components graphically.
+`yamada` is a visual editor for `handle` applications. It is similar in purpose to MATLAB App Designer, but **instead of using the dedicated binary `.mlapp` format**, it treats ordinary MATLAB class files (`.m`) as source. You can create a new application or open an existing handle class and inspect, arrange, and edit its UI components graphically.
+
+The supported source contract is a class that directly inherits from `handle`
+and owns exactly one `uifigure`. All other UI components must be descendants of
+that figure, including through panels, grids, and tabs. Descendant membership is
+a user precondition; yamada adds no dedicated check for this condition and does
+not guarantee behavior outside it. The source must use the supported statically
+analyzable syntax. AppBase input and automatic conversion are not supported.
+
+Generated callbacks use `@app.Handler` with `(app, source, event)` inputs. The
+default close callback deletes the app. Adding an editable CloseRequestFcn
+replaces that fallback, and deleting the handler restores it. A figure-bound
+destruction listener releases the owner without replacing a user's DeleteFcn.
 
 ## Important
 
@@ -8,7 +20,7 @@
 
 ## Features
 
-- Create a runnable `matlab.apps.AppBase` subclass from an empty canvas
+- Create a runnable `handle` subclass from an empty canvas
 - Statically parse an existing `.m` class that follows a common App Designer-like structure
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
 - Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
@@ -102,7 +114,7 @@ Source-backed values are preserved.
 
 ### Edit an existing application
 
-1. Select **File > Open** and choose a `.m` file whose class derives from `matlab.apps.AppBase`.
+1. Select **File > Open** and choose a `.m` file whose class derives from `handle`.
 2. Review the parsed hierarchy, Safe Preview, and diagnostics.
 3. Modify supported components and properties.
 4. Validate the document and review the diff. Save to a new file if you want to preserve the original.
@@ -173,7 +185,8 @@ and Preview selection unchanged. The popup title identifies the component being
 managed; its scrollable rows list callbacks supported by that component's catalog
 variant.
 
-- **Add** creates an assignment and a uniquely named empty method together.
+- **Add** creates an assignment and a uniquely named method together. Ordinary
+  callbacks start empty; CloseRequestFcn starts with `delete(app)`.
 - **Delete** removes the assignment and the entire handler method, including its
   body. Each action is one Undo/Redo operation and applies immediately; **Close**
   only closes the popup.
@@ -201,7 +214,7 @@ The following boundaries protect the input source:
 
 - `.mlapp` files and their internal format are not supported.
 - The input application's constructor, callbacks, helper methods, and arbitrary expressions are never executed.
-- Initial property values follow statically resolved same-class calls from the constructor, including AppBase startup methods. Method names are unrestricted; callback registrations and anonymous callback bodies are excluded. Repeated calls retain their order. Dynamic calls, recursion, and unsupported call expressions produce diagnostics without executing source. For constructor-free fragments, a single identifiable factory-owning method is used with a warning. Runtime-only writes do not replace initial values or make those properties read-only; initialization expressions remain source-backed and read-only.
+- Initial property values follow statically resolved same-class calls from the constructor, including ordinary initialization helpers. Method names are unrestricted; callback registrations and anonymous callback bodies are excluded. Repeated calls retain their order. Dynamic calls, recursion, and unsupported call expressions produce diagnostics without executing source. For constructor-free fragments, a single identifiable factory-owning method is used with a warning. Runtime-only writes do not replace initial values or make those properties read-only; initialization expressions remain source-backed and read-only.
 - Dynamic component creation and ambiguous source structures are restricted when they cannot be edited safely; diagnostics explain the restriction.
 - Inclusion in the catalog does not mean that every component or property can be previewed, inserted, and edited to the same extent. Unsupported values may remain visible but read-only.
 - Full App Designer compatibility and complete round-tripping of arbitrary MATLAB syntax are not goals.

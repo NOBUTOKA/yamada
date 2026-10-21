@@ -179,6 +179,7 @@ classdef CallbackSourceAnalyzer
                 "InstanceNames", strings(1, 0), ...
                 "Methods", struct("Name", {}, "Span", {}), "MethodAnchor", 0);
             stack = struct("Kind", {}, "Name", {}, "Start", {}, "Instance", {});
+            constructorTry = zeros(1, numel(statements));
             for index = 1:numel(statements)
                 text = char(strtrim(statements(index).Text));
                 % Associate branch statements with their method, excluding nested bodies.
@@ -188,6 +189,10 @@ classdef CallbackSourceAnalyzer
                     nnz(string({stack.Kind}) == "function") == 1;
                 if instanceBody, layout.Owner(index) = stack(3).Name; end
                 layout.StraightLine(index) = instanceBody && numel(stack) == 3;
+                if instanceBody && numel(stack) == 4 && stack(4).Kind == "try" && ...
+                        stack(3).Name == layout.ClassName
+                    constructorTry(index) = stack(4).Start;
+                end
                 token = regexp(text, '^([A-Za-z]\w*)(?!\w)', 'tokens', 'once');
                 if isempty(token), continue, end
                 keyword = string(token{1});
@@ -204,6 +209,20 @@ classdef CallbackSourceAnalyzer
                             "Span", macd.model.SourceSpan(block.Start, statements(index).Span.EndOffset));
                     elseif block.Kind == "methods" && block.Instance && layout.MethodAnchor == 0
                         layout.MethodAnchor = statements(index).Span.StartOffset - 1;
+                    elseif block.Kind == "try"
+                        % A cleanup-and-rethrow constructor catch cannot return a live app.
+                        owned = find(constructorTry == block.Start);
+                        catches = owned(startsWith(strtrim(string({statements(owned).Text})), "catch "));
+                        if isscalar(catches)
+                            tail = string({statements(catches:index - 1).Text});
+                            caught = regexp(tail(1), '^catch\s+(\w+)$', 'tokens', 'once');
+                            if numel(tail) == 3 && ~isempty(caught) && ...
+                                    ~isempty(regexp(tail(2), '^delete\s*\(\s*app\s*\)$', 'once')) && ...
+                                    ~isempty(regexp(tail(3), '^rethrow\s*\(\s*' + string(caught{1}) + '\s*\)$', 'once'))
+                                layout.StraightLine(owned(owned < catches)) = true;
+                                layout.Owner(catches:index - 1) = "";
+                            end
+                        end
                     end
                     continue
                 end
@@ -310,10 +329,13 @@ classdef CallbackSourceAnalyzer
             end
 
             % Allow only bindings whose referenced method can be identified without execution.
-            match = regexp(expression, '^createCallbackFcn\s*\(\s*app\s*,\s*@(\w+)\s*,\s*true\s*\)$', 'tokens', 'once');
-            if isempty(match)
-                match = regexp(expression, '^@app\.(\w+)$', 'tokens', 'once');
+            if component.Factory == "uifigure" && name == "CloseRequestFcn" && ...
+                    macd.source.CallbackSourceEdits.isDefaultClose(expression)
+                state = "absent";
+                reason = "";
+                return
             end
+            match = regexp(expression, '^@app\.(\w+)$', 'tokens', 'once');
             reason = "The callback expression does not have supported method ownership.";
             if isempty(match), return, end
             handler = string(match{1});

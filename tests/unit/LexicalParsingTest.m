@@ -42,13 +42,13 @@ classdef (TestTags = {'fast', 'parser'}) LexicalParsingTest < matlab.unittest.Te
             % scannerKeepsBalancedContinuationAsOneStatement Check continuation.
 
             % Keep a callback expression intact without attempting to interpret it.
-            source = "app.Button.ButtonPushedFcn = createCallbackFcn( ..." + ...
-                newline + "    app, @Callback, true);";
+            source = "app.Button.ButtonPushedFcn = ..." + ...
+                newline + "    @app.Callback;";
             statements = macd.source.MatlabLexicalScanner.splitStatements(source);
 
             testCase.verifyEqual(numel(statements), 1);
-            testCase.verifySubstring(statements.Text, "createCallbackFcn(");
-            testCase.verifySubstring(statements.Text, "@Callback");
+            testCase.verifySubstring(statements.Text, "@app.Callback");
+            testCase.verifySubstring(statements.Text, "@app.Callback");
             testCase.verifyFalse(contains(statements.Text, "..."));
         end
 

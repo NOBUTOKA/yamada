@@ -9,7 +9,7 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             forms = ["'Initial'", macd.source.LiteralEncoder.encode("Initial")];
             registry = macd.model.ComponentRegistry.createDefault();
             for index = 1:numel(forms)
-                source = strjoin(["classdef TextInputFixture < matlab.apps.AppBase", "properties", ...
+                source = strjoin(["classdef TextInputFixture < handle", "properties", ...
                     "UIFigure matlab.ui.Figure", "Label matlab.ui.control.Label", "end", "methods", ...
                     "function app = TextInputFixture", "createComponents(app);", "end", ...
                     "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
@@ -112,7 +112,7 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
         function preservedNavigationHandlesNonvisualTreeNodes(testCase)
             % preservedNavigationHandlesNonvisualTreeNodes Exclude records without pixel bounds from geometry.
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            fixture = string(fullfile(root, "tests", "fixtures", "NavigationDataApp.m"));
+            fixture = string(fullfile(root, "tests", "fixtures", "handle", "NavigationDataApp.m"));
             lifecycle = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() delete(app));

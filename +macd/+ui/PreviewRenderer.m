@@ -1,7 +1,7 @@
 classdef PreviewRenderer < handle
     % PreviewRenderer Render registry-approved component models on an editor surface.
     %   This class creates only known factories from a DocumentModel and applies
-    %   editable literal properties. It does not instantiate an opened AppBase
+    %   editable literal properties. It does not instantiate an opened handle-based
     %   class, invoke callbacks, or evaluate source expressions.
     %
     %   Example:

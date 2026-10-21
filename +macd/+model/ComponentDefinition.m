@@ -15,7 +15,7 @@ classdef ComponentDefinition
         Id string = ""
         % Factory - MATLAB factory function used to create this component type.
         Factory string = ""
-        % DeclaredType - MATLAB class used in AppBase property declarations.
+        % DeclaredType - MATLAB class used in handle-based property declarations.
         DeclaredType string = ""
         % AllowedParentFactories - Factories permitted to contain this type.
         AllowedParentFactories string = strings(1, 0)
@@ -38,7 +38,7 @@ classdef ComponentDefinition
         SupportedStyles string = strings(1, 0)
         % DefaultStyle - Style used when a new component omits an explicit style.
         DefaultStyle string = ""
-        % DeclaredTypesByStyle - Declared AppBase type for each supported style.
+        % DeclaredTypesByStyle - Declared handle-based type for each supported style.
         DeclaredTypesByStyle struct = struct()
         % OverlayShape - Default SVG silhouette used by the editor interaction layer.
         OverlayShape string = "rectangle"

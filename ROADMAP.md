@@ -16,7 +16,8 @@ has one `uifigure`, with all other UI components as its descendants. Descendant
 membership is a user precondition, without a new dedicated validation pass.
 See the [handle app migration plan](HANDLE_APP_MIGRATION_PLAN.md) for scope,
 implementation stages, lifecycle behavior, and verification criteria. The
-migration is planned; current AppBase behavior remains until implementation.
+core migration is implemented; final full-profile verification remains before
+this task is marked complete.
 
 ## Add Component-Reference Property Editors
 
@@ -127,7 +128,8 @@ the original six stage checkpoints are verified in the completion evidence below
 - Keep right-click targeting independent of selection: opening the menu for an
   unselected component must leave Hierarchy selection, Properties and Safe Preview
   unchanged. The popup operates on that explicit context target.
-- Add creates a binding and an empty method together. Delete removes the binding
+- Add creates a binding and a method together (empty except for the default
+  CloseRequestFcn shutdown body). Delete removes the binding
   and the full method body together. Disable both actions when either operation
   cannot be proven safe; show the reason in the popup.
 - Implement callback-management Stages 1-5, then the three Reload Source stages
@@ -146,7 +148,7 @@ the original six stage checkpoints are verified in the completion evidence below
   a parallel hard-coded callback list or changes to literal property editing.
 - Define absent/empty, safely editable, and preserved unsupported/ambiguous binding
   states, with explicit reasons for unavailable operations.
-- Define Add as generating a uniquely named empty handler method and its binding
+- Define Add as generating a uniquely named handler method and its binding
   in one edit. Define Delete as removing both the binding and the complete handler
   method in one edit. Prove method ownership and absence of other references before
   enabling deletion; shared handlers or ambiguous references are unsafe. Editing
@@ -155,13 +157,13 @@ the original six stage checkpoints are verified in the completion evidence below
   anchors. Read existing expressions without evaluation; refuse ambiguous ownership.
 
 Checkpoint: review discovery and Add/Delete semantics using new components, direct
-assignments, createCallbackFcn bindings, empty assignments, constructor bindings,
+assignments, bound-method bindings, empty assignments, constructor bindings,
 anonymous functions, shared handlers, and repeated/conditional assignments.
 Confirm unsupported forms have diagnostics and no-edit source remains exact.
 
 Stage 1 progress: effective callback discovery and immutable CallbackState results
 are implemented. CallbackSourceAnalyzer recognizes direct createComponents bindings
-using createCallbackFcn(app, @Method, true) or @app.Method, explicit empty bindings,
+using @app.Method, explicit empty bindings,
 and whole instance-method spans with nested blocks. Conditional/repeated/constructor
 bindings, arbitrary anonymous functions, shared/missing handlers, indirect access,
 dynamic dispatch, and unproven block structures return unsupported with a reason.

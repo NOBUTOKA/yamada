@@ -2,16 +2,33 @@
 
 This document describes the current public feature scope, input and output contract, and safety limitations of the development version of `yamada`. It is not a roadmap for future implementation.
 
+The supported class directly inherits from `handle` and owns exactly one
+`uifigure`. Every other UI component must be a descendant of that figure, either
+directly or through nested containers. This hierarchy is a user precondition:
+there is no new dedicated descendant-membership validation or diagnostic, and
+behavior outside it is not guaranteed. Existing model consistency and safe-edit
+validation remain in place. Arbitrary inheritance graphs, dynamic construction,
+AppBase compatibility, and automatic source conversion are outside the contract.
+
+Generated callbacks are bound methods with `(app, source, event)` inputs. The
+default CloseRequestFcn deletes the owner. Add replaces the default binding with
+an editable close handler initialized to delete the app; Delete restores the
+default binding. The destructor releases owned resources without argument
+validation or a cancel decision. A source-bound ObjectBeingDestroyed listener
+handles direct figure deletion without replacing user DeleteFcn code and ignores
+owner destruction already in progress. No-output startup retains the owner through
+figure callbacks; constructor failure cleans up a partially created figure.
+
 ## Purpose
 
-`yamada` is a visual editor for `matlab.apps.AppBase` applications that treats ordinary MATLAB class files (`.m`) as the source of truth.
+`yamada` is a visual editor for `handle` applications that treats ordinary MATLAB class files (`.m`) as the source of truth.
 
-Users can create a new AppBase class from an empty canvas or open an existing AppBase class, then inspect and edit supported UI components and properties graphically. `yamada` does not depend on the private internal format of `.mlapp` files.
+Users can create a new handle class from an empty canvas or open an existing handle class, then inspect and edit supported UI components and properties graphically. `yamada` does not depend on the private internal format of `.mlapp` files.
 
 ## Supported Environment
 
 - Development and verification target: MATLAB R2024a
-- Input: A `.m` file defining a class derived from `matlab.apps.AppBase`
+- Input: A `.m` file defining a class derived from `handle`
 - Output: A `.m` file defining an ordinary MATLAB class
 
 Compatibility with MATLAB releases other than R2024a is not guaranteed. No versioned release, MATLAB Toolbox package, or standalone application is currently available.
@@ -20,7 +37,7 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 
 ### New applications
 
-- Create an empty AppBase class with a valid MATLAB class name and a root `uifigure`.
+- Create an empty handle class with a valid MATLAB class name and a root `uifigure`.
 - Start an untouched new document clean; the first edit marks it as having unsaved changes.
 - Add supported components from the palette.
 - Inspect the component hierarchy and Safe Preview.
@@ -38,11 +55,11 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
   `Visible`, and `Scrollable` through the Property Inspector. `Padding` uses the
   documented MATLAB vector order `[left bottom right top]`.
 - Explicitly delete components and undo or redo changes.
-- Validate the document, review the source diff, and save a runnable AppBase `.m` file.
+- Validate the document, review the source diff, and save a runnable handle `.m` file.
 
 ### Existing applications
 
-- Open an AppBase `.m` file with a common App Designer-like or programmatic structure.
+- Open an handle `.m` file with a common App Designer-like or programmatic structure.
 - Statically parse supported declarations, creation statements, parent-child relationships, and direct property assignments.
 - Display parsed components in the hierarchy browser, Safe Preview, and Property Inspector.
 - Edit property assignments and components whose source ownership can be determined safely.
@@ -132,14 +149,14 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 - Manage Callbacks opens one independent modal popup for the target. Callback rows
   come from the effective component/style/parent catalog surface, excluding
   callback execution-control properties. Long lists scroll.
-- Add creates a unique empty instance method and a createCallbackFcn binding.
+- Add creates a unique instance method and an `@app.Method` binding. Ordinary
+  handlers start empty; CloseRequestFcn starts with `delete(app)`.
   Delete removes both the owned binding and the complete owned method, including
   its body and immediately following help. Closing the popup retains edits.
 - Each action preflights complete source generation and records one Undo/Redo step.
   Failure leaves intentions, source preview, diagnostics, history and dirty state
   unchanged. Undo restores exact original source bodies; unrelated code is kept.
-- Existing direct createComponents assignments using createCallbackFcn(app,
-  @Method, true) or @app.Method can be deleted when the method is unique and has no
+- Existing direct createComponents assignments using `@app.Method` can be deleted when the method is unique and has no
   other detected references. Empty bindings can be replaced safely.
 - Shared/missing methods, arbitrary anonymous functions, constructor bindings,
   conditional/repeated assignments, indirect/dynamic references, and unproven
@@ -257,7 +274,7 @@ Because of this limitation, Safe Preview may not reproduce the input application
 
 ## Output
 
-- Output is ordinary AppBase `.m` source that can be reviewed and compared as text.
+- Output is ordinary handle `.m` source that can be reviewed and compared as text.
 - Files are written as UTF-8 without a BOM.
 - A new file includes the class and component declarations, creation method, application registration, and cleanup required for execution.
 - New files use the host platform's standard line ending; existing files preserve the detected CRLF or LF convention.

@@ -82,7 +82,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             % recognizesOwnedMethodIncludingNestedBlocks Locate complete method help and body.
             evalin("base", "clear macdCallbackAnalyzerSentinel");
             source = CallbackSourceAnalyzerTest.fixture( ...
-                "app.Button.ButtonPushedFcn = createCallbackFcn(app, @Pressed, true);", ...
+                "app.Button.ButtonPushedFcn = @app.Pressed;", ...
                 ["if true"; "assignin('base','macdCallbackAnalyzerSentinel',true);"; "end"]);
             [state, document] = CallbackSourceAnalyzerTest.inspect(source);
             testCase.verifyEqual(state.State, "editable");
@@ -114,7 +114,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
         function rejectsAmbiguousAssignmentsAndReferences(testCase)
             % rejectsAmbiguousAssignmentsAndReferences Block both actions when source ownership is uncertain.
-            binding = "app.Button.ButtonPushedFcn = createCallbackFcn(app, @Pressed, true);";
+            binding = "app.Button.ButtonPushedFcn = @app.Pressed;";
             sources = [ ...
                 CallbackSourceAnalyzerTest.fixture(["if true"; binding; "end"], ""); ...
                 CallbackSourceAnalyzerTest.fixture([binding; binding], ""); ...
@@ -123,7 +123,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
                 CallbackSourceAnalyzerTest.fixture(binding, "feval('unknown');"); ...
                 CallbackSourceAnalyzerTest.fixture("set(app.Button, 'ButtonPushedFcn', @app.Pressed);", ""); ...
                 CallbackSourceAnalyzerTest.fixture("alias.ButtonPushedFcn = @app.Pressed;", ""); ...
-                CallbackSourceAnalyzerTest.fixture([binding; "app.Other.ButtonPushedFcn = createCallbackFcn(app, @Pressed, true);"], "")];
+                CallbackSourceAnalyzerTest.fixture([binding; "app.Other.ButtonPushedFcn = @app.Pressed;"], "")];
             for source = sources(:)'
                 [state, document] = CallbackSourceAnalyzerTest.inspect(source);
                 testCase.verifyEqual(state.State, "unsupported");
@@ -135,7 +135,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
         function recognizesDirectMethodHandlesAndMultilineBindings(testCase)
             % recognizesDirectMethodHandlesAndMultilineBindings Cover direct handles and continuation syntax.
             bindings = {"app.Button.ButtonPushedFcn = @app.Pressed;", ...
-                ["app.Button.ButtonPushedFcn = createCallbackFcn( ..."; "app, @Pressed, true);"]};
+                ["app.Button.ButtonPushedFcn = ..."; "@app.Pressed;"]};
             for index = 1:numel(bindings)
                 [state, ~] = CallbackSourceAnalyzerTest.inspect( ...
                     CallbackSourceAnalyzerTest.fixture(bindings{index}, ""));
@@ -202,7 +202,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             states = macd.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
             testCase.verifyTrue(all(string({states.State}) == "absent"));
             source = CallbackSourceAnalyzerTest.fixture( ...
-                "app.Button.ButtonPushedFcn = createCallbackFcn(app, @Missing, true);", "");
+                "app.Button.ButtonPushedFcn = @app.Missing;", "");
             [state, ~] = CallbackSourceAnalyzerTest.inspect(source);
             testCase.verifyEqual(state.State, "unsupported");
         end
@@ -210,7 +210,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
     methods (Static, Access = private)
         function source = fixture(binding, body)
-            % fixture Build preserved AppBase text with a complete callback method.
+            % fixture Build preserved handle-based text with a complete callback method.
             arguments (Input)
                 binding string
                 body string
@@ -218,13 +218,13 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             arguments (Output)
                 source (1, 1) string
             end
-            lines = ["classdef CallbackFixture < matlab.apps.AppBase"; ...
+            lines = ["classdef CallbackFixture < handle"; ...
                 "properties (Access = public)"; ...
                 "UIFigure matlab.ui.Figure"; "Button matlab.ui.control.Button"; "end"; ...
                 "methods (Access = private)"; "function createComponents(app)"; ...
                 "app.UIFigure = uifigure('Visible', 'off');"; ...
                 "app.Button = uibutton(app.UIFigure);"; binding(:); "end"; ...
-                "function Pressed(app, event)"; "% Pressed Keep the test callback inert."; ...
+                "function Pressed(app, source, event)"; "% Pressed Keep the test callback inert."; ...
                 body(:); "end"; "end"; "end"];
             source = strjoin(lines, string(newline)) + newline;
         end

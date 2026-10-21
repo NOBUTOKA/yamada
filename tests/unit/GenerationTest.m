@@ -1,6 +1,6 @@
 classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.TestCase
     % GenerationTest Verify canonical new-app generation and source writing.
-    %   This test class covers generated AppBase structure, safe literal output,
+    %   This test class covers generated handle-based structure, safe literal output,
     %   blocking diagnostics, UTF-8 encoding, CRLF lines, and license isolation.
 
     methods (Test)
@@ -18,7 +18,7 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
         end
 
         function generatesMinimalRunnableClass(testCase)
-            % generatesMinimalRunnableClass Verify the canonical AppBase skeleton.
+            % generatesMinimalRunnableClass Verify the canonical handle-based skeleton.
 
             % Generate from the same empty model used by the future editor.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -31,9 +31,9 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifyGreaterThan(strlength(source), 0);
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(source, ...
-                "classdef GeneratedApp < matlab.apps.AppBase");
+                "classdef GeneratedApp < handle");
             testCase.verifySubstring(source, ...
-                "% GeneratedApp Define a programmatic AppBase application.");
+                "% GeneratedApp Define a programmatic handle-based application.");
             testCase.verifyFalse(contains(source, "%   Example:"));
             testCase.verifyFalse(contains(source, "This class owns its generated"));
             testCase.verifySubstring(source, ...
@@ -48,8 +48,8 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifySubstring(source, ...
                 "% createComponents Create and configure UI components.");
             testCase.verifySubstring(source, ...
-                "% GeneratedApp Construct and register the application.");
-            testCase.verifySubstring(source, "registerApp(app, app.UIFigure);");
+                "% GeneratedApp Construct the application.");
+            testCase.verifySubstring(source, "addlistener(app.UIFigure, ""ObjectBeingDestroyed"", @app.figureDeleted);");
             testCase.verifySubstring(source, "delete(app.UIFigure);");
             if ispc
                 testCase.verifyEmpty(regexp(source, "(?<!\r)\n", "once"));
@@ -96,7 +96,7 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
         function classIdentityRewriteUpdatesArgumentsWithoutChangingLiterals(testCase)
             % classIdentityRewriteUpdatesArgumentsWithoutChangingLiterals Rename only class identity syntax.
             source = join([ ...
-                "classdef OldApp < matlab.apps.AppBase", ...
+                "classdef OldApp < handle", ...
                 "    % OldApp Describe the application.", ...
                 "    %       app = OldApp();", ...
                 "    methods", ...
@@ -121,7 +121,7 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
                 source, "SavedApp");
 
             testCase.verifyEmpty(diagnostics);
-            testCase.verifySubstring(rewritten, "classdef SavedApp < matlab.apps.AppBase");
+            testCase.verifySubstring(rewritten, "classdef SavedApp < handle");
             testCase.verifySubstring(rewritten, "function app = SavedApp");
             testCase.verifyEqual(count(rewritten, "(1, 1) SavedApp"), 3);
             testCase.verifySubstring(rewritten, "% SavedApp Describe the application.");

@@ -1,6 +1,6 @@
 classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertionRuntimeTest < matlab.unittest.TestCase
     % PropertyInsertionRuntimeTest Execute only test-authored generated source fixtures.
-    %   These tests compile owned AppBase classes and compare Preview with the
+    %   These tests compile owned handle-based classes and compare Preview with the
     %   same planned source. Arbitrary opened application text is never run.
 
     methods (Test)
@@ -202,7 +202,7 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
 
     methods (Static, Access = private)
         function text = source(className, body)
-            % source Build one explicitly owned, noninteractive AppBase fixture class.
+            % source Build one explicitly owned, noninteractive handle-based fixture class.
             arguments (Input)
                 className (1, 1) string
                 body (1, :) string
@@ -210,7 +210,7 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
             arguments (Output)
                 text (1, 1) string
             end
-            text = strjoin(["classdef " + className + " < matlab.apps.AppBase", "properties", ...
+            text = strjoin(["classdef " + className + " < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Control matlab.ui.control.DropDown", "end", "methods", ...
                 "function app = " + className, "createComponents(app);", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", body, "end", ...

@@ -1,6 +1,6 @@
 classdef AppSourceParser
-    % AppSourceParser Parse a conservative AppBase source subset without running it.
-    %   This static parser reads AppBase inheritance, component declarations,
+    % AppSourceParser Parse a conservative handle-based source subset without running it.
+    %   This static parser reads handle-based inheritance, component declarations,
     %   registry-supported factory calls, parent links, and direct property
     %   assignments into a shared DocumentModel. Unsupported expressions remain
     %   source-backed and are reported rather than evaluated or discarded.
@@ -14,7 +14,7 @@ classdef AppSourceParser
 
     methods (Static)
         function [document, diagnostics] = parseFile(filePath, registry)
-            % parseFile Read UTF-8 AppBase source and parse it without execution.
+            % parseFile Read UTF-8 handle-based source and parse it without execution.
             arguments (Input)
                 filePath (1, 1) string {mustBeFile}
                 registry (1, 1) macd.model.ComponentRegistry
@@ -65,7 +65,7 @@ classdef AppSourceParser
         end
 
         function [document, diagnostics] = parseText(source, registry, filePath)
-            % parseText Parse AppBase source text into the shared document model.
+            % parseText Parse handle-based source text into the shared document model.
             arguments (Input)
                 source string
                 registry (1, 1) macd.model.ComponentRegistry
@@ -78,7 +78,7 @@ classdef AppSourceParser
 
             % Split source lexically before applying limited structural recognition.
             statements = macd.source.MatlabLexicalScanner.splitStatements(source);
-            [className, isAppBase] = macd.source.AppSourceParser.findAppBaseClass( ...
+            [className, isHandle] = macd.source.AppSourceParser.findHandleClass( ...
                 statements);
             if strlength(className) == 0
                 className = "ParsedApp";
@@ -91,10 +91,10 @@ classdef AppSourceParser
             document.Metadata.SourceSnapshotId = string(java.util.UUID.randomUUID());
             document.Metadata.SourceSnapshotText = source;
             diagnostics = macd.model.Diagnostic.empty;
-            if ~isAppBase
+            if ~isHandle
                 diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
-                    "not-appbase-class", "error", ...
-                    "Source does not declare a class derived from matlab.apps.AppBase.", ...
+                    "not-handle-class", "error", ...
+                    "Source does not declare a class derived from handle.", ...
                     "", macd.model.SourceSpan.empty);
                 document.Diagnostics = diagnostics;
                 return
@@ -314,7 +314,11 @@ classdef AppSourceParser
                         macd.model.UnknownSourceRegion( ...
                         statement.Text, statement.Span, "conflicting-property-assignment");
                 end
-                if setting.ValueKind == "expression"
+                % Known shutdown infrastructure stays source-backed without an unknown-region warning.
+                infrastructure = setting.ValueKind == "expression" && setting.IsCertain && ...
+                    component.Factory == "uifigure" && assignment.Path == "CloseRequestFcn" && ...
+                    macd.source.CallbackSourceEdits.isDefaultClose(setting.SourceExpression);
+                if setting.ValueKind == "expression" && ~infrastructure
                     diagnostics(end + 1) = macd.source.AppSourceParser.diagnostic( ...
                         "source-expression", "warning", ...
                         "Property expression was retained as read-only source text.", ...
@@ -334,8 +338,7 @@ classdef AppSourceParser
                 for setting = member.Settings
                     if setting.ValueKind == "expression"
                         expression = strtrim(string(macd.source.ComponentNameRewriter.codeMask(setting.SourceExpression)));
-                        deferred = startsWith(expression, "@") || ...
-                            ~isempty(regexp(expression, '^createCallbackFcn\s*\(', 'once'));
+                        deferred = startsWith(expression, "@");
                         blocked = string({document.Metadata.InitializationContext.Layout.Methods.Name});
                         inert = macd.source.InitializationSourceAnalyzer.isLiteralDataCall(setting.SourceExpression, blocked);
                         if ~deferred && ~inert && ~isempty(regexp(expression, '(?<![\w.@])(?:\w+\.)*\w+\s*\(', 'once'))
@@ -439,25 +442,25 @@ classdef AppSourceParser
             result = isequal(bytes, encoded);
         end
 
-        function [className, isAppBase] = findAppBaseClass(statements)
-            % findAppBaseClass Locate a supported AppBase class declaration.
+        function [className, isHandle] = findHandleClass(statements)
+            % findHandleClass Locate a supported handle-based class declaration.
             arguments (Input)
                 statements macd.source.SourceStatement
             end
             arguments (Output)
                 className string
-                isAppBase logical
+                isHandle logical
             end
 
             % Match only one declaration form and leave all others unsupported.
             className = "";
-            isAppBase = false;
-            pattern = '^classdef\s+(?<name>[A-Za-z]\w*)\s*<\s*matlab\.apps\.AppBase\s*$';
+            isHandle = false;
+            pattern = '^classdef\s+(?<name>[A-Za-z]\w*)\s*<\s*handle\s*$';
             for index = 1:numel(statements)
                 tokens = regexp(char(statements(index).Text), pattern, "names", "once");
                 if ~isempty(tokens)
                     className = string(tokens.name);
-                    isAppBase = true;
+                    isHandle = true;
                     return
                 end
             end

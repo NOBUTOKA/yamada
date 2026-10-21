@@ -15,7 +15,7 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             testCase.verifyEqual(document.HistoryIndex, checkpoint + 1);
             added = document.CallbackEdits;
             testCase.verifyEqual(numel(added), 1);
-            testCase.verifySubstring(added.MethodText, "function " + added.HandlerName + "(app, event)");
+            testCase.verifySubstring(added.MethodText, "function " + added.HandlerName + "(app, source, event)");
             testCase.verifySubstring(added.MethodText, "% " + added.HandlerName);
             document.undo();
             testCase.verifyEmpty(document.CallbackEdits);
@@ -51,11 +51,11 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
         function rejectsSharedMethodsAndGeneratesPendingCallbacks(testCase)
             % rejectsSharedMethodsAndGeneratesPendingCallbacks Protect unsafe source while generating validated operations.
             registry = macd.model.ComponentRegistry.createDefault();
-            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "handle", "SimpleCalculatorApp.m");
             source = string(fileread(path));
             source = replace(source, "app.CalculateButton = uibutton(app.GridLayout, 'push');", ...
                 "app.CalculateButton = uibutton(app.GridLayout, 'push');" + newline + ...
-                "app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @CalculateButtonPushed, true);");
+                "app.UIFigure.CloseRequestFcn = @app.CalculateButtonPushed;");
             document = macd.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("CalculateButton");
             testCase.verifyError(@() document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry), ...
@@ -86,7 +86,7 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
         function parsedDeletionPreservesOriginalBodyAndCanBeReplaced(testCase)
             % parsedDeletionPreservesOriginalBodyAndCanBeReplaced Retain original spans through delete/add and history.
             registry = macd.model.ComponentRegistry.createDefault();
-            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "handle", "SimpleCalculatorApp.m");
             document = macd.source.AppSourceParser.parseFile(path, registry);
             component = document.getComponentByName("CalculateButton");
             original = document.OriginalText;

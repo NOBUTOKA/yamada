@@ -33,8 +33,7 @@ classdef CallbackSourceEdits
                 if isempty(component), continue, end
                 binding = "";
                 if edit.Action == "Add"
-                    binding = "app." + component.Name + "." + edit.Name + ...
-                        " = createCallbackFcn(app, @" + edit.HandlerName + ", true);";
+                    binding = macd.source.CallbackSourceEdits.bindingText(component.Name, edit.Name, edit.HandlerName);
                     if edit.MethodAnchor <= 0
                         diagnostics(end + 1) = macd.model.Diagnostic("unsafe-callback-anchor", "error", ...
                             "The callback method insertion anchor is unavailable."); %#ok<AGROW>
@@ -42,6 +41,9 @@ classdef CallbackSourceEdits
                     end
                     edits(end + 1) = struct("Start", edit.MethodAnchor + 1, "End", edit.MethodAnchor, ...
                         "Text", ending + macd.source.CallbackSourceEdits.methodText(edit, document.ClassName) + ending); %#ok<AGROW>
+                end
+                if edit.Action == "Delete" && component.Factory == "uifigure" && edit.Name == "CloseRequestFcn"
+                    binding = macd.source.CallbackSourceEdits.defaultClose(component.Name);
                 end
                 if ~isempty(edit.BindingSpan)
                     edits(end + 1) = struct("Start", edit.BindingSpan.StartOffset, ...
@@ -56,6 +58,62 @@ classdef CallbackSourceEdits
                         "Text", ending + "            " + binding); %#ok<AGROW>
                 end
             end
+        end
+
+        function text = bindingText(componentName, name, handler)
+            % bindingText Emit one documented bound-method callback assignment.
+            arguments (Input)
+                componentName (1, 1) string
+                name (1, 1) string
+                handler (1, 1) string
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+            text = "app." + componentName + "." + name + " = @app." + handler + ";";
+        end
+
+        function text = defaultClose(componentName)
+            % defaultClose Emit the infrastructure close binding without a user handler.
+            arguments (Input)
+                componentName (1, 1) string
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+            text = "app." + componentName + ".CloseRequestFcn = @(~, ~) delete(app);";
+        end
+
+        function result = isDefaultClose(expression)
+            % isDefaultClose Recognize only the exact deferred owner-deletion fallback.
+            arguments (Input)
+                expression (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = ~isempty(regexp(expression, '^@\(\s*~\s*,\s*~\s*\)\s*delete\(\s*app\s*\)$', 'once'));
+        end
+
+        function text = handlerText(handler, name, className, ending, closesApp)
+            % handlerText Emit a source-and-event callback stub with optional default shutdown.
+            arguments (Input)
+                handler (1, 1) string
+                name (1, 1) string
+                className (1, 1) string
+                ending (1, 1) string
+                closesApp (1, 1) logical = false
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+            lines = ["        function " + handler + "(app, source, event)"; ...
+                "            % " + handler + " Handle the " + name + " callback."; ...
+                "            arguments (Input)"; "                app (1, 1) " + className; ...
+                "                source"; "                event"; "            end"; ""; ...
+                "            % Add callback behavior here."];
+            if closesApp, lines(end + 1) = "            delete(app);"; end
+            text = strjoin([lines; "        end"], ending);
         end
 
         function text = methodText(edit, className)

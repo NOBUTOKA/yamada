@@ -77,7 +77,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
             right = document.getComponentByName(right.Name);
             document.reparentSubtree(button.Id, right.Id, registry);
             testCase.verifySubstring(document.GeneratedText, "error('callback-must-not-run');");
-            testCase.verifySubstring(document.GeneratedText, ".ButtonPushedFcn = createCallbackFcn");
+            testCase.verifySubstring(document.GeneratedText, ".ButtonPushedFcn = @app.");
         end
 
         function dependentInitializationRejectsWithoutMutation(testCase)

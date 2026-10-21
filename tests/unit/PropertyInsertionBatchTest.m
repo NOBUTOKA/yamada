@@ -1,6 +1,6 @@
 classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertionBatchTest < matlab.unittest.TestCase
     % PropertyInsertionBatchTest Verify shared candidate evaluation across pending source owners.
-    %   All fixtures are synthetic AppBase text and are never executed. Candidate
+    %   All fixtures are synthetic handle-based text and are never executed. Candidate
     %   sharing must preserve source ownership, setting order and caller isolation.
     properties (Access = private)
         Registry macd.model.ComponentRegistry
@@ -184,7 +184,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             arguments (Output)
                 document (1, 1) macd.model.DocumentModel
             end
-            source = strjoin(["classdef BatchInsertionFixture < matlab.apps.AppBase", ...
+            source = strjoin(["classdef BatchInsertionFixture < handle", ...
                 "properties", "UIFigure matlab.ui.Figure", names, "end", "methods", ...
                 "function app = BatchInsertionFixture", "createComponents(app);", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...

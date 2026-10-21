@@ -18,7 +18,7 @@ Include as much of the following information as possible in a reproducible bug r
 - Reproduction steps
 - Expected and actual behavior
 - Diagnostics shown by `yamada` or the complete MATLAB error message
-- A minimal AppBase `.m` file that reproduces the problem, if it can be shared publicly
+- A minimal supported handle-class app `.m` file that reproduces the problem, if it can be shared publicly
 
 Before attaching source, make sure it does not contain secrets, personal information, or code that you are not allowed to redistribute.
 

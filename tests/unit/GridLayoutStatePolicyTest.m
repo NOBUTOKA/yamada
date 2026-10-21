@@ -559,7 +559,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
         end
 
         function [document, registry, grid] = fixture(body)
-            % fixture Parse a literal owned AppBase initializer with up to three controls.
+            % fixture Parse a literal owned handle-based initializer with up to three controls.
             arguments (Input)
                 body string
             end
@@ -569,7 +569,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
                 grid (1, 1) macd.model.ComponentRecord
             end
             registry = macd.model.ComponentRegistry.createDefault();
-            source = strjoin(["classdef GridStateFixture < matlab.apps.AppBase", "properties", ...
+            source = strjoin(["classdef GridStateFixture < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Grid matlab.ui.container.GridLayout", ...
                 "First matlab.ui.control.Button", "Second matlab.ui.control.Button", "Third matlab.ui.control.Button", ...
                 "end", "methods", "function app = GridStateFixture", "createComponents(app);", "end", ...

@@ -1,6 +1,6 @@
 function results = runYamadaUpdateDistribution(options)
 % runYamadaUpdateDistribution Trace real edits, additions, geometry publication, and render acknowledgement.
-%   The production editor is unchanged. All fixtures are synthetic AppBase source.
+%   The production editor is unchanged. All fixtures are synthetic handle-based source.
 arguments (Input)
     options.OutputFolder (1, 1) string
     options.Case (1, 1) string {mustBeMember(options.Case, ["absolute", "flatgrid", "nestedgrid"])} = "nestedgrid"
@@ -360,7 +360,7 @@ for group = 1:3
         end
     end
 end
-source = strjoin(["classdef UpdateDistributionFixture < matlab.apps.AppBase"; "properties"; ...
+source = strjoin(["classdef UpdateDistributionFixture < handle"; "properties"; ...
     properties; "end"; "methods"; "function app = UpdateDistributionFixture"; "createComponents(app);"; ...
     "end"; "function createComponents(app)"; body; "end"; "end"; "end"], sprintf('\r\n'));
 fixture = fullfile(options.OutputFolder, "UpdateDistributionFixture.m");

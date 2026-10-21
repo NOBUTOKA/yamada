@@ -1,5 +1,5 @@
 classdef ModelValidator
-    % ModelValidator Validate shared AppBase document and component models.
+    % ModelValidator Validate shared handle-based document and component models.
     %   This static utility checks identifiers, hierarchy, registry support, and
     %   property edit safety. It reports structured diagnostics without mutating
     %   component values or generating source.

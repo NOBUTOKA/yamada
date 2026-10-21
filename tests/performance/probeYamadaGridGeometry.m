@@ -1,6 +1,6 @@
 function snapshots = probeYamadaGridGeometry(options)
 % probeYamadaGridGeometry Compare fresh boundary reconstruction with settled native measurements.
-%   Parse a fixture and render registered controls without executing its AppBase class.
+%   Parse a fixture and render registered controls without executing its handle-based class.
 arguments (Input)
     options.FixturePath (1, 1) string
     options.OutputFolder (1, 1) string

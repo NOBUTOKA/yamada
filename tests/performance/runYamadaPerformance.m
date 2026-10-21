@@ -346,10 +346,10 @@ arguments (Output)
     fixture (1, 1) string
 end
 if options.Case == "gallery"
-    fixture = fullfile(projectRoot, "tests", "fixtures", "ControlGalleryApp.m");
+    fixture = fullfile(projectRoot, "tests", "fixtures", "handle", "ControlGalleryApp.m");
     return
 elseif options.Case == "navigation"
-    fixture = fullfile(projectRoot, "tests", "fixtures", "NavigationDataApp.m");
+    fixture = fullfile(projectRoot, "tests", "fixtures", "handle", "NavigationDataApp.m");
     return
 end
 document = macd.model.NewAppFactory.createEmpty("PerformanceFixture", registry);

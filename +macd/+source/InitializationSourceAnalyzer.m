@@ -132,21 +132,14 @@ classdef InitializationSourceAnalyzer
             reason = "";
             % Argument declarations are structural syntax, never executable instance calls.
             if ~isempty(regexp(code, '^(arguments|function|methods|properties|classdef)(?!\w)', 'once')), return, end
-            % AppBase's startup wrapper executes its method during construction.
-            startup = regexp(code, '^runStartupFcn\s*\(\s*app\s*,\s*@(?:app\s*\.\s*)?(\w+)\s*\)$', 'tokens', 'once');
-            if isempty(startup)
-                startup = regexp(code, '^runStartupFcn\s*\(\s*app\s*,\s*@\(\s*app\s*\)\s*(\w+)\s*\(\s*app(?:\s*,[\s\S]*)?\)\s*\)$', 'tokens', 'once');
-            end
-            if ~isempty(startup)
-                if any(names == string(startup{1}))
-                    target = string(startup{1});
-                else
-                    reason = "The startup method cannot be resolved within this class.";
-                end
+            % Dynamic initialization dispatch cannot be resolved without execution.
+            if ~isempty(regexp(code, '^(?:(?:\[[^\]]*\]|\w+|app\s*\.\s*\w+)\s*=\s*)?(?:feval\s*\(|app\s*\.\s*\()', 'once'))
+                reason = "Dynamic initialization dispatch cannot be resolved statically.";
                 return
             end
-            if ~isempty(regexp(code, '^runStartupFcn\s*\(|^(?:(?:\[[^\]]*\]|\w+|app\s*\.\s*\w+)\s*=\s*)?(?:feval\s*\(|app\s*\.\s*\()', 'once'))
-                reason = "Dynamic initialization dispatch cannot be resolved statically.";
+            % A source-bound destruction listener registers deferred behavior only.
+            if ~any(blockedNames == "addlistener") && ~isempty(regexp(strtrim(source), ...
+                    '^addlistener\s*\(\s*app\.\w+\s*,\s*["'']ObjectBeingDestroyed["'']\s*,\s*@app\.\w+\s*\)$', 'once'))
                 return
             end
             if ~contains(code, "@") && ~isempty(regexp(code, '(?<!\w)(eval|evalc|evalin|feval|str2func|subsref|subsasgn)\s*\(|(?<!\w)app\s*\.\s*\(', 'once'))
@@ -217,7 +210,7 @@ classdef InitializationSourceAnalyzer
             end
             if any(names == string(call.name))
                 target = string(call.name);
-            elseif ~any(string(call.name) == [string(methods("matlab.apps.AppBase"))', "registerApp", "runStartupFcn", "createCallbackFcn"])
+            elseif ~any(string(call.name) == string(methods("handle"))')
                 reason = "Initialization call '" + string(call.name) + "' cannot be resolved within this class.";
             end
         end

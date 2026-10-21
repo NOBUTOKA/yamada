@@ -70,9 +70,9 @@ grids = findall(popup, "Type", "uigridlayout");
 assert(any(arrayfun(@(grid) string(grid.Scrollable) == "on", grids)));
 exportapp(popup, fullfile(outputDirectory, "callback-root-popup.png"));
 clickAction(popup, "Add", "SizeChangedFcn");
-assert(contains(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn"));
+assert(contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
 clickAction(popup, "Delete", "SizeChangedFcn");
-assert(~contains(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn"));
+assert(~contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
 
 % Deleting the actual target closes its popup and undo restores the component record.
 close(popup);
@@ -92,10 +92,10 @@ tree = findall(window, "Type", "uitree");
 popup = openPopup(test, tree, app.Document.RootComponentId);
 undo = findall(window, "Type", "uimenu", "Text", "&Undo");
 undo.MenuSelectedFcn(undo, []);
-assert(contains(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn"));
+assert(contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
 redo = findall(window, "Type", "uimenu", "Text", "&Redo");
 redo.MenuSelectedFcn(redo, []);
-assert(~contains(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn"));
+assert(~contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
 
 % Reload externally saved method bodies through F5 while the modal popup has focus.
 clickAction(popup, "Add", "SizeChangedFcn");
@@ -120,7 +120,7 @@ states = macd.source.CallbackSourceAnalyzer.analyze(app.Document, app.Document.R
 handler = states([states.Name] == "SizeChangedFcn").HandlerName;
 saved = app.Document.GeneratedText;
 saved = replace(saved, 'app.UIFigure.Visible = "on";', ...
-    "app.UIFigure.WindowKeyPressFcn = createCallbackFcn(app, @" + handler + ", true);" + newline + ...
+    "app.UIFigure.WindowKeyPressFcn = @app." + handler + ";" + newline + ...
     '        app.UIFigure.Visible = "on";');
 saved = saved + join(repmat("% External long-source verification", 2000, 1), newline) + newline;
 macd.source.SourceWriter.write(path, saved, "CRLF");
@@ -158,7 +158,7 @@ clickAction(popup, "Add", "SizeChangedFcn");
 save = findall(window, "Type", "uimenu", "Text", "&Save");
 save.MenuSelectedFcn(save, []);
 assert(~app.Document.IsDirty);
-assert(contains(string(fileread(path)), "SizeChangedFcn = createCallbackFcn"));
+assert(contains(string(fileread(path)), "SizeChangedFcn = @app."));
 
 % Open and New must dispose popup targets; repeated opens must not accumulate dialogs.
 open.MenuSelectedFcn(open, []);
@@ -265,8 +265,8 @@ dropHandler = document.CallbackEdits(end).HandlerName;
 source = macd.source.RoundTripGenerator(registry).generate(document);
 source = replace(source, "% Add callback behavior here.", ...
     "assignin('base','macdCallbackWorkflowSentinel',true);");
-source = replace(source, "@" + rightHandler + ", true", "@" + leftHandler + ", true");
-source = replace(source, "createCallbackFcn(app, @" + dropHandler + ", true)", ...
+source = replace(source, "@app." + rightHandler, "@app." + leftHandler);
+source = replace(source, "@app." + dropHandler, ...
     "@(src,event) disp(event)");
 leftName = left.Name;
 rightName = right.Name;

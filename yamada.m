@@ -1,5 +1,5 @@
-classdef yamada < matlab.apps.AppBase
-    % yamada Edit programmatic AppBase classes without executing them.
+classdef yamada < handle
+    % yamada Edit programmatic handle-based classes without executing them.
     %   This application coordinates the shared document model, conservative source
     %   parser, source generators, hierarchy browser, safe preview, property
     %   inspector, and diagnostics. It never instantiates an opened application.
@@ -8,7 +8,7 @@ classdef yamada < matlab.apps.AppBase
     %       editor = yamada();
 
     properties (SetAccess = private)
-        % Document - Current new or parsed AppBase document, when available.
+        % Document - Current new or parsed handle-based document, when available.
         Document macd.model.DocumentModel = macd.model.DocumentModel.empty
         % SelectedComponentId - Stable identity selected in the hierarchy browser.
         SelectedComponentId string = ""
@@ -87,6 +87,14 @@ classdef yamada < matlab.apps.AppBase
         InteractionStartPoint double = [0 0]
         InteractionStartPosition double = [0 0 0 0]
         InteractionPosition double = [0 0 0 0]
+        ResizeHandles matlab.ui.container.Panel = matlab.ui.container.Panel.empty
+        ResizeTargetId string = ""
+        ResizeKind string = ""
+        ResizeStartPoint double = [0 0]
+        ResizeStartPosition double = [0 0 0 0]
+        DragComponentId string = ""
+        DragStartPoint double = [0 0]
+        DragStartPosition double = [0 0 0 0]
         DiagnosticsDrawer matlab.ui.container.Panel
         DiagnosticsGrid matlab.ui.container.GridLayout
         DiagnosticsSummaryLabel matlab.ui.control.Label
@@ -118,12 +126,19 @@ classdef yamada < matlab.apps.AppBase
             app.DefaultValueProvider = macd.ui.inspector.DefaultValueProvider(app.Registry);
             app.PreviewRenderer = macd.ui.PreviewRenderer(app.Registry);
             app.GridLayoutOverlayDataBuilder = macd.ui.GridLayoutOverlayDataBuilder();
-            app.createComponents();
-            app.createMenus();
-            app.newDocument("UntitledApp");
-            app.UIFigure.Visible = "on";
+            try
+                app.createComponents();
+                addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
+                app.createMenus();
+                app.newDocument("UntitledApp");
+                app.UIFigure.Visible = "on";
+            catch exception
+                delete(app);
+                rethrow(exception);
+            end
 
-            if nargout == 0
+            % Keep command-window ans unchanged while figure callbacks retain the owner.
+            if ~nargout
                 clear app
             end
         end
@@ -142,7 +157,7 @@ classdef yamada < matlab.apps.AppBase
                 app.TabLayoutTimer = timer.empty;
             end
 
-            % Avoid deleting an already closed figure during AppBase cleanup.
+            % Avoid deleting a figure whose destruction already triggered owner cleanup.
             if ~isempty(app.UIFigure) && isvalid(app.UIFigure)
                 delete(app.UIFigure);
             end
@@ -150,6 +165,16 @@ classdef yamada < matlab.apps.AppBase
     end
 
     methods (Access = private)
+        function figureDeleted(app, ~, ~)
+            % figureDeleted Release editor resources when its root figure is destroyed.
+            arguments (Input)
+                app (1, 1) yamada
+                ~
+                ~
+            end
+            if isvalid(app), delete(app); end
+        end
+
         function createComponents(app)
             % createComponents Build the editor-owned interface controls.
             arguments (Input)
@@ -327,7 +352,7 @@ classdef yamada < matlab.apps.AppBase
         end
 
         function openButtonPushed(app)
-            % openButtonPushed Select and parse an existing AppBase source file.
+            % openButtonPushed Select and parse an existing handle-based source file.
             arguments (Input)
                 app (1, 1) yamada
             end

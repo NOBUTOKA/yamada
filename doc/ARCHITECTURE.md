@@ -67,7 +67,7 @@ checkpoint. The editor title is derived from the document identity and `IsDirty`
 | [`resources/component-catalog/R2024a`](../resources/component-catalog/R2024a) | Runtime component, property, grouping, ordering, context, and Inspector-row data |
 | [`resources/EditorInteractionOverlay.html`](../resources/EditorInteractionOverlay.html) | Transparent HTML/SVG pointer and selection layer for the canvas |
 | [`dev/component-data`](../dev/component-data) | Audited source data, design artifacts, and reproducible catalog-generation scripts |
-| [`tests`](../tests) | Unit tests and preserved AppBase input fixtures |
+| [`tests`](../tests) | Unit tests, preserved original inputs, and adapted handle-class fixtures |
 
 ## Callback Management
 
@@ -191,13 +191,20 @@ then records the insertion in model history.
 the existing line-ending convention, and retains the exact decoded source.
 `MatlabLexicalScanner` first identifies safe statement boundaries around strings,
 comments, continuations, and balanced delimiters. The parser then recognizes the
-supported AppBase subset:
+supported handle-class subset:
 
 - class inheritance;
 - component property declarations;
 - direct registered factory calls;
 - parent relationships; and
 - direct component property assignments with supported literals.
+
+The supported app directly inherits from `handle` and owns one `uifigure`.
+Other UI components are descendants of that figure as a user precondition;
+there is no dedicated descendant-membership validation. Constructor tracing
+follows ordinary same-class calls. A constructor try/catch that only deletes
+the owner and rethrows the caught exception is traced on its successful path;
+other guarded initialization remains uncertain.
 
 `MatlabLiteralParser` interprets only the conservative literal subset. Callback
 values, arbitrary expressions, unsupported statements, and uncertain regions are
@@ -540,7 +547,7 @@ generators, and tests consume the same diagnostic model.
 `RoundTripGenerator` is the editor's generation entry point.
 
 - If a document has no original source, it delegates to `NewAppGenerator`, which
-  owns the complete minimal AppBase class skeleton and deterministic component
+  owns the complete minimal handle-class app skeleton and deterministic component
   construction order.
 - For an opened document, no-edit generation returns `OriginalText` unchanged.
   Edited literal assignments replace only owned `SourceSpan` ranges. New
@@ -548,6 +555,18 @@ generators, and tests consume the same diagnostic model.
   limited to owned non-root leaves with no unknown external reference.
 - Edits are rejected if required spans are missing, deletion ownership is
   ambiguous, or calculated edits overlap.
+
+`CallbackSourceEdits` owns new bound-method registration and handler templates.
+All four generation paths use that formatter, while existing registrations are
+preserved as source during localized edits and reparenting. Handler inputs are
+`(app, source, event)`. The default close binding is infrastructure: Add replaces
+it with an editable handler and Delete restores it.
+
+Both the editor and generated apps own their figure lifetime explicitly. A
+figure-bound `ObjectBeingDestroyed` listener deletes a still-valid owner without
+replacing user `DeleteFcn` code. Owner deletion skips a figure already being
+destroyed. Constructor failure deletes the partially constructed owner and
+rethrows the original exception; destructors contain no argument-validation block.
 
 Diff Preview compares `OriginalText` with the generated candidate before writing.
 The application enables in-place Save only after Open or Save As establishes a

@@ -1,5 +1,5 @@
 classdef RoundTripGenerator
-    % RoundTripGenerator Apply conservative localized edits to parsed AppBase source.
+    % RoundTripGenerator Apply conservative localized edits to parsed handle-based source.
     %   This generator preserves an opened document byte-for-byte until an editable
     %   value changes. It only rewrites owned direct assignments and only inserts
     %   or removes components when declarations and initialization spans are known.
@@ -307,8 +307,7 @@ classdef RoundTripGenerator
                 pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
                 for callback = pending(:)'
                     if callback.Action == "Add"
-                        creationText = creationText + eol + "            app." + component.Name + "." + callback.Name + ...
-                            " = createCallbackFcn(app, @" + callback.HandlerName + ", true);";
+                        creationText = creationText + eol + "            " + macd.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName);
                     end
                 end
                 entries = macd.model.PropertyApplicationPlanner.forComponent( ...

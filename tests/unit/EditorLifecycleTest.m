@@ -83,7 +83,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             original = app.Document;
-            macd.source.SourceWriter.write(target, "not an AppBase class", "CRLF");
+            macd.source.SourceWriter.write(target, "not an handle-based class", "CRLF");
             invokeEditorMenu("Reload Source (F5)");
             testCase.verifyTrue(app.Document == original);
             addPaletteComponent("Button");
@@ -155,7 +155,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyEqual(app.Document.ClassName, string(base));
             savedSource = string(fileread(target));
             testCase.verifySubstring(savedSource, "classdef " + string(base) + ...
-                " < matlab.apps.AppBase");
+                " < handle");
             testCase.verifySubstring(savedSource, "function app = " + string(base));
             testCase.verifySubstring(savedSource, "app (1, 1) " + string(base));
             testCase.verifyFalse(contains(savedSource, "app (1, 1) UntitledApp"));
@@ -169,14 +169,14 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Save");
             testCase.verifyFalse(app.Document.IsDirty);
             testCase.verifySubstring(string(fileread(target)), ...
-                "classdef " + string(base) + " < matlab.apps.AppBase");
+                "classdef " + string(base) + " < handle");
             clear appCleanup
         end
 
         function saveAsRenamesOpenedClassAndLaterSaveKeepsItsIdentity(testCase)
             % saveAsRenamesOpenedClassAndLaterSaveKeepsItsIdentity Preserve parsed source edits across saves.
             fixture = string(fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
-                "fixtures", "SimpleCalculatorApp.m"));
+                "fixtures", "handle", "SimpleCalculatorApp.m"));
             target = string(tempname) + ".m";
             cleanupFile = onCleanup(@() deleteTemporaryFile(target));
             service = lifecycleForTest(struct("OpenPath", fixture, "SavePath", target));
@@ -190,7 +190,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyEqual(app.Document.ClassName, string(baseName));
             source = string(fileread(target));
             testCase.verifySubstring(source, "classdef " + string(baseName) + ...
-                " < matlab.apps.AppBase");
+                " < handle");
             testCase.verifySubstring(source, "function app = " + string(baseName));
             testCase.verifyFalse(contains(source, "function app = SimpleCalculatorApp"));
 
@@ -199,7 +199,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Save");
             source = string(fileread(target));
             testCase.verifySubstring(source, "classdef " + string(baseName) + ...
-                " < matlab.apps.AppBase");
+                " < handle");
             testCase.verifySubstring(source, "Changed after Save As");
             clear cleanupApp cleanupFile
         end
@@ -210,7 +210,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             target = string(tempname) + ".m";
             originalCleanup = onCleanup(@() deleteTemporaryFile(originalPath));
             targetCleanup = onCleanup(@() deleteTemporaryFile(target));
-            source = strjoin(["classdef SaveHistoryFixture < matlab.apps.AppBase", "properties", ...
+            source = strjoin(["classdef SaveHistoryFixture < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Choice matlab.ui.control.DropDown", "end", "methods", ...
                 "function app = SaveHistoryFixture", "createComponents(app);", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
@@ -345,7 +345,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % newAndOpenUseOneDiscardOrCancelGuard Preserve or replace only after the selected answer.
 
             fixture = fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
-                "fixtures", "SimpleCalculatorApp.m");
+                "fixtures", "handle", "SimpleCalculatorApp.m");
             canceled = lifecycleForTest(struct("NewClassName", "NextApp", ...
                 "OpenPath", fixture, "UnsavedChoice", "Cancel"));
             app = yamada(canceled);

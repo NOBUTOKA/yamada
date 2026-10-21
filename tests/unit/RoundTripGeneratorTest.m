@@ -5,7 +5,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
         function newChildFollowsParentCreationAcrossHelpers(testCase)
             % newChildFollowsParentCreationAcrossHelpers Use execution visits when helper file order differs.
             registry = macd.model.ComponentRegistry.createDefault();
-            source = strjoin(["classdef AnchorApp < matlab.apps.AppBase"; "properties"; ...
+            source = strjoin(["classdef AnchorApp < handle"; "properties"; ...
                 "UIFigure matlab.ui.Figure"; "EarlyPanel matlab.ui.container.Panel"; ...
                 "LatePanel matlab.ui.container.Panel"; "end"; "methods"; ...
                 "function app = AnchorApp"; "createEarly(app);"; "createLate(app);"; "end"; ...
@@ -44,7 +44,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             [source, diagnostics] = generator.generate(document);
 
             testCase.verifySubstring(source, "app.LeftValueLabel.Text = ""First value"";");
-            testCase.verifySubstring(source, "app.CalculateButton.ButtonPushedFcn = createCallbackFcn(");
+            testCase.verifySubstring(source, "app.CalculateButton.ButtonPushedFcn = @app.CalculateButtonPushed");
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
         end
 
@@ -110,7 +110,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                 'app\.\w+\.(InnerPosition|OuterPosition|Number)\s*=', "once"));
             testCase.verifySubstring(source, "app.GridLayout.CustomUnknownProperty = 123;");
             testCase.verifySubstring(source, "app.UIFigure.Position =");
-            testCase.verifySubstring(source, "app.CalculateButton.ButtonPushedFcn = createCallbackFcn(");
+            testCase.verifySubstring(source, "app.CalculateButton.ButtonPushedFcn = @app.CalculateButtonPushed");
         end
 
         function deletionRejectsExternalReference(testCase)
@@ -135,7 +135,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                 "app.Tree = uitree(app.UIFigure, 'checkbox', InnerPosition=[10 20 150 200], Position=[30 40 160 210]);", ...
                 "app.Tree = uitree(app.UIFigure, 'checkbox', 'InnerPosition', [10 20 150 200], 'Position', [30 40 160 210]);"};
             for body = bodies
-                original = strjoin(["classdef GeometryFixture < matlab.apps.AppBase", "properties", ...
+                original = strjoin(["classdef GeometryFixture < handle", "properties", ...
                     "UIFigure matlab.ui.Figure", "Tree matlab.ui.container.CheckBoxTree", "end", "methods", ...
                     "function app = GeometryFixture", "createComponents(app);", "end", ...
                     "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
@@ -217,7 +217,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
             testPath = mfilename("fullpath");
             fixturePath = string(fullfile(fileparts(fileparts(testPath)), ...
-                "fixtures", "SimpleCalculatorApp.m"));
+                "fixtures", "handle", "SimpleCalculatorApp.m"));
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
             generator = macd.source.RoundTripGenerator(registry);

@@ -47,7 +47,7 @@ classdef DocumentLifecycleService < handle
         end
 
         function [accepted, filePath] = requestOpenPath(obj)
-            % requestOpenPath Request an existing AppBase source path.
+            % requestOpenPath Request an existing handle-based source path.
             [accepted, filePath] = obj.RequestOpenPathFcn();
             accepted = logical(accepted);
             filePath = string(filePath);
@@ -188,7 +188,7 @@ classdef DocumentLifecycleService < handle
 
         function [accepted, filePath] = requestNativeOpenPath()
             % requestNativeOpenPath Show the native Open-file dialog.
-            [fileName, folder] = uigetfile("*.m", "Open AppBase class");
+            [fileName, folder] = uigetfile("*.m", "Open handle-based class");
             accepted = ~isequal(fileName, 0);
             filePath = "";
             if accepted
@@ -198,7 +198,7 @@ classdef DocumentLifecycleService < handle
 
         function [accepted, filePath] = requestNativeSavePath(suggestedName)
             % requestNativeSavePath Show the native Save As target dialog.
-            [fileName, folder] = uiputfile("*.m", "Save AppBase class", char(suggestedName));
+            [fileName, folder] = uiputfile("*.m", "Save handle-based class", char(suggestedName));
             accepted = ~isequal(fileName, 0);
             filePath = "";
             if accepted

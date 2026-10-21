@@ -1,5 +1,5 @@
 classdef AppClassIdentityRewriter
-    % AppClassIdentityRewriter Align an AppBase class identity with its saved filename.
+    % AppClassIdentityRewriter Align an handle-based class identity with its saved filename.
     %   This utility changes the class declaration, constructor declaration,
     %   self types in arguments blocks, and class help examples. Other source
     %   text, including string literals and component properties, is preserved.
@@ -25,14 +25,14 @@ classdef AppClassIdentityRewriter
                 return
             end
 
-            % Locate the supported AppBase declaration without changing line endings.
+            % Locate the supported handle-based declaration without changing line endings.
             original = char(source);
             lines = regexp(original, '\r\n|\n|\r', 'split');
             separators = regexp(original, '\r\n|\n|\r', 'match');
             declaration = [];
             for index = 1:numel(lines)
                 tokens = regexp(lines{index}, ...
-                    '^(?<prefix>[ \t]*classdef[ \t]+)(?<name>[A-Za-z]\w*)(?<suffix>[ \t]*<[ \t]*matlab\.apps\.AppBase(?:[ \t]*%.*)?)$', ...
+                    '^(?<prefix>[ \t]*classdef[ \t]+)(?<name>[A-Za-z]\w*)(?<suffix>[ \t]*<[ \t]*handle(?:[ \t]*%.*)?)$', ...
                     'names', 'once');
                 if ~isempty(tokens)
                     declaration = index;
@@ -43,7 +43,7 @@ classdef AppClassIdentityRewriter
             if isempty(declaration)
                 diagnostics(end + 1) = macd.model.Diagnostic( ...
                     "class-rename-unsupported", "error", ...
-                    "The AppBase class declaration could not be renamed safely.");
+                    "The handle-based class declaration could not be renamed safely.");
                 return
             end
             if oldName == className

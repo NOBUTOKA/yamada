@@ -221,8 +221,7 @@ classdef SubtreeReparentSourceEdits
             pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
             for callback = pending(:)'
                 if callback.Action == "Add"
-                    text = text + ending + "            app." + component.Name + "." + callback.Name + ...
-                        " = createCallbackFcn(app, @" + callback.HandlerName + ", true);";
+                    text = text + ending + "            " + macd.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName);
                 end
             end
             entries = macd.model.PropertyApplicationPlanner.forComponent(component, document, registry);

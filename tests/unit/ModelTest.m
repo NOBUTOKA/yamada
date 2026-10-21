@@ -267,7 +267,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % Use a parsed fixture so deletion remains source-backed and reversible.
             testPath = mfilename("fullpath");
             fixturePath = string(fullfile(fileparts(fileparts(testPath)), ...
-                "fixtures", "SimpleCalculatorApp.m"));
+                "fixtures", "handle", "SimpleCalculatorApp.m"));
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
             target = document.getComponentByName("LeftValueLabel");
@@ -583,7 +583,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % Source preservation takes precedence over removing a parsed literal.
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseFile(fullfile( ...
-                fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m"), registry);
+                fileparts(fileparts(mfilename("fullpath"))), "fixtures", "handle", "SimpleCalculatorApp.m"), registry);
             label = document.getComponentByName("LeftValueLabel");
             testCase.verifyError(@() document.resetProperty(label.Id, "Text"), ...
                 "macd:DocumentModel:ParsedPropertyResetUnsupported");
@@ -595,7 +595,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             registry = macd.model.ComponentRegistry.createDefault();
             newDocument = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
             fixturePath = fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
-                "fixtures", "SimpleCalculatorApp.m");
+                "fixtures", "handle", "SimpleCalculatorApp.m");
             parsedDocument = macd.source.AppSourceParser.parseFile(fixturePath, registry);
 
             testCase.verifyFalse(newDocument.IsDirty);

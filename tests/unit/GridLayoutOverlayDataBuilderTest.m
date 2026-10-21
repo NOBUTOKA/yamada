@@ -185,7 +185,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             projectRoot = fileparts(fileparts(fileparts(testPath)));
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
-                "tests", "fixtures", "SimpleCalculatorApp.m"), registry);
+                "tests", "fixtures", "handle", "SimpleCalculatorApp.m"), registry);
             grid = document.getComponentByName("GridLayout");
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
@@ -218,7 +218,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             projectRoot = fileparts(fileparts(fileparts(testPath)));
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
-                "tests", "fixtures", "ControlGalleryApp.m"), registry);
+                "tests", "fixtures", "handle", "ControlGalleryApp.m"), registry);
             grid = document.getComponentByName("FormGrid");
             selected = document.getComponentByName("DueDatePicker");
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);

@@ -1,5 +1,5 @@
 classdef DocumentModel < handle
-    % DocumentModel Hold shared state for new and parsed AppBase documents.
+    % DocumentModel Hold shared state for new and parsed handle-based documents.
     %   This handle class owns document identity, ordered component records,
     %   source snapshots, diagnostics, unknown regions, and pending edits. It does
     %   not parse source, render UI controls, or generate MATLAB code itself.
@@ -946,7 +946,7 @@ classdef DocumentModel < handle
                     error("macd:DocumentModel:UnsafeComponentRename", "Resolve source generation errors before renaming.");
                 end
                 macd.source.ComponentNameRewriter.validate(source, oldName, newName);
-                inherited = [string(properties("matlab.apps.AppBase")); string(methods("matlab.apps.AppBase"))];
+                inherited = [string(properties("handle")); string(methods("handle"))];
                 if any(inherited == newName) || newName == obj.ClassName || ...
                         any(string({obj.Components.Name}) == newName) || ...
                         any(string({before.OldName}) == newName & ...
@@ -960,7 +960,7 @@ classdef DocumentModel < handle
                 members = macd.source.ComponentNameRewriter.memberNames(source);
                 code = macd.source.ComponentNameRewriter.codeMask(source);
                 identifiers = string(regexp(code, '[A-Za-z]\w*', 'match'));
-                used = [members, identifiers, string({before.OldName}), newName, obj.ClassName, "createComponents", "delete"];
+                used = [members, identifiers, string({before.OldName}), newName, obj.ClassName, "createComponents", "delete", "figureDeleted"];
                 for state = states(:)'
                     handler = state.HandlerName;
                     if strlength(handler) == 0, continue, end
@@ -1041,20 +1041,16 @@ classdef DocumentModel < handle
                 handler = stem;
                 suffix = 1;
                 used = [string({obj.Components.Name}), string({after.HandlerName}), ...
-                    string({obj.RenameEdits.OldName}), string({obj.RenameEdits.NewName}), obj.ClassName, "createComponents", "delete"];
+                    string({obj.RenameEdits.OldName}), string({obj.RenameEdits.NewName}), obj.ClassName, "createComponents", "delete", "figureDeleted"];
                 while any(used == handler) || ~isempty(regexp(obj.OriginalText, ...
                         '(?<!\w)' + handler + '(?!\w)', 'once'))
                     suffix = suffix + 1;
                     handler = stem + "_" + suffix;
                 end
-                lines = ["        function " + handler + "(app, event)"; ...
-                    "            % " + handler + " Handle the " + name + " callback."; ...
-                    "            arguments (Input)"; "                app (1, 1) " + obj.ClassName; ...
-                    "                event"; "            end"; ""; ...
-                    "            % Add callback behavior here."; "        end"];
                 ending = string(newline);
                 if obj.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
-                method = strjoin(lines, ending);
+                method = macd.source.CallbackSourceEdits.handlerText(handler, name, obj.ClassName, ending, ...
+                    component.Factory == "uifigure" && name == "CloseRequestFcn");
             end
             if action == "Add" || ~isempty(original.BindingSpan) || ~isempty(original.MethodSpan)
                 after(end + 1) = macd.model.CallbackEdit(componentId, name, action, handler, method, original, obj.OriginalText);
@@ -1376,8 +1372,8 @@ classdef DocumentModel < handle
             newIds = strings(size(oldIds));
             newNames = strings(size(oldIds));
             usedNames = [string({obj.Components.Name}), string({obj.CallbackEdits.HandlerName}), ...
-                string(methods("matlab.apps.AppBase"))', string(properties("matlab.apps.AppBase"))', ...
-                obj.ClassName, "createComponents", "delete"];
+                string(methods("handle"))', string(properties("handle"))', ...
+                obj.ClassName, "createComponents", "delete", "figureDeleted"];
             if isprop(obj, "RenameEdits")
                 mappings = obj.("RenameEdits");
                 usedNames = [usedNames string({mappings.OldName})];

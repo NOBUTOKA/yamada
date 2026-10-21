@@ -121,15 +121,15 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             add = findall(popup, "Tag", "macd-callback-add", "UserData", "SizeChangedFcn");
             add.ButtonPushedFcn(add, []);
             testCase.verifyEqual(app.Document.HistoryIndex, 1);
-            testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn");
+            testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = @app.");
             remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "SizeChangedFcn");
             testCase.verifyEqual(string(remove.Enable), "on");
             remove.ButtonPushedFcn(remove, []);
             testCase.verifyEqual(app.Document.HistoryIndex, 2);
-            testCase.verifyFalse(contains(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn"));
+            testCase.verifyFalse(contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
             undo = findall(figure, "Type", "uimenu", "Text", "&Undo");
             undo.MenuSelectedFcn(undo, []);
-            testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = createCallbackFcn");
+            testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = @app.");
             remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "SizeChangedFcn");
             testCase.verifyEqual(string(remove.Enable), "on");
         end
