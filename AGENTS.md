@@ -29,7 +29,9 @@
   MATLAB function signature and supported value types make validation practical.
   Functions without return values do not need an empty output arguments block.
   Omit arguments blocks where MATLAB forbids them, including methods declared in
-  a `methods (Test)` block of a `matlab.unittest.TestCase` class.
+  a `methods (Test)` block of a `matlab.unittest.TestCase` class. Never add an
+  arguments block to a handle-class `delete` method: MATLAB will not recognize
+  that method as a destructor when argument validation is present.
 - Add concise English comments before meaningful groups of internal operations,
   especially validation, model mutation, traversal, generation, I/O, and cleanup.
   Do not comment self-evident individual assignments.
