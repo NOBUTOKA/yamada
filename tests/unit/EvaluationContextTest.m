@@ -2,6 +2,83 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
     % EvaluationContextTest Verify exact-input caching without shared mutable results.
     %   Direct changes and history branching must not reuse an obsolete evaluation.
     methods (Test)
+        function manyChildrenShareExactNestedDependencyScopes(testCase)
+            % manyChildrenShareExactNestedDependencyScopes Bound repeated traversals while preserving fresh resolver results.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("SharedScopeFixture", registry);
+            outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            inner = document.insertComponent(registry, "uigridlayout", outer.Id);
+            nestedGroup = document.insertComponent(registry, "uibuttongroup", inner.Id);
+            document.insertComponent(registry, "uiradiobutton", nestedGroup.Id);
+            separate = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);
+            document.insertComponent(registry, "uiradiobutton", group.Id);
+            absolute = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            leaves = macd.model.ComponentRecord.empty;
+            for index = 1:32
+                parentId = inner.Id;
+                if mod(index, 2) == 0, parentId = separate.Id; end
+                leaves(end + 1) = document.insertComponent(registry, "uilabel", parentId); %#ok<AGROW>
+            end
+            for component = document.Components
+                document.getEffectivePropertyStates(registry, component.Id);
+            end
+            candidate = document.structuralCandidate(registry);
+            % Snapshot traversal may reorder records, so warm the actual candidate before measuring inheritance.
+            for component = candidate.Components
+                candidate.getEffectivePropertyStates(registry, component.Id);
+            end
+            candidate.getComponent(leaves(1).Id).setProperty("FontSize", 19);
+            profile clear; profile on;
+            stopProfile = onCleanup(@() profile("off"));
+            context = candidate.evaluationContext(registry);
+            profile off; functions = profile("info").FunctionTable; clear stopProfile
+            scopes = endsWith(string({functions.FunctionName}), "EvaluationContext.stateScope");
+            testCase.verifyLessThanOrEqual(sum([functions(scopes).NumCalls]), 5);
+            for id = [outer.Id, inner.Id, nestedGroup.Id, leaves(1).Id]
+                [~, found] = context.lookup("states:" + id);
+                testCase.verifyFalse(found);
+            end
+            for id = [separate.Id, leaves(2).Id, group.Id, absolute.Id]
+                [~, found] = context.lookup("states:" + id);
+                testCase.verifyTrue(found);
+            end
+            fresh = candidate.structuralCandidate();
+            for component = candidate.Components
+                [actual, diagnostics] = candidate.getEffectivePropertyStates(registry, component.Id);
+                [expected, expectedDiagnostics] = fresh.getEffectivePropertyStates(registry, component.Id);
+                testCase.verifyEqual([actual.Resolution], [expected.Resolution], component.Name);
+                testCase.verifyEqual(diagnostics, expectedDiagnostics, component.Name);
+            end
+        end
+
+        function invalidIdentityGraphsKeepConservativeScopeBehavior(testCase)
+            % invalidIdentityGraphsKeepConservativeScopeBehavior Preserve cycle invalidation and duplicate-id fallback.
+            for kind = ["cycle", "duplicate"]
+                registry = macd.model.ComponentRegistry.createDefault();
+                document = macd.model.NewAppFactory.createEmpty("InvalidScopeFixture", registry);
+                first = document.insertComponent(registry, "uilabel", document.RootComponentId);
+                second = document.insertComponent(registry, "uilabel", document.RootComponentId);
+                third = document.insertComponent(registry, "uilabel", document.RootComponentId);
+                if kind == "cycle"
+                    first.ParentId = second.Id;
+                    second.ParentId = first.Id;
+                else
+                    duplicate = macd.model.ComponentRecord(first.Id, "Duplicate", "uilabel", ...
+                        "matlab.ui.control.Label", "generated");
+                    duplicate.ParentId = document.RootComponentId;
+                    document.Components(end + 1) = duplicate;
+                end
+                context = document.evaluationContext(registry);
+                context.remember("states:" + first.Id, struct("Marker", 1));
+                third.Metadata.ScopeChange = true;
+                next = document.evaluationContext(registry);
+                [value, found] = next.lookup("states:" + first.Id);
+                testCase.verifyEqual(found, kind == "duplicate");
+                if found, testCase.verifyEqual(value.Marker, 1); end
+            end
+        end
+
         function nestedGridInheritanceKeepsUnrelatedScopes(testCase)
             % nestedGridInheritanceKeepsUnrelatedScopes Invalidate coupled descendants while retaining separate groups.
             registry = macd.model.ComponentRegistry.createDefault();

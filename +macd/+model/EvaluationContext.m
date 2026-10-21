@@ -47,12 +47,27 @@ classdef EvaluationContext < handle
             for index = 1:numel(after)
                 changed(index) = ~isequaln(before(index), after(index));
             end
+            % Nested coupled descendants share exactly the same complete dependency scope.
+            groups = macd.model.EvaluationContext.scopeGroups(after);
+            componentIds = string({after.Id});
+            checked = false(1, numel(after));
+            retained = false(1, numel(after));
             for name = names
                 id = extractAfter(name, "states:");
-                indices = macd.model.EvaluationContext.stateScope(after, id);
-                if ~isempty(indices) && ~any(changed(indices))
-                    obj.Values(char(name)) = previous.Values(char(name));
+                index = find(componentIds == id, 1);
+                if isempty(index), continue, end
+                group = groups(index);
+                if group > 0 && checked(group)
+                    reuse = retained(group);
+                else
+                    indices = macd.model.EvaluationContext.stateScope(after, id);
+                    reuse = ~isempty(indices) && ~any(changed(indices));
+                    if group > 0
+                        checked(group) = true;
+                        retained(group) = reuse;
+                    end
                 end
+                if reuse, obj.Values(char(name)) = previous.Values(char(name)); end
             end
         end
 
@@ -370,6 +385,42 @@ classdef EvaluationContext < handle
             [key, safe] = macd.model.EvaluationContext.freeze(key);
             key.Components = components;
             safe = safe && ownedSafe;
+        end
+
+        function groups = scopeGroups(components)
+            % scopeGroups Group identical coupled scopes without changing their dependency membership.
+            arguments (Input)
+                components struct
+            end
+            arguments (Output)
+                groups (1, :) double
+            end
+            count = numel(components);
+            groups = 1:count;
+            ids = string({components.Id});
+            if numel(unique(ids)) ~= count
+                groups(:) = 0;
+                return
+            end
+            coupled = ismember(string({components.Factory}), ["uigridlayout", "uibuttongroup"]);
+            if ~any(coupled), return, end
+            [~, parents] = ismember(string({components.ParentId}), ids);
+            for index = 1:count
+                current = index;
+                outer = 0;
+                visited = false(1, count);
+                while current > 0
+                    if visited(current)
+                        groups(index) = 0;
+                        break
+                    end
+                    visited(current) = true;
+                    if coupled(current), outer = current; end
+                    current = parents(current);
+                end
+                % Cycles and duplicate identities retain the established conservative traversal.
+                if groups(index) > 0 && outer > 0, groups(index) = outer; end
+            end
         end
 
         function indices = stateScope(components, id)
