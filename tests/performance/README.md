@@ -209,6 +209,13 @@ Inspector surface reuse. The default true explicitly selects the parent before
 every insertion; selection latency is recorded separately, while the insertion
 itself changes Inspector type from the parent to a Label.
 
+`ProfileParentSelection` profiles each explicit parent selection before an
+addition. It labels those samples `profile-selection-add-parent` and saves the
+matching raw/profile JSON files; do not include them among ordinary selection
+times. The flag defaults to false and does not change the application. Combine
+it with `Profile` to retain the same preceding property-profile sequence when
+investigating a cold parent selection from an earlier distribution run.
+
 `ExplicitValues=false` omits numeric Value assignments from the fixture so edits
 insert new settings. `AlternatingValueChanges` changes Field1 through the chosen
 `AlternatingTargetCount` repeatedly, timing selection separately and checking each

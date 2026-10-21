@@ -16,6 +16,7 @@ param(
     [bool]$Fit = $true,
     [bool]$Trace = $false,
     [switch]$Profile,
+    [switch]$ProfileParentSelection,
     [string]$OutputFolder = '',
     [int]$OperationTimeoutSeconds = 300,
     [int]$ProfileTimeoutSeconds = 600,
@@ -41,7 +42,7 @@ $manifest = @($tracked + $added | Sort-Object -Unique | ForEach-Object {
     }
 })
 [pscustomobject]@{commit = (git -C $projectRoot rev-parse HEAD); status = @(git -C $projectRoot status --short);
-    explicitValues = $ExplicitValues; parentEachAddition = $ParentEachAddition; alternatingValueChanges = $AlternatingValueChanges; alternatingTargetCount = $AlternatingTargetCount; comparisons = $Comparisons; fit = $Fit; trace = $Trace; additions = $Additions; count = $ComponentCount; samples = $Samples; profile = [bool]$Profile;
+    explicitValues = $ExplicitValues; parentEachAddition = $ParentEachAddition; alternatingValueChanges = $AlternatingValueChanges; alternatingTargetCount = $AlternatingTargetCount; comparisons = $Comparisons; fit = $Fit; trace = $Trace; additions = $Additions; count = $ComponentCount; samples = $Samples; profile = [bool]$Profile; profileParentSelection = [bool]$ProfileParentSelection;
     operationTimeoutSeconds = $OperationTimeoutSeconds; profileTimeoutSeconds = $ProfileTimeoutSeconds; caseTimeoutSeconds = $CaseTimeoutSeconds;
     nestedDepth = $NestedDepth; surfaceHeight = $SurfaceHeight; sources = $manifest} |
     ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $OutputFolder 'source-manifest.json') -Encoding utf8
@@ -55,12 +56,13 @@ foreach ($case in $Cases) {
     $quoteRoot = $projectRoot.Replace("'", "''")
     $quoteOutput = $caseFolder.Replace("'", "''")
     $profileLiteral = if ($Profile) { 'true' } else { 'false' }
+    $profileParentLiteral = if ($ProfileParentSelection) { 'true' } else { 'false' }
     $explicitLiteral = if ($ExplicitValues) { 'true' } else { 'false' }
     $parentLiteral = if ($ParentEachAddition) { 'true' } else { 'false' }
     $comparisonLiteral = if ($Comparisons) { 'true' } else { 'false' }
     $fitLiteral = if ($Fit) { 'true' } else { 'false' }
     $traceLiteral = if ($Trace) { 'true' } else { 'false' }
-    $expression = "cd('$quoteRoot'); addpath(pwd,fullfile(pwd,'tests','performance')); runYamadaUpdateDistribution(OutputFolder=string('$quoteOutput'),Case=string('$case'),ComponentCount=$ComponentCount,NestedDepth=$NestedDepth,SurfaceHeight=$SurfaceHeight,Samples=$Samples,Additions=$Additions,ExplicitValues=$explicitLiteral,ParentEachAddition=$parentLiteral,AlternatingValueChanges=$AlternatingValueChanges,AlternatingTargetCount=$AlternatingTargetCount,Comparisons=$comparisonLiteral,Fit=$fitLiteral,Trace=$traceLiteral,Profile=$profileLiteral);"
+    $expression = "cd('$quoteRoot'); addpath(pwd,fullfile(pwd,'tests','performance')); runYamadaUpdateDistribution(OutputFolder=string('$quoteOutput'),Case=string('$case'),ComponentCount=$ComponentCount,NestedDepth=$NestedDepth,SurfaceHeight=$SurfaceHeight,Samples=$Samples,Additions=$Additions,ExplicitValues=$explicitLiteral,ParentEachAddition=$parentLiteral,AlternatingValueChanges=$AlternatingValueChanges,AlternatingTargetCount=$AlternatingTargetCount,Comparisons=$comparisonLiteral,Fit=$fitLiteral,Trace=$traceLiteral,Profile=$profileLiteral,ProfileParentSelection=$profileParentLiteral);"
     $log = Join-Path $caseFolder 'matlab.log'
     $arguments = @('-wait', '-nosplash', '-logfile', ('"' + $log + '"'), '-batch', ('"' + $expression + '"'))
     $process = Start-Process -FilePath $Matlab -ArgumentList $arguments -PassThru -WindowStyle Hidden

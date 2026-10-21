@@ -16,6 +16,7 @@ arguments (Input)
     options.Comparisons (1, 1) logical = true
     options.Fit (1, 1) logical = true
     options.Profile (1, 1) logical = false
+    options.ProfileParentSelection (1, 1) logical = false
     options.Trace (1, 1) logical = false
 end
 arguments (Output)
@@ -90,7 +91,9 @@ end
 parentId = target.ParentId;
 for index = 1:options.Additions
     if index == 1 || options.ParentEachAddition
-        runAction("selection-add-parent", index, @() selectId(figure, parentId), false);
+        selectionAction = "selection-add-parent";
+        if options.ProfileParentSelection, selectionAction = "profile-selection-add-parent"; end
+        runAction(selectionAction, index, @() selectId(figure, parentId), options.ProfileParentSelection);
     end
     before = numel(app.Document.Components);
     runAction("add", index, @() addLabel(figure), false);
