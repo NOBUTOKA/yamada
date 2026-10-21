@@ -269,8 +269,7 @@ classdef DocumentEditAvailability
                     end
                 end
                 for span = spans
-                    matches = find(arrayfun(@(item) item.Span.StartOffset == span.StartOffset && ...
-                        item.Span.EndOffset == span.EndOffset, statements));
+                    matches = analysis.statementIndices(span);
                     if ~span.isKnown() || numel(matches) ~= 1 || ~direct(matches)
                         error("macd:DocumentEditAvailability:Ownership", "Initialization ownership is not a unique direct statement.");
                     end

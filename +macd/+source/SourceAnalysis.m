@@ -24,6 +24,9 @@ classdef SourceAnalysis < handle
         CallbackCreationOffsets double = []
         CallbackInsertion logical = false
         HasCallbackInsertion logical = false
+        CallbackCandidates containers.Map
+        StatementStarts double = []
+        StatementEnds double = []
     end
 
     methods
@@ -36,7 +39,9 @@ classdef SourceAnalysis < handle
                 obj (1, 1) macd.source.SourceAnalysis
             end
             obj.Source = source;
+            obj.CallbackCandidates = containers.Map("KeyType", "char", "ValueType", "any");
             obj.Statements = macd.source.MatlabLexicalScanner.splitStatements(source);
+            obj.indexStatements();
             obj.Layout = macd.source.CallbackSourceAnalyzer.sourceLayout(obj.Statements);
         end
 
@@ -50,6 +55,21 @@ classdef SourceAnalysis < handle
                 result (1, 1) logical
             end
             result = isequaln(obj.Source, source);
+        end
+
+        function indices = statementIndices(obj, span, matchEnd)
+            % statementIndices Find exact source ranges without repeated statement-object traversal.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+                span (1, 1) macd.model.SourceSpan
+                matchEnd (1, 1) logical = true
+            end
+            arguments (Output)
+                indices (1, :) double
+            end
+            matching = obj.StatementStarts == span.StartOffset;
+            if matchEnd, matching = matching & obj.StatementEnds == span.EndOffset; end
+            indices = find(matching);
         end
 
         function result = canInsertGenerated(obj, creationOffsets)
@@ -108,6 +128,41 @@ classdef SourceAnalysis < handle
         end
     end
 
+    methods (Access = private)
+        function indexStatements(obj)
+            % indexStatements Retain immutable numeric offsets for the exact lexical statement snapshot.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+            end
+            if isempty(obj.Statements)
+                obj.StatementStarts = zeros(1, 0);
+                obj.StatementEnds = zeros(1, 0);
+                return
+            end
+            spans = [obj.Statements.Span];
+            obj.StatementStarts = [spans.StartOffset];
+            obj.StatementEnds = [spans.EndOffset];
+        end
+    end
+
+    methods (Access = ?macd.source.CallbackSourceAnalyzer)
+        function indices = callbackCandidates(obj, name)
+            % callbackCandidates Share source-only candidate indices for one literal callback identifier.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+                name (1, 1) string
+            end
+            arguments (Output)
+                indices (1, :) double
+            end
+            key = char(name);
+            if ~isKey(obj.CallbackCandidates, key)
+                obj.CallbackCandidates(key) = macd.source.CallbackSourceAnalyzer.sourceCallbackCandidates(obj.Statements, name);
+            end
+            indices = obj.CallbackCandidates(key);
+        end
+    end
+
     methods (Static, Access = ?macd.source.AppSourceParser)
         function obj = fromParsed(source, statements, layout, offsets, trace)
             % fromParsed Retain the parser's completed analysis without compiling it again.
@@ -124,6 +179,7 @@ classdef SourceAnalysis < handle
             obj = macd.source.SourceAnalysis();
             obj.Source = source;
             obj.Statements = statements;
+            obj.indexStatements();
             obj.Layout = layout;
             obj.TraceOffsets = offsets;
             obj.Trace = trace;

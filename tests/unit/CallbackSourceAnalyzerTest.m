@@ -4,6 +4,80 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
     %   while ensuring analysis does not change document source or history.
 
     methods (Test)
+        function sharesCandidateScansAcrossParsedOwners(testCase)
+            % sharesCandidateScansAcrossParsedOwners Scan the source once per callback name across many component queries.
+            registry = macd.model.ComponentRegistry.createDefault();
+            source = CallbackSourceAnalyzerTest.fixture("", "");
+            declarations = strings(1, 24);
+            creations = strings(1, 24);
+            for index = 1:24
+                name = "Other" + index;
+                declarations(index) = name + " matlab.ui.control.Button";
+                creations(index) = "app." + name + " = uibutton(app.UIFigure);";
+            end
+            source = replace(source, "Button matlab.ui.control.Button", ...
+                strjoin(["Button matlab.ui.control.Button", declarations], newline));
+            source = replace(source, "app.Button = uibutton(app.UIFigure);", ...
+                strjoin(["app.Button = uibutton(app.UIFigure);", creations], newline));
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            buttons = document.Components(string({document.Components.Factory}) == "uibutton");
+            definitions = registry.getEffectiveCallbacks("uibutton", "uifigure");
+            profile clear; profile on;
+            stopProfile = onCleanup(@() profile("off"));
+            for repeat = 1:2
+                for button = buttons
+                    states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
+                    testCase.verifyTrue(all(string({states.State}) == "absent"));
+                end
+            end
+            profile off; functions = profile("info").FunctionTable; clear stopProfile
+            scans = endsWith(string({functions.FunctionName}), "CallbackSourceAnalyzer.sourceCallbackCandidates");
+            testCase.verifyEqual(sum([functions(scans).NumCalls]), numel(definitions));
+        end
+
+        function candidateFilteringPreservesFirstBlockingReason(testCase)
+            % candidateFilteringPreservesFirstBlockingReason Keep source-order precedence for dynamic and indirect references.
+            indirect = "alias.ButtonPushedFcn = @app.Pressed;";
+            dynamic = "feval('unknown');";
+            for order = 1:2
+                lines = [indirect; dynamic];
+                expected = "Indirect callback access prevents proving assignment ownership.";
+                if order == 2
+                    lines = flip(lines);
+                    expected = "Dynamic source references prevent safe callback editing.";
+                end
+                [state, ~] = CallbackSourceAnalyzerTest.inspect(CallbackSourceAnalyzerTest.fixture(lines, ""));
+                testCase.verifyEqual(state.State, "unsupported");
+                testCase.verifyEqual(state.Reason, expected);
+            end
+            [state, ~] = CallbackSourceAnalyzerTest.inspect(CallbackSourceAnalyzerTest.fixture( ...
+                "app.Other.ButtonPushedFcn = [];", ""));
+            testCase.verifyEqual(state.State, "absent");
+            [state, ~] = CallbackSourceAnalyzerTest.inspect(CallbackSourceAnalyzerTest.fixture( ...
+                "text = ""app.Button.ButtonPushedFcn"";", ""));
+            testCase.verifyEqual(state.State, "unsupported");
+        end
+
+        function changedSourceReplacesCandidateIndicesIndependently(testCase)
+            % changedSourceReplacesCandidateIndicesIndependently Recompile changed text without poisoning another source owner.
+            source = CallbackSourceAnalyzerTest.fixture("", "");
+            [state, document] = CallbackSourceAnalyzerTest.inspect(source);
+            testCase.assertEqual(state.State, "absent");
+            copy = document.structuralCandidate();
+            document.OriginalText = replace(source, "app.Button = uibutton(app.UIFigure);", ...
+                "app.Button = uibutton(app.UIFigure);" + newline + "app.Button.ButtonPushedFcn = @app.Pressed;");
+            registry = macd.model.ComponentRegistry.createDefault();
+            button = document.getComponentByName("Button");
+            states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
+            testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
+            button = copy.getComponentByName("Button");
+            states = macd.source.CallbackSourceAnalyzer.analyze(copy, button.Id, registry);
+            testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "absent");
+            button.SourceSpans.Creation = macd.model.SourceSpan(1, 1);
+            states = macd.source.CallbackSourceAnalyzer.analyze(copy, button.Id, registry);
+            testCase.verifyTrue(all(string({states.State}) == "unsupported"));
+        end
+
         function recognizesOwnedMethodIncludingNestedBlocks(testCase)
             % recognizesOwnedMethodIncludingNestedBlocks Locate complete method help and body.
             evalin("base", "clear macdCallbackAnalyzerSentinel");

@@ -3,6 +3,32 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
     %   Cached lexical and initialization data must retain the independent
     %   compiler's results, including unsafe input and source-version changes.
     methods (Test)
+        function numericStatementLookupsMatchIndependentSearch(testCase)
+            % numericStatementLookupsMatchIndependentSearch Preserve start-only and complete-range ownership matching.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.source.AppSourceParser.parseText(analysisSource(), registry);
+            for analysis = [macd.source.SourceAnalysis(analysisSource()), document.sourceAnalysis()]
+                statements = analysis.Statements;
+                for statement = statements
+                    span = statement.Span;
+                    for matchEnd = [false true]
+                        expected = find(arrayfun(@(item) item.Span.StartOffset == span.StartOffset && ...
+                            (~matchEnd || item.Span.EndOffset == span.EndOffset), statements));
+                        actual = analysis.statementIndices(span, matchEnd);
+                        testCase.verifyEqual(actual, expected);
+                        actual(:) = 0;
+                        testCase.verifyEqual(actual, zeros(size(actual)));
+                        testCase.verifyEqual(analysis.statementIndices(span, matchEnd), expected);
+                    end
+                    shifted = macd.model.SourceSpan(span.StartOffset, span.EndOffset + 1);
+                    testCase.verifyEmpty(analysis.statementIndices(shifted));
+                    testCase.verifyEqual(analysis.statementIndices(shifted, false), ...
+                        analysis.statementIndices(span, false));
+                end
+                testCase.verifyEmpty(analysis.statementIndices(macd.model.SourceSpan()));
+            end
+        end
+
         function tracesMatchIndependentCompilerAcrossOffsetInputs(testCase)
             % tracesMatchIndependentCompilerAcrossOffsetInputs Preserve trace keys and independent returned values.
             analysis = macd.source.SourceAnalysis(analysisSource());

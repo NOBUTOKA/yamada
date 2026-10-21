@@ -5,6 +5,24 @@ classdef CallbackSourceAnalyzer
     %   references remain visible with both mutation actions unavailable.
 
     methods (Static, Access = ?macd.source.SourceAnalysis)
+        function indices = sourceCallbackCandidates(statements, name)
+            % sourceCallbackCandidates Retain every possible binding, indirect reference, and dynamic dispatch in source order.
+            arguments (Input)
+                statements macd.source.SourceStatement
+                name (1, 1) string
+            end
+            arguments (Output)
+                indices (1, :) double
+            end
+            relevant = false(1, numel(statements));
+            for index = 1:numel(statements)
+                text = statements(index).Text;
+                relevant(index) = contains(text, name) || ~isempty(regexp(text, ...
+                    '(?<!\w)(eval|evalc|evalin|feval|str2func|subsref|subsasgn)\s*\(|app\s*\.\s*\(', 'once'));
+            end
+            indices = find(relevant);
+        end
+
         function layout = sourceLayout(statements)
             % sourceLayout Expose the pure layout compiler only to the derived source cache.
             arguments (Input)
@@ -81,8 +99,14 @@ classdef CallbackSourceAnalyzer
                     if generatedInsertion
                         methodAnchor = layout.MethodAnchor;
                     else
+                        sourceName = document.sourceComponentName(componentId);
+                        candidates = 1:numel(statements);
+                        if ~isempty(regexp(sourceName, '^[A-Za-z]\w*$', 'once')) && ...
+                                ~isempty(regexp(name, '^[A-Za-z]\w*$', 'once'))
+                            candidates = analysis.callbackCandidates(name);
+                        end
                         [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = ...
-                        macd.source.CallbackSourceAnalyzer.classify(component, document.sourceComponentName(componentId), name, statements, layout);
+                        macd.source.CallbackSourceAnalyzer.classify(component, sourceName, name, statements, layout, candidates, analysis);
                     end
                 else
                     entry = component.getProperty(name);
@@ -212,7 +236,7 @@ classdef CallbackSourceAnalyzer
             layout.Valid = layout.Valid && isempty(stack);
         end
 
-        function [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = classify(component, sourceName, name, statements, layout)
+        function [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = classify(component, sourceName, name, statements, layout, candidates, analysis)
             % classify Validate a direct binding, unique method, and exclusive source references.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
@@ -220,6 +244,8 @@ classdef CallbackSourceAnalyzer
                 name (1, 1) string
                 statements macd.source.SourceStatement
                 layout (1, 1) struct
+                candidates (1, :) double
+                analysis (1, 1) macd.source.SourceAnalysis
             end
             arguments (Output)
                 state (1, 1) string
@@ -241,12 +267,13 @@ classdef CallbackSourceAnalyzer
             methodAnchor = layout.MethodAnchor;
             if ~layout.Valid || methodAnchor == 0 || isempty(component.SourceSpans.Creation), return, end
             creation = component.SourceSpans.Creation;
-            creationIndex = find(arrayfun(@(statement) statement.Span.StartOffset == creation.StartOffset, statements));
+            creationIndex = analysis.statementIndices(creation, false);
             if numel(creationIndex) ~= 1 || ~layout.Direct(creationIndex), return, end
             bindingAnchor = creation.EndOffset;
             target = "app\s*\.\s*" + sourceName + "\s*\.\s*" + name;
             occurrences = [];
-            for index = 1:numel(statements)
+            % The shared index omits only statements that cannot affect this exact predicate.
+            for index = candidates
                 text = statements(index).Text;
                 % Dynamic dispatch prevents proving exclusive ownership of any handler.
                 if ~isempty(regexp(text, '(?<!\w)(eval|evalc|evalin|feval|str2func|subsref|subsasgn)\s*\(|app\s*\.\s*\(', 'once'))
