@@ -30,6 +30,34 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
     end
 
     methods (Test)
+        function sharesAxisStatesWhilePreservingOpaqueTrackRejection(testCase)
+            % sharesAxisStatesWhilePreservingOpaqueTrackRejection Read each grid once and keep expression-backed axes locked.
+            [document, handles, panel, grid, ~, second, cleanup, registry] = ...
+                testCase.renderGrid([40 50], [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            baseline = builder.build(document, handles, panel, grid.Id, second.Id, 7);
+            for opaqueCount = 0:2
+                if opaqueCount > 0
+                    paths = ["RowHeight", "ColumnWidth"];
+                    entry = grid.getProperty(paths(opaqueCount));
+                    entry.setSourceExpression("unresolvedTracks");
+                end
+                profile clear; profile on;
+                stopProfile = onCleanup(@() profile("off"));
+                actual = builder.build(document, handles, panel, grid.Id, second.Id, 7, registry);
+                profile off; functions = profile("info").FunctionTable; clear stopProfile
+                selected = contains(string({functions.FunctionName}), "DocumentModel.getEffectivePropertyStates");
+                testCase.verifyEqual(sum([functions(selected).NumCalls]), double(opaqueCount < 2));
+                if opaqueCount == 0
+                    testCase.verifyEqual(actual, baseline);
+                else
+                    testCase.verifyFalse(actual.geometryAvailable);
+                    testCase.verifySubstring(actual.readOnlyReason, "source-backed");
+                end
+            end
+        end
+
         function alignsNestedFitTracksInAnOffsetParentCell(testCase)
             % alignsNestedFitTracksInAnOffsetParentCell Avoid adding nested grid coordinates twice.
 
@@ -296,9 +324,24 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
     end
 
     methods (Access = private)
-        function [document, handles, panel, grid, first, second, cleanup] = ...
+        function [document, handles, panel, grid, first, second, cleanup, registry] = ...
                 renderGrid(testCase, rowHeight, columnWidth)
             % renderGrid Render one stable safe-preview grid with two immediate children.
+            arguments (Input)
+                testCase (1, 1) GridLayoutOverlayDataBuilderTest
+                rowHeight
+                columnWidth
+            end
+            arguments (Output)
+                document (1, 1) macd.model.DocumentModel
+                handles containers.Map
+                panel (1, 1) matlab.ui.container.Panel
+                grid (1, 1) macd.model.ComponentRecord
+                first (1, 1) macd.model.ComponentRecord
+                second (1, 1) macd.model.ComponentRecord
+                cleanup (1, 1) onCleanup
+                registry (1, 1) macd.model.ComponentRegistry
+            end
 
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.model.NewAppFactory.createEmpty("GridOverlayApp", registry);

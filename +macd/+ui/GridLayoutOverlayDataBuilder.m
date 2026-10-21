@@ -47,10 +47,21 @@ classdef GridLayoutOverlayDataBuilder
             data.outerBounds = outerBounds;
             data.innerBounds = innerBounds;
 
+            % Both axes consume one model state; native geometry stays freshly measured.
+            states = struct([]);
+            resolveTracks = ~isempty(registry);
+            if resolveTracks
+                rowEntry = grid.getProperty("RowHeight");
+                columnEntry = grid.getProperty("ColumnWidth");
+                if isempty(rowEntry) || rowEntry.ValueKind == "literal" || ...
+                        isempty(columnEntry) || columnEntry.ValueKind == "literal"
+                    states = document.getEffectivePropertyStates(registry, grid.Id);
+                end
+            end
             [rowValue, rowEditable, rowReason] = ...
-                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "RowHeight", document, registry);
+                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "RowHeight", states, resolveTracks);
             [columnValue, columnEditable, columnReason] = ...
-                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "ColumnWidth", document, registry);
+                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "ColumnWidth", states, resolveTracks);
             if strlength(rowReason) > 0 || strlength(columnReason) > 0
                 data.readOnlyReason = macd.ui.GridLayoutOverlayDataBuilder.joinMessages( ...
                     [rowReason columnReason]);
@@ -156,14 +167,14 @@ classdef GridLayoutOverlayDataBuilder
                 innerPosition(3:4)];
         end
 
-        function [value, editable, reason] = trackValue(grid, preview, path, document, registry)
+        function [value, editable, reason] = trackValue(grid, preview, path, states, resolveTracks)
             % trackValue Prefer shared effective tracks while retaining explicit edit ownership.
             arguments (Input)
                 grid (1, 1) macd.model.ComponentRecord
                 preview (1, 1) matlab.ui.container.GridLayout
                 path (1, 1) string
-                document (1, 1) macd.model.DocumentModel
-                registry macd.model.ComponentRegistry
+                states struct
+                resolveTracks (1, 1) logical
             end
             arguments (Output)
                 value
@@ -185,8 +196,7 @@ classdef GridLayoutOverlayDataBuilder
             else
                 value = preview.(char(path));
             end
-            if ~isempty(registry)
-                states = document.getEffectivePropertyStates(registry, grid.Id);
+            if resolveTracks
                 state = states(arrayfun(@(item) item.Definition.Path == path, states));
                 if isempty(state) || ~state.Resolution.IsKnown
                     editable = false;
