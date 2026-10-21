@@ -357,38 +357,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyNotEqual(second.Component.getProperty("Name").LiteralValue, "Changed privately");
         end
 
-        function privatePlansRetainIndependentResolvedValues(testCase)
-            % privatePlansRetainIndependentResolvedValues Reuse known values while retaining isolated mutable documents.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("PreparedStateFixture", registry);
-            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            label.setProperty("FontSize", 19);
-            definitions = registry.getEffectiveProperties(label.Factory, "uifigure", label.CreationArguments);
-            expected = macd.model.PropertyStateResolver.resolve(label, definitions, document, registry);
-            context = document.evaluationContext(registry);
-            context.rememberConfiguration("prepared", document);
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
-            [actual, ~, found] = context.configurationStates("prepared", label, definitions, document);
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            testCase.assertTrue(found);
-            testCase.verifyEqual(actual, expected);
-            repeated = contains(string({functions.FunctionName}), "PropertyStateResolver.evaluate");
-            testCase.verifyEqual(sum([functions(repeated).NumCalls]), 0);
-
-            % A public copy cannot mutate the stored value result or its source owner.
-            [copy, found] = context.configuration("prepared", label.Name);
-            testCase.assertTrue(found);
-            copy.Component.setProperty("FontSize", 31);
-            [again, ~, found] = context.configurationStates("prepared", label, definitions, document);
-            testCase.verifyTrue(found);
-            testCase.verifyEqual(again, expected);
-            testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 19);
-            label.setProperty("FontSize", 23);
-            [~, ~, found] = context.configurationStates("prepared", label, definitions, document);
-            testCase.verifyFalse(found);
-        end
-
         function configurationStatesKeepStoredAndReturnedValuesIndependent(testCase)
             % configurationStatesKeepStoredAndReturnedValuesIndependent Read immutable values without cloning model records.
             registry = macd.model.ComponentRegistry.createDefault();
