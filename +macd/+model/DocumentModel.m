@@ -88,6 +88,53 @@ classdef DocumentModel < handle
         end
     end
 
+    methods (Access = ?macd.model.EvaluationContext)
+        function snapshot = configurationSnapshot(obj)
+            % configurationSnapshot Capture value data from a detached parsed checkpoint for independent future copies.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                snapshot (1, 1) struct
+            end
+            % Borrow only private parsed checkpoints that cannot retain their owning editor document.
+            if strlength(obj.OriginalText) == 0 || ~isempty(obj.History) || ...
+                    ~isempty(obj.PropertyCheckpoint) || any(string({obj.Components.Origin}) ~= "parsed")
+                error("macd:DocumentModel:UnsafeConfigurationSnapshot", "A detached parsed checkpoint is required.");
+            end
+            values = struct();
+            fields = ["FilePath", "OriginalText", "GeneratedText", "RootComponentId", ...
+                "Diagnostics", "UnknownRegions", "Encoding", "LineEnding", "Metadata", ...
+                "CallbackEdits", "RenameEdits", "PendingEdits"];
+            for field = fields, values.(field) = obj.(field); end
+            if ~macd.model.InputChangeClock.isValueData(values)
+                error("macd:DocumentModel:UnsafeConfigurationSnapshot", "Configuration fields contain mutable data.");
+            end
+            snapshot = struct("ClassName", obj.ClassName, ...
+                "Components", macd.model.SubtreeSnapshot(obj, obj.RootComponentId), ...
+                "Values", values, "Analysis", obj.SourceAnalysisData);
+        end
+    end
+
+    methods (Static, Access = ?macd.model.EvaluationContext)
+        function document = fromConfigurationSnapshot(snapshot)
+            % fromConfigurationSnapshot Materialize caller-owned records with the same fields as structuralCandidate.
+            arguments (Input)
+                snapshot (1, 1) struct
+            end
+            arguments (Output)
+                document (1, 1) macd.model.DocumentModel
+            end
+            document = macd.model.DocumentModel(snapshot.ClassName);
+            document.Components = snapshot.Components.materialize();
+            for field = reshape(string(fieldnames(snapshot.Values)), 1, [])
+                document.(field) = snapshot.Values.(field);
+            end
+            % SourceAnalysis is a source-only index already shared by structuralCandidate.
+            document.SourceAnalysisData = snapshot.Analysis;
+        end
+    end
+
     methods (Access = private)
         function noteInput(obj, value)
             % noteInput Notify the token only after evaluation has attached it to a complete object.
@@ -1518,7 +1565,11 @@ classdef DocumentModel < handle
                 carryValidation (1, 1) logical
             end
             context = obj.evaluationContext(registry);
-            context.rememberConfiguration("combined", prepared);
+            if carryValidation
+                context.rememberOwnedConfiguration("combined", prepared);
+            else
+                context.rememberConfiguration("combined", prepared);
+            end
             component = obj.getComponent(componentId);
             fontEdit = component.Factory == "uilabel" && all(paths == "FontSize");
             numericEdit = component.Factory == "uieditfield" && ...

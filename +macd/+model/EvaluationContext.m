@@ -178,7 +178,7 @@ classdef EvaluationContext < handle
             plan = struct();
             if ~found, return, end
             saved = obj.Plans(char(name));
-            document = saved.structuralCandidate();
+            document = obj.configurationDocument(saved, true);
             component = document.getComponentByName(componentName);
             found = ~isempty(component);
             if found, plan = struct("Document", document, "Component", component); end
@@ -204,7 +204,7 @@ classdef EvaluationContext < handle
             found = obj.matches(document, obj.Registry) && ~isempty(owned) && owned == original && ...
                 isKey(obj.Plans, char(name));
             if ~found, return, end
-            saved = obj.Plans(char(name));
+            saved = obj.configurationDocument(obj.Plans(char(name)), false);
             component = saved.getComponentByName(original.Name);
             found = ~isempty(component);
             if ~found, return, end
@@ -232,6 +232,28 @@ classdef EvaluationContext < handle
     end
 
     methods (Access = ?macd.model.DocumentModel)
+        function rememberOwnedConfiguration(obj, name, document)
+            % rememberOwnedConfiguration Retain a model-owned checkpoint with an independent value snapshot.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                name (1, 1) string
+                document (1, 1) macd.model.DocumentModel
+            end
+            if ~obj.Cacheable, return, end
+            try
+                snapshot = document.configurationSnapshot();
+            catch exception
+                if string(exception.identifier) ~= "macd:DocumentModel:UnsafeConfigurationSnapshot"
+                    rethrow(exception)
+                end
+                obj.rememberConfiguration(name, document);
+                return
+            end
+            [clock, revision, tracked] = document.inputStamp();
+            obj.Plans(char(name)) = struct("Document", document, "Snapshot", snapshot, ...
+                "Clock", clock, "Revision", revision, "Tracked", tracked);
+        end
+
         function inheritEligibility(obj, previous)
             % inheritEligibility Carry immutable condition answers after a document-proven local literal edit.
             arguments (Input)
@@ -252,6 +274,32 @@ classdef EvaluationContext < handle
     end
 
     methods (Access = private)
+        function document = configurationDocument(~, saved, independent)
+            % configurationDocument Return an isolated copy or a version-checked private read source.
+            arguments (Input)
+                ~
+                saved
+                independent (1, 1) logical
+            end
+            arguments (Output)
+                document (1, 1) macd.model.DocumentModel
+            end
+            if ~isstruct(saved)
+                document = saved;
+                if independent, document = saved.structuralCandidate(); end
+                return
+            end
+            if ~independent
+                [clock, revision, tracked] = saved.Document.inputStamp();
+                if saved.Tracked && tracked && saved.Clock == clock && saved.Revision == revision
+                    document = saved.Document;
+                    return
+                end
+            end
+            % A later edit or rollback may mutate the checkpoint, but never its saved value snapshot.
+            document = macd.model.DocumentModel.fromConfigurationSnapshot(saved.Snapshot);
+        end
+
         function finishRead(obj)
             % finishRead Release a synchronous evaluation scope, including on errors.
             arguments (Input)
