@@ -111,9 +111,6 @@ classdef CallbackManagerDialog < handle
 
         function delete(obj)
             % delete Close the popup without altering any committed document edits.
-            arguments (Input)
-                obj (1, 1) macd.ui.CallbackManagerDialog
-            end
             if obj.isOpen(), delete(obj.Figure); end
         end
     end

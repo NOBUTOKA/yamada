@@ -70,9 +70,6 @@ classdef HierarchyContextMenu < handle
 
         function delete(obj)
             % delete Release the editor menu and its transient target.
-            arguments (Input)
-                obj (1, 1) macd.ui.HierarchyContextMenu
-            end
             obj.reset();
             if ~isempty(obj.Menu) && isvalid(obj.Menu), delete(obj.Menu), end
         end

@@ -125,10 +125,6 @@ classdef InspectorView < handle
 
         function delete(obj)
             % delete Release the inspector grid when its editor host is disposed.
-            arguments (Input)
-                obj (1, 1) macd.ui.inspector.InspectorView
-            end
-
             if ~isempty(obj.Panel) && isvalid(obj.Panel)
                 delete(obj.Panel);
             end

@@ -4,6 +4,19 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
     %   blocking diagnostics, UTF-8 encoding, CRLF lines, and license isolation.
 
     methods (Test)
+        function generatedDestructorHasNoArgumentValidation(testCase)
+            % generatedDestructorHasNoArgumentValidation Keep generated cleanup recognizable as a destructor.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("DestructorApp", registry);
+            source = macd.source.NewAppGenerator(registry).generate(document);
+
+            % Inspect only the destructor, leaving validation on ordinary methods intact.
+            destructor = extractAfter(source, "function delete(app)");
+            testCase.assertNotEmpty(destructor);
+            testCase.verifyFalse(contains(destructor, "arguments"));
+            testCase.verifySubstring(destructor, "delete(app.UIFigure);");
+        end
+
         function generatesMinimalRunnableClass(testCase)
             % generatesMinimalRunnableClass Verify the canonical AppBase skeleton.
 

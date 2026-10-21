@@ -25,6 +25,23 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.Te
     end
 
     methods (Test)
+        function unreachableViewReleasesOwnedControls(testCase)
+            % unreachableViewReleasesOwnedControls Exercise implicit destructor dispatch.
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            view = macd.ui.inspector.InspectorView(figure);
+            grid = view.contentGrid();
+
+            % Remove the callback's reference so clearing the owner triggers destruction.
+            panel = grid.Parent.Parent;
+            panel.SizeChangedFcn = [];
+            clear view
+            testCase.verifyFalse(isvalid(grid));
+            testCase.verifyFalse(isvalid(panel));
+            testCase.verifyTrue(isvalid(figure));
+            clear cleanup
+        end
+
         function clearDeletesOnlyOwnedChildren(testCase)
             % clearDeletesOnlyOwnedChildren Remove view children without deleting the host.
 

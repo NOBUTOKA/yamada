@@ -130,10 +130,6 @@ classdef yamada < matlab.apps.AppBase
 
         function delete(app)
             % delete Release the editor figure when the application is deleted.
-            arguments (Input)
-                app (1, 1) yamada
-            end
-
             % Stop deferred UI work before releasing the editor figure.
             app.IsClosingProgrammatically = true;
             app.cancelOverlayRefresh();
