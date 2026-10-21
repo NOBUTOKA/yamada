@@ -226,7 +226,7 @@ classdef EvaluationContext < handle
                 document (1, 1) macd.model.DocumentModel
             end
             if obj.Cacheable
-                obj.Plans(char(name)) = document.structuralCandidate();
+                obj.Plans(char(name)) = document.structuralCandidate(obj.Registry);
             end
         end
     end
