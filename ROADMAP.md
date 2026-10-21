@@ -4,7 +4,7 @@ This roadmap contains unfinished work for the public development version of `yam
 
 The [product specification](SPECIFICATION.md) remains authoritative for current behavior. A roadmap item becomes part of the supported public contract only after its implementation, tests, and user documentation are complete.
 
-The handle-class source migration was completed on 2026-10-22. Its scope and evidence are retained in the [migration plan](HANDLE_APP_MIGRATION_PLAN.md) and [verification record](HANDLE_APP_MIGRATION_VERIFICATION.md); it is no longer an unfinished roadmap task.
+The handle-class source migration was completed on 2026-10-22. Its source and lifetime contracts are described in the [architecture reference](doc/ARCHITECTURE.md); implementation and verification history remain in Git. It is no longer an unfinished roadmap task.
 
 ## Add Component-Reference Property Editors
 
@@ -270,7 +270,7 @@ The editor currently tracks one selected component ID. Establish a selection mod
 
 ## Operate on Components with Their Descendants
 
-Status: completed for the supported scope in SPECIFICATION.md. MATLAB R2024a initial full verification passed 341/341 tests; the subsequent UI/clipboard revision and its verification are recorded in SUBTREE_EDITING_VERIFICATION.md. Complete descendant collection, isolated source preflight and atomic history are shared by deletion, parent changes, Cut and Paste. Acceptance criteria remain recorded below; see SUBTREE_EDITING_VERIFICATION.md for requirement evidence.
+Status: completed for the supported scope in SPECIFICATION.md. Complete descendant collection, isolated source preflight and atomic history are shared by deletion, parent changes, Cut and Paste. The [architecture reference](doc/ARCHITECTURE.md#subtree-editing-and-clipboard-ownership) describes these shared responsibilities; implementation and verification history remain in Git. Acceptance criteria remain recorded below.
 
 - Add model operations that collect descendants in stable hierarchy order and validate the complete subtree before changing any component or source intent.
 - Keep parent-child links, component order, names, internal references, and supported layout properties consistent. Define how references from outside the subtree are handled; reject operations that cannot preserve them safely.
@@ -282,7 +282,7 @@ Status: completed for the supported scope in SPECIFICATION.md. MATLAB R2024a ini
 
 Allow a component or complete subtree to move from one valid parent to another, including dragging it between two Grid Layouts in Safe Preview.
 
-Status: completed through Preview drop commands in the supported scope. Parent changes are available only by dragging in Preview. Verification is recorded in SUBTREE_EDITING_VERIFICATION.md. The checks below are retained as acceptance evidence.
+Status: completed through Preview drop commands in the supported scope. Parent changes are available only by dragging in Preview. See the [architecture reference](doc/ARCHITECTURE.md#subtree-editing-and-clipboard-ownership) for placement and transaction boundaries. The checks below are retained as acceptance criteria.
 
 - Add a validated reparent operation that rejects cycles, the root component, unsupported parent types, ambiguous source ownership, and invalid destinations before changing either parent's child list.
 - Define placement when moving among absolute-positioned containers and Grid Layouts. Update `Position` or `Layout.Row`/`Layout.Column` together with the parent change; do not silently discard unsupported layout or source values.
@@ -292,7 +292,7 @@ Status: completed through Preview drop commands in the supported scope. Parent c
 
 ## Add Component Copy, Cut, and Paste
 
-Status: completed in the Edit menu, keyboard shortcuts and Hierarchy context menu, including static SelectedTab/ContextMenu reference handling. Full MATLAB and HTML overlay verification passed. See SPECIFICATION.md for explicit source and clipboard boundaries and SUBTREE_EDITING_VERIFICATION.md for evidence.
+Status: completed in the Edit menu, keyboard shortcuts and Hierarchy context menu, including static SelectedTab/ContextMenu reference handling. See SPECIFICATION.md for supported source and clipboard behavior and the [architecture reference](doc/ARCHITECTURE.md#subtree-editing-and-clipboard-ownership) for shared command and ownership boundaries. Implementation and verification history remain in Git.
 
 - Provide Copy, Cut, and Paste through the Edit menu, keyboard shortcuts, and context menus on components in the hierarchy view. All three entry points must use the same commands and availability rules.
 - Use the complete-subtree rules above when a selected component has children. Define where each subtree can be pasted and how unique component names and identities are assigned.
