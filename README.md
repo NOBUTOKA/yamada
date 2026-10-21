@@ -1,18 +1,6 @@
 # yamada - Yet Another MATLAB App Designer Alternative
 
-`yamada` is a visual editor for `handle` applications. It is similar in purpose to MATLAB App Designer, but **instead of using the dedicated binary `.mlapp` format**, it treats ordinary MATLAB class files (`.m`) as source. You can create a new application or open an existing handle class and inspect, arrange, and edit its UI components graphically.
-
-The supported source contract is a class that directly inherits from `handle`
-and owns exactly one `uifigure`. All other UI components must be descendants of
-that figure, including through panels, grids, and tabs. Descendant membership is
-a user precondition; yamada adds no dedicated check for this condition and does
-not guarantee behavior outside it. The source must use the supported statically
-analyzable syntax. AppBase input and automatic conversion are not supported.
-
-Generated callbacks use `@app.Handler` with `(app, source, event)` inputs. The
-default close callback deletes the app. Adding an editable CloseRequestFcn
-replaces that fallback, and deleting the handler restores it. A figure-bound
-destruction listener releases the owner without replacing a user's DeleteFcn.
+`yamada` is a visual editor for GUI classes that inherit from `handle` and own a `uifigure`. You can create or open ordinary MATLAB `.m` class files and edit their UI components graphically.
 
 ## Important
 
@@ -24,20 +12,13 @@ destruction listener releases the owner without replacing a user's DeleteFcn.
 - Statically parse an existing `.m` class that follows a common App Designer-like structure
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
 - Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
-- Add and delete components and edit supported properties, including literal
-  Checkbox Tree `Position` settings
-- Preserve existing initialization settings and apply reviewed dependencies when
-  adding properties, including supported axes value/Mode pairs
-- Preserve manual grid-width holds when adding upstream axes widths, and track
-  stored color values separately from automatic rendering modes
-- Resolve reviewed position aliases consistently in the Inspector, Safe Preview,
-  and subtree copies, including Lamp's square size constraint
-- Resolve Grid Layout tracks and implicit child placements from initialization
-  order, and reject track edits whose requested size would be lost to occupancy
-- Resolve RadioButton/ToggleButton selection using the owning group and sibling
-  initialization order, including copied groups
-- Allow unaudited (`unknown`) properties under existing product and source-edit
-  rules, using their stored literal inputs; refuse identified unsupported effects
+- Add and delete components and edit supported properties, including literal Checkbox Tree `Position` settings
+- Preserve existing initialization settings and apply reviewed dependencies when adding properties, including supported axes value/Mode pairs
+- Preserve manual grid-width holds when adding upstream axes widths, and track stored color values separately from automatic rendering modes
+- Resolve reviewed position aliases consistently in the Inspector, Safe Preview, and subtree copies, including Lamp's square size constraint
+- Resolve Grid Layout tracks and implicit child placements from initialization order, and reject track edits whose requested size would be lost to occupancy
+- Resolve RadioButton/ToggleButton selection using the owning group and sibling initialization order, including copied groups
+- Allow unaudited (`unknown`) properties under existing product and source-edit rules, using their stored literal inputs; refuse identified unsupported effects
 - Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
 - Rename component properties in the hierarchy, including static source references and default callback names
 - Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion
@@ -76,41 +57,20 @@ delete(editor);
 2. Add components from the palette on the left.
 3. Select a component on the canvas or in the hierarchy browser, then edit its supported properties in the Property Inspector on the right.
 4. Select **Tools > Validate** to validate the document model.
-5. Select **Tools > Diff Preview** to review the generated source, then use **File > Save As** to save it as a `.m` file.
-   Save As asks before replacing an existing target; after a successful Save As,
-   **File > Save** writes to that confirmed path without another replacement prompt.
+5. Select **Tools > Diff Preview** to review the generated source, then use **File > Save As** to save it as a `.m` file. Save As asks before replacing an existing target; after a successful Save As, **File > Save** writes to that confirmed path without another replacement prompt.
 
-An untouched empty document starts clean. The title gains an asterisk after the
-first edit that has not been saved.
+An untouched empty document starts clean. The title gains an asterisk after the first edit that has not been saved.
 
 ### Edit a Grid Layout
 
-Select a Grid Layout or one of its children. The canvas activates the nearest
-Grid Layout and shows its immediate rows, columns, and child occupancy without
-changing the selected component in the Inspector.
+Select a Grid Layout or one of its children. The canvas activates the nearest Grid Layout and shows its immediate rows, columns, and child occupancy without changing the selected component in the Inspector.
 
-- Click a row or column settings button beside the grid to choose **Fit**, a
-  fixed pixel value, or a flexible `x` weight. The same popover inserts and
-  deletes tracks.
-- Drag the selected child to move its occupied cells. Drag one of its edge or
-  corner handles to change its row or column span. The candidate is cell-snapped
-  and commits only when released.
-- For a selected nested Grid Layout, drag its frame or empty background to move
-  it within the parent grid. Its handles change the parent-cell span while its
-  row and column settings continue to edit the inner grid.
-- Use the Inspector for `RowSpacing`, `ColumnSpacing`, `Padding` (in MATLAB
-  order `[left bottom right top]`), `BackgroundColor`, `Visible`, and
-  `Scrollable`. It also remains the exact-value fallback for a child's
-  `Layout.Row` and `Layout.Column`.
+- Click a row or column settings button beside the grid to choose **Fit**, a fixed pixel value, or a flexible `x` weight. The same popover inserts and deletes tracks.
+- Drag the selected child to move its occupied cells. Drag one of its edge or corner handles to change its row or column span. The candidate is cell-snapped and commits only when released.
+- For a selected nested Grid Layout, drag its frame or empty background to move it within the parent grid. Its handles change the parent-cell span while its row and column settings continue to edit the inner grid.
+- Use the Inspector for `RowSpacing`, `ColumnSpacing`, `Padding` (in MATLAB order `[left bottom right top]`), `BackgroundColor`, `Visible`, and `Scrollable`. It also remains the exact-value fallback for a child's `Layout.Row` and `Layout.Column`.
 
-Track editing accepts supported literal values and Preview defaults; a
-source-backed track list remains read-only. Moving or resizing a child
-requires editable, explicit `Layout.Row` and `Layout.Column` values and
-unambiguous realized geometry. Track insertion or deletion is rejected when an
-affected child has an implicit or expression-backed placement, or the change
-would leave a child without a valid track. Stale canvas actions are also rejected.
-Moving and resizing children may create overlapping placements, as MATLAB allows.
-Source-backed values are preserved.
+Track editing accepts supported literal values and Preview defaults; a source-backed track list remains read-only. Moving or resizing a child requires editable, explicit `Layout.Row` and `Layout.Column` values and unambiguous realized geometry. Track insertion or deletion is rejected when an affected child has an implicit or expression-backed placement, or the change would leave a child without a valid track. Stale canvas actions are also rejected. Moving and resizing children may create overlapping placements, as MATLAB allows. Source-backed values are preserved.
 
 ### Edit an existing application
 
@@ -121,94 +81,41 @@ Source-backed values are preserved.
 
 ### Rename a component
 
-Select a component in **Hierarchy** and press **F2**, click the same selected node
-again, or choose **Edit > Rename Component** (**F2**). Edit the name within the
-hierarchy view; **Enter** commits and **Escape** cancels. Invalid or conflicting
-names remain in the editor with an explanation so you can correct them.
+Select a component in **Hierarchy** and press **F2**, click the same selected node again, or choose **Edit > Rename Component** (**F2**). Edit the name within the hierarchy view; **Enter** commits and **Escape** cancels. Invalid or conflicting names remain in the editor with an explanation so you can correct them.
 
-Renaming changes the MATLAB property identifier and its static `app.Name`
-references. Component IDs, displayed `Text` or `Title`, and the app class name
-stay unchanged. Exclusively owned callback methods follow only when their names
-match the editor's default generated naming convention; custom or shared handler
-names stay unchanged. Class, property, and method help comments follow renamed
-identifiers, including callback H1 lines and help examples. Ordinary comments and
-code string literals are preserved. Undo and Redo treat the rename as one edit.
-Source using dynamic dispatch or unresolved app aliases is rejected with an
-explanation; references in other files are outside this operation's scope.
+Renaming changes the MATLAB property identifier and its static `app.Name` references. Component IDs, displayed `Text` or `Title`, and the app class name stay unchanged. Exclusively owned callback methods follow only when their names match the editor's default generated naming convention; custom or shared handler names stay unchanged. Class, property, and method help comments follow renamed identifiers, including callback H1 lines and help examples. Ordinary comments and code string literals are preserved. Undo and Redo treat the rename as one edit. Source using dynamic dispatch or unresolved app aliases is rejected with an explanation; references in other files are outside this operation's scope.
 
 ### Copy, cut, and paste components
 
-Select a component in Hierarchy and use **Edit > Copy / Cut / Paste**, or
-**Ctrl+C / Ctrl+X / Ctrl+V**. The same commands are available by right-clicking
-a Hierarchy node. Right-click Copy targets that node without changing selection.
-The same shortcuts work in Safe Preview. Edit menu shortcut hints use a separate
-column, including F2 for Rename. Text fields retain their normal clipboard shortcuts.
+Select a component in Hierarchy and use **Edit > Copy / Cut / Paste**, or **Ctrl+C / Ctrl+X / Ctrl+V**. The same commands are available by right-clicking a Hierarchy node. Right-click Copy targets that node without changing selection. The same shortcuts work in Safe Preview. Edit menu shortcut hints use a separate column, including F2 for Rename. Text fields retain their normal clipboard shortcuts.
 
-The component and all descendants form one unit. Copy captures independent data;
-later edits to the original do not change it. Cut removes the subtree immediately.
-Paste creates fresh IDs and unique MATLAB property names and selects the inserted
-root. Copy adds `Copy` to names; Cut retains the original names when available
-and adds a numeric suffix only on collision. Cut and Paste each take one Undo
-step. Repeated Paste is supported.
+The component and all descendants form one unit. Copy captures independent data; later edits to the original do not change it. Cut removes the subtree immediately. Paste creates fresh IDs and unique MATLAB property names and selects the inserted root. Copy adds `Copy` to names; Cut retains the original names when available and adds a numeric suffix only on collision. Cut and Paste each take one Undo step. Repeated Paste is supported.
 
-Paste uses the nearest compatible container, starting with the selected or
-right-clicked node and walking up its ancestors. Absolute copies receive a small
-offset; grid copies use a free rectangle while retaining their span. Hover over
-the status line to see command availability, reasons, and the resolved Paste
-destination. The clipboard belongs to this editor document; successful New,
-Open, or Reload Source clears it. OS and cross-document clipboards are not used.
+Paste uses the nearest compatible container, starting with the selected or right-clicked node and walking up its ancestors. Absolute copies receive a small offset; grid copies use a free rectangle while retaining their span. Hover over the status line to see command availability, reasons, and the resolved Paste destination. The clipboard belongs to this editor document; successful New, Open, or Reload Source clears it. OS and cross-document clipboards are not used.
 
 ### Move a subtree to another container
 
-In Safe Preview, drag a selected component into another visible container.
-A dashed guide shows the proposed placement; red indicates an invalid target.
-Grid destinations snap to cells and retain spans. Occupied or out-of-range
-rectangles are rejected. Drop commits the parent and placement together as one
-Undo step. Escape or pointer cancellation discards the draft. Moving within the
-same parent continues to use the existing position or grid-placement tools.
+In Safe Preview, drag a selected component into another visible container. A dashed guide shows the proposed placement; red indicates an invalid target. Grid destinations snap to cells and retain spans. Occupied or out-of-range rectangles are rejected. Drop commits the parent and placement together as one Undo step. Escape or pointer cancellation discards the draft. Moving within the same parent continues to use the existing position or grid-placement tools.
 
-Subtree operations require catalog-compatible parents and provable source
-ownership. The root UIFigure, programmatic-only construction families, and native
-FigureTools subtrees are excluded. Copy/Cut accept supported literals and static
-`SelectedTab`/`ContextMenu` references: internal references follow the copies;
-external context menus retain their identity in the same document. Other
-expressions, executable callback bindings, and ambiguous source are rejected
-without dropping their contents. Reparenting preserves existing callback methods;
-pending callback edits on parsed moved nodes currently require Save and Reload
-Source, or Undo, before moving. Review the generated diff before saving.
+Subtree operations require catalog-compatible parents and provable source ownership. The root UIFigure, programmatic-only construction families, and native FigureTools subtrees are excluded. Copy/Cut accept supported literals and static `SelectedTab`/`ContextMenu` references: internal references follow the copies; external context menus retain their identity in the same document. Other expressions, executable callback bindings, and ambiguous source are rejected without dropping their contents. Reparenting preserves existing callback methods; pending callback edits on parsed moved nodes currently require Save and Reload Source, or Undo, before moving. Review the generated diff before saving.
 
 ### Manage callbacks
 
-Right-click a component in **Hierarchy** and choose **Manage Callbacks...**.
-Right-clicking an unselected component leaves the current selection, Properties,
-and Preview selection unchanged. The popup title identifies the component being
-managed; its scrollable rows list callbacks supported by that component's catalog
-variant.
+Right-click a component in **Hierarchy** and choose **Manage Callbacks...**. Right-clicking an unselected component leaves the current selection, Properties, and Preview selection unchanged. The popup title identifies the component being managed; its scrollable rows list callbacks supported by that component's catalog variant.
 
-- **Add** creates an assignment and a uniquely named method together. Ordinary
-  callbacks start empty; CloseRequestFcn starts with `delete(app)`.
-- **Delete** removes the assignment and the entire handler method, including its
-  body. Each action is one Undo/Redo operation and applies immediately; **Close**
-  only closes the popup.
-- Existing shared methods, arbitrary anonymous functions, constructor bindings,
-  conditional/repeated assignments, dynamic references, and source whose ownership
-  cannot be established have both buttons disabled. Hover over the row or buttons
-  to read the reason.
+- **Add** creates an assignment and a uniquely named method together. Ordinary callbacks start empty; CloseRequestFcn starts with `delete(app)`.
+- **Delete** removes the assignment and the entire handler method, including its body. Each action is one Undo/Redo operation and applies immediately; **Close** only closes the popup.
+- Existing shared methods, arbitrary anonymous functions, constructor bindings, conditional/repeated assignments, dynamic references, and source whose ownership cannot be established have both buttons disabled. Hover over the row or buttons to read the reason.
 
-Review the source diff before saving. To edit a handler body in MATLAB, first save
-in yamada, edit and save the `.m` file in MATLAB, then use the toolbar **Refresh**
-button, **Edit > Reload Source (F5)**, or **F5**. Reload reads the saved file; it
-cannot read unsaved MATLAB editor buffers. New documents need to be saved first.
-Local unsaved changes prompt Save/Discard/Cancel. If the file also changed outside
-yamada, Save As must use a different file so external edits remain intact.
-Successful reload resets Undo/Redo, closes the callback popup and retains the
-selected component by a unique name where possible. Failed reload keeps the
-current document.
-The opened application's callbacks are never run by the editor or Safe Preview.
+Generated callbacks use `@app.Handler` with `(app, source, event)` inputs. The default close callback deletes the app. Adding an editable CloseRequestFcn replaces that fallback, and deleting the handler restores it. A figure-bound destruction listener releases the owner without replacing a user's DeleteFcn.
+
+Review the source diff before saving. To edit a handler body in MATLAB, first save in yamada, edit and save the `.m` file in MATLAB, then use the toolbar **Refresh** button, **Edit > Reload Source (F5)**, or **F5**. Reload reads the saved file; it cannot read unsaved MATLAB editor buffers. New documents need to be saved first. Local unsaved changes prompt Save/Discard/Cancel. If the file also changed outside yamada, Save As must use a different file so external edits remain intact. Successful reload resets Undo/Redo, closes the callback popup and retains the selected component by a unique name where possible. Failed reload keeps the current document. The opened application's callbacks are never run by the editor or Safe Preview.
 
 ## Scope and Limitations
 
 `yamada` catalogs standard persistent MATLAB R2024a UI components, containers, axes, instrumentation controls, menus, and toolbar tools. See the [product specification](SPECIFICATION.md) for the detailed component and property scope.
+
+Supported classes directly inherit from `handle` and own exactly one `uifigure`. All other UI components must be descendants of that figure, including through panels, grids, and tabs. Descendant membership is a user precondition without a dedicated check; behavior outside it is not guaranteed. The source must use the supported statically analyzable syntax. AppBase input and automatic conversion are not supported.
 
 The following boundaries protect the input source:
 

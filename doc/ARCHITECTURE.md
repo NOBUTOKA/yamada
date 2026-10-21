@@ -1,25 +1,15 @@
 # yamada Architecture
 
-This document is a developer reference for the architecture implemented in the
-current `yamada` source tree. It describes stable responsibilities, data flow,
-and extension boundaries; it is not a delivery plan. See the
-[product specification](../SPECIFICATION.md) for supported public behavior and
-the [roadmap](../ROADMAP.md) for unfinished work.
+This document is a developer reference for the architecture implemented in the current `yamada` source tree. It describes stable responsibilities, data flow, and extension boundaries; it is not a delivery plan. See the [product specification](../SPECIFICATION.md) for supported public behavior and the [roadmap](../ROADMAP.md) for unfinished work.
 
 ## Architectural Principles
 
-- Ordinary MATLAB `.m` class files are the persistent source of truth. The
-  project does not read or write the private `.mlapp` format.
-- New and opened applications converge on the same `DocumentModel`, registry,
-  validation, Inspector, Preview, and generation pipeline.
-- Opening a source file is a static operation. The input class, its constructor,
-  callbacks, helper methods, and arbitrary expressions are never executed.
-- Preview handles, Inspector controls, hierarchy nodes, and HTML overlay state are
-  disposable views. Only model state is eligible for source generation.
-- Existing source is changed through owned source spans. Unsupported or ambiguous
-  source is preserved and can block an unsafe edit or save.
-- Component and property capabilities are declarative JSON data. Executable
-  behavior is selected only through fixed MATLAB allowlists.
+- Ordinary MATLAB `.m` class files are the persistent source of truth. The project does not read or write the private `.mlapp` format.
+- New and opened applications converge on the same `DocumentModel`, registry, validation, Inspector, Preview, and generation pipeline.
+- Opening a source file is a static operation. The input class, its constructor, callbacks, helper methods, and arbitrary expressions are never executed.
+- Preview handles, Inspector controls, hierarchy nodes, and HTML overlay state are disposable views. Only model state is eligible for source generation.
+- Existing source is changed through owned source spans. Unsupported or ambiguous source is preserved and can block an unsafe edit or save.
+- Component and property capabilities are declarative JSON data. Executable behavior is selected only through fixed MATLAB allowlists.
 
 ## System Map
 
@@ -43,16 +33,9 @@ Open App ─> AppSourceParser ───────> DocumentModel
                                   diff and save
 ```
 
-The main application class, [`yamada.m`](../yamada.m), coordinates these layers.
-Parsing, model mutation, validation, rendering, and generation remain separate so
-none of them must infer document state from live UI handles.
+The main application class, [`yamada.m`](../yamada.m), coordinates these layers. Parsing, model mutation, validation, rendering, and generation remain separate so none of them must infer document state from live UI handles.
 
-Save, Save As, New, Open, and editor close pass through the injected
-[`DocumentLifecycleService`](../+macd/+ui/DocumentLifecycleService.m). Its native
-implementation uses MATLAB dialogs and binary UTF-8 output; tests replace its
-dialog, existence, and write callbacks to cover cancellation and write failures.
-Only a successful write updates the file path, generated snapshot, and model save
-checkpoint. The editor title is derived from the document identity and `IsDirty`.
+Save, Save As, New, Open, and editor close pass through the injected [`DocumentLifecycleService`](../+macd/+ui/DocumentLifecycleService.m). Its native implementation uses MATLAB dialogs and binary UTF-8 output; tests replace its dialog, existence, and write callbacks to cover cancellation and write failures. Only a successful write updates the file path, generated snapshot, and model save checkpoint. The editor title is derived from the document identity and `IsDirty`.
 
 ## Package Responsibilities
 
@@ -71,81 +54,38 @@ checkpoint. The editor title is derived from the document identity and `IsDirty`
 
 ## Callback Management
 
-HierarchyContextMenu owns one shared native menu and a transient context target.
-The hit node comes from ContextMenuOpeningFcn.InteractionInformation.Node; it does
-not modify the editor's SelectedComponentId. Dispatch checks document identity and
-component existence again, and hierarchy rebuilds reset the transient target.
+HierarchyContextMenu owns one shared native menu and a transient context target. The hit node comes from ContextMenuOpeningFcn.InteractionInformation.Node; it does not modify the editor's SelectedComponentId. Dispatch checks document identity and component existence again, and hierarchy rebuilds reset the transient target.
 
-CallbackManagerDialog owns only its modal figure, scrollable rows, explanations,
-and injected state/action/validity functions. It displays immutable CallbackState
-results from CallbackSourceAnalyzer. The effective catalog valueSchema.kind
-identifies callbacks without introducing special Inspector property rows.
+CallbackManagerDialog owns only its modal figure, scrollable rows, explanations, and injected state/action/validity functions. It displays immutable CallbackState results from CallbackSourceAnalyzer. The effective catalog valueSchema.kind identifies callbacks without introducing special Inspector property rows.
 
-DocumentModel.applyCallbackAction stores typed immutable CallbackEdit intentions
-against OriginalText. One history record contains the before/after intention
-arrays. Original binding and method spans and the complete source snapshot remain
-available for Delete/Add, Undo/Redo and stale-source rejection. The full generator
-is preflighted before history is committed; a failure restores intentions,
-diagnostics and generated preview.
+DocumentModel.applyCallbackAction stores typed immutable CallbackEdit intentions against OriginalText. One history record contains the before/after intention arrays. Original binding and method spans and the complete source snapshot remain available for Delete/Add, Undo/Redo and stale-source rejection. The full generator is preflighted before history is committed; a failure restores intentions, diagnostics and generated preview.
 
-NewAppGenerator emits canonical bindings and English-documented stubs.
-CallbackSourceEdits supplies original-offset replacements to RoundTripGenerator,
-which combines common insertion anchors and rejects overlapping source claims.
-The original input is never run; preserved expressions do not reach Safe Preview.
-Saving retains the original snapshot and intentions, so repeated generation does
-not reapply patches to already patched text. Reopening reparses the saved file and
-creates fresh ownership spans. Source reload uses the same replacement boundary:
-the shell first resolves dirty/external-change policy through DocumentLifecycleService,
-then captures fresh bytes, parses without execution and verifies an unchanged
-snapshot before swapping documents. A separate saved-source snapshot tracks the
-last successful Open/Reload/Save without changing the model's original rewrite
-basis. The reload target remains the original file even if conflict handling saves
-local changes to a different file. All three entry points share one reentrancy guard.
+NewAppGenerator emits canonical bindings and English-documented stubs. CallbackSourceEdits supplies original-offset replacements to RoundTripGenerator, which combines common insertion anchors and rejects overlapping source claims. The original input is never run; preserved expressions do not reach Safe Preview. Saving retains the original snapshot and intentions, so repeated generation does not reapply patches to already patched text. Reopening reparses the saved file and creates fresh ownership spans. Source reload uses the same replacement boundary: the shell first resolves dirty/external-change policy through DocumentLifecycleService, then captures fresh bytes, parses without execution and verifies an unchanged snapshot before swapping documents. A separate saved-source snapshot tracks the last successful Open/Reload/Save without changing the model's original rewrite basis. The reload target remains the original file even if conflict handling saves local changes to a different file. All three entry points share one reentrancy guard.
 
 ## Shared Document Model
 
-[`DocumentModel`](../+macd/+model/DocumentModel.m) is the authoritative in-memory
-state for both new and parsed applications. It owns:
+[`DocumentModel`](../+macd/+model/DocumentModel.m) is the authoritative in-memory state for both new and parsed applications. It owns:
 
 - class name, file path, encoding, and line-ending policy;
 - exact original text and the latest generated text;
 - the ordered component collection and root component identity;
 - diagnostics, unknown source regions, and pending source edits; and
-- bounded undo/redo history, including a conservative saved-history checkpoint
-  and public dirty-state flag.
+- bounded undo/redo history, including a conservative saved-history checkpoint and public dirty-state flag.
 
-[`ComponentRecord`](../+macd/+model/ComponentRecord.m) represents one component
-instance. It stores stable identity, MATLAB property name, factory, declared type,
-creation arguments, parent/child IDs, origin, source spans, and ordered
-`PropertyEntry` objects. Parent relationships use stable model IDs rather than
-Preview handles or hierarchy nodes.
+[`ComponentRecord`](../+macd/+model/ComponentRecord.m) represents one component instance. It stores stable identity, MATLAB property name, factory, declared type, creation arguments, parent/child IDs, origin, source spans, and ordered `PropertyEntry` objects. Parent relationships use stable model IDs rather than Preview handles or hierarchy nodes.
 
-[`PropertyEntry`](../+macd/+model/PropertyEntry.m) keeps document state separate
-from catalog capability state. A supported value is either:
+[`PropertyEntry`](../+macd/+model/PropertyEntry.m) keeps document state separate from catalog capability state. A supported value is either:
 
 - a parsed or generated literal that the model may edit; or
 - a source-backed expression that remains read-only and retains its exact source.
 
-Model mutators implement insertion, leaf deletion, individual and batch property
-changes, reset, undo, and redo. A batch is preflighted before mutation and becomes
-one history entry. Parsed deletion also retains enough intent for undo to restore
-the source-generation state.
+Model mutators implement insertion, leaf deletion, individual and batch property changes, reset, undo, and redo. A batch is preflighted before mutation and becomes one history entry. Parsed deletion also retains enough intent for undo to restore the source-generation state.
 
 ## Component Catalog and Capability Resolution
 
-The development pipeline runs `Assert-ComponentLedgerSchema` from
-`dev/component-data/ComponentLedger.ps1` before policy application, grouping
-artifact generation, grouping design, and runtime promotion. It validates every
-complete concrete document against the release schema before writing outputs.
-Application graph, source evidence, and grouping parity checks remain separate.
-Accepted MATLAB classes remain JSON arrays even for a single class; their order
-has no semantic meaning. Combined official headings supply each named property's
-description, rather than leaving earlier names blank. Full-schema verification
-does not establish that a property's setter effects have been audited.
+The development pipeline runs `Assert-ComponentLedgerSchema` from `dev/component-data/ComponentLedger.ps1` before policy application, grouping artifact generation, grouping design, and runtime promotion. It validates every complete concrete document against the release schema before writing outputs. Application graph, source evidence, and grouping parity checks remain separate. Accepted MATLAB classes remain JSON arrays even for a single class; their order has no semantic meaning. Combined official headings supply each named property's description, rather than leaving earlier names blank. Full-schema verification does not establish that a property's setter effects have been audited.
 
-[`ComponentRegistry`](../+macd/+model/ComponentRegistry.m) is the runtime query
-boundary. `createDefault` loads the packaged R2024a catalog through
-[`ComponentCatalogLoader`](../+macd/+catalog/ComponentCatalogLoader.m).
+[`ComponentRegistry`](../+macd/+model/ComponentRegistry.m) is the runtime query boundary. `createDefault` loads the packaged R2024a catalog through [`ComponentCatalogLoader`](../+macd/+catalog/ComponentCatalogLoader.m).
 
 The schema-version 2 manifest references:
 
@@ -155,43 +95,23 @@ The schema-version 2 manifest references:
 - declarative Inspector composite-row templates; and
 - direct-parent context rules.
 
-`ComponentDefinition` describes one concrete factory variant, including creation
-arguments, declared MATLAB type, allowed parents, palette metadata, Preview
-outline shape, and resize constraints. Variant selection prefers an exact
-creation-argument match, then the most specific prefix, then an unstyled default.
+`ComponentDefinition` describes one concrete factory variant, including creation arguments, declared MATLAB type, allowed parents, palette metadata, Preview outline shape, and resize constraints. Variant selection prefers an exact creation-argument match, then the most specific prefix, then an unstyled default.
 
-`PropertyDefinition` describes one property capability. It includes the property
-path, default, editability, category and order, typed value schema, style scope,
-Preview/reset policies, audit disposition, and symbolic editor and validator IDs.
-It never stores an instance value.
+`PropertyDefinition` describes one property capability. It includes the property path, default, editability, category and order, typed value schema, style scope, Preview/reset policies, audit disposition, and symbolic editor and validator IDs. It never stores an instance value.
 
-`ParentContextRule` composes the effective property surface from the selected
-component and its direct parent. For example, a Grid Layout parent suppresses
-absolute `Position` and contributes `Layout.Row` and `Layout.Column`. All
-consumers obtain this effective surface through
-`ComponentRegistry.getEffectiveProperties`.
+`ParentContextRule` composes the effective property surface from the selected component and its direct parent. For example, a Grid Layout parent suppresses absolute `Position` and contributes `Layout.Row` and `Layout.Column`. All consumers obtain this effective surface through `ComponentRegistry.getEffectiveProperties`.
 
-Catalog JSON is data, not executable configuration. Loader validation rejects
-unknown fields, broken references, duplicate ownership, invalid ordering, and
-unknown behavior identifiers. `PropertyBehaviorRegistry` contains the finite
-allowlists that bridge symbolic catalog IDs to project-owned MATLAB code.
+Catalog JSON is data, not executable configuration. Loader validation rejects unknown fields, broken references, duplicate ownership, invalid ordering, and unknown behavior identifiers. `PropertyBehaviorRegistry` contains the finite allowlists that bridge symbolic catalog IDs to project-owned MATLAB code.
 
 ## New and Open Workflows
 
 ### New documents
 
-`NewAppFactory.createEmpty` creates a `DocumentModel` with one generated root
-`uifigure`. Subsequent palette insertion asks the registry for the selected
-variant and allowed parent, seeds required creation arguments and layout defaults,
-then records the insertion in model history.
+`NewAppFactory.createEmpty` creates a `DocumentModel` with one generated root `uifigure`. Subsequent palette insertion asks the registry for the selected variant and allowed parent, seeds required creation arguments and layout defaults, then records the insertion in model history.
 
 ### Opened documents
 
-`AppSourceParser.parseFile` reads source as bytes, requires valid UTF-8, detects
-the existing line-ending convention, and retains the exact decoded source.
-`MatlabLexicalScanner` first identifies safe statement boundaries around strings,
-comments, continuations, and balanced delimiters. The parser then recognizes the
-supported handle-class subset:
+`AppSourceParser.parseFile` reads source as bytes, requires valid UTF-8, detects the existing line-ending convention, and retains the exact decoded source. `MatlabLexicalScanner` first identifies safe statement boundaries around strings, comments, continuations, and balanced delimiters. The parser then recognizes the supported handle-class subset:
 
 - class inheritance;
 - component property declarations;
@@ -199,396 +119,119 @@ supported handle-class subset:
 - parent relationships; and
 - direct component property assignments with supported literals.
 
-The supported app directly inherits from `handle` and owns one `uifigure`.
-Other UI components are descendants of that figure as a user precondition;
-there is no dedicated descendant-membership validation. Constructor tracing
-follows ordinary same-class calls. A constructor try/catch that only deletes
-the owner and rethrows the caught exception is traced on its successful path;
-other guarded initialization remains uncertain.
+The supported app directly inherits from `handle` and owns one `uifigure`. Other UI components are descendants of that figure as a user precondition; there is no dedicated descendant-membership validation. Constructor tracing follows ordinary same-class calls. A constructor try/catch that only deletes the owner and rethrows the caught exception is traced on its successful path; other guarded initialization remains uncertain.
 
-`MatlabLiteralParser` interprets only the conservative literal subset. Callback
-values, arbitrary expressions, unsupported statements, and uncertain regions are
-retained as source-backed data or `UnknownSourceRegion` records. Parsing never
-uses `eval` and never constructs the opened application.
+`MatlabLiteralParser` interprets only the conservative literal subset. Callback values, arbitrary expressions, unsupported statements, and uncertain regions are retained as source-backed data or `UnknownSourceRegion` records. Parsing never uses `eval` and never constructs the opened application.
 
 ## Editing and View Synchronization
 
-The editor uses stable component IDs for hierarchy selection and Preview mapping.
-After an accepted model command, `yamada.refreshShell` rebuilds or synchronizes
-the hierarchy, palette, diagnostics, Safe Preview, Inspector, and command state.
+The editor uses stable component IDs for hierarchy selection and Preview mapping. After an accepted model command, `yamada.refreshShell` rebuilds or synchronizes the hierarchy, palette, diagnostics, Safe Preview, Inspector, and command state.
 
-Insertion eligibility is determined from catalog metadata and the selected or
-nearest eligible parent. Deletion is explicit and model-validated. Absolute
-canvas gestures keep a temporary candidate rectangle in editor state and commit
-one `Position` change on pointer release. A selected Grid Layout child instead
-uses the active-grid overlay: its cell-snapped draft is owned by HTML and a
-release sends a declarative move or span candidate for MATLAB-side validation.
-`GridChildPlacementPlanner` accepts only an editable literal placement of an
-immediate child, rejects new overlap and out-of-range targets, and returns one
-change set for `DocumentModel.applyGridLayoutEdit`.
+Insertion eligibility is determined from catalog metadata and the selected or nearest eligible parent. Deletion is explicit and model-validated. Absolute canvas gestures keep a temporary candidate rectangle in editor state and commit one `Position` change on pointer release. A selected Grid Layout child instead uses the active-grid overlay: its cell-snapped draft is owned by HTML and a release sends a declarative move or span candidate for MATLAB-side validation. `GridChildPlacementPlanner` accepts only an editable literal placement of an immediate child, rejects new overlap and out-of-range targets, and returns one change set for `DocumentModel.applyGridLayoutEdit`.
 
-The model, not the Preview, owns source-coordinate geometry. The editor converts
-between the fitted Preview scale and source pixels and applies the catalog's
-component/style-specific resize constraint before committing a candidate.
+The model, not the Preview, owns source-coordinate geometry. The editor converts between the fitted Preview scale and source pixels and applies the catalog's component/style-specific resize constraint before committing a candidate.
 
 ## Property Inspector
 
-Native setter access and product disposition are separate catalog facts. The
-review applicator can retain passed, release-specific `setterAccess` evidence
-without granting constructor support or completing a policy review. It validates
-all observations before writing any ledger, rejects duplicate targets and
-documented read-only conflicts, and carries runtime access through grouping and
-promotion. Detailed `runtimeObservations` remain development evidence. Checkbox
-Tree Position is publicly writable; InnerPosition is also writable in source but
-remains omitted from the Inspector. OuterPosition has a restricted setter.
+Native setter access and product disposition are separate catalog facts. The review applicator can retain passed, release-specific `setterAccess` evidence without granting constructor support or completing a policy review. It validates all observations before writing any ledger, rejects duplicate targets and documented read-only conflicts, and carries runtime access through grouping and promotion. Detailed `runtimeObservations` remain development evidence. Checkbox Tree Position is publicly writable; InnerPosition is also writable in source but remains omitted from the Inspector. OuterPosition has a restricted setter.
 
-`positionAlias` and `squarePositionAlias` select finite getter effects for 14
-reviewed simple-control variants. `PositionAliasPolicy` propagates a public
-setter's value and setting identity across the shared getters without changing
-their explicit inputs. Lamp uses the smaller finite nonnegative size component
-for both dimensions. Unknown aliases invalidate the group; a later certain
-literal restores it. Grid-managed aliases remain unknown with a layout reason.
-This family does not describe decorated sliders, knobs, containers, or axes.
+`positionAlias` and `squarePositionAlias` select finite getter effects for 14 reviewed simple-control variants. `PositionAliasPolicy` propagates a public setter's value and setting identity across the shared getters without changing their explicit inputs. Lamp uses the smaller finite nonnegative size component for both dimensions. Unknown aliases invalidate the group; a later certain literal restores it. Grid-managed aliases remain unknown with a layout reason. This family does not describe decorated sliders, knobs, containers, or axes.
 
-Preview filters skipped named arguments before invoking native factories and
-projects known alias geometry once through Position. Unknown geometry produces a
-diagnostic instead of silently treating an earlier value as the effective one.
-Named ImageSource values use the existing asset adapter after construction.
-Original constructor arguments and setting ownership stay unchanged.
+Preview filters skipped named arguments before invoking native factories and projects known alias geometry once through Position. Unknown geometry produces a diagnostic instead of silently treating an earlier value as the effective one. Named ImageSource values use the existing asset adapter after construction. Original constructor arguments and setting ownership stay unchanged.
 
-`gridTracks` selects the finite `GridLayoutStatePolicy`. The parser records a
-global initialization sequence and certainty for each creation, including calls
-without named properties. The policy merges these events with explicit track
-and direct-child placement writes. It retains requested track baselines, pads
-occupied rows/columns with `1x`, and releases implicit padding after children
-move out. Default placement follows the last occupied cell in row-major order.
-Positional grid size precedes named track overrides. Unknown placement affects
-the corresponding track state; later certain literals can restore it. Pixel
-geometry and `fit` measurements are outside this policy.
-`PropertyState.EffectPolicy` scopes normalized track comparisons to this audited
-family; a table's unrelated `ColumnWidth` retains its own comparison semantics.
+`gridTracks` selects the finite `GridLayoutStatePolicy`. The parser records a global initialization sequence and certainty for each creation, including calls without named properties. The policy merges these events with explicit track and direct-child placement writes. It retains requested track baselines, pads occupied rows/columns with `1x`, and releases implicit padding after children move out. Default placement follows the last occupied cell in row-major order. Positional grid size precedes named track overrides. Unknown placement affects the corresponding track state; later certain literals can restore it. Pixel geometry and `fit` measurements are outside this policy. `PropertyState.EffectPolicy` scopes normalized track comparisons to this audited family; a table's unrelated `ColumnWidth` retains its own comparison semantics.
 
-The shared resolver exposes final tracks and implicit placements without adding
-source occurrences. Preview projects known values, and copy configuration
-freezes affected values for independent generation and verification. Grid
-overlay track data and track actions consume the same effective values. A
-pending sibling placement reuses its actual insertion plan; new child events
-use the generator's parsed creation anchor. `PropertySourcePlan.combined`
-generates and reparses complete output for multiple pending grid plans. Its
-detached generation candidate uses conservative states to avoid recursive
-planning; the model, copies, Preview, and overlay consume the complete parsed
-result. Preview shares one combined configuration per render. Parsed
-grid batches generate and reparse a detached combined candidate before committing
-one history record, so an occupied-track shrink cannot silently change the
-requested size. Single-property history wraps cell values as scalar record
-fields so track lists remain one Undo/Redo operation.
+The shared resolver exposes final tracks and implicit placements without adding source occurrences. Preview projects known values, and copy configuration freezes affected values for independent generation and verification. Grid overlay track data and track actions consume the same effective values. A pending sibling placement reuses its actual insertion plan; new child events use the generator's parsed creation anchor. `PropertySourcePlan.combined` generates and reparses complete output for multiple pending grid plans. Its detached generation candidate uses conservative states to avoid recursive planning; the model, copies, Preview, and overlay consume the complete parsed result. Preview shares one combined configuration per render. Parsed grid batches generate and reparse a detached combined candidate before committing one history record, so an occupied-track shrink cannot silently change the requested size. Single-property history wraps cell values as scalar record fields so track lists remain one Undo/Redo operation.
 
-Copies keep the full original snapshot but collapse its effective configuration
-to one Position. Placement uses that frozen result, and copy verification checks
-placement changes, including offsets, rather than excluding them. Grid copy
-configuration omits ignored aliases and uses layout coordinates or supplied
-measured geometry when moving to an absolute parent. Source relocation continues
-to retain the original alias statements. It reparses generated output and checks
-each requested placement before committing; an earlier Position overwritten by
-a preserved later alias cannot silently determine a different destination.
-Native-verified zero sizes remain valid for these alias families in both model
-validation and placement. Other families retain their existing size constraints.
+Copies keep the full original snapshot but collapse its effective configuration to one Position. Placement uses that frozen result, and copy verification checks placement changes, including offsets, rather than excluding them. Grid copy configuration omits ignored aliases and uses layout coordinates or supplied measured geometry when moving to an absolute parent. Source relocation continues to retain the original alias statements. It reparses generated output and checks each requested placement before committing; an earlier Position overwritten by a preserved later alias cannot silently determine a different destination. Native-verified zero sizes remain valid for these alias families in both model validation and placement. Other families retain their existing size constraints.
 
-The Inspector begins with `DocumentModel.getEffectivePropertyStates`, which joins
-catalog definitions with explicit instance entries. Source-only assignments that
-are outside the effective catalog surface are appended as read-only rows instead
-of being dropped.
+The Inspector begins with `DocumentModel.getEffectivePropertyStates`, which joins catalog definitions with explicit instance entries. Source-only assignments that are outside the effective catalog surface are appended as read-only rows instead of being dropped.
 
-The application contract distinguishes `independent`, `modeled`, `unsupported`,
-and `unknown` effect status, separately from constructor support and product
-editability. Legacy catalogs default to unknown. The exact per-property review
-artifact passes through schema validation, grouping, promotion, and loader;
-`effectPolicy: none` alone never grants independence. An unknown review status
-does not disable editing or invalidate other states for certain literal writes.
-The resolver projects their stored inputs and catalog defaults while retaining
-`PropertyState.EffectStatus == "unknown"`; `IsKnown` is a finite-model result,
-not proof of reviewed native independence. Untouched Inspector values and related
-editor transactions may also use the existing owned default fixture for unknown
-properties, without materializing source settings. Product omissions/read-only
-access, value validation, and source ownership remain separate gates. Unsupported writes
-and source-uncertain unknown writes invalidate the declared paths, or all
-same-component states when the scope is unbounded.
-Unexpanded initialization, nonempty constructor CreateFcn, uncataloged setters,
-and unsupported Parent/Children writes invalidate document-level guarantees while
-retaining original source. Source hierarchy writes can affect destination siblings
-outside the constructor ownership graph, so a local unknown state is insufficient.
-Later coupled setters do not erase identified unsupported or source-uncertain
-upstream effects. A later reviewed
-independent setter can restore its own stored input. Unknown explicit calls are
-bounded even without an app argument; only allowlisted data constructors with
-inert literal arguments bypass the execution barrier.
+The application contract distinguishes `independent`, `modeled`, `unsupported`, and `unknown` effect status, separately from constructor support and product editability. Legacy catalogs default to unknown. The exact per-property review artifact passes through schema validation, grouping, promotion, and loader; `effectPolicy: none` alone never grants independence. An unknown review status does not disable editing or invalidate other states for certain literal writes. The resolver projects their stored inputs and catalog defaults while retaining `PropertyState.EffectStatus == "unknown"`; `IsKnown` is a finite-model result, not proof of reviewed native independence. Untouched Inspector values and related editor transactions may also use the existing owned default fixture for unknown properties, without materializing source settings. Product omissions/read-only access, value validation, and source ownership remain separate gates. Unsupported writes and source-uncertain unknown writes invalidate the declared paths, or all same-component states when the scope is unbounded. Unexpanded initialization, nonempty constructor CreateFcn, uncataloged setters, and unsupported Parent/Children writes invalidate document-level guarantees while retaining original source. Source hierarchy writes can affect destination siblings outside the constructor ownership graph, so a local unknown state is insufficient. Later coupled setters do not erase identified unsupported or source-uncertain upstream effects. A later reviewed independent setter can restore its own stored input. Unknown explicit calls are bounded even without an app argument; only allowlisted data constructors with inert literal arguments bypass the execution barrier.
 
-`ButtonSelectionPolicy` replays parent SelectedObject references, sibling creation,
-and Value events. Source occurrences remain intact. New/copy generators defer
-selection assignments until siblings exist; the insertion planner admits proven
-same-group creation boundaries. Copy materializes child values and omits the
-source-only parent handle. Preview selects the resolved child after rendering all
-siblings. Mixed radio/toggle families and unresolved handles are not generalized.
+`ButtonSelectionPolicy` replays parent SelectedObject references, sibling creation, and Value events. Source occurrences remain intact. New/copy generators defer selection assignments until siblings exist; the insertion planner admits proven same-group creation boundaries. Copy materializes child values and omits the source-only parent handle. Preview selects the resolved child after rendering all siblings. Mixed radio/toggle families and unresolved handles are not generalized.
 
-`AncestorGeometryPolicy` invalidates child geometry after later ancestor position
-writes unless prior AutoResizeChildren is explicitly off. It does not calculate
-native reflow. Stored position, slider thickness, and selected square control
-rules keep decoration-dependent aliases unknown. Pending ancestor changes use
-the same complete emitted candidate as other cross-component policies.
+`AncestorGeometryPolicy` invalidates child geometry after later ancestor position writes unless prior AutoResizeChildren is explicitly off. It does not calculate native reflow. Stored position, slider thickness, and selected square control rules keep decoration-dependent aliases unknown. Pending ancestor changes use the same complete emitted candidate as other cross-component policies.
 
-New subtree creation shares an execution-order anchor with grid event replay.
-The anchor follows proven ancestor geometry initialization. A later ancestor
-setter in a different unresolved insertion context causes refusal; existing
-source settings are not moved to accommodate the new component.
+New subtree creation shares an execution-order anchor with grid event replay. The anchor follows proven ancestor geometry initialization. A later ancestor setter in a different unresolved insertion context causes refusal; existing source settings are not moved to accommodate the new component.
 
-`PropertyStateResolver` keeps original explicit values, replacement requests,
-and effective values separate. The allowlisted `valueMode` policy covers
-individually reviewed axes font, tick, limit, and map value/mode pairs. An explicit
-value selects manual mode; an automatic or unevaluated mode makes computed output
-unknown. The canonical application graph restores a requested final mode after
-the value, while parsed settings retain their original order and token ownership.
-Copy retains audited automatic-mode inputs and their mode without claiming a
-computed getter value. This rule is not generalized to color modes, coupled
-aspect ratios, grid-width followers, or unreviewed geographic behavior.
+`PropertyStateResolver` keeps original explicit values, replacement requests, and effective values separate. The allowlisted `valueMode` policy covers individually reviewed axes font, tick, limit, and map value/mode pairs. An explicit value selects manual mode; an automatic or unevaluated mode makes computed output unknown. The canonical application graph restores a requested final mode after the value, while parsed settings retain their original order and token ownership. Copy retains audited automatic-mode inputs and their mode without claiming a computed getter value. This rule is not generalized to color modes, coupled aspect ratios, grid-width followers, or unreviewed geographic behavior.
 
-`modeFlag` separately models reviewed color/alpha setters that select manual
-mode while preserving the stored getter when auto is restored. `axisWidth`
-resolves LineWidth -> GridLineWidth -> MinorGridLineWidth using audited defaults,
-automatic followers, and manual holds. Constructor arguments set explicit values
-and flags before follower synchronization; assignments update followers at each
-setter. Held defaults carry their determining mode occurrence without becoming
-explicit source writes. The insertion planner preserves existing manual hold
-points before new upstream assignments and verified constructor additions.
+`modeFlag` separately models reviewed color/alpha setters that select manual mode while preserving the stored getter when auto is restored. `axisWidth` resolves LineWidth -> GridLineWidth -> MinorGridLineWidth using audited defaults, automatic followers, and manual holds. Constructor arguments set explicit values and flags before follower synchronization; assignments update followers at each setter. Held defaults carry their determining mode occurrence without becoming explicit source writes. The insertion planner preserves existing manual hold points before new upstream assignments and verified constructor additions.
 
-Copy omits implicit automatic width setters that would otherwise select manual
-mode, and checks the derived getters after reparsing. A manually held constructor
-default is materialized in the copied configuration before emitting assignments.
-The source snapshot retains its original history and getter inputs.
+Copy omits implicit automatic width setters that would otherwise select manual mode, and checks the derived getters after reparsing. A manually held constructor default is materialized in the copied configuration before emitting assignments. The source snapshot retains its original history and getter inputs.
 
-[`DefaultValueProvider`](../+macd/+ui/+inspector/DefaultValueProvider.m) resolves
-implicit values without changing the document. It first uses catalog or MATLAB
-class metadata and then, when required, constructs one hidden, editor-owned
-fixture for the allowlisted factory and direct-parent context. The result is
-cached by MATLAB release and catalog surface. This controlled probe never
-constructs the application being edited.
+[`DefaultValueProvider`](../+macd/+ui/+inspector/DefaultValueProvider.m) resolves implicit values without changing the document. It first uses catalog or MATLAB class metadata and then, when required, constructs one hidden, editor-owned fixture for the allowlisted factory and direct-parent context. The result is cached by MATLAB release and catalog surface. This controlled probe never constructs the application being edited.
 
-[`InspectorSurfaceBuilder`](../+macd/+ui/+inspector/InspectorSurfaceBuilder.m)
-projects atomic property states into deterministic singleton or declarative
-composite rows. Composite rows change presentation only; underlying property
-contracts remain independent.
+[`InspectorSurfaceBuilder`](../+macd/+ui/+inspector/InspectorSurfaceBuilder.m) projects atomic property states into deterministic singleton or declarative composite rows. Composite rows change presentation only; underlying property contracts remain independent.
 
-`RowHeight` and `ColumnWidth` have the `gridTrackList` editor capability, which
-marks them for the canvas overlay rather than a native Inspector row. The normal
-Grid Layout Inspector retains `RowSpacing`, `ColumnSpacing`, `Padding`,
-`BackgroundColor`, `Visible`, and `Scrollable`; the child Inspector retains
-`Layout.Row` and `Layout.Column` as the exact-value fallback.
+`RowHeight` and `ColumnWidth` have the `gridTrackList` editor capability, which marks them for the canvas overlay rather than a native Inspector row. The normal Grid Layout Inspector retains `RowSpacing`, `ColumnSpacing`, `Padding`, `BackgroundColor`, `Visible`, and `Scrollable`; the child Inspector retains `Layout.Row` and `Layout.Column` as the exact-value fallback.
 
-[`PropertyEditorFactory`](../+macd/+ui/+inspector/PropertyEditorFactory.m) maps an
-allowlisted editor ID to a native control or project-owned dialog. Editors submit
-one or more changes through `PropertyTransaction`. The editor validates the
-complete candidate state with `PropertyBatchValidator`, reconciles dependent
-values such as `Items`/`ItemsData`/`Value`, and calls
-`DocumentModel.setPropertyBatch` only after validation succeeds. An accepted
-batch produces one history record and one shell refresh.
+[`PropertyEditorFactory`](../+macd/+ui/+inspector/PropertyEditorFactory.m) maps an allowlisted editor ID to a native control or project-owned dialog. Editors submit one or more changes through `PropertyTransaction`. The editor validates the complete candidate state with `PropertyBatchValidator`, reconciles dependent values such as `Items`/`ItemsData`/`Value`, and calls `DocumentModel.setPropertyBatch` only after validation succeeds. An accepted batch produces one history record and one shell refresh.
 
 ## Safe Preview and Canvas Overlay
 
-[`PreviewRenderer`](../+macd/+ui/PreviewRenderer.m) destroys stale editor-owned
-controls and rebuilds a Preview from the model hierarchy. It creates only
-registered factories, applies editable literal values permitted by each
-`PreviewPolicy`, skips source expressions and callbacks, and reports individual
-construction or assignment failures as non-executing diagnostics. Native menu and
-toolbar families are currently not rendered on the Preview canvas.
+[`PreviewRenderer`](../+macd/+ui/PreviewRenderer.m) destroys stale editor-owned controls and rebuilds a Preview from the model hierarchy. It creates only registered factories, applies editable literal values permitted by each `PreviewPolicy`, skips source expressions and callbacks, and reports individual construction or assignment failures as non-executing diagnostics. Native menu and toolbar families are currently not rendered on the Preview canvas.
 
-The outer Preview panel keeps a light native heading; its child is a dark-gray
-scroll host. The renderer adds a padded dark content panel so all four edges of
-the figure remain distinct from the scroll bars at their limits. Two fixed dark
-dividers mark the viewport boundary next to visible native scroll tracks while
-the canvas extends beyond the viewport. The renderer places an unscaled canvas
-at the root `UIFigure.Position(3:4)` client-area size, uses the figure's
-supported `Color`. The scroll content encompasses the figure and visible
-component bounds, with room for resize handles. The transparent HTML overlay
-is a sibling of the figure frame in that content, so component outlines remain
-selectable outside a shrunken figure. The canvas itself continues to clip native
-controls at the actual UIFigure boundary. The overlay's `surfaceBounds` describes
-its extent in canvas pixels; SVG viewBox and HTML layer offsets preserve those
-coordinates when the editing area extends beyond the canvas. All pointer events,
-hit targets, and Grid Layout measurements use canvas-local
-pixels. Editor window resizing repositions the fixed-size canvas without
-changing the document. The frame gives the canvas a one-pixel border on each
-side. Eight root resize handles remain available when the root has an editable
-literal Position, including an empty document. West and south drags also update
-the screen origin to anchor the opposite edge; source-backed positions remain
-noneditable. A disposable HTML guide is placed in the scroll content during a
-root drag, so its dashed proposed bounds can extend beyond the current canvas.
-The guide disappears when the gesture ends; the overlay shows no size label.
+The outer Preview panel keeps a light native heading; its child is a dark-gray scroll host. The renderer adds a padded dark content panel so all four edges of the figure remain distinct from the scroll bars at their limits. Two fixed dark dividers mark the viewport boundary next to visible native scroll tracks while the canvas extends beyond the viewport. The renderer places an unscaled canvas at the root `UIFigure.Position(3:4)` client-area size, uses the figure's supported `Color`. The scroll content encompasses the figure and visible component bounds, with room for resize handles. The transparent HTML overlay is a sibling of the figure frame in that content, so component outlines remain selectable outside a shrunken figure. The canvas itself continues to clip native controls at the actual UIFigure boundary. The overlay's `surfaceBounds` describes its extent in canvas pixels; SVG viewBox and HTML layer offsets preserve those coordinates when the editing area extends beyond the canvas. All pointer events, hit targets, and Grid Layout measurements use canvas-local pixels. Editor window resizing repositions the fixed-size canvas without changing the document. The frame gives the canvas a one-pixel border on each side. Eight root resize handles remain available when the root has an editable literal Position, including an empty document. West and south drags also update the screen origin to anchor the opposite edge; source-backed positions remain noneditable. A disposable HTML guide is placed in the scroll content during a root drag, so its dashed proposed bounds can extend beyond the current canvas. The guide disappears when the gesture ends; the overlay shows no size label.
 
-The renderer returns a map from stable component IDs to disposable Preview
-handles. `yamada` uses this map to build the transparent
-[`EditorInteractionOverlay.html`](../resources/EditorInteractionOverlay.html)
-`uihtml` layer. MATLAB sends source-derived component outlines, selection state,
-and Tab Group information to the overlay. For the nearest selected Grid Layout,
-`GridLayoutOverlayDataBuilder` also publishes versioned public Preview geometry,
-track headers, immediate-child occupancy, and editability. The HTML/SVG layer
-owns pointer capture, outlines, resize handles, tab-selection hit targets, and
-temporary grid drafts, then sends declarative pointer or grid actions back to
-MATLAB. It never mutates the document directly. MATLAB rejects actions with a
-stale revision, a mismatched active grid, unsupported source ownership, or an
-invalid final placement.
+The renderer returns a map from stable component IDs to disposable Preview handles. `yamada` uses this map to build the transparent [`EditorInteractionOverlay.html`](../resources/EditorInteractionOverlay.html) `uihtml` layer. MATLAB sends source-derived component outlines, selection state, and Tab Group information to the overlay. For the nearest selected Grid Layout, `GridLayoutOverlayDataBuilder` also publishes versioned public Preview geometry, track headers, immediate-child occupancy, and editability. The HTML/SVG layer owns pointer capture, outlines, resize handles, tab-selection hit targets, and temporary grid drafts, then sends declarative pointer or grid actions back to MATLAB. It never mutates the document directly. MATLAB rejects actions with a stale revision, a mismatched active grid, unsupported source ownership, or an invalid final placement.
 
-Tab content geometry is published only after observed layout values stabilize.
-Inactive-tab child outlines are omitted, and the active tab selection remains
-disposable Preview state unless a supported model property is explicitly edited.
+Tab content geometry is published only after observed layout values stabilize. Inactive-tab child outlines are omitted, and the active tab selection remains disposable Preview state unless a supported model property is explicitly edited.
 
 ### Grid Layout Visual Editor
 
-The editor follows one model-to-canvas-to-model flow. `DocumentModel` holds
-track values and child placements. `PreviewRenderer` draws disposable MATLAB
-controls from that model. `GridLayoutOverlayDataBuilder` combines model values
-with the controls' realized geometry into a versioned payload. The HTML overlay
-draws the grid UI and sends a proposed action to `yamada`, which validates it
-and commits one model change before rebuilding the Preview. The Inspector edits
-ordinary component properties alongside this canvas workflow. Preview and HTML
-are disposable views of the document state.
+The editor follows one model-to-canvas-to-model flow. `DocumentModel` holds track values and child placements. `PreviewRenderer` draws disposable MATLAB controls from that model. `GridLayoutOverlayDataBuilder` combines model values with the controls' realized geometry into a versioned payload. The HTML overlay draws the grid UI and sends a proposed action to `yamada`, which validates it and commits one model change before rebuilding the Preview. The Inspector edits ordinary component properties alongside this canvas workflow. Preview and HTML are disposable views of the document state.
 
 #### Selection and editing context
 
-`SelectedComponentId` drives the hierarchy and Inspector; the nearest selected
-Grid Layout (`ActiveGridId`) drives track controls. Selection targets for visible
-grid-managed children are published independently of the active grid. Otherwise
-an opened document, which initially selects `UIFigure`, could not select a grid
-child from the canvas. Selecting a nested Grid Layout enters that grid's immediate
-tracks and children. Transparent targets are painted from outer to inner grids
-in one background layer so descendants win hit testing without covering active
-child controls or track settings. Selecting a child changes view state only.
+`SelectedComponentId` drives the hierarchy and Inspector; the nearest selected Grid Layout (`ActiveGridId`) drives track controls. Selection targets for visible grid-managed children are published independently of the active grid. Otherwise an opened document, which initially selects `UIFigure`, could not select a grid child from the canvas. Selecting a nested Grid Layout enters that grid's immediate tracks and children. Transparent targets are painted from outer to inner grids in one background layer so descendants win hit testing without covering active child controls or track settings. Selecting a child changes view state only.
 
-The editing surface reserves space around the active grid for its row and
-column settings buttons. Headers and their popovers use the editing surface
-bounds, including the dark area outside UIFigure, so full-figure grids and
-stranded grids retain their settings controls. The buttons sit outside the grid
-edges, distinct from the figure resize handles.
+The editing surface reserves space around the active grid for its row and column settings buttons. Headers and their popovers use the editing surface bounds, including the dark area outside UIFigure, so full-figure grids and stranded grids retain their settings controls. The buttons sit outside the grid edges, distinct from the figure resize handles.
 
 #### Track and child edits
 
-The Inspector remains focused on the selected component. `RowHeight` and
-`ColumnWidth` use the compact canvas settings controls; spacing and padding stay
-in the ordinary Inspector. Track editing uses explicit Fit, Fixed, and Flexible
-modes instead of dragging a boundary, because a pixel drag would silently
-convert a fit or weighted track to a fixed size. The HTML popover owns only the
-draft. MATLAB validates the submitted action and `DocumentModel.applyGridLayoutEdit`
-commits a structural edit with all affected child placements as one Undo step.
-Expression-backed tracks or placements remain locked when source ownership
-cannot be proved.
+The Inspector remains focused on the selected component. `RowHeight` and `ColumnWidth` use the compact canvas settings controls; spacing and padding stay in the ordinary Inspector. Track editing uses explicit Fit, Fixed, and Flexible modes instead of dragging a boundary, because a pixel drag would silently convert a fit or weighted track to a fixed size. The HTML popover owns only the draft. MATLAB validates the submitted action and `DocumentModel.applyGridLayoutEdit` commits a structural edit with all affected child placements as one Undo step. Expression-backed tracks or placements remain locked when source ownership cannot be proved.
 
-Inserting or deleting a track remaps explicit immediate-child placements in
-the same transaction. Deleting a track occupied by a single-track child is
-rejected rather than moving or deleting that child implicitly. Existing
-overlaps are preserved, while a canvas drop that would create a new overlap
-is rejected; exact Inspector placement remains available for intentional
-overlap.
+Inserting or deleting a track remaps explicit immediate-child placements in the same transaction. Deleting a track occupied by a single-track child is rejected rather than moving or deleting that child implicitly. Existing overlaps are preserved, while a canvas drop that would create a new overlap is rejected; exact Inspector placement remains available for intentional overlap.
 
 #### Geometry and interaction
 
-R2024a exposes the grid and rendered controls' public geometry, but not the
-realized rectangle of every track. `GridLayoutOverlayDataBuilder` reconstructs
-track boundaries from literals, spacing, and settled Safe Preview measurements.
-For `fit` measurements it prefers a direct child's `OuterPosition`, which can
-include decorations omitted from its control-body `Position`; selection hit
-targets still use the visible child's ordinary bounds. This distinction matters
-for controls such as Range Slider, whose narrow body understates the height
-required by its row. `OuterPosition` is still not a grid-cell measurement, so
-this reconstruction is not guaranteed to align every separator exactly. When
-geometry is ambiguous, the builder withholds geometry-dependent editing instead
-of publishing a plausible but incorrect boundary. Adding invisible nested
-`uigridlayout` controls as cell probes was tested and rejected: in a populated
-R2024a grid they changed the native layout and did not reliably occupy the
-requested cell.
+R2024a exposes the grid and rendered controls' public geometry, but not the realized rectangle of every track. `GridLayoutOverlayDataBuilder` reconstructs track boundaries from literals, spacing, and settled Safe Preview measurements. For `fit` measurements it prefers a direct child's `OuterPosition`, which can include decorations omitted from its control-body `Position`; selection hit targets still use the visible child's ordinary bounds. This distinction matters for controls such as Range Slider, whose narrow body understates the height required by its row. `OuterPosition` is still not a grid-cell measurement, so this reconstruction is not guaranteed to align every separator exactly. When geometry is ambiguous, the builder withholds geometry-dependent editing instead of publishing a plausible but incorrect boundary. Adding invisible nested `uigridlayout` controls as cell probes was tested and rejected: in a populated R2024a grid they changed the native layout and did not reliably occupy the requested cell.
 
-An unoccupied `fit` track can have zero extent without losing its logical index.
-The overlay keeps its settings control addressable and supplies a temporary drop
-band during a child move; that band changes neither the Preview grid nor source.
-Span-handle drags begin from the handle even when it overlaps spacing or
-padding. The moving edge snaps at the midpoint between valid track edges in
-either direction, independently of the perpendicular axis.
+An unoccupied `fit` track can have zero extent without losing its logical index. The overlay keeps its settings control addressable and supplies a temporary drop band during a child move; that band changes neither the Preview grid nor source. Span-handle drags begin from the handle even when it overlaps spacing or padding. The moving edge snaps at the midpoint between valid track edges in either direction, independently of the perpendicular axis.
 
 #### Preview updates and Tab visibility
 
-Preview geometry may change after an initial Open or Tab switch. The editor
-publishes an initial overlay and schedules a bounded refresh after visible grid
-and child rectangles stabilize, including when no grid is selected. On a Tab
-switch it immediately removes controls belonging to the hidden Tab, then
-refreshes settled geometry. Visibility must be checked through every enclosing
-Tab Group; a selected grid on a hidden Tab does not remain active on the canvas.
+Preview geometry may change after an initial Open or Tab switch. The editor publishes an initial overlay and schedules a bounded refresh after visible grid and child rectangles stabilize, including when no grid is selected. On a Tab switch it immediately removes controls belonging to the hidden Tab, then refreshes settled geometry. Visibility must be checked through every enclosing Tab Group; a selected grid on a hidden Tab does not remain active on the canvas.
 
-Overlay publication reserves one revision before native layout can reenter the
-update. Every payload section uses that revision. A superseded update discards
-its result instead of overwriting newer geometry; stale incoming actions still
-fail the revision check.
+Overlay publication reserves one revision before native layout can reenter the update. Every payload section uses that revision. A superseded update discards its result instead of overwriting newer geometry; stale incoming actions still fail the revision check.
 
 ## Validation and Diagnostics
 
-`ModelValidator` checks document-wide invariants: valid and unique identifiers,
-one registered root, resolvable parents, allowed hierarchy relationships,
-effective property applicability, editable/source-backed consistency, typed
-property values, and supported geometry.
+`ModelValidator` checks document-wide invariants: valid and unique identifiers, one registered root, resolvable parents, allowed hierarchy relationships, effective property applicability, editable/source-backed consistency, typed property values, and supported geometry.
 
-`PropertyBatchValidator` validates one complete candidate property state. This is
-important for dependent contracts such as limits and values or item labels, item
-data, multiselect mode, and selection. Validation returns user-facing messages;
-document validation publishes structured `Diagnostic` objects with severity,
-code, component identity, and source span where available.
+`PropertyBatchValidator` validates one complete candidate property state. This is important for dependent contracts such as limits and values or item labels, item data, multiselect mode, and selection. Validation returns user-facing messages; document validation publishes structured `Diagnostic` objects with severity, code, component identity, and source span where available.
 
-Errors block unsafe generation or Save. Warnings can describe state that is
-preserved but cannot be edited or rendered. The diagnostics drawer, status line,
-generators, and tests consume the same diagnostic model.
+Errors block unsafe generation or Save. Warnings can describe state that is preserved but cannot be edited or rendered. The diagnostics drawer, status line, generators, and tests consume the same diagnostic model.
 
 ## Generation, Diff, and Save
 
 `RoundTripGenerator` is the editor's generation entry point.
 
-- If a document has no original source, it delegates to `NewAppGenerator`, which
-  owns the complete minimal handle-class app skeleton and deterministic component
-  construction order.
-- For an opened document, no-edit generation returns `OriginalText` unchanged.
-  Edited literal assignments replace only owned `SourceSpan` ranges. New
-  components require unambiguous declaration and creation anchors. Deletion is
-  limited to owned non-root leaves with no unknown external reference.
-- Edits are rejected if required spans are missing, deletion ownership is
-  ambiguous, or calculated edits overlap.
+- If a document has no original source, it delegates to `NewAppGenerator`, which owns the complete minimal handle-class app skeleton and deterministic component construction order.
+- For an opened document, no-edit generation returns `OriginalText` unchanged. Edited literal assignments replace only owned `SourceSpan` ranges. New components require unambiguous declaration and creation anchors. Deletion is limited to owned non-root leaves with no unknown external reference.
+- Edits are rejected if required spans are missing, deletion ownership is ambiguous, or calculated edits overlap.
 
-`CallbackSourceEdits` owns new bound-method registration and handler templates.
-All four generation paths use that formatter, while existing registrations are
-preserved as source during localized edits and reparenting. Handler inputs are
-`(app, source, event)`. The default close binding is infrastructure: Add replaces
-it with an editable handler and Delete restores it.
+`CallbackSourceEdits` owns new bound-method registration and handler templates. All four generation paths use that formatter, while existing registrations are preserved as source during localized edits and reparenting. Handler inputs are `(app, source, event)`. The default close binding is infrastructure: Add replaces it with an editable handler and Delete restores it.
 
-Both the editor and generated apps own their figure lifetime explicitly. A
-figure-bound `ObjectBeingDestroyed` listener deletes a still-valid owner without
-replacing user `DeleteFcn` code. Owner deletion skips a figure already being
-destroyed. Constructor failure deletes the partially constructed owner and
-rethrows the original exception; destructors contain no argument-validation block.
+Both the editor and generated apps own their figure lifetime explicitly. A figure-bound `ObjectBeingDestroyed` listener deletes a still-valid owner without replacing user `DeleteFcn` code. Owner deletion skips a figure already being destroyed. Constructor failure deletes the partially constructed owner and rethrows the original exception; destructors contain no argument-validation block.
 
-Diff Preview compares `OriginalText` with the generated candidate before writing.
-The application enables in-place Save only after Open or Save As establishes a
-confirmed path and validation has no errors. Generated text is written as UTF-8
-without a BOM. New documents use the host line-ending convention; opened source
-preserves detected CRLF or LF text. `SourceWriter` provides the separately tested
-byte-level utility for callers that need explicit line-ending normalization.
+Diff Preview compares `OriginalText` with the generated candidate before writing. The application enables in-place Save only after Open or Save As establishes a confirmed path and validation has no errors. Generated text is written as UTF-8 without a BOM. New documents use the host line-ending convention; opened source preserves detected CRLF or LF text. `SourceWriter` provides the separately tested byte-level utility for callers that need explicit line-ending normalization.
 
-`SavedSourceCheckpoint` reparses the exact normalized output without executing
-input code. It verifies the component set, parent links, and known effective
-property states before writing. Its value-only subtree snapshot owns the saved
-setting histories and offsets under a fresh source version; `ComponentMap` joins
-those parsed identities to the editable document's stable component identities.
-Unknown effective values remain unknown and are not fabricated by the save check.
+`SavedSourceCheckpoint` reparses the exact normalized output without executing input code. It verifies the component set, parent links, and known effective property states before writing. Its value-only subtree snapshot owns the saved setting histories and offsets under a fresh source version; `ComponentMap` joins those parsed identities to the editable document's stable component identities. Unknown effective values remain unknown and are not fabricated by the save check.
 
-Only after writing succeeds does `DocumentModel.confirmSavedSource` attach this
-checkpoint and advance the saved history position. It rechecks detached source
-generation to reject intentions changed during the write. `OriginalText`, its
-setting IDs and offsets, and existing Undo/Redo records remain the immutable edit
-basis until reload. Subsequent saves regenerate from that basis rather than
-applying old offsets to a previously saved output. Save As changes the confirmed
-class identity while preserving the same ownership boundary.
+Only after writing succeeds does `DocumentModel.confirmSavedSource` attach this checkpoint and advance the saved history position. It rechecks detached source generation to reject intentions changed during the write. `OriginalText`, its setting IDs and offsets, and existing Undo/Redo records remain the immutable edit basis until reload. Subsequent saves regenerate from that basis rather than applying old offsets to a previously saved output. Save As changes the confirmed class identity while preserving the same ownership boundary.
 
 ## Resource and Development-Data Boundary
 
@@ -596,41 +239,30 @@ Runtime code resolves resources relative to the project root:
 
 - `resources/component-catalog/R2024a` is loaded by the registry;
 - `resources/EditorInteractionOverlay.html` is loaded by `yamada`; and
-- development ledgers and generation scripts under `dev/component-data` are not
-  runtime dependencies.
+- development ledgers and generation scripts under `dev/component-data` are not runtime dependencies.
 
-The development ledger is the review surface for catalog research and audit
-decisions. Promotion scripts generate the grouped runtime catalog; loader and
-baseline tests verify that the promoted variants reconstruct the audited
-intrinsic and parent-effective property surfaces without capability drift.
+The development ledger is the review surface for catalog research and audit decisions. Promotion scripts generate the grouped runtime catalog; loader and baseline tests verify that the promoted variants reconstruct the audited intrinsic and parent-effective property surfaces without capability drift.
 
 ## Extending the Architecture
 
 ### Add or change a component or property
 
 1. Update the release-specific audited data under `dev/component-data/R2024a`.
-2. Regenerate or promote the runtime catalog rather than adding declarative
-   inventory to `ComponentRegistry.m`.
-3. Add only allowlisted executable behavior required by a new editor, validator,
-   Preview adapter, or reset policy.
-4. Test loader failure modes, registry parity, parent-context projection,
-   Inspector behavior, Preview safety, validation, and source generation.
+2. Regenerate or promote the runtime catalog rather than adding declarative inventory to `ComponentRegistry.m`.
+3. Add only allowlisted executable behavior required by a new editor, validator, Preview adapter, or reset policy.
+4. Test loader failure modes, registry parity, parent-context projection, Inspector behavior, Preview safety, validation, and source generation.
 
 ### Add an Inspector editor
 
 1. Define a typed value schema and symbolic editor/validator identifiers.
 2. Add the identifiers to the finite behavior allowlists.
 3. Implement the native adapter or dialog in `+macd/+ui/+inspector`.
-4. Commit through `PropertyTransaction` and the shared batch validator; do not
-   mutate a component record directly from a UI callback.
-5. Preserve source-backed values and test rejected drafts, atomic history,
-   Preview refresh, and round-trip output.
+4. Commit through `PropertyTransaction` and the shared batch validator; do not mutate a component record directly from a UI callback.
+5. Preserve source-backed values and test rejected drafts, atomic history, Preview refresh, and round-trip output.
 
 ### Extend source syntax
 
-Extend the lexical/parser contract and source ownership model together. A syntax
-form may be parsed for preservation without becoming editable. Generation must
-still prove exact ownership and insertion anchors before rewriting it.
+Extend the lexical/parser contract and source ownership model together. A syntax form may be parsed for preservation without becoming editable. Generation must still prove exact ownership and insertion anchors before rewriting it.
 
 ## Verification Boundaries
 
@@ -641,11 +273,7 @@ Tests are organized by architectural boundary:
 - loader and registry baseline tests prove strict catalog expansion and parity;
 - Inspector and editor tests construct real hidden UI fixtures and delete them;
 - Preview tests prove allowlisted rendering without input-app execution;
-- generation tests cover canonical output, localized edits, source preservation,
-  encoding, and line endings; and
-- project-convention tests enforce MATLAB documentation, license, encoding, and
-  line-ending rules.
+- generation tests cover canonical output, localized edits, source preservation, encoding, and line endings; and
+- project-convention tests enforce MATLAB documentation, license, encoding, and line-ending rules.
 
-Run focused tests for a change before the complete `tests/unit` suite. Current
-known failures and unfinished product capabilities belong in
-[ROADMAP.md](../ROADMAP.md), not in this architecture reference.
+Run focused tests for a change before the complete `tests/unit` suite. Current known failures and unfinished product capabilities belong in [ROADMAP.md](../ROADMAP.md), not in this architecture reference.

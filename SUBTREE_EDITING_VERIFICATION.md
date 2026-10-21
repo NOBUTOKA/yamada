@@ -34,19 +34,11 @@
 
 ## 追加の実ファイル検証
 
-新規モデルから既存ソースを作り、解析後に Copy → Paste → 親変更 → Cut → Undo を実施した。
-生成結果を一時 `.m` ファイルへ SourceWriter で書き、AppSourceParser.parseFile で再読込した。
-CRLF / LF の両方で、コンポーネント数、コピー先の親、末尾の未知コードsentinel、改行規約の一致を確認した。
-入力クラスはインスタンス化していない。検証用の一時ファイルは終了時に削除した。
+新規モデルから既存ソースを作り、解析後に Copy → Paste → 親変更 → Cut → Undo を実施した。 生成結果を一時 `.m` ファイルへ SourceWriter で書き、AppSourceParser.parseFile で再読込した。 CRLF / LF の両方で、コンポーネント数、コピー先の親、末尾の未知コードsentinel、改行規約の一致を確認した。 入力クラスはインスタンス化していない。検証用の一時ファイルは終了時に削除した。
 
 ## HTMLポインター検証の範囲
 
-R2024aのFigure向けuitest.dragでは、この構成のuihtml内部へのpointerイベント到達を確認できなかった。
-恒久テストは元HTMLの一時コピーへテスト専用リスナーを追加し、sendEventToHTMLSourceから
-実iframe内DOMにpointerdown/move/upをdispatchする。実HTMLの要素ヒット判定・drag handler・
-MATLABへのイベント送信・モデル変更・指定セル・一つの履歴までを確認する。
-OSマウス自体の自動操作を検証したという主張はしない。
-ガイドの座標・占有・キャンセル・版番号と既存overlay動作はNodeテストでも検証する。
+R2024aのFigure向けuitest.dragでは、この構成のuihtml内部へのpointerイベント到達を確認できなかった。 恒久テストは元HTMLの一時コピーへテスト専用リスナーを追加し、sendEventToHTMLSourceから 実iframe内DOMにpointerdown/move/upをdispatchする。実HTMLの要素ヒット判定・drag handler・ MATLABへのイベント送信・モデル変更・指定セル・一つの履歴までを確認する。 OSマウス自体の自動操作を検証したという主張はしない。 ガイドの座標・占有・キャンセル・版番号と既存overlay動作はNodeテストでも検証する。
 
 ## 対応表と境界
 
@@ -80,24 +72,17 @@ addpath(pwd, fullfile(pwd, 'tests'));
 results = runYamadaTests('full');
 ```
 
-HTML overlayは tests 配下の7本の .test.cjs をNodeで実行し、全て合格した。
-仕様上の対応範囲・後続範囲は上の対応表とSPECIFICATION.mdに記載し、計画の全段階の実装と検証を完了した。
+HTML overlayは tests 配下の7本の .test.cjs をNodeで実行し、全て合格した。 仕様上の対応範囲・後続範囲は上の対応表とSPECIFICATION.mdに記載し、計画の全段階の実装と検証を完了した。
 
 ## 2026-10-15: UI・Cut命名・Previewショートカット修正
 
 - 親変更UIをPreviewのドラッグに限定し、Edit/Hierarchyの親変更コマンドと専用ウィンドウを削除した。
-- CutのPasteは子孫も元名を維持し、実際のメンバー名・参照との衝突時だけ数字を追加する。
-  削除後のソースを独立candidateで生成して確認する。Copyは従来どおりCopy接尾辞を付ける。
-- Preview HTMLにCtrl+C/X/Vの転送を追加した。入力欄、編集中のpopover、操作中のgestureは除外し、
-  MATLAB側でも選択IDとrevisionを照合する。実iframeのKeyboardEventからPasteまでを検証した。
-  OSの物理キーボード自体を自動操作した検証ではない。
+- CutのPasteは子孫も元名を維持し、実際のメンバー名・参照との衝突時だけ数字を追加する。 削除後のソースを独立candidateで生成して確認する。Copyは従来どおりCopy接尾辞を付ける。
+- Preview HTMLにCtrl+C/X/Vの転送を追加した。入力欄、編集中のpopover、操作中のgestureは除外し、 MATLAB側でも選択IDとrevisionを照合する。実iframeのKeyboardEventからPasteまでを検証した。 OSの物理キーボード自体を自動操作した検証ではない。
 - EditのCopy/Cut/Pasteにキー表記を追加し、RenameのF2も同じ区切りで表示する。
 - MATLAB R2024a quick: **221/221合格**、失敗0、未完了0、190.701秒。
-- 関連UI: EditorClipboardTest **8/8**、EditorReparentDragTest **4/4**、
-  HierarchyContextMenuTest **5/5**。TestSelectionContractTestも**3/3合格**。
-- 最終モデルコードのComponentClipboardTestを再実行し、**13/13合格**。
-  既存ソースの保存・再解析、Rename後のCut、反復Paste、Undo後の名前衝突を含む。
+- 関連UI: EditorClipboardTest **8/8**、EditorReparentDragTest **4/4**、 HierarchyContextMenuTest **5/5**。TestSelectionContractTestも**3/3合格**。
+- 最終モデルコードのComponentClipboardTestを再実行し、**13/13合格**。 既存ソースの保存・再解析、Rename後のCut、反復Paste、Undo後の名前衝突を含む。
 - HTML Nodeテストは新規overlayClipboardShortcut.test.cjsを含む**8/8合格**。
-- checkcode: 変更箇所の新規指摘0。DocumentModelには既存の未使用初期値targetNameに関するNASGUが1件ある。
-  その他の変更MATLABファイルは指摘0。文字コード・改行・GPLの規約テストも合格。
+- checkcode: 変更箇所の新規指摘0。DocumentModelには既存の未使用初期値targetNameに関するNASGUが1件ある。 その他の変更MATLABファイルは指摘0。文字コード・改行・GPLの規約テストも合格。
 - 今回はquickと関連UIを実行した。上記341件のfull記録は初回実装完了時の記録である。

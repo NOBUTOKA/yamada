@@ -1,14 +1,8 @@
 # Handle-class input fixtures
 
-These fixtures were adapted on 2026-10-21 from the sibling original files in
-`tests/fixtures/`. The originals are retained unchanged. Original notices are
-retained in each adapted file; no editor license was newly imposed on user output.
+These fixtures were adapted on 2026-10-21 from the sibling original files in `tests/fixtures/`. The originals are retained unchanged. Original notices are retained in each adapted file; no editor license was newly imposed on user output.
 
-Adaptations: inherit from `handle`, replace the App Designer callback wrapper
-with a bound method accepting source and event, replace app registration with
-a default close callback and a figure destruction listener, and remove the
-App Designer no-output clear idiom. The fixture class identities and UI data
-remain unchanged. These files are preserved input data, not editor runtime code.
+Adaptations: inherit from `handle`, replace the App Designer callback wrapper with a bound method accepting source and event, replace app registration with a default close callback and a figure destruction listener, and remove the App Designer no-output clear idiom. The fixture class identities and UI data remain unchanged. These files are preserved input data, not editor runtime code.
 
 | Original file | Original SHA-256 |
 | --- | --- |

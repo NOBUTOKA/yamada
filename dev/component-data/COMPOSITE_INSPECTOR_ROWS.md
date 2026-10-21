@@ -2,24 +2,18 @@
 
 ## Purpose
 
-This document defines how one Inspector row can present and edit multiple
-MATLAB properties without merging their underlying property contracts. The
-design is intended to remain applicable when another MATLAB release catalog is
-generated.
+This document defines how one Inspector row can present and edit multiple MATLAB properties without merging their underlying property contracts. The design is intended to remain applicable when another MATLAB release catalog is generated.
 
 ## Selection rule
 
-A composite row is justified only when the property set has one natural,
-user-facing name. At least one of the following must also be true:
+A composite row is justified only when the property set has one natural, user-facing name. At least one of the following must also be true:
 
 1. The properties are validated or committed as one candidate state.
 2. One existing dialog already edits the properties together.
 3. The properties form one compact control, such as paired state buttons.
 4. One property determines the valid shape or interpretation of another.
 
-Sharing a documentation category, an editor kind, or a visual effect is not
-sufficient by itself. If no precise row name exists, keep separate Inspector
-rows even when the implementation shares validation or transaction logic.
+Sharing a documentation category, an editor kind, or a visual effect is not sufficient by itself. If no precise row name exists, keep separate Inspector rows even when the implementation shares validation or transaction logic.
 
 ## Recommended names and candidate inventory
 
@@ -32,17 +26,9 @@ rows even when the implementation shares validation or transaction logic.
 | `Items` | `Items`, `ItemsData` | dropdown, list box, and discrete knob | One button opening a paired Items/ItemsData dialog | `ItemsData` is interpreted against `Items`; both should be staged and applied together. |
 | `Font Style` | `FontWeight`, `FontAngle` | all components that expose both properties | Inline bold `B` and italic `I` state buttons | Both values are binary typographic style switches and fit naturally in one compact row. |
 
-`FontSize` is not included in the initial `Font Style` row. A later `Font` row
-could combine `FontName`, `FontSize`, `FontWeight`, and `FontAngle`, but it would
-need either a two-line row or a dialog in the current narrow Inspector. The
-first slice should establish the multi-property contract without deciding that
-larger layout yet.
+`FontSize` is not included in the initial `Font Style` row. A later `Font` row could combine `FontName`, `FontSize`, `FontWeight`, and `FontAngle`, but it would need either a two-line row or a dialog in the current narrow Inspector. The first slice should establish the multi-property contract without deciding that larger layout yet.
 
-Switch variants are intentionally excluded from the generic `Items` row. Their
-`Items` contract is exactly two states, while their `ItemsData` contract is the
-matching two-element data form or empty. They need a dedicated two-state editor
-with a reviewed name and interaction model rather than an unrestricted list
-dialog.
+Switch variants are intentionally excluded from the generic `Items` row. Their `Items` contract is exactly two states, while their `ItemsData` contract is the matching two-element data form or empty. They need a dedicated two-state editor with a reviewed name and interaction model rather than an unrestricted list dialog.
 
 ### High-confidence follow-up candidates
 
@@ -60,9 +46,7 @@ dialog.
 
 ### Valid but larger component-family candidates
 
-These pass the naming rule but require substantial family-specific UI. They
-should use the same infrastructure after the initial slices rather than expand
-the first implementation package.
+These pass the naming rule but require substantial family-specific UI. They should use the same infrastructure after the initial slices rather than expand the first implementation package.
 
 | Row name | Representative members | Family |
 | --- | --- | --- |
@@ -77,30 +61,17 @@ the first implementation package.
 
 ### Combinations intentionally not selected now
 
-- Keep `Visible` and `Enable` separate. `State` is too abstract, and each field
-  is frequently edited independently.
-- Keep `Value` separate from `Limits`. The current value and its admissible
-  range are different user tasks even when validation relates them.
-- Keep text content, tooltip, icon, and alignment separate. `Content` would hide
-  several unrelated editors behind an imprecise label.
-- Keep font and background colors separate initially. `Colors` is a possible
-  space-saving presentation but provides no dependency or atomic-edit benefit.
-- Keep `Position`, `Units`, resizing, and child auto-resize separate. `Geometry`
-  would be broad rather than a single editing task.
+- Keep `Visible` and `Enable` separate. `State` is too abstract, and each field is frequently edited independently.
+- Keep `Value` separate from `Limits`. The current value and its admissible range are different user tasks even when validation relates them.
+- Keep text content, tooltip, icon, and alignment separate. `Content` would hide several unrelated editors behind an imprecise label.
+- Keep font and background colors separate initially. `Colors` is a possible space-saving presentation but provides no dependency or atomic-edit benefit.
+- Keep `Position`, `Units`, resizing, and child auto-resize separate. `Geometry` would be broad rather than a single editing task.
 
 ## Catalog boundary
 
-Property definitions remain atomic. Each MATLAB property keeps its own path,
-value contract, disposition, Preview policy, default, and fallback editor. A
-composite row is a presentation overlay and must not replace, duplicate, or
-weaken those contracts.
+Property definitions remain atomic. Each MATLAB property keeps its own path, value contract, disposition, Preview policy, default, and fallback editor. A composite row is a presentation overlay and must not replace, duplicate, or weaken those contracts.
 
-Add a versioned development artifact at
-`dev/component-data/R2024a/inspector-rows.json` and generate a runtime artifact
-at `resources/component-catalog/R2024a/inspector-rows.json`. Add the latter to the
-runtime manifest through an `inspectorRowFiles` list. Keeping this artifact
-separate from property grouping prevents a change in Inspector presentation
-from splitting semantic property groups or changing property parity hashes.
+Add a versioned development artifact at `dev/component-data/R2024a/inspector-rows.json` and generate a runtime artifact at `resources/component-catalog/R2024a/inspector-rows.json`. Add the latter to the runtime manifest through an `inspectorRowFiles` list. Keeping this artifact separate from property grouping prevents a change in Inspector presentation from splitting semantic property groups or changing property parity hashes.
 
 Each composite-row record has this declarative shape:
 
@@ -128,117 +99,63 @@ The schema rules are:
 - `id`, `displayName`, and `editor` are nonempty scalar strings.
 - `editor` is resolved through the existing allowlisted behavior boundary.
 - `members` contains at least two unique paths and unique roles.
-- A nonempty `categoryId` identifies the category in which the composite row is
-  shown. When it is empty, the `orderAnchor` member's category is used.
-- `orderAnchor` names one member and determines the projected row position.
-  The anchor must belong to the explicit `categoryId` when one is supplied.
-- Empty `componentIds` means any component with the complete matching member
-  set; an explicit list narrows application.
-- `parentContextIds` is empty for intrinsic groups and identifies contributed
-  surfaces such as grid placement when present.
-- Members may originate in different documentation categories when the named
-  editing task is genuinely cross-cutting. For example, R2024a places
-  `ColumnSortable` under `UIFigure-based Apps Only`, but the Inspector projects
-  it into the `Columns` row in `Table`. The overlay never changes the member's
-  underlying category metadata.
+- A nonempty `categoryId` identifies the category in which the composite row is shown. When it is empty, the `orderAnchor` member's category is used.
+- `orderAnchor` names one member and determines the projected row position. The anchor must belong to the explicit `categoryId` when one is supplied.
+- Empty `componentIds` means any component with the complete matching member set; an explicit list narrows application.
+- `parentContextIds` is empty for intrinsic groups and identifies contributed surfaces such as grid placement when present.
+- Members may originate in different documentation categories when the named editing task is genuinely cross-cutting. For example, R2024a places `ColumnSortable` under `UIFigure-based Apps Only`, but the Inspector projects it into the `Columns` row in `Table`. The overlay never changes the member's underlying category metadata.
 - One effective property path cannot belong to more than one composite row.
-- Missing or omitted members cause the template not to match; they do not cause
-  a partial row.
-- Source-only properties that are absent from the runtime catalog remain
-  independent read-only rows.
+- Missing or omitted members cause the template not to match; they do not cause a partial row.
+- Source-only properties that are absent from the runtime catalog remain independent read-only rows.
 
-The initial artifact contains only the four initial composite rows. Add follow-up
-candidates one vertical slice at a time after their concrete editor and
-validation behavior are defined.
+The initial artifact contains only the four initial composite rows. Add follow-up candidates one vertical slice at a time after their concrete editor and validation behavior are defined.
 
 ## Runtime representation
 
-Add a typed `InspectorRowDefinition` runtime value with stable ID, display name,
-editor identifier, ordered member path/role records, matching scope, and order
-anchor. Store the loaded templates in `ComponentRegistry`; do not hard-code
-component IDs or member paths in `yamada`.
+Add a typed `InspectorRowDefinition` runtime value with stable ID, display name, editor identifier, ordered member path/role records, matching scope, and order anchor. Store the loaded templates in `ComponentRegistry`; do not hard-code component IDs or member paths in `yamada`.
 
-An `InspectorSurfaceBuilder` consumes the effective property states and the
-matching row templates. It performs these steps:
+An `InspectorSurfaceBuilder` consumes the effective property states and the matching row templates. It performs these steps:
 
 1. Match complete templates against the selected component and parent context.
-2. Replace matched member states with one composite row state at the anchor's
-   category/order position.
+2. Replace matched member states with one composite row state at the anchor's category/order position.
 3. Project every unmatched property state to an implicit one-member row.
 4. Preserve source-only states as implicit read-only rows.
 5. Reject overlapping matched templates as a catalog/runtime invariant failure.
 
-The property set returned by the registry, model validation, Preview, and
-source generation remains unchanged. Only the Inspector projection changes.
+The property set returned by the registry, model validation, Preview, and source generation remains unchanged. Only the Inspector projection changes.
 
 ## Inspector row contract
 
-Generalize the current single-path row binding to own an ordered member-state
-array. A row receives:
+Generalize the current single-path row binding to own an ordered member-state array. A row receives:
 
 - its `InspectorRowDefinition`;
-- each member's definition, effective/default/raw value, explicitness, and
-  editability;
+- each member's definition, effective/default/raw value, explicitness, and editability;
 - the complete effective candidate snapshot for related-property validation;
 - the existing atomic batch-commit callback.
 
-All row editors submit a property-change array. A singleton editor may submit a
-one-element array. An inline composite editor such as `Font Style` may submit a
-one-property batch when one state button changes. A modal editor stages any
-number of member changes and submits them together on Apply. Sharing a row does
-not require every user gesture to rewrite every member.
+All row editors submit a property-change array. A singleton editor may submit a one-element array. An inline composite editor such as `Font Style` may submit a one-property batch when one state button changes. A modal editor stages any number of member changes and submits them together on Apply. Sharing a row does not require every user gesture to rewrite every member.
 
-Editability remains member-specific. For example, one source-backed font style
-expression disables only its own state button. A dialog that requires a
-complete candidate may disable its single launch button when a required member
-is unknown. Unsupported values must remain visible and source-preserved.
+Editability remains member-specific. For example, one source-backed font style expression disables only its own state button. A dialog that requires a complete candidate may disable its single launch button when a required member is unknown. Unsupported values must remain visible and source-preserved.
 
-Transient drafts and validation results use the stable row ID plus member path,
-not a single primary path. A property-path or cell-coordinate error is routed
-to the corresponding child control; otherwise the composite editor host shows
-the existing pale-red/error-tooltip fallback.
+Transient drafts and validation results use the stable row ID plus member path, not a single primary path. A property-path or cell-coordinate error is routed to the corresponding child control; otherwise the composite editor host shows the existing pale-red/error-tooltip fallback.
 
 ## Initial implementation sequence
 
-1. Freeze the development/runtime JSON schema and four initial composite-row
-   records. Update generation and strict loader fixtures without changing the
-   expanded property set.
-2. Add typed runtime definitions and `InspectorSurfaceBuilder`. Prove singleton
-   fallback, deterministic ordering, parent-context matching, and overlap
-   rejection without constructing UI controls.
-3. Generalize `InspectorPropertyRow` and Inspector synchronization from one
-   property state to ordered member states. Route both singleton and composite
-   changes through the batch callback while preserving existing adapters.
-4. Migrate `uitable.Data`, `ColumnName`, and `RowName` to one `Data & Names` row.
-   Remove the duplicate launch rows and retain the existing atomic dialog.
-5. Implement one `Columns` row for the column-settings dialog, including the
-   table-wide `ColumnRearrangeable` control, and one variable-length `Items` row
-   whose paired dialog can stage both `Items` and `ItemsData`. Keep fixed
-   two-state switch items separate pending a dedicated editor.
-6. Add the inline `Font Style` adapter with bold and italic state buttons.
-   Synchronize and enable the buttons independently; preserve char/string and
-   logical/on-off boundary conversions already audited for each property.
-7. Promote high-confidence follow-up groups one feature-sized slice at a time.
-   Do not add a row template until its row name, controls, error routing, and
-   commit semantics are reviewed.
-8. Run catalog/schema, surface-projection, hidden Inspector construction,
-   atomic history, Preview-refresh-count, and source round-trip tests.
+1. Freeze the development/runtime JSON schema and four initial composite-row records. Update generation and strict loader fixtures without changing the expanded property set.
+2. Add typed runtime definitions and `InspectorSurfaceBuilder`. Prove singleton fallback, deterministic ordering, parent-context matching, and overlap rejection without constructing UI controls.
+3. Generalize `InspectorPropertyRow` and Inspector synchronization from one property state to ordered member states. Route both singleton and composite changes through the batch callback while preserving existing adapters.
+4. Migrate `uitable.Data`, `ColumnName`, and `RowName` to one `Data & Names` row. Remove the duplicate launch rows and retain the existing atomic dialog.
+5. Implement one `Columns` row for the column-settings dialog, including the table-wide `ColumnRearrangeable` control, and one variable-length `Items` row whose paired dialog can stage both `Items` and `ItemsData`. Keep fixed two-state switch items separate pending a dedicated editor.
+6. Add the inline `Font Style` adapter with bold and italic state buttons. Synchronize and enable the buttons independently; preserve char/string and logical/on-off boundary conversions already audited for each property.
+7. Promote high-confidence follow-up groups one feature-sized slice at a time. Do not add a row template until its row name, controls, error routing, and commit semantics are reviewed.
+8. Run catalog/schema, surface-projection, hidden Inspector construction, atomic history, Preview-refresh-count, and source round-trip tests.
 
 ## Acceptance criteria
 
-- `uitable` exposes one `Data & Names` row and one `Columns` row, with no
-  duplicate member launch buttons.
-- Each variable-length Items/ItemsData pair exposes one `Items` row and commits
-  both values as one candidate when both changed. Fixed two-state switch items
-  remain separate and retain their cardinality contract.
-- Components with both font-style properties expose one `Font Style` row whose
-  bold and italic controls remain independently editable.
-- Catalog parity tests prove that grouping changes no effective property path,
-  type contract, disposition, Preview policy, or generated source ownership.
-- One accepted modal Apply creates one history record, one validation pass, one
-  Preview refresh, and one Inspector synchronization.
-- Unknown composite editor IDs, duplicate member paths, overlapping templates,
-  missing anchors, invalid placement categories, and invalid context matches
-  fail closed.
-- Unsupported/source-backed members remain readable and are never converted to
-  literals merely because another member is editable.
+- `uitable` exposes one `Data & Names` row and one `Columns` row, with no duplicate member launch buttons.
+- Each variable-length Items/ItemsData pair exposes one `Items` row and commits both values as one candidate when both changed. Fixed two-state switch items remain separate and retain their cardinality contract.
+- Components with both font-style properties expose one `Font Style` row whose bold and italic controls remain independently editable.
+- Catalog parity tests prove that grouping changes no effective property path, type contract, disposition, Preview policy, or generated source ownership.
+- One accepted modal Apply creates one history record, one validation pass, one Preview refresh, and one Inspector synchronization.
+- Unknown composite editor IDs, duplicate member paths, overlapping templates, missing anchors, invalid placement categories, and invalid context matches fail closed.
+- Unsupported/source-backed members remain readable and are never converted to literals merely because another member is editable.

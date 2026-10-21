@@ -1141,7 +1141,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         end
 
         function inspectorProbesRuntimeDefaultsWithoutEntries(testCase)
-            % inspectorProbesRuntimeDefaults Show runtime defaults without materializing properties.
+            % inspectorProbesRuntimeDefaultsWithoutEntries Show runtime defaults without materializing properties.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
