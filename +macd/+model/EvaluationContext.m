@@ -266,6 +266,12 @@ classdef EvaluationContext < handle
                     ~isequaln(rmfield(obj.Key, "Components"), rmfield(previous.Key, "Components"))
                 return
             end
+            % Generic inheritance already covers independent scopes; compare only when coupled results are missing.
+            names = string(keys(previous.Values));
+            names = names(startsWith(names, "states:") & names ~= "states:" + componentId);
+            if isempty(names), return, end
+            names = names(~isKey(obj.Values, cellstr(names)));
+            if isempty(names), return, end
             before = previous.Key.Components;
             after = obj.Key.Components;
             target = find(string({after.Id}) == componentId, 1);
@@ -284,8 +290,7 @@ classdef EvaluationContext < handle
             if ~isequaln(before, after), return, end
 
             % Numeric Value has no grid, button-selection, or ancestor-geometry effect on other owners.
-            names = string(keys(previous.Values));
-            for name = names(startsWith(names, "states:") & names ~= "states:" + componentId)
+            for name = names
                 obj.Values(char(name)) = previous.Values(char(name));
             end
         end
