@@ -143,6 +143,81 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             end
         end
 
+        function recognizesAnonymousMethodForwarding(testCase)
+            % recognizesAnonymousMethodForwarding Preserve inert wrappers with omitted or forwarded inputs.
+            expressions = ["@(~, event) app.Pressed(event)", "@(~,~) app.Pressed()", ...
+                "@(source,event) app.Pressed(source,event)", "@(source,~) app.Pressed(source)", ...
+                "@(source,event) app.Pressed(event)", "@(source,event) app.Pressed()", ...
+                "@ ( ~ , data ) app . Pressed ( data )"];
+            for expression = expressions
+                source = CallbackSourceAnalyzerTest.fixture( ...
+                    "app.Button.ButtonPushedFcn = " + expression + ";", "");
+                [state, document] = CallbackSourceAnalyzerTest.inspect(source);
+                testCase.verifyEqual(state.State, "editable", expression);
+                testCase.verifyEqual(state.HandlerName, "Pressed", expression);
+                testCase.verifyTrue(state.MethodSpan.isKnown(), expression);
+                testCase.verifyEqual(macd.source.RoundTripGenerator().generate(document), source);
+                testCase.verifyEmpty(document.History);
+            end
+        end
+
+        function handlerNamesMayContainCallbackPropertyNames(testCase)
+            % handlerNamesMayContainCallbackPropertyNames Match callback identifiers without confusing handler suffixes.
+            registry = macd.model.ComponentRegistry.createDefault();
+            for name = ["ButtonPushedFcn", "CellEditCallback"]
+                handler = "SampleTable" + name;
+                source = CallbackSourceAnalyzerTest.fixture( ...
+                    "app.Button." + name + " = @(~,event) app.Pressed(event);", "");
+                source = replace(source, "Pressed", handler);
+                if name == "CellEditCallback"
+                    source = replace(source, "Button matlab.ui.control.Button", "Button matlab.ui.control.Table");
+                    source = replace(source, "uibutton(app.UIFigure)", "uitable(app.UIFigure)");
+                end
+                document = macd.source.AppSourceParser.parseText(source, registry);
+                component = document.getComponentByName("Button");
+                states = macd.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
+                state = states(string({states.Name}) == name);
+                testCase.verifyEqual(state.State, "editable", name);
+                testCase.verifyEqual(state.HandlerName, handler);
+                document.applyCallbackAction(component.Id, name, "Delete", registry);
+                removed = macd.source.RoundTripGenerator(registry).generate(document);
+                testCase.verifyFalse(contains(removed, handler));
+                document.undo();
+                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            end
+        end
+
+        function rejectsNonForwardingAnonymousBodies(testCase)
+            % rejectsNonForwardingAnonymousBodies Reject captures, computed arguments, shadowing and compound calls.
+            expressions = ["@(~,event) app.Pressed(other)", "@(~,event) app.Pressed(event.Value)", ...
+                "@(~,event) app.Pressed(transform(event))", "@(~,event) app.Pressed(event) + 1", ...
+                "@(app,event) app.Pressed(event)", "@(source,app) app.Pressed(source)", ...
+                "@(event,event) app.Pressed(event)", "@(~,~) app.Pressed(~)", ...
+                "@(source,event) app.Pressed(event,source)", "@(source,event) app.Pressed(event,event)", ...
+                "@(event) app.Pressed(event)", "@(~,event) other.Pressed(event)"];
+            for expression = expressions
+                source = CallbackSourceAnalyzerTest.fixture( ...
+                    "app.Button.ButtonPushedFcn = " + expression + ";", "");
+                [state, document] = CallbackSourceAnalyzerTest.inspect(source);
+                testCase.verifyEqual(state.State, "unsupported", expression);
+                testCase.verifyNotEmpty(state.Reason, expression);
+                testCase.verifyEqual(document.OriginalText, source);
+            end
+        end
+
+        function forwardedHandlersStillRequireExclusiveOwnership(testCase)
+            % forwardedHandlersStillRequireExclusiveOwnership Retain sharing and conditional-scope rejection.
+            binding = "app.Button.ButtonPushedFcn = @(~,event) app.Pressed(event);";
+            sources = [CallbackSourceAnalyzerTest.fixture([binding; ...
+                "app.Other.ButtonPushedFcn = @(~,~) app.Pressed();"], ""); ...
+                CallbackSourceAnalyzerTest.fixture(binding, "app.Pressed([]);"); ...
+                CallbackSourceAnalyzerTest.fixture(["if true"; binding; "end"], "")];
+            for source = sources'
+                [state, ~] = CallbackSourceAnalyzerTest.inspect(source);
+                testCase.verifyEqual(state.State, "unsupported");
+            end
+        end
+
         function rejectsConstructorBindingsAndUnbalancedScopes(testCase)
             % rejectsConstructorBindingsAndUnbalancedScopes Avoid unsafe edits of embedded or incomplete source.
             source = CallbackSourceAnalyzerTest.fixture("", "");

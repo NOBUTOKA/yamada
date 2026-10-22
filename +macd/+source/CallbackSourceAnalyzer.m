@@ -290,6 +290,7 @@ classdef CallbackSourceAnalyzer
             if numel(creationIndex) ~= 1 || ~layout.Direct(creationIndex), return, end
             bindingAnchor = creation.EndOffset;
             target = "app\s*\.\s*" + sourceName + "\s*\.\s*" + name;
+            callbackToken = "(?<!\w)" + regexptranslate("escape", name) + "(?!\w)";
             occurrences = [];
             % The shared index omits only statements that cannot affect this exact predicate.
             for index = candidates
@@ -300,9 +301,9 @@ classdef CallbackSourceAnalyzer
                     return
                 end
                 if ~isempty(regexp(text, target + '(?!\w)', 'once')) || ...
-                        (index == creationIndex && contains(text, name))
+                        (index == creationIndex && ~isempty(regexp(text, callbackToken, 'once')))
                     occurrences(end + 1) = index; %#ok<AGROW>
-                elseif contains(text, name) && isempty(regexp(text, ...
+                elseif ~isempty(regexp(text, callbackToken, 'once')) && isempty(regexp(text, ...
                         'app\s*\.\s*\w+\s*\.\s*' + name + '(?!\w)\s*=', 'once'))
                     reason = "Indirect callback access prevents proving assignment ownership.";
                     return
@@ -335,10 +336,9 @@ classdef CallbackSourceAnalyzer
                 reason = "";
                 return
             end
-            match = regexp(expression, '^@app\.(\w+)$', 'tokens', 'once');
+            handler = macd.source.CallbackSourceAnalyzer.bindingHandler(expression);
             reason = "The callback expression does not have supported method ownership.";
-            if isempty(match), return, end
-            handler = string(match{1});
+            if strlength(handler) == 0, return, end
             if any(handler == ["createComponents", "delete"]), return, end
             methods = layout.Methods(string({layout.Methods.Name}) == handler);
             reason = "The callback method is missing, shared, or referenced elsewhere.";
@@ -352,6 +352,46 @@ classdef CallbackSourceAnalyzer
             methodSpan = methods.Span;
             state = "editable";
             reason = "";
+        end
+    end
+
+    methods (Static, Access = ?macd.source.AppSourceParser)
+        function handler = bindingHandler(expression)
+            % bindingHandler Recognize bound methods or inert two-input forwarding wrappers.
+            arguments (Input)
+                expression (1, 1) string
+            end
+            arguments (Output)
+                handler (1, 1) string
+            end
+
+            % Keep direct handles and forwarding calls confined to the captured app.
+            handler = "";
+            direct = regexp(expression, "^@\s*app\s*\.\s*([A-Za-z]\w*)$", "tokens", "once");
+            if ~isempty(direct)
+                handler = string(direct{1});
+                return
+            end
+            parameter = "(?:~|[A-Za-z]\w*)";
+            pattern = "^@\s*\(\s*(?<source>" + parameter + ")\s*,\s*(?<event>" + parameter + ...
+                ")\s*\)\s*app\s*\.\s*(?<handler>[A-Za-z]\w*)\s*\((?<forwarded>[^()]*)\)$";
+            wrapper = regexp(expression, pattern, "names", "once");
+            if isempty(wrapper), return, end
+            parameters = [string(wrapper.source), string(wrapper.event)];
+            named = parameters(parameters ~= "~");
+            if any(named == "app") || numel(unique(named)) ~= numel(named) || ...
+                    any(arrayfun(@(name) ~isvarname(name) || iskeyword(name), named))
+                return
+            end
+
+            % Only forward an ordered subset of the wrapper inputs, without evaluating expressions.
+            forwarded = strtrim(string(wrapper.forwarded));
+            if strlength(forwarded) > 0
+                forwarded = strtrim(split(forwarded, ","))';
+                [found, indices] = ismember(forwarded, parameters);
+                if ~all(found) || any(forwarded == "~") || any(diff(indices) <= 0), return, end
+            end
+            handler = string(wrapper.handler);
         end
     end
 end

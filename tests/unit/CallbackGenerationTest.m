@@ -144,6 +144,81 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
             testCase.verifyEqual(generator.generate(loaded), source);
         end
 
+        function anonymousForwardersPreserveSourceAndSupportDeleteUndo(testCase)
+            % anonymousForwardersPreserveSourceAndSupportDeleteUndo Keep wrapper syntax and inert handler bodies intact.
+            registry = macd.model.ComponentRegistry.createDefault();
+            generator = macd.source.RoundTripGenerator(registry);
+            evalin("base", "clear macdForwardedCallbackSentinel");
+            for mode = ["event", "none", "both"]
+                document = macd.model.NewAppFactory.createEmpty("ForwardedCallbackApp", registry);
+                button = document.insertComponent(registry, "uibutton", document.RootComponentId);
+                document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+                states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
+                handler = states(string({states.Name}) == "ButtonPushedFcn").HandlerName;
+                source = generator.generate(document);
+                ending = string(newline);
+                if document.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
+                expression = "@(~, event) app." + handler + "(event)";
+                inputs = "app, event";
+                if mode == "none"
+                    expression = "@(~,~) app." + handler + "()";
+                    inputs = "app";
+                elseif mode == "both"
+                    expression = "@(source,event) app." + handler + "(source,event)";
+                    inputs = "app, source, event";
+                end
+                source = replace(source, "@app." + handler + ";", expression + ";");
+                originalMethod = macd.source.CallbackSourceEdits.handlerText( ...
+                    handler, "ButtonPushedFcn", document.ClassName, ending);
+                method = strjoin(["        function " + handler + "(" + inputs + ")"; ...
+                    "            % " + handler + " Keep forwarded callback behavior inert."; ...
+                    "            assignin('base','macdForwardedCallbackSentinel',true);"; ...
+                    "        end"], ending);
+                source = replace(source, originalMethod, method);
+                testCase.assertSubstring(source, method);
+
+                % Parsing and unrelated property edits retain the original registration and signature.
+                parsed = macd.source.AppSourceParser.parseText(source, registry);
+                target = parsed.getComponentByName(button.Name);
+                states = macd.source.CallbackSourceAnalyzer.analyze(parsed, target.Id, registry);
+                testCase.assertEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
+                testCase.verifyEqual(generator.generate(parsed), source);
+                parsed.setProperty(target.Id, "Text", "Changed", registry);
+                changed = generator.generate(parsed);
+                testCase.verifySubstring(changed, expression + ";");
+                testCase.verifySubstring(changed, method);
+                parsed.undo();
+                testCase.verifyEqual(generator.generate(parsed), source);
+
+                % Default handler renames preserve the wrapper's inputs and forwarding convention.
+                parsed.renameComponent(target.Id, "ForwardedButton", registry);
+                renamedHandler = macd.source.ComponentNameRewriter.defaultHandler("ForwardedButton", "ButtonPushedFcn");
+                renamed = generator.generate(parsed);
+                testCase.verifySubstring(renamed, replace(expression, "app." + handler, "app." + renamedHandler));
+                testCase.verifySubstring(renamed, "function " + renamedHandler + "(" + inputs + ")");
+                renamedDocument = macd.source.AppSourceParser.parseText(renamed, registry);
+                renamedTarget = renamedDocument.getComponentByName("ForwardedButton");
+                renamedStates = macd.source.CallbackSourceAnalyzer.analyze(renamedDocument, renamedTarget.Id, registry);
+                testCase.verifyEqual(renamedStates(string({renamedStates.Name}) == "ButtonPushedFcn").State, "editable");
+                parsed.undo();
+                testCase.verifyEqual(generator.generate(parsed), source);
+
+                % One Delete removes both owned ranges, and Undo restores their exact original bytes.
+                parsed.applyCallbackAction(target.Id, "ButtonPushedFcn", "Delete", registry);
+                removed = generator.generate(parsed);
+                testCase.verifyFalse(contains(removed, handler));
+                reopened = macd.source.AppSourceParser.parseText(removed, registry);
+                states = macd.source.CallbackSourceAnalyzer.analyze( ...
+                    reopened, reopened.getComponentByName(button.Name).Id, registry);
+                testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "absent");
+                parsed.undo();
+                testCase.verifyEqual(generator.generate(parsed), source);
+                parsed.redo();
+                testCase.verifyEqual(generator.generate(parsed), removed);
+                testCase.verifyEqual(evalin("base", "exist('macdForwardedCallbackSentinel','var')"), 0);
+            end
+        end
+
         function failedGenerationRollsBackEveryTemporaryModelChange(testCase)
             % failedGenerationRollsBackEveryTemporaryModelChange Reject an invalid sibling value without recording history.
             registry = macd.model.ComponentRegistry.createDefault();

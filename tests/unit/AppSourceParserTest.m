@@ -58,8 +58,69 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             testCase.verifyFalse(callback.IsEditable);
             testCase.verifySubstring(callback.SourceExpression, ...
                 "@app.CalculateButtonPushed");
-            testCase.verifyTrue(any([document.UnknownRegions.Reason] == ...
-                "source-expression"));
+            warnings = document.Diagnostics(string({document.Diagnostics.Code}) == "source-expression");
+            testCase.verifyFalse(any(string({warnings.ComponentId}) == button.Id));
+            regions = document.UnknownRegions(string({document.UnknownRegions.Reason}) == "source-expression");
+            testCase.verifyFalse(any(arrayfun(@(region) ...
+                region.Span.StartOffset == callback.SourceSpan.StartOffset, regions)));
+        end
+
+        function recognizedCallbackBindingsDoNotProduceExpressionWarnings(testCase)
+            % recognizedCallbackBindingsDoNotProduceExpressionWarnings Distinguish known registrations from data expressions.
+            registry = macd.model.ComponentRegistry.createDefault();
+            evalin("base", "clear macdCallbackDiagnosticSentinel");
+            expressions = ["@app.Pressed", "@(~, event) app.Pressed(event)", ...
+                "@(~,~) app.Pressed()", "@(source,event) app.Pressed(source,event)"];
+            for expression = expressions
+                source = AppSourceParserTest.callbackFixture(expression);
+                [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+                button = document.getComponentByName("Button");
+                label = document.getComponentByName("Label");
+                callback = button.getProperty("ButtonPushedFcn");
+                testCase.verifyEqual(callback.ValueKind, "expression");
+                testCase.verifyEqual(callback.SourceExpression, expression);
+                testCase.verifyFalse(callback.IsEditable);
+                warnings = diagnostics(string({diagnostics.Code}) == "source-expression");
+                testCase.verifyNumElements(warnings, 1);
+                testCase.verifyEqual(warnings.ComponentId, label.Id);
+                regions = document.UnknownRegions(string({document.UnknownRegions.Reason}) == "source-expression");
+                testCase.verifyNumElements(regions, 1);
+                testCase.verifySubstring(regions.Text, "app.Label.Text = message");
+                states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
+                testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
+                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+                testCase.verifyEqual(evalin("base", "exist('macdCallbackDiagnosticSentinel','var')"), 0);
+            end
+        end
+
+        function unsupportedOrUncertainCallbackExpressionsKeepWarnings(testCase)
+            % unsupportedOrUncertainCallbackExpressionsKeepWarnings Retain diagnostics outside proven callback syntax.
+            registry = macd.model.ComponentRegistry.createDefault();
+            expressions = ["@(source,event) disp(event)", "@(~,event) app.Pressed(event.Value)", ...
+                "@(~,event) app.Pressed(captured)"];
+            for expression = expressions
+                [document, diagnostics] = macd.source.AppSourceParser.parseText( ...
+                    AppSourceParserTest.callbackFixture(expression), registry);
+                button = document.getComponentByName("Button");
+                warnings = diagnostics(string({diagnostics.Code}) == "source-expression");
+                testCase.verifyTrue(any(string({warnings.ComponentId}) == button.Id));
+            end
+            source = AppSourceParserTest.callbackFixture("@(~,event) app.Pressed(event)");
+            binding = "app.Button.ButtonPushedFcn = @(~,event) app.Pressed(event);";
+            source = replace(source, binding, strjoin(["if true"; binding; "end"], newline));
+            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            button = document.getComponentByName("Button");
+            warnings = diagnostics(string({diagnostics.Code}) == "source-expression");
+            testCase.verifyTrue(any(string({warnings.ComponentId}) == button.Id));
+            testCase.verifyFalse(button.getSettings("ButtonPushedFcn").IsCertain);
+
+            % A method-handle expression on an ordinary data property is still unsupported source.
+            source = replace(AppSourceParserTest.callbackFixture("@app.Pressed"), ...
+                "app.Label.Text = message;", "app.Label.Text = @app.Pressed;");
+            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            label = document.getComponentByName("Label");
+            warnings = diagnostics(string({diagnostics.Code}) == "source-expression");
+            testCase.verifyTrue(any(string({warnings.ComponentId}) == label.Id));
         end
 
         function parsesContinuationSeparatedCreationArguments(testCase)
@@ -319,6 +380,26 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
     end
 
     methods (Static, Access = private)
+        function source = callbackFixture(expression)
+            % callbackFixture Build inert source with one callback registration and one unrelated expression.
+            arguments (Input)
+                expression (1, 1) string
+            end
+            arguments (Output)
+                source (1, 1) string
+            end
+            lines = ["classdef CallbackDiagnosticApp < handle"; "properties"; ...
+                "UIFigure matlab.ui.Figure"; "Button matlab.ui.control.Button"; ...
+                "Label matlab.ui.control.Label"; "end"; "methods"; ...
+                "function app = CallbackDiagnosticApp"; "createComponents(app);"; "end"; ...
+                "function createComponents(app)"; "app.UIFigure = uifigure('Visible','off');"; ...
+                "app.Button = uibutton(app.UIFigure);"; "app.Label = uilabel(app.UIFigure);"; ...
+                "app.Label.Text = message;"; "app.Button.ButtonPushedFcn = " + expression + ";"; ...
+                "end"; "function Pressed(app, varargin)"; ...
+                "assignin('base','macdCallbackDiagnosticSentinel',true);"; "end"; "end"; "end"];
+            source = strjoin(lines, newline) + newline;
+        end
+
         function result = fixturePath(name)
             % fixturePath Resolve one preserved parser fixture by file name.
             arguments (Input)
