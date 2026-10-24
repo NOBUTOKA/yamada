@@ -46,6 +46,7 @@ classdef yamada < handle
         IsReloading logical = false
         IsClosingProgrammatically logical = false
         KeyboardFocusMoved logical = false
+        PreviewOwnsKeyboard logical = false
         HierarchyPanel matlab.ui.container.Panel
         HierarchyGrid matlab.ui.container.GridLayout
         HierarchyTree matlab.ui.container.Tree
@@ -303,28 +304,23 @@ classdef yamada < handle
                 "MenuSelectedFcn", @(~, ~) app.saveAsButtonPushed());
 
             editMenu = uimenu(app.UIFigure, "Text", "&Edit");
-            % Display hints while leaving clipboard key ownership with the focused editor surface.
+            % Use native accelerators for the supported Ctrl-based menu shortcuts.
             shortcuts = ["C", "X", "V"];
             actions = ["Copy", "Cut", "Paste"];
             for index = 1:numel(actions)
                 action = actions(index);
-                label = action + string(char(9)) + "Ctrl+" + shortcuts(index);
-                app.ClipboardMenuItems(end + 1) = uimenu(editMenu, "Text", label, ...
+                app.ClipboardMenuItems(end + 1) = uimenu(editMenu, "Text", action, ...
+                    "Accelerator", shortcuts(index), ...
                     "Tag", "macd-edit-" + lower(action), "Enable", "off", ...
                     "MenuSelectedFcn", @(~, ~) app.clipboardCommand(action, app.SelectedComponentId));
             end
-            uimenu(editMenu, "Text", "Rename Component" + string(char(9)) + "F2", ...
-                "Tag", "macd-rename-component", ...
-                "MenuSelectedFcn", @(~, ~) app.beginHierarchyRename());
-            app.DeleteMenuItem = uimenu(editMenu, "Text", "&Delete", ...
+            app.DeleteMenuItem = uimenu(editMenu, "Text", "&Delete" + sprintf("\t\t\t") + "(Del)", "Tag", "macd-edit-delete", ...
                 "MenuSelectedFcn", @(~, ~) app.deleteComponentButtonPushed());
-            app.EditUndoMenuItem = uimenu(editMenu, "Text", "&Undo", ...
-                "Accelerator", "Z", ...
+            app.EditUndoMenuItem = uimenu(editMenu, "Text", "&Undo", "Tag", "macd-edit-undo", "Accelerator", "Z", ...
                 "MenuSelectedFcn", @(~, ~) app.undoButtonPushed());
-            app.EditRedoMenuItem = uimenu(editMenu, "Text", "&Redo", ...
-                "Accelerator", "R", ...
+            app.EditRedoMenuItem = uimenu(editMenu, "Text", "&Redo", "Tag", "macd-edit-redo", "Accelerator", "R", ...
                 "MenuSelectedFcn", @(~, ~) app.redoButtonPushed());
-            app.ReloadMenuItem = uimenu(editMenu, "Text", "Reload Source (F5)", ...
+            app.ReloadMenuItem = uimenu(editMenu, "Text", "Reload Source" + sprintf("\t") + "(F5)", ...
                 "Separator", "on", "Tag", "macd-reload-source", ...
                 "MenuSelectedFcn", @(~, ~) app.reloadSourceRequested());
 
@@ -687,15 +683,20 @@ classdef yamada < handle
             app.SelectedComponentId = component.Id;
             app.refreshShell();
             app.setStatus("Added " + component.Name);
+            app.PreviewOwnsKeyboard = true;
+            app.KeyboardFocusMoved = false;
+            focus(app.InteractionOverlay);
         end
 
-        function deleteComponentButtonPushed(app)
+        function deleteComponentButtonPushed(app, id)
             % deleteComponentButtonPushed Delete the selected component and its descendants.
             arguments (Input)
                 app (1, 1) yamada
+                id (1, 1) string = app.SelectedComponentId
             end
 
-            component = app.selectedComponent();
+            if isempty(app.Document), return, end
+            component = app.Document.getComponent(id);
             if isempty(component)
                 return
             end
@@ -737,7 +738,11 @@ classdef yamada < handle
             end
             state = struct("Enabled", false, "Reason", "No component is available.", "ParentId", "");
             if isempty(app.Document) || strlength(app.HierarchyRenameId) > 0 || app.IsReloading, return, end
-            state = app.Clipboard.availability(action, app.Document, id, app.Registry);
+            if action == "Delete"
+                state = macd.model.DocumentEditAvailability.deletion(app.Document, id, app.Registry);
+            else
+                state = app.Clipboard.availability(action, app.Document, id, app.Registry);
+            end
         end
 
         function position = clipboardPosition(app, id)
@@ -771,7 +776,10 @@ classdef yamada < handle
                 return
             end
             try
-                if action == "Copy"
+                if action == "Delete"
+                    app.deleteComponentButtonPushed(id);
+                    return
+                elseif action == "Copy"
                     app.Clipboard.copy(app.Document, id, app.Registry, app.clipboardPosition(id));
                     app.refreshEditCommands();
                 elseif action == "Cut"
@@ -843,15 +851,14 @@ classdef yamada < handle
         end
 
         function editorKeyPressed(app, event)
-            % editorKeyPressed Dispatch Delete and Ctrl-based edit shortcuts.
+            % editorKeyPressed Dispatch keys that cannot use native menu accelerators.
             arguments (Input)
                 app (1, 1) yamada
                 event
             end
 
             modifiers = string(event.Modifier);
-            hasControl = any(modifiers == "control") || any(modifiers == "command");
-            % Text editing owns Delete and local undo until its transaction ends.
+            % Inline name editing owns its confirmation and cancellation keys.
             if strlength(app.HierarchyRenameId) > 0
                 if strcmpi(event.Key, "escape")
                     app.endHierarchyRename();
@@ -863,25 +870,41 @@ classdef yamada < handle
             % CurrentObject tracks clicks, so Tab invalidates its keyboard ownership.
             if strcmpi(event.Key, "tab")
                 app.KeyboardFocusMoved = true;
+                app.PreviewOwnsKeyboard = false;
                 return
+            end
+            % Native uihtml clicks leave CurrentObject empty; retain the explicit surface owner.
+            previewOwnsKeyboard = ~app.KeyboardFocusMoved && app.PreviewOwnsKeyboard;
+            current = app.UIFigure.CurrentObject;
+            while previewOwnsKeyboard && ~isempty(current) && isvalid(current)
+                if isequal(current, app.InspectorPanel)
+                    previewOwnsKeyboard = false;
+                    break
+                end
+                if ~isprop(current, "Parent"), break, end
+                current = current.Parent;
             end
             if strcmpi(event.Key, "f2") && isempty(modifiers) && ...
                     app.hierarchyOwnsKeyboard()
                 app.beginHierarchyRename();
             elseif strcmpi(event.Key, "f5") && isempty(modifiers)
                 app.reloadSourceRequested();
-            elseif strcmpi(event.Key, "delete") && ~hasControl
-                if app.hierarchyOwnsKeyboard(), app.deleteComponentButtonPushed(); end
-            elseif hasControl && any(strcmpi(event.Key, {'c', 'x', 'v'}))
-                if app.hierarchyOwnsKeyboard() || (~app.KeyboardFocusMoved && isequal(app.UIFigure.CurrentObject, app.InteractionOverlay))
-                    actions = ["Copy", "Cut", "Paste"];
-                    keys = ["c", "x", "v"];
-                    app.clipboardCommand(actions(strcmpi(event.Key, keys)), app.SelectedComponentId);
-                end
-            elseif hasControl && strcmpi(event.Key, "z")
-                app.undoButtonPushed();
-            elseif hasControl && strcmpi(event.Key, "r")
-                app.redoButtonPushed();
+            elseif strcmpi(event.Key, "delete") && isempty(modifiers)
+                if app.hierarchyOwnsKeyboard() || previewOwnsKeyboard, app.deleteComponentButtonPushed(); end
+            end
+        end
+
+        function invokeAccelerator(app, key)
+            % invokeAccelerator Forward iframe keys to the registered native menu action.
+            arguments (Input)
+                app (1, 1) yamada
+                key (1, 1) string
+            end
+            % Keyboard events do not bubble from uihtml into the parent document.
+            items = findall(app.UIFigure, "Type", "uimenu", "Accelerator", key);
+            if isscalar(items) && string(items.Enable) == "on" && string(items.Visible) == "on"
+                callback = items.MenuSelectedFcn;
+                if isa(callback, "function_handle"), callback(items, []); end
             end
         end
 
@@ -892,6 +915,7 @@ classdef yamada < handle
             end
 
             app.KeyboardFocusMoved = false;
+            app.PreviewOwnsKeyboard = false;
         end
 
         function result = hierarchyOwnsKeyboard(app)
@@ -1746,13 +1770,50 @@ classdef yamada < handle
                 app.reparentDropEvent(event.HTMLEventData);
                 return
             end
+            if eventName == "Accelerator"
+                data = event.HTMLEventData;
+                if isstruct(data) && all(isfield(data, ["key", "revision"])) && ...
+                        isequal(data.revision, app.InteractionOverlayRevision) && ...
+                        any(string(data.key) == ["N", "O", "S"])
+                    app.invokeAccelerator(string(data.key));
+                end
+                return
+            end
+            if eventName == "ContextMenu"
+                data = event.HTMLEventData;
+                if isstruct(data) && all(isfield(data, ["componentId", "revision", "x", "y"])) && ...
+                        isequal(data.revision, app.InteractionOverlayRevision) && ...
+                        ~isempty(app.HierarchyContextMenu) && ...
+                        isnumeric(data.x) && isscalar(data.x) && isfinite(data.x) && ...
+                        isnumeric(data.y) && isscalar(data.y) && isfinite(data.y)
+                    bounds = getpixelposition(app.InteractionOverlay, true);
+                    app.HierarchyContextMenu.openForComponent(string(data.componentId), ...
+                        bounds(1:2) + [double(data.x), double(data.y)]);
+                end
+                return
+            end
+            if eventName == "Shortcut"
+                data = event.HTMLEventData;
+                if isstruct(data) && all(isfield(data, ["componentId", "revision", "action"])) && ...
+                        isequal(string(data.componentId), app.SelectedComponentId) && ...
+                        isequal(data.revision, app.InteractionOverlayRevision)
+                    switch string(data.action)
+                        case "Undo", app.invokeAccelerator("Z");
+                        case "Redo", app.invokeAccelerator("R");
+                        case "Reload", app.reloadSourceRequested();
+                    end
+                end
+                return
+            end
             if eventName == "Clipboard"
                 data = event.HTMLEventData;
                 if isstruct(data) && all(isfield(data, ["componentId", "revision", "action"])) && ...
                         isequal(string(data.componentId), app.SelectedComponentId) && ...
                         isequal(data.revision, app.InteractionOverlayRevision) && ...
                         any(string(data.action) == ["Copy", "Cut", "Paste"])
-                    app.clipboardCommand(string(data.action), app.SelectedComponentId);
+                    actions = ["Copy", "Cut", "Paste"];
+                    keys = ["C", "X", "V"];
+                    app.invokeAccelerator(keys(actions == string(data.action)));
                 end
                 return
             end
@@ -1778,6 +1839,8 @@ classdef yamada < handle
             if phase == "tabselect"
                 app.selectTabFromOverlay(string(data.componentId), double(data.tabIndex));
             elseif phase == "pointerdown"
+                app.PreviewOwnsKeyboard = true;
+                app.KeyboardFocusMoved = false;
                 app.beginOverlayInteraction(string(data.componentId), ...
                     string(data.handle), point);
             elseif phase == "pointermove"
@@ -1854,6 +1917,8 @@ classdef yamada < handle
             end
             gridId = string(data.activeGridId);
             if action == "select-child"
+                app.PreviewOwnsKeyboard = true;
+                app.KeyboardFocusMoved = false;
                 app.gridChildSelectionActionEvent(gridId, data);
                 return
             end

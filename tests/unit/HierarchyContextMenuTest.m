@@ -28,6 +28,21 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             testCase.verifyEqual(tree.SelectedNodes, button);
         end
 
+        function previewUsesSameMenuWithoutChangingTreeSelection(testCase)
+            % previewUsesSameMenuWithoutChangingTreeSelection Dispatch explicit Preview targets through the shared menu.
+            [figure, tree, menu, root, ~] = testCase.fixture();
+            cleanup = onCleanup(@() delete(figure));
+            tree.SelectedNodes = root;
+            adapter = figure.UserData;
+            adapter.openForComponent("button", [30 40]);
+            item = findall(menu, "Tag", "macd-manage-callbacks");
+            item.MenuSelectedFcn(item, []);
+            testCase.verifyEqual(testCase.ReceivedId, "button");
+            testCase.verifyEqual(tree.SelectedNodes, root);
+            adapter.openForComponent("missing", [30 40]);
+            testCase.verifyEqual(string(item.Enable), "off");
+        end
+
         function emptySpaceAndReplacementCannotReuseTarget(testCase)
             % emptySpaceAndReplacementCannotReuseTarget Reject stale targets after native menu preparation.
             [figure, tree, menu, ~, button] = testCase.fixture();
@@ -127,7 +142,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             remove.ButtonPushedFcn(remove, []);
             testCase.verifyEqual(app.Document.HistoryIndex, 2);
             testCase.verifyFalse(contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
-            undo = findall(figure, "Type", "uimenu", "Text", "&Undo");
+            undo = findall(figure, "Type", "uimenu", "Tag", "macd-edit-undo");
             undo.MenuSelectedFcn(undo, []);
             testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = @app.");
             remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "SizeChangedFcn");

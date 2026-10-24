@@ -104,26 +104,29 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(isvalid(node));
             testCase.verifyEqual(tree.SelectedNodes, node);
             testCase.verifySubstring(string(node.Text), "RunButton");
-            figure.WindowKeyPressFcn(figure, struct("Key", "z", "Modifier", {{'control'}}));
+            menu = findall(figure, "Tag", "macd-edit-undo");
+            menu.MenuSelectedFcn(menu, []);
             testCase.verifyEqual(component.Name, "Button");
             testCase.verifyTrue(isvalid(rootNode));
             testCase.verifyEqual(tree.SelectedNodes, node);
-            figure.WindowKeyPressFcn(figure, struct("Key", "r", "Modifier", {{'control'}}));
+            menu = findall(figure, "Tag", "macd-edit-redo");
+            menu.MenuSelectedFcn(menu, []);
             testCase.verifyEqual(component.Name, "RunButton");
             testCase.verifyTrue(isvalid(node));
             clear cleanup
         end
 
-        function hierarchyRenameRetainsRejectedTextAndMenuUsesSelection(testCase)
-            % hierarchyRenameRetainsRejectedTextAndMenuUsesSelection Correct invalid names without document mutation.
+        function hierarchyRenameRetainsRejectedTextAndF2UsesSelection(testCase)
+            % hierarchyRenameRetainsRejectedTextAndF2UsesSelection Correct invalid names without document mutation.
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
             [figure, ~] = editorPalette();
             tree = findall(figure, "Type", "uitree");
             node = tree.SelectedNodes;
-            rename = findall(figure, "Tag", "macd-rename-component");
-            rename.MenuSelectedFcn(rename, []);
+            testCase.verifyEmpty(findall(figure, "Tag", "macd-rename-component"));
+            figure.CurrentObject = node;
+            figure.WindowKeyPressFcn(figure, struct("Key", "f2", "Modifier", {{}}));
             field = findall(figure, "Tag", "macd-hierarchy-rename");
             field.Value = "bad name";
             field.ValueChangedFcn(field, struct("Value", "bad name"));

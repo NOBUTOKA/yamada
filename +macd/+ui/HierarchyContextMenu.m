@@ -46,10 +46,23 @@ classdef HierarchyContextMenu < handle
                 "Tag", "macd-manage-callbacks", "Enable", "off", ...
                 "MenuSelectedFcn", @(~, ~) obj.invoke());
             tree.ContextMenu = obj.Menu;
-            for action = ["Copy", "Cut", "Paste"]
+            for action = ["Copy", "Cut", "Paste", "Delete"]
                 obj.EditItems(end + 1) = uimenu(obj.Menu, "Text", action, ...
                     "Tag", "macd-context-" + lower(action), "Enable", "off", ...
                     "MenuSelectedFcn", @(~, ~) obj.invokeEdit(action));
+            end
+        end
+
+        function openForComponent(obj, id, position)
+            % openForComponent Open the shared native menu for a Preview hit target.
+            arguments (Input)
+                obj (1, 1) macd.ui.HierarchyContextMenu
+                id (1, 1) string
+                position (1, 2) double {mustBeFinite}
+            end
+            obj.prepare(id);
+            if strlength(obj.TargetId) > 0
+                open(obj.Menu, position(1), position(2));
             end
         end
 
@@ -91,9 +104,19 @@ classdef HierarchyContextMenu < handle
             parent = node.Parent;
             while isa(parent, "matlab.ui.container.TreeNode"), parent = parent.Parent; end
             if parent ~= obj.Tree, return, end
+            obj.prepare(string(node.NodeData));
+        end
+
+        function prepare(obj, id)
+            % prepare Resolve one explicit target for both editor surfaces.
+            arguments (Input)
+                obj (1, 1) macd.ui.HierarchyContextMenu
+                id (1, 1) string
+            end
+            obj.reset();
             document = obj.DocumentFcn();
             if isempty(document), return, end
-            component = document.getComponent(string(node.NodeData));
+            component = document.getComponent(id);
             if isempty(component), return, end
             parentFactory = "";
             if strlength(component.ParentId) > 0
@@ -104,7 +127,7 @@ classdef HierarchyContextMenu < handle
             obj.TargetId = component.Id;
             obj.TargetDocument = document;
             if ~isempty(callbacks), obj.CallbackItem.Enable = "on"; end
-            actions = ["Copy", "Cut", "Paste"];
+            actions = ["Copy", "Cut", "Paste", "Delete"];
             for index = 1:numel(actions)
                 state = obj.AvailabilityFcn(actions(index), obj.TargetId);
                 obj.EditItems(index).Enable = state.Enabled;

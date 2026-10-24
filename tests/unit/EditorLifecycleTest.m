@@ -13,7 +13,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 appCleanup = onCleanup(@() deleteIfValid(app));
                 invokeEditorMenu("Open...");
                 addPaletteComponent("Button");
-                invokeEditorMenu("Reload Source (F5)");
+                invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
                 testCase.verifyFalse(app.Document.IsDirty);
                 testCase.verifyFalse(app.Document.canUndo());
                 if choice == "Save"
@@ -37,7 +37,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyEqual(string(tool.Enable), "off");
             invokeEditorMenu("Open...");
             original = app.Document;
-            invokeEditorMenu("Reload Source (F5)");
+            invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyTrue(app.Document == original);
             testCase.verifyEqual(string(tool.Enable), "on");
             clear appCleanup
@@ -46,7 +46,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Open...");
             original = app.Document;
             addPaletteComponent("Button");
-            invokeEditorMenu("Reload Source (F5)");
+            invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyTrue(app.Document == original);
             testCase.verifyTrue(app.Document.IsDirty);
         end
@@ -61,7 +61,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             for entry = 1:3
                 macd.source.SourceWriter.write(target, source + "% Revision " + entry + newline, "CRLF");
                 if entry == 1
-                    invokeEditorMenu("Reload Source (F5)");
+                    invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
                 elseif entry == 2
                     tool = findall(editorFigure(), "Tag", "macd-refresh-source");
                     tool.ClickedCallback(tool, []);
@@ -84,13 +84,13 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Open...");
             original = app.Document;
             macd.source.SourceWriter.write(target, "not an handle-based class", "CRLF");
-            invokeEditorMenu("Reload Source (F5)");
+            invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyTrue(app.Document == original);
             addPaletteComponent("Button");
-            invokeEditorMenu("Reload Source (F5)");
+            invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyTrue(app.Document == original);
             delete(target);
-            invokeEditorMenu("Reload Source (F5)");
+            invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyTrue(app.Document == original);
             testCase.verifyTrue(app.Document.canUndo());
         end
@@ -108,7 +108,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 invokeEditorMenu("Open...");
                 addPaletteComponent("Button");
                 macd.source.SourceWriter.write(target, source + "% External edit" + newline, "CRLF");
-                invokeEditorMenu("Reload Source (F5)");
+                invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
                 testCase.verifySubstring(string(fileread(target)), "% External edit");
                 if saveTarget == target
                     testCase.verifyTrue(app.Document.IsDirty);

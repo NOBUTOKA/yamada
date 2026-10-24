@@ -120,6 +120,14 @@ function setup(htmlComponent) {
   svg = document.getElementById("overlay");
   document.addEventListener("keydown", deleteSelectionKey);
   document.addEventListener("keydown", clipboardSelectionKey);
+  document.addEventListener("keydown", editorShortcutKey);
+  document.addEventListener("pointerdown", function(event) {
+    if (previewTextTarget(event.target)) return;
+    document.body.focus({preventScroll: true});
+    // Right-click must never start a selection, move, or resize gesture.
+    if (event.button === 2) event.stopPropagation();
+  }, true);
+  document.addEventListener("contextmenu", previewContextMenu);
   htmlComponent.addEventListener("DataChanged", function(event) {
     var incoming = htmlComponent.Data || currentData;
     var version = incoming.gridEditor && incoming.gridEditor.revision;
@@ -153,16 +161,51 @@ function setup(htmlComponent) {
   render();
 }
 
+function previewTextTarget(target) {
+  return target && (target.isContentEditable ||
+    /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName || "") ||
+    (target.closest && target.closest(".track-popover")));
+}
+
+function previewContextMenu(event) {
+  if (previewTextTarget(event.target) || gridGesture || absoluteGesture || !currentData.gridEditor) return;
+  var hit = event.target.closest && event.target.closest("[data-component-id]");
+  var id = hit ? hit.dataset.componentId : currentData.rootId;
+  if (!id) return;
+  var rect = svg.getBoundingClientRect();
+  var point = {x: event.clientX - rect.left, y: rect.height - (event.clientY - rect.top)};
+  event.preventDefault();
+  event.stopPropagation();
+  component.sendEventToMATLAB("ContextMenu", {componentId: id,
+    revision: currentData.gridEditor.revision, x: point.x, y: point.y});
+}
+
+function editorShortcutKey(event) {
+  if (event.altKey || event.shiftKey || event.repeat || gridGesture || absoluteGesture ||
+      previewTextTarget(event.target) || !currentData.selectedComponentId || !currentData.gridEditor) return;
+  var control = event.ctrlKey || event.metaKey;
+  var key = String(event.key).toLowerCase();
+  if (control && ["n", "o", "s"].indexOf(key) !== -1) {
+    event.preventDefault();
+    event.stopPropagation();
+    component.sendEventToMATLAB("Accelerator", {key: key.toUpperCase(), revision: currentData.gridEditor.revision});
+    return;
+  }
+  var action = control ? ({z: "Undo", r: "Redo"})[key] : ({f5: "Reload"})[key];
+  if (!action) return;
+  event.preventDefault();
+  event.stopPropagation();
+  component.sendEventToMATLAB("Shortcut", {action: action,
+    componentId: currentData.selectedComponentId, revision: currentData.gridEditor.revision});
+}
+
 function clipboardSelectionKey(event) {
   if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey || event.repeat ||
       gridGesture || absoluteGesture) return;
   var actions = {c: "Copy", x: "Cut", v: "Paste"};
   var action = actions[String(event.key).toLowerCase()];
   if (!action) return;
-  var target = event.target;
-  if (target && (target.isContentEditable ||
-      /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName || "") ||
-      (target.closest && target.closest(".track-popover")))) return;
+  if (previewTextTarget(event.target)) return;
   if (!currentData.selectedComponentId || !currentData.gridEditor) return;
   event.preventDefault();
   event.stopPropagation();
@@ -172,11 +215,8 @@ function clipboardSelectionKey(event) {
 }
 
 function deleteSelectionKey(event) {
-  if (event.key !== "Delete" || event.ctrlKey || event.metaKey || event.altKey || gridGesture) return;
-  var target = event.target;
-  if (target && (target.isContentEditable ||
-      /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName || "") ||
-      (target.closest && target.closest(".track-popover")))) return;
+  if (event.key !== "Delete" || event.ctrlKey || event.metaKey || event.altKey || event.repeat || gridGesture || absoluteGesture) return;
+  if (previewTextTarget(event.target)) return;
   if (!currentData.selectedComponentId || !currentData.gridEditor) return;
   event.preventDefault();
   event.stopPropagation();
@@ -276,7 +316,13 @@ function sendPointerEvent(event) {
   if (event.type === "pointercancel") { absoluteGesture = null; clearReparentGuide(); }
   if (event.type === "pointermove" && absoluteGesture) showReparentGuide(dropCandidate(absoluteGesture, point));
   if (event.type === "pointerup" && absoluteGesture) {
-    if (!currentData.dragSource || currentData.dragSource.id !== absoluteGesture.id) absoluteGesture.pendingPoint = point;
+    if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId);
+    var distance = Math.hypot(point.x - absoluteGesture.startPoint.x, point.y - absoluteGesture.startPoint.y);
+    if (distance < 3) {
+      absoluteGesture = null;
+      clearReparentGuide();
+      component.sendEventToMATLAB("Pointer", {phase: "pointerup", x: point.x, y: point.y, componentId: "", handle: ""});
+    } else if (!currentData.dragSource || currentData.dragSource.id !== absoluteGesture.id) absoluteGesture.pendingPoint = point;
     else finishAbsoluteDrop(point);
     return;
   }
@@ -335,6 +381,7 @@ function renderGridSelectionTargets(targets, gridData, placementData) {
         Number(target.width) <= 0 || Number(target.height) <= 0) return;
     var hitTarget = document.createElement("div");
     hitTarget.className = "grid-selection-target";
+    hitTarget.dataset.componentId = target.id;
     hitTarget.style.left = Number(target.x) + "px";
     hitTarget.style.top = (currentData.height - Number(target.y) - Number(target.height)) + "px";
     hitTarget.style.width = Number(target.width) + "px";
@@ -501,6 +548,7 @@ function renderGridEditor(data, headersOnly) {
     var editable = !!track.editable && !!data.editable;
     header.className = "track-settings" + (editable ? "" : " locked");
     header.dataset.gridId = data.activeGridId;
+    header.dataset.componentId = data.activeGridId;
     header.dataset.axis = axis;
     header.dataset.index = String(track.index);
     var trackName = (axis === "row" ? "row " : "column ") + String(track.index);
@@ -569,6 +617,7 @@ function renderGridChildren(data) {
   componentArray(data.children).forEach(function(child) {
     if (!child.bounds || child.bounds.length !== 4 || child.bounds[2] <= 0 || child.bounds[3] <= 0) return;
     var childBox = document.createElement("div");
+    childBox.dataset.componentId = child.id;
     var childEditable = !!child.selected && !!child.editable && !!data.editable && !!data.geometryAvailable;
     childBox.className = "grid-child" + (child.selected ? " selected" : "") +
       (childEditable ? " editable" : "");
@@ -1229,5 +1278,5 @@ function setOutlineSelection(node, selected) {
 }
 </script>
 </head>
-<body><div id="tab-controls"></div><div id="grid-controls"></div><svg id="overlay"></svg></body>
+<body tabindex="-1"><div id="tab-controls"></div><div id="grid-controls"></div><svg id="overlay"></svg></body>
 </html>

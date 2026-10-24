@@ -51,12 +51,110 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             keys = ["C", "X", "V"];
             for index = 1:numel(actions)
                 item = findall(figure, "Tag", "macd-edit-" + lower(actions(index)));
-                testCase.verifyEqual(string(item.Text), actions(index) + string(char(9)) + "Ctrl+" + keys(index));
+                testCase.verifyEqual(string(item.Text), actions(index));
+                testCase.verifyEqual(string(item.Accelerator), keys(index));
             end
             rename = findall(figure, "Tag", "macd-rename-component");
-            testCase.verifyEqual(string(rename.Text), "Rename Component" + string(char(9)) + "F2");
+            testCase.verifyEmpty(rename);
+            items = findall(figure, "Type", "uimenu");
+            labels = string({items.Text});
+            for label = ["&Delete" + string(sprintf("\t\t\t")) + "(Del)", "&Undo", "&Redo", "Reload Source" + string(char(9)) + "(F5)"]
+                testCase.verifyTrue(any(labels == label));
+            end
+            undo = findall(figure, "Tag", "macd-edit-undo");
+            redo = findall(figure, "Tag", "macd-edit-redo");
+            testCase.verifyEqual(string(undo.Accelerator), "Z");
+            testCase.verifyEqual(string(redo.Accelerator), "R");
+            for key = ["N", "O", "S"]
+                testCase.verifyNumElements(findall(figure, "Type", "uimenu", "Accelerator", key), 1);
+            end
+            testCase.verifyEmpty(findall(figure, "Type", "uimenu", "Accelerator", "A"));
             testCase.verifyEmpty(findall(figure, "Tag", "macd-edit-reparent"));
             testCase.verifyEmpty(findall(figure, "Tag", "macd-context-reparent"));
+        end
+
+        function previewContextTargetsAndShortcutsShareCommands(testCase)
+            % previewContextTargetsAndShortcutsShareCommands Keep right-click identity and reject stale keys.
+            [app, figure, panelId] = testCase.fixture();
+            cleanup = onCleanup(@() delete(app));
+            selected = app.SelectedComponentId;
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            request = struct("componentId", panelId, "revision", overlay.Data.gridEditor.revision, "x", 30, "y", 40);
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
+            testCase.verifyEqual(app.SelectedComponentId, selected);
+            tree = findall(figure, "Type", "uitree");
+            copy = findall(tree.ContextMenu, "Tag", "macd-context-copy");
+            testCase.verifyEqual(string(copy.Enable), "on");
+            copy.MenuSelectedFcn(copy, []);
+            testCase.select(figure, app.Document.RootComponentId);
+            paste = findall(figure, "Tag", "macd-edit-paste");
+            paste.MenuSelectedFcn(paste, []);
+            testCase.verifyEqual(numel(app.Document.getComponent(app.SelectedComponentId).Children), 1);
+            history = app.Document.HistoryIndex;
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            request = struct("componentId", app.SelectedComponentId, "revision", overlay.Data.gridEditor.revision - 1, "action", "Undo");
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Shortcut", "HTMLEventData", request));
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+            request.revision = overlay.Data.gridEditor.revision;
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Shortcut", "HTMLEventData", request));
+            testCase.verifyEqual(app.Document.HistoryIndex, history - 1);
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            request.componentId = app.SelectedComponentId;
+            request.revision = overlay.Data.gridEditor.revision;
+            request.action = "Redo";
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Shortcut", "HTMLEventData", request));
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+        end
+
+        function nativeDeleteAfterAddAndPreviewClickDoesNotNeedCurrentObject(testCase)
+            % nativeDeleteAfterAddAndPreviewClickDoesNotNeedCurrentObject Match actual palette and empty uihtml hit state.
+            [app, figure, panelId] = testCase.fixture();
+            cleanup = onCleanup(@() delete(app));
+            selected = app.SelectedComponentId;
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Category"), tables));
+            figure.CurrentObject = palette;
+            figure.WindowKeyPressFcn(figure, struct("Key", "delete", "Modifier", {{}}));
+            testCase.verifyEmpty(app.Document.getComponent(selected));
+            testCase.verifyNotEmpty(app.Document.getComponent(panelId));
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            figure.CurrentObject = [];
+            figure.WindowButtonDownFcn(figure, []);
+            request = struct("phase", "pointerdown", "componentId", panelId, "handle", "", "x", 30, "y", 40);
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", "HTMLEventData", request));
+            request.phase = "pointermove";
+            request.x = 70;
+            request.y = 80;
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", "HTMLEventData", request));
+            request.phase = "pointerup";
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", "HTMLEventData", request));
+            figure.WindowKeyPressFcn(figure, struct("Key", "delete", "Modifier", {{}}));
+            testCase.verifyEmpty(app.Document.getComponent(panelId));
+        end
+
+        function contextDeleteUsesExplicitTargetAndNativeKeysDoNotDuplicate(testCase)
+            % contextDeleteUsesExplicitTargetAndNativeKeysDoNotDuplicate Delete the hit subtree once through shared actions.
+            [app, figure, panelId] = testCase.fixture();
+            cleanup = onCleanup(@() delete(app));
+            testCase.select(figure, app.Document.RootComponentId);
+            history = app.Document.HistoryIndex;
+            figure.CurrentObject = findall(figure, "Type", "uitree");
+            for key = ["c", "x", "v", "z", "r", "n", "o", "s", "a"]
+                figure.WindowKeyPressFcn(figure, struct("Key", key, "Modifier", {{'control'}}));
+            end
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            request = struct("componentId", panelId, "revision", overlay.Data.gridEditor.revision, "x", 30, "y", 40);
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
+            tree = findall(figure, "Type", "uitree");
+            item = findall(tree.ContextMenu, "Tag", "macd-context-delete");
+            testCase.verifyEqual(string(item.Enable), "on");
+            item.MenuSelectedFcn(item, []);
+            testCase.verifyEmpty(app.Document.getComponent(panelId));
+            testCase.verifyEqual(app.SelectedComponentId, app.Document.RootComponentId);
+            testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
+            item.MenuSelectedFcn(item, []);
+            testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
         end
 
         function embeddedPreviewCtrlVPastesSubtree(testCase)
@@ -70,7 +168,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             html = string(fileread(overlay.HTMLSource));
             hook = "htmlComponent.addEventListener('HarnessKey', function(event) {" + ...
                 "var target=document; if(event.Data.editing){target=document.createElement('input');document.body.appendChild(target);}" + ...
-                "target.dispatchEvent(new KeyboardEvent('keydown',{key:event.Data.key,ctrlKey:true,bubbles:true,cancelable:true}));" + ...
+                "target.dispatchEvent(new KeyboardEvent('keydown',{key:event.Data.key,ctrlKey:!event.Data.unmodified,bubbles:true,cancelable:true}));" + ...
                 "if(event.Data.editing)target.remove(); htmlComponent.sendEventToMATLAB('HarnessDone',{});});";
             html = replace(html, "function setup(htmlComponent) {", "function setup(htmlComponent) {" + hook);
             marker = "  currentData = htmlComponent.Data || currentData;" + string(sprintf("\r\n")) + "  render();";
@@ -82,7 +180,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             fclose(file);
             overlay.HTMLSource = filePath;
             testCase.waitForHtml("HarnessReady");
-            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "c", "editing", false));
+            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "c", "editing", false, "unmodified", false));
             testCase.waitForHtml("HarnessDone");
             testCase.verifyEqual(sum(testCase.HtmlEvents == "Clipboard"), 1);
             testCase.select(figure, app.Document.RootComponentId);
@@ -90,17 +188,29 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             pause(0.1);
             history = app.Document.HistoryIndex;
             testCase.HtmlEvents = strings(1, 0);
-            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "v", "editing", true));
+            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "v", "editing", true, "unmodified", false));
             testCase.waitForHtml("HarnessDone");
             testCase.verifyEqual(app.Document.HistoryIndex, history);
             testCase.HtmlEvents = strings(1, 0);
-            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "v", "editing", false));
+            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "v", "editing", false, "unmodified", false));
             testCase.waitForHtml("HarnessDone");
             testCase.verifyEqual(sum(testCase.HtmlEvents == "Clipboard"), 1);
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
             pasted = app.Document.getComponent(app.SelectedComponentId);
             testCase.verifyEqual(pasted.ParentId, app.Document.RootComponentId);
             testCase.verifyEqual(numel(pasted.Children), 1);
+            pastedId = pasted.Id;
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            originalFcn = overlay.HTMLEventReceivedFcn;
+            overlay.HTMLEventReceivedFcn = @(src, event) testCase.captureHtml(originalFcn, src, event);
+            testCase.HtmlEvents = strings(1, 0);
+            overlay.HTMLSource = filePath;
+            testCase.waitForHtml("HarnessReady");
+            sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "Delete", "editing", false, "unmodified", true));
+            testCase.waitForHtml("HarnessDone");
+            testCase.verifyEqual(sum(testCase.HtmlEvents == "DeleteSelection"), 1);
+            testCase.verifyEmpty(app.Document.getComponent(pastedId));
+            testCase.verifyEqual(app.Document.HistoryIndex, history + 2);
         end
 
         function previewClipboardEventChecksSelectionAndRevision(testCase)
@@ -209,7 +319,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(app.SelectedComponentId, rootId);
             testCase.verifyEqual(app.Document.HistoryIndex, history + 2);
             menus = findall(figure, "Type", "uimenu");
-            undo = menus(erase(string({menus.Text}), "&") == "Undo");
+            undo = menus(string({menus.Tag}) == "macd-edit-undo");
             undo.MenuSelectedFcn(undo, []);
             testCase.verifyNotEmpty(app.Document.getComponent(pastedId));
             undo.MenuSelectedFcn(undo, []);
@@ -236,6 +346,9 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 actions = ["Copy", "Cut", "Paste"];
                 figure.WindowButtonDownFcn(figure, []);
                 figure.WindowKeyPressFcn(figure, struct("Key", keys(actions == action), "Modifier", {{'control'}}));
+                item = findall(figure, "Type", "uimenu", "Accelerator", upper(keys(actions == action)));
+                testCase.assertEqual(string(item.Enable), "on");
+                item.MenuSelectedFcn(item, []);
             else
                 tree = findall(figure, "Type", "uitree");
                 nodes = findall(tree, "Type", "uitreenode");
