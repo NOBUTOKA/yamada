@@ -65,6 +65,8 @@ classdef DocumentModel < handle
         PropertyValidationDiagnostics macd.model.Diagnostic = macd.model.Diagnostic.empty
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
+        ComponentLookup containers.Map
+        ComponentLookupReady logical = false
     end
 
     methods (Access = ?macd.model.EvaluationContext)
@@ -147,11 +149,12 @@ classdef DocumentModel < handle
         end
 
         function noteInputCollection(obj, value)
-            % noteInputCollection Attach new owned records before recording their collection write.
+            % noteInputCollection Invalidate identity reuse and attach records before their collection write.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 value macd.model.ComponentRecord
             end
+            obj.ComponentLookupReady = false;
             if isempty(obj.InputClock), return, end
             for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
             obj.InputClock.touch([]);
@@ -333,7 +336,9 @@ classdef DocumentModel < handle
                 obj (1, 1) macd.model.DocumentModel
             end
 
-            % Normalize the class name while retaining all other defaults.
+            % Keep the identity map private to this document and normalize its class name.
+            obj.ComponentLookup = containers.Map("KeyType", "char", "ValueType", "double");
+            obj.ComponentLookupReady = true;
             obj.ClassName = className;
         end
 
@@ -799,12 +804,29 @@ classdef DocumentModel < handle
                 component
             end
 
-            % Search the small ordered collection without changing its order.
+            % Reuse only successful identities; structural assignments invalidate numeric indices.
             component = [];
+            reusable = isscalar(id) && ~ismissing(id) && strlength(id) > 0 && ...
+                all(isvalid(obj.Components), "all");
+            if reusable
+                if ~obj.ComponentLookupReady
+                    if obj.ComponentLookup.Count > 0
+                        obj.ComponentLookup = containers.Map("KeyType", "char", "ValueType", "double");
+                    end
+                    obj.ComponentLookupReady = true;
+                end
+                key = char(id);
+                if isKey(obj.ComponentLookup, key)
+                    component = obj.Components(obj.ComponentLookup(key));
+                    return
+                end
+            end
+            % Keep first-match order and legacy behavior for invalid handles or non-scalar IDs.
             for index = 1:numel(obj.Components)
                 candidate = obj.Components(index);
                 if candidate.Id == id
                     component = candidate;
+                    if reusable, obj.ComponentLookup(key) = index; end
                     return
                 end
             end
