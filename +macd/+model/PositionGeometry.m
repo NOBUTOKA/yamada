@@ -1,7 +1,7 @@
 classdef PositionGeometry
     % PositionGeometry Share finite Position constraints across model and editor inputs.
-    %   Only reviewed policies select a fixed aspect ratio or a fixed slider
-    %   thickness. This class does not calculate decoration or parent layout.
+    %   Reviewed policies select fixed ratios, slider thickness, or independent
+    %   linear gauge dimensions. Decoration and parent layout are not calculated.
 
     methods (Static)
         function result = applies(policy)
@@ -13,7 +13,7 @@ classdef PositionGeometry
                 result (1, 1) logical
             end
             result = any(policy == ["squarePosition", "squarePositionAlias", ...
-                "sliderPosition", "switchPosition", "semicircularPosition"]);
+                "sliderPosition", "switchPosition", "semicircularPosition", "linearPosition"]);
         end
 
         function spec = constraint(policy, orientation, known)

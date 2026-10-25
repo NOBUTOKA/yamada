@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "d48836251d8fa8db320bf4319f550c9e201059433a9565abe2da8d3c88d5533e",
+  "inputSha256": "9e3d7ae91304e99014b7019fd4f11cd2e54d8397b15169c716521d2f6fd61020",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -22982,9 +22982,14 @@
             "applyAfter": [],
             "nameValue": "unknown",
             "effectPolicy": "none",
-            "effectStatus": "independent",
-            "affectedPaths": [],
-            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            "defaultLiteral": "'horizontal'",
+            "effectStatus": "modeled",
+            "affectedPaths": [
+              "InnerPosition",
+              "OuterPosition",
+              "Position"
+            ],
+            "effectReason": "Owned R2024a PositionGeometryRuntimeTest verifies independent linear-gauge dimensions and orientation size exchange; aliases remain unresolved."
           }
         },
         {
@@ -23280,12 +23285,19 @@
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
+            "applyAfter": [
+              "Orientation"
+            ],
             "nameValue": "unknown",
-            "effectPolicy": "positionInput",
+            "effectPolicy": "linearPosition",
+            "defaultLiteral": "[100 100 120 40]",
             "effectStatus": "modeled",
-            "affectedPaths": [],
-            "effectReason": "Finite stored Position behavior verified by the owned R2024a probe. InnerPosition and OuterPosition are not assumed equivalent."
+            "affectedPaths": [
+              "InnerPosition",
+              "OuterPosition",
+              "Position"
+            ],
+            "effectReason": "Owned R2024a PositionGeometryRuntimeTest verifies independent linear-gauge dimensions and orientation size exchange; aliases remain unresolved."
           }
         },
         {

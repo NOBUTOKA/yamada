@@ -189,7 +189,7 @@
       "sourceSha256": "5a6cbeb798328bc56190c0027dae41bf42eac1215858b38798303a3cee481e52",
       "candidateCount": 21,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 9
+      "reviewedPolicyCount": 10
     },
     {
       "id": "uigauge-ninetydegree",

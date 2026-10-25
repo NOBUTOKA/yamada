@@ -227,7 +227,7 @@
           "items": {"type": "string", "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"}
         },
         "nameValue": {"enum": ["supported", "unsupported", "unknown"]},
-        "effectPolicy": {"enum": ["none", "itemSelection", "boundedValue", "numericValue", "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", "textValue", "componentReference", "layout", "gridTracks", "buttonSelection", "positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition"]},
+        "effectPolicy": {"enum": ["none", "itemSelection", "boundedValue", "numericValue", "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", "textValue", "componentReference", "layout", "gridTracks", "buttonSelection", "positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition", "linearPosition"]},
         "effectStatus": {"enum": ["unknown", "independent", "modeled", "unsupported"]},
         "affectedPaths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"}},
         "effectReason": {"type": "string", "minLength": 1},

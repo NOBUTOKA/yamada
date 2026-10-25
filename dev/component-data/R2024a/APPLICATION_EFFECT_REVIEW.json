@@ -6124,9 +6124,13 @@
         },
         {
           "path": "Orientation",
-          "status": "independent",
-          "affectedPaths": [],
-          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          "status": "modeled",
+          "affectedPaths": [
+            "Position",
+            "InnerPosition",
+            "OuterPosition"
+          ],
+          "reason": "Owned R2024a PositionGeometryRuntimeTest verifies independent linear-gauge dimensions and orientation size exchange; aliases remain unresolved."
         },
         {
           "path": "ScaleColors",
@@ -6239,8 +6243,12 @@
         {
           "path": "Position",
           "status": "modeled",
-          "affectedPaths": [],
-          "reason": "Finite stored Position behavior verified by the owned R2024a probe. InnerPosition and OuterPosition are not assumed equivalent."
+          "affectedPaths": [
+            "Position",
+            "InnerPosition",
+            "OuterPosition"
+          ],
+          "reason": "Owned R2024a PositionGeometryRuntimeTest verifies independent linear-gauge dimensions and orientation size exchange; aliases remain unresolved."
         },
         {
           "path": "InnerPosition",

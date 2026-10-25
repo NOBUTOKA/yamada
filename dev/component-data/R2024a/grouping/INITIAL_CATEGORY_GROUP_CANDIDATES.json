@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "31ae4bf5473ffd9dfc3751cf772db9a886f086af8b55a30e1e994c4d39f87392",
+  "inputSha256": "9b3105cf9fb58cc20bec081f638ec4d5b6aa3eaaf1960cf9ebecbf15b32a7f21",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
@@ -1301,14 +1301,12 @@
         "uidropdown",
         "uieditfield-numeric",
         "uieditfield-text",
-        "uigauge-linear",
         "uilistbox",
         "uispinner"
       ],
-      "reuseCount": 6,
+      "reuseCount": 5,
       "documentedCategoryOrders": [
-        4,
-        5
+        4
       ]
     },
     {

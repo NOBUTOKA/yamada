@@ -1371,8 +1371,7 @@
         "uieditfield-numeric",
         "uieditfield-text",
         "uilistbox",
-        "uispinner",
-        "uigauge-linear"
+        "uispinner"
       ],
       "path": "Position",
       "effectPolicy": "positionInput",
@@ -1455,6 +1454,26 @@
       "path": "Orientation",
       "kind": "documentation",
       "detail": "Orientation selects the documented control direction. The finite Position policy replays the observed size exchange at the original setting location."
+    },
+    {
+      "variants": [
+        "uigauge-linear"
+      ],
+      "path": "Position",
+      "applyAfter": [
+        "Orientation"
+      ],
+      "effectPolicy": "linearPosition",
+      "kind": "inference",
+      "detail": "Owned R2024a PositionGeometryRuntimeTest verifies independent width and height, free Preview resizing, and orientation size exchange in actual constructor/setter order. No fixed aspect ratio applies."
+    },
+    {
+      "variants": [
+        "uigauge-linear"
+      ],
+      "path": "Orientation",
+      "kind": "inference",
+      "detail": "Owned R2024a PositionGeometryRuntimeTest verifies that changing between horizontal and vertical exchanges the stored width and height. Position remains independently writable in either orientation."
     }
   ],
   "initialValues": [
@@ -1786,6 +1805,16 @@
         "Position": "[100 100 120 65]"
       },
       "detail": "Seed the documented default orientation and stored Position without introducing source settings."
+    },
+    {
+      "variants": [
+        "uigauge-linear"
+      ],
+      "values": {
+        "Orientation": "'horizontal'",
+        "Position": "[100 100 120 40]"
+      },
+      "detail": "The release-fixed LinearGauge properties document horizontal Orientation and [100 100 120 40] Position defaults."
     }
   ],
   "contractCorrections": [

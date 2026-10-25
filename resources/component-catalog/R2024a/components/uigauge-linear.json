@@ -143,9 +143,14 @@
               "applyAfter": [],
               "nameValue": "unknown",
               "effectPolicy": "none",
-              "effectStatus": "independent",
-              "affectedPaths": [],
-              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+              "defaultLiteral": "'horizontal'",
+              "effectStatus": "modeled",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Owned R2024a PositionGeometryRuntimeTest verifies independent linear-gauge dimensions and orientation size exchange; aliases remain unresolved."
             }
           }
         },
@@ -857,12 +862,19 @@
               "constraints": []
             },
             "application": {
-              "applyAfter": [],
+              "applyAfter": [
+                "Orientation"
+              ],
               "nameValue": "unknown",
-              "effectPolicy": "positionInput",
+              "effectPolicy": "linearPosition",
+              "defaultLiteral": "[100 100 120 40]",
               "effectStatus": "modeled",
-              "affectedPaths": [],
-              "effectReason": "Finite stored Position behavior verified by the owned R2024a probe. InnerPosition and OuterPosition are not assumed equivalent."
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Owned R2024a PositionGeometryRuntimeTest verifies independent linear-gauge dimensions and orientation size exchange; aliases remain unresolved."
             }
           }
         },
@@ -1369,6 +1381,6 @@
       "ninetydegree": "quarterCircle",
       "semicircular": "semicircle"
     },
-    "resizeConstraint": "aspectRatio"
+    "resizeConstraint": "free"
   }
 }

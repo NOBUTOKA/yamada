@@ -188,13 +188,30 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.lineargauge-properties.html",
+          "detail": "Owned R2024a PositionGeometryRuntimeTest verifies that changing between horizontal and vertical exchanges the stored width and height. Position remains independently writable in either orientation."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.lineargauge-properties.html",
+          "detail": "The release-fixed LinearGauge properties document horizontal Orientation and [100 100 120 40] Position defaults."
+        }
+      ],
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
         "effectPolicy": "none",
-        "effectStatus": "independent",
-        "affectedPaths": [],
-        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+        "defaultLiteral": "'horizontal'",
+        "effectStatus": "modeled",
+        "affectedPaths": [
+          "InnerPosition",
+          "OuterPosition",
+          "Position"
+        ],
+        "effectReason": "Owned R2024a PositionGeometryRuntimeTest verifies independent linear-gauge dimensions and orientation size exchange; aliases remain unresolved."
       }
     },
     {
@@ -1024,16 +1041,28 @@
         {
           "kind": "inference",
           "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.lineargauge-properties.html",
-          "detail": "Owned R2024a ProbeStoredPositionInteractions verifies the stored Position getter. Native decorated/container aliases remain unknown; slider minor size is fixed at 3 and the reviewed square families use the smaller requested dimension."
+          "detail": "Owned R2024a PositionGeometryRuntimeTest verifies independent width and height, free Preview resizing, and orientation size exchange in actual constructor/setter order. No fixed aspect ratio applies."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.lineargauge-properties.html",
+          "detail": "The release-fixed LinearGauge properties document horizontal Orientation and [100 100 120 40] Position defaults."
         }
       ],
       "application": {
-        "applyAfter": [],
+        "applyAfter": [
+          "Orientation"
+        ],
         "nameValue": "unknown",
-        "effectPolicy": "positionInput",
+        "effectPolicy": "linearPosition",
+        "defaultLiteral": "[100 100 120 40]",
         "effectStatus": "modeled",
-        "affectedPaths": [],
-        "effectReason": "Finite stored Position behavior verified by the owned R2024a probe. InnerPosition and OuterPosition are not assumed equivalent."
+        "affectedPaths": [
+          "InnerPosition",
+          "OuterPosition",
+          "Position"
+        ],
+        "effectReason": "Owned R2024a PositionGeometryRuntimeTest verifies independent linear-gauge dimensions and orientation size exchange; aliases remain unresolved."
       }
     },
     {

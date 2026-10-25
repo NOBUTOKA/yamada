@@ -3,16 +3,44 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
     %   These fixtures execute only test-authored factories and literal setters.
 
     methods (Test)
+        function linearGaugePreviewKeepsWidthAndHeightIndependent(testCase)
+            % linearGaugePreviewKeepsWidthAndHeightIndependent Preserve narrow, tall, and height-only Preview edits.
+            registry = macd.model.ComponentRegistry.createDefault();
+            definition = registry.getById("uigauge-linear");
+            testCase.verifyEqual(definition.resizeConstraintFor(definition.CreationArguments), "free");
+            source = strjoin(["classdef LinearPositionFixture < handle"; "properties"; ...
+                "UIFigure matlab.ui.Figure"; "Control matlab.ui.control.LinearGauge"; "end"; ...
+                "methods"; "function app = LinearPositionFixture"; "createComponents(app);"; "end"; ...
+                "function createComponents(app)"; "app.UIFigure = uifigure(Visible='off', AutoResizeChildren='off');"; ...
+                "app.Control = uigauge(app.UIFigure, 'linear');"; "app.Control.Orientation = 'horizontal';"; ...
+                "app.Control.Position = [10 20 100 70];"; "end"; "end"; "end"], newline);
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            component = document.getComponentByName("Control");
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() delete(figure));
+            renderer = macd.ui.PreviewRenderer(registry);
+            for orientation = ["horizontal", "vertical"]
+                document.setProperty(component.Id, "Orientation", orientation, registry);
+                for sizes = [100 70; 100 150; 50 150]'
+                    requested = [10 20 sizes'];
+                    document.setProperty(component.Id, "Position", requested, registry);
+                    [handles, diagnostics] = renderer.render(document, figure);
+                    testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    testCase.verifyEqual(handles(char(component.Id)).Position, requested);
+                end
+            end
+        end
+
         function aspectPoliciesMatchEveryOrientationAndBoundary(testCase)
             % aspectPoliciesMatchEveryOrientationAndBoundary Check fractional, tall, wide, and zero rectangles.
             registry = macd.model.ComponentRegistry.createDefault();
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             vectors = [10 20 100 70; 20 30 50 150; 10.1 20.2 0.5 2.3; 10 20 0 0; 10 20 100 0];
-            for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular"]
+            for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular", "uigauge-linear"]
                 definition = registry.getById(id);
                 orientations = ["horizontal", "vertical"];
-                if definition.Factory == "uigauge", orientations = ["north", "south", "east", "west"]; end
+                if definition.Id == "uigauge-semicircular", orientations = ["north", "south", "east", "west"]; end
                 for orientation = orientations
                     for row = 1:size(vectors, 1)
                         target = feval(definition.Factory, figure, definition.CreationArguments{:});
@@ -34,10 +62,10 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular", ...
-                    "uislider-slider", "uislider-range"]
+                    "uislider-slider", "uislider-range", "uigauge-linear"]
                 definition = registry.getById(id);
                 orientation = "vertical";
-                if definition.Factory == "uigauge", orientation = "east"; end
+                if definition.Id == "uigauge-semicircular", orientation = "east"; end
                 for method = ["assignment", "nameValue"]
                     for reverse = [false true]
                         writes = {"Position", [10 20 100 70]; "Orientation", orientation};

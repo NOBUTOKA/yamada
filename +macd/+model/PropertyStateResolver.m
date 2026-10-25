@@ -474,7 +474,7 @@ classdef PropertyStateResolver
                 end
                 [states, message] = macd.model.PositionAliasPolicy.apply(states, definitions, path, id);
             end
-            if any(policy.EffectPolicy == ["positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition"])
+            if any(policy.EffectPolicy == ["positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition", "linearPosition"])
                 for alias = ["InnerPosition", "OuterPosition"]
                     states = setUnknown(states, alias, id, "This getter depends on native decoration or container layout.", "native-geometry");
                 end
@@ -542,7 +542,7 @@ classdef PropertyStateResolver
             if path == "Orientation"
                 position = find(paths == "Position", 1);
                 if ~isempty(position) && any(definitions(position).Application.EffectPolicy == ...
-                        ["switchPosition", "semicircularPosition", "sliderPosition"])
+                        ["switchPosition", "semicircularPosition", "linearPosition", "sliderPosition"])
                     familyPolicy = definitions(position).Application.EffectPolicy;
                     [oldOrientation, oldKnown] = stateValue(previous, "Orientation");
                     if ~oldKnown, oldOrientation = ""; end
@@ -552,10 +552,15 @@ classdef PropertyStateResolver
                     end
                     beforeSpec = macd.model.PositionGeometry.constraint(familyPolicy, string(oldOrientation), oldKnown);
                     afterSpec = macd.model.PositionGeometry.constraint(familyPolicy, newOrientation, known);
+                    if familyPolicy == "linearPosition"
+                        beforeSpec.Known = oldKnown && any(string(oldOrientation) == ["horizontal", "vertical"]);
+                        afterSpec.Known = known && any(newOrientation == ["horizontal", "vertical"]);
+                    end
                     if states(position).IsKnown && beforeSpec.Known && afterSpec.Known
                         rectangle = states(position).EffectiveValue;
                         changed = ~isequaln(beforeSpec.Ratio, afterSpec.Ratio) || ...
-                            beforeSpec.FixedIndex ~= afterSpec.FixedIndex;
+                            beforeSpec.FixedIndex ~= afterSpec.FixedIndex || ...
+                            (familyPolicy == "linearPosition" && string(oldOrientation) ~= newOrientation);
                         if changed, rectangle(3:4) = rectangle([4 3]); end
                         states = setEffective(states, "Position", rectangle, id);
                     else

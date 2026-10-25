@@ -33,7 +33,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'parser'}) PositionGeometry
         function editingCopyAndSavePreservePositionHistory(testCase)
             % editingCopyAndSavePreservePositionHistory Keep original source ownership and one undo unit.
             registry = macd.model.ComponentRegistry.createDefault();
-            for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular"]
+            for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular", "uigauge-linear"]
                 definition = registry.getById(id);
                 source = PositionGeometryTest.source(definition);
                 document = macd.source.AppSourceParser.parseText(source, registry);
@@ -45,7 +45,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'parser'}) PositionGeometry
                 before = macd.source.RoundTripGenerator(registry).generate(document);
                 original = component.settingSnapshot();
                 orientation = "horizontal";
-                if definition.Factory == "uigauge", orientation = "north"; end
+                if definition.Id == "uigauge-semicircular", orientation = "north"; end
                 spec = macd.model.PositionGeometry.constraint(definition.getProperty("Position").Application.EffectPolicy, orientation, true);
                 requested = macd.model.PositionGeometry.edit(resolution.EffectiveValue, 3, 90, spec);
                 history = document.HistoryIndex;
@@ -86,7 +86,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'parser'}) PositionGeometry
                 styleArgument = ", '" + string(definition.CreationArguments{1}) + "'";
             end
             orientation = "horizontal";
-            if definition.Factory == "uigauge", orientation = "north"; end
+            if definition.Id == "uigauge-semicircular", orientation = "north"; end
             source = strjoin(["classdef PositionFixture < handle"; "properties"; ...
                 "UIFigure matlab.ui.Figure"; "Control " + definition.DeclaredType; "end"; ...
                 "methods"; "function app = PositionFixture"; "createComponents(app);"; "end"; ...

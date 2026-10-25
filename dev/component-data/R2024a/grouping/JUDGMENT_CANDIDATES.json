@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "31ae4bf5473ffd9dfc3751cf772db9a886f086af8b55a30e1e994c4d39f87392",
+  "inputSha256": "9b3105cf9fb58cc20bec081f638ec4d5b6aa3eaaf1960cf9ebecbf15b32a7f21",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -3535,6 +3535,35 @@
           ]
         },
         {
+          "candidateId": "candidate.gauge.5cb01af7b071",
+          "categoryId": "gauge",
+          "categoryDisplayName": "Gauge",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Gauge-style and shape settings.",
+          "capabilitySha256": "5cb01af7b07151ade49d99d3163f327632bf8897269d0231d6aaf4e34d0faff4",
+          "propertyPaths": [
+            "Value",
+            "Limits",
+            "Orientation",
+            "ScaleColors",
+            "ScaleColorLimits"
+          ],
+          "propertyCapabilitySha256": [
+            "bd4e7856a8a00e6e303727358bff8e4d1ec847f797849d84603185eb33647194",
+            "a3062ffa6220315f4d96d2fc0939d3b0331da3b24b263c48e86daadb551ee3f2",
+            "3f6eeffd7803265a1a54de1ee94ae7cdf75abc83d60619ecb3947cd490f76f74",
+            "93348a8c10f7ac8734bbe3c7df981a3b64a6e8f80db58ad3ae25688bcee3b0a4",
+            "4b1ecfacc4002dec0beb4bcc0521078479e3d2091fd57facade32c52ca818ee8"
+          ],
+          "memberVariantIds": [
+            "uigauge-linear"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            1
+          ]
+        },
+        {
           "candidateId": "candidate.gauge.7b716a50c683",
           "categoryId": "gauge",
           "categoryDisplayName": "Gauge",
@@ -3593,35 +3622,6 @@
           "documentedCategoryOrders": [
             1
           ]
-        },
-        {
-          "candidateId": "candidate.gauge.d0d83a8acfab",
-          "categoryId": "gauge",
-          "categoryDisplayName": "Gauge",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Gauge-style and shape settings.",
-          "capabilitySha256": "d0d83a8acfab3a11e6b32f5fbac6fa6ac6b0e355fc802a1a186f2235f2811cb1",
-          "propertyPaths": [
-            "Value",
-            "Limits",
-            "Orientation",
-            "ScaleColors",
-            "ScaleColorLimits"
-          ],
-          "propertyCapabilitySha256": [
-            "bd4e7856a8a00e6e303727358bff8e4d1ec847f797849d84603185eb33647194",
-            "a3062ffa6220315f4d96d2fc0939d3b0331da3b24b263c48e86daadb551ee3f2",
-            "aea89b241a7d1624eb6fb73e037c831133adf6f124ebd7613662466a15597963",
-            "93348a8c10f7ac8734bbe3c7df981a3b64a6e8f80db58ad3ae25688bcee3b0a4",
-            "4b1ecfacc4002dec0beb4bcc0521078479e3d2091fd57facade32c52ca818ee8"
-          ],
-          "memberVariantIds": [
-            "uigauge-linear"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            1
-          ]
         }
       ],
       "pathCoverage": [
@@ -3630,9 +3630,9 @@
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
             "candidate.gauge.293615878a92",
+            "candidate.gauge.5cb01af7b071",
             "candidate.gauge.7b716a50c683",
-            "candidate.gauge.a0b5eb0b804e",
-            "candidate.gauge.d0d83a8acfab"
+            "candidate.gauge.a0b5eb0b804e"
           ]
         },
         {
@@ -3640,8 +3640,8 @@
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
             "candidate.gauge.293615878a92",
-            "candidate.gauge.a0b5eb0b804e",
-            "candidate.gauge.d0d83a8acfab"
+            "candidate.gauge.5cb01af7b071",
+            "candidate.gauge.a0b5eb0b804e"
           ]
         },
         {
@@ -3649,9 +3649,9 @@
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
             "candidate.gauge.293615878a92",
+            "candidate.gauge.5cb01af7b071",
             "candidate.gauge.7b716a50c683",
-            "candidate.gauge.a0b5eb0b804e",
-            "candidate.gauge.d0d83a8acfab"
+            "candidate.gauge.a0b5eb0b804e"
           ]
         },
         {
@@ -3659,9 +3659,9 @@
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
             "candidate.gauge.293615878a92",
+            "candidate.gauge.5cb01af7b071",
             "candidate.gauge.7b716a50c683",
-            "candidate.gauge.a0b5eb0b804e",
-            "candidate.gauge.d0d83a8acfab"
+            "candidate.gauge.a0b5eb0b804e"
           ]
         },
         {
@@ -3678,9 +3678,9 @@
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
             "candidate.gauge.293615878a92",
+            "candidate.gauge.5cb01af7b071",
             "candidate.gauge.7b716a50c683",
-            "candidate.gauge.a0b5eb0b804e",
-            "candidate.gauge.d0d83a8acfab"
+            "candidate.gauge.a0b5eb0b804e"
           ]
         }
       ],
@@ -5029,7 +5029,7 @@
       ],
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "surfaceCount": 22,
+      "surfaceCount": 23,
       "affectedVariantIds": [
         "axes",
         "geoaxes",
@@ -5095,6 +5095,33 @@
           ],
           "memberVariantIds": [
             "uitable"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            5
+          ]
+        },
+        {
+          "candidateId": "candidate.position.076eca417dac",
+          "categoryId": "position",
+          "categoryDisplayName": "Position",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+          "capabilitySha256": "076eca417dac803f94d8eeb077a43d34e3f77e7c8dba6d67ba15ab34d3d90ba7",
+          "propertyPaths": [
+            "Position",
+            "InnerPosition",
+            "OuterPosition",
+            "Layout"
+          ],
+          "propertyCapabilitySha256": [
+            "99b05ebddeffb3c40b8e12a2f3c90c5ca622a512c16f86e689f004fa0867701d",
+            "55403dcf8424bb2b1302b962f00289d7a3044910ad53a34f12f674b5612f7dcc",
+            "8b65f1d39ec9b6920c31b978e139efa70bc393451e99822c34d5c3064541f99e",
+            "7aad050e4afcedeef89aa1a314897df6dd28e8a4408b54460179b7e8d41404ea"
+          ],
+          "memberVariantIds": [
+            "uigauge-linear"
           ],
           "reuseCount": 1,
           "documentedCategoryOrders": [
@@ -5360,14 +5387,12 @@
             "uidropdown",
             "uieditfield-numeric",
             "uieditfield-text",
-            "uigauge-linear",
             "uilistbox",
             "uispinner"
           ],
-          "reuseCount": 6,
+          "reuseCount": 5,
           "documentedCategoryOrders": [
-            4,
-            5
+            4
           ]
         },
         {
@@ -5774,9 +5799,10 @@
         },
         {
           "path": "InnerPosition",
-          "presentInSurfaceCount": 22,
+          "presentInSurfaceCount": 23,
           "presentInCandidateIds": [
             "candidate.position.02009aacc879",
+            "candidate.position.076eca417dac",
             "candidate.position.0c050da19339",
             "candidate.position.0e8db18638b5",
             "candidate.position.0ff5ac978ff9",
@@ -5802,8 +5828,9 @@
         },
         {
           "path": "Layout",
-          "presentInSurfaceCount": 16,
+          "presentInSurfaceCount": 17,
           "presentInCandidateIds": [
+            "candidate.position.076eca417dac",
             "candidate.position.0c050da19339",
             "candidate.position.0e8db18638b5",
             "candidate.position.0ff5ac978ff9",
@@ -5824,9 +5851,10 @@
         },
         {
           "path": "OuterPosition",
-          "presentInSurfaceCount": 22,
+          "presentInSurfaceCount": 23,
           "presentInCandidateIds": [
             "candidate.position.02009aacc879",
+            "candidate.position.076eca417dac",
             "candidate.position.0c050da19339",
             "candidate.position.0e8db18638b5",
             "candidate.position.0ff5ac978ff9",
@@ -5868,9 +5896,10 @@
         },
         {
           "path": "Position",
-          "presentInSurfaceCount": 22,
+          "presentInSurfaceCount": 23,
           "presentInCandidateIds": [
             "candidate.position.02009aacc879",
+            "candidate.position.076eca417dac",
             "candidate.position.0c050da19339",
             "candidate.position.0e8db18638b5",
             "candidate.position.0ff5ac978ff9",

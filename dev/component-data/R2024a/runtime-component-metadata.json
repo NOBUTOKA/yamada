@@ -261,7 +261,8 @@
           "overlayShape": "semicircle"
         },
         "uigauge-linear": {
-          "displayName": "Linear Gauge"
+          "displayName": "Linear Gauge",
+          "resizeConstraint": "free"
         }
       },
       "capabilities": {
