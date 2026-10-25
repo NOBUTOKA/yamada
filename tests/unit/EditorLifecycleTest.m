@@ -123,6 +123,79 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             end
         end
 
+        function saveNewDocumentRequestsTarget(testCase)
+            % saveNewDocumentRequestsTarget Offer Save As through ordinary Save for a new document.
+            target = string(tempname) + ".m";
+            cleanupFile = onCleanup(@() deleteTemporaryFile(target));
+            app = yamada(lifecycleForTest(struct("SavePath", target)));
+            cleanupApp = onCleanup(@() deleteIfValid(app));
+            addPaletteComponent("Button");
+            item = findall(editorFigure(), "Type", "uimenu", "Accelerator", "S");
+            testCase.verifyEqual(string(item.Enable), "on");
+            invokeEditorMenu("Save");
+            testCase.verifyTrue(isfile(target));
+            testCase.verifyEqual(app.Document.FilePath, target);
+            [~, name] = fileparts(target);
+            testCase.verifyEqual(app.Document.ClassName, string(name));
+            testCase.verifyFalse(app.Document.IsDirty);
+        end
+
+        function saveMissingTargetRequestsAnotherPath(testCase)
+            % saveMissingTargetRequestsAnotherPath Use Save As when a confirmed file was removed externally.
+            original = reloadFixture();
+            target = string(tempname) + ".m";
+            cleanupFiles = onCleanup(@() cleanupTemporaryPaths([original target]));
+            app = yamada(lifecycleForTest(struct("OpenPath", original, "SavePath", target)));
+            cleanupApp = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            app.Document.setProperty(app.Document.RootComponentId, "Name", "Edited before saving");
+            deleteTemporaryFile(original);
+            invokeEditorMenu("Save");
+            testCase.verifyFalse(isfile(original));
+            testCase.verifyTrue(isfile(target));
+            testCase.verifyEqual(app.Document.FilePath, target);
+            testCase.verifyFalse(app.Document.IsDirty);
+            testCase.verifySubstring(string(fileread(target)), "Edited before saving");
+        end
+
+        function canceledSaveMissingTargetKeepsState(testCase)
+            % canceledSaveMissingTargetKeepsState Keep the document and checkpoint when automatic Save As is canceled.
+            original = reloadFixture();
+            cleanupFile = onCleanup(@() deleteTemporaryFile(original));
+            app = yamada(lifecycleForTest(struct("OpenPath", original, "SaveAccepted", false)));
+            cleanupApp = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            app.Document.setProperty(app.Document.RootComponentId, "Name", "Unsaved edit");
+            className = app.Document.ClassName;
+            checkpoint = app.Document.SavedSource;
+            history = app.Document.HistoryIndex;
+            deleteTemporaryFile(original);
+            invokeEditorMenu("Save");
+            testCase.verifyFalse(isfile(original));
+            testCase.verifyEqual(app.Document.FilePath, original);
+            testCase.verifyEqual(app.Document.ClassName, className);
+            testCase.verifyEqual(app.Document.SavedSource, checkpoint);
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+            testCase.verifyTrue(app.Document.IsDirty);
+        end
+
+        function saveExistingTargetSkipsChooser(testCase)
+            % saveExistingTargetSkipsChooser Preserve direct Save for an existing confirmed file.
+            target = reloadFixture();
+            cleanupFile = onCleanup(@() deleteTemporaryFile(target));
+            service = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() deal(true, target), ...
+                "RequestSavePathFcn", @(~) error("macd:EditorLifecycleTest:UnexpectedSaveAs", "Existing Save must not open a chooser.")));
+            app = yamada(service);
+            cleanupApp = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            app.Document.setProperty(app.Document.RootComponentId, "Name", "Direct Save");
+            invokeEditorMenu("Save");
+            testCase.verifyEqual(app.Document.FilePath, target);
+            testCase.verifyFalse(app.Document.IsDirty);
+            testCase.verifySubstring(string(fileread(target)), "Direct Save");
+        end
+
         function saveAsReplacementAndNormalSaveFollowTheirSeparatePolicies(testCase)
             % saveAsReplacementAndNormalSaveFollowTheirSeparatePolicies Verify replacement prompts occur once.
 
@@ -473,7 +546,7 @@ end
 
 defaults = struct("NewClassName", "NextApp", "OpenPath", "", ...
     "SavePath", "", "SaveAccepted", true, "UnsavedChoice", "Cancel", ...
-    "FileExists", false, "ReplaceAccepted", true, "WriteSucceeds", true, ...
+    "FileExists", [], "ReplaceAccepted", true, "WriteSucceeds", true, ...
     "ConfirmMustNotRun", false, "ReloadChoice", "Cancel");
 names = string(fieldnames(defaults));
 for index = 1:numel(names)
@@ -489,10 +562,36 @@ callbacks = struct( ...
     "ConfirmUnsavedChangesFcn", @() unsavedChoice(options), ...
     "ConfirmReloadConflictFcn", @() options.ReloadChoice, ...
     "ConfirmReplaceFcn", @(~) options.ReplaceAccepted, ...
-    "FileExistsFcn", @(~) options.FileExists, ...
+    "FileExistsFcn", @(path) fileExistsForTest(path, options.FileExists), ...
     "WriteSourceFcn", @(path, source, lineEnding) writeForTest( ...
     path, source, lineEnding, options.WriteSucceeds));
 service = macd.ui.DocumentLifecycleService(callbacks);
+end
+
+function result = fileExistsForTest(path, override)
+% fileExistsForTest Use real file state unless a test overrides its existence.
+arguments (Input)
+    path (1, 1) string
+    override logical
+end
+arguments (Output)
+    result (1, 1) logical
+end
+if isempty(override)
+    result = isfile(path);
+else
+    result = override;
+end
+end
+
+function cleanupTemporaryPaths(paths)
+% cleanupTemporaryPaths Remove only the explicitly created test outputs.
+arguments (Input)
+    paths (1, :) string
+end
+for path = paths
+    deleteTemporaryFile(path);
+end
 end
 
 function [accepted, text] = selectedText(text)

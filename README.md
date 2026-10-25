@@ -57,7 +57,7 @@ delete(editor);
 2. Add components from the palette on the left.
 3. Select a component on the canvas or in the hierarchy browser, then edit its supported properties in the Property Inspector on the right.
 4. Select **Tools > Validate** to validate the document model.
-5. Select **Tools > Diff Preview** to review the generated source, then use **File > Save As** to save it as a `.m` file. Save As asks before replacing an existing target; after a successful Save As, **File > Save** writes to that confirmed path without another replacement prompt.
+5. Select **Tools > Diff Preview** to review the generated source, then use **File > Save** to save it as a `.m` file. Save opens Save As for a new document or when its saved target no longer exists. Save As asks before replacing an existing target; subsequent Save writes directly to a confirmed existing path without another replacement prompt.
 
 An untouched empty document starts clean. The title gains an asterisk after the first edit that has not been saved.
 

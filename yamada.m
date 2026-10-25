@@ -3519,8 +3519,10 @@ classdef yamada < handle
             end
 
             completed = false;
+            % Missing or unconfirmed targets use the same chooser and validation as Save As.
             needsSaveAs = forceSaveAs || ~app.SavePathConfirmed || ...
-                strlength(app.Document.FilePath) == 0;
+                strlength(app.Document.FilePath) == 0 || ...
+                ~app.Lifecycle.fileExists(app.Document.FilePath);
             filePath = app.Document.FilePath;
             targetClassName = app.Document.ClassName;
             if needsSaveAs
@@ -3802,14 +3804,14 @@ classdef yamada < handle
         end
 
         function updateSaveState(app, diagnostics)
-            % updateSaveState Enable Save only for a confirmed path without fatal errors.
+            % updateSaveState Enable Save for valid documents, including new unsaved documents.
             arguments (Input)
                 app (1, 1) yamada
                 diagnostics macd.model.Diagnostic
             end
 
             % Keep the menu state synchronized with the current safety validation.
-            if app.SavePathConfirmed && ~macd.validation.ModelValidator.hasErrors(diagnostics)
+            if ~isempty(app.Document) && ~macd.validation.ModelValidator.hasErrors(diagnostics)
                 app.SaveMenuItem.Enable = "on";
             else
                 app.SaveMenuItem.Enable = "off";
