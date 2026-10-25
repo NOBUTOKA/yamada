@@ -1512,7 +1512,7 @@ classdef DocumentModel < handle
                 local (1, 1) logical
             end
 
-            % Re-edit proven inserted or existing numeric tokens without replaying the document.
+            % Re-edit proven inserted or existing literals without replaying the document.
             parsed = obj.localPropertyCandidate(componentId, changes, registry);
             local = ~isempty(parsed);
             if local, return, end
@@ -1588,7 +1588,7 @@ classdef DocumentModel < handle
         end
 
         function result = canCarryPropertyValidation(obj, registry)
-            % canCarryPropertyValidation Check actual full diagnostics before the live numeric mutation.
+            % canCarryPropertyValidation Check actual full diagnostics before the live literal mutation.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 registry (1, 1) macd.model.ComponentRegistry
@@ -1602,7 +1602,7 @@ classdef DocumentModel < handle
         end
 
         function parsed = localPropertyCandidate(obj, componentId, changes, registry)
-            % localPropertyCandidate Validate bounded numeric replacements in a private proven source plan.
+            % localPropertyCandidate Validate bounded literal replacements in a private proven source plan.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 componentId (1, 1) string
@@ -1656,12 +1656,17 @@ classdef DocumentModel < handle
                 numeric = numericValue && definition.Application.EffectStatus == "modeled" && ...
                     definition.Application.EffectPolicy == "numericValue" && ...
                     all(ismember(definition.Application.ApplyAfter, constraints));
-                if ~(independent || numeric) || ...
-                        ~isfield(schema, "kind") || string(schema.kind) ~= "number" || ...
+                finiteNumber = isfield(schema, "kind") && string(schema.kind) == "number" && ...
+                    isa(change.Value, "double") && isscalar(change.Value) && ...
+                    isreal(change.Value) && isfinite(change.Value);
+                textLiteral = independent && isempty(definition.Application.AffectedPaths) && ...
+                    isfield(schema, "kind") && any(string(schema.kind) == ["text", "multilineText"]) && ...
+                    (ischar(change.Value) || isstring(change.Value) || ...
+                    (iscell(change.Value) && all(cellfun(@(value) ischar(value) || ...
+                    (isstring(value) && isscalar(value)), change.Value), "all")));
+                if ~(independent || numeric) || ~(finiteNumber || textLiteral) || ...
                         isempty(entry) || isempty(entry.SourceSpan) || ~entry.IsEditable || ...
-                        entry.ValueKind ~= "literal" || ~states(index).Resolution.IsKnown || ...
-                        ~isa(change.Value, "double") || ~isscalar(change.Value) || ...
-                        ~isreal(change.Value) || ~isfinite(change.Value)
+                        entry.ValueKind ~= "literal" || ~states(index).Resolution.IsKnown
                     return
                 end
                 for other = definitions
@@ -1671,8 +1676,18 @@ classdef DocumentModel < handle
                         return
                     end
                 end
-                [decoded, literal] = macd.source.MatlabLiteralParser.parse( ...
-                    macd.source.LiteralEncoder.encode(change.Value));
+                % Unsupported text representations retain full-preflight diagnostics.
+                try
+                    encoded = macd.source.LiteralEncoder.encode(change.Value);
+                catch exception
+                    if textLiteral, return, end
+                    rethrow(exception)
+                end
+                % A physical line break inside quotes needs the full source-syntax checks.
+                if textLiteral && (contains(encoded, string(newline)) || contains(encoded, string(char(13))))
+                    return
+                end
+                [decoded, literal] = macd.source.MatlabLiteralParser.parse(encoded);
                 if ~literal || ~isequaln(decoded, change.Value), return, end
                 transaction.stage(string(change.Path), change.Value);
             end
