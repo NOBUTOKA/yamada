@@ -538,7 +538,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uiknob-discrete.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

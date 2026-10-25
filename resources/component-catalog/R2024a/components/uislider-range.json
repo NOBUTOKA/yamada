@@ -819,7 +819,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uislider-range.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

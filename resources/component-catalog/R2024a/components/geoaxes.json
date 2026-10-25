@@ -2219,7 +2219,7 @@
             "category": "Position",
             "order": 3,
             "groupId": "local.geoaxes.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

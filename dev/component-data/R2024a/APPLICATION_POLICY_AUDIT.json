@@ -211,7 +211,7 @@
       "sourceSha256": "8319d09a9bbd6b266c7fd172323af26b9c4ec55a6b80ff25f63acf238479f405",
       "candidateCount": 21,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 8
+      "reviewedPolicyCount": 10
     },
     {
       "id": "uigridlayout",
@@ -396,7 +396,7 @@
       "sourceSha256": "ce187f1fea6ec348ff6d083fc5179aa4702d5851896d3f4ec0cde983f4c1c1a4",
       "candidateCount": 7,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 3
+      "reviewedPolicyCount": 5
     },
     {
       "id": "uiswitch-slider",
@@ -407,7 +407,7 @@
       "sourceSha256": "31b07b8d694882f12886659a139282dd8b41af163b1a850f01516c5796866e98",
       "candidateCount": 7,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 3
+      "reviewedPolicyCount": 5
     },
     {
       "id": "uiswitch-toggle",
@@ -418,7 +418,7 @@
       "sourceSha256": "8c6e6ebe0f882a258c1c1a11ca146c111db6b448b5f3d6a655d80e42e6b6f1aa",
       "candidateCount": 7,
       "runtimeVerificationStatus": "partial",
-      "reviewedPolicyCount": 3
+      "reviewedPolicyCount": 5
     },
     {
       "id": "uitab",

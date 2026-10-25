@@ -404,9 +404,8 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             % The callback must leave the root selected and show its properties.
             testCase.verifyEqual(app.SelectedComponentId, app.Document.RootComponentId);
-            editors = findall(0, "Type", "uieditfield", ...
-                "Tag", "macd-inspector-property-editor");
-            testCase.verifyGreaterThan(numel(editors), 0);
+            editors = findall(0, "Tag", "macd-inspector-position-field");
+            testCase.verifyEqual(numel(editors), 4);
             clear cleanup
         end
 
@@ -444,8 +443,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             tree.SelectionChangedFcn(tree, struct("SelectedNodes", buttonNode));
             testCase.verifyEqual(app.SelectedComponentId, buttonId);
 
-            menus = findall(figure, "Type", "uimenu");
-            deleteMenu = menus(erase(string({menus.Text}), "&") == "Delete");
+            deleteMenu = findall(figure, "Tag", "macd-edit-delete");
             deleteMenu.MenuSelectedFcn(deleteMenu, struct());
             drawnow;
 

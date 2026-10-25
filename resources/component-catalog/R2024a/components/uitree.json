@@ -561,7 +561,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uitree.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

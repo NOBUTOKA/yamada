@@ -557,7 +557,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uitogglebutton.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

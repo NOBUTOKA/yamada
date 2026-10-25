@@ -83,7 +83,8 @@ classdef PositionAliasPolicy
                 else
                     value = reshape(double(value), 1, 4);
                     if definitions(index).Application.EffectPolicy == "squarePositionAlias"
-                        value(3:4) = min(value(3:4));
+                        value = macd.model.PositionGeometry.normalize(value, ...
+                            macd.model.PositionGeometry.constraint("squarePositionAlias"));
                     end
                     reason = "";
                 end

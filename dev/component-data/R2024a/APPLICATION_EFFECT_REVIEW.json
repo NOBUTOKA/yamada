@@ -6578,9 +6578,9 @@
         },
         {
           "path": "Orientation",
-          "status": "independent",
+          "status": "modeled",
           "affectedPaths": [],
-          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          "reason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
         },
         {
           "path": "ScaleDirection",
@@ -6698,13 +6698,13 @@
         },
         {
           "path": "Position",
-          "status": "unsupported",
+          "status": "modeled",
           "affectedPaths": [
             "InnerPosition",
             "OuterPosition",
             "Position"
           ],
-          "reason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+          "reason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
         },
         {
           "path": "InnerPosition",
@@ -9724,9 +9724,9 @@
         },
         {
           "path": "Orientation",
-          "status": "independent",
+          "status": "modeled",
           "affectedPaths": [],
-          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          "reason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
         },
         {
           "path": "FontName",
@@ -9784,13 +9784,13 @@
         },
         {
           "path": "Position",
-          "status": "unsupported",
+          "status": "modeled",
           "affectedPaths": [
             "InnerPosition",
             "OuterPosition",
             "Position"
           ],
-          "reason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+          "reason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
         },
         {
           "path": "InnerPosition",
@@ -9916,9 +9916,9 @@
         },
         {
           "path": "Orientation",
-          "status": "independent",
+          "status": "modeled",
           "affectedPaths": [],
-          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          "reason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
         },
         {
           "path": "FontName",
@@ -9976,13 +9976,13 @@
         },
         {
           "path": "Position",
-          "status": "unsupported",
+          "status": "modeled",
           "affectedPaths": [
             "InnerPosition",
             "OuterPosition",
             "Position"
           ],
-          "reason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+          "reason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
         },
         {
           "path": "InnerPosition",
@@ -10108,9 +10108,9 @@
         },
         {
           "path": "Orientation",
-          "status": "independent",
+          "status": "modeled",
           "affectedPaths": [],
-          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          "reason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
         },
         {
           "path": "FontName",
@@ -10168,13 +10168,13 @@
         },
         {
           "path": "Position",
-          "status": "unsupported",
+          "status": "modeled",
           "affectedPaths": [
             "InnerPosition",
             "OuterPosition",
             "Position"
           ],
-          "reason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+          "reason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
         },
         {
           "path": "InnerPosition",

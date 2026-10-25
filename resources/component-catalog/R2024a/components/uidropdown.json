@@ -675,7 +675,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uidropdown.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

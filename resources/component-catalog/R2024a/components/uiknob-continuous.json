@@ -709,7 +709,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uiknob-continuous.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

@@ -354,7 +354,12 @@ classdef InspectorPropertyRow < handle
             result = false;
             figure = ancestor(obj.Editor, "figure");
             if ~isempty(figure) && isvalid(figure) && isprop(figure, "CurrentObject")
-                result = isequal(figure.CurrentObject, obj.Editor);
+                current = figure.CurrentObject;
+                while ~isempty(current)
+                    if isequal(current, obj.Editor), result = true; return, end
+                    if ~isprop(current, "Parent"), break, end
+                    current = current.Parent;
+                end
             end
         end
     end
@@ -375,6 +380,8 @@ classdef InspectorPropertyRow < handle
                     isfield(definition.ValueSchema, "multiselectProperty")
                 % Reserve the List Box selection surface for its optional multi-select mode.
                 height = 84;
+            elseif definition.Editor == "position"
+                height = 102;
             elseif definition.Editor == "multilineText"
                 height = 84;
             elseif definition.Editor == "dateTime" && ...

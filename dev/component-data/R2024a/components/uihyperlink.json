@@ -707,7 +707,7 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "adapt",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "position",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []

@@ -49,7 +49,9 @@ function Set-TextContract($document, $path, $classes) {
 }
 
 function Set-FixedNumericVectorContract($document, $path, $length) {
-    $property = Set-PropertyMetadata $document $path "numericVector" "editable" @()
+    $editor = "numericVector"
+    if ($path -ceq "Position") { $editor = "position" }
+    $property = Set-PropertyMetadata $document $path $editor "editable" @()
     Set-ValueContract $property "numericArray" @("double") "fixedLengthVector" $false @() ([ordered]@{ fixedLength = $length })
 }
 

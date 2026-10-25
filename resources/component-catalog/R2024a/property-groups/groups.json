@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "6f0a8da2f5a467c415d3da83b19f35d6c671564cdd3f730d1f635fba5f738d74",
+  "inputSha256": "d48836251d8fa8db320bf4319f550c9e201059433a9565abe2da8d3c88d5533e",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -2102,7 +2102,7 @@
       ]
     },
     {
-      "id": "exact.position.464084a32dfa",
+      "id": "exact.position.1a61fde7d888",
       "kind": "exactCategory",
       "categoryId": "position",
       "entries": [
@@ -2119,7 +2119,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -2802,7 +2802,7 @@
       ]
     },
     {
-      "id": "exact.switch.cd3e40c4761c",
+      "id": "exact.switch.eb0e1541414b",
       "kind": "exactCategory",
       "categoryId": "switch",
       "entries": [
@@ -4806,7 +4806,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -6270,7 +6270,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -7997,7 +7997,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -9912,7 +9912,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -10459,7 +10459,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -10868,7 +10868,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -11905,7 +11905,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -12302,7 +12302,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13009,7 +13009,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13510,7 +13510,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -13850,7 +13850,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14415,7 +14415,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -15323,7 +15323,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -16034,7 +16034,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -16440,7 +16440,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -16872,7 +16872,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -17304,7 +17304,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -18241,7 +18241,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -18904,7 +18904,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -19461,7 +19461,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -19855,7 +19855,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -20267,7 +20267,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -20562,7 +20562,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -21079,7 +21079,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -21625,7 +21625,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -23180,7 +23180,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -23501,7 +23501,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -23960,7 +23960,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -24399,7 +24399,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -24938,7 +24938,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -25257,7 +25257,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -25694,7 +25694,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26616,7 +26616,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -27378,7 +27378,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -28195,7 +28195,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -28675,7 +28675,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -29820,7 +29820,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -30414,7 +30414,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []

@@ -1584,8 +1584,7 @@ classdef yamada < handle
                     "tabTitles", tabTitles, "tabSelected", tabSelected, ...
                     "depth", app.componentNestingDepth(component.Id), ...
                     "inGrid", app.hasGridAncestor(component.Id), ...
-                    "resizeConstraint", char(definition.resizeConstraintFor( ...
-                        component.CreationArguments))); %#ok<AGROW>
+                    "resizeConstraint", char(app.previewResizeConstraint(component, definition))); %#ok<AGROW>
             end
             % Paint ancestor silhouettes first so nested controls receive pointer events.
             if ~isempty(components)
@@ -2116,6 +2115,7 @@ classdef yamada < handle
             end
             app.InteractionStartPoint = point;
             app.InteractionStartPosition = double(position.LiteralValue);
+            app.InteractionStartPosition = app.interactionInputPosition(component, position.LiteralValue);
             app.InteractionPosition = app.InteractionStartPosition;
             if startsWith(handle, "root-")
                 app.createRootResizeGuide();
@@ -2502,6 +2502,10 @@ classdef yamada < handle
             rectangle(3:4) = app.InteractionPosition(3:4);
             component = app.Document.getComponent(componentId);
             definition = app.Registry.get(component.Factory, component.CreationArguments);
+            property = definition.getProperty("Position");
+            if ~isempty(property) && macd.model.PositionGeometry.applies(property.Application.EffectPolicy)
+                return
+            end
             constraint = definition.resizeConstraintFor(component.CreationArguments);
             if constraint == "fixedHeight"
                 % MATLAB keeps the slider-like control height independent of Position.
@@ -2632,7 +2636,7 @@ classdef yamada < handle
             app.ResizeTargetId = component.Id;
             app.ResizeKind = kind;
             app.ResizeStartPoint = double(app.UIFigure.CurrentPoint);
-            app.ResizeStartPosition = double(position.LiteralValue);
+            app.ResizeStartPosition = app.interactionInputPosition(component, position.LiteralValue);
             app.UIFigure.WindowButtonMotionFcn = @(~, ~) app.resizeHandleMoved();
             app.UIFigure.WindowButtonUpFcn = @(~, ~) app.resizeHandleFinished();
         end
@@ -2747,6 +2751,52 @@ classdef yamada < handle
             position = round(position);
         end
 
+        function position = interactionInputPosition(app, component, requested)
+            % interactionInputPosition Start constrained gestures from the owned native rectangle.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) macd.model.ComponentRecord
+                requested (1, 4) double
+            end
+            arguments (Output)
+                position (1, 4) double
+            end
+            position = requested;
+            definition = app.Registry.get(component.Factory, component.CreationArguments);
+            property = definition.getProperty("Position");
+            if ~isempty(property) && macd.model.PositionGeometry.applies(property.Application.EffectPolicy) && ...
+                    component.Id ~= app.Document.RootComponentId && ~isempty(app.PreviewHandles) && ...
+                    isKey(app.PreviewHandles, char(component.Id))
+                position = double(app.PreviewHandles(char(component.Id)).Position);
+            end
+        end
+
+        function constraint = previewResizeConstraint(app, component, definition)
+            % previewResizeConstraint Publish orientation-aware handle affordances from shared constraints.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) macd.model.ComponentRecord
+                definition (1, 1) macd.model.ComponentDefinition
+            end
+            arguments (Output)
+                constraint (1, 1) string
+            end
+            constraint = definition.resizeConstraintFor(component.CreationArguments);
+            property = definition.getProperty("Position");
+            if isempty(property) || ~macd.model.PositionGeometry.applies(property.Application.EffectPolicy), return, end
+            orientation = "";
+            if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
+                target = app.PreviewHandles(char(component.Id));
+                if isprop(target, "Orientation"), orientation = string(target.Orientation); end
+            end
+            spec = macd.model.PositionGeometry.constraint(property.Application.EffectPolicy, orientation, strlength(orientation) > 0);
+            if ~spec.Known, return, end
+            constraint = "free";
+            if ~isnan(spec.Ratio), constraint = "aspectRatio"; end
+            if spec.FixedIndex == 3, constraint = "fixedWidth"; end
+            if spec.FixedIndex == 4, constraint = "fixedHeight"; end
+        end
+
         function position = applyResizePolicy(app, position, startPosition, kind)
             % applyResizePolicy Apply registry-defined control size constraints.
             arguments (Input)
@@ -2765,6 +2815,18 @@ classdef yamada < handle
                 return
             end
             definition = app.Registry.get(component.Factory, component.CreationArguments);
+            property = definition.getProperty("Position");
+            if ~isempty(property) && macd.model.PositionGeometry.applies(property.Application.EffectPolicy)
+                orientation = "";
+                if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
+                    target = app.PreviewHandles(char(component.Id));
+                    if isprop(target, "Orientation"), orientation = string(target.Orientation); end
+                end
+                spec = macd.model.PositionGeometry.constraint(property.Application.EffectPolicy, ...
+                    orientation, strlength(orientation) > 0);
+                position = macd.model.PositionGeometry.resize(position, startPosition, kind, spec);
+                return
+            end
             policy = definition.resizeConstraintFor(component.CreationArguments);
             if policy == "fixedHeight"
                 position(2) = startPosition(2);
@@ -2827,7 +2889,7 @@ classdef yamada < handle
             end
             app.DragComponentId = componentId;
             app.DragStartPoint = double(app.UIFigure.CurrentPoint);
-            app.DragStartPosition = double(position.LiteralValue);
+            app.DragStartPosition = app.interactionInputPosition(component, position.LiteralValue);
             app.UIFigure.WindowButtonMotionFcn = @(~, ~) app.previewDragMoved();
             app.UIFigure.WindowButtonUpFcn = @(~, ~) app.previewDragFinished();
             app.refreshEditCommands();

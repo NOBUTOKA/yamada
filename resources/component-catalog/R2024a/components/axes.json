@@ -4341,7 +4341,7 @@
             "category": "Position",
             "order": 3,
             "groupId": "local.axes.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

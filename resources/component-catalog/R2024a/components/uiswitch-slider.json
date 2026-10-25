@@ -217,9 +217,10 @@
               "applyAfter": [],
               "nameValue": "unknown",
               "effectPolicy": "none",
-              "effectStatus": "independent",
+              "defaultLiteral": "'horizontal'",
+              "effectStatus": "modeled",
               "affectedPaths": [],
-              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+              "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
             }
           }
         }
@@ -575,7 +576,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uiswitch-slider.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -588,16 +589,19 @@
               "constraints": []
             },
             "application": {
-              "applyAfter": [],
+              "applyAfter": [
+                "Orientation"
+              ],
               "nameValue": "unknown",
-              "effectPolicy": "none",
-              "effectStatus": "unsupported",
+              "effectPolicy": "switchPosition",
+              "defaultLiteral": "[100 100 45 20]",
+              "effectStatus": "modeled",
               "affectedPaths": [
                 "InnerPosition",
                 "OuterPosition",
                 "Position"
               ],
-              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+              "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
             }
           }
         },

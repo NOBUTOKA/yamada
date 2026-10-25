@@ -11,6 +11,7 @@
 - Create a runnable `handle` subclass from an empty canvas
 - Statically parse an existing `.m` class that follows a common App Designer-like structure
 - Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
+- Edit Position in four vertically stacked numeric fields, with linked aspect ratios and tooltips identifying fixed dimensions
 - Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
 - Add and delete components and edit supported properties, including literal Checkbox Tree `Position` settings
 - Preserve existing initialization settings and apply reviewed dependencies when adding properties, including supported axes value/Mode pairs

@@ -633,7 +633,7 @@
       "entries": [
         {
           "path": "Position",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
@@ -641,8 +641,8 @@
             "categoryId": "position",
             "category": "Position",
             "order": 1,
-            "groupId": "exact.position.464084a32dfa",
-            "editor": "numericVector",
+            "groupId": "exact.position.1a61fde7d888",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -668,7 +668,7 @@
         },
         {
           "path": "InnerPosition",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "InnerPosition",
@@ -676,7 +676,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 2,
-            "groupId": "exact.position.464084a32dfa",
+            "groupId": "exact.position.1a61fde7d888",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "omitted",
@@ -705,7 +705,7 @@
         },
         {
           "path": "OuterPosition",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "OuterPosition",
@@ -713,7 +713,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 3,
-            "groupId": "exact.position.464084a32dfa",
+            "groupId": "exact.position.1a61fde7d888",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -742,7 +742,7 @@
         },
         {
           "path": "Units",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
@@ -750,7 +750,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 4,
-            "groupId": "exact.position.464084a32dfa",
+            "groupId": "exact.position.1a61fde7d888",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",

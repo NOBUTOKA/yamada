@@ -179,7 +179,7 @@ Typical initial decisions are:
 | `Text` | true | `apply` | text or string-list | editable |
 | `Visible` | true | `apply` | on/off | editable |
 | `FontColor` | true | `apply` | color | editable |
-| `Position` | true | `adapt` | numeric vector | editable, effective only for absolute context |
+| `Position` | true | `adapt` | inline position | editable, effective only for absolute context |
 | `Icon` | true | `skip` until asset policy is approved | asset | editable |
 | `ContextMenu` | true | `skip` until reference mapping exists | component reference | editable |
 | callback functions | false | `skip` | none in the property inspector | omitted: `callbackManaged`, `callbackExecutable` |
@@ -235,3 +235,9 @@ Properties that do not pass the promotion gate remain represented in the develop
 Every review has a release-fixed source and property-level status/reason. Validate full coverage and affected-path references before regeneration. Owned MATLAB fixtures establish finite setter behavior; exact enumeration of unknown rows is coverage bookkeeping, not completion of their native audit. New policies must reach parsing, source planning, Preview, Copy, relocation, and saved checkpoints.
 
 Unsupported hierarchy setters can affect objects outside constructor ownership. Existing Parent/Children writes stop document-wide guarantees, including those for destination siblings. Managed reparenting updates factory parents and proven insertion positions through its own preflight. A local native observation does not establish independent Parent/Children setters for every variant.
+
+## Inline Position editor and native constraints
+
+Use the `position` editor identifier for editable intrinsic Position properties. It retains the numeric-array value contract and serializes one four-element vector, rather than four separate source settings. Fixed numeric dimensions are read-only within the adapter and retain explicit fixed-dimension tooltips. Aspect-link labels are vertical pairs beside the two vertically stacked size fields.
+
+The `switchPosition` and `semicircularPosition` effect policies model the observed R2024a fixed aspect ratios and orientation size exchange. Record documented initial Orientation/Position seeds and preserve original constructor/assignment execution order. Owned `PositionGeometryRuntimeTest` fixtures compare normalization and both setter orders with real controls. These results permit the finite Position policy; they do not grant independence to InnerPosition/OuterPosition or automatically grant constructor support for new settings. Product omissions, grid ownership, source uncertainty, and unsupported geometry retain their separate boundaries.

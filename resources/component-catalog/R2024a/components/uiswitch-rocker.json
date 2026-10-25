@@ -40,7 +40,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -48,7 +48,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 1,
-            "groupId": "exact.switch.cd3e40c4761c",
+            "groupId": "exact.switch.eb0e1541414b",
             "editor": "itemSelection",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -77,7 +77,7 @@
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Items",
@@ -85,7 +85,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 2,
-            "groupId": "exact.switch.cd3e40c4761c",
+            "groupId": "exact.switch.eb0e1541414b",
             "editor": "stringList",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -115,7 +115,7 @@
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ItemsData",
@@ -123,7 +123,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 3,
-            "groupId": "exact.switch.cd3e40c4761c",
+            "groupId": "exact.switch.eb0e1541414b",
             "editor": "structuredData",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -156,7 +156,7 @@
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ValueIndex",
@@ -164,7 +164,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 4,
-            "groupId": "exact.switch.cd3e40c4761c",
+            "groupId": "exact.switch.eb0e1541414b",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "auditDisposition": "readOnly",
@@ -189,7 +189,7 @@
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Orientation",
@@ -197,7 +197,7 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 5,
-            "groupId": "exact.switch.cd3e40c4761c",
+            "groupId": "exact.switch.eb0e1541414b",
             "editor": "enum",
             "previewPolicy": "apply",
             "auditDisposition": "editable",
@@ -219,9 +219,10 @@
               "applyAfter": [],
               "nameValue": "unknown",
               "effectPolicy": "none",
-              "effectStatus": "independent",
+              "defaultLiteral": "'vertical'",
+              "effectStatus": "modeled",
               "affectedPaths": [],
-              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+              "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
             }
           }
         }
@@ -577,7 +578,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uiswitch-rocker.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {
@@ -590,16 +591,19 @@
               "constraints": []
             },
             "application": {
-              "applyAfter": [],
+              "applyAfter": [
+                "Orientation"
+              ],
               "nameValue": "unknown",
-              "effectPolicy": "none",
-              "effectStatus": "unsupported",
+              "effectPolicy": "switchPosition",
+              "defaultLiteral": "[100 100 20 45]",
+              "effectStatus": "modeled",
               "affectedPaths": [
                 "InnerPosition",
                 "OuterPosition",
                 "Position"
               ],
-              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+              "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
             }
           }
         },

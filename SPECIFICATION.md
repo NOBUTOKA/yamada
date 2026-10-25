@@ -120,6 +120,10 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - Generating an existing source file without edits does not change its original text.
 - Edits make localized changes only to declarations, creation statements, and assignments whose ownership can be determined safely.
 - Checkbox Tree supports literal `Position` edits in its original assignment or constructor argument. Existing writable `InnerPosition` settings are preserved; the Inspector continues to use `Position` as its geometry editing surface.
+- Position uses one inline Inspector property row containing four vertically stacked numeric fields in original `[X Y Width Height]` order. Their tooltips are `X`, `Y`, `Width`, and `Height`. Fixed slider dimensions remain readable but cannot be edited; their tooltips are `Width (fixed)` or `Height (fixed)` according to Orientation.
+- Fixed aspect ratios are indicated by two labels, `┓` above `┛`, aligned in the same column to the right of Width and Height. Editing either linked size updates its partner before committing a single Position vector, so Undo restores both sizes together. The links indicate a native constraint and are not unlock buttons.
+- Reviewed Position constraints cover square Lamp/Knob/Gauge families, fixed-thickness sliders, all Switch styles, and the semicircular Gauge. Position normalization and orientation exchange use shared finite rules in source-state resolution, the inline editor, Safe Preview, and canvas resize handling. Switch and semicircular Gauge Position are editable within the normal literal/source-ownership contract; decoration-dependent aliases remain outside that finite policy. Grid-managed and natively read-only Position properties keep their existing restrictions.
+
 - If an insertion point or ownership range required for addition or deletion is ambiguous, the edit or save is rejected with a diagnostic.
 - Failed validation of a supported value restricts Preview or saving as necessary for safety.
 - Deletion occurs only after an explicit user action.

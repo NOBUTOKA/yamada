@@ -3170,7 +3170,7 @@
             "category": "Position",
             "order": 3,
             "groupId": "local.polaraxes.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

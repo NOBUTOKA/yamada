@@ -69,7 +69,7 @@ classdef PropertyBatchValidator
                 if strlength(message) > 0
                     return
                 end
-            elseif definition.Editor == "numericVector"
+            elseif any(definition.Editor == ["numericVector", "position"])
                 message = macd.validation.PropertyBatchValidator.validateNumericVector(schema, value);
                 if strlength(message) > 0
                     return

@@ -472,7 +472,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             outer = definition.Properties([definition.Properties.Path] == "OuterPosition");
             testCase.verifyTrue(position.IsEditable);
             testCase.verifyEqual(position.AuditDisposition, "editable");
-            testCase.verifyEqual(position.Editor, "numericVector");
+            testCase.verifyEqual(position.Editor, "position");
             testCase.verifyTrue(inner.IsEditable);
             testCase.verifyEqual(inner.AuditDisposition, "omitted");
             testCase.verifyEqual(inner.Editor, "readOnly");

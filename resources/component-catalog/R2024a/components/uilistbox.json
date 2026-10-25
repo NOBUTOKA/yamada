@@ -642,7 +642,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uilistbox.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

@@ -148,7 +148,7 @@
             "category": "Position and Size",
             "order": 1,
             "groupId": "local.uifigure.positionandsize",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

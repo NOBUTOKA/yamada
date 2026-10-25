@@ -284,6 +284,12 @@ classdef PropertyStateResolver
                 result (1, 1) logical
             end
             result = state.IsKnown && macd.model.PropertyStateResolver.equivalent(state.EffectiveValue, value);
+            if state.IsKnown && state.Path == "Position" && ...
+                    macd.model.PositionGeometry.valid(state.EffectiveValue) && macd.model.PositionGeometry.valid(value)
+                first = reshape(double(state.EffectiveValue), 1, 4);
+                second = reshape(double(value), 1, 4);
+                result = all(abs(first - second) <= 16 * eps(max(1, max(abs(first), abs(second)))));
+            end
             if state.IsKnown && state.EffectPolicy == "buttonSelection" && ...
                     (isnumeric(value) || islogical(value)) && isreal(value) && isscalar(value) && any(value == [0 1])
                 result = isequaln(double(state.EffectiveValue), double(value));
@@ -468,7 +474,7 @@ classdef PropertyStateResolver
                 end
                 [states, message] = macd.model.PositionAliasPolicy.apply(states, definitions, path, id);
             end
-            if any(policy.EffectPolicy == ["positionInput", "sliderPosition", "squarePosition"])
+            if any(policy.EffectPolicy == ["positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition"])
                 for alias = ["InnerPosition", "OuterPosition"]
                     states = setUnknown(states, alias, id, "This getter depends on native decoration or container layout.", "native-geometry");
                 end
@@ -478,18 +484,14 @@ classdef PropertyStateResolver
                     states = setUnknown(states, path, id, message, "constraint");
                 elseif known
                     value = reshape(double(value), 1, 4);
-                    if policy.EffectPolicy == "squarePosition"
-                        value(3:4) = min(value(3:4));
-                    elseif policy.EffectPolicy == "sliderPosition"
-                        [orientation, orientationKnown] = stateValue(states, "Orientation");
-                        if ~orientationKnown || ~any(string(orientation) == ["horizontal", "vertical"])
-                            states = setUnknown(states, path, id, "Slider orientation is not known.", "native-geometry");
-                            return
-                        end
-                        minor = 4;
-                        if string(orientation) == "vertical", minor = 3; end
-                        value(minor) = 3;
+                    [orientation, orientationKnown] = stateValue(states, "Orientation");
+                    if ~orientationKnown, orientation = ""; end
+                    spec = macd.model.PositionGeometry.constraint(policy.EffectPolicy, string(orientation), orientationKnown);
+                    if ~spec.Known
+                        states = setUnknown(states, path, id, "Position requires a known Orientation.", "native-geometry");
+                        return
                     end
+                    value = macd.model.PositionGeometry.normalize(value, spec);
                     states = setEffective(states, path, value, id);
                 end
             end
@@ -539,9 +541,29 @@ classdef PropertyStateResolver
 
             if path == "Orientation"
                 position = find(paths == "Position", 1);
-                if ~isempty(position) && definitions(position).Application.EffectPolicy == "sliderPosition" && ...
-                        strlength(states(position).EffectSettingId) > 0
-                    states = setUnknown(states, "Position", id, "A later Orientation setter may change slider geometry.", "native-geometry");
+                if ~isempty(position) && any(definitions(position).Application.EffectPolicy == ...
+                        ["switchPosition", "semicircularPosition", "sliderPosition"])
+                    familyPolicy = definitions(position).Application.EffectPolicy;
+                    [oldOrientation, oldKnown] = stateValue(previous, "Orientation");
+                    if ~oldKnown, oldOrientation = ""; end
+                    newOrientation = "";
+                    if known && ((isstring(value) && isscalar(value)) || (ischar(value) && isrow(value)))
+                        newOrientation = string(value);
+                    end
+                    beforeSpec = macd.model.PositionGeometry.constraint(familyPolicy, string(oldOrientation), oldKnown);
+                    afterSpec = macd.model.PositionGeometry.constraint(familyPolicy, newOrientation, known);
+                    if states(position).IsKnown && beforeSpec.Known && afterSpec.Known
+                        rectangle = states(position).EffectiveValue;
+                        changed = ~isequaln(beforeSpec.Ratio, afterSpec.Ratio) || ...
+                            beforeSpec.FixedIndex ~= afterSpec.FixedIndex;
+                        if changed, rectangle(3:4) = rectangle([4 3]); end
+                        states = setEffective(states, "Position", rectangle, id);
+                    else
+                        states = setUnknown(states, "Position", id, "Orientation requires known prior geometry.", "native-geometry");
+                    end
+                    for alias = ["InnerPosition", "OuterPosition"]
+                        states = setUnknown(states, alias, id, "This getter depends on native decoration or container layout.", "native-geometry");
+                    end
                 end
             end
             % Infinite endpoints request native data-dependent axis-limit calculation.

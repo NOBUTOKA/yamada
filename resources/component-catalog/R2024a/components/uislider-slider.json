@@ -748,7 +748,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uislider-slider.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

@@ -644,7 +644,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uieditfield-text.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

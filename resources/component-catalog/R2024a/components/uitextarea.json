@@ -602,7 +602,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uitextarea.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

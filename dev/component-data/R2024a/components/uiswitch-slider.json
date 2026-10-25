@@ -304,13 +304,26 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.switch-properties.html",
+          "detail": "Orientation selects the documented control direction. The finite Position policy replays the observed size exchange at the original setting location."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.switch-properties.html",
+          "detail": "Seed the documented default orientation and stored Position without introducing source settings."
+        }
+      ],
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
         "effectPolicy": "none",
-        "effectStatus": "independent",
+        "defaultLiteral": "'horizontal'",
+        "effectStatus": "modeled",
         "affectedPaths": [],
-        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+        "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
       }
     },
     {
@@ -678,23 +691,38 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "adapt",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "position",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.switch-properties.html",
+          "detail": "Owned R2024a PositionGeometryRuntimeTest verifies fixed-ratio bounding-box normalization, orientation size exchange, and constructor argument order. Native decorated aliases remain unresolved."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.switch-properties.html",
+          "detail": "Seed the documented default orientation and stored Position without introducing source settings."
+        }
+      ],
       "application": {
-        "applyAfter": [],
+        "applyAfter": [
+          "Orientation"
+        ],
         "nameValue": "unknown",
-        "effectPolicy": "none",
-        "effectStatus": "unsupported",
+        "effectPolicy": "switchPosition",
+        "defaultLiteral": "[100 100 45 20]",
+        "effectStatus": "modeled",
         "affectedPaths": [
           "InnerPosition",
           "OuterPosition",
           "Position"
         ],
-        "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+        "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
       }
     },
     {

@@ -784,7 +784,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uitable.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

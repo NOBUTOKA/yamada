@@ -91,6 +91,14 @@ svg { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overf
 .nested-grid-handle[data-resize-constraint="fixedHeight"][data-handle="nw"],
 .nested-grid-handle[data-resize-constraint="fixedHeight"][data-handle="se"],
 .nested-grid-handle[data-resize-constraint="fixedHeight"][data-handle="sw"] { cursor: ew-resize; }
+.handle[data-resize-constraint="fixedWidth"][data-handle="ne"],
+.handle[data-resize-constraint="fixedWidth"][data-handle="nw"],
+.handle[data-resize-constraint="fixedWidth"][data-handle="se"],
+.handle[data-resize-constraint="fixedWidth"][data-handle="sw"],
+.nested-grid-handle[data-resize-constraint="fixedWidth"][data-handle="ne"],
+.nested-grid-handle[data-resize-constraint="fixedWidth"][data-handle="nw"],
+.nested-grid-handle[data-resize-constraint="fixedWidth"][data-handle="se"],
+.nested-grid-handle[data-resize-constraint="fixedWidth"][data-handle="sw"] { cursor: ns-resize; }
 </style>
 <script>
 var component;
@@ -431,6 +439,7 @@ function renderNestedGridComponents(components) {
         n: [width / 2, 0], ne: [width, 0] };
       Object.keys(positions).forEach(function(kind) {
         if (item.resizeConstraint === "fixedHeight" && (kind === "n" || kind === "s")) return;
+        if (item.resizeConstraint === "fixedWidth" && (kind === "e" || kind === "w")) return;
         var handle = document.createElement("div");
         handle.className = "nested-grid-handle";
         handle.dataset.componentId = item.id;
@@ -1123,6 +1132,7 @@ function addHandles(componentData, parent) {
   var name;
   for (name in positions) {
     if (componentData.resizeConstraint === "fixedHeight" && (name === "n" || name === "s")) continue;
+    if (componentData.resizeConstraint === "fixedWidth" && (name === "e" || name === "w")) continue;
     var point = positions[name];
     (parent || svg).appendChild(svgElement("rect", { class: "handle", x: point[0] - 4, y: point[1] - 4, width: 8, height: 8, "data-component-id": componentData.id, "data-handle": name, "data-resize-constraint": componentData.resizeConstraint || "" }));
   }

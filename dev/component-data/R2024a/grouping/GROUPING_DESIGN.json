@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "6f0a8da2f5a467c415d3da83b19f35d6c671564cdd3f730d1f635fba5f738d74",
+  "inputSha256": "d48836251d8fa8db320bf4319f550c9e201059433a9565abe2da8d3c88d5533e",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -2976,7 +2976,7 @@
       ]
     },
     {
-      "id": "exact.position.464084a32dfa",
+      "id": "exact.position.1a61fde7d888",
       "kind": "exactCategory",
       "categoryId": "position",
       "capabilities": [
@@ -2993,7 +2993,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -3952,7 +3952,7 @@
       ]
     },
     {
-      "id": "exact.switch.cd3e40c4761c",
+      "id": "exact.switch.eb0e1541414b",
       "kind": "exactCategory",
       "categoryId": "switch",
       "capabilities": [
@@ -4110,9 +4110,10 @@
             "applyAfter": [],
             "nameValue": "unknown",
             "effectPolicy": "none",
-            "effectStatus": "independent",
+            "defaultLiteral": "'vertical'",
+            "effectStatus": "modeled",
             "affectedPaths": [],
-            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
           }
         }
       ],
@@ -6981,7 +6982,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -9095,7 +9096,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -11488,7 +11489,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14151,7 +14152,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -14997,7 +14998,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -15560,7 +15561,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -16983,7 +16984,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -17529,7 +17530,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -18499,7 +18500,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -19204,7 +19205,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -19679,7 +19680,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -20478,7 +20479,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -21729,7 +21730,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -22705,7 +22706,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -23273,7 +23274,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -23875,7 +23876,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -24153,9 +24154,10 @@
             "applyAfter": [],
             "nameValue": "unknown",
             "effectPolicy": "none",
-            "effectStatus": "independent",
+            "defaultLiteral": "'north'",
+            "effectStatus": "modeled",
             "affectedPaths": [],
-            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
           }
         },
         {
@@ -24477,22 +24479,25 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
+            "applyAfter": [
+              "Orientation"
+            ],
             "nameValue": "unknown",
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
+            "effectPolicy": "semicircularPosition",
+            "defaultLiteral": "[100 100 120 65]",
+            "effectStatus": "modeled",
             "affectedPaths": [
               "InnerPosition",
               "OuterPosition",
               "Position"
             ],
-            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
           }
         },
         {
@@ -25791,7 +25796,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -26699,7 +26704,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -27461,7 +27466,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -28005,7 +28010,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -28587,7 +28592,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -29001,7 +29006,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -29707,7 +29712,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -30465,7 +30470,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -32609,7 +32614,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -33049,7 +33054,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -33691,7 +33696,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -34305,7 +34310,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -35070,22 +35075,25 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
+            "applyAfter": [
+              "Orientation"
+            ],
             "nameValue": "unknown",
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
+            "effectPolicy": "switchPosition",
+            "defaultLiteral": "[100 100 20 45]",
+            "effectStatus": "modeled",
             "affectedPaths": [
               "InnerPosition",
               "OuterPosition",
               "Position"
             ],
-            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
           }
         },
         {
@@ -35520,22 +35528,25 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
+            "applyAfter": [
+              "Orientation"
+            ],
             "nameValue": "unknown",
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
+            "effectPolicy": "switchPosition",
+            "defaultLiteral": "[100 100 45 20]",
+            "effectStatus": "modeled",
             "affectedPaths": [
               "InnerPosition",
               "OuterPosition",
               "Position"
             ],
-            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
           }
         },
         {
@@ -35798,9 +35809,10 @@
             "applyAfter": [],
             "nameValue": "unknown",
             "effectPolicy": "none",
-            "effectStatus": "independent",
+            "defaultLiteral": "'horizontal'",
+            "effectStatus": "modeled",
             "affectedPaths": [],
-            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
           }
         }
       ],
@@ -36139,22 +36151,25 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
+            "applyAfter": [
+              "Orientation"
+            ],
             "nameValue": "unknown",
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
+            "effectPolicy": "switchPosition",
+            "defaultLiteral": "[100 100 20 45]",
+            "effectStatus": "modeled",
             "affectedPaths": [
               "InnerPosition",
               "OuterPosition",
               "Position"
             ],
-            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
           }
         },
         {
@@ -37423,7 +37438,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -38475,7 +38490,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -39596,7 +39611,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -40257,7 +40272,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -41827,7 +41842,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -42641,7 +42656,7 @@
           },
           "affectsDisplay": true,
           "previewPolicy": "adapt",
-          "requiredEditor": "numericVector",
+          "requiredEditor": "position",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -47510,22 +47525,22 @@
       "propertyOwners": [
         {
           "path": "Position",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public"
         },
         {
           "path": "InnerPosition",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "OuterPosition",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Units",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public"
         }
       ]
@@ -53336,22 +53351,22 @@
       "propertyOwners": [
         {
           "path": "Position",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public"
         },
         {
           "path": "InnerPosition",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "OuterPosition",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Units",
-          "groupId": "exact.position.464084a32dfa",
+          "groupId": "exact.position.1a61fde7d888",
           "runtimeSetAccess": "public"
         }
       ]
@@ -54822,27 +54837,27 @@
       "propertyOwners": [
         {
           "path": "Value",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         }
       ]
@@ -55314,27 +55329,27 @@
       "propertyOwners": [
         {
           "path": "Value",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.cd3e40c4761c",
+          "groupId": "exact.switch.eb0e1541414b",
           "runtimeSetAccess": "public"
         }
       ]

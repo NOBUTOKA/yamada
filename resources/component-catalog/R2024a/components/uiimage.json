@@ -465,7 +465,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uiimage.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

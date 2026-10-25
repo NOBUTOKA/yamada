@@ -465,6 +465,15 @@ classdef PreviewRenderer < handle
             if path == "Position" && isnumeric(value) && numel(value) == 4 && ...
                 obj.usesPixelPosition(target)
                 definition = obj.Registry.get(component.Factory, component.CreationArguments);
+                property = definition.getProperty("Position");
+                if ~isempty(property) && macd.model.PositionGeometry.applies(property.Application.EffectPolicy)
+                    orientation = "";
+                    if isprop(target, "Orientation"), orientation = string(target.Orientation); end
+                    spec = macd.model.PositionGeometry.constraint(property.Application.EffectPolicy, ...
+                        orientation, strlength(orientation) > 0);
+                    target.Position = macd.model.PositionGeometry.normalize(reshape(double(value), 1, 4), spec);
+                    return
+                end
                 constraint = definition.resizeConstraintFor(component.CreationArguments);
                 if constraint == "fixedHeight"
                     % Slider-like controls reject height writes entirely.

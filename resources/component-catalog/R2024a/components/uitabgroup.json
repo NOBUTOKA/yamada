@@ -203,7 +203,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uitabgroup.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

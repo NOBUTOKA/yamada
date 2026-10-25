@@ -827,7 +827,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uispinner.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

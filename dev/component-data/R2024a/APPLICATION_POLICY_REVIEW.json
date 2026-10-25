@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "reviewedOn": "2026-10-15",
+  "reviewedOn": "2026-10-25",
   "status": "partial",
   "scope": "Reviewed initialization rules only. Absence does not assert independence or constructor support. applyAfter describes canonical new initialization, not permission to reorder preserved input.",
   "rules": [
@@ -1418,6 +1418,43 @@
       "effectPolicy": "componentReference",
       "kind": "inference",
       "detail": "ContextMenu registration is bounded to the stored handle on the reviewed push-button surface. Owned pushButtonContextMenuRegistrationKeepsStoredInputs verifies setter access, unchanged other getters, clearing, and deferred opening callbacks. Existing subtree reference mapping handles source-owned references; constructor support remains unknown."
+    },
+    {
+      "variants": [
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle"
+      ],
+      "path": "Position",
+      "applyAfter": [
+        "Orientation"
+      ],
+      "effectPolicy": "switchPosition",
+      "kind": "inference",
+      "detail": "Owned R2024a PositionGeometryRuntimeTest verifies fixed-ratio bounding-box normalization, orientation size exchange, and constructor argument order. Native decorated aliases remain unresolved."
+    },
+    {
+      "variants": [
+        "uigauge-semicircular"
+      ],
+      "path": "Position",
+      "applyAfter": [
+        "Orientation"
+      ],
+      "effectPolicy": "semicircularPosition",
+      "kind": "inference",
+      "detail": "Owned R2024a PositionGeometryRuntimeTest verifies the 120:65 north/south and 65:120 east/west size constraints, orientation exchange, and constructor order. Native aliases remain outside this finite stored-input policy."
+    },
+    {
+      "variants": [
+        "uiswitch-rocker",
+        "uiswitch-slider",
+        "uiswitch-toggle",
+        "uigauge-semicircular"
+      ],
+      "path": "Orientation",
+      "kind": "documentation",
+      "detail": "Orientation selects the documented control direction. The finite Position policy replays the observed size exchange at the original setting location."
     }
   ],
   "initialValues": [
@@ -1718,6 +1755,37 @@
         "Orientation": "'horizontal'"
       },
       "detail": "The R2024a slider properties document horizontal as the default Orientation."
+    },
+    {
+      "variants": [
+        "uiswitch-rocker",
+        "uiswitch-toggle"
+      ],
+      "values": {
+        "Orientation": "'vertical'",
+        "Position": "[100 100 20 45]"
+      },
+      "detail": "Seed the documented default orientation and stored Position without introducing source settings."
+    },
+    {
+      "variants": [
+        "uiswitch-slider"
+      ],
+      "values": {
+        "Orientation": "'horizontal'",
+        "Position": "[100 100 45 20]"
+      },
+      "detail": "Seed the documented default orientation and stored Position without introducing source settings."
+    },
+    {
+      "variants": [
+        "uigauge-semicircular"
+      ],
+      "values": {
+        "Orientation": "'north'",
+        "Position": "[100 100 120 65]"
+      },
+      "detail": "Seed the documented default orientation and stored Position without introducing source settings."
     }
   ],
   "contractCorrections": [

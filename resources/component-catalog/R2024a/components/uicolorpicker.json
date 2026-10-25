@@ -313,7 +313,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uicolorpicker.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {

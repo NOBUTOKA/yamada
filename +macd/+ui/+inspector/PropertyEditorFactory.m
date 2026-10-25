@@ -30,6 +30,8 @@ classdef PropertyEditorFactory
                 return
             end
             switch definition.Editor
+                case "position"
+                    macd.ui.inspector.PositionEditor.bind(control, commitFcn);
                 case {"logical", "onOff", "number"}
                     control.ValueChangedFcn = @(source, ~) commitFcn(source.Value);
                 case "enum"
@@ -90,6 +92,8 @@ classdef PropertyEditorFactory
             end
 
             switch definition.Editor
+                case "position"
+                    control = macd.ui.inspector.PositionEditor.create(parent, definition, commitFcn);
                 case {"logical", "onOff"}
                     control = uicheckbox(parent, "Text", "", "Tag", "macd-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) commitFcn(source.Value));
@@ -240,7 +244,7 @@ classdef PropertyEditorFactory
             end
 
             result = any(definition.Editor == ["literal", "text", "logical", ...
-                "onOff", "enum", "number", "numericVector", "color", "stringList", ...
+                "onOff", "enum", "number", "numericVector", "position", "color", "stringList", ...
                 "multilineText", "url", "asset", "structuredData", "dateTime", "tableData", ...
                 "itemSelection"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
@@ -323,7 +327,10 @@ classdef PropertyEditorFactory
                 relatedValues struct = struct()
             end
 
-            if isprop(control, "Tag") && control.Tag == "macd-inspector-item-selection-editor"
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-position-editor"
+                macd.ui.inspector.PositionEditor.synchronize(control, rawValue, isEditable, relatedValues);
+                return
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-item-selection-editor"
                 macd.ui.inspector.PropertyEditorFactory.synchronizeItemSelection( ...
                     control, rawValue, isEditable, relatedValues);
                 return
@@ -478,7 +485,9 @@ classdef PropertyEditorFactory
                 control
             end
 
-            if isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-position-editor"
+                value = macd.ui.inspector.PositionEditor.value(control);
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
                 value = control.Value;
             elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-limits-editor"
                 parts = control.UserData;
@@ -508,7 +517,9 @@ classdef PropertyEditorFactory
                 value
             end
 
-            if isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
+            if isprop(control, "Tag") && control.Tag == "macd-inspector-position-editor"
+                macd.ui.inspector.PositionEditor.restore(control, value);
+            elseif isprop(control, "Tag") && control.Tag == "macd-inspector-date-picker-editor"
                 if isdatetime(value) && isscalar(value)
                     control.Value = value;
                 end

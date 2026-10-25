@@ -192,13 +192,26 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Orientation selects the documented control direction. The finite Position policy replays the observed size exchange at the original setting location."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Seed the documented default orientation and stored Position without introducing source settings."
+        }
+      ],
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
         "effectPolicy": "none",
-        "effectStatus": "independent",
+        "defaultLiteral": "'north'",
+        "effectStatus": "modeled",
         "affectedPaths": [],
-        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+        "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
       }
     },
     {
@@ -1058,23 +1071,38 @@
       },
       "affectsDisplay": true,
       "previewPolicy": "adapt",
-      "requiredEditor": "numericVector",
+      "requiredEditor": "position",
       "disposition": {
         "kind": "editable",
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Owned R2024a PositionGeometryRuntimeTest verifies the 120:65 north/south and 65:120 east/west size constraints, orientation exchange, and constructor order. Native aliases remain outside this finite stored-input policy."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.semicirculargauge-properties.html",
+          "detail": "Seed the documented default orientation and stored Position without introducing source settings."
+        }
+      ],
       "application": {
-        "applyAfter": [],
+        "applyAfter": [
+          "Orientation"
+        ],
         "nameValue": "unknown",
-        "effectPolicy": "none",
-        "effectStatus": "unsupported",
+        "effectPolicy": "semicircularPosition",
+        "defaultLiteral": "[100 100 120 65]",
+        "effectStatus": "modeled",
         "affectedPaths": [
           "InnerPosition",
           "OuterPosition",
           "Position"
         ],
-        "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+        "effectReason": "Finite Position geometry and orientation exchange are verified by owned R2024a PositionGeometryRuntimeTest fixtures. Decoration-dependent aliases remain unresolved."
       }
     },
     {

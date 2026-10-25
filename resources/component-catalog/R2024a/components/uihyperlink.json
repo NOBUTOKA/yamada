@@ -641,7 +641,7 @@
             "category": "Position",
             "order": 1,
             "groupId": "local.uihyperlink.position",
-            "editor": "numericVector",
+            "editor": "position",
             "previewPolicy": "adapt",
             "auditDisposition": "editable",
             "valueSchema": {
