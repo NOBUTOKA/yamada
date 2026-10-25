@@ -16,6 +16,8 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             parts = control.UserData;
             testCase.verifyEqual(string({parts.Fields.Tooltip}), ["X", "Y", "Width", "Height"]);
             testCase.verifyEqual([parts.Fields.Value], [10 20 20 45]);
+            testCase.verifyEqual(string({parts.FieldLabels.Text}), ["X", "Y", "W", "H"]);
+            testCase.verifyEqual(arrayfun(@(item) item.Layout.Column, parts.Fields), [2 2 2 2]);
             testCase.verifyEqual(string({parts.Links.Text}), ["┓", "┛"]);
             testCase.verifyEqual(string([parts.Links.Visible]), ["on", "on"]);
             testCase.verifyEqual(parts.Links(1).Layout.Column, parts.Links(2).Layout.Column);

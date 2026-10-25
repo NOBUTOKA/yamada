@@ -15,29 +15,37 @@ classdef PositionEditor
                 control (1, 1) matlab.ui.container.Panel
             end
             control = uipanel(parent, "BorderType", "none", "Tag", "macd-inspector-position-editor");
-            grid = uigridlayout(control, [4 2], "Padding", [0 0 0 0], ...
-                "ColumnWidth", {"1x", 20}, "RowHeight", {24, 24, 24, 24}, ...
-                "ColumnSpacing", 2, "RowSpacing", 2);
+            grid = uigridlayout(control, [4 3], "Padding", [0 0 0 0], ...
+                "ColumnWidth", {16, "1x", 20}, "RowHeight", {24, 24, 24, 24}, ...
+                "ColumnSpacing", 4, "RowSpacing", 2);
             fields = matlab.ui.control.NumericEditField.empty;
             names = ["X", "Y", "Width", "Height"];
+            headings = ["X", "Y", "W", "H"];
+            fieldLabels = matlab.ui.control.Label.empty;
             for index = 1:4
+                label = uilabel(grid, "Text", headings(index), "Tooltip", names(index), ...
+                    "Tag", "macd-inspector-position-label", "HorizontalAlignment", "center");
+                label.Layout.Row = index;
+                label.Layout.Column = 1;
+                fieldLabels(end + 1) = label; %#ok<AGROW>
                 field = uieditfield(grid, "numeric", "Tooltip", names(index), ...
                     "Tag", "macd-inspector-position-field", "ValueDisplayFormat", "%.6g");
                 field.Layout.Row = index;
-                field.Layout.Column = 1;
+                field.Layout.Column = 2;
                 field.Limits = [-realmax realmax];
                 if index > 2, field.Limits = [0 realmax]; end
                 fields(end + 1) = field; %#ok<AGROW>
             end
+            % Keep both corner glyphs inside the fixed-height rows without clipping.
             links = matlab.ui.control.Label.empty;
             for index = 1:2
                 label = uilabel(grid, "Text", "", "Tooltip", "Width and height are linked", ...
-                    "Tag", "macd-inspector-position-link", "HorizontalAlignment", "center", "FontSize", 24);
+                    "Tag", "macd-inspector-position-link", "HorizontalAlignment", "center", "FontSize", 14);
                 label.Layout.Row = index + 2;
-                label.Layout.Column = 2;
+                label.Layout.Column = 3;
                 links(end + 1) = label; %#ok<AGROW>
             end
-            control.UserData = struct("Fields", fields, "Links", links, ...
+            control.UserData = struct("Fields", fields, "FieldLabels", fieldLabels, "Links", links, ...
                 "Policy", definition.Application.EffectPolicy, "Value", zeros(1, 4), ...
                 "Constraint", macd.model.PositionGeometry.constraint("none"), "Editable", false);
             macd.ui.inspector.PositionEditor.bind(control, commitFcn);
