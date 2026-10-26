@@ -1164,6 +1164,73 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'inspector', 'ui'})
+        function numericGridEditsReuseMeasuredTracksWithoutChangingGeometry(testCase)
+            % numericGridEditsReuseMeasuredTracksWithoutChangingGeometry Reuse grid payloads only with matching native inputs.
+            source = strjoin(["classdef GridCacheUI < handle", "properties", ...
+                "UIFigure matlab.ui.Figure", "Grid matlab.ui.container.GridLayout", ...
+                "Field matlab.ui.control.NumericEditField", "end", "methods", ...
+                "function app = GridCacheUI", "createComponents(app);", "end", ...
+                "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                "app.Grid = uigridlayout(app.UIFigure,[2 1]);", ...
+                "app.Grid.RowHeight = {'fit','1x'};", "app.Grid.ColumnWidth = {'1x'};", ...
+                "app.Field = uieditfield(app.Grid,'numeric');", "app.Field.Value = 1;", ...
+                "app.Field.Layout.Row = 1;", "app.Field.Layout.Column = 1;", ...
+                "end", "end", "end"], sprintf("\r\n"));
+            fixture = string(tempname()) + ".m";
+            macd.source.SourceWriter.write(fixture, source);
+            testCase.addTeardown(@() delete(fixture));
+            lifecycle = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Tag", "macd-yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            open = menus(erase(string({menus.Text}), "&") == "Open...");
+            open.MenuSelectedFcn(open, struct());
+            field = app.Document.getComponentByName("Field");
+            grid = app.Document.getComponentByName("Grid");
+            tree = findall(figure, "Type", "uitree");
+            nodes = findall(tree, "Type", "uitreenode");
+            node = nodes(arrayfun(@(item) string(item.NodeData) == field.Id, nodes));
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+            drawnow;
+            for value = [2 3]
+                labels = findall(figure, "Tag", "macd-inspector-property-label");
+                label = labels(string({labels.Text}) == "Value");
+                editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+                testCase.assertEqual(numel(editor), 1);
+                if value == 3
+                    profile clear; profile on;
+                    stopProfile = onCleanup(@() profile("off"));
+                end
+                editor.Value = value;
+                editor.ValueChangedFcn(editor, struct());
+                drawnow; pause(0.25); drawnow;
+                if value == 3
+                    profile off; functions = profile("info").FunctionTable; clear stopProfile
+                    measured = contains(string({functions.FunctionName}), "GridLayoutOverlayDataBuilder.trackBounds");
+                    testCase.verifyEqual(sum([functions(measured).NumCalls]), 0);
+                end
+            end
+
+            % The retained payload must equal an independent measurement of the current native controls.
+            canvas = findall(figure, "Tag", "macd-preview-canvas");
+            controls = findall(canvas);
+            nativeGrid = controls(arrayfun(@(item) isa(item, "matlab.ui.container.GridLayout"), controls));
+            nativeField = controls(arrayfun(@(item) isa(item, "matlab.ui.control.NumericEditField"), controls));
+            handles = containers.Map(cellstr([grid.Id, field.Id]), {nativeGrid, nativeField});
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            actual = overlay.Data.gridEditor;
+            expected = macd.ui.GridLayoutOverlayDataBuilder().build(app.Document, handles, canvas, ...
+                grid.Id, field.Id, actual.revision, macd.model.ComponentRegistry.createDefault());
+            testCase.verifyTrue(actual.geometryAvailable);
+            testCase.verifyEqual(actual, expected);
+            testCase.verifyEqual(nativeField.Value, 3);
+            testCase.verifyEqual(app.Document.HistoryIndex, 2);
+            testCase.verifyEqual(app.Document.OriginalText, source);
+            clear cleanup
+        end
+
         function repeatedNumericInspectorEditsRetainPreviewAndHistory(testCase)
             % repeatedNumericInspectorEditsRetainPreviewAndHistory Reuse validation through real numeric callbacks.
             source = strjoin(["classdef LocalValidationUI < handle", "properties", ...

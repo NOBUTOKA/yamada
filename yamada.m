@@ -77,7 +77,7 @@ classdef yamada < handle
         PreviewTabSelections containers.Map
         TabLayoutTimer timer = timer.empty
         TabLayoutGeneration uint64 = uint64(0)
-        TabLayoutSignature string = ""
+        TabLayoutSignature struct = struct()
         TabLayoutStableCount double = 0
         TabLayoutPollCount double = 0
         InteractionOverlay matlab.ui.control.HTML
@@ -1666,23 +1666,7 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
             keys = app.PreviewHandles.keys();
-            stamp = cell(1, numel(keys));
-            for index = 1:numel(keys)
-                preview = app.PreviewHandles(keys{index});
-                if ~isvalid(preview) || ~isprop(preview, "Position")
-                    stamp{index} = struct("id", string(keys{index}), "position", []);
-                    continue
-                end
-                item = struct("id", string(keys{index}), "position", double(preview.Position));
-                if isprop(preview, "InnerPosition"), item.inner = double(preview.InnerPosition); end
-                if isprop(preview, "Units"), item.units = string(preview.Units); end
-                if isprop(preview, "SelectedTab")
-                    item.tab = 0;
-                    if ~isempty(preview.SelectedTab), item.tab = find(preview.Children == preview.SelectedTab, 1); end
-                end
-                stamp{index} = item;
-            end
-            stamp{end + 1} = double(app.PreviewCanvas.Position);
+            stamp = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
             geometry = app.PreviewGeometry;
             changed = ~isfield(geometry, "Stamp") || ~isequaln(geometry.Stamp, stamp);
             if changed
@@ -1696,11 +1680,6 @@ classdef yamada < handle
                     end
                 end
             end
-            [inputs, safe] = app.Document.evaluationContext(app.Registry).inputs();
-            if ~safe || ~isfield(geometry, "Inputs") || ~isequaln(geometry.Inputs, inputs)
-                geometry.Grids = containers.Map("KeyType", "char", "ValueType", "any");
-            end
-            geometry.Inputs = inputs;
             app.PreviewGeometry = geometry;
         end
 
@@ -1730,15 +1709,37 @@ classdef yamada < handle
             arguments (Output)
                 data (1, 1) struct
             end
-            cached = strlength(id) > 0 && isfield(app.PreviewGeometry, "Grids") && ...
-                isKey(app.PreviewGeometry.Grids, char(id));
+            if strlength(id) == 0
+                data = app.GridLayoutOverlayDataBuilder.build(app.Document, app.PreviewHandles, ...
+                    app.PreviewCanvas, id, app.SelectedComponentId, revision, app.Registry);
+                return
+            end
+            present = isfield(app.PreviewGeometry, "Grids") && isKey(app.PreviewGeometry.Grids, char(id));
+            saved = struct();
+            if present, saved = app.PreviewGeometry.Grids(char(id)); end
+            [token, tracked] = app.Document.evaluationContext(app.Registry).revisionToken();
+            cached = present && isfield(saved, "Data") && tracked && isequaln(saved.Token, token);
             if cached
-                data = app.PreviewGeometry.Grids(char(id));
+                inputs = saved.Inputs;
+                safe = true;
+            else
+                % Compare resolved dependencies after any semantic write; mutable inputs never reuse results.
+                [inputs, safe] = app.GridLayoutOverlayDataBuilder.cacheInputs(app.Document, app.Registry, id);
+                cached = present && isfield(saved, "Data") && safe && isequaln(saved.Inputs, inputs);
+            end
+            if cached
+                data = saved.Data;
             else
                 data = app.GridLayoutOverlayDataBuilder.build(app.Document, app.PreviewHandles, ...
                     app.PreviewCanvas, id, app.SelectedComponentId, revision, app.Registry);
-                if strlength(id) > 0 && isfield(app.PreviewGeometry, "Grids")
-                    app.PreviewGeometry.Grids(char(id)) = data;
+            end
+            % Native geometry changes clear this map; unresolved measurements must be retried.
+            if isfield(app.PreviewGeometry, "Grids")
+                if safe && data.geometryAvailable
+                    app.PreviewGeometry.Grids(char(id)) = struct("Inputs", inputs, "Data", data, ...
+                        "Token", token);
+                elseif present
+                    remove(app.PreviewGeometry.Grids, char(id));
                 end
             end
             data.revision = revision;
@@ -2245,7 +2246,7 @@ classdef yamada < handle
                 app.refreshOverlayAfterTabLayout(timerObject, generation);
             app.TabLayoutTimer.ErrorFcn = @(timerObject, ~) ...
                 app.stopOverlayRefresh(timerObject, generation);
-            app.TabLayoutSignature = "";
+            app.TabLayoutSignature = struct();
             app.TabLayoutStableCount = 0;
             app.TabLayoutPollCount = 0;
             start(app.TabLayoutTimer);
@@ -2312,7 +2313,7 @@ classdef yamada < handle
             end
             if ~app.isCurrentOverlayRefresh(timerObject, generation), return, end
             app.TabLayoutPollCount = app.TabLayoutPollCount + 1;
-            if signature == app.TabLayoutSignature
+            if isequaln(signature, app.TabLayoutSignature)
                 app.TabLayoutStableCount = app.TabLayoutStableCount + 1;
             else
                 app.TabLayoutSignature = signature;
@@ -2325,50 +2326,14 @@ classdef yamada < handle
         end
 
         function signature = activeTabGeometrySignature(app)
-            % activeTabGeometrySignature Summarize visible tab and active-grid geometry for polling.
+            % activeTabGeometrySignature Compare native layout inputs without repeating canvas transforms.
             arguments (Input)
                 app (1, 1) yamada
             end
             arguments (Output)
-                signature (1, 1) string
+                signature (1, 1) struct
             end
-
-            parts = strings(1, 0);
-            keys = sort(string(app.PreviewHandles.keys()));
-            for index = 1:numel(keys)
-                component = app.Document.getComponent(keys(index));
-                if isempty(component) || component.Factory == "uitab" || ...
-                        ~app.isVisibleInSelectedTab(component.Id)
-                    continue
-                end
-                preview = app.PreviewHandles(char(component.Id));
-                if ~isvalid(preview)
-                    continue
-                end
-                parent = app.Document.getComponent(component.ParentId);
-                if component.Factory == "uigridlayout"
-                    rectangle = app.previewDisplayPosition(preview);
-                    inner = double(preview.InnerPosition);
-                    parts(end + 1) = component.Id + ":" + ...
-                        strjoin(string(round([rectangle inner])), ","); %#ok<AGROW>
-                    continue
-                end
-                if ~isempty(parent) && parent.Factory == "uigridlayout"
-                    rectangle = app.previewDisplayPosition(preview);
-                    parts(end + 1) = component.Id + ":" + ...
-                        strjoin(string(round(rectangle)), ","); %#ok<AGROW>
-                    continue
-                end
-                position = component.getProperty("Position");
-                if isempty(position) || position.ValueKind ~= "literal" || ...
-                        ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
-                    continue
-                end
-                rectangle = app.previewDisplayPosition(preview);
-                parts(end + 1) = component.Id + ":" + ...
-                    strjoin(string(round(rectangle)), ","); %#ok<AGROW>
-            end
-            signature = strjoin(parts, "|");
+            signature = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
         end
 
         function restorePreviewTabSelections(app)

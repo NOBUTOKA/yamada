@@ -30,6 +30,109 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
     end
 
     methods (Test)
+        function cacheInputsReuseOnlyUnchangedLogicalGridState(testCase)
+            % cacheInputsReuseOnlyUnchangedLogicalGridState Isolate track, placement, and editability dependencies from text.
+            [document, handles, panel, grid, first, second, cleanup, registry] = ...
+                testCase.renderGrid([40 50], [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            [before, safe] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.assertTrue(safe);
+            expected = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry);
+            document.setProperty(first.Id, "Text", "Independent text");
+            [after, safe] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.verifyTrue(safe);
+            testCase.verifyEqual(after, before);
+            testCase.verifyEqual(builder.build(document, handles, panel, grid.Id, first.Id, 1, registry), expected);
+
+            % A returned key owns values and cannot mutate the document or future reads.
+            after.Children(1).Row.Value = 99;
+            [again, ~] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.verifyEqual(again, before);
+            testCase.verifyEqual(first.getProperty("Layout.Row").LiteralValue, 1);
+            second.setProperty("Layout.Row", 1);
+            [moved, ~] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.verifyNotEqual(moved, before);
+            second.IsEditable = false;
+            [locked, ~] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.verifyNotEqual(locked, moved);
+        end
+
+        function cacheInputsRejectLiveDataAndFollowCatalogRevision(testCase)
+            % cacheInputsRejectLiveDataAndFollowCatalogRevision Keep unresolved mutable inputs on the full path.
+            [document, ~, ~, grid, ~, ~, cleanup, registry] = testCase.renderGrid([40 50], [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            [before, safe] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.assertTrue(safe);
+            registry.register(registry.get("uigridlayout"));
+            [changed, safe] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.verifyTrue(safe);
+            testCase.verifyNotEqual(changed, before);
+            document.Metadata.Live = containers.Map("mutable", 1);
+            [unknown, safe] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.verifyFalse(safe);
+            testCase.verifyEmpty(fieldnames(unknown));
+        end
+
+        function nativeInputsObserveFitTracksAndUnmappedAncestors(testCase)
+            % nativeInputsObserveFitTracksAndUnmappedAncestors Track every public geometry input without pixel transforms.
+            [document, handles, panel, grid, first, ~, cleanup] = testCase.renderGrid([40 50], [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            original = first.settingSnapshot();
+            history = document.HistoryIndex;
+            profile clear; profile on;
+            stopProfile = onCleanup(@() profile("off"));
+            before = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
+            profile off; functions = profile("info").FunctionTable; clear stopProfile
+            transforms = contains(string({functions.FunctionName}), "getpixelposition");
+            testCase.verifyEqual(sum([functions(transforms).NumCalls]), 0);
+            ids = cellfun(@(item) item.id, before.Controls);
+            gridInput = before.Controls{find(ids == grid.Id, 1)};
+            firstInput = before.Controls{find(ids == first.Id, 1)};
+            testCase.verifyEqual(gridInput.RowSpacing, handles(char(grid.Id)).RowSpacing);
+            testCase.verifyEqual(gridInput.ColumnWidth, handles(char(grid.Id)).ColumnWidth);
+            testCase.verifyEqual(firstInput.OuterPosition, double(handles(char(first.Id)).OuterPosition));
+
+            % A renderer-owned frame is absent from the component map but changes canvas coordinates.
+            frame = findall(panel, "Tag", "macd-preview-frame");
+            frame.Position(1:2) = frame.Position(1:2) + [17 13];
+            drawnow;
+            moved = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
+            testCase.verifyEqual(moved.Controls, before.Controls);
+            testCase.verifyNotEqual(moved.Ancestors, before.Ancestors);
+            native = handles(char(grid.Id));
+            native.RowSpacing = native.RowSpacing + 3;
+            spaced = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
+            testCase.verifyNotEqual(spaced, moved);
+            testCase.verifyEqual(first.settingSnapshot(), original);
+            testCase.verifyEqual(document.HistoryIndex, history);
+        end
+
+        function nativeInputsFollowMultilineFitGrowthAndShrink(testCase)
+            % nativeInputsFollowMultilineFitGrowthAndShrink Keep realized fit observations fresh without source edits.
+            [document, handles, panel, grid, first, ~, cleanup, registry] = ...
+                testCase.renderGrid({"fit", "1x"}, [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            baseline = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry);
+            testCase.assertTrue(baseline.geometryAvailable);
+            stamp = builder.nativeInputs(handles, panel);
+            native = handles(char(first.Id));
+            original = native.Text;
+            native.Text = ["Line one"; "Line two"; "Line three"];
+            testCase.waitForLayout(handles(char(grid.Id)));
+            grown = builder.build(document, handles, panel, grid.Id, first.Id, 2, registry);
+            testCase.assertTrue(grown.geometryAvailable);
+            testCase.verifyGreaterThan(grown.rowTracks(1).bounds(4), baseline.rowTracks(1).bounds(4));
+            testCase.verifyNotEqual(builder.nativeInputs(handles, panel), stamp);
+            native.Text = original;
+            testCase.waitForLayout(handles(char(grid.Id)));
+            shrunk = builder.build(document, handles, panel, grid.Id, first.Id, 3, registry);
+            testCase.assertTrue(shrunk.geometryAvailable);
+            testCase.verifyEqual(shrunk.rowBoundaries, baseline.rowBoundaries, "AbsTol", 1);
+        end
+
         function sharesAxisStatesWhilePreservingOpaqueTrackRejection(testCase)
             % sharesAxisStatesWhilePreservingOpaqueTrackRejection Read each grid once and keep expression-backed axes locked.
             [document, handles, panel, grid, ~, second, cleanup, registry] = ...

@@ -8,6 +8,52 @@ classdef GridLayoutOverlayDataBuilder
     %       data = builder.build(document, handles, panel, gridId, selectedId, 1);
 
     methods
+        function [inputs, safe] = cacheInputs(~, document, registry, gridId)
+            % cacheInputs Project immutable model dependencies used by one grid overlay payload.
+            arguments (Input)
+                ~
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+                gridId (1, 1) string
+            end
+            arguments (Output)
+                inputs (1, 1) struct
+                safe (1, 1) logical
+            end
+            inputs = struct();
+            grid = document.getComponent(gridId);
+            safe = ~isempty(grid) && grid.Factory == "uigridlayout";
+            if ~safe, return, end
+            [~, safe] = document.evaluationContext(registry).inputs();
+            if ~safe, return, end
+
+            % Effective tracks retain initialization effects; child placement stays source-explicit.
+            states = macd.ui.GridLayoutOverlayDataBuilder.trackStates(document, registry, grid);
+            resolutions = macd.model.PropertyState.empty;
+            for state = states
+                if any(state.Definition.Path == ["RowHeight", "ColumnWidth"])
+                    resolutions(end + 1) = state.Resolution; %#ok<AGROW>
+                end
+            end
+            children = struct("Id", {}, "Present", {}, "Editable", {}, "Row", {}, "Column", {});
+            for id = reshape(grid.Children, 1, [])
+                child = document.getComponent(id);
+                item = struct("Id", id, "Present", ~isempty(child), "Editable", false, ...
+                    "Row", struct(), "Column", struct());
+                if ~isempty(child)
+                    item.Editable = child.IsEditable;
+                    item.Row = macd.ui.GridLayoutOverlayDataBuilder.entryInputs(child, "Layout.Row");
+                    item.Column = macd.ui.GridLayoutOverlayDataBuilder.entryInputs(child, "Layout.Column");
+                end
+                children(end + 1) = item; %#ok<AGROW>
+            end
+            inputs = struct("RegistryRevision", registry.Revision, "Id", grid.Id, ...
+                "Editable", grid.IsEditable, "Tracks", resolutions, ...
+                "Row", macd.ui.GridLayoutOverlayDataBuilder.entryInputs(grid, "RowHeight"), ...
+                "Column", macd.ui.GridLayoutOverlayDataBuilder.entryInputs(grid, "ColumnWidth"), ...
+                "Children", children);
+        end
+
         function data = build(~, document, previewHandles, previewPanel, ...
                 activeGridId, selectedComponentId, revision, registry)
             % build Return one versioned overlay payload for the active Grid Layout.
@@ -48,16 +94,8 @@ classdef GridLayoutOverlayDataBuilder
             data.innerBounds = innerBounds;
 
             % Both axes consume one model state; native geometry stays freshly measured.
-            states = struct([]);
+            states = macd.ui.GridLayoutOverlayDataBuilder.trackStates(document, registry, grid);
             resolveTracks = ~isempty(registry);
-            if resolveTracks
-                rowEntry = grid.getProperty("RowHeight");
-                columnEntry = grid.getProperty("ColumnWidth");
-                if isempty(rowEntry) || rowEntry.ValueKind == "literal" || ...
-                        isempty(columnEntry) || columnEntry.ValueKind == "literal"
-                    states = document.getEffectivePropertyStates(registry, grid.Id);
-                end
-            end
             [rowValue, rowEditable, rowReason] = ...
                 macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "RowHeight", states, resolveTracks);
             [columnValue, columnEditable, columnReason] = ...
@@ -103,7 +141,107 @@ classdef GridLayoutOverlayDataBuilder
         end
     end
 
+    methods (Static)
+        function stamp = nativeInputs(previewHandles, previewPanel)
+            % nativeInputs Capture bounded layout inputs without canvas-relative coordinate transforms.
+            arguments (Input)
+                previewHandles containers.Map
+                previewPanel
+            end
+            arguments (Output)
+                stamp (1, 1) struct
+            end
+            ids = previewHandles.keys();
+            controls = cell(1, numel(ids));
+            parents = {previewPanel};
+            for index = 1:numel(ids)
+                preview = previewHandles(ids{index});
+                controls{index} = macd.ui.GridLayoutOverlayDataBuilder.nativeItem(preview, string(ids{index}));
+                if ~isvalid(preview), continue, end
+
+                % Include unmapped preview surfaces and every intervening parent exactly once.
+                parent = preview.Parent;
+                while ~isempty(parent) && isvalid(parent)
+                    if any(cellfun(@(item) isequal(item, parent), parents)), break, end
+                    parents{end + 1} = parent; %#ok<AGROW>
+                    parent = parent.Parent;
+                end
+            end
+            ancestors = cell(1, numel(parents));
+            for index = 1:numel(parents)
+                ancestors{index} = macd.ui.GridLayoutOverlayDataBuilder.nativeItem(parents{index}, string(index));
+            end
+            stamp = struct("Controls", {controls}, "Ancestors", {ancestors});
+        end
+    end
+
     methods (Static, Access = private)
+        function inputs = entryInputs(component, path)
+            % entryInputs Copy only explicit literal, expression, and editability inputs consumed by the overlay.
+            arguments (Input)
+                component (1, 1) macd.model.ComponentRecord
+                path (1, 1) string
+            end
+            arguments (Output)
+                inputs (1, 1) struct
+            end
+            entry = component.getProperty(path);
+            inputs = struct("Present", ~isempty(entry), "Kind", "", "Value", [], ...
+                "Expression", "", "Editable", false);
+            if isempty(entry), return, end
+            inputs.Kind = entry.ValueKind;
+            inputs.Value = entry.LiteralValue;
+            inputs.Expression = entry.SourceExpression;
+            inputs.Editable = entry.IsEditable;
+        end
+
+        function states = trackStates(document, registry, grid)
+            % trackStates Resolve both axes together only when at least one literal axis can be displayed.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                registry macd.model.ComponentRegistry
+                grid (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                states struct
+            end
+            states = struct([]);
+            resolveTracks = ~isempty(registry);
+            if resolveTracks
+                rowEntry = grid.getProperty("RowHeight");
+                columnEntry = grid.getProperty("ColumnWidth");
+                if isempty(rowEntry) || rowEntry.ValueKind == "literal" || ...
+                        isempty(columnEntry) || columnEntry.ValueKind == "literal"
+                    states = document.getEffectivePropertyStates(registry, grid.Id);
+                end
+            end
+        end
+
+        function item = nativeItem(preview, id)
+            % nativeItem Retain native dimensions, fit decorations, track inputs, and parent identity.
+            arguments (Input)
+                preview
+                id (1, 1) string
+            end
+            arguments (Output)
+                item (1, 1) struct
+            end
+            item = struct("id", id, "valid", isvalid(preview));
+            if ~item.valid, return, end
+            if isprop(preview, "Parent"), item.parent = preview.Parent; end
+            for property = ["Position", "InnerPosition", "OuterPosition"]
+                if isprop(preview, property), item.(property) = double(preview.(property)); end
+            end
+            if isprop(preview, "Units"), item.units = string(preview.Units); end
+            if isprop(preview, "SelectedTab"), item.tab = preview.SelectedTab; end
+            if isa(preview, "matlab.ui.container.GridLayout")
+                item.RowHeight = preview.RowHeight;
+                item.ColumnWidth = preview.ColumnWidth;
+                item.RowSpacing = preview.RowSpacing;
+                item.ColumnSpacing = preview.ColumnSpacing;
+            end
+        end
+
         function data = emptyData(revision, activeGridId)
             % emptyData Create a JSON-safe payload when no editable geometry is available.
             data = struct("revision", revision, "activeGridId", char(activeGridId), ...

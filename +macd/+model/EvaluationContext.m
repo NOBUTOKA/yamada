@@ -71,6 +71,21 @@ classdef EvaluationContext < handle
             end
         end
 
+        function [token, tracked] = revisionToken(obj)
+            % revisionToken Return acyclic input and catalog identities without retaining model records.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+            end
+            arguments (Output)
+                token (1, 1) struct
+                tracked (1, 1) logical
+            end
+            token = struct("Clock", obj.InputClock, "Revision", obj.InputRevision, ...
+                "Registry", obj.Registry, "RegistryRevision", obj.RegistryRevision);
+            tracked = obj.Cacheable && obj.InputClock.IsTracked && ...
+                obj.InputClock.Revision == obj.InputRevision && obj.Registry.Revision == obj.RegistryRevision;
+        end
+
         function [inputs, safe] = inputs(obj)
             % inputs Return independent semantic inputs for conservative view invalidation.
             arguments (Input)

@@ -420,6 +420,32 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyFalse(context.matches(document, registry));
         end
 
+        function revisionTokensFollowWritesAndCatalogWithoutOwningRecords(testCase)
+            % revisionTokensFollowWritesAndCatalogWithoutOwningRecords Reject stale revisions and untracked live data.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("RevisionTokenFixture", registry);
+            root = document.getComponent(document.RootComponentId);
+            context = document.evaluationContext(registry);
+            [before, tracked] = context.revisionToken();
+            testCase.assertTrue(tracked);
+            testCase.verifyEqual(sort(string(fieldnames(before))), ...
+                sort(["Clock"; "Revision"; "Registry"; "RegistryRevision"]));
+            root.setProperty("Name", "Changed title");
+            [~, tracked] = context.revisionToken();
+            testCase.verifyFalse(tracked);
+            [after, tracked] = document.evaluationContext(registry).revisionToken();
+            testCase.verifyTrue(tracked);
+            testCase.verifyEqual(after.Clock, before.Clock);
+            testCase.verifyGreaterThan(after.Revision, before.Revision);
+            registry.register(registry.get("uifigure"));
+            [changed, tracked] = document.evaluationContext(registry).revisionToken();
+            testCase.verifyTrue(tracked);
+            testCase.verifyGreaterThan(changed.RegistryRevision, after.RegistryRevision);
+            document.Metadata.Live = containers.Map("live", 1);
+            [~, tracked] = document.evaluationContext(registry).revisionToken();
+            testCase.verifyFalse(tracked);
+        end
+
         function gridProjectionKeepsValueAndPublicPlanIndependence(testCase)
             % gridProjectionKeepsValueAndPublicPlanIndependence Avoid model copies while isolating returned grid values.
             registry = macd.model.ComponentRegistry.createDefault();
