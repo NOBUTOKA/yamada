@@ -169,6 +169,7 @@ classdef RoundTripGenerator
             diagnostics = [diagnostics(:)' callbackDiagnostics(:)'];
             edits = macd.source.CallbackSourceEdits.combineInsertions([edits callbackEdits]);
             edits = macd.source.SourceFormatting.cleanDeletions(source, edits);
+            edits = macd.source.SourceFormatting.separateComponents(source, edits);
             if macd.validation.ModelValidator.hasErrors(diagnostics) || ...
                     ~obj.nonOverlapping(edits)
                 if ~obj.nonOverlapping(edits)

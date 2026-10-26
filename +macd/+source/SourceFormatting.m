@@ -4,6 +4,67 @@ classdef SourceFormatting
     %   It preserves comments, inline statements, and unrelated blank lines.
 
     methods (Static)
+        function edits = separateComponents(source, edits)
+            % separateComponents Add one blank line at component boundaries touched by insertions.
+            arguments (Input)
+                source (1, 1) string
+                edits struct
+            end
+            arguments (Output)
+                edits struct
+            end
+            insertions = find([edits.Start] > [edits.End] & string({edits.Text}) ~= "");
+            if isempty(insertions), return, end
+            statements = macd.source.MatlabLexicalScanner.splitStatements(source);
+            ending = string(newline);
+            if contains(source, sprintf("\r\n")) || ...
+                    strlength(source) == 0 && any(contains(string({edits.Text}), sprintf("\r\n")))
+                ending = string(sprintf("\r\n"));
+            end
+            pattern = '^app\.(\w+)(?:\.\w+)*\s*=(?!=)';
+            % Include the neighboring statements so new blocks also separate from existing code.
+            for index = insertions
+                edit = edits(index);
+                before = find(arrayfun(@(item) item.Span.EndOffset <= edit.End, statements), 1, "last");
+                after = find(arrayfun(@(item) item.Span.StartOffset > edit.End, statements), 1);
+                prefix = "";
+                suffix = "";
+                if ~isempty(before)
+                    prefix = extractBetween(source, statements(before).Span.StartOffset, edit.End);
+                end
+                if ~isempty(after)
+                    suffix = extractBetween(source, edit.Start, statements(after).Span.EndOffset);
+                end
+                text = prefix + edit.Text + suffix;
+                local = macd.source.MatlabLexicalScanner.splitStatements(text);
+                offsets = zeros(1, 0);
+                first = strlength(prefix) + 1;
+                last = strlength(prefix) + strlength(edit.Text);
+                for position = 2:numel(local)
+                    previous = local(position - 1);
+                    current = local(position);
+                    previousInserted = previous.Span.StartOffset >= first && previous.Span.EndOffset <= last;
+                    currentInserted = current.Span.StartOffset >= first && current.Span.EndOffset <= last;
+                    if ~previousInserted && ~currentInserted, continue, end
+                    left = regexp(previous.Text, pattern, 'tokens', 'once');
+                    right = regexp(current.Text, pattern, 'tokens', 'once');
+                    if isempty(left) || isempty(right) || string(left{1}) == string(right{1}), continue, end
+                    gap = extractBetween(text, previous.Span.EndOffset + 1, current.Span.StartOffset - 1);
+                    % Preserve inline code and comments; an existing blank line already separates blocks.
+                    if isempty(regexp(gap, '^[ \t]*(?:%[^\r\n]*)?\r?\n[ \t]*$', 'once')), continue, end
+                    indent = macd.source.SourceFormatting.indent(text, current.Span.StartOffset);
+                    offset = current.Span.StartOffset - strlength(indent) - 1;
+                    offset = min(max(offset, strlength(prefix)), strlength(prefix) + strlength(edit.Text));
+                    offsets(end + 1) = offset - strlength(prefix); %#ok<AGROW>
+                end
+                % Apply only within the inserted text, leaving original source bytes untouched.
+                for offset = sort(unique(offsets), "descend")
+                    edit.Text = extractBefore(edit.Text, offset + 1) + ending + extractAfter(edit.Text, offset);
+                end
+                edits(index).Text = edit.Text;
+            end
+        end
+
         function result = indent(source, offset)
             % indent Return the leading spaces or tabs on the containing source line.
             arguments (Input)

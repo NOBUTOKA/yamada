@@ -69,7 +69,7 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
             block = "            app.First.Text = ""First""; % keep this comment" + ending + ...
                 "            app.First.FontSize = 19;" + ending + ...
                 "            app.First.Tooltip = ""Hint"";";
-            testCase.verifySubstring(source, block + ending + "            app.Second =");
+            testCase.verifySubstring(source, block + ending + ending + "            app.Second =");
             document.undo();
             testCase.verifyFalse(contains(macd.source.RoundTripGenerator(registry).generate(document), ".Tooltip ="));
             document.redo();
@@ -79,7 +79,69 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
             document.setProperty(document.getComponentByName("First").Id, "FontWeight", "bold", registry);
             source = macd.source.RoundTripGenerator(registry).generate(document);
             testCase.verifySubstring(source, block + ending + "            app.First.FontWeight = ""bold"";" + ...
-                ending + "            app.Second =");
+                ending + ending + "            app.Second =");
+        end
+
+        function insertedBlocksHaveOneBlankLineAtEachBoundary(testCase)
+            % insertedBlocksHaveOneBlankLineAtEachBoundary Separate new blocks without splitting same-owner settings.
+            for ending = [string(newline), string(sprintf("\r\n"))]
+                for separator = [ending, ending + ending]
+                    source = "    app.First.Text = ""First""; % note" + separator + ...
+                        "    app.Last.Text = ""Last"";" + ending;
+                    anchor = strfind(source, " % note") + strlength(" % note") - 1;
+                    block = ending + "    app.Middle = uilabel(app.UIFigure);" + ending + ...
+                        "    app.Middle.Text = ""Middle"";";
+                    edits = struct("Start", anchor + 1, "End", anchor, "Text", block);
+                    edits = macd.source.SourceFormatting.separateComponents(source, edits);
+                    actual = extractBefore(source, edits.Start) + edits.Text + extractAfter(source, edits.End);
+                    expected = "    app.First.Text = ""First""; % note" + ending + ending + ...
+                        "    app.Middle = uilabel(app.UIFigure);" + ending + ...
+                        "    app.Middle.Text = ""Middle"";" + ending + ending + ...
+                        "    app.Last.Text = ""Last"";" + ending;
+                    testCase.verifyEqual(actual, expected);
+                    testCase.verifyEqual(macd.source.SourceFormatting.separateComponents(source, edits), edits);
+                end
+            end
+        end
+
+        function multipleInsertedComponentsKeepTheirOwnSettingsTogether(testCase)
+            % multipleInsertedComponentsKeepTheirOwnSettingsTogether Separate generated groups and preserve deletion history.
+            registry = macd.model.ComponentRegistry.createDefault();
+            ending = string(sprintf("\r\n"));
+            document = macd.source.AppSourceParser.parseText(SourceFormattingTest.fixture(ending, "            "), registry);
+            first = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            second = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            document.setProperty(first.Id, "Text", "Added first", registry);
+            document.setProperty(second.Id, "Text", "Added second", registry);
+            generator = macd.source.RoundTripGenerator(registry);
+            [source, diagnostics] = generator.generate(document);
+            testCase.assertFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifySubstring(source, "app.Second.Text = ""Second"";" + ending + ending + ...
+                "            app." + first.Name + " = uilabel(app.UIFigure);");
+            testCase.verifySubstring(source, ".Text = ""Added first"";" + ending + ending + ...
+                "            app." + second.Name + " = uilabel(app.UIFigure);");
+            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyEqual(generator.generate(reopened), source);
+            reopened.removeSubtree(reopened.getComponentByName(first.Name).Id, registry);
+            removed = generator.generate(reopened);
+            testCase.verifyFalse(contains(removed, "app." + first.Name + " ="));
+            testCase.verifyFalse(contains(removed, ending + ending + ending));
+            reopened.undo();
+            testCase.verifyEqual(generator.generate(reopened), source);
+        end
+
+        function constructorArgumentInsertionKeepsItsOriginalWhitespace(testCase)
+            % constructorArgumentInsertionKeepsItsOriginalWhitespace Do not format a partial statement as a new block.
+            for ending = [string(newline), string(sprintf("\r\n"))]
+                for body = ["    app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""]);", ...
+                        "    app.Control = uidropdown(app.UIFigure, ..." + ending + ...
+                        "        Items=[""A"" ""B""]); "]
+                    source = "    app.UIFigure = uifigure;" + ending + body + ending;
+                    anchor = strfind(source, "Items=[") - 1;
+                    edits = struct("Start", anchor + 1, "End", anchor, "Text", "FontSize=18, ");
+                    testCase.verifyEqual(macd.source.SourceFormatting.separateComponents(source, edits), edits);
+                end
+            end
         end
 
         function deletionKeepsCommentsAndInlineNeighbors(testCase)
