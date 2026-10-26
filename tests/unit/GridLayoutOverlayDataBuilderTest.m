@@ -76,30 +76,34 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
         end
 
         function nativeInputsObserveFitTracksAndUnmappedAncestors(testCase)
-            % nativeInputsObserveFitTracksAndUnmappedAncestors Track every public geometry input without pixel transforms.
+            % nativeInputsObserveFitTracksAndUnmappedAncestors Track public pixel observations and unmapped parent inputs.
             [document, handles, panel, grid, first, ~, cleanup] = testCase.renderGrid([40 50], [60 70]);
             testCase.addTeardown(@() delete(cleanup));
             original = first.settingSnapshot();
             history = document.HistoryIndex;
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
             before = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            transforms = contains(string({functions.FunctionName}), "getpixelposition");
-            testCase.verifyEqual(sum([functions(transforms).NumCalls]), 0);
+            testCase.verifyTrue(before.Cacheable);
             ids = cellfun(@(item) item.id, before.Controls);
             gridInput = before.Controls{find(ids == grid.Id, 1)};
             firstInput = before.Controls{find(ids == first.Id, 1)};
             testCase.verifyEqual(gridInput.RowSpacing, handles(char(grid.Id)).RowSpacing);
             testCase.verifyEqual(gridInput.ColumnWidth, handles(char(grid.Id)).ColumnWidth);
             testCase.verifyEqual(firstInput.OuterPosition, double(handles(char(first.Id)).OuterPosition));
+            expected = double(getpixelposition(handles(char(first.Id)), true));
+            reference = double(getpixelposition(panel, true));
+            expected(1:2) = expected(1:2) - reference(1:2);
+            testCase.verifyEqual(firstInput.pixels, expected);
 
             % A renderer-owned frame is absent from the component map but changes canvas coordinates.
             frame = findall(panel, "Tag", "macd-preview-frame");
             frame.Position(1:2) = frame.Position(1:2) + [17 13];
             drawnow;
             moved = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
-            testCase.verifyEqual(moved.Controls, before.Controls);
+            for index = 1:numel(before.Controls)
+                testCase.verifyEqual(moved.Controls{index}.Position, before.Controls{index}.Position);
+                testCase.verifyEqual(moved.Controls{index}.pixels - before.Controls{index}.pixels, ...
+                    [17 13 0 0], "AbsTol", 1e-6);
+            end
             testCase.verifyNotEqual(moved.Ancestors, before.Ancestors);
             native = handles(char(grid.Id));
             native.RowSpacing = native.RowSpacing + 3;
@@ -107,6 +111,30 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.verifyNotEqual(spaced, moved);
             testCase.verifyEqual(first.settingSnapshot(), original);
             testCase.verifyEqual(document.HistoryIndex, history);
+        end
+
+        function distinguishesPendingNativeGeometryFromSourceAmbiguity(testCase)
+            % distinguishesPendingNativeGeometryFromSourceAmbiguity Retry inconsistent realized spans without hiding source limits.
+            [document, handles, panel, grid, first, ~, cleanup, registry] = ...
+                testCase.renderGrid({"fit", "fit"}, [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            document.setProperty(first.Id, "Layout.Row", [1 2]);
+            pending = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry);
+            testCase.verifyFalse(pending.geometryAvailable);
+            testCase.verifyTrue(pending.geometryPending);
+            testCase.verifySubstring(pending.readOnlyReason, "do not agree");
+            native = handles(char(first.Id));
+            document.setProperty(first.Id, "Layout.Row", 1);
+            native.Layout.Row = 1;
+            testCase.waitForLayout(handles(char(grid.Id)));
+            ready = builder.build(document, handles, panel, grid.Id, first.Id, 2, registry);
+            testCase.verifyTrue(ready.geometryAvailable);
+            testCase.verifyFalse(ready.geometryPending);
+            grid.getProperty("RowHeight").setSourceExpression("unresolvedTracks");
+            opaque = builder.build(document, handles, panel, grid.Id, first.Id, 3, registry);
+            testCase.verifyFalse(opaque.geometryAvailable);
+            testCase.verifyFalse(opaque.geometryPending);
         end
 
         function nativeInputsFollowMultilineFitGrowthAndShrink(testCase)

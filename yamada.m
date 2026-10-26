@@ -1660,15 +1660,18 @@ classdef yamada < handle
             app.InteractionOverlay.Data = data;
         end
 
-        function capturePreviewGeometry(app)
+        function capturePreviewGeometry(app, stamp)
             % capturePreviewGeometry Reuse canvas-relative transforms while native layout inputs match.
             arguments (Input)
                 app (1, 1) yamada
+                stamp (1, 1) struct = struct()
             end
             keys = app.PreviewHandles.keys();
-            stamp = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
+            if isempty(fieldnames(stamp))
+                stamp = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
+            end
             geometry = app.PreviewGeometry;
-            changed = ~isfield(geometry, "Stamp") || ~isequaln(geometry.Stamp, stamp);
+            changed = ~stamp.Cacheable || ~isfield(geometry, "Stamp") || ~isequaln(geometry.Stamp, stamp);
             if changed
                 geometry = struct("Stamp", {stamp}, ...
                     "Bounds", containers.Map("KeyType", "char", "ValueType", "any"), ...
@@ -2320,8 +2323,33 @@ classdef yamada < handle
                 app.TabLayoutStableCount = 0;
             end
             if app.TabLayoutStableCount >= 2 || app.TabLayoutPollCount >= 40
-                app.stopOverlayRefresh(timerObject, generation);
-                if app.isCurrentOverlayRefresh(timerObject, generation), app.updateInteractionOverlay(); end
+                settled = app.gridGeometrySettled(signature);
+                if ~app.isCurrentOverlayRefresh(timerObject, generation), return, end
+                if settled || app.TabLayoutPollCount >= 40
+                    app.stopOverlayRefresh(timerObject, generation);
+                    if app.isCurrentOverlayRefresh(timerObject, generation), app.updateInteractionOverlay(); end
+                else
+                    app.TabLayoutStableCount = 0;
+                end
+            end
+        end
+
+        function settled = gridGeometrySettled(app, stamp)
+            % gridGeometrySettled Keep polling while visible grids still report incomplete native geometry.
+            arguments (Input)
+                app (1, 1) yamada
+                stamp (1, 1) struct
+            end
+            arguments (Output)
+                settled (1, 1) logical
+            end
+            app.capturePreviewGeometry(stamp);
+            settled = true;
+            grids = app.Document.Components(string({app.Document.Components.Factory}) == "uigridlayout");
+            for grid = reshape(grids, 1, [])
+                if ~app.isVisibleInSelectedTab(grid.Id), continue, end
+                data = app.gridOverlayData(grid.Id, app.InteractionOverlayRevision);
+                if data.geometryPending, settled = false; end
             end
         end
 
