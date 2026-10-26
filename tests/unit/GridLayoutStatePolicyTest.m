@@ -4,6 +4,46 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     %   default child placement, copy configuration, and Preview projection.
 
     methods (Test, TestTags = {'fast', 'model', 'parser', 'generation', 'roundtrip'})
+        function committedPlacementProjectsPrivateGridValues(testCase)
+            % committedPlacementProjectsPrivateGridValues Preserve source identities and padded tracks without plan copies.
+            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
+                "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);"]);
+            first = document.getComponentByName("First");
+            second = document.getComponentByName("Second");
+            document.setProperty(first.Id, "Layout.Row", 3, registry);
+            context = document.evaluationContext(registry);
+
+            profile clear; profile on;
+            cleanup = onCleanup(@() profile("off"));
+            actual = testCase.state(document, registry, grid, "RowHeight");
+            profile off; functions = profile("info").FunctionTable; clear cleanup
+            names = string({functions.FunctionName});
+            projecting = contains(names, "EvaluationContext.configurationGridState");
+            copies = contains(names, "DocumentModel.structuralCandidate") | ...
+                contains(names, "DocumentModel.fromConfigurationSnapshot");
+            testCase.verifyGreaterThan(sum([functions(projecting).NumCalls]), 0);
+            testCase.verifyEqual(sum([functions(copies).NumCalls]), 0);
+            testCase.verifyTrue(actual.IsKnown);
+            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(actual.EffectiveValue, {"1x", "1x", "1x"}));
+            [values, found] = context.configurationGridState("combined", grid, document, first);
+            testCase.assertTrue(found);
+            testCase.verifyEqual(values.ChildIds, [first.Id, second.Id]);
+            testCase.verifyEqual(values.Coordinates{1, 1}, 3);
+            testCase.verifyTrue(all(values.CoordinateKnown, "all"));
+
+            % The retained source plan remains independently mutable and generation retains placement.
+            [copy, found] = context.configuration("combined", grid.Name);
+            testCase.assertTrue(found);
+            copy.Component.setProperty("RowHeight", {999});
+            [again, found] = context.configurationGridState("combined", grid, document, first);
+            testCase.verifyTrue(found);
+            testCase.verifyEqual(again, values);
+            source = macd.source.RoundTripGenerator(registry).generate(document);
+            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            parsedFirst = parsed.getComponentByName("First");
+            testCase.verifyEqual(testCase.state(parsed, registry, parsedFirst, "Layout.Row").EffectiveValue, 3);
+        end
+
         function sharedUncertaintyFollowsDirectSourceChanges(testCase)
             % sharedUncertaintyFollowsDirectSourceChanges Invalidate both empty and diagnostic group results.
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...

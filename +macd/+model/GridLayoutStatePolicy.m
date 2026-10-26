@@ -139,6 +139,41 @@ classdef GridLayoutStatePolicy
         end
     end
 
+    methods (Static, Access = ?macd.model.EvaluationContext)
+        function result = projectConfiguration(grid, document, configuration, registry)
+            % projectConfiguration Map private configured grid values back to original source identities.
+            arguments (Input)
+                grid (1, 1) macd.model.ComponentRecord
+                document (1, 1) macd.model.DocumentModel
+                configuration (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            children = document.Components(string({document.Components.ParentId}) == grid.Id);
+            configuredGrid = configuration.getComponentByName(document.sourceComponentName(grid.Id));
+            result = macd.model.GridLayoutStatePolicy.configuration(configuredGrid, configuration, registry);
+            for axis = 1:2
+                result.TrackIds(axis) = macd.model.PropertyStateResolver.originalEffectId(grid, configuredGrid, ...
+                    result.TrackIds(axis), document, configuration);
+            end
+            for index = 1:numel(result.ChildIds)
+                configured = configuration.getComponent(result.ChildIds(index));
+                for child = children
+                    if document.sourceComponentName(child.Id) == configured.Name
+                        result.ChildIds(index) = child.Id;
+                        for axis = 1:2
+                            result.CoordinateIds(index, axis) = macd.model.PropertyStateResolver.originalEffectId(child, configured, ...
+                                result.CoordinateIds(index, axis), document, configuration);
+                        end
+                        break
+                    end
+                end
+            end
+        end
+    end
+
     methods (Static, Access = private)
         function id = unresolvedGridEffect(grid, document, registry)
             % unresolvedGridEffect Share the unchanged member scan for one exact grid input.
@@ -201,26 +236,11 @@ classdef GridLayoutStatePolicy
             if nnz(planned) == 1 && all(string({members.Origin}) == "parsed")
                 % Reuse actual source placement when a different member owns the pending setting.
                 try
+                    context = document.evaluationContext(registry);
+                    [result, found] = context.configurationGridState("combined", grid, document, members(planned));
+                    if found, return, end
                     plan = macd.source.PropertySourcePlan.plan(document, members(planned), registry);
-                    configuredGrid = plan.Document.getComponentByName(document.sourceComponentName(grid.Id));
-                    result = macd.model.GridLayoutStatePolicy.configuration(configuredGrid, plan.Document, registry);
-                    for axis = 1:2
-                        result.TrackIds(axis) = macd.model.PropertyStateResolver.originalEffectId(grid, configuredGrid, ...
-                            result.TrackIds(axis), document, plan.Document);
-                    end
-                    for index = 1:numel(result.ChildIds)
-                        configured = plan.Document.getComponent(result.ChildIds(index));
-                        for child = children
-                            if document.sourceComponentName(child.Id) == configured.Name
-                                result.ChildIds(index) = child.Id;
-                                for axis = 1:2
-                                    result.CoordinateIds(index, axis) = macd.model.PropertyStateResolver.originalEffectId(child, configured, ...
-                                        result.CoordinateIds(index, axis), document, plan.Document);
-                                end
-                                break
-                            end
-                        end
-                    end
+                    result = macd.model.GridLayoutStatePolicy.projectConfiguration(grid, document, plan.Document, registry);
                     return
                 catch
                     % The owning resolver reports placement errors; related states stay unknown below.

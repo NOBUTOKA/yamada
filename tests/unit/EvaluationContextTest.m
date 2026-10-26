@@ -420,6 +420,89 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyFalse(context.matches(document, registry));
         end
 
+        function gridProjectionKeepsValueAndPublicPlanIndependence(testCase)
+            % gridProjectionKeepsValueAndPublicPlanIndependence Avoid model copies while isolating returned grid values.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            child = document.insertComponent(registry, "uilabel", grid.Id);
+            grid.setProperty("RowHeight", {40, "fit", "1x"});
+            child.setProperty("Layout.Row", 3);
+            context = document.evaluationContext(registry);
+            context.rememberConfiguration("plan", document);
+
+            profile clear; profile on;
+            cleanup = onCleanup(@() profile("off"));
+            [result, found] = context.configurationGridState("plan", grid, document, grid);
+            profile off; functions = profile("info").FunctionTable; clear cleanup
+            testCase.assertTrue(found);
+            copies = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate") | ...
+                contains(string({functions.FunctionName}), "DocumentModel.fromConfigurationSnapshot");
+            testCase.verifyEqual(sum([functions(copies).NumCalls]), 0);
+            testCase.verifyTrue(result.TrackKnown(1));
+            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(result.Tracks{1}, {40, "fit", "1x"}));
+            testCase.verifyEqual(result.ChildIds, child.Id);
+            testCase.verifyEqual(result.Coordinates{1, 1}, 3);
+            expected = result;
+
+            % Neither caller-owned values nor the public mutable plan can change the private projection.
+            result.Tracks{1}{1} = 999;
+            [copy, found] = context.configuration("plan", grid.Name);
+            testCase.assertTrue(found);
+            copy.Component.setProperty("RowHeight", {999});
+            [again, found] = context.configurationGridState("plan", grid, document, grid);
+            testCase.verifyTrue(found);
+            testCase.verifyEqual(again, expected);
+            testCase.verifyNotEqual(result.Tracks, expected.Tracks);
+        end
+
+        function gridProjectionRejectsMissingPlannedOwner(testCase)
+            % gridProjectionRejectsMissingPlannedOwner Keep the original named source-plan ownership guard.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            child = document.insertComponent(registry, "uilabel", grid.Id);
+            incomplete = document.structuralCandidate();
+            incomplete.Components(incomplete.Components == incomplete.getComponent(child.Id)) = [];
+            incomplete.getComponent(grid.Id).removeChild(child.Id);
+            context = document.evaluationContext(registry);
+            context.rememberConfiguration("plan", incomplete);
+            [publicPlan, found] = context.configuration("plan", child.Name);
+            testCase.verifyFalse(found);
+            testCase.verifyEmpty(fieldnames(publicPlan));
+            [values, found] = context.configurationGridState("plan", grid, document, child);
+            testCase.verifyFalse(found);
+            testCase.verifyEmpty(fieldnames(values));
+        end
+
+        function gridProjectionRejectsStaleOrUnownedInputs(testCase)
+            % gridProjectionRejectsStaleOrUnownedInputs Require current ownership, input state, and catalog revision.
+            for kind = ["foreign", "direct", "registry", "missing", "non-grid"]
+                registry = macd.model.ComponentRegistry.createDefault();
+                document = macd.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
+                grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+                context = document.evaluationContext(registry);
+                context.rememberConfiguration("plan", document);
+                name = "plan";
+                switch kind
+                    case "foreign"
+                        copy = document.structuralCandidate();
+                        grid = copy.getComponent(grid.Id);
+                    case "direct"
+                        grid.setProperty("RowHeight", {90});
+                    case "registry"
+                        registry.register(registry.get("uigridlayout"));
+                    case "missing"
+                        name = "missing";
+                    case "non-grid"
+                        grid = document.getComponent(document.RootComponentId);
+                end
+                [result, found] = context.configurationGridState(name, grid, document, grid);
+                testCase.verifyFalse(found, kind);
+                testCase.verifyEmpty(fieldnames(result), kind);
+            end
+        end
+
         function doesNotExposeSharedConfigurationHandles(testCase)
             % doesNotExposeSharedConfigurationHandles Copy a cached plan for each mutable caller.
             registry = macd.model.ComponentRegistry.createDefault();

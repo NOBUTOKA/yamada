@@ -233,6 +233,34 @@ classdef EvaluationContext < handle
             end
         end
 
+        function [result, found] = configurationGridState(obj, name, grid, document, owner)
+            % configurationGridState Project mapped grid values without exposing cached document handles.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                name (1, 1) string
+                grid (1, 1) macd.model.ComponentRecord
+                document (1, 1) macd.model.DocumentModel
+                owner (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                result (1, 1) struct
+                found (1, 1) logical
+            end
+            result = struct();
+            owned = document.getComponent(grid.Id);
+            ownedOwner = document.getComponent(owner.Id);
+            found = obj.matches(document, obj.Registry) && grid.Factory == "uigridlayout" && ...
+                ~isempty(owned) && owned == grid && ~isempty(ownedOwner) && ownedOwner == owner && ...
+                isKey(obj.Plans, char(name));
+            if ~found, return, end
+
+            % Keep the version-checked private source inside a synchronous value projection.
+            saved = obj.configurationDocument(obj.Plans(char(name)), false);
+            found = ~isempty(saved.getComponentByName(owner.Name));
+            if ~found, return, end
+            result = macd.model.GridLayoutStatePolicy.projectConfiguration(grid, document, saved, obj.Registry);
+        end
+
         function rememberConfiguration(obj, name, document)
             % rememberConfiguration Hide an independent configuration from subsequent caller mutations.
             arguments (Input)
