@@ -1,0 +1,120 @@
+classdef SourceFormatting
+    % SourceFormatting Preserve local whitespace around owned source edits.
+    %   This utility recovers line indentation and removes vacated source lines.
+    %   It preserves comments, inline statements, and unrelated blank lines.
+
+    methods (Static)
+        function result = indent(source, offset)
+            % indent Return the leading spaces or tabs on the containing source line.
+            arguments (Input)
+                source (1, 1) string
+                offset (1, 1) double {mustBePositive, mustBeInteger}
+            end
+            arguments (Output)
+                result (1, 1) string
+            end
+            text = char(source);
+            first = find(text(1:offset - 1) == newline, 1, "last");
+            if isempty(first), first = 0; end
+            result = string(regexp(text(first + 1:offset), '^[ \t]*', 'match', 'once'));
+        end
+
+        function edits = cleanDeletions(source, edits)
+            % cleanDeletions Remove trivia only when owned removals vacate a whole line.
+            arguments (Input)
+                source (1, 1) string
+                edits struct
+            end
+            arguments (Output)
+                edits struct
+            end
+            text = char(source);
+            % Merge removals separated solely by trivia, including fully removed inline statements.
+            [~, order] = sort([edits.Start]);
+            edits = edits(order);
+            index = 1;
+            while index < numel(edits)
+                gap = text(edits(index).End + 1:edits(index + 1).Start - 1);
+                if edits(index).Text == "" && edits(index + 1).Text == "" && ...
+                        isempty(regexp(gap, '[^ \t\r\n]', 'once'))
+                    edits(index).End = max(edits(index).End, edits(index + 1).End);
+                    edits(index + 1) = [];
+                else
+                    index = index + 1;
+                end
+            end
+            % Keep the following newline so insertions at a removed end stay valid.
+            for index = 1:numel(edits)
+                edit = edits(index);
+                if edit.Text ~= "" || edit.Start > edit.End, continue, end
+                first = find(text(1:edit.Start - 1) == newline, 1, "last");
+                if isempty(first), first = 0; end
+                following = find(text(edit.End + 1:end) == newline, 1);
+                last = numel(text);
+                if ~isempty(following), last = edit.End + following - 1; end
+                prefix = text(first + 1:edit.Start - 1);
+                suffix = text(edit.End + 1:last);
+                if ~isempty(regexp(prefix, '[^ \t\r]', 'once')) || ...
+                        ~isempty(regexp(suffix, '[^ \t\r]', 'once')), continue, end
+                if last > 0 && text(last) == char(13), last = last - 1; end
+                % Avoid consuming offsets needed by other replacements or insertions.
+                others = edits;
+                others(index) = [];
+                start = first;
+                if start == 0
+                    start = 1;
+                    if ~isempty(following), last = edit.End + following; end
+                else
+                    % Retain one separator when removing a block between two blank lines.
+                    tail = '';
+                    if ~isempty(following), tail = text(edit.End + following + 1:end); end
+                    if ~isempty(following) && ~isempty(regexp(tail, '^[ \t]*\r?\n', 'once'))
+                        while start > 1
+                            previous = find(text(1:start - 1) == newline, 1, "last");
+                            if isempty(previous), break, end
+                            if ~isempty(regexp(text(previous + 1:start - 1), '[^ \t\r]', 'once')), break, end
+                            start = previous;
+                        end
+                    end
+                    if start > 1 && text(start - 1) == char(13), start = start - 1; end
+                end
+                if any([others.Start] <= last & [others.End] >= start & ...
+                        ([others.Start] < edit.Start | [others.End] > edit.End)), continue, end
+                edits(index).Start = start;
+                edits(index).End = last;
+            end
+            % Consecutive removals can share trivia; merge empty replacements only.
+            [~, order] = sort([edits.Start]);
+            edits = edits(order);
+            index = 1;
+            while index < numel(edits)
+                if edits(index).Text == "" && edits(index + 1).Text == "" && ...
+                        edits(index + 1).Start <= edits(index).End + 1
+                    edits(index).End = max(edits(index).End, edits(index + 1).End);
+                    edits(index + 1) = [];
+                else
+                    index = index + 1;
+                end
+            end
+        end
+    end
+end
+
+%{
+Copyright (C) 2026 Nobuto Kaitoh
+
+This file is part of yamada.
+
+yamada is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+yamada is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with yamada. If not, see <https://www.gnu.org/licenses/>.
+%}

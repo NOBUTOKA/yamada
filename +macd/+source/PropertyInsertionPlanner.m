@@ -407,7 +407,7 @@ classdef PropertyInsertionPlanner
                 anchors (1, :) struct
                 boundary (1, 1) double
             end
-            anchors = struct("Offset", {}, "Visit", {}, "OwnerMethod", {}, "Indent", {});
+            anchors = struct("Offset", {}, "Visit", {}, "OwnerMethod", {}, "Indent", {}, "Owned", {});
             boundary = numel(order) + 1;
             for visit = created:numel(order)
                 index = order(visit);
@@ -442,11 +442,14 @@ classdef PropertyInsertionPlanner
                     if ~isempty(starts), start = starts(end); end
                     indent = string(regexp(char(extractBetween(source, start + 1, statement.Span.StartOffset - 1)), '^\s*', 'match', 'once'));
                     anchors(end + 1) = struct("Offset", offset, "Visit", returns(visit), ...
-                        "OwnerMethod", layout.Owner(index), "Indent", indent); %#ok<AGROW>
+                        "OwnerMethod", layout.Owner(index), "Indent", indent, ...
+                        "Owned", visit == created || ~isempty(owned)); %#ok<AGROW>
                 end
             end
-            [~, sorted] = sort([anchors.Visit]);
-            anchors = anchors(sorted);
+            % Prefer the end of this component's settings before trying other proven slots.
+            preferred = anchors([anchors.Owned]);
+            [~, sorted] = sort([preferred.Visit], "descend");
+            anchors = [preferred(sorted) anchors(~[anchors.Owned])];
         end
 
         function text = assignment(~, document, name, entry, anchor)

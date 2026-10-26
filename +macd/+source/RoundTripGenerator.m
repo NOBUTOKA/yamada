@@ -168,6 +168,7 @@ classdef RoundTripGenerator
             [callbackEdits, callbackDiagnostics] = macd.source.CallbackSourceEdits.build(document);
             diagnostics = [diagnostics(:)' callbackDiagnostics(:)'];
             edits = macd.source.CallbackSourceEdits.combineInsertions([edits callbackEdits]);
+            edits = macd.source.SourceFormatting.cleanDeletions(source, edits);
             if macd.validation.ModelValidator.hasErrors(diagnostics) || ...
                     ~obj.nonOverlapping(edits)
                 if ~obj.nonOverlapping(edits)
@@ -307,7 +308,7 @@ classdef RoundTripGenerator
                 pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
                 for callback = pending(:)'
                     if callback.Action == "Add"
-                        creationText = creationText + eol + "            " + macd.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName);
+                        creationText = creationText + eol + obj.indent(source, creationOffset) + macd.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName);
                     end
                 end
                 entries = macd.model.PropertyApplicationPlanner.forComponent( ...
@@ -374,12 +375,7 @@ classdef RoundTripGenerator
 
         function result = indent(~, source, offset)
             % indent Recover the whitespace preceding one source offset on its line.
-            lineStart = find(extractBefore(source, offset) == newline, 1, "last");
-            if isempty(lineStart)
-                lineStart = 0;
-            end
-            result = extractBetween(source, lineStart + 1, offset - 1);
-            result = string(regexp(char(result), '^\s*', 'match', 'once'));
+            result = macd.source.SourceFormatting.indent(source, offset);
         end
 
         function result = lineEnding(~, document)
