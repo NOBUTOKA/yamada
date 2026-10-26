@@ -215,6 +215,9 @@ classdef NewAppGenerator
             lineEnding = macd.source.NewAppGenerator.lineEndingText( ...
                 document.LineEnding);
             source = strjoin(lines, lineEnding) + lineEnding;
+            formatted = macd.source.SourceFormatting.separateComponents("", ...
+                struct("Start", 1, "End", 0, "Text", source));
+            source = formatted.Text;
             source = macd.source.ComponentNameRewriter.rewrite(source, document.RenameEdits);
             document.GeneratedText = source;
             document.Diagnostics = diagnostics;

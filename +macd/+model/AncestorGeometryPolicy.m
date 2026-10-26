@@ -30,6 +30,16 @@ classdef AncestorGeometryPolicy
                 error("macd:AncestorGeometryPolicy:UnsafeAnchor", "The creation method is ambiguous.");
             end
             scope = methods(containing).Name;
+            % Keep the final existing component's settings together before adding another block.
+            for setting = anchor.Settings
+                if setting.Method == "generated" || ~setting.IsCertain || ...
+                        setting.OwnerMethod ~= scope || isempty(setting.SourceSpan) || ...
+                        setting.Sequence <= sequence || setting.SourceSpan.EndOffset < offset
+                    continue
+                end
+                offset = setting.SourceSpan.EndOffset;
+                sequence = setting.Sequence;
+            end
             generated = document.Components(string({document.Components.Origin}) == "generated");
             for member = generated
                 parent = document.getComponent(member.ParentId);
