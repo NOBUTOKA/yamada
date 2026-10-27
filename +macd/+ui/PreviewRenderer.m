@@ -62,6 +62,7 @@ classdef PreviewRenderer < handle
             end
             id = request.ComponentIds(1);
             component = document.getComponent(id);
+            % This allowlist approves native setter reuse; geometry decisions use catalog metadata below.
             allowed = ["Text", "FontSize", "FontName", "FontWeight", "FontAngle", ...
                 "FontColor", "BackgroundColor", "HorizontalAlignment", "VerticalAlignment", ...
                 "WordWrap", "Visible", "Enable", "Tooltip"];
@@ -120,8 +121,8 @@ classdef PreviewRenderer < handle
             obj.RenderedInputs = inputs;
             obj.SynchronizationCount = obj.SynchronizationCount + 1;
             obj.FallbackReason = "";
-            % Keep fit/layout publication conservative while reusing the native numeric widget.
-            geometryChanged = request.affectsGeometry() || numericValue;
+            % Use reviewed geometry metadata independently of setter reuse eligibility.
+            geometryChanged = request.affectsGeometry(document, obj.Registry, handles);
             applied = true;
         end
 

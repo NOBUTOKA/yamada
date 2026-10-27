@@ -1208,7 +1208,8 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 drawnow; pause(0.25); drawnow;
                 if value == 3
                     profile off; functions = profile("info").FunctionTable; clear stopProfile
-                    measured = contains(string({functions.FunctionName}), "GridLayoutOverlayDataBuilder.trackBounds");
+                    measured = contains(string({functions.FunctionName}), ["GridLayoutOverlayDataBuilder.trackBounds", "GridLayoutOverlayDataBuilder.nativeInputs", ...
+                        "yamada.capturePreviewGeometry", "yamada.previewBounds"]);
                     testCase.verifyEqual(sum([functions(measured).NumCalls]), 0);
                 end
             end
@@ -1285,6 +1286,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                     checking = contains(names, "ModelValidator.validate") | ...
                         contains(names, "AppSourceParser.parseText") | contains(names, "RoundTripGenerator.generate");
                     testCase.verifyEqual(sum([functions(checking).NumCalls]), 0);
+                    measuring = contains(names, ["GridLayoutOverlayDataBuilder.nativeInputs", ...
+                        "yamada.capturePreviewGeometry", "yamada.previewBounds"]);
+                    testCase.verifyEqual(sum([functions(measuring).NumCalls]), 0);
                 end
                 native = findall(figure, "Type", "uilabel", "Text", "Local validation label");
                 testCase.assertEqual(numel(native), 1);

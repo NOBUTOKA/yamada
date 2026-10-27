@@ -6,6 +6,27 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
     %   versioned runtime catalog and its strict validation boundary.
 
     methods (Test)
+        function loadsAndValidatesGeometryMetadata(testCase)
+            % loadsAndValidatesGeometryMetadata Reject unsafe classification data and default old catalogs conservatively.
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.properties{2}.metadata.gridGeometryImpact = "fit";
+            component.properties{2}.metadata.absoluteGeometryImpact = false;
+            testCase.writeJson(root, "components/uilabel.json", component);
+            definition = macd.catalog.ComponentCatalogLoader.load(root).get("uilabel");
+            testCase.verifyEqual(definition.getProperty("Text").GridGeometryImpact, "fit");
+            testCase.verifyFalse(definition.getProperty("Text").AbsoluteGeometryImpact);
+            testCase.verifyEqual(definition.getProperty("Position").GridGeometryImpact, "required");
+            testCase.verifyTrue(definition.getProperty("Position").AbsoluteGeometryImpact);
+            component.properties{2}.metadata.gridGeometryImpact = "guess";
+            testCase.writeJson(root, "components/uilabel.json", component);
+            testCase.verifyCatalogFailure(root);
+            component.properties{2}.metadata.gridGeometryImpact = "none";
+            component.properties{2}.metadata.absoluteGeometryImpact = 0;
+            testCase.writeJson(root, "components/uilabel.json", component);
+            testCase.verifyCatalogFailure(root);
+        end
+
         function loadsApplicationPolicyWithoutChangingInspectorOrder(testCase)
             % loadsApplicationPolicyWithoutChangingInspectorOrder Keep execution and presentation distinct.
 

@@ -39,6 +39,8 @@
             "groupId": "local.uitreenode.node",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -73,6 +75,8 @@
             "groupId": "local.uitreenode.node",
             "editor": "structuredData",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "arbitraryData",
@@ -106,6 +110,8 @@
             "groupId": "local.uitreenode.node",
             "editor": "asset",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "filePath",
@@ -148,6 +154,8 @@
             "groupId": "local.uitreenode.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -188,6 +196,8 @@
             "groupId": "local.uitreenode.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -223,6 +233,8 @@
             "groupId": "local.uitreenode.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -265,6 +277,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "onOff",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -300,6 +314,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "enum",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -338,6 +354,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -378,6 +396,8 @@
             "groupId": "local.uitreenode.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -411,6 +431,8 @@
             "groupId": "local.uitreenode.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "graphicsObject",
@@ -444,6 +466,8 @@
             "groupId": "local.uitreenode.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "enum",
@@ -485,6 +509,8 @@
             "groupId": "local.uitreenode.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -518,6 +544,8 @@
             "groupId": "local.uitreenode.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "text",
@@ -552,6 +580,8 @@
             "groupId": "local.uitreenode.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "arbitraryData",

@@ -100,6 +100,8 @@ function ConvertTo-PropertyCapability {
         path           = [string]$Property.path
         valueContract  = ConvertTo-NormalizedValueContract $Property.valueContract
         affectsDisplay = [bool]$Property.affectsDisplay
+        gridGeometryImpact = [string]$Property.gridGeometryImpact
+        absoluteGeometryImpact = [bool]$Property.absoluteGeometryImpact
         previewPolicy  = [string]$Property.previewPolicy
         requiredEditor = [string]$Property.requiredEditor
         disposition    = ConvertTo-NormalizedDisposition $Property.disposition
@@ -175,7 +177,7 @@ function Test-ComponentDocument {
     }
 
     foreach ($property in $properties) {
-        foreach ($name in @("path", "categoryId", "order", "runtimeSetAccess", "valueContract", "affectsDisplay", "previewPolicy", "requiredEditor", "disposition")) {
+        foreach ($name in @("path", "categoryId", "order", "runtimeSetAccess", "valueContract", "affectsDisplay", "gridGeometryImpact", "absoluteGeometryImpact", "previewPolicy", "requiredEditor", "disposition")) {
             $null = Get-RequiredProperty $property $name "$context property '$($property.path)'"
         }
         if ($categoryIds -notcontains [string]$property.categoryId) {

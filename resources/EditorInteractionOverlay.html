@@ -141,13 +141,21 @@ function setup(htmlComponent) {
     var version = incoming.gridEditor && incoming.gridEditor.revision;
     if (Number.isFinite(version) && version < receivedRevision) return;
     if (Number.isFinite(version)) receivedRevision = version;
+    var sameGeometry = Number.isFinite(incoming.geometryRevision) &&
+        incoming.geometryRevision === currentData.geometryRevision;
     currentData = incoming;
     if (absoluteGesture && absoluteGesture.modelRevision !== currentData.reparentRevision) {
       absoluteGesture = null;
       clearReparentGuide();
     }
     if (gridGesture && gridGesture.modelRevision !== currentData.reparentRevision) cancelGridChildGesture();
-    render();
+    if (sameGeometry) {
+      // Retained closures need the new command revision even when no regions are rebuilt.
+      if (renderedGridEditor && currentData.gridEditor) renderedGridEditor.revision = currentData.gridEditor.revision;
+      if (renderedChildGridEditor && currentData.gridEditor) renderedChildGridEditor.revision = currentData.gridEditor.revision;
+      if (renderedGridPlacement && currentData.gridPlacement) renderedGridPlacement.revision = currentData.gridPlacement.revision;
+      acknowledgeRender();
+    } else render();
     if (absoluteGesture && absoluteGesture.pendingPoint && currentData.dragSource &&
         currentData.dragSource.id === absoluteGesture.id) finishAbsoluteDrop(absoluteGesture.pendingPoint);
   });
@@ -1270,6 +1278,10 @@ function render() {
     addRootHandles(rootLayer);
     rootKey = rootHandlesKey;
   }
+  acknowledgeRender();
+}
+
+function acknowledgeRender() {
   if (currentData.measureRender) {
     var revision = currentData.gridEditor && currentData.gridEditor.revision;
     requestAnimationFrame(function() {

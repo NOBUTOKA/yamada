@@ -657,7 +657,7 @@ classdef ComponentCatalogLoader
                     ["editor", "validator", "previewPolicy", "resetPolicy", ...
                     "displayName", "category", "order", "valueSchema", ...
                     "applicableStyles", "auditDisposition", "description", ...
-                    "categoryId", "groupId", "application"], ...
+                    "categoryId", "groupId", "application", "gridGeometryImpact", "absoluteGeometryImpact"], ...
                     context + ".metadata");
                 macd.catalog.PropertyBehaviorRegistry.validateMetadata(metadata, context);
                 if isfield(metadata, "application")
@@ -834,11 +834,41 @@ classdef ComponentCatalogLoader
                 entry = entries{index};
                 entryContext = context + "[" + string(index) + "]";
                 macd.catalog.ComponentCatalogLoader.requireFields(entry, ["parentFactories", "kind"], entryContext);
-                macd.catalog.ComponentCatalogLoader.rejectUnknownFields(entry, ["parentFactories", "kind"], entryContext);
+                macd.catalog.ComponentCatalogLoader.rejectUnknownFields(entry, ["parentFactories", "kind", "geometryImpacts"], entryContext);
                 parents = macd.catalog.ComponentCatalogLoader.stringList(entry.parentFactories, entryContext + ".parentFactories");
                 kind = macd.catalog.ComponentCatalogLoader.scalarString(entry.kind, entryContext + ".kind");
                 try
-                    rules(end + 1) = macd.model.ParentContextRule.fromKind(parents, kind); %#ok<AGROW>
+                    rule = macd.model.ParentContextRule.fromKind(parents, kind);
+                    if isfield(entry, "geometryImpacts")
+                        impacts = cell(1, 0);
+                        if ~isequal(entry.geometryImpacts, [])
+                            impacts = macd.catalog.ComponentCatalogLoader.objectList(entry.geometryImpacts, entryContext + ".geometryImpacts");
+                        end
+                        properties = rule.AddedProperties;
+                        paths = strings(1, numel(impacts));
+                        for impactIndex = 1:numel(impacts)
+                            impact = impacts{impactIndex};
+                            macd.catalog.ComponentCatalogLoader.requireFields(impact, ...
+                                ["path", "gridGeometryImpact", "absoluteGeometryImpact"], entryContext);
+                            macd.catalog.ComponentCatalogLoader.rejectUnknownFields(impact, ...
+                                ["path", "gridGeometryImpact", "absoluteGeometryImpact"], entryContext);
+                            paths(impactIndex) = macd.catalog.ComponentCatalogLoader.scalarString(impact.path, entryContext);
+                            propertyIndex = find(string({properties.Path}) == paths(impactIndex), 1);
+                            if isempty(propertyIndex), error("Unknown contributed geometry path."); end
+                            metadata = properties(propertyIndex).Metadata;
+                            metadata.gridGeometryImpact = impact.gridGeometryImpact;
+                            metadata.absoluteGeometryImpact = impact.absoluteGeometryImpact;
+                            macd.catalog.PropertyBehaviorRegistry.validateMetadata(metadata, entryContext);
+                            property = properties(propertyIndex);
+                            properties(propertyIndex) = macd.model.PropertyDefinition(property.Path, ...
+                                property.DefaultValue, property.HasDefault, property.IsEditable, metadata);
+                        end
+                        if numel(unique(paths)) ~= numel(paths) || numel(paths) ~= numel(properties)
+                            error("Geometry impacts must cover each contributed property exactly once.");
+                        end
+                        rule = macd.model.ParentContextRule(parents, properties, rule.SuppressedPaths);
+                    end
+                    rules(end + 1) = rule; %#ok<AGROW>
                 catch exception
                     macd.catalog.ComponentCatalogLoader.fail(entryContext + ".kind", string(exception.message));
                 end

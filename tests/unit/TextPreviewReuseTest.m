@@ -32,7 +32,7 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                         macd.ui.RefreshRequest("properties", label.Id, "Text"));
                     testCase.verifyTrue(applied, layout);
                     testCase.verifyEmpty(diagnostics);
-                    testCase.verifyTrue(geometry);
+                    testCase.verifyEqual(geometry, layout ~= "absolute");
                     testCase.verifyEqual(handles(char(label.Id)), original);
                     testCase.verifyEqual(numel(findall(left)), count);
                     reference = referenceRenderer.render(document, right);

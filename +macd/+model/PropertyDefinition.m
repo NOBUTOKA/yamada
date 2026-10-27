@@ -26,6 +26,10 @@ classdef PropertyDefinition
         Validator string = "matlabLiteral"
         % PreviewPolicy - Whether a committed literal may reach Safe Preview.
         PreviewPolicy string = "apply"
+        % GridGeometryImpact - Required, fit-dependent, or absent grid geometry refresh.
+        GridGeometryImpact string = "required"
+        % AbsoluteGeometryImpact - Whether free-position geometry must be refreshed.
+        AbsoluteGeometryImpact logical = true
         % ResetPolicy - Allowlisted rule for resetting an explicit value.
         ResetPolicy string = "remove"
         % DisplayName - User-facing property label supplied by the catalog.
@@ -68,6 +72,8 @@ classdef PropertyDefinition
             if isfield(metadata, "editor"), obj.Editor = string(metadata.editor); end
             if isfield(metadata, "validator"), obj.Validator = string(metadata.validator); end
             if isfield(metadata, "previewPolicy"), obj.PreviewPolicy = string(metadata.previewPolicy); end
+            if isfield(metadata, "gridGeometryImpact"), obj.GridGeometryImpact = string(metadata.gridGeometryImpact); end
+            if isfield(metadata, "absoluteGeometryImpact"), obj.AbsoluteGeometryImpact = metadata.absoluteGeometryImpact; end
             if isfield(metadata, "resetPolicy"), obj.ResetPolicy = string(metadata.resetPolicy); end
             if isfield(metadata, "displayName"), obj.DisplayName = string(metadata.displayName); end
             if isfield(metadata, "category"), obj.Category = string(metadata.category); end

@@ -45,6 +45,8 @@
             "groupId": "local.uimenu.menu",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -79,6 +81,8 @@
             "groupId": "local.uimenu.menu",
             "editor": "text",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -113,6 +117,8 @@
             "groupId": "local.uimenu.menu",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -148,6 +154,8 @@
             "groupId": "local.uimenu.menu",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -183,6 +191,8 @@
             "groupId": "local.uimenu.menu",
             "editor": "color",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "color",
@@ -225,6 +235,8 @@
             "groupId": "local.uimenu.interactivity",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -260,6 +272,8 @@
             "groupId": "local.uimenu.interactivity",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -295,6 +309,8 @@
             "groupId": "local.uimenu.interactivity",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -335,6 +351,8 @@
             "groupId": "local.uimenu.callbacks",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -370,6 +388,8 @@
             "groupId": "local.uimenu.callbacks",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -405,6 +425,8 @@
             "groupId": "local.uimenu.callbacks",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -436,7 +458,7 @@
       "entries": [
         {
           "path": "Interruptible",
-          "groupId": "exact.callbackexecutioncontrol.70dbfcc452dc",
+          "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
@@ -444,9 +466,11 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
-            "groupId": "exact.callbackexecutioncontrol.70dbfcc452dc",
+            "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -471,7 +495,7 @@
         },
         {
           "path": "BusyAction",
-          "groupId": "exact.callbackexecutioncontrol.70dbfcc452dc",
+          "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
@@ -479,9 +503,11 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
-            "groupId": "exact.callbackexecutioncontrol.70dbfcc452dc",
+            "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
             "editor": "enum",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -509,7 +535,7 @@
         },
         {
           "path": "BeingDeleted",
-          "groupId": "exact.callbackexecutioncontrol.70dbfcc452dc",
+          "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
@@ -517,9 +543,11 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
-            "groupId": "exact.callbackexecutioncontrol.70dbfcc452dc",
+            "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -560,6 +588,8 @@
             "groupId": "local.uimenu.parentchild",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -593,6 +623,8 @@
             "groupId": "local.uimenu.parentchild",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "graphicsObject",
@@ -626,6 +658,8 @@
             "groupId": "local.uimenu.parentchild",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "enum",
@@ -667,6 +701,8 @@
             "groupId": "local.uimenu.identifiers",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -700,6 +736,8 @@
             "groupId": "local.uimenu.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "text",
@@ -734,6 +772,8 @@
             "groupId": "local.uimenu.identifiers",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "arbitraryData",
@@ -774,6 +814,8 @@
             "groupId": "local.uimenu.uifigurebasedappsonly",
             "editor": "multilineText",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "multilineText",

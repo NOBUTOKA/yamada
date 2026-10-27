@@ -45,6 +45,8 @@
             "groupId": "local.geoaxes.maps",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -93,6 +95,8 @@
             "groupId": "local.geoaxes.maps",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -126,6 +130,8 @@
             "groupId": "local.geoaxes.maps",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -159,6 +165,8 @@
             "groupId": "local.geoaxes.maps",
             "editor": "numericVector",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -193,6 +201,8 @@
             "groupId": "local.geoaxes.maps",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -234,6 +244,8 @@
             "groupId": "local.geoaxes.maps",
             "editor": "number",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "number",
@@ -269,6 +281,8 @@
             "groupId": "local.geoaxes.maps",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -310,6 +324,8 @@
             "groupId": "local.geoaxes.maps",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -350,6 +366,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -384,6 +402,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "number",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "number",
@@ -419,6 +439,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -460,6 +482,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -498,6 +522,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -536,6 +562,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -569,6 +597,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -602,6 +632,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -640,6 +672,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -678,6 +712,8 @@
             "groupId": "local.geoaxes.font",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -727,6 +763,8 @@
             "groupId": "local.geoaxes.ticks",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -770,6 +808,8 @@
             "groupId": "local.geoaxes.ticks",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -811,6 +851,8 @@
             "groupId": "local.geoaxes.ticks",
             "editor": "numericVector",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -845,6 +887,8 @@
             "groupId": "local.geoaxes.ticks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -885,6 +929,8 @@
             "groupId": "local.geoaxes.rulers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -918,6 +964,8 @@
             "groupId": "local.geoaxes.rulers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -951,6 +999,8 @@
             "groupId": "local.geoaxes.rulers",
             "editor": "color",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "color",
@@ -993,6 +1043,8 @@
             "groupId": "local.geoaxes.grids",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -1028,6 +1080,8 @@
             "groupId": "local.geoaxes.grids",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1069,6 +1123,8 @@
             "groupId": "local.geoaxes.grids",
             "editor": "color",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "color",
@@ -1104,6 +1160,8 @@
             "groupId": "local.geoaxes.grids",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1145,6 +1203,8 @@
             "groupId": "local.geoaxes.grids",
             "editor": "number",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "number",
@@ -1180,6 +1240,8 @@
             "groupId": "local.geoaxes.grids",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1228,6 +1290,8 @@
             "groupId": "local.geoaxes.labels",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -1262,6 +1326,8 @@
             "groupId": "local.geoaxes.labels",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -1296,6 +1362,8 @@
             "groupId": "local.geoaxes.labels",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1335,6 +1403,8 @@
             "groupId": "local.geoaxes.labels",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -1369,6 +1439,8 @@
             "groupId": "local.geoaxes.labels",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -1403,6 +1475,8 @@
             "groupId": "local.geoaxes.labels",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -1432,7 +1506,7 @@
       "entries": [
         {
           "path": "ColorOrder",
-          "groupId": "exact.multipleplots.9ca2ff8e5e60",
+          "groupId": "exact.multipleplots.6139c591954b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorOrder",
@@ -1440,9 +1514,11 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 1,
-            "groupId": "exact.multipleplots.9ca2ff8e5e60",
+            "groupId": "exact.multipleplots.6139c591954b",
             "editor": "color",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "color",
@@ -1467,7 +1543,7 @@
         },
         {
           "path": "LineStyleOrder",
-          "groupId": "exact.multipleplots.9ca2ff8e5e60",
+          "groupId": "exact.multipleplots.6139c591954b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleOrder",
@@ -1475,9 +1551,11 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 2,
-            "groupId": "exact.multipleplots.9ca2ff8e5e60",
+            "groupId": "exact.multipleplots.6139c591954b",
             "editor": "stringList",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "stringList",
@@ -1503,7 +1581,7 @@
         },
         {
           "path": "LineStyleCyclingMethod",
-          "groupId": "exact.multipleplots.9ca2ff8e5e60",
+          "groupId": "exact.multipleplots.6139c591954b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleCyclingMethod",
@@ -1511,9 +1589,11 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 3,
-            "groupId": "exact.multipleplots.9ca2ff8e5e60",
+            "groupId": "exact.multipleplots.6139c591954b",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -1536,7 +1616,7 @@
         },
         {
           "path": "NextSeriesIndex",
-          "groupId": "exact.multipleplots.9ca2ff8e5e60",
+          "groupId": "exact.multipleplots.6139c591954b",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "NextSeriesIndex",
@@ -1544,9 +1624,11 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 4,
-            "groupId": "exact.multipleplots.9ca2ff8e5e60",
+            "groupId": "exact.multipleplots.6139c591954b",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -1569,7 +1651,7 @@
         },
         {
           "path": "NextPlot",
-          "groupId": "exact.multipleplots.9ca2ff8e5e60",
+          "groupId": "exact.multipleplots.6139c591954b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "NextPlot",
@@ -1577,9 +1659,11 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 5,
-            "groupId": "exact.multipleplots.9ca2ff8e5e60",
+            "groupId": "exact.multipleplots.6139c591954b",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1609,7 +1693,7 @@
         },
         {
           "path": "SortMethod",
-          "groupId": "exact.multipleplots.9ca2ff8e5e60",
+          "groupId": "exact.multipleplots.6139c591954b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SortMethod",
@@ -1617,9 +1701,11 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 6,
-            "groupId": "exact.multipleplots.9ca2ff8e5e60",
+            "groupId": "exact.multipleplots.6139c591954b",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1647,7 +1733,7 @@
         },
         {
           "path": "ColorOrderIndex",
-          "groupId": "exact.multipleplots.9ca2ff8e5e60",
+          "groupId": "exact.multipleplots.6139c591954b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorOrderIndex",
@@ -1655,9 +1741,11 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 7,
-            "groupId": "exact.multipleplots.9ca2ff8e5e60",
+            "groupId": "exact.multipleplots.6139c591954b",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -1680,7 +1768,7 @@
         },
         {
           "path": "LineStyleOrderIndex",
-          "groupId": "exact.multipleplots.9ca2ff8e5e60",
+          "groupId": "exact.multipleplots.6139c591954b",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleOrderIndex",
@@ -1688,9 +1776,11 @@
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 8,
-            "groupId": "exact.multipleplots.9ca2ff8e5e60",
+            "groupId": "exact.multipleplots.6139c591954b",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -1720,7 +1810,7 @@
       "entries": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
@@ -1728,9 +1818,11 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 1,
-            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
             "editor": "color",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "color",
@@ -1755,7 +1847,7 @@
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorScale",
@@ -1763,9 +1855,11 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 2,
-            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1793,7 +1887,7 @@
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLim",
@@ -1801,9 +1895,11 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 3,
-            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
             "editor": "numericVector",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -1827,7 +1923,7 @@
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLimMode",
@@ -1835,9 +1931,11 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 4,
-            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1868,7 +1966,7 @@
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
@@ -1876,9 +1974,11 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 5,
-            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
             "editor": "numericVector",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -1903,7 +2003,7 @@
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AlphaScale",
@@ -1911,9 +2011,11 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 6,
-            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -1941,7 +2043,7 @@
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALim",
@@ -1949,9 +2051,11 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 7,
-            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
             "editor": "numericVector",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -1975,7 +2079,7 @@
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALimMode",
@@ -1983,9 +2087,11 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 8,
-            "groupId": "exact.colorandtransparencymaps.6436bd9486ee",
+            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -2034,6 +2140,8 @@
             "groupId": "local.geoaxes.boxstyling",
             "editor": "color",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "color",
@@ -2069,6 +2177,8 @@
             "groupId": "local.geoaxes.boxstyling",
             "editor": "number",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "number",
@@ -2104,6 +2214,8 @@
             "groupId": "local.geoaxes.boxstyling",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -2146,6 +2258,8 @@
             "groupId": "local.geoaxes.position",
             "editor": "numericVector",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -2184,6 +2298,8 @@
             "groupId": "local.geoaxes.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "numericArray",
@@ -2221,6 +2337,8 @@
             "groupId": "local.geoaxes.position",
             "editor": "position",
             "previewPolicy": "adapt",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -2256,6 +2374,8 @@
             "groupId": "local.geoaxes.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -2289,6 +2409,8 @@
             "groupId": "local.geoaxes.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -2322,6 +2444,8 @@
             "groupId": "local.geoaxes.position",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -2365,6 +2489,8 @@
             "groupId": "local.geoaxes.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "graphicsObject",
@@ -2405,6 +2531,8 @@
             "groupId": "local.geoaxes.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -2438,6 +2566,8 @@
             "groupId": "local.geoaxes.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "graphicsObject",
@@ -2471,6 +2601,8 @@
             "groupId": "local.geoaxes.interactivity",
             "editor": "numericVector",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -2504,6 +2636,8 @@
             "groupId": "local.geoaxes.interactivity",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -2539,6 +2673,8 @@
             "groupId": "local.geoaxes.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -2572,6 +2708,8 @@
             "groupId": "local.geoaxes.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -2605,6 +2743,8 @@
             "groupId": "local.geoaxes.interactivity",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -2640,6 +2780,8 @@
             "groupId": "local.geoaxes.interactivity",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -2682,6 +2824,8 @@
             "groupId": "local.geoaxes.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -2717,6 +2861,8 @@
             "groupId": "local.geoaxes.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -2752,6 +2898,8 @@
             "groupId": "local.geoaxes.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -2794,6 +2942,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "onOff",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -2829,6 +2979,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "enum",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -2867,6 +3019,8 @@
             "groupId": "local.geoaxes.callbackexecutioncontrol",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -2906,6 +3060,8 @@
             "groupId": "local.geoaxes.callbackexecutioncontrol",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -2941,6 +3097,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -2981,6 +3139,8 @@
             "groupId": "local.geoaxes.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -3014,6 +3174,8 @@
             "groupId": "local.geoaxes.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "graphicsObject",
@@ -3047,6 +3209,8 @@
             "groupId": "local.geoaxes.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "enum",
@@ -3088,6 +3252,8 @@
             "groupId": "local.geoaxes.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -3121,6 +3287,8 @@
             "groupId": "local.geoaxes.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "text",
@@ -3155,6 +3323,8 @@
             "groupId": "local.geoaxes.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "arbitraryData",

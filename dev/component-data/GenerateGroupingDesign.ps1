@@ -92,6 +92,8 @@ function Get-PropertyCapability {
         path = [string]$Property.path
         valueContract = $valueContract
         affectsDisplay = [bool]$Property.affectsDisplay
+        gridGeometryImpact = [string]$Property.gridGeometryImpact
+        absoluteGeometryImpact = [bool]$Property.absoluteGeometryImpact
         previewPolicy = [string]$Property.previewPolicy
         requiredEditor = [string]$Property.requiredEditor
         disposition = [ordered]@{
@@ -304,7 +306,7 @@ foreach ($document in @($documents | Sort-Object id)) {
             if ($rule.effect -eq 'suppressed') { $effective = @($effective | Where-Object path -ne $rule.path) }
             elseif ($rule.effect -eq 'contributed') {
                 if (@($effective | Where-Object path -eq $rule.path).Count -ne 0) { throw "Parent context '$($context.id)' duplicates '$($rule.path)' for '$($document.id)'." }
-                $effective += [ordered]@{ path = [string]$rule.path; valueContract = $rule.valueContract; affectsDisplay = [bool]$rule.affectsDisplay; previewPolicy = [string]$rule.previewPolicy; requiredEditor = [string]$rule.requiredEditor; disposition = $rule.disposition }
+                $effective += [ordered]@{ path = [string]$rule.path; valueContract = $rule.valueContract; affectsDisplay = [bool]$rule.affectsDisplay; gridGeometryImpact = [string]$rule.gridGeometryImpact; absoluteGeometryImpact = [bool]$rule.absoluteGeometryImpact; previewPolicy = [string]$rule.previewPolicy; requiredEditor = [string]$rule.requiredEditor; disposition = $rule.disposition }
             }
         }
         $paths = @($effective | ForEach-Object path)

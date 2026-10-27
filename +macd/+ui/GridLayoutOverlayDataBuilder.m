@@ -174,7 +174,7 @@ classdef GridLayoutOverlayDataBuilder
                 % Include unmapped preview surfaces and every intervening parent exactly once.
                 parent = preview.Parent;
                 while ~isempty(parent) && isvalid(parent)
-                    if any(cellfun(@(item) isequal(item, parent), parents)), break, end
+                    if any(cellfun(@(item) item == parent, parents)), break, end
                     parents{end + 1} = parent; %#ok<AGROW>
                     parent = parent.Parent;
                 end

@@ -65,3 +65,24 @@ assert.notEqual(context.outlineNodes.get('a').node, outline);
 assert.equal(context.outlineNodes.has('b'), false);
 assert.equal(outline.parent, null);
 console.log('Diff rendering preserves controls, updates bindings, removes nodes, and rejects stale publications.');
+
+// Geometry-preserving property commits advance safety and event revisions without redrawing regions.
+context.currentData.geometryRevision = 3;
+component.Data = structuredClone(context.currentData);
+component.Data.gridEditor.revision = 4;
+component.Data.reparentRevision = 10;
+let renders = 0;
+const render = context.render;
+context.render = () => { renders += 1; };
+listeners.DataChanged({});
+assert.equal(renders, 0, 'same geometry must not rebuild selection or pointer regions');
+assert.equal(context.currentData.reparentRevision, 10);
+header.listeners.click({stopPropagation() {}});
+assert.equal(opened, 4, 'retained track controls still use the newest command revision');
+component.Data = structuredClone(component.Data);
+component.Data.gridEditor.revision = 5;
+component.Data.geometryRevision = 5;
+listeners.DataChanged({});
+assert.equal(renders, 1, 'native layout or catalog invalidation must restore rendering');
+context.render = render;
+console.log('Geometry reuse skips region rendering while preserving current event revisions.');

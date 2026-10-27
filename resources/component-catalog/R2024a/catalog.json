@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "matlabRelease": "R2024a",
-  "sourceGroupingSha256": "9e3d7ae91304e99014b7019fd4f11cd2e54d8397b15169c716521d2f6fd61020",
+  "sourceGroupingSha256": "6c02055a0e8497d0f7c9f28a519b2bf40506092e8e73170f9f98560d66334690",
   "propertyGroupFiles": [
     "property-groups/groups.json"
   ],
@@ -16,7 +16,19 @@
       "parentFactories": [
         "uigridlayout"
       ],
-      "kind": "grid"
+      "kind": "grid",
+      "geometryImpacts": [
+        {
+          "path": "Layout.Row",
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true
+        },
+        {
+          "path": "Layout.Column",
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true
+        }
+      ]
     },
     {
       "parentFactories": [
@@ -25,7 +37,8 @@
         "uitab",
         "uibuttongroup"
       ],
-      "kind": "absoluteIntrinsic"
+      "kind": "absoluteIntrinsic",
+      "geometryImpacts": []
     },
     {
       "parentFactories": [
@@ -35,7 +48,8 @@
         "uimenu",
         "uitoolbar"
       ],
-      "kind": "structural"
+      "kind": "structural",
+      "geometryImpacts": []
     }
   ],
   "componentFiles": [

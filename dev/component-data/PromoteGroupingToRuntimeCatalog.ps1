@@ -94,6 +94,8 @@ function Get-PropertyMetadata {
         groupId = $GroupId
         editor = $editor
         previewPolicy = [string]$Capability.previewPolicy
+        gridGeometryImpact = [string]$Capability.gridGeometryImpact
+        absoluteGeometryImpact = [bool]$Capability.absoluteGeometryImpact
         auditDisposition = [string]$Capability.disposition.kind
         valueSchema = $valueSchema
     }
@@ -183,6 +185,8 @@ foreach ($group in @($design.groups | Sort-Object id)) {
                 path = [string]$_.path
                 valueContract = $_.valueContract
                 affectsDisplay = [bool]$_.affectsDisplay
+                gridGeometryImpact = [string]$_.gridGeometryImpact
+                absoluteGeometryImpact = [bool]$_.absoluteGeometryImpact
                 previewPolicy = [string]$_.previewPolicy
                 requiredEditor = [string]$_.requiredEditor
                 disposition = $_.disposition
@@ -301,6 +305,9 @@ $parentContextRules = @($parentContextDocument.contexts |
         [ordered]@{
             parentFactories = @($_.parentFactories | ForEach-Object { [string]$_ })
             kind = $kind
+            geometryImpacts = @($parentContextDocument.rules | Where-Object { $_.contextId -eq $kind -and $_.effect -eq 'contributed' } | ForEach-Object {
+                [ordered]@{ path = [string]$_.path; gridGeometryImpact = [string]$_.gridGeometryImpact; absoluteGeometryImpact = [bool]$_.absoluteGeometryImpact }
+            })
         }
     })
 Write-Utf8JsonFile (Join-Path $catalogPath "catalog.json") ([ordered]@{

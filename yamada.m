@@ -66,6 +66,7 @@ classdef yamada < handle
         PreviewEditingBounds double = [0 0 1 1]
         PreviewGeometry struct = struct()
         LastOverlayValue struct = struct()
+        OverlayGeometryRevision double = 0
         InspectorPanel matlab.ui.container.Panel
         InspectorGrid matlab.ui.container.GridLayout
         InspectorView macd.ui.inspector.InspectorView
@@ -588,7 +589,7 @@ classdef yamada < handle
             if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog), app.CallbackDialog.refresh(); end
             % Publish settled geometry once; only layout-changing setters need polling.
             drawnow;
-            app.updateInteractionOverlay();
+            app.updateInteractionOverlay(applied && ~geometryChanged);
             if applied && geometryChanged, app.scheduleOverlayRefresh(); end
             if isappdata(app.UIFigure, "macdPerformanceMeasurement") && getappdata(app.UIFigure, "macdPerformanceMeasurement")
                 setappdata(app.UIFigure, "macdPreviewStatistics", app.PreviewRenderer.statistics());
@@ -1499,11 +1500,13 @@ classdef yamada < handle
             app.RootResizeGuide.Visible = "on";
         end
 
-        function updateInteractionOverlay(app)
-            % updateInteractionOverlay Send component silhouettes to the SVG layer.
+        function updateInteractionOverlay(app, reuseGeometry)
+            % updateInteractionOverlay Publish geometry only when catalog or native layout inputs require it.
             arguments (Input)
                 app (1, 1) yamada
+                reuseGeometry (1, 1) logical = false
             end
+            if reuseGeometry && app.reuseInteractionGeometry(), return, end
 
             if isempty(app.InteractionOverlay) || ~isvalid(app.InteractionOverlay) || ...
                     ~isa(app.PreviewHandles, "containers.Map")
@@ -1644,7 +1647,9 @@ classdef yamada < handle
                 "selectedComponentId", char(app.SelectedComponentId), ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);
+            data.geometryRevision = revision;
             comparable = data;
+            comparable.geometryRevision = 0;
             comparable.gridEditor.revision = 0;
             comparable.gridPlacement.revision = 0;
             for index = 1:numel(comparable.reparentTargets)
@@ -1657,7 +1662,75 @@ classdef yamada < handle
                 return
             end
             app.LastOverlayValue = comparable;
+            app.OverlayGeometryRevision = revision;
             app.InteractionOverlay.Data = data;
+        end
+
+        function reused = reuseInteractionGeometry(app)
+            % reuseInteractionGeometry Retain measured regions while refreshing gesture eligibility and revision.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            arguments (Output)
+                reused (1, 1) logical
+            end
+            reused = false;
+            data = app.LastOverlayValue;
+            if isempty(fieldnames(data)) || isempty(app.InteractionOverlay) || ~isvalid(app.InteractionOverlay) || ...
+                    string(data.selectedComponentId) ~= app.SelectedComponentId || ...
+                    (~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer) && app.TabLayoutTimer.Running == "on")
+                return
+            end
+            if (strlength(string(data.gridEditor.activeGridId)) > 0 && ~data.gridEditor.geometryAvailable) || ...
+                    (strlength(string(data.gridPlacement.activeGridId)) > 0 && ~data.gridPlacement.geometryAvailable)
+                return
+            end
+            % Reparent safety depends on document state even when all measured rectangles are unchanged.
+            selected = app.Document.getComponent(app.SelectedComponentId);
+            if isempty(selected), return, end
+            app.DropSourceId = app.SelectedComponentId;
+            app.DropStates = struct([]);
+            if selected.Id ~= app.Document.RootComponentId
+                try
+                    app.DropStates = app.reparentStates(selected.Id);
+                catch
+                    % Failed availability disables destinations without discarding proven geometry.
+                end
+            end
+            for index = 1:numel(data.reparentTargets)
+                target = data.reparentTargets(index);
+                match = [];
+                if ~isempty(app.DropStates), match = find(string({app.DropStates.Id}) == string(target.id), 1); end
+                target.enabled = false;
+                target.reason = 'Destination availability is unknown.';
+                if ~isempty(match)
+                    target.enabled = app.DropStates(match).Enabled;
+                    target.reason = char(app.DropStates(match).Reason);
+                end
+                parent = app.Document.getComponent(string(target.id));
+                if ~isempty(parent) && parent.Id == selected.ParentId
+                    target.enabled = selected.IsEditable && parent.IsEditable;
+                end
+                if isfield(target.grid, "geometryAvailable") && ~target.grid.geometryAvailable
+                    target.enabled = false;
+                    target.reason = target.grid.readOnlyReason;
+                end
+                data.reparentTargets(index) = target;
+            end
+            revision = app.InteractionOverlayRevision + 1;
+            data.reparentRevision = app.ReparentRevision;
+            app.LastOverlayValue = data;
+            data.geometryRevision = app.OverlayGeometryRevision;
+            data.gridEditor.revision = revision;
+            data.gridPlacement.revision = revision;
+            for index = 1:numel(data.reparentTargets)
+                if isfield(data.reparentTargets(index).grid, "revision")
+                    data.reparentTargets(index).grid.revision = revision;
+                end
+            end
+            app.InteractionOverlayRevision = revision;
+            app.InteractionOverlay.Data = data;
+            reused = true;
         end
 
         function capturePreviewGeometry(app, stamp)

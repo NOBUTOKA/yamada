@@ -40,7 +40,7 @@
       "entries": [
         {
           "path": "Value",
-          "groupId": "exact.switch.eb0e1541414b",
+          "groupId": "exact.switch.5a10684f87ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
@@ -48,9 +48,11 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 1,
-            "groupId": "exact.switch.eb0e1541414b",
+            "groupId": "exact.switch.5a10684f87ff",
             "editor": "itemSelection",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "itemSelection",
@@ -77,7 +79,7 @@
         },
         {
           "path": "Items",
-          "groupId": "exact.switch.eb0e1541414b",
+          "groupId": "exact.switch.5a10684f87ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Items",
@@ -85,9 +87,11 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 2,
-            "groupId": "exact.switch.eb0e1541414b",
+            "groupId": "exact.switch.5a10684f87ff",
             "editor": "stringList",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "stringList",
@@ -115,7 +119,7 @@
         },
         {
           "path": "ItemsData",
-          "groupId": "exact.switch.eb0e1541414b",
+          "groupId": "exact.switch.5a10684f87ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ItemsData",
@@ -123,9 +127,11 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 3,
-            "groupId": "exact.switch.eb0e1541414b",
+            "groupId": "exact.switch.5a10684f87ff",
             "editor": "structuredData",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "arbitraryData",
@@ -156,7 +162,7 @@
         },
         {
           "path": "ValueIndex",
-          "groupId": "exact.switch.eb0e1541414b",
+          "groupId": "exact.switch.5a10684f87ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ValueIndex",
@@ -164,9 +170,11 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 4,
-            "groupId": "exact.switch.eb0e1541414b",
+            "groupId": "exact.switch.5a10684f87ff",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -189,7 +197,7 @@
         },
         {
           "path": "Orientation",
-          "groupId": "exact.switch.eb0e1541414b",
+          "groupId": "exact.switch.5a10684f87ff",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Orientation",
@@ -197,9 +205,11 @@
             "categoryId": "switch",
             "category": "Switch",
             "order": 5,
-            "groupId": "exact.switch.eb0e1541414b",
+            "groupId": "exact.switch.5a10684f87ff",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -235,7 +245,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -243,9 +253,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -269,7 +281,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -277,9 +289,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "number",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "number",
@@ -305,7 +319,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -313,9 +327,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -343,7 +359,7 @@
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -351,9 +367,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -381,7 +399,7 @@
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -389,9 +407,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "color",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "color",
@@ -434,6 +454,8 @@
             "groupId": "standardInteractivity",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -469,6 +491,8 @@
             "groupId": "standardInteractivity",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -504,6 +528,8 @@
             "groupId": "standardInteractivity",
             "editor": "multilineText",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "multilineText",
@@ -540,6 +566,8 @@
             "groupId": "local.uiswitch-rocker.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -580,6 +608,8 @@
             "groupId": "local.uiswitch-rocker.position",
             "editor": "position",
             "previewPolicy": "adapt",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -620,6 +650,8 @@
             "groupId": "local.uiswitch-rocker.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -657,6 +689,8 @@
             "groupId": "local.uiswitch-rocker.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -694,6 +728,8 @@
             "groupId": "local.uiswitch-rocker.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "graphicsObject",
@@ -734,6 +770,8 @@
             "groupId": "local.uiswitch-rocker.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -769,6 +807,8 @@
             "groupId": "local.uiswitch-rocker.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -804,6 +844,8 @@
             "groupId": "local.uiswitch-rocker.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -846,6 +888,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "onOff",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -881,6 +925,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "enum",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -919,6 +965,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -959,6 +1007,8 @@
             "groupId": "local.uiswitch-rocker.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -992,6 +1042,8 @@
             "groupId": "local.uiswitch-rocker.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "enum",
@@ -1033,6 +1085,8 @@
             "groupId": "local.uiswitch-rocker.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -1066,6 +1120,8 @@
             "groupId": "local.uiswitch-rocker.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "text",
@@ -1100,6 +1156,8 @@
             "groupId": "local.uiswitch-rocker.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "arbitraryData",

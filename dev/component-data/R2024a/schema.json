@@ -37,7 +37,12 @@
       "description": "Documented positional factory arguments that distinguish this variant. An empty array denotes the factory default.",
       "type": "array",
       "items": {
-        "type": ["string", "number", "boolean", "null"]
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "null"
+        ]
       }
     },
     "declaredType": {
@@ -74,7 +79,11 @@
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type", "url", "scope"],
+      "required": [
+        "type",
+        "url",
+        "scope"
+      ],
       "properties": {
         "type": {
           "const": "mathworksDocumentation"
@@ -95,7 +104,11 @@
     "category": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "displayName", "order"],
+      "required": [
+        "id",
+        "displayName",
+        "order"
+      ],
       "properties": {
         "id": {
           "description": "Stable local identifier used by properties in this file.",
@@ -127,7 +140,10 @@
         "affectsDisplay",
         "previewPolicy",
         "requiredEditor",
-        "disposition"
+        "disposition",
+        "gridGeometryImpact",
+        "absoluteGeometryImpact",
+        "geometryEvidence"
       ],
       "properties": {
         "path": {
@@ -167,7 +183,11 @@
         },
         "runtimeSetAccess": {
           "description": "Target-release meta.property SetAccess observation. This supporting evidence does not override documentedReadOnly.",
-          "enum": ["public", "restricted", "unresolved"]
+          "enum": [
+            "public",
+            "restricted",
+            "unresolved"
+          ]
         },
         "runtimeObservations": {
           "description": "Target-release hidden-fixture observations retained separately from authoritative documentation facts.",
@@ -191,11 +211,27 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["kind", "source", "detail"],
+            "required": [
+              "kind",
+              "source",
+              "detail"
+            ],
             "properties": {
-              "kind": {"enum": ["documentation", "inference", "runtime"]},
-              "source": {"type": "string", "minLength": 1},
-              "detail": {"type": "string", "minLength": 1}
+              "kind": {
+                "enum": [
+                  "documentation",
+                  "inference",
+                  "runtime"
+                ]
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           }
         },
@@ -205,15 +241,84 @@
         },
         "previewPolicy": {
           "description": "Safe Preview assignment policy, independent of editability.",
-          "enum": ["apply", "adapt", "skip", "notRendered"]
+          "enum": [
+            "apply",
+            "adapt",
+            "skip",
+            "notRendered"
+          ]
         },
         "requiredEditor": {
           "description": "Semantic editor requirement for an editable property; this does not assert adapter implementation status.",
-          "enum": ["none", "text", "multilineText", "logical", "onOff", "enum", "number", "numericVector", "position", "numericMatrix", "color", "stringList", "gridTrackList", "itemSelection", "asset", "url", "dateTime", "tableData", "columnSettings", "componentReference", "structuredData"]
+          "enum": [
+            "none",
+            "text",
+            "multilineText",
+            "logical",
+            "onOff",
+            "enum",
+            "number",
+            "numericVector",
+            "position",
+            "numericMatrix",
+            "color",
+            "stringList",
+            "gridTrackList",
+            "itemSelection",
+            "asset",
+            "url",
+            "dateTime",
+            "tableData",
+            "columnSettings",
+            "componentReference",
+            "structuredData"
+          ]
         },
         "disposition": {
           "description": "Initial product disposition, independent of current adapter availability.",
           "$ref": "#/$defs/disposition"
+        },
+        "gridGeometryImpact": {
+          "enum": [
+            "none",
+            "fit",
+            "required"
+          ],
+          "description": "Safe Preview geometry refresh for a grid-managed component: none, only with a fit dependency, or required."
+        },
+        "absoluteGeometryImpact": {
+          "type": "boolean",
+          "description": "Whether free-position geometry or interaction regions require refresh."
+        },
+        "geometryEvidence": {
+          "description": "Non-executable documentation, inference, or runtime evidence for geometry classification.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "source",
+              "detail"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "documentation",
+                  "inference",
+                  "runtime"
+                ]
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         }
       }
     },
@@ -224,35 +329,143 @@
         "applyAfter": {
           "type": "array",
           "uniqueItems": true,
-          "items": {"type": "string", "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"}
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"
+          }
         },
-        "nameValue": {"enum": ["supported", "unsupported", "unknown"]},
-        "effectPolicy": {"enum": ["none", "itemSelection", "boundedValue", "numericValue", "tickMode", "valueMode", "modeFlag", "axisWidth", "positionAlias", "squarePositionAlias", "textValue", "componentReference", "layout", "gridTracks", "buttonSelection", "positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition", "linearPosition"]},
-        "effectStatus": {"enum": ["unknown", "independent", "modeled", "unsupported"]},
-        "affectedPaths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"}},
-        "effectReason": {"type": "string", "minLength": 1},
-        "defaultLiteral": {"type": "string", "minLength": 1, "description": "Audited inert MATLAB literal, parsed without eval to seed effective-state resolution."}
+        "nameValue": {
+          "enum": [
+            "supported",
+            "unsupported",
+            "unknown"
+          ]
+        },
+        "effectPolicy": {
+          "enum": [
+            "none",
+            "itemSelection",
+            "boundedValue",
+            "numericValue",
+            "tickMode",
+            "valueMode",
+            "modeFlag",
+            "axisWidth",
+            "positionAlias",
+            "squarePositionAlias",
+            "textValue",
+            "componentReference",
+            "layout",
+            "gridTracks",
+            "buttonSelection",
+            "positionInput",
+            "sliderPosition",
+            "squarePosition",
+            "switchPosition",
+            "semicircularPosition",
+            "linearPosition"
+          ]
+        },
+        "effectStatus": {
+          "enum": [
+            "unknown",
+            "independent",
+            "modeled",
+            "unsupported"
+          ]
+        },
+        "affectedPaths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$"
+          }
+        },
+        "effectReason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "defaultLiteral": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Audited inert MATLAB literal, parsed without eval to seed effective-state resolution."
+        }
       }
     },
     "valueContract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "matlabClasses", "shape", "allowsEmpty", "constraints"],
+      "required": [
+        "kind",
+        "matlabClasses",
+        "shape",
+        "allowsEmpty",
+        "constraints"
+      ],
       "properties": {
         "kind": {
-          "enum": ["text", "multilineText", "logical", "onOff", "enum", "number", "numericArray", "color", "stringList", "gridTrackList", "dayOfWeekList", "itemSelection", "filePath", "url", "dateTime", "tabularData", "columnWidth", "columnFormat", "callback", "componentReference", "graphicsObject", "arbitraryData", "opaque"]
+          "enum": [
+            "text",
+            "multilineText",
+            "logical",
+            "onOff",
+            "enum",
+            "number",
+            "numericArray",
+            "color",
+            "stringList",
+            "gridTrackList",
+            "dayOfWeekList",
+            "itemSelection",
+            "filePath",
+            "url",
+            "dateTime",
+            "tabularData",
+            "columnWidth",
+            "columnFormat",
+            "callback",
+            "componentReference",
+            "graphicsObject",
+            "arbitraryData",
+            "opaque"
+          ]
         },
         "matlabClasses": {
           "description": "Normalized accepted MATLAB value classes. any and unknown are audit markers rather than MATLAB class names.",
           "type": "array",
           "minItems": 1,
           "items": {
-            "enum": ["char", "string", "cell", "categorical", "logical", "numeric", "double", "datetime", "duration", "calendarDuration", "table", "timetable", "function_handle", "handle", "any", "unknown"]
+            "enum": [
+              "char",
+              "string",
+              "cell",
+              "categorical",
+              "logical",
+              "numeric",
+              "double",
+              "datetime",
+              "duration",
+              "calendarDuration",
+              "table",
+              "timetable",
+              "function_handle",
+              "handle",
+              "any",
+              "unknown"
+            ]
           },
           "uniqueItems": true
         },
         "shape": {
-          "enum": ["scalar", "vector", "matrix", "fixedLengthVector", "propertyDependent", "any"]
+          "enum": [
+            "scalar",
+            "vector",
+            "matrix",
+            "fixedLengthVector",
+            "propertyDependent",
+            "any"
+          ]
         },
         "allowsEmpty": {
           "type": "boolean"
@@ -288,7 +501,11 @@
         },
         "orientation": {
           "description": "Documented orientation when vector orientation is significant.",
-          "enum": ["row", "column", "any"]
+          "enum": [
+            "row",
+            "column",
+            "any"
+          ]
         },
         "allowsNaT": {
           "description": "Whether a datetime contract admits NaT independently of empty-array support.",
@@ -296,7 +513,13 @@
         },
         "normalization": {
           "description": "Documented or target-runtime canonical form relevant to safe editing.",
-          "enum": ["dateOnly", "columnVector", "charOrRowCell", "logical", "rowCell"]
+          "enum": [
+            "dateOnly",
+            "columnVector",
+            "charOrRowCell",
+            "logical",
+            "rowCell"
+          ]
         },
         "multiselectProperty": {
           "description": "Existing peer property controlling scalar or multiple item selection.",
@@ -324,10 +547,20 @@
     "valueConstraint": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind"],
+      "required": [
+        "kind"
+      ],
       "properties": {
         "kind": {
-          "enum": ["sameLengthAs", "memberOf", "withinLimitsOf", "sameShapeAs", "pairedWith", "strictlyIncreasing", "sortedAscending"]
+          "enum": [
+            "sameLengthAs",
+            "memberOf",
+            "withinLimitsOf",
+            "sameShapeAs",
+            "pairedWith",
+            "strictlyIncreasing",
+            "sortedAscending"
+          ]
         },
         "property": {
           "type": "string",
@@ -339,12 +572,20 @@
           "if": {
             "properties": {
               "kind": {
-                "enum": ["sameLengthAs", "memberOf", "withinLimitsOf", "sameShapeAs", "pairedWith"]
+                "enum": [
+                  "sameLengthAs",
+                  "memberOf",
+                  "withinLimitsOf",
+                  "sameShapeAs",
+                  "pairedWith"
+                ]
               }
             }
           },
           "then": {
-            "required": ["property"]
+            "required": [
+              "property"
+            ]
           }
         }
       ]
@@ -352,15 +593,36 @@
     "disposition": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "reasonCodes"],
+      "required": [
+        "kind",
+        "reasonCodes"
+      ],
       "properties": {
         "kind": {
-          "enum": ["editable", "readOnly", "omitted"]
+          "enum": [
+            "editable",
+            "readOnly",
+            "omitted"
+          ]
         },
         "reasonCodes": {
           "type": "array",
           "items": {
-            "enum": ["documentedReadOnly", "runtimeSetRestricted", "hierarchyManaged", "callbackManaged", "callbackExecutable", "handleReference", "arbitraryData", "externalResource", "lifecycleInternal", "lowDesignTimeValue", "unsafeToEvaluate", "sourceOnly", "deferredComponentReference"]
+            "enum": [
+              "documentedReadOnly",
+              "runtimeSetRestricted",
+              "hierarchyManaged",
+              "callbackManaged",
+              "callbackExecutable",
+              "handleReference",
+              "arbitraryData",
+              "externalResource",
+              "lifecycleInternal",
+              "lowDesignTimeValue",
+              "unsafeToEvaluate",
+              "sourceOnly",
+              "deferredComponentReference"
+            ]
           },
           "uniqueItems": true
         }

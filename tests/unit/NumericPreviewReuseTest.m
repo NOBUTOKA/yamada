@@ -23,7 +23,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                         macd.ui.RefreshRequest("properties", first.Id, "Value"));
                     testCase.verifyTrue(applied, layout);
                     testCase.verifyEmpty(diagnostics);
-                    testCase.verifyTrue(geometry);
+                    testCase.verifyFalse(geometry);
                     testCase.verifyTrue(isvalid(canvas));
                     testCase.verifyEqual(handles(char(first.Id)), original);
                     testCase.verifyEqual(original.Value, value);

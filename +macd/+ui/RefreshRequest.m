@@ -23,21 +23,80 @@ classdef RefreshRequest
             obj.Paths = unique(reshape(paths, 1, []), "stable");
         end
 
-        function result = affectsGeometry(obj)
-            % affectsGeometry Include native fit sizing even for independently stored font values.
+        function result = affectsGeometry(obj, document, registry, handles)
+            % affectsGeometry Resolve catalog impacts against actual placement and native fit dependencies.
             arguments (Input)
                 obj (1, 1) macd.ui.RefreshRequest
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+                handles containers.Map
             end
             arguments (Output)
                 result (1, 1) logical
             end
-            result = any(obj.Kind == ["layout", "structure"]) || ...
-                any(startsWith(obj.Paths, "Layout.")) || any(ismember(obj.Paths, ...
-                ["Position", "InnerPosition", "OuterPosition", "Units", "Text", "FontSize", ...
-                "FontName", "FontWeight", "FontAngle", "WordWrap", "Visible", "Padding", ...
-                "RowSpacing", "ColumnSpacing", "RowHeight", "ColumnWidth"]));
+            result = obj.Kind ~= "selection";
+            if obj.Kind ~= "properties" || isempty(obj.Paths) || isempty(obj.ComponentIds), return, end
+            for id = obj.ComponentIds
+                component = document.getComponent(id);
+                if isempty(component), return, end
+                parent = document.getComponent(component.ParentId);
+                parentFactory = "";
+                if ~isempty(parent), parentFactory = parent.Factory; end
+                definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+                [found, indices] = ismember(obj.Paths, string({definitions.Path}));
+                if ~all(found), return, end
+                for index = indices
+                    definition = definitions(index);
+                    if parentFactory ~= "uigridlayout"
+                        if definition.AbsoluteGeometryImpact, return, end
+                    elseif ~any(definition.GridGeometryImpact == ["none", "fit"]) || ...
+                            (definition.GridGeometryImpact == "fit" && ...
+                            macd.ui.RefreshRequest.hasFitDependency(document, handles, parent))
+                        return
+                    end
+                end
+            end
+            result = false;
+        end
+
+    end
+    methods (Static, Access = private)
+        function result = hasFitDependency(document, handles, component)
+            % hasFitDependency Retain refresh for fit ancestors and unavailable native layout inputs.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                handles containers.Map
+                component (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = true;
+            for depth = 1:numel(document.Components)
+                if component.Factory == "uigridlayout"
+                    if ~isKey(handles, char(component.Id)), return, end
+                    preview = handles(char(component.Id));
+                    if ~isvalid(preview) || ~isa(preview, "matlab.ui.container.GridLayout"), return, end
+                    for path = ["RowHeight", "ColumnWidth"]
+                        tracks = preview.(path);
+                        if isnumeric(tracks), continue, end
+                        if ~iscell(tracks), tracks = cellstr(string(tracks)); end
+                        for index = 1:numel(tracks)
+                            track = tracks{index};
+                            if (ischar(track) || isstring(track)) && isequal(string(track), "fit"), return, end
+                        end
+                    end
+                end
+                if strlength(component.ParentId) == 0
+                    result = false;
+                    return
+                end
+                component = document.getComponent(component.ParentId);
+                if isempty(component), return, end
+            end
         end
     end
+
 end
 
 %{

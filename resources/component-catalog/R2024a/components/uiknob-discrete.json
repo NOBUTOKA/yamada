@@ -51,6 +51,8 @@
             "groupId": "local.uiknob-discrete.knob",
             "editor": "itemSelection",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "itemSelection",
@@ -88,6 +90,8 @@
             "groupId": "local.uiknob-discrete.knob",
             "editor": "stringList",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "stringList",
@@ -125,6 +129,8 @@
             "groupId": "local.uiknob-discrete.knob",
             "editor": "structuredData",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "arbitraryData",
@@ -166,6 +172,8 @@
             "groupId": "local.uiknob-discrete.knob",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "opaque",
@@ -195,7 +203,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -203,9 +211,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "text",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -229,7 +239,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -237,9 +247,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "number",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "number",
@@ -265,7 +277,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -273,9 +285,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -303,7 +317,7 @@
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -311,9 +325,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "enum",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "fit",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -341,7 +357,7 @@
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.bb68af77ba17",
+          "groupId": "exact.font.0179cf584b1f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -349,9 +365,11 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.bb68af77ba17",
+            "groupId": "exact.font.0179cf584b1f",
             "editor": "color",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "color",
@@ -394,6 +412,8 @@
             "groupId": "standardInteractivity",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -429,6 +449,8 @@
             "groupId": "standardInteractivity",
             "editor": "onOff",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -464,6 +486,8 @@
             "groupId": "standardInteractivity",
             "editor": "multilineText",
             "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "multilineText",
@@ -500,6 +524,8 @@
             "groupId": "local.uiknob-discrete.interactivity",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -540,6 +566,8 @@
             "groupId": "local.uiknob-discrete.position",
             "editor": "position",
             "previewPolicy": "adapt",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -573,6 +601,8 @@
             "groupId": "local.uiknob-discrete.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -610,6 +640,8 @@
             "groupId": "local.uiknob-discrete.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -647,6 +679,8 @@
             "groupId": "local.uiknob-discrete.position",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "graphicsObject",
@@ -687,6 +721,8 @@
             "groupId": "local.uiknob-discrete.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -722,6 +758,8 @@
             "groupId": "local.uiknob-discrete.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -757,6 +795,8 @@
             "groupId": "local.uiknob-discrete.callbacks",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -799,6 +839,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "onOff",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -834,6 +876,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "enum",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -872,6 +916,8 @@
             "groupId": "callbackExecutionCore",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -912,6 +958,8 @@
             "groupId": "local.uiknob-discrete.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -945,6 +993,8 @@
             "groupId": "local.uiknob-discrete.parentchild",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "enum",
@@ -986,6 +1036,8 @@
             "groupId": "local.uiknob-discrete.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -1019,6 +1071,8 @@
             "groupId": "local.uiknob-discrete.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "text",
@@ -1053,6 +1107,8 @@
             "groupId": "local.uiknob-discrete.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "arbitraryData",

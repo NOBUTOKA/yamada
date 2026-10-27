@@ -38,6 +38,8 @@
             "groupId": "local.uitoggletool.toggletool",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -73,6 +75,8 @@
             "groupId": "local.uitoggletool.toggletool",
             "editor": "asset",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "filePath",
@@ -108,6 +112,8 @@
             "groupId": "local.uitoggletool.toggletool",
             "editor": "numericVector",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "numericArray",
@@ -141,6 +147,8 @@
             "groupId": "local.uitoggletool.toggletool",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -172,7 +180,7 @@
       "entries": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.f07e6903a776",
+          "groupId": "exact.interactivity.f9707e9d610c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
@@ -180,9 +188,11 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
-            "groupId": "exact.interactivity.f07e6903a776",
+            "groupId": "exact.interactivity.f9707e9d610c",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -207,7 +217,7 @@
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.f07e6903a776",
+          "groupId": "exact.interactivity.f9707e9d610c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
@@ -215,9 +225,11 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
-            "groupId": "exact.interactivity.f07e6903a776",
+            "groupId": "exact.interactivity.f9707e9d610c",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -242,7 +254,7 @@
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.f07e6903a776",
+          "groupId": "exact.interactivity.f9707e9d610c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
@@ -250,9 +262,11 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
-            "groupId": "exact.interactivity.f07e6903a776",
+            "groupId": "exact.interactivity.f9707e9d610c",
             "editor": "text",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -277,7 +291,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.f07e6903a776",
+          "groupId": "exact.interactivity.f9707e9d610c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -285,9 +299,11 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
-            "groupId": "exact.interactivity.f07e6903a776",
+            "groupId": "exact.interactivity.f9707e9d610c",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -310,7 +326,7 @@
         },
         {
           "path": "TooltipString",
-          "groupId": "exact.interactivity.f07e6903a776",
+          "groupId": "exact.interactivity.f9707e9d610c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TooltipString",
@@ -318,9 +334,11 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 5,
-            "groupId": "exact.interactivity.f07e6903a776",
+            "groupId": "exact.interactivity.f9707e9d610c",
             "editor": "text",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "text",
@@ -363,6 +381,8 @@
             "groupId": "local.uitoggletool.callbacks",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -398,6 +418,8 @@
             "groupId": "local.uitoggletool.callbacks",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -433,6 +455,8 @@
             "groupId": "local.uitoggletool.callbacks",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -468,6 +492,8 @@
             "groupId": "local.uitoggletool.callbacks",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -503,6 +529,8 @@
             "groupId": "local.uitoggletool.callbacks",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "callback",
@@ -534,7 +562,7 @@
       "entries": [
         {
           "path": "Interruptible",
-          "groupId": "exact.callbackexecutioncontrol.5b240a7f6c51",
+          "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
@@ -542,9 +570,11 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
-            "groupId": "exact.callbackexecutioncontrol.5b240a7f6c51",
+            "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -569,7 +599,7 @@
         },
         {
           "path": "BusyAction",
-          "groupId": "exact.callbackexecutioncontrol.5b240a7f6c51",
+          "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
@@ -577,9 +607,11 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
-            "groupId": "exact.callbackexecutioncontrol.5b240a7f6c51",
+            "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
             "editor": "enum",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "enum",
@@ -607,7 +639,7 @@
         },
         {
           "path": "BeingDeleted",
-          "groupId": "exact.callbackexecutioncontrol.5b240a7f6c51",
+          "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
@@ -615,9 +647,11 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
-            "groupId": "exact.callbackexecutioncontrol.5b240a7f6c51",
+            "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -640,7 +674,7 @@
         },
         {
           "path": "HitTest",
-          "groupId": "exact.callbackexecutioncontrol.5b240a7f6c51",
+          "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HitTest",
@@ -648,9 +682,11 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 4,
-            "groupId": "exact.callbackexecutioncontrol.5b240a7f6c51",
+            "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
             "editor": "onOff",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {
               "kind": "onOff",
@@ -693,6 +729,8 @@
             "groupId": "local.uitoggletool.parentchild",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "readOnly",
             "valueSchema": {
               "kind": "componentReference",
@@ -726,6 +764,8 @@
             "groupId": "local.uitoggletool.parentchild",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "enum",
@@ -767,6 +807,8 @@
             "groupId": "local.uitoggletool.identifiers",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "opaque",
@@ -800,6 +842,8 @@
             "groupId": "local.uitoggletool.identifiers",
             "editor": "readOnly",
             "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "text",
@@ -834,6 +878,8 @@
             "groupId": "local.uitoggletool.identifiers",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
             "auditDisposition": "omitted",
             "valueSchema": {
               "kind": "arbitraryData",

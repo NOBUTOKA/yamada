@@ -40,7 +40,7 @@ try {
     Copy-Item -LiteralPath (Join-Path $toolRoot 'R2024a') -Destination $releaseRoot -Recurse
     Assert-ComponentLedgerSchema -ReleaseDirectory $releaseRoot
     $documents = @(Get-ChildItem -LiteralPath (Join-Path $releaseRoot 'components') -Filter '*.json' -File)
-    $entries = @('ApplyApplicationPolicyReview', 'GenerateGroupingArtifacts', 'GenerateGroupingDesign', 'PromoteGroupingToRuntimeCatalog')
+    $entries = @('ApplyGeometryImpactReview', 'ApplyApplicationPolicyReview', 'GenerateGroupingArtifacts', 'GenerateGroupingDesign', 'PromoteGroupingToRuntimeCatalog')
     foreach ($entry in $entries) { Invoke-PipelineEntry $entry $releaseRoot $catalogRoot }
     Assert-ComponentLedgerSchema -ReleaseDirectory $releaseRoot
 
@@ -52,14 +52,24 @@ try {
     $ticks = @($runtime.categories | ForEach-Object { $_.entries }) | Where-Object path -CEQ 'XTick'
     Assert-Condition ($ticks.metadata.description -ceq 'Tick values') 'The grouped official heading did not reach runtime metadata.'
 
+    $label = Get-Content -LiteralPath (Join-Path $catalogRoot 'components/uilabel.json') -Raw | ConvertFrom-Json
+    $text = @($label.categories | ForEach-Object { $_.entries }) | Where-Object path -CEQ 'Text'
+    Assert-Condition ($text.metadata.gridGeometryImpact -ceq 'fit' -and $text.metadata.absoluteGeometryImpact -ceq $false) 'Geometry metadata did not reach the runtime component.'
+    $manifest = Get-Content -LiteralPath (Join-Path $catalogRoot 'catalog.json') -Raw | ConvertFrom-Json
+    $grid = $manifest.parentContextRules | Where-Object kind -CEQ 'grid'
+    Assert-Condition ($grid.geometryImpacts.Count -eq 2 -and @($grid.geometryImpacts | Where-Object gridGeometryImpact -CNE 'required').Count -eq 0) 'Contributed geometry metadata did not reach runtime rules.'
+
     # A late invalid component must block every ingress without partial artifacts.
     $fixturePath = Join-Path $releaseRoot 'components/uilistbox.json'
     $original = [IO.File]::ReadAllText($fixturePath)
     $rejections = 0
-    foreach ($case in @('scalarClass', 'emptySummary', 'unknownReason', 'invalidPeerPath', 'unknownPolicyField', 'malformedJson')) {
+    foreach ($case in @('missingGeometry', 'unknownGeometry', 'numericGeometryBoolean', 'scalarClass', 'emptySummary', 'unknownReason', 'invalidPeerPath', 'unknownPolicyField', 'malformedJson')) {
         $fixture = $original | ConvertFrom-Json
         $value = $fixture.properties | Where-Object path -CEQ 'Value'
         switch ($case) {
+            'missingGeometry' { $value.PSObject.Properties.Remove('gridGeometryImpact') }
+            'unknownGeometry' { $value.gridGeometryImpact = 'unknown' }
+            'numericGeometryBoolean' { $value.absoluteGeometryImpact = 0 }
             'scalarClass' { $value.valueContract.matlabClasses = 'any' }
             'emptySummary' { $value.summary = '' }
             'unknownReason' { $value.disposition.reasonCodes = @('unreviewedReason') }

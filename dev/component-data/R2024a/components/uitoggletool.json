@@ -85,7 +85,16 @@
         "effectStatus": "unsupported",
         "affectedPaths": [],
         "effectReason": "State assignment invokes owned callbacks under figure but not uifigure in the R2024a fixture. Context-dependent callback effects remain unsupported; independence is not asserted."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Icon",
@@ -124,7 +133,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "CData",
@@ -159,7 +177,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Separator",
@@ -196,7 +223,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Visible",
@@ -233,7 +269,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Enable",
@@ -270,7 +315,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Tooltip",
@@ -308,7 +362,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "ContextMenu",
@@ -345,7 +408,16 @@
         "effectStatus": "unknown",
         "affectedPaths": [],
         "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "TooltipString",
@@ -383,7 +455,16 @@
         "effectStatus": "unknown",
         "affectedPaths": [],
         "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "ClickedCallback",
@@ -425,7 +506,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "OnCallback",
@@ -467,7 +557,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "OffCallback",
@@ -509,7 +608,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "CreateFcn",
@@ -551,7 +659,16 @@
         "effectStatus": "unsupported",
         "affectedPaths": [],
         "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "DeleteFcn",
@@ -593,7 +710,16 @@
         "effectStatus": "unsupported",
         "affectedPaths": [],
         "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Interruptible",
@@ -630,7 +756,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "BusyAction",
@@ -670,7 +805,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "BeingDeleted",
@@ -707,7 +851,16 @@
         "effectStatus": "unknown",
         "affectedPaths": [],
         "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "HitTest",
@@ -744,7 +897,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Parent",
@@ -780,7 +942,16 @@
         "effectStatus": "unknown",
         "affectedPaths": [],
         "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "HandleVisibility",
@@ -819,7 +990,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Type",
@@ -856,7 +1036,16 @@
         "effectStatus": "unknown",
         "affectedPaths": [],
         "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "Tag",
@@ -895,7 +1084,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     },
     {
       "path": "UserData",
@@ -933,7 +1131,16 @@
         "effectStatus": "independent",
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-      }
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
     }
   ]
 }

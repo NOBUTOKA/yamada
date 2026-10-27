@@ -5,7 +5,12 @@
   "description": "Development-only rules for deriving a child component's effective property surface from its direct-parent context.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "matlabRelease", "contexts", "rules"],
+  "required": [
+    "schemaVersion",
+    "matlabRelease",
+    "contexts",
+    "rules"
+  ],
   "properties": {
     "$schema": {
       "const": "parent-context-rules.schema.json"
@@ -34,10 +39,17 @@
     "context": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "parentFactories"],
+      "required": [
+        "id",
+        "parentFactories"
+      ],
       "properties": {
         "id": {
-          "enum": ["absolute", "grid", "structural"]
+          "enum": [
+            "absolute",
+            "grid",
+            "structural"
+          ]
         },
         "parentFactories": {
           "type": "array",
@@ -52,16 +64,29 @@
     "rule": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["contextId", "scope", "effect", "path"],
+      "required": [
+        "contextId",
+        "scope",
+        "effect",
+        "path"
+      ],
       "properties": {
         "contextId": {
-          "enum": ["absolute", "grid", "structural"]
+          "enum": [
+            "absolute",
+            "grid",
+            "structural"
+          ]
         },
         "scope": {
           "const": "eligibleDirectChild"
         },
         "effect": {
-          "enum": ["contributed", "suppressed", "constrained"]
+          "enum": [
+            "contributed",
+            "suppressed",
+            "constrained"
+          ]
         },
         "path": {
           "type": "string",
@@ -74,13 +99,48 @@
           "type": "boolean"
         },
         "previewPolicy": {
-          "enum": ["apply", "adapt", "skip", "notRendered"]
+          "enum": [
+            "apply",
+            "adapt",
+            "skip",
+            "notRendered"
+          ]
         },
         "requiredEditor": {
-          "enum": ["none", "text", "logical", "onOff", "enum", "number", "numericVector", "numericMatrix", "color", "stringList", "asset", "url", "dateTime", "tableData", "componentReference", "structuredData"]
+          "enum": [
+            "none",
+            "text",
+            "logical",
+            "onOff",
+            "enum",
+            "number",
+            "numericVector",
+            "numericMatrix",
+            "color",
+            "stringList",
+            "asset",
+            "url",
+            "dateTime",
+            "tableData",
+            "componentReference",
+            "structuredData"
+          ]
         },
         "disposition": {
           "$ref": "schema.json#/$defs/disposition"
+        },
+        "gridGeometryImpact": {
+          "enum": [
+            "none",
+            "fit",
+            "required"
+          ]
+        },
+        "absoluteGeometryImpact": {
+          "type": "boolean"
+        },
+        "geometryEvidence": {
+          "$ref": "schema.json#/$defs/property/properties/geometryEvidence"
         }
       },
       "allOf": [
@@ -93,7 +153,16 @@
             }
           },
           "then": {
-            "required": ["valueContract", "affectsDisplay", "previewPolicy", "requiredEditor", "disposition"]
+            "required": [
+              "valueContract",
+              "affectsDisplay",
+              "previewPolicy",
+              "requiredEditor",
+              "disposition",
+              "gridGeometryImpact",
+              "absoluteGeometryImpact",
+              "geometryEvidence"
+            ]
           }
         }
       ]
