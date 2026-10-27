@@ -43,6 +43,7 @@ classdef yamada < handle
         Lifecycle macd.ui.DocumentLifecycleService
         SavePathConfirmed logical = false
         SavedSourceText string = ""
+        IsCheckingExternalSource logical = false
         IsReloading logical = false
         IsClosingProgrammatically logical = false
         KeyboardFocusMoved logical = false
@@ -191,6 +192,7 @@ classdef yamada < handle
                 "WindowButtonDownFcn", @(~, ~) app.editorPointerPressed(), ...
                 "CloseRequestFcn", @(~, ~) app.closeRequest(), ...
                 "Tag", "macd-yamada-editor");
+            addlistener(app.UIFigure, "FigureActivated", @(~, ~) app.checkExternalSource());
             app.MainGrid = uigridlayout(app.UIFigure, [3 3]);
             app.MainGrid.RowHeight = {38, "1x", 150};
             app.MainGrid.ColumnWidth = {230, "1x", 330};
@@ -3798,6 +3800,42 @@ classdef yamada < handle
                 layer = icon(:, :, channel);
                 layer(mask) = color(channel);
                 icon(:, :, channel) = layer;
+            end
+        end
+
+        function checkExternalSource(app)
+            % checkExternalSource Offer reload when activation reveals different saved source.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            if app.IsCheckingExternalSource || app.IsReloading || isempty(app.Document) || ...
+                    strlength(app.Document.FilePath) == 0
+                return
+            end
+            app.IsCheckingExternalSource = true;
+            cleanup = onCleanup(@() app.finishExternalSourceCheck());
+
+            % Compare the last loaded or saved text without running source or changing edits.
+            document = app.Document;
+            try
+                source = app.reloadText(app.Lifecycle.readSourceBytes(document.FilePath));
+            catch
+                return
+            end
+            if source == app.SavedSourceText, return, end
+            accepted = app.Lifecycle.confirmExternalSourceChange();
+            if accepted && isvalid(app) && app.Document == document
+                app.reloadSourceRequested();
+            end
+        end
+
+        function finishExternalSourceCheck(app)
+            % finishExternalSourceCheck Release activation protection after dialogs or errors.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            if isvalid(app)
+                app.IsCheckingExternalSource = false;
             end
         end
 

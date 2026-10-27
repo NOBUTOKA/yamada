@@ -4,6 +4,40 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     %   only native dialogs and filesystem decisions through the lifecycle service.
 
     methods (Test)
+        function activationChecksOriginalSourceAndPreservesCanceledEdits(testCase)
+            % activationChecksOriginalSourceAndPreservesCanceledEdits Exercise the real figure event listener.
+            for accepted = [false true]
+                [target, source] = reloadFixture();
+                fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+                app = yamada(lifecycleForTest(struct("OpenPath", target, ...
+                    "ExternalAccepted", accepted, "ReloadChoice", "Discard")));
+                appCleanup = onCleanup(@() deleteIfValid(app));
+                invokeEditorMenu("Open...");
+                original = app.Document;
+                window = editorFigure();
+                notify(window, "FigureActivated");
+                testCase.verifyTrue(app.Document == original);
+                addPaletteComponent("Button");
+                macd.source.SourceWriter.write(target, source + "% External revision" + newline, "CRLF");
+                notify(window, "FigureActivated");
+                if accepted
+                    testCase.verifyFalse(app.Document == original);
+                    testCase.verifySubstring(app.Document.OriginalText, "% External revision");
+                    testCase.verifyFalse(app.Document.IsDirty);
+                else
+                    testCase.verifyTrue(app.Document == original);
+                    testCase.verifyTrue(app.Document.IsDirty);
+                end
+                invokeEditorMenu("Save");
+                saved = app.Document;
+                notify(window, "FigureActivated");
+                testCase.verifyTrue(app.Document == saved);
+                deleteTemporaryFile(target);
+                notify(window, "FigureActivated");
+                clear appCleanup fileCleanup
+            end
+        end
+
         function reloadDirtySaveAndDiscardResetToFreshHistory(testCase)
             % reloadDirtySaveAndDiscardResetToFreshHistory Resolve dirty changes before reading the replacement.
             for choice = ["Save", "Discard"]
@@ -547,7 +581,7 @@ end
 defaults = struct("NewClassName", "NextApp", "OpenPath", "", ...
     "SavePath", "", "SaveAccepted", true, "UnsavedChoice", "Cancel", ...
     "FileExists", [], "ReplaceAccepted", true, "WriteSucceeds", true, ...
-    "ConfirmMustNotRun", false, "ReloadChoice", "Cancel");
+    "ConfirmMustNotRun", false, "ReloadChoice", "Cancel", "ExternalAccepted", false);
 names = string(fieldnames(defaults));
 for index = 1:numel(names)
     name = names(index);
@@ -561,6 +595,7 @@ callbacks = struct( ...
     "RequestSavePathFcn", @(~) selectedPath(options.SavePath, options.SaveAccepted), ...
     "ConfirmUnsavedChangesFcn", @() unsavedChoice(options), ...
     "ConfirmReloadConflictFcn", @() options.ReloadChoice, ...
+    "ConfirmExternalSourceChangeFcn", @() options.ExternalAccepted, ...
     "ConfirmReplaceFcn", @(~) options.ReplaceAccepted, ...
     "FileExistsFcn", @(path) fileExistsForTest(path, options.FileExists), ...
     "WriteSourceFcn", @(path, source, lineEnding) writeForTest( ...

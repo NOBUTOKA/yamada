@@ -16,6 +16,7 @@ classdef DocumentLifecycleService < handle
         FileExistsFcn function_handle
         WriteSourceFcn function_handle
         ReadSourceBytesFcn function_handle
+        ConfirmExternalSourceChangeFcn function_handle
         ConfirmReloadConflictFcn function_handle
     end
 
@@ -36,6 +37,7 @@ classdef DocumentLifecycleService < handle
             obj.WriteSourceFcn = @macd.source.SourceWriter.write;
             obj.ReadSourceBytesFcn = @macd.ui.DocumentLifecycleService.readNativeSourceBytes;
             obj.ConfirmReloadConflictFcn = @macd.ui.DocumentLifecycleService.confirmNativeReloadConflict;
+            obj.ConfirmExternalSourceChangeFcn = @macd.ui.DocumentLifecycleService.confirmNativeExternalSourceChange;
             obj.installCallbacks(callbacks);
         end
 
@@ -103,6 +105,17 @@ classdef DocumentLifecycleService < handle
             bytes = bytes(:)';
         end
 
+        function accepted = confirmExternalSourceChange(obj)
+            % confirmExternalSourceChange Ask before reloading externally modified source.
+            arguments (Input)
+                obj (1, 1) macd.ui.DocumentLifecycleService
+            end
+            arguments (Output)
+                accepted (1, 1) logical
+            end
+            accepted = logical(obj.ConfirmExternalSourceChangeFcn());
+        end
+
         function choice = confirmReloadConflict(obj)
             % confirmReloadConflict Resolve local edits when the saved source also changed.
             arguments (Input)
@@ -133,7 +146,7 @@ classdef DocumentLifecycleService < handle
             names = ["RequestNewClassNameFcn", "RequestOpenPathFcn", ...
                 "RequestSavePathFcn", "ConfirmUnsavedChangesFcn", ...
                 "ConfirmReplaceFcn", "FileExistsFcn", "WriteSourceFcn", ...
-                "ReadSourceBytesFcn", "ConfirmReloadConflictFcn"];
+                "ReadSourceBytesFcn", "ConfirmReloadConflictFcn", "ConfirmExternalSourceChangeFcn"];
             for index = 1:numel(names)
                 name = names(index);
                 if isfield(callbacks, name)
@@ -167,6 +180,16 @@ classdef DocumentLifecycleService < handle
             if number ~= 0 && ~feof(file)
                 error("macd:DocumentLifecycleService:ReadFailed", "%s", message);
             end
+        end
+
+        function accepted = confirmNativeExternalSourceChange()
+            % confirmNativeExternalSourceChange Offer a safe default when disk text differs.
+            arguments (Output)
+                accepted (1, 1) logical
+            end
+            choice = string(questdlg("The source file has changed. Reload it?", ...
+                "Source File Changed", "Reload", "Cancel", "Cancel"));
+            accepted = choice == "Reload";
         end
 
         function choice = confirmNativeReloadConflict()
