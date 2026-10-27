@@ -2090,7 +2090,7 @@
         ]
       },
       "affectsDisplay": true,
-      "previewPolicy": "apply",
+      "previewPolicy": "skip",
       "requiredEditor": "color",
       "disposition": {
         "kind": "editable",
@@ -2113,6 +2113,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
         }
+      ],
+      "runtimeObservations": [
+        "R2024a UIFigure-based Safe Preview rejects the ShadowColor setter; the source setting remains preserved without native preview assignment."
       ]
     }
   ]

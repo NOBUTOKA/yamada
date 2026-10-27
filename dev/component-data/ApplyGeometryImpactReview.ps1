@@ -22,6 +22,10 @@ function Set-GeometryImpact {
         $grid = 'none'; $absolute = $false
         $detail = 'Safe Preview does not apply this property; it cannot change native preview geometry.'
     }
+    elseif ($Property.previewPolicy -eq 'adapt' -and $Property.requiredEditor -eq 'asset') {
+        $grid = 'fit'; $absolute = $false
+        $detail = 'Adapted local-asset content can affect preferred size in fit tracks; free-position bounds remain assigned.'
+    }
     elseif ($path -match 'Color$' -or $path -in @('Tooltip', 'HorizontalAlignment', 'VerticalAlignment')) {
         $grid = 'none'; $absolute = $false
         $detail = 'Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle.'

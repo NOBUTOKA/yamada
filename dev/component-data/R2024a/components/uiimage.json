@@ -83,7 +83,7 @@
         ]
       },
       "affectsDisplay": true,
-      "previewPolicy": "skip",
+      "previewPolicy": "adapt",
       "requiredEditor": "asset",
       "disposition": {
         "kind": "editable",
@@ -98,13 +98,13 @@
         "affectedPaths": [],
         "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
       },
-      "gridGeometryImpact": "none",
+      "gridGeometryImpact": "fit",
       "absoluteGeometryImpact": false,
       "geometryEvidence": [
         {
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
-          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+          "detail": "The existing local-asset Preview adapter changes image content; preferred size can affect fit tracks while free-position bounds remain assigned."
         }
       ]
     },

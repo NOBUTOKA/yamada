@@ -1037,7 +1037,15 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             overlays = findall(figure, "Type", "uihtml");
+            % Incremental placement may return before native fit tracks have expanded.
+            started = tic;
             refreshed = overlays.Data.gridEditor;
+            while toc(started) < 3 && (~refreshed.geometryAvailable || ...
+                    refreshed.rowTracks(1).bounds(4) <= 0 || refreshed.columnTracks(1).bounds(3) <= 0)
+                pause(0.01); drawnow;
+                refreshed = overlays.Data.gridEditor;
+            end
+            fprintf("COLLAPSED_MOVE_SETTLE Seconds=%.3f Available=%d\n", toc(started), refreshed.geometryAvailable);
             child = app.Document.getComponent(childId);
             testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
             testCase.verifyEqual(child.getProperty("Layout.Column").LiteralValue, 1);

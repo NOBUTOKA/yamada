@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "8508e591f2c96fa25645fb13649d9c4261f5e56596bd7e75ee3f5dbba9a23456",
+  "inputSha256": "139bd820d615825b616bd54c5caddf2ba107f6a62ed6ac41598ee5005593ee98",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -2793,17 +2793,17 @@
       ],
       "surfaces": [
         {
-          "candidateId": "candidate.figurebasedappsonly.761d4c8af237",
+          "candidateId": "candidate.figurebasedappsonly.07550e413402",
           "categoryId": "figurebasedappsonly",
           "categoryDisplayName": "figure -Based Apps Only",
           "sharingScope": "familyScoped",
           "scopeRationale": "Figure-app container surface, not a generic control capability.",
-          "capabilitySha256": "761d4c8af237f92753ce1803843792b759d76c3be73514ecaef6e2cfc6fe9f24",
+          "capabilitySha256": "07550e4134028195c19a8698c8ec42f8f37b60babd80a9ce915a23f7738a440d",
           "propertyPaths": [
             "ShadowColor"
           ],
           "propertyCapabilitySha256": [
-            "761d4c8af237f92753ce1803843792b759d76c3be73514ecaef6e2cfc6fe9f24"
+            "07550e4134028195c19a8698c8ec42f8f37b60babd80a9ce915a23f7738a440d"
           ],
           "memberVariantIds": [
             "uibuttongroup",
@@ -2848,7 +2848,7 @@
           "path": "ShadowColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.figurebasedappsonly.761d4c8af237"
+            "candidate.figurebasedappsonly.07550e413402"
           ]
         }
       ],

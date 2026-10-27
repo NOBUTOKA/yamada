@@ -1532,7 +1532,7 @@
             "order": 1,
             "groupId": "local.uipanel.figurebasedappsonly",
             "editor": "color",
-            "previewPolicy": "apply",
+            "previewPolicy": "skip",
             "gridGeometryImpact": "none",
             "absoluteGeometryImpact": false,
             "auditDisposition": "editable",

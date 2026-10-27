@@ -82,7 +82,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     delete(handles(char(first.Id)));
                 end
                 applied = renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", first.Id, "Value"));
-                testCase.verifyFalse(applied, kind);
+                testCase.verifyEqual(applied, kind == "empty", kind);
                 clear cleanup
             end
         end

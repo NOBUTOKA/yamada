@@ -48,8 +48,8 @@
             "order": 1,
             "groupId": "local.uiimage.image",
             "editor": "asset",
-            "previewPolicy": "skip",
-            "gridGeometryImpact": "none",
+            "previewPolicy": "adapt",
+            "gridGeometryImpact": "fit",
             "absoluteGeometryImpact": false,
             "auditDisposition": "editable",
             "valueSchema": {

@@ -1639,7 +1639,7 @@
             "order": 1,
             "groupId": "local.uibuttongroup.figurebasedappsonly",
             "editor": "color",
-            "previewPolicy": "apply",
+            "previewPolicy": "skip",
             "gridGeometryImpact": "none",
             "absoluteGeometryImpact": false,
             "auditDisposition": "editable",

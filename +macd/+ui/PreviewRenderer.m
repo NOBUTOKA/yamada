@@ -18,13 +18,15 @@ classdef PreviewRenderer < handle
         RenderedRegistryRevision uint64 = uint64(0)
         RenderCount double = 0
         SynchronizationCount double = 0
+        SubtreeRebuildCount double = 0
         FallbackReason string = ""
     end
 
     methods
         function [applied, diagnostics, geometryChanged] = synchronize(obj, document, handles, request)
-            % synchronize Apply audited label and numeric Value changes without replacing native handles.
-            %   Any unrelated input change or uncertain setter uses the existing renderer.
+            % synchronize Apply resolved property changes across every catalog component capability.
+            %   Uncertain local transitions rebuild their owning subtree; unrelated
+            %   source, structure, or registry changes retain full reconstruction.
             arguments (Input)
                 obj (1, 1) macd.ui.PreviewRenderer
                 document (1, 1) macd.model.DocumentModel
@@ -40,9 +42,7 @@ classdef PreviewRenderer < handle
             diagnostics = macd.model.Diagnostic.empty;
             geometryChanged = false;
             obj.FallbackReason = "unsupported-change";
-            if request.Kind ~= "properties" || isempty(request.Paths) || numel(request.ComponentIds) ~= 1
-                return
-            end
+            if request.Kind ~= "properties" || isempty(request.Paths) || isempty(request.ComponentIds), return, end
             [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
             if ~safe || isempty(fieldnames(obj.RenderedInputs)) || ...
                     obj.RenderedRegistryRevision ~= obj.Registry.Revision
@@ -54,75 +54,100 @@ classdef PreviewRenderer < handle
                 applied = true;
                 return
             end
-            before = obj.maskRequestedInputs(obj.RenderedInputs, request);
-            after = obj.maskRequestedInputs(inputs, request);
-            if ~isequaln(before, after)
+            if ~isequaln(obj.maskRequestedInputs(obj.RenderedInputs, request), obj.maskRequestedInputs(inputs, request))
                 obj.FallbackReason = "unrelated-inputs";
                 return
             end
-            id = request.ComponentIds(1);
-            component = document.getComponent(id);
-            % This allowlist approves native setter reuse; geometry decisions use catalog metadata below.
-            allowed = ["Text", "FontSize", "FontName", "FontWeight", "FontAngle", ...
-                "FontColor", "BackgroundColor", "HorizontalAlignment", "VerticalAlignment", ...
-                "WordWrap", "Visible", "Enable", "Tooltip"];
-            if isempty(component) || ~isKey(handles, char(id)), return, end
-            label = component.Factory == "uilabel" && all(ismember(request.Paths, allowed));
-            numericValue = component.Factory == "uieditfield" && ...
-                component.DeclaredType == "matlab.ui.control.NumericEditField" && isequal(request.Paths, "Value");
-            if ~(label || numericValue), return, end
-            preview = handles(char(id));
-            if ~isvalid(preview)
-                obj.FallbackReason = "stale-handle";
-                return
-            end
-            if numericValue && ~isa(preview, "matlab.ui.control.NumericEditField")
-                obj.FallbackReason = "native-type";
-                return
-            end
-            states = document.getEffectivePropertyStates(obj.Registry, id);
-            paths = string(arrayfun(@(item) item.Definition.Path, states));
-            [found, indices] = ismember(request.Paths, paths);
-            if ~all(found), return, end
-            if numericValue
-                % All non-requested inputs, including constraints, format, parent and constructor, must match.
-                constraints = ["Value", "Limits", "AllowEmpty", "RoundFractionalValues", ...
-                    "LowerLimitInclusive", "UpperLimitInclusive"];
-                [known, constraintIndices] = ismember(constraints, paths);
-                if ~all(known) || ~all(arrayfun(@(state) state.Resolution.IsKnown, states(constraintIndices)))
-                    obj.FallbackReason = "unknown-constraints";
+            reconstructed = false;
+            % Reuse existing model resolution and catalog policies, without rehearsing a document edit.
+            for id = request.ComponentIds
+                component = document.getComponent(id);
+                localPaths = request.pathsFor(id);
+                componentRequest = macd.ui.RefreshRequest("properties", id, localPaths);
+                if isempty(component), return, end
+                if id == document.RootComponentId
+                    if isempty(obj.PreviewSurface) || ~isvalid(obj.PreviewSurface), return, end
+                    obj.updatePreviewSurface(component, obj.PreviewSurface.Parent.Parent.Parent);
+                    geometryChanged = geometryChanged || componentRequest.affectsGeometry(document, obj.Registry, handles);
+                    continue
+                end
+                states = document.getEffectivePropertyStates(obj.Registry, id);
+                paths = string(arrayfun(@(state) state.Definition.Path, states));
+                [found, requested] = ismember(localPaths, paths);
+                if ~all(found), return, end
+                visible = arrayfun(@(state) ~any(state.Definition.PreviewPolicy == ["skip", "notRendered"]), states);
+                if ~any(visible(requested)), continue, end
+                if ~isKey(handles, char(id)) || ~isvalid(handles(char(id)))
+                    obj.FallbackReason = "stale-handle";
                     return
                 end
-            end
-            for index = indices
-                state = states(index);
-                audited = label && state.Definition.Application.EffectStatus == "independent";
-                if numericValue
-                    value = state.Resolution.EffectiveValue;
-                    audited = state.Definition.Application.EffectStatus == "modeled" && ...
-                        state.Definition.Application.EffectPolicy == "numericValue" && ...
-                        isa(value, "double") && isscalar(value) && isreal(value) && isfinite(value);
-                end
-                if ~audited || state.Definition.PreviewPolicy ~= "apply" || ~state.Resolution.IsKnown || ...
-                        ~state.Resolution.IsEditable
-                    obj.FallbackReason = "unsupported-effect";
-                    return
-                end
-            end
-            try
-                for index = indices
+                preview = handles(char(id));
+                reason = "";
+                for index = requested(visible(requested))
                     state = states(index);
-                    obj.setProperty(preview, state.Definition.Path, state.Resolution.EffectiveValue, component);
+                    if ~state.Resolution.IsKnown || ~state.Resolution.IsEditable || ...
+                            ~any(state.Definition.Application.EffectStatus == ["independent", "modeled"])
+                        reason = "unresolved-local-effect";
+                        break
+                    end
                 end
-            catch
-                obj.FallbackReason = "native-setter";
-                return
+                try
+                    if strlength(reason) > 0, error("macd:PreviewRenderer:Reconstruct", "%s", reason); end
+                    indices = macd.ui.PreviewUpdatePlanner.plan(states, localPaths, preview);
+                    if obj.prepareNativeTransition(preview, states, indices)
+                        indices = macd.ui.PreviewUpdatePlanner.plan(states, localPaths, preview);
+                    end
+                    for index = indices
+                        state = states(index);
+                        if state.Definition.Application.EffectPolicy == "buttonSelection", continue, end
+                        value = state.Resolution.EffectiveValue;
+                        if state.Definition.PreviewPolicy == "adapt" && state.Definition.Editor == "asset"
+                            value = obj.resolveImageSource(value, document);
+                        end
+                        obj.setProperty(preview, state.Definition.Path, value, component);
+                    end
+                    obj.synchronizeCoupledScope(document, component, handles, states(requested));
+                    if ~isempty(component.Children) && componentRequest.affectsGeometry(document, obj.Registry, handles)
+                        obj.synchronizeDescendantGeometry(document, component, handles);
+                    end
+                    componentRequest = macd.ui.RefreshRequest("properties", id, unique([localPaths paths(indices)], "stable"));
+                    geometryChanged = geometryChanged || componentRequest.affectsGeometry(document, obj.Registry, handles);
+                catch exception
+                    % A failed native transition is repaired from the accepted model, never left half-applied.
+                    obj.FallbackReason = "local-reconstruction:" + string(exception.identifier);
+                    [repaired, localDiagnostics] = obj.rebuildScope(document, component, handles);
+                    diagnostics = [diagnostics localDiagnostics]; %#ok<AGROW>
+                    if ~repaired, return, end
+                    geometryChanged = true;
+                    reconstructed = true;
+                end
             end
             obj.RenderedInputs = inputs;
             obj.SynchronizationCount = obj.SynchronizationCount + 1;
+            if ~reconstructed, obj.FallbackReason = ""; end
+            applied = true;
+        end
+
+        function applied = acknowledgeCallbackChanges(obj, document)
+            % acknowledgeCallbackChanges Advance source-only callback intentions without touching native controls.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                document (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                applied (1, 1) logical
+            end
+            applied = false;
+            [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
+            if ~safe || isempty(fieldnames(obj.RenderedInputs)) || obj.RenderedRegistryRevision ~= obj.Registry.Revision
+                return
+            end
+            % Callback bindings are never installed in Safe Preview; every visual input must still match.
+            before = obj.RenderedInputs;
+            before.CallbackEdits = inputs.CallbackEdits;
+            if ~isequaln(before, inputs), return, end
+            obj.RenderedInputs = inputs;
             obj.FallbackReason = "";
-            % Use reviewed geometry metadata independently of setter reuse eligibility.
-            geometryChanged = request.affectsGeometry(document, obj.Registry, handles);
             applied = true;
         end
 
@@ -135,7 +160,7 @@ classdef PreviewRenderer < handle
                 value (1, 1) struct
             end
             value = struct("renders", obj.RenderCount, "synchronizations", obj.SynchronizationCount, ...
-                "fallbackReason", obj.FallbackReason);
+                "fallbackReason", obj.FallbackReason, "subtreeRebuilds", obj.SubtreeRebuildCount);
         end
 
         function obj = PreviewRenderer(registry)
@@ -214,6 +239,215 @@ classdef PreviewRenderer < handle
     end
 
     methods (Access = private)
+        function prepared = prepareNativeTransition(~, target, states, indices)
+            % prepareNativeTransition Bridge disjoint valid ranges and item-data replacements.
+            arguments (Input)
+                ~
+                target
+                states (1, :) struct
+                indices (1, :) double
+            end
+            arguments (Output)
+                prepared (1, 1) logical
+            end
+            prepared = false;
+            paths = string(arrayfun(@(state) state.Definition.Path, states));
+            policies = string(arrayfun(@(state) state.Definition.Application.EffectPolicy, states(indices)));
+            % ItemsData must not constrain an intermediate replacement of Items.
+            if any(policies == "itemSelection") && any(ismember(paths(indices), ["Items", "ItemsData"])) && isprop(target, "ItemsData")
+                target.ItemsData = [];
+                prepared = true;
+            end
+            % Join valid old and final domains before restoring the final constraints.
+            for family = ["numericValue", "boundedValue", "textValue"]
+                if ~any(policies == family), continue, end
+                range = "Limits";
+                if family == "textValue", range = "CharacterLimits"; end
+                rangeIndex = find(paths == range & ismember(1:numel(paths), indices), 1);
+                valueIndex = find(paths == "Value", 1);
+                if isempty(rangeIndex) || isempty(valueIndex) || ~states(valueIndex).Resolution.IsKnown, continue, end
+                current = target.(range);
+                desired = states(rangeIndex).Resolution.EffectiveValue;
+                if ~isnumeric(current) || ~isnumeric(desired) || numel(current) ~= 2 || numel(desired) ~= 2, continue, end
+                if isequaln(current, desired), continue, end
+                target.(range) = [min(current(1), desired(1)), max(current(2), desired(2))];
+                if family == "numericValue"
+                    for path = ["LowerLimitInclusive", "UpperLimitInclusive"]
+                        if isprop(target, path), target.(path) = "on"; end
+                    end
+                    if isempty(states(valueIndex).Resolution.EffectiveValue) && isprop(target, "AllowEmpty")
+                        target.AllowEmpty = "on";
+                    end
+                end
+                target.Value = states(valueIndex).Resolution.EffectiveValue;
+                prepared = true;
+            end
+        end
+
+        function synchronizeCoupledScope(obj, document, component, handles, changed)
+            % synchronizeCoupledScope Publish resolved group selection and grid-child placement locally.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                handles containers.Map
+                changed (1, :) struct
+            end
+            policies = string(arrayfun(@(state) state.Definition.Application.EffectPolicy, changed));
+            if any(policies == "buttonSelection")
+                group = document.getComponent(component.ParentId);
+                if isempty(group) || ~isKey(handles, char(group.Id)), return, end
+                nativeGroup = handles(char(group.Id));
+                for id = group.Children
+                    states = document.getEffectivePropertyStates(obj.Registry, id);
+                    for state = states
+                        if state.Definition.Application.EffectPolicy == "buttonSelection" && state.Resolution.IsKnown && ...
+                                logical(state.Resolution.EffectiveValue) && isKey(handles, char(id))
+                            nativeGroup.SelectedObject = handles(char(id));
+                            break
+                        end
+                    end
+                end
+            end
+            if any(policies == "gridTracks")
+                for id = component.Children
+                    if ~isKey(handles, char(id)), continue, end
+                    states = document.getEffectivePropertyStates(obj.Registry, id);
+                    child = document.getComponent(id);
+                    for state = states
+                        if state.Definition.Application.EffectPolicy == "layout" && ...
+                                state.Resolution.IsKnown && state.Resolution.IsEditable
+                            obj.setProperty(handles(char(id)), state.Definition.Path, state.Resolution.EffectiveValue, child);
+                        end
+                    end
+                end
+            end
+        end
+
+        function synchronizeDescendantGeometry(obj, document, component, handles)
+            % synchronizeDescendantGeometry Restore final child coordinates after native container reflow.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                handles containers.Map
+            end
+            % Restore only the descendants owned by this layout change.
+            pending = component.Children;
+            while ~isempty(pending)
+                id = pending(1); pending(1) = [];
+                child = document.getComponent(id);
+                pending = [pending child.Children]; %#ok<AGROW>
+                if ~isKey(handles, char(id)), continue, end
+                states = document.getEffectivePropertyStates(obj.Registry, id);
+                paths = string(arrayfun(@(state) state.Definition.Path, states));
+                index = find(paths == "Position", 1);
+                if isempty(index), continue, end
+                if ~states(index).Resolution.IsKnown
+                    error("macd:PreviewRenderer:UnknownChildGeometry", "Child geometry needs local reconstruction.");
+                end
+                obj.setProperty(handles(char(id)), "Position", states(index).Resolution.EffectiveValue, child);
+            end
+        end
+
+        function [repaired, diagnostics] = rebuildScope(obj, document, component, handles)
+            % rebuildScope Reconstruct only the local ownership scope after an uncertain or failed transition.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                handles containers.Map
+            end
+            arguments (Output)
+                repaired (1, 1) logical
+                diagnostics macd.model.Diagnostic
+            end
+            repaired = false;
+            diagnostics = macd.model.Diagnostic.empty;
+            scope = component;
+            parent = document.getComponent(component.ParentId);
+            if ~isempty(parent) && isKey(handles, char(parent.Id))
+                nativeParent = handles(char(parent.Id));
+                if isprop(nativeParent, "RowHeight") || isprop(nativeParent, "SelectedObject")
+                    scope = parent;
+                end
+            end
+            if scope.Id == document.RootComponentId || ~isKey(handles, char(scope.Id)), return, end
+            target = handles(char(scope.Id));
+            if ~isvalid(target), return, end
+            nativeParent = target.Parent;
+            % Freeze stacking and transient tab selection before native disposal.
+            siblingOrder = nativeParent.Children;
+            slot = find(siblingOrder == target, 1);
+            selectedTab = [];
+            replacesSelectedTab = false;
+            if isprop(nativeParent, "SelectedTab")
+                selectedTab = nativeParent.SelectedTab;
+                replacesSelectedTab = ~isempty(selectedTab) && selectedTab == target;
+            end
+            try
+                obj.prepareConfiguration(document);
+                % Native deletion owns descendants; retire every corresponding map entry.
+                pending = scope.Id;
+                ids = strings(1, 0);
+                while ~isempty(pending)
+                    id = pending(1); pending(1) = [];
+                    record = document.getComponent(id);
+                    ids(end + 1) = id; %#ok<AGROW>
+                    pending = [pending record.Children]; %#ok<AGROW>
+                end
+                delete(target);
+                for id = ids
+                    if isKey(handles, char(id)), remove(handles, char(id)); end
+                end
+                obj.renderComponent(document, scope.Id, nativeParent, handles);
+                if isKey(handles, char(scope.Id)) && ~isempty(slot)
+                    % Preserve native tab order and stacking among unchanged siblings.
+                    siblingOrder(slot) = handles(char(scope.Id));
+                    try
+                        nativeParent.Children = siblingOrder;
+                    catch orderException
+                        enclosing = document.getComponent(scope.ParentId);
+                        if ~isempty(enclosing) && enclosing.Id ~= document.RootComponentId
+                            [repaired, diagnostics] = obj.rebuildScope(document, enclosing, handles);
+                            return
+                        end
+                        rethrow(orderException);
+                    end
+                end
+                if replacesSelectedTab
+                    nativeParent.SelectedTab = handles(char(scope.Id));
+                elseif ~isempty(selectedTab) && isvalid(selectedTab)
+                    nativeParent.SelectedTab = selectedTab;
+                end
+                diagnostics = obj.Diagnostics;
+                obj.Diagnostics = macd.model.Diagnostic.empty;
+                repaired = isKey(handles, char(scope.Id)) && isvalid(handles(char(scope.Id)));
+                if repaired, obj.SubtreeRebuildCount = obj.SubtreeRebuildCount + 1; end
+            catch
+                % The caller retains complete reconstruction as the final repair boundary.
+            end
+        end
+
+        function prepareConfiguration(obj, document)
+            % prepareConfiguration Reuse the existing source-plan projection for full or subtree construction.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                document (1, 1) macd.model.DocumentModel
+            end
+            obj.Diagnostics = macd.model.Diagnostic.empty;
+            obj.CombinedConfiguration = macd.model.DocumentModel.empty;
+            obj.UsesCombinedConfiguration = any(arrayfun(@(component) ...
+                macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document, obj.Registry) || ...
+                macd.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document), document.Components));
+            if obj.UsesCombinedConfiguration
+                root = document.getComponent(document.RootComponentId);
+                plan = macd.source.PropertySourcePlan.combined(document, root, obj.Registry);
+                obj.CombinedConfiguration = plan.Document;
+                obj.CombinedConfiguration.FilePath = document.FilePath;
+            end
+        end
+
         function inputs = maskRequestedInputs(~, inputs, request)
             % maskRequestedInputs Prove that every other source and model input stayed unchanged.
             arguments (Input)
@@ -228,11 +462,13 @@ classdef PreviewRenderer < handle
                 component = inputs.Components(index);
                 if ~any(request.ComponentIds == component.Id), continue, end
                 if ~isempty(component.Properties)
-                    component.Properties(ismember(string({component.Properties.Path}), request.Paths)) = [];
+                    component.Properties(ismember(string({component.Properties.Path}), request.pathsFor(component.Id))) = [];
                 end
                 if ~isempty(component.Settings)
-                    component.Settings(ismember(string({component.Settings.Path}), request.Paths)) = [];
+                    component.Settings(ismember(string({component.Settings.Path}), request.pathsFor(component.Id))) = [];
                 end
+                if isempty(component.Properties), component.Properties = struct([]); end
+                if isempty(component.Settings), component.Settings = struct([]); end
                 inputs.Components(index) = component;
             end
         end
@@ -321,7 +557,7 @@ classdef PreviewRenderer < handle
                     continue
                 end
                 property = definition.getProperty(entry.Path);
-                imageSource = component.Factory == "uiimage" && entry.Path == "ImageSource";
+                imageSource = ~isempty(property) && property.PreviewPolicy == "adapt" && property.Editor == "asset";
                 if ~imageSource && ~isempty(property) && ...
                         any(property.PreviewPolicy == ["skip", "notRendered"])
                     continue
@@ -391,36 +627,37 @@ classdef PreviewRenderer < handle
                 parent
             end
 
-            % Use the source figure size as the coordinate system for pixel children.
-            sourceSize = [560 420];
-            positionEntry = root.getProperty("Position");
-            if ~isempty(positionEntry) && positionEntry.ValueKind == "literal" && ...
-                    isnumeric(positionEntry.LiteralValue) && ...
-                    numel(positionEntry.LiteralValue) == 4 && ...
-                    all(positionEntry.LiteralValue(3:4) > 0)
-                sourceSize = positionEntry.LiteralValue(3:4);
+            % Construct editor-owned wrappers once; subsequent root edits reuse them.
+            content = uipanel(parent, BorderType="none", AutoResizeChildren="off", ...
+                BackgroundColor=[0.35 0.36 0.38], Tag="macd-preview-scroll-content");
+            frame = uipanel(content, BorderType="none", AutoResizeChildren="off", ...
+                BackgroundColor=[0.53 0.54 0.55], Tag="macd-preview-frame");
+            obj.PreviewSurface = uipanel(frame, BorderType="none", AutoResizeChildren="off", ...
+                BackgroundColor=[0.94 0.94 0.94], Tag="macd-preview-canvas");
+            obj.updatePreviewSurface(root, parent);
+        end
+
+        function updatePreviewSurface(obj, root, parent)
+            % updatePreviewSurface Adapt figure client size and color without replacing preview children.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                root (1, 1) macd.model.ComponentRecord
+                parent
             end
-            availablePosition = obj.parentInnerPosition(parent);
+            sourceSize = [560 420];
+            entry = root.getProperty("Position");
+            if ~isempty(entry) && entry.ValueKind == "literal" && isnumeric(entry.LiteralValue) && ...
+                    isreal(entry.LiteralValue) && numel(entry.LiteralValue) == 4 && ...
+                    all(isfinite(entry.LiteralValue)) && all(entry.LiteralValue(3:4) > 0)
+                sourceSize = reshape(entry.LiteralValue(3:4), 1, []);
+            end
+            available = obj.parentInnerPosition(parent);
             frameSize = double(sourceSize) + 2;
-            % Preserve a dark margin at every scroll limit, including the far edges.
-            contentSize = max(double(availablePosition(3:4)), ...
-                frameSize + 2 * obj.PreviewMargin);
-            content = uipanel(parent, "BorderType", "none", ...
-                "AutoResizeChildren", "off", ...
-                "BackgroundColor", [0.35 0.36 0.38], ...
-                "Position", [1 1 contentSize], ...
-                "Tag", "macd-preview-scroll-content");
-            frameOrigin = floor((contentSize - frameSize) ./ 2) + 1;
-            frame = uipanel(content, "BorderType", "none", ...
-                "AutoResizeChildren", "off", ...
-                "BackgroundColor", [0.53 0.54 0.55], ...
-                "Position", [frameOrigin frameSize], ...
-                "Tag", "macd-preview-frame");
-            obj.PreviewSurface = uipanel(frame, "BorderType", "none", ...
-                "AutoResizeChildren", "off", ...
-                "BackgroundColor", [0.94 0.94 0.94], ...
-                "Position", [2 2 double(sourceSize)], ...
-                "Tag", "macd-preview-canvas");
+            contentSize = max(double(available(3:4)), frameSize + 2 * obj.PreviewMargin);
+            frame = obj.PreviewSurface.Parent;
+            frame.Parent.Position = [1 1 contentSize];
+            frame.Position = [floor((contentSize - frameSize) ./ 2) + 1 frameSize];
+            obj.PreviewSurface.Position = [2 2 double(sourceSize)];
             colorEntry = root.getProperty("Color");
             if ~isempty(colorEntry) && colorEntry.ValueKind == "literal"
                 try

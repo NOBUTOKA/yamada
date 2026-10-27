@@ -209,7 +209,7 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
                 macd.ui.RefreshRequest("properties", label.Id, "FontSize"));
             testCase.verifyTrue(applied);
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyTrue(geometry);
+            testCase.verifyFalse(geometry);
             testCase.verifyTrue(isvalid(canvas));
             testCase.verifyEqual(handles(char(label.Id)), preview);
             [reference, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, second);

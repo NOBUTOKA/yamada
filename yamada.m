@@ -579,8 +579,10 @@ classdef yamada < handle
                 app.Document, app.PreviewHandles, request);
             if ~applied
                 app.refreshPreview();
-            elseif ~isempty(diagnostics)
-                app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
+            else
+                if ~isempty(diagnostics), app.Document.Diagnostics = [app.Document.Diagnostics diagnostics]; end
+                % Scoped reconstruction retains the overlay but may replace tab-native handles.
+                app.restorePreviewTabSelections();
             end
             app.refreshInspector();
             app.refreshDiagnostics(app.Document.Diagnostics);
@@ -820,6 +822,7 @@ classdef yamada < handle
             end
 
             retainHierarchy = app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "rename";
+            callbackOnly = app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "callback";
             try
                 app.Document.undo();
             catch exception
@@ -828,7 +831,13 @@ classdef yamada < handle
             end
             app.ensureSelectionExists();
             if retainHierarchy, app.refreshHierarchyLabels(); end
-            app.refreshShell(retainHierarchy);
+            if callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)
+                % History restores intentions; refresh generated source without rebuilding Preview.
+                app.generateSource();
+                app.refreshCallbackViews();
+            else
+                app.refreshShell(retainHierarchy);
+            end
             app.setStatus("Undid last edit.");
         end
 
@@ -839,6 +848,7 @@ classdef yamada < handle
             end
 
             retainHierarchy = app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "rename";
+            callbackOnly = app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "callback";
             try
                 app.Document.redo();
             catch exception
@@ -847,7 +857,13 @@ classdef yamada < handle
             end
             app.ensureSelectionExists();
             if retainHierarchy, app.refreshHierarchyLabels(); end
-            app.refreshShell(retainHierarchy);
+            if callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)
+                % History restores intentions; refresh generated source without rebuilding Preview.
+                app.generateSource();
+                app.refreshCallbackViews();
+            else
+                app.refreshShell(retainHierarchy);
+            end
             app.setStatus("Redid edit.");
         end
 
@@ -1271,9 +1287,34 @@ classdef yamada < handle
             message = "";
             try
                 app.Document.applyCallbackAction(componentId, name, action, app.Registry);
-                app.refreshShell(true);
+                if app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)
+                    app.refreshCallbackViews(false);
+                else
+                    app.refreshShell(true);
+                end
             catch exception
                 message = string(exception.message);
+            end
+        end
+
+        function refreshCallbackViews(app, refreshDialog)
+            % refreshCallbackViews Refresh source-dependent controls while preserving all preview geometry.
+            arguments (Input)
+                app (1, 1) yamada
+                refreshDialog (1, 1) logical = true
+            end
+            % The model transaction has already generated and validated the complete source.
+            app.refreshInspector();
+            app.refreshDiagnostics(app.Document.Diagnostics);
+            app.refreshEditCommands();
+            app.refreshTitle();
+            app.ReparentRevision = app.ReparentRevision + 1;
+            app.InteractionComponentId = "";
+            app.InteractionKind = "";
+            % Publish only availability and command revisions using existing measured regions.
+            app.reuseInteractionGeometry(false);
+            if refreshDialog && ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog)
+                app.CallbackDialog.refresh();
             end
         end
 
@@ -1666,10 +1707,11 @@ classdef yamada < handle
             app.InteractionOverlay.Data = data;
         end
 
-        function reused = reuseInteractionGeometry(app)
+        function reused = reuseInteractionGeometry(app, requireReady)
             % reuseInteractionGeometry Retain measured regions while refreshing gesture eligibility and revision.
             arguments (Input)
                 app (1, 1) yamada
+                requireReady (1, 1) logical = true
             end
             arguments (Output)
                 reused (1, 1) logical
@@ -1678,11 +1720,11 @@ classdef yamada < handle
             data = app.LastOverlayValue;
             if isempty(fieldnames(data)) || isempty(app.InteractionOverlay) || ~isvalid(app.InteractionOverlay) || ...
                     string(data.selectedComponentId) ~= app.SelectedComponentId || ...
-                    (~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer) && app.TabLayoutTimer.Running == "on")
+                    (requireReady && ~isempty(app.TabLayoutTimer) && isvalid(app.TabLayoutTimer) && app.TabLayoutTimer.Running == "on")
                 return
             end
-            if (strlength(string(data.gridEditor.activeGridId)) > 0 && ~data.gridEditor.geometryAvailable) || ...
-                    (strlength(string(data.gridPlacement.activeGridId)) > 0 && ~data.gridPlacement.geometryAvailable)
+            if requireReady && ((strlength(string(data.gridEditor.activeGridId)) > 0 && ~data.gridEditor.geometryAvailable) || ...
+                    (strlength(string(data.gridPlacement.activeGridId)) > 0 && ~data.gridPlacement.geometryAvailable))
                 return
             end
             % Reparent safety depends on document state even when all measured rectangles are unchanged.
@@ -2055,7 +2097,7 @@ classdef yamada < handle
                 end
                 app.Document.applyGridLayoutEdit(gridId, changes, app.Registry);
                 app.setStatus("Updated " + path + ".");
-                app.refreshPreview();
+                app.refreshViews(macd.ui.RefreshRequest.forChanges(changes));
             catch exception
                 app.setStatus(string(exception.message));
                 app.updateInteractionOverlay();
@@ -2151,7 +2193,7 @@ classdef yamada < handle
                 end
                 app.Document.applyGridLayoutEdit(gridId, changes, app.Registry);
                 app.setStatus(message);
-                app.refreshPreview();
+                app.refreshViews(macd.ui.RefreshRequest.forChanges(changes));
             catch exception
                 app.setStatus(string(exception.message));
                 app.updateInteractionOverlay();
@@ -2514,7 +2556,8 @@ classdef yamada < handle
                     app.setStatus(string(exception.message));
                 end
             end
-            app.refreshShell(true);
+            app.LastOverlayValue = struct();
+            app.refreshViews(macd.ui.RefreshRequest("properties", componentId, "Position"));
         end
 
         function position = movedPosition(app, componentId, startPosition, delta)
@@ -2748,9 +2791,15 @@ classdef yamada < handle
             app.ResizeTargetId = "";
             app.ResizeKind = "";
             if ~isequal(position, app.ResizeStartPosition)
-                app.Document.setProperty(componentId, "Position", position, app.Registry);
+                try
+                    app.Document.setProperty(componentId, "Position", position, app.Registry);
+                catch exception
+                    preview.Position = app.ResizeStartPosition;
+                    app.setStatus(string(exception.message));
+                end
             end
-            app.refreshShell();
+            app.LastOverlayValue = struct();
+            app.refreshViews(macd.ui.RefreshRequest("properties", componentId, "Position"));
         end
 
         function position = resizedRootPosition(~, startPosition, delta, kind)
@@ -3009,10 +3058,12 @@ classdef yamada < handle
                 try
                     app.Document.setProperty(componentId, "Position", sourcePosition, app.Registry);
                 catch exception
+                    preview.Position = app.DragStartPosition;
                     app.setStatus(string(exception.message));
                 end
             end
-            app.refreshShell();
+            app.LastOverlayValue = struct();
+            app.refreshViews(macd.ui.RefreshRequest("properties", componentId, "Position"));
         end
 
         function message = inspectorValueCommitted(app, componentId, path, value)

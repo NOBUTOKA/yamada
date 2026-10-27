@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "8508e591f2c96fa25645fb13649d9c4261f5e56596bd7e75ee3f5dbba9a23456",
+  "inputSha256": "139bd820d615825b616bd54c5caddf2ba107f6a62ed6ac41598ee5005593ee98",
   "occurrences": [
     {
       "componentId": "axes",
@@ -2339,9 +2339,9 @@
         "ShadowColor"
       ],
       "propertyCapabilitySha256": [
-        "761d4c8af237f92753ce1803843792b759d76c3be73514ecaef6e2cfc6fe9f24"
+        "07550e4134028195c19a8698c8ec42f8f37b60babd80a9ce915a23f7738a440d"
       ],
-      "capabilitySha256": "761d4c8af237f92753ce1803843792b759d76c3be73514ecaef6e2cfc6fe9f24"
+      "capabilitySha256": "07550e4134028195c19a8698c8ec42f8f37b60babd80a9ce915a23f7738a440d"
     },
     {
       "componentId": "uicheckbox",
@@ -4863,12 +4863,12 @@
         "ScaleMethod"
       ],
       "propertyCapabilitySha256": [
-        "abe492bd3e90fd42cf5063e6b4e47302efa6bba4ad5a4c05fb4a695621aa84c5",
+        "a366e1158e98d3c56e45b07bf3dbaf4eb00e29fcf2f4803177ac81310624e392",
         "2f1f94d655da6d35a35d8254dab0905b0606548b147cdb6cb4fe459c44687c00",
         "7845b7caba03f2185a80587203473e10a5a031e2bf17301d6f599c30373ccbb9",
         "bfdfab03ebb7b73dbbbbd6eef5657376ff71128cf823b55dfb7ab5899fe0def5"
       ],
-      "capabilitySha256": "b74348d2d4319fb1ffe59219e9d1805d6490f66d7bf6f6b2a5aeeec497791f9a"
+      "capabilitySha256": "3509db7ceb09165b86ba87f19f37c8de63ab71569a9768b9ad38d0d5e1b22010"
     },
     {
       "componentId": "uiimage",
@@ -6157,9 +6157,9 @@
         "ShadowColor"
       ],
       "propertyCapabilitySha256": [
-        "761d4c8af237f92753ce1803843792b759d76c3be73514ecaef6e2cfc6fe9f24"
+        "07550e4134028195c19a8698c8ec42f8f37b60babd80a9ce915a23f7738a440d"
       ],
-      "capabilitySha256": "761d4c8af237f92753ce1803843792b759d76c3be73514ecaef6e2cfc6fe9f24"
+      "capabilitySha256": "07550e4134028195c19a8698c8ec42f8f37b60babd80a9ce915a23f7738a440d"
     },
     {
       "componentId": "uipushtool",

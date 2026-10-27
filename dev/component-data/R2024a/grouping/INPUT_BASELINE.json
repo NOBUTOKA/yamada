@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "9dcb593367de8c17b48995d3968fda2ddef2919c",
-  "inputSha256": "8508e591f2c96fa25645fb13649d9c4261f5e56596bd7e75ee3f5dbba9a23456",
+  "ledgerBaselineGitCommit": "51ec244113ddce2ddb6a1f8c86619e732f5bb19f",
+  "inputSha256": "139bd820d615825b616bd54c5caddf2ba107f6a62ed6ac41598ee5005593ee98",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -101,7 +101,7 @@
     },
     {
       "path": "components/uibuttongroup.json",
-      "sha256": "c7675080914a618397de1f94fea18510f7a9c514e35146d3076ee9f3e6459f2b"
+      "sha256": "1cb21e3f783abc42255ca5914d3ea9d9528d0efb85e87e3dea7bcc63f5ee706c"
     },
     {
       "path": "components/uicheckbox.json",
@@ -165,7 +165,7 @@
     },
     {
       "path": "components/uiimage.json",
-      "sha256": "4720bc65ea860b8b05944df11aa092ca473629403d66ae2796b21b68fa0472dc"
+      "sha256": "2ee3bdf1677117cfbee785bcbcf5d5e3139e22234521604ebd7f026548594352"
     },
     {
       "path": "components/uiknob-continuous.json",
@@ -193,7 +193,7 @@
     },
     {
       "path": "components/uipanel.json",
-      "sha256": "dcd1e2b5b2066e79fea5d75d15b0611f23c4499b840cb3336318dc82bc69d821"
+      "sha256": "49b41fe41117a8b6874a8d464d4600afee87db5d3b57fc740e1a2aafbfe4be2c"
     },
     {
       "path": "components/uipushtool.json",

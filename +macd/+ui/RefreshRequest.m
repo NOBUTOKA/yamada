@@ -9,18 +9,38 @@ classdef RefreshRequest
         ComponentIds string
         % Paths - Properties explicitly accepted in the atomic command.
         Paths string
+        % Changes - Optional exact component/path pairs for heterogeneous atomic updates.
+        Changes struct = struct("ComponentId", {}, "Path", {})
     end
     methods
-        function obj = RefreshRequest(kind, componentIds, paths)
+        function obj = RefreshRequest(kind, componentIds, paths, changes)
             % RefreshRequest Retain one accepted change without inspecting native UI state.
             arguments (Input)
                 kind (1, 1) string {mustBeMember(kind, ["selection", "properties", "layout", "structure"])}
                 componentIds string = strings(1, 0)
                 paths string = strings(1, 0)
+                changes struct = struct("ComponentId", {}, "Path", {})
             end
             obj.Kind = kind;
             obj.ComponentIds = reshape(componentIds, 1, []);
             obj.Paths = unique(reshape(paths, 1, []), "stable");
+            obj.Changes = changes;
+        end
+
+        function paths = pathsFor(obj, id)
+            % pathsFor Return the exact property subset owned by one atomic update member.
+            arguments (Input)
+                obj (1, 1) macd.ui.RefreshRequest
+                id (1, 1) string
+            end
+            arguments (Output)
+                paths (1, :) string
+            end
+            paths = obj.Paths;
+            if ~isempty(obj.Changes)
+                selected = obj.Changes(string({obj.Changes.ComponentId}) == id);
+                paths = reshape(string({selected.Path}), 1, []);
+            end
         end
 
         function result = affectsGeometry(obj, document, registry, handles)
@@ -43,7 +63,7 @@ classdef RefreshRequest
                 parentFactory = "";
                 if ~isempty(parent), parentFactory = parent.Factory; end
                 definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
-                [found, indices] = ismember(obj.Paths, string({definitions.Path}));
+                [found, indices] = ismember(obj.pathsFor(id), string({definitions.Path}));
                 if ~all(found), return, end
                 for index = indices
                     definition = definitions(index);
@@ -59,6 +79,23 @@ classdef RefreshRequest
             result = false;
         end
 
+    end
+    methods (Static)
+        function request = forChanges(changes)
+            % forChanges Retain exact component/path membership without storing mutable values.
+            arguments (Input)
+                changes (1, :) struct
+            end
+            arguments (Output)
+                request (1, 1) macd.ui.RefreshRequest
+            end
+            pairs = struct("ComponentId", {}, "Path", {});
+            for change = changes
+                pairs(end + 1) = struct("ComponentId", string(change.ComponentId), "Path", string(change.Path)); %#ok<AGROW>
+            end
+            request = macd.ui.RefreshRequest("properties", unique(string({pairs.ComponentId}), "stable"), ...
+                unique(string({pairs.Path}), "stable"), pairs);
+        end
     end
     methods (Static, Access = private)
         function result = hasFitDependency(document, handles, component)
