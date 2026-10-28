@@ -89,7 +89,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
         end
 
         function changedInputsReturnToFullPreflight(testCase)
-            % changedInputsReturnToFullPreflight Discard local proof after owner, metadata, catalog, or source changes.
+            % changedInputsReturnToFullPreflight Reuse validated owner changes but discard stale metadata, catalog, or source proofs.
             for kind = ["other-owner", "metadata", "registry", "source"]
                 [document, first] = testCase.fixture("flat");
                 registry = macd.model.ComponentRegistry.createDefault();
@@ -114,7 +114,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                     document.setProperty(first.Id, "Text", "After invalidation", registry);
                 end
                 profile off; functions = profile("info").FunctionTable; clear stopProfile
-                testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0, kind);
+                if kind == "other-owner"
+                    % The second owned edit established a complete configuration for both owners.
+                    testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, kind);
+                else
+                    testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0, kind);
+                end
                 if kind == "source"
                     testCase.verifyEqual(identifier, "macd:DocumentModel:UnsafePropertyEdit");
                     testCase.verifyEqual(first.getProperty("Text").LiteralValue, "Warm");
@@ -158,8 +163,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
         end
 
         function unprovenSyntaxKeepsTheFullPath(testCase)
-            % unprovenSyntaxKeepsTheFullPath Match full-preflight acceptance and atomicity for unsupported encodings.
+            % unprovenSyntaxKeepsTheFullPath Match full-preflight acceptance and retain fallback for unrepresentable syntax.
             values = {"first" + string(newline) + "second", string(missing), categorical("one"), {{'nested'}}};
+            cases = ["physical-newline", "missing-string", "categorical", "exact-nested-cell"];
             for index = 1:numel(values)
                 [document, first] = testCase.fixture("absolute");
                 [reference, referenceFirst] = testCase.fixture("absolute");
@@ -173,8 +179,16 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 stopProfile = onCleanup(@() profile("off"));
                 actual = testCase.attempt(document, first.Id, values{index}, testCase.Registry);
                 profile off; functions = profile("info").FunctionTable; clear stopProfile
-                testCase.verifyEqual(actual, expected, "Value " + index);
-                testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0);
+                testCase.verifyEqual(actual, expected, cases(index));
+                if cases(index) == "exact-nested-cell"
+                    % Exact literal decoding permits local schema acceptance or rejection without a source trial.
+                    [decoded, literal] = macd.source.MatlabLiteralParser.parse(macd.source.LiteralEncoder.encode(values{index}));
+                    testCase.verifyTrue(literal);
+                    testCase.verifyEqual(decoded, values{index});
+                    testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
+                else
+                    testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0, cases(index));
+                end
                 testCase.verifyEqual(first.getProperty("Text").LiteralValue, ...
                     referenceFirst.getProperty("Text").LiteralValue);
                 testCase.verifyEqual(document.HistoryIndex, reference.HistoryIndex);

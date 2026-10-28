@@ -334,9 +334,18 @@ classdef EvaluationContext < handle
             after = obj.Key.Components;
             target = find(string({after.Id}) == componentId, 1);
             if isempty(target) || numel(before) ~= numel(after) || ...
-                    ~isequal(string({before.Id}), string({after.Id})) || ...
-                    after(target).Factory ~= "uieditfield" || ...
-                    after(target).DeclaredType ~= "matlab.ui.control.NumericEditField"
+                    ~isequal(string({before.Id}), string({after.Id}))
+                return
+            end
+            % The catalog defines the same bounded numeric semantics for every eligible factory.
+            parentFactory = "";
+            parent = find(string({after.Id}) == after(target).ParentId, 1);
+            if ~isempty(parent), parentFactory = after(parent).Factory; end
+            definitions = obj.Registry.getEffectiveProperties(after(target).Factory, ...
+                parentFactory, after(target).CreationArguments);
+            index = find([definitions.Path] == "Value", 1);
+            if isempty(index) || definitions(index).Application.EffectStatus ~= "modeled" || ...
+                    definitions(index).Application.EffectPolicy ~= "numericValue"
                 return
             end
             % Prove that only the owned Value literal changed; settings and every other input remain exact.

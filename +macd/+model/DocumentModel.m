@@ -59,8 +59,6 @@ classdef DocumentModel < handle
         Evaluation macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         PropertyCheckpoint macd.model.DocumentModel = macd.model.DocumentModel.empty
         PropertyCheckpointContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
-        PropertyCheckpointId string = ""
-        PropertyCheckpointPaths string = strings(1, 0)
         PropertyValidationContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         PropertyValidationDiagnostics macd.model.Diagnostic = macd.model.Diagnostic.empty
         SavedHistoryIndex double = NaN
@@ -1589,18 +1587,21 @@ classdef DocumentModel < handle
                 context.rememberConfiguration("combined", prepared);
             end
             component = obj.getComponent(componentId);
-            fontEdit = component.Factory == "uilabel" && all(paths == "FontSize");
-            numericEdit = component.Factory == "uieditfield" && ...
-                component.DeclaredType == "matlab.ui.control.NumericEditField" && isequal(paths, "Value");
-            if carryValidation && (fontEdit || numericEdit)
+            parentFactory = "";
+            parent = obj.getComponent(component.ParentId);
+            if ~isempty(parent), parentFactory = parent.Factory; end
+            definitions = registry.getEffectiveProperties(component.Factory, ...
+                parentFactory, component.CreationArguments);
+            valueIndex = find([definitions.Path] == "Value", 1);
+            numericEdit = isequal(paths, "Value") && ~isempty(valueIndex) && ...
+                definitions(valueIndex).Application.EffectPolicy == "numericValue";
+            if carryValidation
                 % Proven local literals retain ownership and logical placement; measured geometry stays guarded.
                 context.inheritEligibility(obj.PropertyValidationContext);
                 if numericEdit, context.inheritNumericStates(obj.PropertyValidationContext, componentId); end
             end
             obj.PropertyCheckpoint = prepared;
             obj.PropertyCheckpointContext = context;
-            obj.PropertyCheckpointId = componentId;
-            obj.PropertyCheckpointPaths = paths;
             obj.PropertyValidationContext = macd.model.EvaluationContext.empty;
             if carryValidation
                 obj.PropertyValidationContext = context;
@@ -1635,25 +1636,29 @@ classdef DocumentModel < handle
                 parsed macd.model.DocumentModel
             end
             parsed = macd.model.DocumentModel.empty;
-            if isempty(obj.PropertyCheckpointContext) || ...
-                    ~obj.PropertyCheckpointContext.matches(obj, registry)
-                return
+            live = obj.getComponent(componentId);
+            if isempty(live), return, end
+            if ~isempty(obj.PropertyCheckpointContext) && obj.PropertyCheckpointContext.matches(obj, registry)
+                checkpoint = obj.PropertyCheckpoint;
+            else
+                % Preview and state evaluation may already own a fully generated, reparsed configuration.
+                context = obj.evaluationContext(registry);
+                [plan, found] = context.configuration("combined", live.Name);
+                if ~found, return, end
+                checkpoint = plan.Document;
+                checkpoint.FilePath = obj.FilePath;
             end
 
-            % A successful full preflight already established occurrence ownership and placement.
-            live = obj.getComponent(componentId);
-            checkpoint = obj.PropertyCheckpoint;
+            % The complete matching configuration proves ownership across all components and paths.
             component = checkpoint.getComponentByName(live.Name);
             if isempty(component), return, end
             paths = string({changes.Path});
-            numericValue = live.Factory == "uieditfield" && ...
-                component.DeclaredType == "matlab.ui.control.NumericEditField" && isequal(paths, "Value");
-            if ~numericValue && (obj.PropertyCheckpointId ~= componentId || ...
-                    ~all(ismember(paths, obj.PropertyCheckpointPaths)))
-                return
-            end
             states = checkpoint.getEffectivePropertyStates(registry, component.Id);
             definitions = [states.Definition];
+            valueIndex = find([definitions.Path] == "Value", 1);
+            numericValue = isequal(paths, "Value") && ~isempty(valueIndex) && ...
+                definitions(valueIndex).Application.EffectStatus == "modeled" && ...
+                definitions(valueIndex).Application.EffectPolicy == "numericValue";
             constraints = ["Value", "Limits", "AllowEmpty", "RoundFractionalValues", ...
                 "LowerLimitInclusive", "UpperLimitInclusive"];
             if numericValue
@@ -1681,12 +1686,13 @@ classdef DocumentModel < handle
                 finiteNumber = isfield(schema, "kind") && string(schema.kind) == "number" && ...
                     isa(change.Value, "double") && isscalar(change.Value) && ...
                     isreal(change.Value) && isfinite(change.Value);
-                textLiteral = independent && isempty(definition.Application.AffectedPaths) && ...
-                    isfield(schema, "kind") && any(string(schema.kind) == ["text", "multilineText"]) && ...
-                    (ischar(change.Value) || isstring(change.Value) || ...
-                    (iscell(change.Value) && all(cellfun(@(value) ischar(value) || ...
-                    (isstring(value) && isscalar(value)), change.Value), "all")));
-                if ~(independent || numeric) || ~(finiteNumber || textLiteral) || ...
+                independentLiteral = independent && isempty(definition.Application.AffectedPaths);
+                % Descendant geometry still needs complete source validation when its owner changes layout.
+                if independentLiteral && ~isempty(live.Children) && ...
+                        (definition.AbsoluteGeometryImpact || definition.GridGeometryImpact == "required")
+                    return
+                end
+                if ~(independentLiteral || (numeric && finiteNumber)) || ...
                         isempty(entry) || isempty(entry.SourceSpan) || ~entry.IsEditable || ...
                         entry.ValueKind ~= "literal" || ~states(index).Resolution.IsKnown
                     return
@@ -1698,15 +1704,14 @@ classdef DocumentModel < handle
                         return
                     end
                 end
-                % Unsupported text representations retain full-preflight diagnostics.
+                % Every independent literal uses the same schema, encoding, and exact decoding proof.
                 try
                     encoded = macd.source.LiteralEncoder.encode(change.Value);
-                catch exception
-                    if textLiteral, return, end
-                    rethrow(exception)
+                catch
+                    return
                 end
                 % A physical line break inside quotes needs the full source-syntax checks.
-                if textLiteral && (contains(encoded, string(newline)) || contains(encoded, string(char(13))))
+                if contains(encoded, string(newline)) || contains(encoded, string(char(13)))
                     return
                 end
                 [decoded, literal] = macd.source.MatlabLiteralParser.parse(encoded);
