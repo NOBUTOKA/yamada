@@ -121,9 +121,10 @@ classdef PropertyInsertionPlanner
             end
             plans = struct("ComponentId", {}, "Edits", {}, "Placements", {});
             parsed = macd.model.DocumentModel.empty;
-            % Structural edits need the complete relocation and component-addition machinery.
+            % Relocation, deletion, callback, and rename edits retain their established proof paths.
+            origins = string({document.Components.Origin});
             if ~isempty(document.PendingEdits) || ~isempty(document.CallbackEdits) || ...
-                    ~isempty(document.RenameEdits) || any([document.Components.Origin] ~= "parsed")
+                    ~isempty(document.RenameEdits) || any(~ismember(origins, ["parsed", "generated"]))
                 return
             end
             owners = document.Components(arrayfun(@(record) ...
@@ -136,8 +137,19 @@ classdef PropertyInsertionPlanner
                     "Edits", tentative.Edits, "Placements", tentative.Placements); %#ok<AGROW>
                 edits = [edits tentative.Edits]; %#ok<AGROW>
             end
+            completeSource = any(origins == "generated");
+            if completeSource
+                % Include generated components before checking placement and all final values once.
+                detached = document.structuralCandidate();
+                detached.Metadata.ResolvingCombinedPropertySource = true;
+                [source, diagnostics] = macd.source.RoundTripGenerator(registry).generatePreparedInsertions(detached, plans);
+                if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics), return, end
+                edits = struct("Start", {}, "End", {}, "Text", {});
+            else
+                source = document.OriginalText;
+            end
             [accepted, candidate] = macd.source.PropertyInsertionPlanner.candidate( ...
-                document.OriginalText, edits, document.sourceComponentName(owners(1).Id), ...
+                source, edits, document.sourceComponentName(owners(1).Id), ...
                 macd.model.PropertyEntry.empty, registry);
             if ~accepted, return, end
             % Final values of other unsaved requests must survive the same intermediate-state checks.
@@ -156,6 +168,10 @@ classdef PropertyInsertionPlanner
                 end
             end
             parsed = candidate;
+            if completeSource
+                % This proof includes every actual generated statement, rather than a partial owner view.
+                document.evaluationContext(registry).rememberConfiguration("combined", parsed);
+            end
         end
 
         function entries = batchRequests(component)

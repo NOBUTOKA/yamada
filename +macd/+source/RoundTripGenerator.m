@@ -6,6 +6,7 @@ classdef RoundTripGenerator
 
     properties (Access = private)
         Registry macd.model.ComponentRegistry
+        PreparedInsertions struct = struct([])
     end
 
     methods
@@ -45,7 +46,11 @@ classdef RoundTripGenerator
                 return
             end
             source = document.OriginalText;
-            diagnostics = macd.validation.ModelValidator.validate(document, obj.Registry);
+            diagnostics = macd.model.Diagnostic.empty;
+            % Only the insertion planner may defer validation until its complete source is parsed.
+            if isempty(obj.PreparedInsertions)
+                diagnostics = macd.validation.ModelValidator.validate(document, obj.Registry);
+            end
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 return
             end
@@ -100,7 +105,16 @@ classdef RoundTripGenerator
                 if any(movedIds == component.Id), continue, end
                 if macd.source.PropertyInsertionPlanner.needsPlan(document, component)
                     try
-                        plan = macd.source.PropertyInsertionPlanner.plan(document, component, obj.Registry);
+                        if isempty(obj.PreparedInsertions)
+                            plan = macd.source.PropertyInsertionPlanner.plan(document, component, obj.Registry);
+                        else
+                            match = find(string({obj.PreparedInsertions.ComponentId}) == component.Id);
+                            if ~isscalar(match)
+                                error("macd:RoundTripGenerator:MissingPreparedInsertion", ...
+                                    "Every pending owner needs one prepared insertion plan.");
+                            end
+                            plan = obj.PreparedInsertions(match);
+                        end
                         edits = [edits plan.Edits]; %#ok<AGROW>
                     catch exception
                         diagnostics(end + 1) = obj.error("unsafe-property-insertion", component, string(exception.message)); %#ok<AGROW>
@@ -183,6 +197,25 @@ classdef RoundTripGenerator
             source = macd.source.ComponentNameRewriter.rewrite(source, document.RenameEdits);
             document.GeneratedText = source;
             document.Diagnostics = diagnostics;
+        end
+    end
+
+    methods (Access = {?macd.source.PropertyInsertionPlanner})
+        function [source, diagnostics] = generatePreparedInsertions(obj, document, plans)
+            % generatePreparedInsertions Emit an internal tentative source for mandatory whole-source validation.
+            %   The value generator keeps these plans private to this call. The caller
+            %   must parse the complete source and verify every pending request.
+            arguments (Input)
+                obj (1, 1) macd.source.RoundTripGenerator
+                document (1, 1) macd.model.DocumentModel
+                plans struct
+            end
+            arguments (Output)
+                source string
+                diagnostics macd.model.Diagnostic
+            end
+            obj.PreparedInsertions = plans;
+            [source, diagnostics] = obj.generate(document);
         end
     end
 

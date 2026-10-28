@@ -157,21 +157,191 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(generator.generate(document), both);
             testCase.verifyEqual(document.HistoryIndex, 2);
         end
+
+        function generatedComponentsParticipateInOneCompletePlacementProof(testCase)
+            % generatedComponentsParticipateInOneCompletePlacementProof Include additions while sharing all owned requests.
+            for layout = ["absolute", "flat", "nested"]
+                document = testCase.numericFixture(2, layout);
+                first = document.getComponentByName("Field1");
+                second = document.getComponentByName("Field2");
+                first.setProperty("Value", 3); second.setProperty("Value", 4);
+                added = document.insertComponent(testCase.Registry, "uilabel", first.ParentId);
+                added.setProperty("FontSize", 14);
+                original = document.OriginalText;
+                profile clear; profile on; stop = onCleanup(@() profile("off"));
+                plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+                other = macd.source.PropertyInsertionPlanner.plan(document, second, testCase.Registry);
+                profile off; functions = profile("info").FunctionTable; clear stop
+                parsed = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
+                testCase.verifyEqual(sum([functions(parsed).NumCalls]), 1, layout);
+                testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
+                testCase.verifyEqual(other.Component.getProperty("Value").LiteralValue, 4);
+                testCase.verifyEqual(plan.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 14);
+                expected = plan.Document.OriginalText;
+                % Public results cannot mutate the complete configuration retained by the live document.
+                plan.Document.getComponentByName(second.Name).setProperty("Value", 99);
+                [retained, found] = document.evaluationContext(testCase.Registry).configuration("combined", added.Name);
+                testCase.verifyTrue(found, layout);
+                testCase.verifyEqual(retained.Document.getComponentByName(second.Name).getProperty("Value").LiteralValue, 4);
+                [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                testCase.verifyEqual(source, expected, layout);
+                testCase.verifyEqual(document.OriginalText, original);
+                testCase.verifyEqual(document.HistoryIndex, 1);
+            end
+        end
+
+        function generatedComponentsKeepTheLaterSlotFallback(testCase)
+            % generatedComponentsKeepTheLaterSlotFallback Reject an invalid first batch without losing a valid later placement.
+            document = testCase.fixture(["First", "Second"], ...
+                ["app.First = uieditfield(app.UIFigure,'numeric');", "app.First.Value = 20;", ...
+                "app.Second = uieditfield(app.UIFigure,'numeric');"]);
+            document.getComponentByName("First").setProperty("Limits", [50 100]);
+            document.getComponentByName("Second").setProperty("Value", 3);
+            added = document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            first = parsed.getComponentByName("First");
+            testCase.verifyGreaterThan(first.getSettings("Limits").SourceSpan.StartOffset, ...
+                first.getSettings("Value").SourceSpan.EndOffset);
+            testCase.verifyNotEmpty(parsed.getComponentByName(added.Name));
+            testCase.verifyEqual(parsed.getComponentByName("Second").getProperty("Value").LiteralValue, 3);
+        end
+
+        function invalidGeneratedRequestsCannotPublishACompleteProof(testCase)
+            % invalidGeneratedRequestsCannotPublishACompleteProof Validate generated settings before retaining source-wide evidence.
+            document = testCase.numericFixture(2);
+            first = document.getComponentByName("Field1");
+            first.setProperty("Value", 3);
+            document.getComponentByName("Field2").setProperty("Value", 4);
+            added = document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            added.setProperty("FontSize", -2);
+            macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            [~, found] = document.evaluationContext(testCase.Registry).configuration("combined", first.Name);
+            testCase.verifyFalse(found);
+            [~, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+        end
+
+        function generatedChangesInvalidateTheCompletePlacementProof(testCase)
+            % generatedChangesInvalidateTheCompletePlacementProof Never retain an earlier value after an added record changes.
+            document = testCase.numericFixture(2);
+            first = document.getComponentByName("Field1");
+            first.setProperty("Value", 3);
+            document.getComponentByName("Field2").setProperty("Value", 4);
+            added = document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            added.setProperty("FontSize", 14);
+            before = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            added.setProperty("FontSize", 18);
+            [~, found] = document.evaluationContext(testCase.Registry).configuration("combined", first.Name);
+            testCase.verifyFalse(found);
+            after = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            testCase.verifyEqual(before.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 14);
+            testCase.verifyEqual(after.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 18);
+        end
+
+        function completePlacementCoversEveryGeneratedCatalogVariant(testCase)
+            % completePlacementCoversEveryGeneratedCatalogVariant Apply the proof wherever ordinary generation is supported.
+            variants = testCase.Registry.listVariantIds();
+            applicable = 0;
+            unsupported = 0;
+            for variant = reshape(variants, 1, [])
+                definition = testCase.Registry.getById(variant);
+                if definition.IsRoot, continue, end
+                document = testCase.numericFixture(2);
+                parentId = testCase.generatedParent(document, definition);
+                generated = macd.model.ComponentRecord("generated-subject", "Subject", ...
+                    definition.Factory, definition.DeclaredType, "generated");
+                generated.CreationArguments = definition.CreationArguments;
+                document.addComponent(generated, parentId);
+                % Existing ordinary generation defines applicability without broadening product capabilities.
+                [~, baselineDiagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+                first = document.getComponentByName("Field1");
+                first.setProperty("Value", 3);
+                document.getComponentByName("Field2").setProperty("FontSize", 14);
+                if macd.validation.ModelValidator.hasErrors(baselineDiagnostics)
+                    [~, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+                    testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics), variant);
+                    unsupported = unsupported + 1;
+                    fprintf("GENERATED_BATCH_NOT_APPLICABLE %s\n", variant);
+                    continue
+                end
+                profile clear; profile on; stop = onCleanup(@() profile("off"));
+                plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+                profile off; functions = profile("info").FunctionTable; clear stop
+                parsed = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
+                testCase.verifyEqual(sum([functions(parsed).NumCalls]), 1, variant);
+                retained = plan.Document.getComponentByName(generated.Name);
+                testCase.assertNotEmpty(retained, variant);
+                testCase.verifyEqual(retained.Factory, generated.Factory, variant);
+                testCase.verifyEqual(retained.CreationArguments, generated.CreationArguments, variant);
+                testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3, variant);
+                testCase.verifyEqual(plan.Document.getComponentByName("Field2").getProperty("FontSize").LiteralValue, 14, variant);
+                [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics), variant);
+                testCase.verifyEqual(source, plan.Document.OriginalText, variant);
+                applicable = applicable + 1;
+                fprintf("GENERATED_BATCH_VARIANT %s\n", variant);
+            end
+            testCase.verifyGreaterThan(applicable, 0);
+            testCase.verifyEqual(applicable + unsupported, numel(variants) - 1);
+            fprintf("GENERATED_BATCH_COVERAGE Reviewed=%d Applicable=%d Unsupported=%d\n", ...
+                numel(variants), applicable, unsupported);
+        end
     end
 
     methods (Access = private)
-        function document = numericFixture(testCase, count)
+        function document = numericFixture(testCase, count, layout)
             % numericFixture Create controls without explicit Value settings for owner-scaling coverage.
             arguments (Input)
                 testCase (1, 1) PropertyInsertionBatchTest
                 count (1, 1) double
+                layout (1, 1) string = "absolute"
             end
             arguments (Output)
                 document (1, 1) macd.model.DocumentModel
             end
-            names = "Field" + (1:count);
-            initialization = "app." + names + " = uieditfield(app.UIFigure,'numeric');";
+            fields = "Field" + (1:count);
+            names = fields;
+            initialization = strings(1, 0);
+            parent = "UIFigure";
+            if layout ~= "absolute"
+                depth = 1;
+                if layout == "nested", depth = 3; end
+                for index = 1:depth
+                    grid = "Grid" + index;
+                    names(end + 1) = grid; %#ok<AGROW>
+                    initialization(end + 1) = "app." + grid + " = uigridlayout(app." + parent + ",[2 1]);"; %#ok<AGROW>
+                    parent = grid;
+                end
+            end
+            initialization = [initialization "app." + fields + " = uieditfield(app." + parent + ",'numeric');"];
             document = testCase.fixture(names, initialization);
+        end
+
+        function id = generatedParent(testCase, document, definition)
+            % generatedParent Build the minimal allowed generated hierarchy for source-only catalog coverage.
+            arguments (Input)
+                testCase (1, 1) PropertyInsertionBatchTest
+                document (1, 1) macd.model.DocumentModel
+                definition (1, 1) macd.model.ComponentDefinition
+            end
+            arguments (Output)
+                id (1, 1) string
+            end
+            if any(definition.AllowedParentFactories == "uifigure")
+                id = document.RootComponentId;
+                return
+            end
+            parentDefinition = testCase.Registry.get(definition.AllowedParentFactories(1));
+            parentId = testCase.generatedParent(document, parentDefinition);
+            name = "GeneratedParent" + numel(document.Components);
+            parent = macd.model.ComponentRecord("generated-" + name, name, ...
+                parentDefinition.Factory, parentDefinition.DeclaredType, "generated");
+            parent.CreationArguments = parentDefinition.CreationArguments;
+            document.addComponent(parent, parentId);
+            id = parent.Id;
         end
 
         function document = fixture(testCase, names, initialization)
