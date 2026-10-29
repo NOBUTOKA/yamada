@@ -13,7 +13,7 @@ function ConvertTo-ApplicationPolicy {
         throw "$Context must be an application policy object."
     }
     foreach ($field in @($Policy.PSObject.Properties | ForEach-Object Name)) {
-        if ($field -notin @('applyAfter', 'nameValue', 'effectPolicy', 'defaultLiteral', 'effectStatus', 'affectedPaths', 'effectReason')) {
+        if ($field -notin @('applyAfter', 'effectPolicy', 'defaultLiteral', 'effectStatus', 'affectedPaths', 'effectReason')) {
             throw "$Context contains unknown field '$field'."
         }
     }
@@ -32,13 +32,6 @@ function ConvertTo-ApplicationPolicy {
             $dependencies += $path
         }
     }
-    $nameValue = 'unknown'
-    if ($null -ne $Policy.PSObject.Properties['nameValue']) {
-        $nameValue = $Policy.nameValue
-    }
-    if ($nameValue -isnot [string] -or $nameValue -cnotin @('supported', 'unsupported', 'unknown')) {
-        throw "$Context.nameValue has an unknown constructor policy."
-    }
     $effect = 'none'
     if ($null -ne $Policy.PSObject.Properties['effectPolicy']) {
         $effect = $Policy.effectPolicy
@@ -50,7 +43,6 @@ function ConvertTo-ApplicationPolicy {
     }
     $result = [ordered]@{
         applyAfter = @($dependencies | Sort-Object -CaseSensitive)
-        nameValue = $nameValue
         effectPolicy = $effect
     }
     if ($null -ne $Policy.PSObject.Properties['defaultLiteral']) {

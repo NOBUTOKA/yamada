@@ -29,7 +29,7 @@ function Assert-PolicyFailure {
 
 # Cover normalization and invalid symbols independently of the generator.
 $emptyPolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{})
-Assert-Condition ($emptyPolicy.nameValue -ceq 'unknown' -and $emptyPolicy.effectPolicy -ceq 'none' -and
+Assert-Condition ($null -eq $emptyPolicy.PSObject.Properties['nameValue'] -and $emptyPolicy.effectPolicy -ceq 'none' -and
     $emptyPolicy.applyAfter.Count -eq 0 -and $emptyPolicy.effectStatus -ceq 'unknown') 'An empty optional policy did not retain conservative defaults.'
 $unresolved = ConvertTo-ApplicationPolicy ([pscustomobject]@{
     effectStatus = 'unsupported'; affectedPaths = @('Value'); effectReason = 'Owned fixture boundary.'
@@ -50,10 +50,10 @@ foreach ($identifier in @('modeFlag','axisWidth','positionAlias','squarePosition
 }
 Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ defaultLiteral = 0 }) }
 $policy = ConvertTo-ApplicationPolicy ([pscustomobject]@{
-    applyAfter = @('ItemsData', 'Items'); nameValue = 'supported'; effectPolicy = 'itemSelection'
+    applyAfter = @('ItemsData', 'Items'); effectPolicy = 'itemSelection'
 })
 Assert-Condition (($policy.applyAfter -join ',') -ceq 'Items,ItemsData') 'Policy normalization is unstable.'
-Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ nameValue = 'SUPPORTED' }) }
+Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ nameValue = 'supported' }) }
 Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ effectPolicy = 'execute' }) }
 Assert-PolicyFailure { ConvertTo-ApplicationPolicy ([pscustomobject]@{ applyAfter = @('Items', 'Items') }) }
 Assert-PolicyFailure { Test-ApplicationPolicies @([pscustomobject]@{
@@ -89,7 +89,7 @@ try {
     $runtime = Get-Content -Raw -LiteralPath (Join-Path $catalogRoot 'components/uidropdown.json') | ConvertFrom-Json
     $entries = @($runtime.categories | ForEach-Object { $_.entries })
     $promoted = $entries | Where-Object { $_.path -ceq 'Value' }
-    Assert-Condition ($promoted.metadata.application.nameValue -ceq 'supported') 'Constructor support was lost during promotion.'
+    Assert-Condition ($null -eq $promoted.metadata.application.PSObject.Properties['nameValue']) 'Removed constructor support flag was promoted.'
     Assert-Condition (($promoted.metadata.application.applyAfter -join ',') -ceq 'Items,ItemsData') 'Application dependencies were lost during promotion.'
     Assert-Condition ($promoted.metadata.application.effectPolicy -ceq 'itemSelection') 'Effect policy was lost during promotion.'
     Assert-Condition ($null -eq $promoted.metadata.PSObject.Properties['applicationEvidence']) 'Evidence leaked into runtime metadata.'

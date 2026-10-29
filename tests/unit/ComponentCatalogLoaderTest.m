@@ -33,15 +33,14 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             root = testCase.createCatalog();
             component = testCase.readJson(root, "components/uilabel.json");
             component.properties{2}.metadata.application = struct( ...
-                "applyAfter", {{"Visible"}}, "nameValue", "supported", "effectPolicy", "none");
+                "applyAfter", {{"Visible"}}, "effectPolicy", "none");
             testCase.writeJson(root, "components/uilabel.json", component);
             definition = macd.catalog.ComponentCatalogLoader.load(root).get("uilabel");
             testCase.verifyEqual(string({definition.Properties.Path}), ...
                 ["Position", "Visible", "Text", "Layout.Row", "Layout.Column"]);
             policy = definition.getProperty("Text").Application;
             testCase.verifyEqual(policy.ApplyAfter, "Visible");
-            testCase.verifyEqual(policy.NameValue, "supported");
-            testCase.verifyEqual(definition.getProperty("Position").Application.NameValue, "unknown");
+            testCase.verifyFalse(isprop(policy, "NameValue"));
         end
 
         function rejectsMissingAndCyclicApplicationDependencies(testCase)

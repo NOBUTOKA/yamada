@@ -2,8 +2,8 @@
 .SYNOPSIS
 Applies explicitly reviewed initialization rules to the development ledger.
 .DESCRIPTION
-Uses release-fixed source URLs and a separate review artifact. Unknown
-constructor support remains unknown. Does not infer rules from candidate text
+Uses release-fixed source URLs and a separate review artifact. Constructor
+syntax follows the documented factory contract. Does not infer rules from candidate text
 or promote artifacts into the runtime catalog.
 #>
 [CmdletBinding()]
@@ -107,7 +107,7 @@ foreach ($seed in $review.initialValues) {
     }
 }
 
-# Constructor support is a separate reviewed runtime fact, never inferred from SetAccess.
+# Native constructor regressions retain evidence independently of documented syntax support.
 $runtimePath = Join-Path $ReleaseDirectory 'APPLICATION_POLICY_RUNTIME_REVIEW.json'
 $runtime = Get-Content -LiteralPath $runtimePath -Raw | ConvertFrom-Json
 if ($runtime.matlabRelease -cne $review.matlabRelease) { throw 'Runtime review release does not match the ledger.' }
@@ -160,7 +160,7 @@ if ($null -ne $runtime.PSObject.Properties['setterAccess']) {
     }
 }
 foreach ($coverage in $runtime.coverage) {
-    if ($coverage.result -cne 'passed') { throw 'Only verified runtime coverage may grant constructor support.' }
+    if ($coverage.result -cne 'passed') { throw 'Only passed runtime coverage may be recorded as evidence.' }
     foreach ($id in $coverage.variants) {
         if ($id -cnotin $policyDocuments) { throw "Runtime review has no documentation-reviewed variant $id." }
         $ledger = $documents[$id]
@@ -171,7 +171,6 @@ foreach ($coverage in $runtime.coverage) {
                 $policy = ConvertTo-ApplicationPolicy ([pscustomobject]@{}) "$id.$path"
                 $property[0] | Add-Member -NotePropertyName application -NotePropertyValue ([pscustomobject]$policy)
             }
-            $property[0].application.nameValue = 'supported'
             $evidence = @()
             if ($null -ne $property[0].PSObject.Properties['applicationEvidence']) {
                 $evidence = @($property[0].applicationEvidence | Where-Object kind -CNE 'runtime')
@@ -198,7 +197,7 @@ foreach ($id in $documents.Keys) {
     if ($id -cin $policyDocuments) {
         $variant.policyReviewStatus = 'partial'
         $count = @($documents[$id].properties | Where-Object {
-            $_.application.effectPolicy -cne 'none' -or $_.application.nameValue -cne 'unknown' -or
+            $_.application.effectPolicy -cne 'none' -or
             $_.application.applyAfter.Count -gt 0 -or $null -ne $_.application.PSObject.Properties['defaultLiteral']
         }).Count
         $variant | Add-Member -NotePropertyName reviewedPolicyCount -NotePropertyValue $count -Force

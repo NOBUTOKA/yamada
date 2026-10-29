@@ -116,7 +116,6 @@
           "RoundFractionalValues",
           "UpperLimitInclusive"
         ],
-        "nameValue": "supported",
         "effectPolicy": "numericValue",
         "defaultLiteral": "0",
         "effectStatus": "modeled",
@@ -180,7 +179,6 @@
       ],
       "application": {
         "applyAfter": [],
-        "nameValue": "supported",
         "effectPolicy": "numericValue",
         "defaultLiteral": "[-Inf Inf]",
         "effectStatus": "modeled",
@@ -225,7 +223,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -287,7 +284,6 @@
           "LowerLimitInclusive",
           "UpperLimitInclusive"
         ],
-        "nameValue": "unknown",
         "effectPolicy": "numericValue",
         "defaultLiteral": "'off'",
         "effectStatus": "modeled",
@@ -334,7 +330,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -392,7 +387,6 @@
       ],
       "application": {
         "applyAfter": [],
-        "nameValue": "supported",
         "effectPolicy": "none",
         "defaultLiteral": "'off'",
         "effectStatus": "modeled",
@@ -439,7 +433,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -490,7 +483,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -543,7 +535,6 @@
       ],
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "defaultLiteral": "'on'",
         "effectStatus": "modeled",
@@ -597,7 +588,6 @@
       ],
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "defaultLiteral": "'on'",
         "effectStatus": "modeled",
@@ -642,7 +632,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -688,7 +677,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -737,7 +725,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -786,7 +773,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -836,7 +822,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -886,7 +871,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -932,7 +916,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -978,7 +961,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1024,7 +1006,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1074,7 +1055,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1120,7 +1100,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unknown",
         "affectedPaths": [],
@@ -1171,7 +1150,6 @@
       ],
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "positionInput",
         "effectStatus": "modeled",
         "affectedPaths": [],
@@ -1217,7 +1195,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unsupported",
         "affectedPaths": [
@@ -1268,7 +1245,6 @@
       "runtimeSetAccess": "restricted",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unsupported",
         "affectedPaths": [
@@ -1319,7 +1295,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unknown",
         "affectedPaths": [],
@@ -1370,7 +1345,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1421,7 +1395,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1472,7 +1445,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unsupported",
         "affectedPaths": [],
@@ -1523,7 +1495,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unsupported",
         "affectedPaths": [],
@@ -1569,7 +1540,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1618,7 +1588,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1664,7 +1633,6 @@
       "runtimeSetAccess": "restricted",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unknown",
         "affectedPaths": [],
@@ -1713,7 +1681,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unknown",
         "affectedPaths": [],
@@ -1761,7 +1728,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1807,7 +1773,6 @@
       "runtimeSetAccess": "restricted",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "unknown",
         "affectedPaths": [],
@@ -1855,7 +1820,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],
@@ -1902,7 +1866,6 @@
       "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
-        "nameValue": "unknown",
         "effectPolicy": "none",
         "effectStatus": "independent",
         "affectedPaths": [],

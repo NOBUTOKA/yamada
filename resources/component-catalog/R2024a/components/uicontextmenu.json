@@ -50,7 +50,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -87,7 +86,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -124,7 +122,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -141,7 +138,7 @@
       "entries": [
         {
           "path": "Interruptible",
-          "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
+          "groupId": "exact.callbackexecutioncontrol.076ab54e429f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
@@ -149,7 +146,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
-            "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
+            "groupId": "exact.callbackexecutioncontrol.076ab54e429f",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -168,7 +165,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -178,7 +174,7 @@
         },
         {
           "path": "BusyAction",
-          "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
+          "groupId": "exact.callbackexecutioncontrol.076ab54e429f",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
@@ -186,7 +182,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
-            "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
+            "groupId": "exact.callbackexecutioncontrol.076ab54e429f",
             "editor": "enum",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -208,7 +204,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -218,7 +213,7 @@
         },
         {
           "path": "BeingDeleted",
-          "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
+          "groupId": "exact.callbackexecutioncontrol.076ab54e429f",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
@@ -226,7 +221,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
-            "groupId": "exact.callbackexecutioncontrol.2e920b3da967",
+            "groupId": "exact.callbackexecutioncontrol.076ab54e429f",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -243,7 +238,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -285,7 +279,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -320,7 +313,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -356,7 +348,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -398,7 +389,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -434,7 +424,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -469,7 +458,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],

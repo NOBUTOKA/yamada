@@ -60,7 +60,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -97,7 +96,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -134,7 +132,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -179,7 +176,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -214,7 +210,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -258,7 +253,6 @@
               "applyAfter": [
                 "Units"
               ],
-              "nameValue": "unknown",
               "effectPolicy": "layout",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -293,7 +287,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -332,7 +325,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -380,7 +372,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -424,7 +415,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -461,7 +451,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -498,7 +487,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -535,7 +523,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -579,7 +566,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -619,7 +605,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -654,7 +639,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -696,7 +680,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -731,7 +714,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -767,7 +749,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -809,7 +790,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -845,7 +825,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -880,7 +859,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -924,7 +902,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -961,7 +938,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],

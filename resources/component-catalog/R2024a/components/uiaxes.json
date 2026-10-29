@@ -51,7 +51,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -88,7 +87,6 @@
               "applyAfter": [
                 "FontUnits"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -130,7 +128,6 @@
               "applyAfter": [
                 "FontSize"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -171,7 +168,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -211,7 +207,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -246,7 +241,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -281,7 +275,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -321,7 +314,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -361,7 +353,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -404,7 +395,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'pixels'",
               "effectStatus": "modeled",
@@ -441,7 +431,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -458,7 +447,7 @@
       "entries": [
         {
           "path": "XTick",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTick",
@@ -466,7 +455,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 1,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -485,7 +474,6 @@
               "applyAfter": [
                 "XLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -495,7 +483,7 @@
         },
         {
           "path": "YTick",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTick",
@@ -503,7 +491,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 2,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -522,7 +510,6 @@
               "applyAfter": [
                 "YLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -532,7 +519,7 @@
         },
         {
           "path": "ZTick",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTick",
@@ -540,7 +527,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 3,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -559,7 +546,6 @@
               "applyAfter": [
                 "ZLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -569,7 +555,7 @@
         },
         {
           "path": "XTickMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickMode",
@@ -577,7 +563,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 4,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -601,7 +587,6 @@
               "applyAfter": [
                 "XTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -612,7 +597,7 @@
         },
         {
           "path": "YTickMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickMode",
@@ -620,7 +605,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 5,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -644,7 +629,6 @@
               "applyAfter": [
                 "YTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -655,7 +639,7 @@
         },
         {
           "path": "ZTickMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickMode",
@@ -663,7 +647,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 6,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -687,7 +671,6 @@
               "applyAfter": [
                 "ZTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -698,7 +681,7 @@
         },
         {
           "path": "XTickLabel",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabel",
@@ -706,7 +689,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 7,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "stringList",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -728,7 +711,6 @@
               "applyAfter": [
                 "XTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -738,7 +720,7 @@
         },
         {
           "path": "YTickLabel",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabel",
@@ -746,7 +728,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 8,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "stringList",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -768,7 +750,6 @@
               "applyAfter": [
                 "YTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -778,7 +759,7 @@
         },
         {
           "path": "ZTickLabel",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickLabel",
@@ -786,7 +767,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 9,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "stringList",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -808,7 +789,6 @@
               "applyAfter": [
                 "ZTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -818,7 +798,7 @@
         },
         {
           "path": "XTickLabelMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelMode",
@@ -826,7 +806,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 10,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -850,7 +830,6 @@
               "applyAfter": [
                 "XTickLabel"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -861,7 +840,7 @@
         },
         {
           "path": "YTickLabelMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelMode",
@@ -869,7 +848,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 11,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -893,7 +872,6 @@
               "applyAfter": [
                 "YTickLabel"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -904,7 +882,7 @@
         },
         {
           "path": "ZTickLabelMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickLabelMode",
@@ -912,7 +890,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 12,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -936,7 +914,6 @@
               "applyAfter": [
                 "ZTickLabel"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -947,7 +924,7 @@
         },
         {
           "path": "TickLabelInterpreter",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickLabelInterpreter",
@@ -955,7 +932,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 13,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -978,7 +955,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -988,7 +964,7 @@
         },
         {
           "path": "XTickLabelRotation",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelRotation",
@@ -996,7 +972,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 14,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1013,7 +989,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1023,7 +998,7 @@
         },
         {
           "path": "YTickLabelRotation",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelRotation",
@@ -1031,7 +1006,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 15,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1048,7 +1023,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1058,7 +1032,7 @@
         },
         {
           "path": "ZTickLabelRotation",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickLabelRotation",
@@ -1066,7 +1040,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 16,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1083,7 +1057,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1093,7 +1066,7 @@
         },
         {
           "path": "XTickLabelRotationMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XTickLabelRotationMode",
@@ -1101,7 +1074,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 17,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1125,7 +1098,6 @@
               "applyAfter": [
                 "XTickLabelRotation"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1136,7 +1108,7 @@
         },
         {
           "path": "YTickLabelRotationMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YTickLabelRotationMode",
@@ -1144,7 +1116,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 18,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1168,7 +1140,6 @@
               "applyAfter": [
                 "YTickLabelRotation"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1179,7 +1150,7 @@
         },
         {
           "path": "ZTickLabelRotationMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZTickLabelRotationMode",
@@ -1187,7 +1158,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 19,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1211,7 +1182,6 @@
               "applyAfter": [
                 "ZTickLabelRotation"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1222,7 +1192,7 @@
         },
         {
           "path": "XMinorTick",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XMinorTick",
@@ -1230,7 +1200,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 20,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1249,7 +1219,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1259,7 +1228,7 @@
         },
         {
           "path": "YMinorTick",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YMinorTick",
@@ -1267,7 +1236,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 21,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1286,7 +1255,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1296,7 +1264,7 @@
         },
         {
           "path": "ZMinorTick",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZMinorTick",
@@ -1304,7 +1272,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 22,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1323,7 +1291,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1333,7 +1300,7 @@
         },
         {
           "path": "TickDir",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickDir",
@@ -1341,7 +1308,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 23,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1365,7 +1332,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1375,7 +1341,7 @@
         },
         {
           "path": "TickDirMode",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickDirMode",
@@ -1383,7 +1349,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 24,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1407,7 +1373,6 @@
               "applyAfter": [
                 "TickDir"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1418,7 +1383,7 @@
         },
         {
           "path": "TickLength",
-          "groupId": "exact.ticks.e2417f5983cd",
+          "groupId": "exact.ticks.672104534fd7",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickLength",
@@ -1426,7 +1391,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 25,
-            "groupId": "exact.ticks.e2417f5983cd",
+            "groupId": "exact.ticks.672104534fd7",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1444,7 +1409,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1461,7 +1425,7 @@
       "entries": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLim",
@@ -1469,7 +1433,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 1,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1486,7 +1450,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1496,7 +1459,7 @@
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLim",
@@ -1504,7 +1467,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 2,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1521,7 +1484,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1531,7 +1493,7 @@
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLim",
@@ -1539,7 +1501,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 3,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1557,7 +1519,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1567,7 +1528,7 @@
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimMode",
@@ -1575,7 +1536,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 4,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1599,7 +1560,6 @@
               "applyAfter": [
                 "XLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1610,7 +1570,7 @@
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimMode",
@@ -1618,7 +1578,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 5,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1642,7 +1602,6 @@
               "applyAfter": [
                 "YLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1653,7 +1612,7 @@
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLimMode",
@@ -1661,7 +1620,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 6,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1685,7 +1644,6 @@
               "applyAfter": [
                 "ZLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1696,7 +1654,7 @@
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimitMethod",
@@ -1704,7 +1662,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 7,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1727,7 +1685,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1737,7 +1694,7 @@
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimitMethod",
@@ -1745,7 +1702,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 8,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1768,7 +1725,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1778,7 +1734,7 @@
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLimitMethod",
@@ -1786,7 +1742,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 9,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1809,7 +1765,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1819,7 +1774,7 @@
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxis",
@@ -1827,7 +1782,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 10,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -1844,7 +1799,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1854,7 +1808,7 @@
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "YAxis",
@@ -1862,7 +1816,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 11,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -1879,7 +1833,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1889,7 +1842,7 @@
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZAxis",
@@ -1897,7 +1850,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 12,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -1914,7 +1867,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1924,7 +1876,7 @@
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxisLocation",
@@ -1932,7 +1884,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 13,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1955,7 +1907,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1965,7 +1916,7 @@
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YAxisLocation",
@@ -1973,7 +1924,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 14,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1996,7 +1947,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2006,7 +1956,7 @@
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColor",
@@ -2014,7 +1964,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 15,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -2033,7 +1983,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2043,7 +1992,7 @@
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColor",
@@ -2051,7 +2000,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 16,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -2070,7 +2019,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2080,7 +2028,7 @@
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZColor",
@@ -2088,7 +2036,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 17,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -2107,7 +2055,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2117,7 +2064,7 @@
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColorMode",
@@ -2125,7 +2072,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 18,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2149,7 +2096,6 @@
               "applyAfter": [
                 "XColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2160,7 +2106,7 @@
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColorMode",
@@ -2168,7 +2114,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 19,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2192,7 +2138,6 @@
               "applyAfter": [
                 "YColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2203,7 +2148,7 @@
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZColorMode",
@@ -2211,7 +2156,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 20,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2235,7 +2180,6 @@
               "applyAfter": [
                 "ZColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2246,7 +2190,7 @@
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XDir",
@@ -2254,7 +2198,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 21,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2276,7 +2220,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2286,7 +2229,7 @@
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YDir",
@@ -2294,7 +2237,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 22,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2316,7 +2259,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2326,7 +2268,7 @@
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZDir",
@@ -2334,7 +2276,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 23,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2356,7 +2298,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2366,7 +2307,7 @@
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XScale",
@@ -2374,7 +2315,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 24,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2396,7 +2337,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2406,7 +2346,7 @@
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YScale",
@@ -2414,7 +2354,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 25,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2436,7 +2376,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2446,7 +2385,7 @@
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.309d253445f3",
+          "groupId": "exact.rulers.f972bd40e6e1",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZScale",
@@ -2454,7 +2393,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 26,
-            "groupId": "exact.rulers.309d253445f3",
+            "groupId": "exact.rulers.f972bd40e6e1",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2476,7 +2415,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2493,7 +2431,7 @@
       "entries": [
         {
           "path": "XGrid",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XGrid",
@@ -2501,7 +2439,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 1,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2520,7 +2458,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2530,7 +2467,7 @@
         },
         {
           "path": "YGrid",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YGrid",
@@ -2538,7 +2475,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 2,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2557,7 +2494,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2567,7 +2503,7 @@
         },
         {
           "path": "ZGrid",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZGrid",
@@ -2575,7 +2511,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 3,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2594,7 +2530,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2604,7 +2539,7 @@
         },
         {
           "path": "Layer",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Layer",
@@ -2612,7 +2547,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 4,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2634,7 +2569,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2644,7 +2578,7 @@
         },
         {
           "path": "GridLineStyle",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineStyle",
@@ -2652,7 +2586,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 5,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2677,7 +2611,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2687,7 +2620,7 @@
         },
         {
           "path": "GridLineWidth",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineWidth",
@@ -2695,7 +2628,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 6,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2716,7 +2649,6 @@
               "applyAfter": [
                 "LineWidth"
               ],
-              "nameValue": "supported",
               "effectPolicy": "axisWidth",
               "defaultLiteral": "0.5",
               "effectStatus": "modeled",
@@ -2727,7 +2659,7 @@
         },
         {
           "path": "GridLineWidthMode",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineWidthMode",
@@ -2735,7 +2667,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 7,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -2754,7 +2686,6 @@
               "applyAfter": [
                 "GridLineWidth"
               ],
-              "nameValue": "supported",
               "effectPolicy": "axisWidth",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2765,7 +2696,7 @@
         },
         {
           "path": "GridColor",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridColor",
@@ -2773,7 +2704,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 8,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -2792,7 +2723,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2802,7 +2732,7 @@
         },
         {
           "path": "GridColorMode",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridColorMode",
@@ -2810,7 +2740,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 9,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2834,7 +2764,6 @@
               "applyAfter": [
                 "GridColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2845,7 +2774,7 @@
         },
         {
           "path": "GridAlpha",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridAlpha",
@@ -2853,7 +2782,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 10,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2872,7 +2801,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2882,7 +2810,7 @@
         },
         {
           "path": "GridAlphaMode",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridAlphaMode",
@@ -2890,7 +2818,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 11,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2914,7 +2842,6 @@
               "applyAfter": [
                 "GridAlpha"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2925,7 +2852,7 @@
         },
         {
           "path": "XMinorGrid",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XMinorGrid",
@@ -2933,7 +2860,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 12,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2952,7 +2879,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2962,7 +2888,7 @@
         },
         {
           "path": "YMinorGrid",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YMinorGrid",
@@ -2970,7 +2896,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 13,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2989,7 +2915,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2999,7 +2924,7 @@
         },
         {
           "path": "ZMinorGrid",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZMinorGrid",
@@ -3007,7 +2932,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 14,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "onOff",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3026,7 +2951,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3036,7 +2960,7 @@
         },
         {
           "path": "MinorGridLineStyle",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineStyle",
@@ -3044,7 +2968,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 15,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3069,7 +2993,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3079,7 +3002,7 @@
         },
         {
           "path": "MinorGridLineWidth",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineWidth",
@@ -3087,7 +3010,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 16,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3108,7 +3031,6 @@
               "applyAfter": [
                 "GridLineWidth"
               ],
-              "nameValue": "supported",
               "effectPolicy": "axisWidth",
               "defaultLiteral": "0.5",
               "effectStatus": "modeled",
@@ -3119,7 +3041,7 @@
         },
         {
           "path": "MinorGridLineWidthMode",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridLineWidthMode",
@@ -3127,7 +3049,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 17,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -3147,7 +3069,6 @@
                 "GridLineWidthMode",
                 "MinorGridLineWidth"
               ],
-              "nameValue": "supported",
               "effectPolicy": "axisWidth",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -3158,7 +3079,7 @@
         },
         {
           "path": "MinorGridColor",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridColor",
@@ -3166,7 +3087,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 18,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -3185,7 +3106,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -3195,7 +3115,7 @@
         },
         {
           "path": "MinorGridColorMode",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridColorMode",
@@ -3203,7 +3123,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 19,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3227,7 +3147,6 @@
               "applyAfter": [
                 "MinorGridColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -3238,7 +3157,7 @@
         },
         {
           "path": "MinorGridAlpha",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridAlpha",
@@ -3246,7 +3165,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 20,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3265,7 +3184,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -3275,7 +3193,7 @@
         },
         {
           "path": "MinorGridAlphaMode",
-          "groupId": "exact.grids.b025a956088b",
+          "groupId": "exact.grids.2802b4ea8fdf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorGridAlphaMode",
@@ -3283,7 +3201,7 @@
             "categoryId": "grids",
             "category": "Grids",
             "order": 21,
-            "groupId": "exact.grids.b025a956088b",
+            "groupId": "exact.grids.2802b4ea8fdf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3307,7 +3225,6 @@
               "applyAfter": [
                 "MinorGridAlpha"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -3325,7 +3242,7 @@
       "entries": [
         {
           "path": "Title",
-          "groupId": "exact.labels.a3a4fcbe4d11",
+          "groupId": "exact.labels.a11c42909e37",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Title",
@@ -3333,7 +3250,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 1,
-            "groupId": "exact.labels.a3a4fcbe4d11",
+            "groupId": "exact.labels.a11c42909e37",
             "editor": "text",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3351,7 +3268,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3361,7 +3277,7 @@
         },
         {
           "path": "Subtitle",
-          "groupId": "exact.labels.a3a4fcbe4d11",
+          "groupId": "exact.labels.a11c42909e37",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Subtitle",
@@ -3369,7 +3285,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 2,
-            "groupId": "exact.labels.a3a4fcbe4d11",
+            "groupId": "exact.labels.a11c42909e37",
             "editor": "text",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3387,7 +3303,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3397,7 +3312,7 @@
         },
         {
           "path": "TitleHorizontalAlignment",
-          "groupId": "exact.labels.a3a4fcbe4d11",
+          "groupId": "exact.labels.a11c42909e37",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitleHorizontalAlignment",
@@ -3405,7 +3320,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 3,
-            "groupId": "exact.labels.a3a4fcbe4d11",
+            "groupId": "exact.labels.a11c42909e37",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3428,7 +3343,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3438,7 +3352,7 @@
         },
         {
           "path": "XLabel",
-          "groupId": "exact.labels.a3a4fcbe4d11",
+          "groupId": "exact.labels.a11c42909e37",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLabel",
@@ -3446,7 +3360,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 4,
-            "groupId": "exact.labels.a3a4fcbe4d11",
+            "groupId": "exact.labels.a11c42909e37",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -3463,7 +3377,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3473,7 +3386,7 @@
         },
         {
           "path": "YLabel",
-          "groupId": "exact.labels.a3a4fcbe4d11",
+          "groupId": "exact.labels.a11c42909e37",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLabel",
@@ -3481,7 +3394,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 5,
-            "groupId": "exact.labels.a3a4fcbe4d11",
+            "groupId": "exact.labels.a11c42909e37",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -3498,7 +3411,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3508,7 +3420,7 @@
         },
         {
           "path": "ZLabel",
-          "groupId": "exact.labels.a3a4fcbe4d11",
+          "groupId": "exact.labels.a11c42909e37",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLabel",
@@ -3516,7 +3428,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 6,
-            "groupId": "exact.labels.a3a4fcbe4d11",
+            "groupId": "exact.labels.a11c42909e37",
             "editor": "text",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3534,7 +3446,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3544,7 +3455,7 @@
         },
         {
           "path": "Legend",
-          "groupId": "exact.labels.a3a4fcbe4d11",
+          "groupId": "exact.labels.a11c42909e37",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Legend",
@@ -3552,7 +3463,7 @@
             "categoryId": "labels",
             "category": "Labels",
             "order": 7,
-            "groupId": "exact.labels.a3a4fcbe4d11",
+            "groupId": "exact.labels.a11c42909e37",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -3569,7 +3480,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3613,7 +3523,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3648,7 +3557,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3686,7 +3594,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3721,7 +3628,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3756,7 +3662,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3798,7 +3703,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3838,7 +3742,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3873,7 +3776,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3890,7 +3792,7 @@
       "entries": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
@@ -3898,7 +3800,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 1,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3917,7 +3819,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3927,7 +3828,7 @@
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorScale",
@@ -3935,7 +3836,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 2,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3957,7 +3858,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3967,7 +3867,7 @@
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLim",
@@ -3975,7 +3875,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 3,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3993,7 +3893,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -4003,7 +3902,7 @@
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLimMode",
@@ -4011,7 +3910,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 4,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -4035,7 +3934,6 @@
               "applyAfter": [
                 "CLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -4046,7 +3944,7 @@
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
@@ -4054,7 +3952,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 5,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -4073,7 +3971,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4083,7 +3980,7 @@
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AlphaScale",
@@ -4091,7 +3988,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 6,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -4113,7 +4010,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -4123,7 +4019,7 @@
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALim",
@@ -4131,7 +4027,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 7,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -4149,7 +4045,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -4159,7 +4054,7 @@
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALimMode",
@@ -4167,7 +4062,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 8,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -4191,7 +4086,6 @@
               "applyAfter": [
                 "ALim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -4236,7 +4130,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4273,7 +4166,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4310,7 +4202,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "axisWidth",
               "defaultLiteral": "0.5",
               "effectStatus": "modeled",
@@ -4348,7 +4239,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4388,7 +4278,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4425,7 +4314,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4465,7 +4353,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4502,7 +4389,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -4546,7 +4432,6 @@
               "applyAfter": [
                 "Units"
               ],
-              "nameValue": "supported",
               "effectPolicy": "layout",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -4581,7 +4466,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -4621,7 +4505,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -4660,7 +4543,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -4695,7 +4577,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4739,7 +4620,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'pixels'",
               "effectStatus": "modeled",
@@ -4776,7 +4656,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -4837,7 +4716,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -4894,7 +4772,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -4955,7 +4832,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5011,7 +4887,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -5028,7 +4903,7 @@
       "entries": [
         {
           "path": "View",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "View",
@@ -5036,7 +4911,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 1,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5054,7 +4929,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5085,7 +4959,7 @@
         },
         {
           "path": "Projection",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Projection",
@@ -5093,7 +4967,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 2,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5115,7 +4989,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5146,7 +5019,7 @@
         },
         {
           "path": "CameraPosition",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraPosition",
@@ -5154,7 +5027,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 3,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5172,7 +5045,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5203,7 +5075,7 @@
         },
         {
           "path": "CameraPositionMode",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraPositionMode",
@@ -5211,7 +5083,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 4,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5233,7 +5105,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5264,7 +5135,7 @@
         },
         {
           "path": "CameraTarget",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraTarget",
@@ -5272,7 +5143,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 5,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5290,7 +5161,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5321,7 +5191,7 @@
         },
         {
           "path": "CameraTargetMode",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraTargetMode",
@@ -5329,7 +5199,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 6,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5351,7 +5221,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5382,7 +5251,7 @@
         },
         {
           "path": "CameraUpVector",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraUpVector",
@@ -5390,7 +5259,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 7,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5408,7 +5277,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5439,7 +5307,7 @@
         },
         {
           "path": "CameraUpVectorMode",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraUpVectorMode",
@@ -5447,7 +5315,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 8,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5469,7 +5337,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5500,7 +5367,7 @@
         },
         {
           "path": "CameraViewAngle",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraViewAngle",
@@ -5508,7 +5375,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 9,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5528,7 +5395,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5559,7 +5425,7 @@
         },
         {
           "path": "CameraViewAngleMode",
-          "groupId": "exact.view.ee6da6b6ddef",
+          "groupId": "exact.view.ded17c6edb4e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CameraViewAngleMode",
@@ -5567,7 +5433,7 @@
             "categoryId": "view",
             "category": "View",
             "order": 10,
-            "groupId": "exact.view.ee6da6b6ddef",
+            "groupId": "exact.view.ded17c6edb4e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -5589,7 +5455,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -5652,7 +5517,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -5687,7 +5551,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -5722,7 +5585,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -5759,7 +5621,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -5794,7 +5655,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -5829,7 +5689,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -5866,7 +5725,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -5903,7 +5761,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -5947,7 +5804,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -5984,7 +5840,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -6021,7 +5876,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -6065,7 +5919,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -6105,7 +5958,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -6146,7 +5998,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -6183,7 +6034,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -6218,7 +6068,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -6260,7 +6109,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -6295,7 +6143,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -6331,7 +6178,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -6373,7 +6219,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -6409,7 +6254,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -6444,7 +6288,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],

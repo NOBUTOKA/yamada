@@ -59,7 +59,6 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                         policy = macd.model.PropertyApplicationPolicy(expected.application);
                     end
                     testCase.verifyEqual(actual.Application.ApplyAfter, policy.ApplyAfter);
-                    testCase.verifyEqual(actual.Application.NameValue, policy.NameValue);
                     testCase.verifyEqual(actual.Application.EffectPolicy, policy.EffectPolicy);
                     testCase.verifyEqual(actual.Application.EffectStatus, policy.EffectStatus);
                     testCase.verifyEqual(actual.Application.AffectedPaths, policy.AffectedPaths);
@@ -482,7 +481,6 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             for path = ["Position", "InnerPosition"]
                 testCase.verifyFalse(registry.isReadOnlyProperty("uitree", path, {"checkbox"}));
                 property = definition.Properties([definition.Properties.Path] == path);
-                testCase.verifyEqual(property.Application.NameValue, "supported");
                 testCase.verifyFalse(isfield(property.Metadata, "runtimeObservations"));
             end
         end

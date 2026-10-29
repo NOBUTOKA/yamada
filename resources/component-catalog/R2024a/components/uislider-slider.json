@@ -76,7 +76,6 @@
               "applyAfter": [
                 "Limits"
               ],
-              "nameValue": "supported",
               "effectPolicy": "boundedValue",
               "defaultLiteral": "0",
               "effectStatus": "modeled",
@@ -113,7 +112,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "boundedValue",
               "defaultLiteral": "[0 100]",
               "effectStatus": "modeled",
@@ -154,7 +152,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "defaultLiteral": "'horizontal'",
               "effectStatus": "independent",
@@ -172,7 +169,7 @@
       "entries": [
         {
           "path": "MajorTicks",
-          "groupId": "exact.ticks.a1ba30830943",
+          "groupId": "exact.ticks.c495bcfe4ebf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTicks",
@@ -180,7 +177,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 1,
-            "groupId": "exact.ticks.a1ba30830943",
+            "groupId": "exact.ticks.c495bcfe4ebf",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -199,7 +196,6 @@
               "applyAfter": [
                 "Limits"
               ],
-              "nameValue": "supported",
               "effectPolicy": "tickMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -209,7 +205,7 @@
         },
         {
           "path": "MajorTicksMode",
-          "groupId": "exact.ticks.a1ba30830943",
+          "groupId": "exact.ticks.c495bcfe4ebf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTicksMode",
@@ -217,7 +213,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 2,
-            "groupId": "exact.ticks.a1ba30830943",
+            "groupId": "exact.ticks.c495bcfe4ebf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -242,7 +238,6 @@
                 "MajorTickLabels",
                 "MajorTicks"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -253,7 +248,7 @@
         },
         {
           "path": "MajorTickLabels",
-          "groupId": "exact.ticks.a1ba30830943",
+          "groupId": "exact.ticks.c495bcfe4ebf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTickLabels",
@@ -261,7 +256,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 3,
-            "groupId": "exact.ticks.a1ba30830943",
+            "groupId": "exact.ticks.c495bcfe4ebf",
             "editor": "stringList",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -283,7 +278,6 @@
               "applyAfter": [
                 "MajorTicks"
               ],
-              "nameValue": "supported",
               "effectPolicy": "tickMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -293,7 +287,7 @@
         },
         {
           "path": "MajorTickLabelsMode",
-          "groupId": "exact.ticks.a1ba30830943",
+          "groupId": "exact.ticks.c495bcfe4ebf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MajorTickLabelsMode",
@@ -301,7 +295,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 4,
-            "groupId": "exact.ticks.a1ba30830943",
+            "groupId": "exact.ticks.c495bcfe4ebf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -325,7 +319,6 @@
               "applyAfter": [
                 "MajorTickLabels"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -336,7 +329,7 @@
         },
         {
           "path": "MinorTicks",
-          "groupId": "exact.ticks.a1ba30830943",
+          "groupId": "exact.ticks.c495bcfe4ebf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorTicks",
@@ -344,7 +337,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 5,
-            "groupId": "exact.ticks.a1ba30830943",
+            "groupId": "exact.ticks.c495bcfe4ebf",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -363,7 +356,6 @@
               "applyAfter": [
                 "Limits"
               ],
-              "nameValue": "supported",
               "effectPolicy": "tickMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -373,7 +365,7 @@
         },
         {
           "path": "MinorTicksMode",
-          "groupId": "exact.ticks.a1ba30830943",
+          "groupId": "exact.ticks.c495bcfe4ebf",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MinorTicksMode",
@@ -381,7 +373,7 @@
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 6,
-            "groupId": "exact.ticks.a1ba30830943",
+            "groupId": "exact.ticks.c495bcfe4ebf",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -405,7 +397,6 @@
               "applyAfter": [
                 "MinorTicks"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -423,7 +414,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -431,7 +422,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "text",
             "previewPolicy": "apply",
             "gridGeometryImpact": "fit",
@@ -449,7 +440,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -459,7 +449,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -467,7 +457,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "fit",
@@ -487,7 +477,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -497,7 +486,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -505,7 +494,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "fit",
@@ -527,7 +516,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -537,7 +525,7 @@
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -545,7 +533,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "fit",
@@ -567,7 +555,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -577,7 +564,7 @@
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -585,7 +572,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -604,7 +591,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -648,7 +634,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -685,7 +670,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -723,7 +707,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -758,7 +741,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -800,7 +782,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "sliderPosition",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -835,7 +816,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -874,7 +854,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -913,7 +892,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -957,7 +935,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -994,7 +971,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1031,7 +1007,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -1068,7 +1043,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -1112,7 +1086,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1152,7 +1125,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1187,7 +1159,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1229,7 +1200,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1265,7 +1235,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1307,7 +1276,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1343,7 +1311,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1378,7 +1345,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],

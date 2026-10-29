@@ -54,7 +54,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -91,7 +90,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -126,7 +124,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -163,7 +160,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -180,7 +176,7 @@
       "entries": [
         {
           "path": "Visible",
-          "groupId": "exact.interactivity.f9707e9d610c",
+          "groupId": "exact.interactivity.c936f7d4724c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
@@ -188,7 +184,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
-            "groupId": "exact.interactivity.f9707e9d610c",
+            "groupId": "exact.interactivity.c936f7d4724c",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -207,7 +203,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -217,7 +212,7 @@
         },
         {
           "path": "Enable",
-          "groupId": "exact.interactivity.f9707e9d610c",
+          "groupId": "exact.interactivity.c936f7d4724c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
@@ -225,7 +220,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
-            "groupId": "exact.interactivity.f9707e9d610c",
+            "groupId": "exact.interactivity.c936f7d4724c",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -244,7 +239,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -254,7 +248,7 @@
         },
         {
           "path": "Tooltip",
-          "groupId": "exact.interactivity.f9707e9d610c",
+          "groupId": "exact.interactivity.c936f7d4724c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
@@ -262,7 +256,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
-            "groupId": "exact.interactivity.f9707e9d610c",
+            "groupId": "exact.interactivity.c936f7d4724c",
             "editor": "text",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -281,7 +275,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -291,7 +284,7 @@
         },
         {
           "path": "ContextMenu",
-          "groupId": "exact.interactivity.f9707e9d610c",
+          "groupId": "exact.interactivity.c936f7d4724c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
@@ -299,7 +292,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
-            "groupId": "exact.interactivity.f9707e9d610c",
+            "groupId": "exact.interactivity.c936f7d4724c",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -316,7 +309,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -326,7 +318,7 @@
         },
         {
           "path": "TooltipString",
-          "groupId": "exact.interactivity.f9707e9d610c",
+          "groupId": "exact.interactivity.c936f7d4724c",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TooltipString",
@@ -334,7 +326,7 @@
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 5,
-            "groupId": "exact.interactivity.f9707e9d610c",
+            "groupId": "exact.interactivity.c936f7d4724c",
             "editor": "text",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -353,7 +345,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -397,7 +388,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -434,7 +424,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -471,7 +460,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -508,7 +496,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -545,7 +532,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -562,7 +548,7 @@
       "entries": [
         {
           "path": "Interruptible",
-          "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
+          "groupId": "exact.callbackexecutioncontrol.78ec6190e1c9",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
@@ -570,7 +556,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
-            "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
+            "groupId": "exact.callbackexecutioncontrol.78ec6190e1c9",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -589,7 +575,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -599,7 +584,7 @@
         },
         {
           "path": "BusyAction",
-          "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
+          "groupId": "exact.callbackexecutioncontrol.78ec6190e1c9",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
@@ -607,7 +592,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
-            "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
+            "groupId": "exact.callbackexecutioncontrol.78ec6190e1c9",
             "editor": "enum",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -629,7 +614,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -639,7 +623,7 @@
         },
         {
           "path": "BeingDeleted",
-          "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
+          "groupId": "exact.callbackexecutioncontrol.78ec6190e1c9",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
@@ -647,7 +631,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
-            "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
+            "groupId": "exact.callbackexecutioncontrol.78ec6190e1c9",
             "editor": "readOnly",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -664,7 +648,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -674,7 +657,7 @@
         },
         {
           "path": "HitTest",
-          "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
+          "groupId": "exact.callbackexecutioncontrol.78ec6190e1c9",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HitTest",
@@ -682,7 +665,7 @@
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 4,
-            "groupId": "exact.callbackexecutioncontrol.5df5b3385b79",
+            "groupId": "exact.callbackexecutioncontrol.78ec6190e1c9",
             "editor": "onOff",
             "previewPolicy": "notRendered",
             "gridGeometryImpact": "none",
@@ -701,7 +684,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -743,7 +725,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -779,7 +760,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -821,7 +801,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -857,7 +836,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -892,7 +870,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],

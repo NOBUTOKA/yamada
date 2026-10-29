@@ -5,14 +5,12 @@ classdef PropertyApplicationPolicy
     %
     %   Example:
     %       policy = macd.model.PropertyApplicationPolicy( ...
-    %           struct("applyAfter", {{"Items"}}, "nameValue", "supported"));
+    %           struct("applyAfter", {{"Items"}}));
 
     properties (SetAccess = private)
         % ApplyAfter - Prerequisites used when planning new initialization.
         % Preserved source order requires separate state-aware validation.
         ApplyAfter string = strings(1, 0)
-        % NameValue - Verified constructor support, or unknown for unaudited data.
-        NameValue string = "unknown"
         % EffectPolicy - Allowlisted policy for resolving implicit setter effects.
         EffectPolicy string = "none"
         % EffectStatus - Unknown, independent, modeled, or explicitly unsupported setter semantics.
@@ -45,7 +43,7 @@ classdef PropertyApplicationPolicy
                 obj.fail(context, "Expected one application policy object.");
             end
             unknown = setdiff(string(fieldnames(data)), ...
-                ["applyAfter", "nameValue", "effectPolicy", "defaultLiteral", "effectStatus", "affectedPaths", "effectReason"]);
+                ["applyAfter", "effectPolicy", "defaultLiteral", "effectStatus", "affectedPaths", "effectReason"]);
             if ~isempty(unknown)
                 obj.fail(context + "." + unknown(1), "Unknown application policy field.");
             end
@@ -69,10 +67,6 @@ classdef PropertyApplicationPolicy
                     obj.fail(context + ".applyAfter", "Dependency paths must be unique.");
                 end
                 obj.ApplyAfter = paths;
-            end
-            if isfield(data, "nameValue")
-                obj.NameValue = obj.identifier(data.nameValue, ...
-                    ["supported", "unsupported", "unknown"], context + ".nameValue");
             end
             if isfield(data, "effectPolicy")
                 obj.EffectPolicy = obj.identifier(data.effectPolicy, ...

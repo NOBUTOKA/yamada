@@ -39,26 +39,24 @@ try {
     $dropdown = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uidropdown.json') -Raw | ConvertFrom-Json
     $value = $dropdown.properties | Where-Object path -CEQ 'Value'
     Assert-Condition (($value.application.applyAfter -join ',') -ceq 'Editable,Items,ItemsData') 'Dropdown domain prerequisites were lost.'
-    Assert-Condition ($value.application.nameValue -ceq 'supported') 'Verified Dropdown constructor support was lost.'
+    Assert-Condition ($null -eq $value.application.PSObject.Properties['nameValue']) 'Removed constructor support flag was restored.'
     Assert-Condition ($value.applicationEvidence[0].kind -ceq 'inference') 'An inferred ordering was misrepresented as an explicit documentation command.'
     Assert-Condition (@($value.applicationEvidence | Where-Object kind -CEQ 'runtime').Count -eq 1) 'Constructor evidence is missing or duplicated.'
     $date = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uidatepicker.json') -Raw | ConvertFrom-Json
     $dateValue = $date.properties | Where-Object path -CEQ 'Value'
-    Assert-Condition ($dateValue.application.nameValue -ceq 'unknown') 'Unverified date constructor support was asserted.'
+    Assert-Condition ($null -eq $dateValue.application.PSObject.Properties['nameValue']) 'Date constructor support retained a redundant audit flag.'
     $axes = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uiaxes.json') -Raw | ConvertFrom-Json
     $ticks = $axes.properties | Where-Object path -CEQ 'XTick'
     $mode = $axes.properties | Where-Object path -CEQ 'XTickMode'
     Assert-Condition ($ticks.application.effectPolicy -ceq 'valueMode') 'Audited axes mode effects were lost.'
     Assert-Condition (($mode.application.applyAfter -join ',') -ceq 'XTick') 'A final axes mode must follow its value.'
     Assert-Condition ($mode.application.defaultLiteral -ceq "'auto'") 'The documented automatic mode seed was lost.'
-    Assert-Condition ($mode.application.nameValue -ceq 'supported') 'Verified axes constructor mode support was lost.'
     $width = $axes.properties | Where-Object path -CEQ 'MinorGridLineWidth'
     $widthMode = $axes.properties | Where-Object path -CEQ 'MinorGridLineWidthMode'
     $color = $axes.properties | Where-Object path -CEQ 'GridColor'
     Assert-Condition ($width.application.effectPolicy -ceq 'axisWidth') 'Width follower semantics were lost.'
     Assert-Condition (($widthMode.application.applyAfter -join ',') -ceq 'GridLineWidthMode,MinorGridLineWidth') 'Final width mode ordering was lost.'
     Assert-Condition ($width.application.defaultLiteral -ceq '0.5') 'The audited width seed was lost.'
-    Assert-Condition ($width.application.nameValue -ceq 'supported') 'Verified width constructor support was lost.'
     Assert-Condition ($color.application.effectPolicy -ceq 'modeFlag') 'Stored color semantics were confused with computed auto values.'
     $geographic = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/geoaxes.json') -Raw | ConvertFrom-Json
     $direction = $geographic.properties | Where-Object path -CEQ 'TickDir'
@@ -80,8 +78,7 @@ try {
     Assert-Condition ($outer.runtimeSetAccess -ceq 'restricted' -and $outer.disposition.kind -ceq 'omitted') 'A read-only alias gained a public setter.'
     Assert-Condition ($inner.runtimeObservations.Count -eq 1) 'Runtime setter evidence is missing or duplicated.'
     Assert-Condition ($inner.application.effectPolicy -ceq 'positionAlias') 'The documented position alias policy was lost.'
-    Assert-Condition ($inner.application.nameValue -ceq 'supported') 'Verified alias constructor support was lost.'
-    Assert-Condition ($outer.application.nameValue -ceq 'unknown') 'A read-only alias gained constructor support.'
+    Assert-Condition ($null -eq $outer.application.PSObject.Properties['nameValue']) 'A read-only alias retained a constructor-support flag.'
     $lamp = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/uilamp.json') -Raw | ConvertFrom-Json
     $lampPosition = $lamp.properties | Where-Object path -CEQ 'Position'
     Assert-Condition ($lampPosition.application.effectPolicy -ceq 'squarePositionAlias') 'Lamp square coercion was generalized to ordinary aliases.'
@@ -155,7 +152,7 @@ try {
     Assert-Condition $failed 'A missing dependency was accepted.'
     Assert-Condition ($first -ceq (Get-LedgerHashes $releaseRoot)) 'Validation failure changed a ledger.'
     Assert-Condition ($auditHash -ceq (Get-FileHash -LiteralPath $auditPath -Algorithm SHA256).Hash) 'Validation failure changed the audit.'
-    Write-Output 'APPLICATION_POLICY_REVIEW Passed: reviewed rules, native setter access, conservative constructor support, gauge exception, reproducibility, atomic validation failures.'
+    Write-Output 'APPLICATION_POLICY_REVIEW Passed: reviewed rules, native setter access, constructor regression evidence, gauge exception, reproducibility, atomic validation failures.'
 }
 finally {
     $resolvedRoot = [IO.Path]::GetFullPath($temporaryRoot)

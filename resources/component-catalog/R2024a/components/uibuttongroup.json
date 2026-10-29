@@ -55,7 +55,7 @@
       "entries": [
         {
           "path": "Title",
-          "groupId": "exact.title.3fdbf4405c27",
+          "groupId": "exact.title.c1fe56e33eeb",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Title",
@@ -63,7 +63,7 @@
             "categoryId": "title",
             "category": "Title",
             "order": 1,
-            "groupId": "exact.title.3fdbf4405c27",
+            "groupId": "exact.title.c1fe56e33eeb",
             "editor": "text",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -82,7 +82,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -92,7 +91,7 @@
         },
         {
           "path": "TitlePosition",
-          "groupId": "exact.title.3fdbf4405c27",
+          "groupId": "exact.title.c1fe56e33eeb",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitlePosition",
@@ -100,7 +99,7 @@
             "categoryId": "title",
             "category": "Title",
             "order": 2,
-            "groupId": "exact.title.3fdbf4405c27",
+            "groupId": "exact.title.c1fe56e33eeb",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -126,7 +125,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -143,7 +141,7 @@
       "entries": [
         {
           "path": "ForegroundColor",
-          "groupId": "exact.colorandstyling.0990328ae9aa",
+          "groupId": "exact.colorandstyling.5870d83b7546",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ForegroundColor",
@@ -151,7 +149,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 1,
-            "groupId": "exact.colorandstyling.0990328ae9aa",
+            "groupId": "exact.colorandstyling.5870d83b7546",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -170,7 +168,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -180,7 +177,7 @@
         },
         {
           "path": "BackgroundColor",
-          "groupId": "exact.colorandstyling.0990328ae9aa",
+          "groupId": "exact.colorandstyling.5870d83b7546",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
@@ -188,7 +185,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 2,
-            "groupId": "exact.colorandstyling.0990328ae9aa",
+            "groupId": "exact.colorandstyling.5870d83b7546",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -207,7 +204,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -217,7 +213,7 @@
         },
         {
           "path": "BorderType",
-          "groupId": "exact.colorandstyling.0990328ae9aa",
+          "groupId": "exact.colorandstyling.5870d83b7546",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderType",
@@ -225,7 +221,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 3,
-            "groupId": "exact.colorandstyling.0990328ae9aa",
+            "groupId": "exact.colorandstyling.5870d83b7546",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -251,7 +247,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -261,7 +256,7 @@
         },
         {
           "path": "BorderWidth",
-          "groupId": "exact.colorandstyling.0990328ae9aa",
+          "groupId": "exact.colorandstyling.5870d83b7546",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderWidth",
@@ -269,7 +264,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 4,
-            "groupId": "exact.colorandstyling.0990328ae9aa",
+            "groupId": "exact.colorandstyling.5870d83b7546",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -289,7 +284,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -299,7 +293,7 @@
         },
         {
           "path": "BorderColor",
-          "groupId": "exact.colorandstyling.0990328ae9aa",
+          "groupId": "exact.colorandstyling.5870d83b7546",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderColor",
@@ -307,7 +301,7 @@
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 5,
-            "groupId": "exact.colorandstyling.0990328ae9aa",
+            "groupId": "exact.colorandstyling.5870d83b7546",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -326,7 +320,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -343,7 +336,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.bcf797dd0a05",
+          "groupId": "exact.font.f71cc40b9d18",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -351,7 +344,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.bcf797dd0a05",
+            "groupId": "exact.font.f71cc40b9d18",
             "editor": "text",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -369,7 +362,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -379,7 +371,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.bcf797dd0a05",
+          "groupId": "exact.font.f71cc40b9d18",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -387,7 +379,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.bcf797dd0a05",
+            "groupId": "exact.font.f71cc40b9d18",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -409,7 +401,6 @@
               "applyAfter": [
                 "FontUnits"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -419,7 +410,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.bcf797dd0a05",
+          "groupId": "exact.font.f71cc40b9d18",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -427,7 +418,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.bcf797dd0a05",
+            "groupId": "exact.font.f71cc40b9d18",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -449,7 +440,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -459,7 +449,7 @@
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.bcf797dd0a05",
+          "groupId": "exact.font.f71cc40b9d18",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -467,7 +457,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.bcf797dd0a05",
+            "groupId": "exact.font.f71cc40b9d18",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -489,7 +479,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -499,7 +488,7 @@
         },
         {
           "path": "FontUnits",
-          "groupId": "exact.font.bcf797dd0a05",
+          "groupId": "exact.font.f71cc40b9d18",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontUnits",
@@ -507,7 +496,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.bcf797dd0a05",
+            "groupId": "exact.font.f71cc40b9d18",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -532,7 +521,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -576,7 +564,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -611,7 +598,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "buttonSelection",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -646,7 +632,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -663,7 +648,7 @@
       "entries": [
         {
           "path": "Position",
-          "groupId": "exact.position.184f3742580f",
+          "groupId": "exact.position.0f24aff1f49e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
@@ -671,7 +656,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 1,
-            "groupId": "exact.position.184f3742580f",
+            "groupId": "exact.position.0f24aff1f49e",
             "editor": "position",
             "previewPolicy": "adapt",
             "gridGeometryImpact": "required",
@@ -690,7 +675,6 @@
               "applyAfter": [
                 "Units"
               ],
-              "nameValue": "supported",
               "effectPolicy": "positionInput",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -700,7 +684,7 @@
         },
         {
           "path": "InnerPosition",
-          "groupId": "exact.position.184f3742580f",
+          "groupId": "exact.position.0f24aff1f49e",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "InnerPosition",
@@ -708,7 +692,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 2,
-            "groupId": "exact.position.184f3742580f",
+            "groupId": "exact.position.0f24aff1f49e",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -725,7 +709,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -739,7 +722,7 @@
         },
         {
           "path": "OuterPosition",
-          "groupId": "exact.position.184f3742580f",
+          "groupId": "exact.position.0f24aff1f49e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "OuterPosition",
@@ -747,7 +730,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 3,
-            "groupId": "exact.position.184f3742580f",
+            "groupId": "exact.position.0f24aff1f49e",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -764,7 +747,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -778,7 +760,7 @@
         },
         {
           "path": "Units",
-          "groupId": "exact.position.184f3742580f",
+          "groupId": "exact.position.0f24aff1f49e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
@@ -786,7 +768,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 4,
-            "groupId": "exact.position.184f3742580f",
+            "groupId": "exact.position.0f24aff1f49e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -812,7 +794,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -856,7 +837,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -893,7 +873,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -930,7 +909,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -967,7 +945,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -1004,7 +981,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -1048,7 +1024,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1088,7 +1063,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1123,7 +1097,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1160,7 +1133,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1202,7 +1174,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1237,7 +1208,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1273,7 +1243,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1315,7 +1284,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1351,7 +1319,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1386,7 +1353,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1428,7 +1394,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1465,7 +1430,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1503,7 +1467,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1540,7 +1503,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1577,7 +1539,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1612,7 +1573,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1656,7 +1616,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],

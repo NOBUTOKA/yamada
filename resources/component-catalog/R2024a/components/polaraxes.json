@@ -61,7 +61,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -98,7 +97,6 @@
               "applyAfter": [
                 "FontUnits"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -140,7 +138,6 @@
               "applyAfter": [
                 "FontSize"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -181,7 +178,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -221,7 +217,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -256,7 +251,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -296,7 +290,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -336,7 +329,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -379,7 +371,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'points'",
               "effectStatus": "modeled",
@@ -417,7 +408,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -461,7 +451,6 @@
               "applyAfter": [
                 "RLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -503,7 +492,6 @@
               "applyAfter": [
                 "RTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -544,7 +532,6 @@
               "applyAfter": [
                 "RTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -586,7 +573,6 @@
               "applyAfter": [
                 "RTickLabel"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -624,7 +610,6 @@
               "applyAfter": [
                 "ThetaLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -666,7 +651,6 @@
               "applyAfter": [
                 "ThetaTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -707,7 +691,6 @@
               "applyAfter": [
                 "ThetaTick"
               ],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -749,7 +732,6 @@
               "applyAfter": [
                 "ThetaTickLabel"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -785,7 +767,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -827,7 +808,6 @@
               "applyAfter": [
                 "RTickLabelRotation"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -865,7 +845,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -902,7 +881,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -944,7 +922,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -986,7 +963,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1028,7 +1004,6 @@
               "applyAfter": [
                 "TickDir"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1070,7 +1045,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1106,7 +1080,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1149,7 +1122,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1191,7 +1163,6 @@
               "applyAfter": [
                 "RLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1228,7 +1199,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1270,7 +1240,6 @@
               "applyAfter": [
                 "ThetaLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1306,7 +1275,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1341,7 +1309,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1376,7 +1343,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1418,7 +1384,6 @@
               "applyAfter": [
                 "RAxisLocation"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1456,7 +1421,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1498,7 +1462,6 @@
               "applyAfter": [
                 "RColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1536,7 +1499,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1578,7 +1540,6 @@
               "applyAfter": [
                 "ThetaColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1619,7 +1580,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1659,7 +1619,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1699,7 +1658,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -1743,7 +1701,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1780,7 +1737,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1820,7 +1776,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1863,7 +1818,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1900,7 +1854,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -1942,7 +1895,6 @@
               "applyAfter": [
                 "GridColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -1980,7 +1932,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2022,7 +1973,6 @@
               "applyAfter": [
                 "GridAlpha"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2060,7 +2010,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2097,7 +2046,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2140,7 +2088,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2177,7 +2124,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2219,7 +2165,6 @@
               "applyAfter": [
                 "MinorGridColor"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2257,7 +2202,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "modeFlag",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2299,7 +2243,6 @@
               "applyAfter": [
                 "MinorGridAlpha"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2343,7 +2286,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2379,7 +2321,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2420,7 +2361,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2455,7 +2395,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2499,7 +2438,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2534,7 +2472,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2572,7 +2509,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2607,7 +2543,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2642,7 +2577,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2684,7 +2618,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2724,7 +2657,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2759,7 +2691,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2776,7 +2707,7 @@
       "entries": [
         {
           "path": "Colormap",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
@@ -2784,7 +2715,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 1,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2803,7 +2734,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2813,7 +2743,7 @@
         },
         {
           "path": "ColorScale",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorScale",
@@ -2821,7 +2751,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 2,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2843,7 +2773,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -2853,7 +2782,7 @@
         },
         {
           "path": "CLim",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLim",
@@ -2861,7 +2790,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 3,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2879,7 +2808,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -2889,7 +2817,7 @@
         },
         {
           "path": "CLimMode",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLimMode",
@@ -2897,7 +2825,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 4,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2921,7 +2849,6 @@
               "applyAfter": [
                 "CLim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -2932,7 +2859,7 @@
         },
         {
           "path": "Alphamap",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
@@ -2940,7 +2867,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 5,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2959,7 +2886,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -2969,7 +2895,7 @@
         },
         {
           "path": "AlphaScale",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AlphaScale",
@@ -2977,7 +2903,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 6,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2999,7 +2925,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3009,7 +2934,7 @@
         },
         {
           "path": "ALim",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALim",
@@ -3017,7 +2942,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 7,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3035,7 +2960,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "valueMode",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -3045,7 +2969,7 @@
         },
         {
           "path": "ALimMode",
-          "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALimMode",
@@ -3053,7 +2977,7 @@
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 8,
-            "groupId": "exact.colorandtransparencymaps.ffeca8218902",
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3077,7 +3001,6 @@
               "applyAfter": [
                 "ALim"
               ],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'auto'",
               "effectStatus": "modeled",
@@ -3122,7 +3045,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3157,7 +3079,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3194,7 +3115,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3231,7 +3151,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3274,7 +3193,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -3313,7 +3231,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [
@@ -3354,7 +3271,6 @@
               "applyAfter": [
                 "Units"
               ],
-              "nameValue": "supported",
               "effectPolicy": "layout",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -3389,7 +3305,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3424,7 +3339,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3459,7 +3373,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "none",
               "defaultLiteral": "'normalized'",
               "effectStatus": "modeled",
@@ -3495,7 +3408,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3537,7 +3449,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3572,7 +3483,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3607,7 +3517,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3644,7 +3553,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3679,7 +3587,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3714,7 +3621,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -3751,7 +3657,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3788,7 +3693,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3832,7 +3736,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3869,7 +3772,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -3906,7 +3808,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -3950,7 +3851,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -3990,7 +3890,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4031,7 +3930,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4068,7 +3966,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4103,7 +4000,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -4145,7 +4041,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -4180,7 +4075,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -4216,7 +4110,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4258,7 +4151,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -4294,7 +4186,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -4329,7 +4220,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],

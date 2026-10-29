@@ -267,7 +267,8 @@ classdef PropertyInsertionPlanner
             nv = false(1, numel(entries));
             for index = 1:numel(entries)
                 definition = definitions(paths == entries(index).Path);
-                nv(index) = nvOnly && ~isempty(definition) && definition.Application.NameValue == "supported" && ...
+                nv(index) = nvOnly && ~isempty(definition) && definition.IsEditable && ...
+                    definition.AuditDisposition == "editable" && ...
                     ~contains(entries(index).Path, ".");
             end
             for index = 1:numel(entries)

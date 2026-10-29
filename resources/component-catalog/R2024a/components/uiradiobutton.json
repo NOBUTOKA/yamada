@@ -58,7 +58,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "buttonSelection",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -96,7 +95,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -138,7 +136,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -175,7 +172,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -192,7 +188,7 @@
       "entries": [
         {
           "path": "FontName",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
@@ -200,7 +196,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 1,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "text",
             "previewPolicy": "apply",
             "gridGeometryImpact": "fit",
@@ -218,7 +214,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -228,7 +223,7 @@
         },
         {
           "path": "FontSize",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
@@ -236,7 +231,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 2,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "number",
             "previewPolicy": "apply",
             "gridGeometryImpact": "fit",
@@ -256,7 +251,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -266,7 +260,7 @@
         },
         {
           "path": "FontWeight",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
@@ -274,7 +268,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 3,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "fit",
@@ -296,7 +290,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -306,7 +299,7 @@
         },
         {
           "path": "FontAngle",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
@@ -314,7 +307,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 4,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "fit",
@@ -336,7 +329,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -346,7 +338,7 @@
         },
         {
           "path": "FontColor",
-          "groupId": "exact.font.0179cf584b1f",
+          "groupId": "exact.font.df2860faea5e",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
@@ -354,7 +346,7 @@
             "categoryId": "font",
             "category": "Font",
             "order": 5,
-            "groupId": "exact.font.0179cf584b1f",
+            "groupId": "exact.font.df2860faea5e",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -373,7 +365,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -417,7 +408,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -454,7 +444,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -492,7 +481,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -527,7 +515,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -569,7 +556,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "positionAlias",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -604,7 +590,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "supported",
               "effectPolicy": "positionAlias",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -639,7 +624,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "positionAlias",
               "effectStatus": "modeled",
               "affectedPaths": [],
@@ -683,7 +667,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -720,7 +703,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unsupported",
               "affectedPaths": [],
@@ -764,7 +746,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -804,7 +785,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -839,7 +819,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -881,7 +860,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -917,7 +895,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -959,7 +936,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "unknown",
               "affectedPaths": [],
@@ -995,7 +971,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],
@@ -1030,7 +1005,6 @@
             },
             "application": {
               "applyAfter": [],
-              "nameValue": "unknown",
               "effectPolicy": "none",
               "effectStatus": "independent",
               "affectedPaths": [],

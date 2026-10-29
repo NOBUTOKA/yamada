@@ -90,8 +90,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyFalse(contains(document.OriginalText, "app.Control.Value ="));
         end
 
-        function constructorStylesReceiveVerifiedNameValueArguments(testCase)
-            % constructorStylesReceiveVerifiedNameValueArguments Preserve both original name-value spellings.
+        function constructorStylesReceiveDocumentedNameValueArguments(testCase)
+            % constructorStylesReceiveDocumentedNameValueArguments Preserve both original name-value spellings.
             cases = ["app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""], ItemsData=[10 20]);", ...
                 "app.Control = uidropdown(app.UIFigure, 'Items', {'A','B'}, 'ItemsData', [10 20]);"];
             for creation = cases
@@ -115,12 +115,13 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(plan.Placements.Method, "assignment");
         end
 
-        function unknownConstructorSupportUsesAnAssignment(testCase)
-            % unknownConstructorSupportUsesAnAssignment Require verified support rather than public SetAccess.
+        function documentedPropertiesUseTheExistingConstructorStyle(testCase)
+            % documentedPropertiesUseTheExistingConstructorStyle Insert ordinary properties without a per-property support flag.
             [document, component] = testCase.fixture("app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""]);");
             component.setProperty("Tooltip", "Hint");
             plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
-            testCase.verifyEqual(plan.Placements.Method, "assignment");
+            testCase.verifyEqual(plan.Placements.Method, "nameValue");
+            testCase.verifySubstring(plan.Document.OriginalText, "Tooltip=""Hint""");
         end
 
         function simultaneousAdditionsUseOneStableDependencyOrder(testCase)

@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "b62e645520c76bcda01dee638bc6886d98adc346",
-  "inputSha256": "9456b927e351ecac1052ed1877570041103d72cb69a5f0c1a5bb05b501f0e612",
+  "ledgerBaselineGitCommit": "4d9668a9ee01211813150c40edd41d618ddfbb12",
+  "inputSha256": "ac4e2e85a9a246c412243cf25a39d381f40bc42cab44e72e44f6e0c8f62e081a",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -77,195 +77,195 @@
     },
     {
       "path": "components/axes.json",
-      "sha256": "14f887b80023db939944457f74cb678c648d3404a241f9b383b19684ab238460"
+      "sha256": "cbef8b1b6ff2821d95e11f62714c4e22da315bc7ac43c98697085920a6df7bbe"
     },
     {
       "path": "components/geoaxes.json",
-      "sha256": "959648f703724401a25fd57ed7ea5716b8f7e4885d19cb5d5e4ba58feb0618c8"
+      "sha256": "a3917f18f20b1b1d57a03749db5b69c6ac7c44c93ed6a104bf6f23d9187dfde3"
     },
     {
       "path": "components/polaraxes.json",
-      "sha256": "4c6ce129f7fb4ad0d026159c2b8e334bd050f70a26430236261fb0b389339acf"
+      "sha256": "0322e71ee129321d761136e15f8322f2e44ce617f0ccb4ddf4a4a5391894a904"
     },
     {
       "path": "components/uiaxes.json",
-      "sha256": "144d43c5dba0fc9e04ff2471414b294bb30379a516bff255428e9f0430e19a61"
+      "sha256": "658f744a16e903e3fff8ae5e5eccf19a72150c415b907285a0e5839fd2eae9f1"
     },
     {
       "path": "components/uibutton-push.json",
-      "sha256": "f36f9a6988d244473cf0d1ee665439e84a3e3120dfdc6feae74bbffe4d926ff8"
+      "sha256": "5992a6921cafd0f756ae6b56e990cd06aad6d81ba1f0b36d8d96399b095e1944"
     },
     {
       "path": "components/uibutton-state.json",
-      "sha256": "c8d4aab0dc5cb352e3a862cc9f10af05b8e6b2e3a6308b9419ec437bfadf0ab8"
+      "sha256": "871426141f9fcdf2ce3652b3c36939adbf80b92cd5a61dfbb917d92792d89108"
     },
     {
       "path": "components/uibuttongroup.json",
-      "sha256": "1cb21e3f783abc42255ca5914d3ea9d9528d0efb85e87e3dea7bcc63f5ee706c"
+      "sha256": "24e737308a4a66ef7f99d73f5656edb5408b6e7408a8ec2f7865d0335c6e5d15"
     },
     {
       "path": "components/uicheckbox.json",
-      "sha256": "c69f91a1f2cf47ef6ebfbed57baac966998b2dbb976e81e83b680748c33ac5cb"
+      "sha256": "2e4eadc258bd2397fcafe3bcbe6d38597131351ad5eab58b87e5731a64b932d1"
     },
     {
       "path": "components/uicolorpicker.json",
-      "sha256": "86f6cb13c8b59eae921d04955a0bc3b716b61bb1dfe182b18b65e57ebc0e3592"
+      "sha256": "7e313fddd1a2633b2f749463a3bb4370bbce584e9aaef5c6da8b9450a71069ff"
     },
     {
       "path": "components/uicontextmenu.json",
-      "sha256": "c417d0e58d81c914a5486a588c01f3c4edd96339c0e42e1dc424632735927f87"
+      "sha256": "44fbc55f1b5649bad2579e9fd10cd1278fc1b60e5498d49edcdc460f43a230ff"
     },
     {
       "path": "components/uidatepicker.json",
-      "sha256": "6df0ebc006e9bd3979e4ef934dfd747f9c1f3b122ec044901854f8edbacb9ee7"
+      "sha256": "59e13ad3a0cbf44f0812799678f275702b7621b48710524aa38c516f76ea1ed0"
     },
     {
       "path": "components/uidropdown.json",
-      "sha256": "6e5375eaa57097e7d19f539972f121fe95895288f57d8fc0171eebcfda0f3419"
+      "sha256": "26d62250ed31dd818a5bb69c06c077d09e3a5bbecce4e74ab615f5ed794b4e02"
     },
     {
       "path": "components/uieditfield-numeric.json",
-      "sha256": "7b00214932dffca86a541b49796d4b8ccc9138a7e84361de0bf14fcfff48c1c4"
+      "sha256": "4604cb6105ace9588c41409eb86bbec9ce80e36c52268e0a5b60c7c390a1813a"
     },
     {
       "path": "components/uieditfield-text.json",
-      "sha256": "c793a573aa4cf3d19249926f37eb7ee7c6970ed81b61b39403724b023907b0fa"
+      "sha256": "c2d7102305c689854af7640568601fd3a0e154b3ca0d93a1b86739989c308122"
     },
     {
       "path": "components/uifigure.json",
-      "sha256": "304eda9c9f3087360ebce17d7fdb240b8850f4c8d2ac788bff3dc1e72695c4ad"
+      "sha256": "044ce84b7b5167a23e536e6fceec2078c42081f9388ccd94c7ff8b702ba57935"
     },
     {
       "path": "components/uigauge-circular.json",
-      "sha256": "4f08273def52dae15e434ef54bdcb4fd0b6eca8e8da8c2b8733f6d23429c7a2d"
+      "sha256": "d7c1d780ec519342772b7ffd5c270c42e1c419e35a538edb913d1e2429e8dd36"
     },
     {
       "path": "components/uigauge-linear.json",
-      "sha256": "39f1d5ea373fd5c1bcd52168d104b1cc26cdeec92d3882f192989ba8e53976fd"
+      "sha256": "032898eaa6d1c8f2835770c5c89b52a813fef771e84044a8e049ee02630cd559"
     },
     {
       "path": "components/uigauge-ninetydegree.json",
-      "sha256": "16720b7b34cdf5e8b6f1705fba488a8a91942f115c8e01d7756897631578dc20"
+      "sha256": "0bf3f6ece2e6f16820b39163ea682065479ec961ba1141c42a5d240dc3d69ecb"
     },
     {
       "path": "components/uigauge-semicircular.json",
-      "sha256": "c49d3a0371fa117fde8746e8b17c01411918eebed72bb5eb1afa99f5766b865a"
+      "sha256": "d483247bf5993df023a3a7a4611ee4b3a846c420b9bf0bd034124004daea5e9e"
     },
     {
       "path": "components/uigridlayout.json",
-      "sha256": "baa849e3b28ca65fff0392a25217db3212a6b23263a619e5eb17be06efef3ddc"
+      "sha256": "040fe709d46a214ecc23db470a0bde72d4be79ca5fd3286314f64d801a77d918"
     },
     {
       "path": "components/uihtml.json",
-      "sha256": "70e1e69794dc6ad28f3e73500b486be352e6b0985112ca753b39ff9a9e4c2ab1"
+      "sha256": "360b6c341a7a20941fd3f57621e55b8a36d70c6f5bf9b135123b52503edd9ee8"
     },
     {
       "path": "components/uihyperlink.json",
-      "sha256": "f088a1e50bc7c9dbab5c156b545bcbc6287725bd9b155813a550c6c5ccd150d1"
+      "sha256": "fbc754b0dbec7821e1f9368a2300dda2361cc2208799ed5911a19976a341d30d"
     },
     {
       "path": "components/uiimage.json",
-      "sha256": "2ee3bdf1677117cfbee785bcbcf5d5e3139e22234521604ebd7f026548594352"
+      "sha256": "52cd5490c7ceca1e3f24c94ea26a7b86fb85966b42df1610086da82ddec18979"
     },
     {
       "path": "components/uiknob-continuous.json",
-      "sha256": "3e82023f9d7a047c4e84dcabebb2d84ec4cfd99ca729182ab02160a27235a134"
+      "sha256": "aae171e5502f4a160071d179aad71aa277baf8d7e183af1bf0a97ec5775b27ca"
     },
     {
       "path": "components/uiknob-discrete.json",
-      "sha256": "99602212206cc72eea9604e9f7d9335bc3ef7b2215d2ba70dadd39a34bc6bcfa"
+      "sha256": "3d7f3ecba08f5aa077bb4d230dec748f26b10f2e4c32cd3cddec27937805f0fb"
     },
     {
       "path": "components/uilabel.json",
-      "sha256": "2f6573b9dc399dfcda721efd3d1f81bd5cb45afa4c8485692e44f712469850c5"
+      "sha256": "81b0530dc0defd1d7299ce610355b4a0e6d692fa3ff5283639a4e98576bdedfe"
     },
     {
       "path": "components/uilamp.json",
-      "sha256": "d85d7af29ad18b1c68515027ef4c7717e98d19699232dc982149a3958ff765cd"
+      "sha256": "0cf37ff167781fe068c31e0c38115f4c45f1f912fcab4ddf31faef4e1e5d88ca"
     },
     {
       "path": "components/uilistbox.json",
-      "sha256": "01f68a4fbfc22f99130e03c383ac9114ed90e9687cc7678a0d11d14c8e7544a5"
+      "sha256": "7a747ada1952e133863627d3be69383a2a1768293e78b0bde7763d8ab554ad9b"
     },
     {
       "path": "components/uimenu.json",
-      "sha256": "46978debf5d10c4307f5e15fc719205ab7290465b63c88d65fe67089cc4874b8"
+      "sha256": "2aca002c3b2285fe9fdcdd7d34d69cc29af0019777683de875e5fc2bba91867f"
     },
     {
       "path": "components/uipanel.json",
-      "sha256": "49b41fe41117a8b6874a8d464d4600afee87db5d3b57fc740e1a2aafbfe4be2c"
+      "sha256": "2ce215a84cc08f380ff029d8c0bd265221b5b7bdf9690f9aca2d82061a9eed29"
     },
     {
       "path": "components/uipushtool.json",
-      "sha256": "69cfe60b875b0dbf2506841386d073b4d4a0009f5ac0215376b7fbe14dda639c"
+      "sha256": "b25337db3c15d26c0e0087c8e2d5fe548598f9242a6926a8493d5eb22e984b02"
     },
     {
       "path": "components/uiradiobutton.json",
-      "sha256": "c2c478e3c51fb055f378be1274ba77b7d5151afe53a52753904d8aa2d1de3ac3"
+      "sha256": "787df1e839ee7d6b95033ce65d05351a3b023e895593b017d8f744daf17e65f8"
     },
     {
       "path": "components/uislider-range.json",
-      "sha256": "87c7c090d07640619c83973ce0bae93ba4d32ddb9ee05360be098134313f5e49"
+      "sha256": "4f93f0a91550ff06387a787df301e43d33f87f1fd1ac75b8fb53489838c9f25b"
     },
     {
       "path": "components/uislider-slider.json",
-      "sha256": "31d0033da91ab53d54d3daedb4e49f49522b019c1e0a263c20b6d60177f06e1c"
+      "sha256": "429ba425b986d6d57decb10e3bee3a0a22bb9260f3136fcd624ace66f3a8424c"
     },
     {
       "path": "components/uispinner.json",
-      "sha256": "97dde7bc96a36d591064bd8fd1f353302652f2179ade4ff462eef1492d5463ab"
+      "sha256": "8339307ba884ee21874040e211762cb6ce6ce7d34956213442fe8640b79f6ae0"
     },
     {
       "path": "components/uiswitch-rocker.json",
-      "sha256": "b688942d5ff4311abd68f2b64f4e248532a173b7f45396f1ccb24c89cd6b90e6"
+      "sha256": "79dd3bfe73cab4be2ee3aa14f5b83deb879e1e446d63ea5ffb54ad66adae4d35"
     },
     {
       "path": "components/uiswitch-slider.json",
-      "sha256": "2c627cdb9bc004b08bce93405d03d199b08e015886b1b1f87ff37178167c471c"
+      "sha256": "4f2879af79d6ebc981ec08ab46a477215b5dddbfa49fe61d9b894a1532c7178b"
     },
     {
       "path": "components/uiswitch-toggle.json",
-      "sha256": "fe3fc8a1b55510038bead72757383ada0a5429eb768338170736442b9d65e398"
+      "sha256": "31e315b14458a133b3a82c3bf2bf5ab02bf91d1aaeca5f5a4b6db8127cfaab9e"
     },
     {
       "path": "components/uitab.json",
-      "sha256": "d85c72f77314506b9da9419815f42c0d7148b7df0ff5596dc72787c697f255a9"
+      "sha256": "668cefc7a7cc455ee170373102a00504a0ec14e0cbb654e8a3c80ad60d95cdc6"
     },
     {
       "path": "components/uitabgroup.json",
-      "sha256": "35ce9be865fb62fca2eeba9a9b533cb876809ac57759c33583311195b67b1dae"
+      "sha256": "7de93edf3af5eb0badcca7b908e9edbb9f36049eb9e2ce48bdb34be3719bfdd0"
     },
     {
       "path": "components/uitable.json",
-      "sha256": "74e63c2677fbc54d740d06f2a58228ef5f03bfe557b506d6be6c3d856341f5a7"
+      "sha256": "2c3e6cfa08add47dc8a6830e0b0cc7d138471375bc201d729d0db94f810ce20d"
     },
     {
       "path": "components/uitextarea.json",
-      "sha256": "0f0762c5619c3ac9c709263f9204d723948a70127ad9a0ead56c066d4d376ab5"
+      "sha256": "fe749ef6d4d50d5d099b95aee866abfef91c21696d06e6c248c8ea0f6378c85d"
     },
     {
       "path": "components/uitogglebutton.json",
-      "sha256": "4eb01083005e34dc307c290c0fc89685e4df480e07416630056cb7ca17f922df"
+      "sha256": "65afc2a35ebd18af0df5438fd02abde83c77dbcd786442540a8fb6d455d0c1ad"
     },
     {
       "path": "components/uitoggletool.json",
-      "sha256": "b0a2c6818a8de63629fbc3e8dafee6616d4947ba097ebcb2d643d3ab346d7922"
+      "sha256": "e92f96a73a8dd0208b1c56bc969dc012d6c337b124eea3d7bd0644039526ccd9"
     },
     {
       "path": "components/uitoolbar.json",
-      "sha256": "d358841330446c8b6ea63719f0dc6021e256ee7dcbeda35e33e393a52f54e465"
+      "sha256": "80bf4a07efc10553d787e3e224eba30347c80ef05f83d34234b7d9a39e80f242"
     },
     {
       "path": "components/uitree-checkbox.json",
-      "sha256": "fb3cebc8072ca73ab1aeefe3769140fa7186c84b6bf38b540046ad07bedb80fb"
+      "sha256": "835d6319e3fd278120118b9cbfb602afc010842b5f0262d9d4412d9d049d2d14"
     },
     {
       "path": "components/uitree.json",
-      "sha256": "be5dab077f5ca118ffe5cb5e0add499fa48a460ac5797d08c2b98f4bc80823de"
+      "sha256": "b1023fe60827e908ba08f02d4930c9df50035d3e2b92b19b63e12e64f36c89bd"
     },
     {
       "path": "components/uitreenode.json",
-      "sha256": "bf2b5337ebe0e3001f8c4061c1fcd9c7f224dc588c505f3f857014546ad9c5fa"
+      "sha256": "d92cdf042034f943c7e811119f33708a639b7881da301a0fce1b7e8ad07d3938"
     },
     {
       "path": "parent-context-rules.json",
@@ -273,7 +273,7 @@
     },
     {
       "path": "schema.json",
-      "sha256": "a5f9b23f1a792d075b7c99c2dbacd7b2790a4cc005ff0f888a36a3bfc38ff6ad"
+      "sha256": "ad4fc0e0919243617a90b77b3f70525d89a8dd79fcfaeae0dcf2bb777e72514a"
     }
   ],
   "validation": {
