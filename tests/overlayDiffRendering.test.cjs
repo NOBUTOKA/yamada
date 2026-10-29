@@ -71,12 +71,15 @@ context.currentData.geometryRevision = 3;
 component.Data = structuredClone(context.currentData);
 component.Data.gridEditor.revision = 4;
 component.Data.reparentRevision = 10;
+component.Data.reparentTargets = [{id: 'parent', name: 'RenamedContainer'}];
 let renders = 0;
 const render = context.render;
 context.render = () => { renders += 1; };
 listeners.DataChanged({});
 assert.equal(renders, 0, 'same geometry must not rebuild selection or pointer regions');
 assert.equal(context.currentData.reparentRevision, 10);
+assert.equal(context.currentData.reparentTargets[0].name, 'RenamedContainer',
+  'member renames update target labels without rebuilding pointer regions');
 header.listeners.click({stopPropagation() {}});
 assert.equal(opened, 4, 'retained track controls still use the newest command revision');
 component.Data = structuredClone(component.Data);

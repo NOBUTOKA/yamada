@@ -833,10 +833,11 @@ classdef yamada < handle
             end
             app.ensureSelectionExists();
             if retainHierarchy, app.refreshHierarchyLabels(); end
-            if callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)
+            if (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
+                    (retainHierarchy && app.PreviewRenderer.acknowledgeRenameChanges(app.Document))
                 % History restores intentions; refresh generated source without rebuilding Preview.
                 app.generateSource();
-                app.refreshCallbackViews();
+                app.refreshSourceViews();
             else
                 app.refreshShell(retainHierarchy);
             end
@@ -859,10 +860,11 @@ classdef yamada < handle
             end
             app.ensureSelectionExists();
             if retainHierarchy, app.refreshHierarchyLabels(); end
-            if callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)
+            if (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
+                    (retainHierarchy && app.PreviewRenderer.acknowledgeRenameChanges(app.Document))
                 % History restores intentions; refresh generated source without rebuilding Preview.
                 app.generateSource();
-                app.refreshCallbackViews();
+                app.refreshSourceViews();
             else
                 app.refreshShell(retainHierarchy);
             end
@@ -1040,7 +1042,11 @@ classdef yamada < handle
             end
             app.endHierarchyRename();
             app.refreshHierarchyLabels();
-            app.refreshShell(true);
+            if app.PreviewRenderer.acknowledgeRenameChanges(app.Document)
+                app.refreshSourceViews();
+            else
+                app.refreshShell(true);
+            end
             app.setStatus("Renamed component to " + name + ".");
         end
 
@@ -1290,7 +1296,7 @@ classdef yamada < handle
             try
                 app.Document.applyCallbackAction(componentId, name, action, app.Registry);
                 if app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)
-                    app.refreshCallbackViews(false);
+                    app.refreshSourceViews(false);
                 else
                     app.refreshShell(true);
                 end
@@ -1299,8 +1305,8 @@ classdef yamada < handle
             end
         end
 
-        function refreshCallbackViews(app, refreshDialog)
-            % refreshCallbackViews Refresh source-dependent controls while preserving all preview geometry.
+        function refreshSourceViews(app, refreshDialog)
+            % refreshSourceViews Refresh names and source-dependent controls while preserving preview geometry.
             arguments (Input)
                 app (1, 1) yamada
                 refreshDialog (1, 1) logical = true
@@ -1310,6 +1316,11 @@ classdef yamada < handle
             app.refreshDiagnostics(app.Document.Diagnostics);
             app.refreshEditCommands();
             app.refreshTitle();
+            root = app.Document.getComponent(app.Document.RootComponentId);
+            if ~isempty(root)
+                title = "Safe preview: " + root.Name;
+                if string(app.PreviewPanel.Title) ~= title, app.PreviewPanel.Title = title; end
+            end
             app.ReparentRevision = app.ReparentRevision + 1;
             app.InteractionComponentId = "";
             app.InteractionKind = "";
@@ -1752,6 +1763,7 @@ classdef yamada < handle
                     target.reason = char(app.DropStates(match).Reason);
                 end
                 parent = app.Document.getComponent(string(target.id));
+                if ~isempty(parent), target.name = char(parent.Name); end
                 if ~isempty(parent) && parent.Id == selected.ParentId
                     target.enabled = selected.IsEditable && parent.IsEditable;
                 end

@@ -151,6 +151,34 @@ classdef PreviewRenderer < handle
             applied = true;
         end
 
+        function applied = acknowledgeRenameChanges(obj, document)
+            % acknowledgeRenameChanges Retain native controls when only source member names changed.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                document (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                applied (1, 1) logical
+            end
+            applied = false;
+            [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
+            if ~safe || isempty(fieldnames(obj.RenderedInputs)) || ...
+                    obj.RenderedRegistryRevision ~= obj.Registry.Revision
+                return
+            end
+            before = obj.RenderedInputs;
+            if numel(before.Components) ~= numel(inputs.Components), return, end
+            % Native identity, properties, order, hierarchy, and source inputs must all remain identical.
+            before.RenameEdits = inputs.RenameEdits;
+            for index = 1:numel(before.Components)
+                before.Components(index).Name = inputs.Components(index).Name;
+            end
+            if ~isequaln(before, inputs), return, end
+            obj.RenderedInputs = inputs;
+            obj.FallbackReason = "";
+            applied = true;
+        end
+
         function value = statistics(obj)
             % statistics Return bounded diagnostic counters for developer measurements.
             arguments (Input)
