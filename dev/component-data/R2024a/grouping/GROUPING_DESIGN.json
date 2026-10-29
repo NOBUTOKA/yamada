@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "inputSha256": "e14122c21cb953005bc35f572f7e293bb0b6b78dfdee453673cefaf2645617a9",
+  "inputSha256": "3986478e41bf2402c4b5e416279543a679aa920160300a70acc7394e644b417e",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -51761,17 +51761,17 @@
         {
           "path": "InnerPosition",
           "groupId": "local.uieditfield-numeric.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "OuterPosition",
           "groupId": "local.uieditfield-numeric.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         },
         {
           "path": "Layout",
           "groupId": "local.uieditfield-numeric.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -51788,17 +51788,17 @@
         {
           "path": "ValueChangedFcn",
           "groupId": "local.uieditfield-numeric.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "CreateFcn",
           "groupId": "local.uieditfield-numeric.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "DeleteFcn",
           "groupId": "local.uieditfield-numeric.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -51825,7 +51825,7 @@
         {
           "path": "BeingDeleted",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         }
       ]
     },
@@ -51841,12 +51841,12 @@
         {
           "path": "Parent",
           "groupId": "local.uieditfield-numeric.parentchild",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "HandleVisibility",
           "groupId": "local.uieditfield-numeric.parentchild",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -51863,17 +51863,17 @@
         {
           "path": "Type",
           "groupId": "local.uieditfield-numeric.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         },
         {
           "path": "Tag",
           "groupId": "local.uieditfield-numeric.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "UserData",
           "groupId": "local.uieditfield-numeric.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -52019,17 +52019,17 @@
         {
           "path": "InnerPosition",
           "groupId": "local.uieditfield-text.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "OuterPosition",
           "groupId": "local.uieditfield-text.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         },
         {
           "path": "Layout",
           "groupId": "local.uieditfield-text.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -52047,22 +52047,22 @@
         {
           "path": "ValueChangedFcn",
           "groupId": "local.uieditfield-text.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "ValueChangingFcn",
           "groupId": "local.uieditfield-text.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "CreateFcn",
           "groupId": "local.uieditfield-text.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "DeleteFcn",
           "groupId": "local.uieditfield-text.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -52089,7 +52089,7 @@
         {
           "path": "BeingDeleted",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         }
       ]
     },
@@ -52105,12 +52105,12 @@
         {
           "path": "Parent",
           "groupId": "local.uieditfield-text.parentchild",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "HandleVisibility",
           "groupId": "local.uieditfield-text.parentchild",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -52127,17 +52127,17 @@
         {
           "path": "Type",
           "groupId": "local.uieditfield-text.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         },
         {
           "path": "Tag",
           "groupId": "local.uieditfield-text.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "UserData",
           "groupId": "local.uieditfield-text.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -60334,12 +60334,12 @@
         {
           "path": "CheckedNodes",
           "groupId": "local.uitree-checkbox.nodes",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "SelectedNodes",
           "groupId": "local.uitree-checkbox.nodes",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -60360,37 +60360,37 @@
         {
           "path": "FontName",
           "groupId": "exact.fontandcolor.762e366185d6",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontSize",
           "groupId": "exact.fontandcolor.762e366185d6",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontWeight",
           "groupId": "exact.fontandcolor.762e366185d6",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontAngle",
           "groupId": "exact.fontandcolor.762e366185d6",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "FontColor",
           "groupId": "exact.fontandcolor.762e366185d6",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BackgroundColor",
           "groupId": "exact.fontandcolor.762e366185d6",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "StyleConfigurations",
           "groupId": "exact.fontandcolor.762e366185d6",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         }
       ]
     },
@@ -60409,27 +60409,27 @@
         {
           "path": "Visible",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Editable",
           "groupId": "local.uitree-checkbox.interactivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Enable",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Tooltip",
           "groupId": "standardInteractivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "ContextMenu",
           "groupId": "local.uitree-checkbox.interactivity",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -60462,7 +60462,7 @@
         {
           "path": "Layout",
           "groupId": "local.uitree-checkbox.position",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -60485,47 +60485,47 @@
         {
           "path": "CheckedNodesChangedFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "SelectionChangedFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "NodeExpandedFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "NodeCollapsedFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "NodeTextChangedFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "ClickedFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "DoubleClickedFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "CreateFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "DeleteFcn",
           "groupId": "local.uitree-checkbox.callbacks",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -60542,17 +60542,17 @@
         {
           "path": "Interruptible",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BusyAction",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "BeingDeleted",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         }
       ]
     },
@@ -60569,17 +60569,17 @@
         {
           "path": "Parent",
           "groupId": "local.uitree-checkbox.parentchild",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "Children",
           "groupId": "local.uitree-checkbox.parentchild",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "HandleVisibility",
           "groupId": "local.uitree-checkbox.parentchild",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },
@@ -60596,17 +60596,17 @@
         {
           "path": "Type",
           "groupId": "local.uitree-checkbox.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "restricted"
         },
         {
           "path": "Tag",
           "groupId": "local.uitree-checkbox.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         },
         {
           "path": "UserData",
           "groupId": "local.uitree-checkbox.identifiers",
-          "runtimeSetAccess": "unresolved"
+          "runtimeSetAccess": "public"
         }
       ]
     },

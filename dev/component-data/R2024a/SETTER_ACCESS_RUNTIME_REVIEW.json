@@ -1,0 +1,474 @@
+{
+  "artifactVersion": 1,
+  "matlabRelease": "R2024a",
+  "matlabVersion": "24.1.0.3050227 (R2024a) Update 8",
+  "verifiedOn": "2026-10-29",
+  "scope": "Instance meta.property SetAccess on owned native fixtures; no input apps or callbacks are executed.",
+  "probeSource": "dev/component-data/ProbeCatalogSetterAccess.m",
+  "observations": [
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "InnerPosition",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "OuterPosition",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "private",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "Layout",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "ValueChangedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "CreateFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "DeleteFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "BeingDeleted",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "protected",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "Parent",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "HandleVisibility",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "Type",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "protected",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "Tag",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-numeric",
+      "path": "UserData",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "InnerPosition",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "OuterPosition",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "private",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "Layout",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "ValueChangedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "ValueChangingFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "CreateFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "DeleteFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "BeingDeleted",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "protected",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "Parent",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "HandleVisibility",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "Type",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "protected",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "Tag",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uieditfield-text",
+      "path": "UserData",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "CheckedNodes",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "SelectedNodes",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "FontName",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "FontSize",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "FontWeight",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "FontAngle",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "FontColor",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "BackgroundColor",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "StyleConfigurations",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "protected",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Visible",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Editable",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Enable",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Tooltip",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "ContextMenu",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Layout",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "CheckedNodesChangedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "SelectionChangedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "NodeExpandedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "NodeCollapsedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "NodeTextChangedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "ClickedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "DoubleClickedFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.metadata.Property",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "CreateFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "DeleteFcn",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Interruptible",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "BusyAction",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "BeingDeleted",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "protected",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Parent",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Children",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "HandleVisibility",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Type",
+      "runtimeSetAccess": "restricted",
+      "nativeSetAccess": "protected",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "Tag",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    },
+    {
+      "componentId": "uitree-checkbox",
+      "path": "UserData",
+      "runtimeSetAccess": "public",
+      "nativeSetAccess": "public",
+      "metadataClass": "matlab.graphics.internal.GraphicsMetaProperty",
+      "errorId": ""
+    }
+  ]
+}

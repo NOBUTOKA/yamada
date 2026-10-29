@@ -1172,7 +1172,7 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1193,6 +1193,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1223,7 +1226,7 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "restricted",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1244,6 +1247,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=private; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1274,7 +1280,7 @@
           "handleReference"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1291,6 +1297,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1325,7 +1334,7 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1342,6 +1351,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1376,7 +1388,7 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1393,6 +1405,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1427,7 +1442,7 @@
           "callbackExecutable"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1444,6 +1459,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1568,7 +1586,7 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "restricted",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1585,6 +1603,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=protected; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1617,7 +1638,7 @@
           "deferredComponentReference"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1634,6 +1655,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1665,7 +1689,7 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1682,6 +1706,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1711,7 +1738,7 @@
           "documentedReadOnly"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "restricted",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1728,6 +1755,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=protected; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1759,7 +1789,7 @@
           "lowDesignTimeValue"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1776,6 +1806,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     },
     {
@@ -1806,7 +1839,7 @@
           "sourceOnly"
         ]
       },
-      "runtimeSetAccess": "unresolved",
+      "runtimeSetAccess": "public",
       "application": {
         "applyAfter": [],
         "nameValue": "unknown",
@@ -1823,6 +1856,9 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "runtimeObservations": [
+        "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
       ]
     }
   ]

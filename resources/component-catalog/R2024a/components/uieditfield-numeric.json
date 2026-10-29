@@ -863,7 +863,7 @@
         {
           "path": "InnerPosition",
           "groupId": "local.uieditfield-numeric.position",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InnerPosition",
             "description": "Inner location and size of edit field",
@@ -902,7 +902,7 @@
         {
           "path": "OuterPosition",
           "groupId": "local.uieditfield-numeric.position",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "OuterPosition",
             "description": "Outer location and size of edit field",
@@ -941,7 +941,7 @@
         {
           "path": "Layout",
           "groupId": "local.uieditfield-numeric.position",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Layout",
             "description": "Layout options",
@@ -983,7 +983,7 @@
         {
           "path": "ValueChangedFcn",
           "groupId": "local.uieditfield-numeric.callbacks",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ValueChangedFcn",
             "description": "Value changed callback",
@@ -1020,7 +1020,7 @@
         {
           "path": "CreateFcn",
           "groupId": "local.uieditfield-numeric.callbacks",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CreateFcn",
             "description": "Creation function",
@@ -1057,7 +1057,7 @@
         {
           "path": "DeleteFcn",
           "groupId": "local.uieditfield-numeric.callbacks",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DeleteFcn",
             "description": "Deletion function",
@@ -1178,7 +1178,7 @@
         {
           "path": "BeingDeleted",
           "groupId": "callbackExecutionCore",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
             "description": "Deletion status",
@@ -1220,7 +1220,7 @@
         {
           "path": "Parent",
           "groupId": "local.uieditfield-numeric.parentchild",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Parent",
             "description": "Parent container",
@@ -1255,7 +1255,7 @@
         {
           "path": "HandleVisibility",
           "groupId": "local.uieditfield-numeric.parentchild",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HandleVisibility",
             "description": "Visibility of object handle",
@@ -1298,7 +1298,7 @@
         {
           "path": "Type",
           "groupId": "local.uieditfield-numeric.identifiers",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Type",
             "description": "Type of graphics object",
@@ -1333,7 +1333,7 @@
         {
           "path": "Tag",
           "groupId": "local.uieditfield-numeric.identifiers",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tag",
             "description": "Object identifier",
@@ -1369,7 +1369,7 @@
         {
           "path": "UserData",
           "groupId": "local.uieditfield-numeric.identifiers",
-          "runtimeSetAccess": "unresolved",
+          "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "UserData",
             "description": "User data",

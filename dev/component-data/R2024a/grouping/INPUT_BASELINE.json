@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024a",
-  "ledgerBaselineGitCommit": "51ec244113ddce2ddb6a1f8c86619e732f5bb19f",
-  "inputSha256": "139bd820d615825b616bd54c5caddf2ba107f6a62ed6ac41598ee5005593ee98",
+  "ledgerBaselineGitCommit": "b62e645520c76bcda01dee638bc6886d98adc346",
+  "inputSha256": "9456b927e351ecac1052ed1877570041103d72cb69a5f0c1a5bb05b501f0e612",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -125,11 +125,11 @@
     },
     {
       "path": "components/uieditfield-numeric.json",
-      "sha256": "0ad0e66cf6c8df06f5926d0a759f8d407a1799e3e42767924e7fdcb22d19552e"
+      "sha256": "7b00214932dffca86a541b49796d4b8ccc9138a7e84361de0bf14fcfff48c1c4"
     },
     {
       "path": "components/uieditfield-text.json",
-      "sha256": "54019ef34e058fa92936924fcf3cf71527786065cd201731125892735efee3d0"
+      "sha256": "c793a573aa4cf3d19249926f37eb7ee7c6970ed81b61b39403724b023907b0fa"
     },
     {
       "path": "components/uifigure.json",
@@ -257,7 +257,7 @@
     },
     {
       "path": "components/uitree-checkbox.json",
-      "sha256": "20a030c1c996286beffae7606b7cfa91f0ced9c7527c32a3b7df2036cf7abf7a"
+      "sha256": "fb3cebc8072ca73ab1aeefe3769140fa7186c84b6bf38b540046ad07bedb80fb"
     },
     {
       "path": "components/uitree.json",
