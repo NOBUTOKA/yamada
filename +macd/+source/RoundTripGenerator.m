@@ -125,13 +125,8 @@ classdef RoundTripGenerator
                 end
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
-                    constructorSetting = isfield(entry.Metadata, "SettingMethod") && ...
-                        entry.Metadata.SettingMethod == "nameValue";
                     if obj.Registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
-                        % Remove owned assignments to catalog-declared read-only properties.
-                        if ~constructorSetting && obj.isKnownSpan(entry.SourceSpan)
-                            edits(end + 1) = obj.edit(entry.SourceSpan, ""); %#ok<AGROW>
-                        end
+                        % Catalog editability never authorizes removing existing source.
                         continue
                     end
                     pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id & ...

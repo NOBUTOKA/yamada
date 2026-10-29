@@ -86,8 +86,8 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             testCase.verifySubstring(source, "app." + grid.Name + ".RowHeight = {""1x""};");
         end
 
-        function removesOwnedCatalogReadOnlyAssignments(testCase)
-            % removesOwnedCatalogReadOnlyAssignments Remove only known restricted setter assignments.
+        function preservesOwnedCatalogReadOnlyAssignments(testCase)
+            % preservesOwnedCatalogReadOnlyAssignments Retain restricted assignments before and after unrelated edits.
 
             [document, generator] = RoundTripGeneratorTest.parsedFixture();
             original = replace(document.OriginalText, ...
@@ -105,12 +105,64 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             [source, diagnostics] = generator.generate(document);
 
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
-            testCase.verifyFalse(contains(source, "app.GridLayout.Position ="));
-            testCase.verifyEmpty(regexp(source, ...
-                'app\.\w+\.(InnerPosition|OuterPosition|Number)\s*=', "once"));
-            testCase.verifySubstring(source, "app.GridLayout.CustomUnknownProperty = 123;");
-            testCase.verifySubstring(source, "app.UIFigure.Position =");
-            testCase.verifySubstring(source, "app.CalculateButton.ButtonPushedFcn = @app.CalculateButtonPushed");
+            testCase.verifyEqual(source, original);
+
+            % A permitted literal rewrite must leave every restricted occurrence intact.
+            label = document.getComponentByName("LeftValueLabel");
+            label.setProperty("Text", "First value");
+            [source, diagnostics] = generator.generate(document);
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            expected = replace(original, "app.LeftValueLabel.Text = 'Left value';", ...
+                "app.LeftValueLabel.Text = ""First value"";");
+            testCase.verifyNotEqual(expected, original);
+            testCase.verifyEqual(source, expected);
+        end
+
+        function openedEditFieldCallbacksSurviveGenerationAndEdits(testCase)
+            % openedEditFieldCallbacksSurviveGenerationAndEdits Preserve text and numeric registrations until explicit deletion.
+            registry = macd.model.ComponentRegistry.createDefault();
+            generator = macd.source.RoundTripGenerator(registry);
+            for style = ["text", "numeric"]
+                type = "matlab.ui.control.EditField";
+                if style == "numeric", type = "matlab.ui.control.NumericEditField"; end
+                for binding = ["@app.FieldValueChanged", "@(~, event) app.FieldValueChanged(event)"]
+                    original = strjoin(["classdef CallbackRetentionFixture < handle"; ...
+                        "properties"; "UIFigure matlab.ui.Figure"; "Field " + type; ...
+                        "end"; "methods"; "function app = CallbackRetentionFixture"; ...
+                        "createComponents(app);"; "end"; "function createComponents(app)"; ...
+                        "app.UIFigure = uifigure(Visible='off');"; ...
+                        "app.UIFigure.Name = 'Before';"; ...
+                        "app.Field = uieditfield(app.UIFigure, '" + style + "');"; ...
+                        "app.Field.ValueChangedFcn = " + binding + "; % Retain registration."; ...
+                        "end"; "function FieldValueChanged(app, varargin)"; ...
+                        "% FieldValueChanged Preserve this callback without executing it."; ...
+                        "error('CallbackRetentionFixture:Executed', 'Callback must remain inert.');"; ...
+                        "end"; "end"; "end"], sprintf("\r\n")) + sprintf("\r\n");
+                    document = macd.source.AppSourceParser.parseText(original, registry);
+                    [source, diagnostics] = generator.generate(document);
+                    testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    testCase.verifyEqual(source, original);
+
+                    % Ordinary property edits must preserve the registration and method verbatim.
+                    root = document.getComponent(document.RootComponentId);
+                    document.setProperty(root.Id, "Name", "After", registry);
+                    [source, diagnostics] = generator.generate(document);
+                    testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    expected = replace(original, "app.UIFigure.Name = 'Before';", ...
+                        "app.UIFigure.Name = ""After"";");
+                    testCase.verifyEqual(source, expected);
+
+                    % Explicit callback deletion remains available and undo restores its exact source.
+                    field = document.getComponentByName("Field");
+                    document.applyCallbackAction(field.Id, "ValueChangedFcn", "Delete", registry);
+                    [source, diagnostics] = generator.generate(document);
+                    testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    testCase.verifyFalse(contains(source, "app.Field.ValueChangedFcn ="));
+                    testCase.verifyFalse(contains(source, "function FieldValueChanged("));
+                    document.undo();
+                    testCase.verifyEqual(generator.generate(document), expected);
+                end
+            end
         end
 
         function deletionRejectsExternalReference(testCase)

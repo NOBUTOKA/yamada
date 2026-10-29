@@ -42,8 +42,8 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), expected);
         end
 
-        function removedReadOnlyPropertyDoesNotLeaveAVacatedLine(testCase)
-            % removedReadOnlyPropertyDoesNotLeaveAVacatedLine Remove complete prohibited setter lines.
+        function readOnlyPropertyDoesNotTriggerDeletionCleanup(testCase)
+            % readOnlyPropertyDoesNotTriggerDeletionCleanup Preserve restricted setter lines and their whitespace.
             registry = macd.model.ComponentRegistry.createDefault();
             ending = string(newline);
             original = SourceFormattingTest.fixture(ending, "            ");
@@ -52,7 +52,7 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
             document = macd.source.AppSourceParser.parseText(original, registry);
             [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
             testCase.assertFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
-            testCase.verifyEqual(source, erase(original, extra));
+            testCase.verifyEqual(source, original);
         end
 
         function newPropertiesFollowTheOwnersExistingSettings(testCase)
