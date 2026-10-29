@@ -170,7 +170,9 @@ classdef PropertyInsertionPlanner
             parsed = candidate;
             if completeSource
                 % This proof includes every actual generated statement, rather than a partial owner view.
-                document.evaluationContext(registry).rememberConfiguration("combined", parsed);
+                context = document.evaluationContext(registry);
+                context.rememberConfiguration("combined", parsed);
+                context.remember("complete-insertion-source", source);
             end
         end
 

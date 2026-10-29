@@ -24,9 +24,21 @@ classdef PropertySourcePlan
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "%s", strjoin(string({diagnostics.Message}), newline));
             end
-            [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
-            if macd.validation.ModelValidator.hasErrors(diagnostics)
-                error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "%s", strjoin(string({diagnostics.Message}), newline));
+            % Only an exact complete emission may substitute for parsing this same output again.
+            candidateContext = candidate.evaluationContext(registry);
+            [emitted, reused] = candidateContext.lookup("complete-insertion-source");
+            reused = reused && candidateContext.matches(candidate, registry) && emitted == source;
+            if reused
+                [validated, reused] = candidateContext.configuration("combined", component.Name);
+                reused = reused && validated.Document.OriginalText == source;
+            end
+            if reused
+                parsed = validated.Document;
+            else
+                [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+                if macd.validation.ModelValidator.hasErrors(diagnostics)
+                    error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "%s", strjoin(string({diagnostics.Message}), newline));
+                end
             end
             configured = parsed.getComponentByName(component.Name);
             if isempty(configured)

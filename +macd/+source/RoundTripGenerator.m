@@ -55,6 +55,18 @@ classdef RoundTripGenerator
                 return
             end
 
+            % A validated batch may already have emitted every statement for these exact inputs.
+            if isempty(obj.PreparedInsertions)
+                context = document.evaluationContext(obj.Registry);
+                [emitted, found] = context.lookup("complete-insertion-source");
+                if found && context.matches(document, obj.Registry)
+                    source = emitted;
+                    document.GeneratedText = source;
+                    document.Diagnostics = diagnostics;
+                    return
+                end
+            end
+
             % Build source edits first, then apply them from the end backwards.
             edits = struct("Start", {}, "End", {}, "Text", {});
             % Complete subtree ownership includes internal child-parent references.

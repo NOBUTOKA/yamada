@@ -289,6 +289,98 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             fprintf("GENERATED_BATCH_COVERAGE Reviewed=%d Applicable=%d Unsupported=%d\n", ...
                 numel(variants), applicable, unsupported);
         end
+
+        function combinedPlansReuseExactCompleteEmissions(testCase)
+            % combinedPlansReuseExactCompleteEmissions Parse and assemble one complete candidate across every layout.
+            for layout = ["absolute", "flat", "nested"]
+                document = testCase.numericFixture(2, layout);
+                first = document.getComponentByName("Field1");
+                first.setProperty("Value", 3);
+                document.getComponentByName("Field2").setProperty("Value", 4);
+                added = document.insertComponent(testCase.Registry, "uilabel", first.ParentId);
+                original = document.OriginalText;
+                profile clear; profile on; stop = onCleanup(@() profile("off"));
+                plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                profile off; functions = profile("info").FunctionTable; clear stop
+                names = string({functions.FunctionName});
+                testCase.verifyEqual(sum([functions(contains(names, "AppSourceParser.parseText")).NumCalls]), 1, layout);
+                testCase.verifyEqual(sum([functions(endsWith(names, "RoundTripGenerator.additionEdits")).NumCalls]), 1, layout);
+                testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
+                testCase.verifyNotEmpty(plan.Document.getComponentByName(added.Name));
+                expected = plan.Document.OriginalText;
+                plan.Document.getComponentByName("Field2").setProperty("Value", 99);
+                retained = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                testCase.verifyEqual(retained.Document.OriginalText, expected);
+                testCase.verifyEqual(retained.Document.getComponentByName("Field2").getProperty("Value").LiteralValue, 4);
+                testCase.verifyEqual(document.OriginalText, original);
+            end
+        end
+
+        function publicGenerationReusesEmissionAfterInputValidation(testCase)
+            % publicGenerationReusesEmissionAfterInputValidation Preserve validation while avoiding a second assembly.
+            document = testCase.numericFixture(2);
+            first = document.getComponentByName("Field1");
+            first.setProperty("Value", 3);
+            document.getComponentByName("Field2").setProperty("Value", 4);
+            document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            expected = plan.Document.OriginalText;
+            plan.Document.getComponentByName("Field2").setProperty("Value", 99);
+            profile clear; profile on; stop = onCleanup(@() profile("off"));
+            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            profile off; functions = profile("info").FunctionTable; clear stop
+            names = string({functions.FunctionName});
+            testCase.verifyEqual(sum([functions(contains(names, "AppSourceParser.parseText")).NumCalls]), 0);
+            testCase.verifyEqual(sum([functions(endsWith(names, "RoundTripGenerator.additionEdits")).NumCalls]), 0);
+            testCase.verifyEqual(sum([functions(endsWith(names, "ModelValidator.validate")).NumCalls]), 1);
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyEqual(source, expected);
+            testCase.verifyEqual(document.GeneratedText, expected);
+        end
+
+        function changedInputsCannotReuseAnEarlierEmission(testCase)
+            % changedInputsCannotReuseAnEarlierEmission Reject stale source after values and the registry change.
+            document = testCase.numericFixture(2);
+            first = document.getComponentByName("Field1");
+            first.setProperty("Value", 3);
+            second = document.getComponentByName("Field2");
+            second.setProperty("Value", 4);
+            added = document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            [~, found] = document.evaluationContext(testCase.Registry).lookup("complete-insertion-source");
+            testCase.verifyTrue(found);
+            replacement = macd.model.ComponentRegistry.createDefault();
+            [~, found] = document.evaluationContext(replacement).lookup("complete-insertion-source");
+            testCase.verifyFalse(found);
+            second.setProperty("Value", 5);
+            [~, found] = document.evaluationContext(testCase.Registry).lookup("complete-insertion-source");
+            testCase.verifyFalse(found);
+            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            testCase.verifyEqual(parsed.getComponentByName("Field2").getProperty("Value").LiteralValue, 5);
+            added.setProperty("FontSize", -2);
+            [~, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+        end
+
+        function partialPlacementsRetainCompleteSourceParsing(testCase)
+            % partialPlacementsRetainCompleteSourceParsing Never treat a partial placement plan as verified emission.
+            document = testCase.numericFixture(2);
+            first = document.getComponentByName("Field1");
+            first.setProperty("Value", 3);
+            document.getComponentByName("Field2").setProperty("Value", 4);
+            macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            [~, found] = document.evaluationContext(testCase.Registry).lookup("complete-insertion-source");
+            testCase.verifyFalse(found);
+            profile clear; profile on; stop = onCleanup(@() profile("off"));
+            plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            profile off; functions = profile("info").FunctionTable; clear stop
+            parsed = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
+            testCase.verifyEqual(sum([functions(parsed).NumCalls]), 2);
+            testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
+            testCase.verifyEqual(plan.Document.getComponentByName("Field2").getProperty("Value").LiteralValue, 4);
+        end
     end
 
     methods (Access = private)
