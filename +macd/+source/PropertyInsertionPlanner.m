@@ -61,6 +61,39 @@ classdef PropertyInsertionPlanner
         end
     end
 
+    methods (Static, Access = ?macd.source.RoundTripGenerator)
+        function edits = generationEdits(document, component, registry)
+            % generationEdits Read validated insertion values without materializing public document copies.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                edits struct
+            end
+            context = document.evaluationContext(registry);
+            scope = context.readScope(); %#ok<NASGU>
+            % Only successful placement proofs publish these value-only records.
+            [plans, found] = context.lookup("insertion-batch");
+            if found
+                match = find(string({plans.ComponentId}) == component.Id, 1);
+                if ~isempty(match)
+                    edits = plans(match).Edits;
+                    return
+                end
+            end
+            [data, found] = context.lookup("insertion:" + component.Id);
+            if found
+                edits = data.Edits;
+                return
+            end
+            % Unproven owners retain the public planner's search, validation and diagnostics.
+            plan = macd.source.PropertyInsertionPlanner.plan(document, component, registry);
+            edits = plan.Edits;
+        end
+    end
+
     methods (Static, Access = private)
         function [plan, found] = sharedBatch(document, component, registry, context)
             % sharedBatch Retain one private candidate while returning independently owned public plans.

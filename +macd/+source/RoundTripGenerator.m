@@ -118,16 +118,16 @@ classdef RoundTripGenerator
                 if macd.source.PropertyInsertionPlanner.needsPlan(document, component)
                     try
                         if isempty(obj.PreparedInsertions)
-                            plan = macd.source.PropertyInsertionPlanner.plan(document, component, obj.Registry);
+                            insertionEdits = macd.source.PropertyInsertionPlanner.generationEdits(document, component, obj.Registry);
                         else
                             match = find(string({obj.PreparedInsertions.ComponentId}) == component.Id);
                             if ~isscalar(match)
                                 error("macd:RoundTripGenerator:MissingPreparedInsertion", ...
                                     "Every pending owner needs one prepared insertion plan.");
                             end
-                            plan = obj.PreparedInsertions(match);
+                            insertionEdits = obj.PreparedInsertions(match).Edits;
                         end
-                        edits = [edits plan.Edits]; %#ok<AGROW>
+                        edits = [edits insertionEdits]; %#ok<AGROW>
                     catch exception
                         diagnostics(end + 1) = obj.error("unsafe-property-insertion", component, string(exception.message)); %#ok<AGROW>
                         source = "";

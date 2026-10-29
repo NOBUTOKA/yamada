@@ -37,6 +37,38 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEmpty(document.History);
         end
 
+        function cachedGenerationKeepsPublicPlansIndependent(testCase)
+            % cachedGenerationKeepsPublicPlansIndependent Reuse edits while protecting caller-owned parsed records.
+            for count = [1 12]
+                document = testCase.numericFixture(count);
+                for index = 1:count
+                    document.getComponentByName("Field" + index).setProperty("Value", index + 1);
+                end
+                first = document.getComponentByName("Field1");
+                plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+                plan.Component.setProperty("Value", 99);
+                validation = macd.validation.ModelValidator.validate(document, testCase.Registry);
+                testCase.assertFalse(macd.validation.ModelValidator.hasErrors(validation));
+                profile clear; profile on; stop = onCleanup(@() profile("off"));
+                [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+                profile off; functions = profile("info").FunctionTable; clear stop
+                names = string({functions.FunctionName});
+                copies = endsWith(names, "DocumentModel.structuralCandidate");
+                testCase.verifyEqual(sum([functions(copies).NumCalls]), 0);
+                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                for index = 1:count
+                    testCase.verifyEqual(parsed.getComponentByName("Field" + index).getProperty("Value").LiteralValue, index + 1);
+                end
+                retained = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+                testCase.verifyEqual(retained.Component.getProperty("Value").LiteralValue, 2);
+                first.setProperty("Value", 7);
+                changed = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+                reparsed = macd.source.AppSourceParser.parseText(changed, testCase.Registry);
+                testCase.verifyEqual(reparsed.getComponentByName("Field1").getProperty("Value").LiteralValue, 7);
+            end
+        end
+
         function placementsMatchIndependentOwnersAndReturnedPlansStayPrivate(testCase)
             % placementsMatchIndependentOwnersAndReturnedPlansStayPrivate Reuse syntax without exposing retained models.
             document = testCase.numericFixture(2);
