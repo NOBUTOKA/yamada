@@ -7,6 +7,7 @@ const html = fs.readFileSync(path.join(__dirname, '../resources/EditorInteractio
 const context = {};
 vm.createContext(context);
 vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1], context);
+const openTrackPopover = context.openTrackPopover;
 const controls = {children: [], clientWidth: 320, clientHeight: 240,
   appendChild(child) { this.children.push(child); }};
 context.document = {
@@ -59,4 +60,46 @@ context.placeTrackPopover({offsetLeft: 944, offsetTop: -572, offsetHeight: 12}, 
 assert.ok(Number.parseFloat(popup.style.left) > 320);
 assert.ok(Number.parseFloat(popup.style.top) < 0);
 assert.ok(Number.parseFloat(popup.style.top) >= -570);
+
+// Verify the available operations and emitted requests instead of source spellings.
+function popupElement(tag) {
+  return {tag, children: [], listeners: {}, style: {}, offsetWidth: 244, offsetHeight: 200,
+    appendChild(child) {
+      this.children.push(child);
+      child.parent = this;
+      if (child.selected) this.value = child.value;
+    },
+    addEventListener(name, listener) { this.listeners[name] = listener; },
+    remove() { this.parent.children = this.parent.children.filter(child => child !== this); },
+    focus() {}};
+}
+function descendants(element) {
+  return [element, ...element.children.flatMap(descendants)];
+}
+const popupHost = popupElement('div');
+context.document = {
+  createElement: popupElement,
+  getElementById: id => id === 'grid-controls' ? popupHost :
+    descendants(popupHost).find(element => element.id === id)
+};
+const requests = [];
+context.component = {sendEventToMATLAB(name, data) { requests.push({name, ...data}); }};
+context.openTrackPopover = openTrackPopover;
+for (const axis of ['row', 'column']) {
+  const labels = axis === 'row' ?
+    ['Insert Row Above', 'Insert Row Below', 'Delete Row', 'Cancel', 'Apply'] :
+    ['Insert Column Left', 'Insert Column Right', 'Delete Column', 'Cancel', 'Apply'];
+  for (const [buttonIndex, action, index] of [[0, 'insert-track', 2],
+    [1, 'insert-track', 3], [2, 'delete-track', 2]]) {
+    context.openTrackPopover({offsetLeft: 30, offsetTop: 20, offsetHeight: 12},
+      {revision: 17, activeGridId: 'owned-grid'}, axis, {index: 2, kind: 'fixed', value: 50});
+    const buttons = descendants(popupHost).filter(element => element.tag === 'button');
+    assert.deepEqual(buttons.map(button => button.textContent), labels,
+      'track controls offer insertion and deletion, without reordering commands');
+    buttons[buttonIndex].listeners.click();
+    assert.deepEqual(requests.at(-1), {name: 'GridAction', action, revision: 17,
+      activeGridId: 'owned-grid', axis, index, fromIndex: 2, mode: 'fit', value: 0});
+    assert.equal(popupHost.children.length, 0, 'an accepted action closes its popup');
+  }
+}
 console.log('Grid settings outside the actual-size figure passed.');

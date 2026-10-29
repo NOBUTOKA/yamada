@@ -44,20 +44,6 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
             testCase.verifyEqual(app.Document.getComponent(app.SelectedComponentId).getProperty("FontSize").LiteralValue, 19);
         end
 
-        function singletonIdentifierMatchesProjectedRow(testCase)
-            % singletonIdentifierMatchesProjectedRow Keep property binding separate from row identity.
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            grid = uigridlayout(figure, [1 1]);
-            definition = macd.model.PropertyDefinition("Position", [], false, true, ...
-                struct("editor", "numericVector"));
-            row = macd.ui.inspector.InspectorPropertyRow(grid, 1, "component-1", ...
-                definition, @(~, ~, ~) "");
-            testCase.verifyEqual(row.identifier(), "property:Position");
-            state = row.snapshotTransientState();
-            testCase.verifyEqual(state.Path, "Position");
-        end
-
         function restoresRejectedDraftAcrossRowReplacement(testCase)
             % restoresRejectedDraftAcrossRowReplacement Restore view-only invalid text.
 

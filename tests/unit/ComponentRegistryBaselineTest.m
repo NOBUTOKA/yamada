@@ -29,7 +29,8 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             documents = ComponentRegistryBaselineTest.ledgerDocuments();
             expectedIds = sort(string(cellfun(@(document) document.id, documents, "UniformOutput", false)));
             testCase.verifyEqual(registry.listVariantIds(), expectedIds);
-            testCase.verifyEqual(numel(registry.listFactories()), 38);
+            expectedFactories = string(cellfun(@(document) document.factory, documents, "UniformOutput", false));
+            testCase.verifyEqual(registry.listFactories(), sort(unique(expectedFactories)));
             for documentIndex = 1:numel(documents)
                 document = documents{documentIndex};
                 definition = registry.getById(string(document.id));
@@ -49,11 +50,15 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     testCase.verifyEqual(actual.Editor, expectedEditor);
                     testCase.verifyEqual(actual.AuditDisposition, string(expected.disposition.kind));
                     testCase.verifyEqual(string(actual.Metadata.description), string(expected.summary));
-                    testCase.verifyEqual(string(actual.ValueSchema.kind), ...
-                        string(expected.valueContract.kind));
-                    % Accepted classes form a set; transcript order is not a capability.
-                    testCase.verifyEqual(sort(reshape(string(actual.ValueSchema.matlabClasses), 1, [])), ...
-                        sort(reshape(string(expected.valueContract.matlabClasses), 1, [])));
+                    context = string(document.id) + "." + string(expected.path);
+                    testCase.verifyEqual(actual.IsEditable, string(expected.runtimeSetAccess) == "public", context);
+                    testCase.verifyEqual(actual.PreviewPolicy, string(expected.previewPolicy), context);
+                    % Compare the complete contract, including optional bounds and constraints.
+                    actualSchema = actual.ValueSchema;
+                    expectedSchema = expected.valueContract;
+                    actualSchema.matlabClasses = sort(reshape(string(actualSchema.matlabClasses), 1, []));
+                    expectedSchema.matlabClasses = sort(reshape(string(expectedSchema.matlabClasses), 1, []));
+                    testCase.verifyEqual(orderfields(actualSchema), orderfields(expectedSchema), context);
                     policy = macd.model.PropertyApplicationPolicy();
                     if isfield(expected, "application")
                         policy = macd.model.PropertyApplicationPolicy(expected.application);
@@ -67,61 +72,11 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     testCase.verifyEqual(actual.Application.HasInitialValue, policy.HasInitialValue);
                     testCase.verifyTrue(isequaln(actual.Application.InitialValue, policy.InitialValue));
                     testCase.verifyFalse(isfield(actual.Metadata, "applicationEvidence"));
-                    if isfield(expected.valueContract, "values")
-                        testCase.verifyTrue(isfield(actual.ValueSchema, "values"));
-                        testCase.verifyEqual(string(actual.ValueSchema.values), ...
-                            string(expected.valueContract.values));
-                    else
-                        testCase.verifyFalse(isfield(actual.ValueSchema, "values"));
-                    end
                 end
             end
-        end
 
-        function runtimeCatalogRetainsGroupingProvenance(testCase)
-            % runtimeCatalogRetainsGroupingProvenance Verify runtime data names the reviewed grouping input.
-
-            % Read raw JSON so the provenance check does not depend on registry details.
-            root = macd.catalog.ComponentCatalogLoader.defaultCatalogRoot();
-            manifest = jsondecode(fileread(fullfile(root, "catalog.json")));
-            groups = jsondecode(fileread(fullfile(root, "property-groups", "groups.json")));
-            profiles = jsondecode(fileread(fullfile(root, "order-profiles.json")));
-            testCase.verifyEqual(manifest.schemaVersion, 2);
-            testCase.verifyEqual(string(manifest.matlabRelease), "R2024a");
-            testCase.verifyEqual(string(manifest.sourceGroupingSha256), string(groups.inputSha256));
-            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            design = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", ...
-                "R2024a", "grouping", "GROUPING_DESIGN.json")));
-            testCase.verifyEqual(numel(groups.groups), numel(design.groups));
-            testCase.verifyEqual(sort(string(manifest.orderProfileFiles)), "order-profiles.json");
-            testCase.verifyEqual(sort(string({profiles.profiles.id})), ...
-                ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
-        end
-
-        function stateButtonValueUsesLogicalContract(testCase)
-            % stateButtonValueUsesLogicalContract Keep State Button state distinct from numeric values.
-
-            definition = macd.model.ComponentRegistry.createDefault().getById("uibutton-state");
-            value = definition.Properties([definition.Properties.Path] == "Value");
-            testCase.verifyEqual(value.Editor, "logical");
-            testCase.verifyEqual(string(value.ValueSchema.kind), "logical");
-            testCase.verifyEqual(string(value.ValueSchema.matlabClasses), "logical");
-        end
-
-        function runtimeCatalogLoadsInitialCompositeInspectorRows(testCase)
-            % runtimeCatalogLoadsInitialCompositeInspectorRows Keep presentation overlays separate from properties.
-
-            registry = macd.model.ComponentRegistry.createDefault();
-            rows = registry.inspectorRows();
-            testCase.verifyEqual(string({rows.Id}), ...
-                ["tableDataAndNames", "tableColumns", "itemsAndData", "fontStyle"]);
-            tableColumns = rows([rows.Id] == "tableColumns");
-            testCase.verifyEqual(tableColumns.MemberPaths, ["ColumnWidth", "ColumnEditable", ...
-                "ColumnRearrangeable", "ColumnSortable", "ColumnFormat"]);
-            testCase.verifyEqual(tableColumns.CategoryId, "table");
-            items = rows([rows.Id] == "itemsAndData");
-            testCase.verifyEqual(items.ComponentIds, ...
-                ["uidropdown", "uilistbox", "uiknob-discrete"]);
+            % Presentation rows have their own reviewed ledger and ordered membership.
+            ComponentRegistryBaselineTest.verifyInspectorRows(testCase, registry);
         end
 
         function editablePropertiesProjectToSupportedInspectorEditors(testCase)
@@ -158,32 +113,6 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             end
         end
 
-        function figureCustomPointerShapesRemainOmitted(testCase)
-            % figureCustomPointerShapesRemainOmitted Keep bitmap-pointer data outside the inspector catalog.
-
-            % Retain the standard pointer choice while omitting its custom bitmap and hotspot.
-            definition = macd.model.ComponentRegistry.createDefault().getById("uifigure");
-            pointer = definition.Properties([definition.Properties.Path] == "Pointer");
-            customShape = definition.Properties([definition.Properties.Path] == "PointerShapeCData");
-            hotSpot = definition.Properties([definition.Properties.Path] == "PointerShapeHotSpot");
-            testCase.verifyEqual(pointer.AuditDisposition, "editable");
-            testCase.verifyEqual(pointer.Editor, "enum");
-            testCase.verifyEqual(customShape.AuditDisposition, "omitted");
-            testCase.verifyEqual(hotSpot.AuditDisposition, "omitted");
-        end
-
-        function figureRuntimeInteractionStateRemainsOmitted(testCase)
-            % figureRuntimeInteractionStateRemainsOmitted Exclude mouse and keyboard event state from design editing.
-
-            % These properties report the most recent user interaction rather than design intent.
-            definition = macd.model.ComponentRegistry.createDefault().getById("uifigure");
-            for path = ["CurrentCharacter", "CurrentPoint", "SelectionType"]
-                property = definition.Properties([definition.Properties.Path] == path);
-                testCase.verifyEqual(property.AuditDisposition, "omitted");
-                testCase.verifyEqual(property.PreviewPolicy, "skip");
-            end
-        end
-
         function editableEnumContractsRetainCompleteFiniteChoices(testCase)
             % editableEnumContractsRetainCompleteFiniteChoices Require dropdown choices for every editable enum.
 
@@ -202,264 +131,6 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             definition = registry.getById("uiaxes");
             smoothing = definition.Properties([definition.Properties.Path] == "FontSmoothing");
             testCase.verifyEqual(smoothing.AuditDisposition, "omitted");
-        end
-
-        function editFieldPublicPropertiesAreNotLeftUnresolved(testCase)
-            % editFieldPublicPropertiesAreNotLeftUnresolved Preserve audited editable field surfaces.
-
-            registry = macd.model.ComponentRegistry.createDefault();
-            ids = ["uieditfield-text", "uieditfield-numeric"];
-            expected = {["Value", "CharacterLimits", "InputType", ...
-                "Placeholder", "HorizontalAlignment", "FontName", "FontSize", ...
-                "FontWeight", "FontAngle", "FontColor", "BackgroundColor", "Visible", ...
-                "Editable", "Enable", "Tooltip", "Position", "Interruptible", "BusyAction"], ...
-                ["Value", "Limits", "RoundFractionalValues", ...
-                "ValueDisplayFormat", "AllowEmpty", "Placeholder", "HorizontalAlignment", ...
-                "LowerLimitInclusive", "UpperLimitInclusive", "FontName", "FontSize", ...
-                "FontWeight", "FontAngle", "FontColor", "BackgroundColor", "Visible", ...
-                "Editable", "Enable", "Tooltip", "Position", "Interruptible", "BusyAction"]};
-            for index = 1:numel(ids)
-                id = ids(index);
-                definition = registry.getById(id);
-                for path = expected{index}
-                    property = definition.Properties([definition.Properties.Path] == path);
-                    testCase.verifyTrue(property.IsEditable, id + "." + path);
-                end
-            end
-        end
-
-        function switchItemsRetainTheirTwoStateContract(testCase)
-            % switchItemsRetainTheirTwoStateContract Keep switches out of the generic Items dialog.
-
-            registry = macd.model.ComponentRegistry.createDefault();
-            for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"]
-                definition = registry.getById(id);
-                items = definition.Properties([definition.Properties.Path] == "Items");
-                testCase.verifyEqual(string(items.ValueSchema.shape), "fixedLengthVector");
-                testCase.verifyEqual(items.ValueSchema.fixedLength, 2);
-                testCase.verifyFalse(items.ValueSchema.allowsEmpty);
-            end
-        end
-
-        function multilineTextSurfacesRemainDistinguishedFromStringLists(testCase)
-            % multilineTextSurfacesRemainDistinguishedFromStringLists Preserve the audited text-editor scope.
-
-            % Count only the prose surfaces that map arrays to display lines.
-            registry = macd.model.ComponentRegistry.createDefault();
-            textCount = 0;
-            tooltipCount = 0;
-            valueCount = 0;
-            for id = registry.listVariantIds()
-                definition = registry.getById(id);
-                for property = definition.Properties
-                    if property.Editor ~= "multilineText"
-                        continue
-                    end
-                    if property.Path == "Text"
-                        textCount = textCount + 1;
-                    elseif property.Path == "Tooltip"
-                        tooltipCount = tooltipCount + 1;
-                    elseif id == "uitextarea" && property.Path == "Value"
-                        valueCount = valueCount + 1;
-                    else
-                        testCase.assertFail("Unexpected multilineText surface: " + id + "." + property.Path);
-                    end
-                end
-            end
-            testCase.verifyEqual([textCount, tooltipCount, valueCount], [7, 37, 1]);
-        end
-
-        function specializedEditorContractsAreClassified(testCase)
-            % specializedEditorContractsAreClassified Guard audited specialized-editor decisions.
-
-            % Keep arbitrary HTML data visible but non-editable in the inspector.
-            registry = macd.model.ComponentRegistry.createDefault();
-            html = registry.getById("uihtml");
-            data = html.Properties([html.Properties.Path] == "Data");
-            testCase.verifyEqual(data.Editor, "readOnly");
-            testCase.verifyEqual(data.AuditDisposition, "readOnly");
-
-            % Route table data and headings through one related-data editor, while
-            % reserving one column-settings editor for all column-oriented settings.
-            table = registry.getById("uitable");
-            for path = ["Data", "ColumnName", "RowName"]
-                property = table.Properties([table.Properties.Path] == path);
-                testCase.verifyEqual(property.Editor, "tableData");
-            end
-            for path = ["ColumnWidth", "ColumnEditable", "ColumnSortable", "ColumnFormat"]
-                property = table.Properties([table.Properties.Path] == path);
-                testCase.verifyEqual(property.Editor, "columnSettings");
-            end
-            rearrangeable = table.Properties([table.Properties.Path] == "ColumnRearrangeable");
-            testCase.verifyEqual(rearrangeable.Editor, "onOff");
-            for path = ["Selection", "SelectionType"]
-                property = table.Properties([table.Properties.Path] == path);
-                testCase.verifyEqual(property.AuditDisposition, "omitted");
-                testCase.verifyEqual(property.Editor, "readOnly");
-            end
-        end
-
-        function auditedValueContractsReachRuntimeCatalog(testCase)
-            % auditedValueContractsReachRuntimeCatalog Verify exact pending-editor schemas.
-
-            % Check the three documented date-picker modes independently.
-            registry = macd.model.ComponentRegistry.createDefault();
-            datePicker = registry.getById("uidatepicker");
-            value = datePicker.Properties([datePicker.Properties.Path] == "Value").ValueSchema;
-            testCase.verifyEqual(string(value.kind), "dateTime");
-            testCase.verifyEqual(string(value.matlabClasses), "datetime");
-            testCase.verifyEqual(string(value.shape), "scalar");
-            testCase.verifyFalse(value.allowsEmpty);
-            testCase.verifyTrue(value.allowsNaT);
-            testCase.verifyEqual(string(value.normalization), "dateOnly");
-            testCase.verifyEqual(string(value.constraints.kind), "withinLimitsOf");
-            testCase.verifyEqual(string(value.constraints.property), "Limits");
-
-            limits = datePicker.Properties([datePicker.Properties.Path] == "Limits").ValueSchema;
-            testCase.verifyEqual(string(limits.matlabClasses), "datetime");
-            testCase.verifyEqual(string(limits.shape), "fixedLengthVector");
-            testCase.verifyEqual(limits.fixedLength, 2);
-            testCase.verifyEqual(string(limits.orientation), "row");
-            testCase.verifyFalse(limits.allowsEmpty);
-            testCase.verifyFalse(limits.allowsNaT);
-            testCase.verifyEqual(string(limits.constraints.kind), "strictlyIncreasing");
-
-            disabled = datePicker.Properties( ...
-                [datePicker.Properties.Path] == "DisabledDates").ValueSchema;
-            testCase.verifyEqual(string(disabled.matlabClasses), "datetime");
-            testCase.verifyEqual(string(disabled.shape), "vector");
-            testCase.verifyEqual(string(disabled.orientation), "column");
-            testCase.verifyTrue(disabled.allowsEmpty);
-            testCase.verifyFalse(disabled.allowsNaT);
-            testCase.verifyEqual(string(disabled.constraints.kind), "sortedAscending");
-
-            % Check table data, headings, and each property-specific column contract.
-            table = registry.getById("uitable");
-            data = table.Properties([table.Properties.Path] == "Data").ValueSchema;
-            testCase.verifyEqual(string(data.kind), "tabularData");
-            testCase.verifyEqual(string(data.matlabClasses(:))', ...
-                ["cell", "logical", "numeric", "string", "table"]);
-            testCase.verifyEqual(string(data.shape), "matrix");
-            testCase.verifyTrue(data.allowsEmpty);
-
-            for path = ["ColumnName", "RowName"]
-                heading = table.Properties([table.Properties.Path] == path).ValueSchema;
-                testCase.verifyEqual(string(heading.kind), "stringList");
-                testCase.verifyEqual(string(heading.shape), "propertyDependent");
-                testCase.verifyEqual(string(heading.normalization), "columnVector");
-            end
-
-            width = table.Properties([table.Properties.Path] == "ColumnWidth").ValueSchema;
-            testCase.verifyEqual(string(width.kind), "columnWidth");
-            testCase.verifyEqual(string(width.matlabClasses(:))', ["cell", "char", "string"]);
-            testCase.verifyFalse(width.allowsEmpty);
-            testCase.verifyEqual(string(width.normalization), "charOrRowCell");
-
-            for path = ["ColumnEditable", "ColumnSortable"]
-                logicalColumns = table.Properties([table.Properties.Path] == path).ValueSchema;
-                testCase.verifyEqual(string(logicalColumns.kind), "logical");
-                testCase.verifyEqual(string(logicalColumns.matlabClasses(:))', ...
-                    ["double", "logical"]);
-                testCase.verifyTrue(logicalColumns.allowsEmpty);
-                testCase.verifyEqual(string(logicalColumns.normalization), "logical");
-            end
-
-            format = table.Properties([table.Properties.Path] == "ColumnFormat").ValueSchema;
-            testCase.verifyEqual(string(format.kind), "columnFormat");
-            testCase.verifyEqual(string(format.matlabClasses(:))', ["cell", "double"]);
-            testCase.verifyTrue(format.allowsEmpty);
-            testCase.verifyEqual(string(format.normalization), "rowCell");
-        end
-
-        function reauditedContractsReachRuntimeCatalog(testCase)
-            % reauditedContractsReachRuntimeCatalog Preserve the post-audit contract corrections.
-
-            registry = macd.model.ComponentRegistry.createDefault();
-
-            % Text-valued fields must not surface through a numeric-vector editor.
-            textTargets = {"uidatepicker", "Placeholder"; "uidatepicker", "DisplayFormat"; ...
-                    "uidropdown", "Placeholder"; "uieditfield-text", "Value"; ...
-                    "uiimage", "AltText"; "uispinner", "ValueDisplayFormat"; ...
-                    "uipanel", "Title"; "uitab", "Title"};
-            for targetIndex = 1:size(textTargets, 1)
-                definition = registry.getById(textTargets{targetIndex, 1});
-                property = definition.Properties([definition.Properties.Path] == textTargets{targetIndex, 2});
-                testCase.verifyEqual(property.Editor, "text");
-                testCase.verifyEqual(string(property.ValueSchema.kind), "text");
-                testCase.verifyTrue(property.ValueSchema.allowsEmpty);
-            end
-
-            % Record heterogeneous day choices and reserve grid tracks for canvas editing.
-            datePicker = registry.getById("uidatepicker");
-            disabledDays = datePicker.Properties( ...
-                [datePicker.Properties.Path] == "DisabledDaysOfWeek");
-            testCase.verifyEqual(disabledDays.Editor, "structuredData");
-            testCase.verifyEqual(string(disabledDays.ValueSchema.kind), "dayOfWeekList");
-            testCase.verifyEqual(string(disabledDays.ValueSchema.matlabClasses(:))', ...
-                ["cell", "numeric", "string"]);
-
-            grid = registry.getById("uigridlayout");
-            for path = ["ColumnWidth", "RowHeight"]
-                property = grid.Properties([grid.Properties.Path] == path);
-                testCase.verifyEqual(property.Editor, "gridTrackList");
-                testCase.verifyEqual(property.AuditDisposition, "editable");
-                testCase.verifyEqual(string(property.ValueSchema.kind), "gridTrackList");
-                testCase.verifyEqual(string(property.ValueSchema.matlabClasses(:))', ...
-                    ["cell", "char", "numeric", "string"]);
-            end
-
-            % Item-backed selections use Items labels and optionally map to ItemsData.
-            for id = ["uidropdown", "uiknob-discrete", "uilistbox", ...
-                    "uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle"]
-                definition = registry.getById(id);
-                property = definition.Properties([definition.Properties.Path] == "Value");
-                testCase.verifyEqual(property.Editor, "itemSelection");
-                testCase.verifyEqual(property.AuditDisposition, "editable");
-                testCase.verifyEqual(string(property.ValueSchema.kind), "itemSelection");
-                testCase.verifyEqual(string(property.ValueSchema.matlabClasses), "any");
-            end
-            listBox = registry.getById("uilistbox");
-            listValue = listBox.Properties([listBox.Properties.Path] == "Value");
-            testCase.verifyEqual(string(listValue.ValueSchema.multiselectProperty), "Multiselect");
-
-            % Fixed vectors and explicit numeric bounds must reach the runtime schema.
-            numeric = registry.getById("uieditfield-numeric");
-            limits = numeric.Properties([numeric.Properties.Path] == "Limits").ValueSchema;
-            testCase.verifyEqual(limits.fixedLength, 2);
-            testCase.verifyTrue(limits.allowsInfinity);
-            panel = registry.getById("uipanel");
-            border = panel.Properties([panel.Properties.Path] == "BorderWidth").ValueSchema;
-            testCase.verifyEqual(string(border.kind), "number");
-            testCase.verifyEqual(border.minimum, 0);
-            testCase.verifyTrue(border.exclusiveMinimum);
-            testCase.verifyTrue(border.integer);
-            font = panel.Properties([panel.Properties.Path] == "FontSize").ValueSchema;
-            testCase.verifyEqual(font.minimum, 0);
-            testCase.verifyTrue(font.exclusiveMinimum);
-
-            % CurrentPoint is interaction state even where runtime metadata exposes it.
-            axes = registry.getById("uiaxes");
-            currentPoint = axes.Properties([axes.Properties.Path] == "CurrentPoint");
-            testCase.verifyEqual(currentPoint.AuditDisposition, "omitted");
-            testCase.verifyEqual(currentPoint.Editor, "readOnly");
-        end
-
-        function innerPositionRemainsOmittedAcrossTheCatalog(testCase)
-            % innerPositionRemainsOmittedAcrossTheCatalog Keep derived geometry out of the inspector.
-
-            % Position is the editable design-time geometry surface for every variant.
-            registry = macd.model.ComponentRegistry.createDefault();
-            count = 0;
-            for id = registry.listVariantIds()
-                definition = registry.getById(id);
-                matches = definition.Properties([definition.Properties.Path] == "InnerPosition");
-                if isempty(matches)
-                    continue
-                end
-                count = count + 1;
-                testCase.verifyEqual(matches.AuditDisposition, "omitted");
-            end
-            testCase.verifyGreaterThan(count, 0);
         end
 
         function checkboxTreeGeometryRetainsNativeAndProductAccessBoundaries(testCase)
@@ -509,6 +180,42 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
     end
 
     methods (Static, Access = private)
+        function verifyInspectorRows(testCase, registry)
+            % verifyInspectorRows Compare every runtime row field with the reviewed presentation ledger.
+            arguments (Input)
+                testCase (1, 1) ComponentRegistryBaselineTest
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            ledger = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", ...
+                "R2024a", "inspector-rows.json")));
+            expectedRows = ComponentRegistryBaselineTest.objectList(ledger.rows);
+            actualRows = registry.inspectorRows();
+            testCase.assertNumElements(actualRows, numel(expectedRows));
+            for index = 1:numel(expectedRows)
+                expected = expectedRows{index};
+                actual = actualRows(index);
+                context = "Inspector row " + string(expected.id);
+                testCase.verifyEqual(actual.Id, string(expected.id), context);
+                testCase.verifyEqual(actual.DisplayName, string(expected.displayName), context);
+                testCase.verifyEqual(actual.Editor, string(expected.editor), context);
+                members = ComponentRegistryBaselineTest.objectList(expected.members);
+                paths = string(cellfun(@(member) member.path, members, "UniformOutput", false));
+                roles = string(cellfun(@(member) member.role, members, "UniformOutput", false));
+                testCase.verifyEqual(actual.MemberPaths, paths, context);
+                testCase.verifyEqual(actual.MemberRoles, roles, context);
+                category = "";
+                if isfield(expected, "categoryId"), category = string(expected.categoryId); end
+                testCase.verifyEqual(actual.CategoryId, category, context);
+                testCase.verifyEqual(actual.OrderAnchor, string(expected.orderAnchor), context);
+                testCase.verifyEqual(actual.ComponentIds, ...
+                    reshape(string(expected.match.componentIds), 1, []), context);
+                testCase.verifyEqual(actual.ParentContextIds, ...
+                    reshape(string(expected.match.parentContextIds), 1, []), context);
+            end
+        end
+
         function documents = ledgerDocuments()
             % ledgerDocuments Read the audited R2024a concrete component transcript.
             arguments (Output)

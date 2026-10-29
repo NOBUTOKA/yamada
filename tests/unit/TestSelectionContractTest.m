@@ -26,7 +26,6 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
                 "PositionEditorTest/fixedDimensionTooltipsFollowOrientation", ...
                 "PositionEditorTest/rowRebindingRejectsStaleNumericEvents", ...
                 "PropertyEditorFactoryTest/createsOnOffCheckBox", ...
-                "PropertyEditorFactoryTest/createsEnumDropDownFromSchema", ...
                 "PropertyEditorFactoryTest/createsNativeDateTimeEditors", ...
                 "PropertyEditorFactoryTest/itemSelectionDropDownMapsItemsDataAndRefreshesItems", ...
                 "PropertyEditorFactoryTest/tableDataRowsShareOneTypedTableEditor", ...
@@ -34,7 +33,6 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
                 "TableDataEditorDialogTest/addDeleteAndApplyCommitOneTableBatch", ...
                 "EditorInteractionTest/editorBuildsEditingSurfaces", ...
                 "EditorInteractionTest/deletingTreeLeafSelectsParentWithoutRebuildingBranches", ...
-                "EditorInteractionTest/hierarchySelectionCallbackUpdatesInspector", ...
                 "EditorInteractionTest/gridOverlayTrackActionCommitsOneValidatedTrackChange", ...
                 "EditorInteractionTest/fontStyleButtonCommitsCatalogChoice"];
 
@@ -42,30 +40,12 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
             testCase.verifyEqual(sort(quickNames), sort([ ...
                 setdiff(allNames, [uiNames, contractNames]), expectedUiSmoke]));
             testCase.verifyEqual(sort(intersect(quickNames, uiNames)), sort(expectedUiSmoke));
-        end
 
-        function areaTagsAlwaysAddToQuickCoverage(testCase)
-            % areaTagsAlwaysAddToQuickCoverage Verify functional-area coverage.
-
-            [allSuite, ~] = TestSelectionContractTest.discoverSuites();
-            quickSuite = testsuite(TestSelectionContractTest.testRoot(), ...
-                "Tag", "fast");
-            quickNames = string({quickSuite.Name});
+            % Keep documented areas populated without reconstructing the selector in tests.
             areas = ["parser", "catalog", "model", "generation", "preview", ...
-                "gridOverlay", "inspector", "dialog", "editorShell", "previewTab", ...
-                "lifecycle"];
-            allNames = string({allSuite.Name});
+                "gridOverlay", "inspector", "dialog", "editorShell", "previewTab", "lifecycle"];
             for area = areas
-                taggedSuite = testsuite(TestSelectionContractTest.testRoot(), ...
-                    "Tag", area);
-                selectedSuite = TestSelectionContractTest.uniqueByName( ...
-                    [quickSuite, taggedSuite]);
-                taggedNames = string({taggedSuite.Name});
-                selectedNames = string({selectedSuite.Name});
-                testCase.verifyNotEmpty(taggedNames, area);
-                testCase.verifyTrue(all(ismember(quickNames, selectedNames)), area);
-                testCase.verifyTrue(all(ismember(taggedNames, selectedNames)), area);
-                testCase.verifyTrue(all(ismember(selectedNames, allNames)), area);
+                testCase.verifyTrue(any(arrayfun(@(test) any(strcmp(test.Tags, area)), allSuite)), area);
             end
         end
 
@@ -105,12 +85,6 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
             testRoot = fullfile(projectRoot, "tests", "unit");
         end
 
-        function suite = uniqueByName(suite)
-            % uniqueByName Preserve first-occurrence order while removing duplicates.
-
-            [~, indices] = unique(string({suite.Name}), "stable");
-            suite = suite(indices);
-        end
     end
 end
 

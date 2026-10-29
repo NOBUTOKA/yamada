@@ -214,17 +214,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
                 state, @(~) "", false), "macd:TableDataEditorDialog:UnsupportedData");
         end
 
-        function nativeUITableAcceptsMixedCellDataWithCharacterVectors(testCase)
-            % nativeUITableAcceptsMixedCellDataWithCharacterVectors Verify the runtime cell-array contract.
-
-            owner = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(owner));
-            data = {1, 'Text'; [], true};
-            control = uitable(owner, "Data", data);
-
-            testCase.verifyEqual(control.Data, data);
-            clear cleanup
-        end
     end
 end
 

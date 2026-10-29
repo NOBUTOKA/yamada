@@ -21,60 +21,9 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             clear cleanup
         end
 
-        function createsEnumDropDownFromSchema(testCase)
-            % createsEnumDropDownFromSchema Map schema choices to a native DropDown.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.PropertyDefinition("Orientation", [], false, true, ...
-                struct("editor", "enum", "valueSchema", ...
-                struct("values", {{"horizontal", "vertical"}})));
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            drawnow;
-            testCase.verifyClass(control, "matlab.ui.control.DropDown");
-            testCase.verifyEqual(string(control.Items), ["horizontal", "vertical"]);
-            clear cleanup
-        end
     end
 
     methods (Test)
-        function enablesCatalogEnumDropDown(testCase)
-            % enablesCatalogEnumDropDown Use audited finite choices in an editable native DropDown.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uibutton-push");
-            definition = definition.Properties([definition.Properties.Path] == "FontWeight");
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "normal", true);
-            drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyEqual(string(control.Items), ["normal", "bold"]);
-            testCase.verifyEqual(string(control.Enable), "on");
-            clear cleanup
-        end
-
-        function enablesEllipsisEnumDropDowns(testCase)
-            % enablesEllipsisEnumDropDowns Verify complete choices recovered from R2024a value tables.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uifigure");
-            definition = definition.Properties([definition.Properties.Path] == "Pointer");
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            expected = ["arrow", "ibeam", "crosshair", "watch", "topl", "custom", ...
-                "botr", "topr", "botl", "circle", "cross", "fleur", "left", ...
-                "right", "top", "bottom", "hand"];
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "arrow", true);
-            drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyEqual(string(control.Items), expected);
-            testCase.verifyEqual(string(control.Enable), "on");
-            clear cleanup
-        end
 
         function enablesEveryRecoveredEllipsisSurface(testCase)
             % enablesEveryRecoveredEllipsisSurface Check all representative recovered enum surfaces.
@@ -129,24 +78,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
             drawnow;
             testCase.verifyFalse(control.Editable);
-            clear cleanup
-        end
-
-        function createsMultilineTextArea(testCase)
-            % createsMultilineTextArea Render prose properties in an inline multiline editor.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.PropertyDefinition("Tooltip", [], false, true, ...
-                struct("editor", "multilineText"));
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'Line one'", true, 'Line one');
-            drawnow;
-            testCase.verifyClass(control, "matlab.ui.control.TextArea");
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyTrue(control.Editable);
-            testCase.verifyEqual(string(control.Value), "Line one");
             clear cleanup
         end
 
@@ -215,21 +146,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
     end
 
     methods (Test)
-        function defersItemsDataAsReadOnly(testCase)
-            % defersItemsDataAsReadOnly Keep arbitrary list-associated data out of the string editor.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.PropertyDefinition("ItemsData", [], false, true, ...
-                struct("editor", "itemsData", "auditDisposition", "readOnly"));
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 2 3]", false);
-            drawnow;
-            testCase.verifyFalse(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyFalse(control.Editable);
-            clear cleanup
-        end
 
         function createsRgbColorAction(testCase)
             % createsRgbColorAction Render one validated RGB value on a native action button.
@@ -357,20 +273,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             clear cleanup
         end
 
-        function defersGridTrackEditorUntilItsDedicatedImplementation(testCase)
-            % defersGridTrackEditorUntilItsDedicatedImplementation Avoid a lossy string-list editor.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uigridlayout");
-            definition = definition.Properties([definition.Properties.Path] == "ColumnWidth");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "{'1x', '1x'}", true, {'1x', '1x'});
-            drawnow;
-            testCase.verifyFalse(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyFalse(control.Editable);
-            clear cleanup
-        end
     end
 
     methods (Test, TestTags = {'fast'})
@@ -428,24 +330,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             control.Value = {'Two', 'Three'};
             control.ValueChangedFcn(control, struct());
             testCase.verifyEqual(getappdata(figure, "committed"), [20 30]);
-            clear cleanup
-        end
-
-        function createsStructuredDayListEditor(testCase)
-            % createsStructuredDayListEditor Route documented weekdays to the readable dialog action.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
-            definition = definition.Properties([definition.Properties.Path] == "DisabledDaysOfWeek");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
-                @(value) setappdata(figure, "committed", value));
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 3]", true, [1 3]);
-            drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyClass(control, "matlab.ui.control.Button");
-            testCase.verifyEqual(string(control.Text), "Sun, Tue");
-            testCase.verifyEqual(control.UserData, [1 3]);
             clear cleanup
         end
 

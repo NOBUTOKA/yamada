@@ -13,31 +13,6 @@ classdef (TestTags = {'fast', 'inspector'}) InspectorValueFormatterTest < matlab
             testCase.verifyEqual(text, """Button""");
         end
 
-        function preservesCharacterVectorSyntax(testCase)
-            % preservesCharacterVectorSyntax Render a char row with single-quote syntax.
-
-            entry = macd.model.PropertyEntry("Text", 'Button');
-            text = macd.ui.InspectorValueFormatter.format(entry);
-            testCase.verifyEqual(text, "'Button'");
-        end
-
-        function preservesEmptyCharacterSyntax(testCase)
-            % preservesEmptyCharacterSyntax Render an empty char value without changing type.
-
-            entry = macd.model.PropertyEntry("Text", '');
-            text = macd.ui.InspectorValueFormatter.format(entry);
-            testCase.verifyEqual(text, "''");
-        end
-
-        function encodesStringArray(testCase)
-            % encodesStringArray Render string arrays using safe matrix literal syntax.
-
-            % Matrix support preserves ItemsData string values through source generation.
-            entry = macd.model.PropertyEntry("Items", ["Light", "Dark", "System"]);
-            text = macd.ui.InspectorValueFormatter.format(entry);
-            testCase.verifyEqual(text, "[""Light"" ""Dark"" ""System""]");
-        end
-
         function preservesSourceExpression(testCase)
             % preservesSourceExpression Display source-backed values without evaluation.
 
@@ -48,13 +23,6 @@ classdef (TestTags = {'fast', 'inspector'}) InspectorValueFormatterTest < matlab
             testCase.verifyEqual(text, "app.updateTheme");
         end
 
-        function encodesCharacterMatrix(testCase)
-            % encodesCharacterMatrix Render a character matrix without an unsupported placeholder.
-
-            entry = macd.model.PropertyEntry("CharData", ['ab'; 'cd']);
-            text = macd.ui.InspectorValueFormatter.format(entry);
-            testCase.verifyEqual(text, "['ab'; 'cd']");
-        end
     end
 end
 

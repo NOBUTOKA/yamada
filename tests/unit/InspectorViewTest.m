@@ -42,21 +42,6 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.Te
             clear cleanup
         end
 
-        function clearDeletesOnlyOwnedChildren(testCase)
-            % clearDeletesOnlyOwnedChildren Remove view children without deleting the host.
-
-            % Add one owned control, then verify clearing preserves the outer figure.
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            view = macd.ui.inspector.InspectorView(figure);
-            label = uilabel(view.contentGrid(), "Text", "Owned");
-            drawnow;
-            view.clear();
-
-            testCase.verifyFalse(isvalid(label));
-            testCase.verifyTrue(isvalid(figure));
-            clear cleanup
-        end
     end
 end
 

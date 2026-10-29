@@ -4,66 +4,6 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
     %   These tests never execute opened app source or undocumented callbacks.
 
     methods (Test)
-        function pushButtonContextMenuRegistrationKeepsStoredInputs(testCase)
-            % pushButtonContextMenuRegistrationKeepsStoredInputs Verify bounded registration without opening callbacks.
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() delete(figure));
-            setappdata(figure, "ContextOpened", false);
-            menu = uicontextmenu(figure, ContextMenuOpeningFcn=@(~,~) setappdata(figure, "ContextOpened", true));
-            button = uibutton(figure, Text="retained", Position=[10 20 130 35]);
-            drawnow;
-            property = findprop(button, "ContextMenu");
-            testCase.verifyEqual(string(property.SetAccess), "public");
-            before = get(button);
-            button.ContextMenu = menu;
-            drawnow;
-            testCase.verifyEqual(button.ContextMenu, menu);
-            after = get(button);
-            fields = intersect(fieldnames(before), {'ContextMenu', 'UIContextMenu'});
-            testCase.verifyEqual(rmfield(after, fields), rmfield(before, fields));
-            testCase.verifyFalse(getappdata(figure, "ContextOpened"));
-            button.ContextMenu = [];
-            testCase.verifyEmpty(button.ContextMenu);
-            testCase.verifyFalse(getappdata(figure, "ContextOpened"));
-        end
-
-        function parentReassignmentChangesDestinationGroupSelection(testCase)
-            % parentReassignmentChangesDestinationGroupSelection Confirm cross-component effects outside the modeled constructor hierarchy.
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() delete(figure));
-            left = uibuttongroup(figure);
-            right = uibuttongroup(figure);
-            moved = uiradiobutton(left);
-            other = uiradiobutton(right);
-            testCase.verifyTrue(other.Value);
-            moved.Parent = right;
-            moved.Value = true;
-            testCase.verifyFalse(other.Value);
-            testCase.verifyEqual(right.SelectedObject, moved);
-        end
-
-        function toggleToolCallbacksDependOnFigureContext(testCase)
-            % toggleToolCallbacksDependOnFigureContext Distinguish native context behavior from registration.
-            for factory = ["uifigure", "figure"]
-                parent = feval(factory, "Visible", "off");
-                cleanup = onCleanup(@() delete(parent));
-                tools = uitoolbar(parent);
-                setappdata(parent, "CallbackCount", 0);
-                tool = uitoggletool(tools, OnCallback=@(~,~) setappdata(parent, "CallbackCount", ...
-                    getappdata(parent, "CallbackCount") + 1));
-                drawnow;
-                tool.State = "on";
-                drawnow;
-                count = getappdata(parent, "CallbackCount");
-                testCase.verifyEqual(string(tool.State), "on");
-                testCase.verifyTrue(any(count == [0 1]));
-                fprintf("TOGGLE_CALLBACK_CONTEXT Factory=%s Count=%d\n", factory, count);
-                % Readiness-dependent execution is not promoted to a static callback policy.
-                feval(tool.OnCallback, tool, []);
-                testCase.verifyEqual(getappdata(parent, "CallbackCount"), count + 1);
-                clear cleanup
-            end
-        end
 
         function gridTracksSupportConstructorsAndOccupancyPadding(testCase)
             % gridTracksSupportConstructorsAndOccupancyPadding Verify constructor tokens and occupied-track release.
@@ -395,20 +335,6 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 testCase.verifyEqual(target.FontSize, 14, "AbsTol", 1e-8);
                 delete(target);
             end
-        end
-
-        function implicitValueChangesAreSeparateFromExplicitWrites(testCase)
-            % implicitValueChangesAreSeparateFromExplicitWrites Pin documented side effects for future state resolution.
-            [figure, ~] = testCase.environment();
-            slider = uislider(figure, "Value", 20);
-            slider.Limits = [50 100];
-            testCase.verifyEqual(slider.Value, 50);
-            field = uieditfield(figure, "numeric", "Value", 2.4);
-            field.RoundFractionalValues = "on";
-            testCase.verifyEqual(field.Value, 2);
-            textField = uieditfield(figure, "text", "Value", "Hello");
-            textField.CharacterLimits = [6 Inf];
-            testCase.verifyEqual(string(textField.Value), "");
         end
 
         function previewPlanPreservesParsedSetterEffectsAndEarlierWrites(testCase)

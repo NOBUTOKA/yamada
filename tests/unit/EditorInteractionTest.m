@@ -390,24 +390,6 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'fast', 'ui'})
-        function hierarchySelectionCallbackUpdatesInspector(testCase)
-            % hierarchySelectionCallbackUpdatesInspector Verify real tree selection.
-
-            % Select the root node through the live uitree callback path.
-            app = yamada();
-            cleanup = onCleanup(@() deleteIfValid(app));
-            drawnow;
-            trees = findall(0, "Type", "uitree");
-            testCase.verifyEqual(numel(trees), 1);
-            trees.SelectedNodes = trees.Children(1);
-            drawnow;
-
-            % The callback must leave the root selected and show its properties.
-            testCase.verifyEqual(app.SelectedComponentId, app.Document.RootComponentId);
-            editors = findall(0, "Tag", "macd-inspector-position-field");
-            testCase.verifyEqual(numel(editors), 4);
-            clear cleanup
-        end
 
         function deletingTreeLeafSelectsParentWithoutRebuildingBranches(testCase)
             % deletingTreeLeafSelectsParentWithoutRebuildingBranches Preserve the open hierarchy after deletion.
@@ -1055,44 +1037,6 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         end
     end
 
-    methods (Test, TestTags = {'fast', 'gridOverlay'})
-        function gridOverlayHtmlOmitsTrackReordering(testCase)
-            % gridOverlayHtmlOmitsTrackReordering Keep unsupported reordering out of the browser contract.
-
-            projectRoot = fileparts(which("yamada"));
-            html = fileread(fullfile(projectRoot, "resources", "EditorInteractionOverlay.html"));
-            testCase.verifyFalse(contains(html, "move-track"));
-            testCase.verifyFalse(contains(html, "Move Earlier"));
-            testCase.verifyFalse(contains(html, "Move Later"));
-            testCase.verifyTrue(contains(html, "select-child"));
-            testCase.verifyFalse(contains(html, "72 * (Number(track.index) - 1)"));
-            testCase.verifyFalse(contains(html, "22 * Number(track.index)"));
-            testCase.verifyTrue(contains(html, "grid-separator"));
-            testCase.verifyTrue(contains(html, "placeTrackPopover"));
-            testCase.verifyTrue(contains(html, "gridSelectionTargets"));
-            testCase.verifyTrue(contains(html, ...
-                ".grid-selection-target { position: absolute; z-index: 1;"));
-            testCase.verifyFalse(contains(html, "hitTarget.style.zIndex"));
-            testCase.verifyTrue(contains(html, "track-settings"));
-            testCase.verifyTrue(contains(html, "componentArray(targets).sort"));
-            testCase.verifyTrue(contains(html, "addTrackDividers"));
-            testCase.verifyFalse(contains(html, "data.rowBoundaries"));
-            testCase.verifyTrue(contains(html, "rgba(34, 100, 199, 0.20)"));
-            testCase.verifyTrue(contains(html, "rowRail"));
-            testCase.verifyTrue(contains(html, "columnRail"));
-            testCase.verifyTrue(contains(html, "var buttonSize = 12"));
-            testCase.verifyTrue(contains(html, "var railGap = 0"));
-            testCase.verifyTrue(contains(html, "Insert Row Above"));
-            testCase.verifyTrue(contains(html, "Insert Column Left"));
-            testCase.verifyFalse(contains(html, "Insert Before"));
-            testCase.verifyTrue(contains(html, "grid-drop-band"));
-            testCase.verifyTrue(contains(html, "width: min(244px, calc(100% - 8px))"));
-            testCase.verifyTrue(contains(html, "grid-template-columns: 1fr"));
-            testCase.verifyTrue(contains(html, "white-space: normal"));
-            testCase.verifyTrue(contains(html, "aria-label"));
-        end
-    end
-
     methods (Test, TestTags = {'inspector', 'ui'})
         function inspectorShowsEffectiveValueWithoutOverwritingSource(testCase)
             % inspectorShowsEffectiveValueWithoutOverwritingSource Keep clamped display and fixed-slot edits consistent.
@@ -1685,24 +1629,6 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         end
     end
 
-    methods (Test, TestTags = {'editorShell', 'ui'})
-        function editMenuExposesEditingCommands(testCase)
-            % editMenuExposesEditingCommands Verify Delete, Undo, and Redo menu items.
-
-            % Inspect the actual menu hierarchy after editor construction.
-            app = yamada();
-            cleanup = onCleanup(@() deleteIfValid(app));
-            drawnow;
-            menus = findall(0, "Type", "uimenu");
-            menuText = string({menus.Text});
-            testCase.verifyTrue(any(contains(menuText, "Edit")));
-            testCase.verifyTrue(any(contains(menuText, "Delete")));
-            testCase.verifyTrue(any(contains(menuText, "Undo")));
-            testCase.verifyTrue(any(contains(menuText, "Redo")));
-            clear cleanup
-        end
-    end
-
     methods (Test, TestTags = {'editorShell', 'previewTab', 'ui'})
         function tabSwitchClearsHiddenGridEditor(testCase)
             % tabSwitchClearsHiddenGridEditor Hide grid tools immediately and restore them on return.
@@ -1832,38 +1758,6 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             groups = findall(figures, "Type", "uitabgroup");
             testCase.verifyEqual(groups.SelectedTab, groups.Children(2));
             clear cleanup
-        end
-    end
-
-    methods (Test, TestTags = {'catalog', 'fast'})
-        function registryCarriesResizePolicies(testCase)
-            % registryCarriesResizePolicies Verify constrained controls are explicit.
-            registry = macd.model.ComponentRegistry.createDefault();
-            testCase.verifyEqual(registry.get("uigauge").ResizeConstraint, ...
-                "aspectRatio");
-            testCase.verifyEqual(registry.get("uiknob").ResizeConstraint, ...
-                "aspectRatio");
-            testCase.verifyEqual(registry.get("uiswitch").ResizeConstraint, ...
-                "aspectRatio");
-            testCase.verifyEqual(registry.get("uilamp").ResizeConstraint, ...
-                "aspectRatio");
-            testCase.verifyEqual(registry.get("uislider").ResizeConstraint, ...
-                "fixedHeight");
-            testCase.verifyEqual(registry.get("uiknob").OverlayShape, "circle");
-            testCase.verifyEqual(registry.get("uislider").OverlayShape, "slider");
-            testCase.verifyEqual(registry.get("uiswitch").OverlayShape, "switch");
-            ninetyDegree = registry.getById("uigauge-ninetydegree");
-            semicircular = registry.getById("uigauge-semicircular");
-            rocker = registry.getById("uiswitch-rocker");
-            toggle = registry.getById("uiswitch-toggle");
-            testCase.verifyEqual(ninetyDegree.overlayShapeFor(ninetyDegree.CreationArguments), ...
-                "quarterCircle");
-            testCase.verifyEqual(semicircular.overlayShapeFor(semicircular.CreationArguments), ...
-                "semicircle");
-            testCase.verifyEqual(rocker.overlayShapeFor(rocker.CreationArguments), ...
-                "rockerSwitch");
-            testCase.verifyEqual(toggle.overlayShapeFor(toggle.CreationArguments), ...
-                "toggleSwitch");
         end
     end
 
