@@ -24,7 +24,7 @@ Before attaching source, make sure it does not contain secrets, personal informa
 
 ## Development Environment
 
-Development and verification currently target MATLAB R2024a. Fork and clone the repository, then add its root to the MATLAB path.
+Development and verification currently target MATLAB R2024a. After cloning the repository, add its root to the MATLAB path.
 
 ```matlab
 projectRoot = "/path/to/yamada";
@@ -48,6 +48,7 @@ See the [product specification](SPECIFICATION.md) for the public feature set, in
 | `resources/EditorInteractionOverlay.html` | HTML/SVG overlay for canvas selection, movement, and resizing; see below |
 | `resources/component-catalog/R2024a` | Release-specific component catalog currently loaded at runtime; add sibling release directories for future MATLAB versions |
 | `dev/component-data` | R2024a component data and catalog-generation scripts |
+| `dev/compatibility` | Opt-in native MATLAB observations and catalog-promotion checks |
 | `doc/ARCHITECTURE.md` | Developer reference for implemented layers, data flow, and extension boundaries |
 | `tests/unit` | MATLAB unit tests |
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
@@ -71,39 +72,28 @@ Follow the formatting of existing code, and do not include unrelated formatting 
 When adding or changing a standard component or property, update the versioned JSON catalog rather than hard-coding declarative specifications in `ComponentRegistry`.
 
 - Check the official MATLAB R2024a documentation and, when necessary, verify behavior in the R2024a runtime.
-- Review the component data, classifications, and generation scripts under `dev/component-data`.
 - Preserve the boundary that prevents catalog data or identifiers from invoking arbitrary MATLAB code.
-- Add or update the corresponding loader, registry, validation, Inspector, Preview, and generation tests.
+- Keep tests consistent with the changed catalog behavior.
 - Do not silently import behavior observed in another MATLAB release into the R2024a catalog.
 
 ## Testing
 
-Make the repository root the Current Folder before running tests. The normal development path has three stages:
-
-1. While editing, run the test file or method directly related to the change.
-2. Before a cohesive commit, run the quick profile and then each affected area.
-3. Before a pull request, release, ROADMAP completion, or a cross-cutting change, run the full suite.
+Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
 
 The quick profile contains every non-UI test plus a bounded UI smoke set. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, and `lifecycle`.
+
+From the repository root, run the full suite with:
+
 ```matlab
-addpath(fullfile(pwd, "tests"));
-clear classes;
-rehash path;
-
-% Run on every cohesive change.
-quickResults = runYamadaTests("quick");
-
-% Add all Inspector and dialog tests after an Inspector-related change.
-affectedResults = runYamadaTests("area", ["inspector", "dialog"]);
+addpath(pwd, fullfile(pwd, "tests"));
+results = runYamadaTests("full");
 ```
 
-Run the complete release gate as follows:
+The other profiles are available as:
 
 ```matlab
-addpath(fullfile(pwd, "tests"));
-clear classes;
-rehash path;
-fullResults = runYamadaTests("full");
+quickResults = runYamadaTests("quick");
+areaResults = runYamadaTests("area", ["inspector", "dialog"]);
 ```
 
 To run one test file:
@@ -113,9 +103,12 @@ results = runtests("tests/unit/ModelTest.m");
 assertSuccess(results);
 ```
 
-Use the full suite instead of an area profile when changing `yamada.m`, catalog JSON, `ComponentRegistry`, `DocumentModel`, shared validation, or test selection infrastructure. Unknown or cross-cutting changes must also fall back to the full suite.
+Optional native MATLAB observations and catalog-promotion provenance checks live outside the normal regression suite:
 
-If you could not run a test, name it and explain why in the pull request.
+```matlab
+addpath(fullfile(pwd, "dev", "compatibility"));
+compatibilityResults = runCompatibilityChecks();
+```
 
 ## HTML Editing Canvas Overlay
 
@@ -126,14 +119,14 @@ Canvas selection, drag movement, eight-direction resizing, and Tab Group selecti
 - MATLAB handles the Preview-to-source scale, component-specific resize constraints, and candidate geometry during a gesture. The completed gesture is then committed as one change to `DocumentModel` and the undo/redo history.
 - The HTML overlay and Preview handles are disposable presentation and input state; neither is the authoritative document state.
 
-If you change the overlay `Data` structure or event format, update the sending and receiving code in `EditorInteractionOverlay.html` and `yamada.m` in the same change. Exercise selection, movement, resizing, and tab-selection paths in `tests/unit/EditorInteractionTest.m`.
+The sending and receiving code in `EditorInteractionOverlay.html` and `yamada.m` must agree on the overlay `Data` structure and event format. Related interaction tests are in `tests/unit/EditorInteractionTest.m`.
 
 ## Pull Requests
 
 Include the following in a pull request:
 
 - What changed and why
-- The related issue
+- The related issue, if any
 - Effects on source preservation, Safe Preview, and the supported scope
 - Tests run and their results
 - Checks not run and the reason
