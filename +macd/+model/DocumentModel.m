@@ -1287,7 +1287,7 @@ classdef DocumentModel < handle
         end
 
         function snapshot = copySubtree(obj, id, registry)
-            % copySubtree Validate a lossless literal subtree snapshot without editing history.
+            % copySubtree Freeze supported subtree configuration while leaving callbacks on the original.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 id (1, 1) string
@@ -1300,11 +1300,6 @@ classdef DocumentModel < handle
                 error("macd:DocumentModel:UnsafeSubtreeCopy", "The document root cannot be copied.");
             end
             snapshot = macd.model.SubtreeSnapshot(obj, id);
-            sourceDiagnostics = obj.Diagnostics;
-            if strlength(obj.OriginalText) > 0
-                originalDocument = macd.source.AppSourceParser.parseText(obj.OriginalText, registry);
-                sourceDiagnostics = originalDocument.Diagnostics;
-            end
             for record = snapshot.Records
                 if ~record.IsEditable
                     error("macd:DocumentModel:UnsafeSubtreeCopy", "A subtree component is read-only.");
@@ -1313,11 +1308,9 @@ classdef DocumentModel < handle
                 if definition.IsProgrammaticOnly || definition.Category == "FigureTools"
                     error("macd:DocumentModel:UnsafeSubtreeCopy", "This construction family is not supported for copying.");
                 end
-                callbacks = macd.source.CallbackSourceAnalyzer.analyze(obj, record.Id, registry);
-                if any(string({callbacks.State}) ~= "absent")
-                    error("macd:DocumentModel:UnsafeSubtreeCopy", "Callback bindings cannot yet be duplicated safely.");
-                end
+                callbackPaths = macd.model.SubtreeCopyPlanner.callbackPaths(obj, record.Id, registry);
                 for property = record.Properties
+                    if any(callbackPaths == property.Path), continue, end
                     if property.ValueKind == "expression"
                         try
                             owner = obj.getComponent(record.Id);
@@ -1343,11 +1336,6 @@ classdef DocumentModel < handle
                     end
                     macd.source.LiteralEncoder.encode(property.LiteralValue);
                 end
-                for diagnostic = sourceDiagnostics
-                    if diagnostic.ComponentId == record.Id && diagnostic.Code == "source-creation-property"
-                        error("macd:DocumentModel:UnsafeSubtreeCopy", "The constructor contains preserved unsupported properties.");
-                    end
-                end
                 if record.Origin == "parsed"
                     if isempty(record.SourceSpans.Creation) || ~record.SourceSpans.Creation.isKnown() || ...
                             isempty(record.SourceSpans.Declaration) || ~record.SourceSpans.Declaration.isKnown()
@@ -1361,6 +1349,7 @@ classdef DocumentModel < handle
                     if numel(matches) ~= 1 || ~direct(matches)
                         error("macd:DocumentModel:UnsafeSubtreeCopy", "Component creation ownership is ambiguous.");
                     end
+                    macd.model.SubtreeCopyPlanner.validateConstructor(obj, record, registry, callbackPaths);
                 end
             end
             snapshot = snapshot.withCopyConfiguration(macd.model.SubtreeCopyPlanner.prepare(obj, snapshot, registry));

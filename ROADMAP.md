@@ -296,6 +296,7 @@ Status: completed in the Edit menu, keyboard shortcuts and Hierarchy context men
 
 - Provide Copy, Cut, and Paste through the Edit menu, keyboard shortcuts, and context menus on components in the hierarchy view. All three entry points must use the same commands and availability rules.
 - Use the complete-subtree rules above when a selected component has children. Define where each subtree can be pasted and how unique component names and identities are assigned.
+- Copy callback-bearing subtrees by omitting catalog-declared callback settings on every copied component. Leave original registrations and handler methods unchanged; Delete/Cut callback restrictions remain in force.
 - Validate the destination's parent rules and source ownership before changing the document. Keep unsupported or ambiguous source structures unchanged.
 - Make each paste or cut one atomic, undoable edit, and update selection, the Inspector, Safe Preview, diagnostics, and generated source consistently.
 - Test the three UI entry points, nested components, invalid destinations, repeated pastes, cancellation or failure, undo/redo, and opened-source round trips without executing the input application.

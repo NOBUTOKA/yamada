@@ -3,6 +3,44 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
     %   These tests exercise model and source contracts without UI entry points.
 
     methods (Test)
+        function pendingCallbacksStayOnOriginalSubtree(testCase)
+            % pendingCallbacksStayOnOriginalSubtree Omit root and child bindings without changing pending edits or history.
+            [document, registry, left, right] = ComponentClipboardTest.fixture();
+            button = document.insertComponent(registry, "uibutton", left.Id);
+            button.setProperty("Text", "Copy this text");
+            document.applyCallbackAction(left.Id, "SizeChangedFcn", "Add", registry);
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            document.markSaved();
+            original = macd.source.RoundTripGenerator(registry).generate(document);
+            edits = document.CallbackEdits;
+            history = document.HistoryIndex;
+            clipboard = macd.model.ComponentClipboard();
+            testCase.verifyTrue(clipboard.availability("Copy", document, left.Id, registry).Enabled);
+            testCase.verifyFalse(clipboard.availability("Cut", document, left.Id, registry).Enabled);
+            clipboard.copy(document, left.Id, registry);
+            testCase.verifyFalse(document.IsDirty);
+            testCase.verifyEqual(document.HistoryIndex, history);
+            testCase.verifyEqual(document.CallbackEdits, edits);
+            testCase.verifyError(@() clipboard.cut(document, left.Id, registry), "macd:DocumentModel:UnsafeSubtreeEdit");
+            testCase.verifyEqual(document.HistoryIndex, history);
+            pasted = clipboard.paste(document, right.Id, registry);
+            copiedButton = document.getComponentByName(button.Name + "Copy");
+            testCase.verifyEqual(copiedButton.getProperty("Text").LiteralValue, "Copy this text");
+            for component = [pasted copiedButton]
+                states = macd.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
+                testCase.verifyTrue(all(string({states.State}) == "absent"));
+            end
+            testCase.verifyEqual(document.CallbackEdits, edits);
+            testCase.verifyEqual(document.HistoryIndex, history + 1);
+            document.undo();
+            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), original);
+            document.redo();
+            clipboard.paste(document, right.Id, registry);
+            testCase.verifyEqual(document.CallbackEdits, edits);
+            testCase.verifyEqual(count(document.GeneratedText, ".ButtonPushedFcn ="), 1);
+            testCase.verifyEqual(count(document.GeneratedText, ".SizeChangedFcn ="), 1);
+        end
+
         function copyDoesNotDirtyAndPasteUsesIndependentData(testCase)
             % copyDoesNotDirtyAndPasteUsesIndependentData Freeze values and assign fresh subtree identities.
             [document, registry, left, right, leaf] = ComponentClipboardTest.fixture();

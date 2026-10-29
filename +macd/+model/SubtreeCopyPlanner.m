@@ -4,8 +4,60 @@ classdef SubtreeCopyPlanner
     %   uses positional factory arguments and one canonical setting per property.
     %   Automatic ticks retain their last literal input and known automatic mode;
     %   the plan never claims that a runtime-computed array is statically known.
+    %   Callback properties are excluded from fresh output; captured source data
+    %   and the original document retain their bindings and method bodies.
 
     methods (Static)
+        function paths = callbackPaths(document, componentId, registry)
+            % callbackPaths Identify omitted bindings from the effective catalog, never from name suffixes.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                paths (1, :) string
+            end
+            component = document.getComponent(componentId);
+            parent = document.getComponent(component.ParentId);
+            parentFactory = "";
+            if ~isempty(parent), parentFactory = parent.Factory; end
+            definitions = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            paths = string({definitions.Path});
+        end
+
+        function validateConstructor(document, record, registry, callbackPaths)
+            % validateConstructor Permit omitted callback arguments while rejecting other unsupported constructor values.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                record (1, 1) struct
+                registry (1, 1) macd.model.ComponentRegistry
+                callbackPaths (1, :) string
+            end
+            if record.Origin ~= "parsed", return, end
+            analysis = document.sourceAnalysis();
+            statements = analysis.Statements;
+            span = record.SourceSpans.Creation;
+            match = arrayfun(@(item) item.Span.StartOffset == span.StartOffset && ...
+                item.Span.EndOffset == span.EndOffset, statements);
+            if nnz(match) ~= 1
+                error("macd:DocumentModel:UnsafeSubtreeCopy", "Component creation ownership is ambiguous.");
+            end
+            definition = registry.get(record.Factory, record.CreationArguments);
+            [~, ~, settings, skipped, supported] = macd.source.PropertySettingSyntax.factory( ...
+                statements(match), definition, "copy");
+            if ~supported || any(~ismember(skipped, callbackPaths))
+                error("macd:DocumentModel:UnsafeSubtreeCopy", "The constructor contains preserved unsupported properties.");
+            end
+            % CreateFcn may already have changed the source object's effective configuration.
+            for setting = settings
+                if setting.Path == "CreateFcn" && ...
+                        ~(setting.ValueKind == "literal" && isempty(setting.LiteralValue))
+                    error("macd:DocumentModel:UnsafeSubtreeCopy", "A construction callback prevents known copied configuration.");
+                end
+            end
+        end
+
         function configuration = prepare(document, snapshot, registry)
             % prepare Resolve frozen source records without running input code or mutating the source document.
             arguments (Input)
@@ -32,11 +84,21 @@ classdef SubtreeCopyPlanner
             for index = 1:numel(snapshot.Records)
                 record = snapshot.Records(index);
                 component = frozen(index);
-                [states, diagnostics] = context.getEffectivePropertyStates(registry, component.Id);
+                callbackPaths = macd.model.SubtreeCopyPlanner.callbackPaths(context, record.Id, registry);
+                % Omitted registrations must not taint the configuration being copied.
+                % Source execution guards still reject callbacks invoked during construction.
+                parent = context.getComponent(component.ParentId);
+                definitions = registry.getEffectiveProperties(component.Factory, parent.Factory, component.CreationArguments);
+                definitions = definitions(~ismember(string({definitions.Path}), callbackPaths));
+                [resolved, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions, context, registry);
+                states = struct("Definition", {}, "Resolution", {});
+                for stateIndex = 1:numel(definitions)
+                    states(end + 1) = struct("Definition", definitions(stateIndex), "Resolution", resolved(stateIndex)); %#ok<AGROW>
+                end
                 if macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:DocumentModel:UnsafeSubtreeCopy", "%s", strjoin(string({diagnostics.Message}), newline));
                 end
-                values = record.Properties;
+                values = record.Properties(~ismember(string({record.Properties.Path}), callbackPaths));
                 expected = struct("Path", {}, "Value", {});
                 % Freeze one canonical Position, preserving all alias occurrences in Records.
                 aliases = arrayfun(@(item) macd.model.PositionAliasPolicy.applies(item.Definition), states);
@@ -72,6 +134,7 @@ classdef SubtreeCopyPlanner
                 end
                 % Implicit setter effects may determine properties with no explicit source write.
                 for state = states
+                    if any(callbackPaths == state.Definition.Path), continue, end
                     % The source-only parent handle is represented by copied child Values.
                     if state.Definition.Path == "SelectedObject" && ...
                             state.Definition.Application.EffectPolicy == "buttonSelection", continue, end

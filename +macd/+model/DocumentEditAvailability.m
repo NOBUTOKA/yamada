@@ -75,11 +75,9 @@ classdef DocumentEditAvailability
                     if definition.IsProgrammaticOnly || definition.Category == "FigureTools"
                         error("macd:DocumentEditAvailability:Factory", "This construction family is not supported for copying.");
                     end
-                    callbacks = macd.source.CallbackSourceAnalyzer.analyze(document, record.Id, registry);
-                    if any(string({callbacks.State}) ~= "absent")
-                        error("macd:DocumentEditAvailability:Callbacks", "Callback bindings cannot yet be duplicated safely.");
-                    end
+                    callbackPaths = macd.model.SubtreeCopyPlanner.callbackPaths(document, record.Id, registry);
                     for entry = record.Properties
+                        if any(callbackPaths == entry.Path), continue, end
                         if entry.ValueKind == "expression"
                             owner = document.getComponent(record.Id);
                             if isfield(entry.Metadata, "SubtreeReferenceId")
@@ -98,18 +96,7 @@ classdef DocumentEditAvailability
                         end
                     end
                     % Constructor ownership comes from source tokens, not replaceable display diagnostics.
-                    if record.Origin == "parsed"
-                        analysis = document.sourceAnalysis();
-                        statements = analysis.Statements;
-                        span = record.SourceSpans.Creation;
-                        match = arrayfun(@(item) item.Span.StartOffset == span.StartOffset && ...
-                            item.Span.EndOffset == span.EndOffset, statements);
-                        [~, ~, ~, skipped, supported] = macd.source.PropertySettingSyntax.factory( ...
-                            statements(match), definition, "availability");
-                        if ~supported || ~isempty(skipped)
-                            error("macd:DocumentEditAvailability:Constructor", "The constructor contains preserved unsupported properties.");
-                        end
-                    end
+                    macd.model.SubtreeCopyPlanner.validateConstructor(document, record, registry, callbackPaths);
                 end
                 state.Enabled = true;
             catch exception

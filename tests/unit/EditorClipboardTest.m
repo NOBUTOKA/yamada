@@ -299,6 +299,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             rootId = app.Document.RootComponentId;
+            app.Document.applyCallbackAction(panelId, "SizeChangedFcn", "Add", macd.model.ComponentRegistry.createDefault());
             testCase.select(figure, panelId);
             if route == "context", testCase.select(figure, rootId); end
             selected = app.SelectedComponentId;
@@ -313,6 +314,8 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyNotEqual(pastedId, panelId);
             testCase.verifyEqual(pasted.ParentId, rootId);
             testCase.verifyEqual(numel(pasted.Children), 1);
+            testCase.verifyEmpty(pasted.getProperty("SizeChangedFcn"));
+            testCase.verifyEqual(numel(app.Document.CallbackEdits), 1);
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
             testCase.invoke(figure, "Cut", route, pastedId);
             testCase.verifyEmpty(app.Document.getComponent(pastedId));
