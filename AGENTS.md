@@ -20,6 +20,14 @@
 - This project is a programmatic MATLAB application. Do not convert the application itself to `.mlapp`.
 - Preserve the input handle-class app source; generated or modified source should remain reviewable as text.
 
+## Test execution and waiting
+
+- After starting a test run and confirming that its process or execution session is live, estimate its completion time from recent runs of the same or a comparable suite, the current test scope, and any known progress. Add a small margin and wait until that estimated completion time instead of polling at fixed intervals.
+- For stable full-suite runs, prefer recent full-suite timings. When a run is already in progress, estimate remaining time from the historical durations of the remaining tests or stages, rather than assuming all test cases take equal time.
+- Prefer completion notifications when available, and use waiting that can be interrupted by new user input. If the run is still active at the estimated completion time, verify the same process or session, update the estimate from the remaining work, and wait again. Do not revert to frequent polling merely because an estimate was exceeded.
+- Keep automated process monitoring, execution time limits, and durable test progress and result logging active. These automated checks do not require repeated model-side log reads, analysis, or routine progress commentary while merely waiting.
+- Treat an estimated completion time or an observation timeout as a time to inspect the existing run, not as evidence that it stopped. Do not stop or restart a test run solely because a wait ended.
+
 ## Commit discipline
 
 - Commit implementation changes in cohesive feature-sized units. After completing a cohesive implementation change and passing its relevant MATLAB unit test suite, proactively create the Git commit without waiting for a user request. Treat this local commit as a normal implementation step, not as an external publication action.
