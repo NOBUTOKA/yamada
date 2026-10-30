@@ -148,6 +148,16 @@ classdef SubtreePlacementPlanner
         end
     end
 
+    methods (Static, Access = ?macd.model.DocumentEditAvailability)
+        function paths = inputPropertyPaths()
+            % inputPropertyPaths Identify stored settings consumed by placement and occupancy planning.
+            arguments (Output)
+                paths (1, :) string
+            end
+            paths = ["Position", "Layout.Row", "Layout.Column", "RowHeight", "ColumnWidth"];
+        end
+    end
+
     methods (Static, Access = private)
         function value = literal(properties, path, fallback)
             % literal Read an explicit literal without interpreting source expressions.

@@ -211,6 +211,67 @@ classdef DocumentEditAvailability
         end
     end
 
+    methods (Static, Access = ?macd.model.DocumentModel)
+        function result = canInheritProperties(document, prepared, id, paths, registry)
+            % canInheritProperties Prove accepted literal changes preserve command and placement conditions.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                prepared (1, 1) macd.model.DocumentModel
+                id (1, 1) string
+                paths (1, :) string
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            source = document.getComponent(id);
+            target = prepared.getComponentByName(source.Name);
+            if isempty(target) || ~isequaln(source.CreationArguments, target.CreationArguments) || ...
+                    macd.model.PropertyStateResolver.hasUnresolvedExecution(document) ~= ...
+                    macd.model.PropertyStateResolver.hasUnresolvedExecution(prepared)
+                return
+            end
+            parent = document.getComponent(source.ParentId);
+            parentFactory = "";
+            if ~isempty(parent), parentFactory = parent.Factory; end
+            definitions = registry.getEffectiveProperties(source.Factory, parentFactory, source.CreationArguments);
+            dependencies = macd.model.SubtreePlacementPlanner.inputPropertyPaths();
+            for path = paths
+                definition = definitions(string({definitions.Path}) == path);
+                if ~isscalar(definition), return, end
+                policy = definition.Application;
+                schema = definition.ValueSchema;
+                if ~definition.IsEditable || definition.AuditDisposition ~= "editable" || ...
+                        ~any(policy.EffectStatus == ["independent", "modeled"]) || ...
+                        any(policy.EffectPolicy == ["buttonSelection", "componentReference", "layout", "gridTracks"]) || ...
+                        any(ismember([path policy.AffectedPaths], dependencies)) || ...
+                        (isfield(schema, "kind") && string(schema.kind) == "callback") || ...
+                        registry.isReadOnlyProperty(source.Factory, path, source.CreationArguments)
+                    return
+                end
+                before = source.getProperty(path);
+                after = target.getProperty(path);
+                if (~isempty(before) && (before.ValueKind ~= "literal" || ~before.IsEditable || ...
+                        isfield(before.Metadata, "SubtreeReferenceId"))) || ...
+                        isempty(after) || after.ValueKind ~= "literal" || ~after.IsEditable || ...
+                        isfield(after.Metadata, "SubtreeReferenceId")
+                    return
+                end
+                if ~isempty(before)
+                    try
+                        encoded = macd.source.LiteralEncoder.encode(before.LiteralValue);
+                        if any(ismissing(encoded), "all"), return, end
+                    catch
+                        return
+                    end
+                end
+            end
+            % The caller has already proved literal encoding, insertion ownership and requested values.
+            result = true;
+        end
+    end
+
     methods (Static, Access = private)
         function snapshot = inspect(document, id)
             % inspect Validate complete subtree identities and editable records once per query.

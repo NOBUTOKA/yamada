@@ -473,12 +473,13 @@ classdef DocumentModel < handle
             carryValidation = local && obj.canCarryPropertyValidation(registry);
             propertyNames = strings(1, 0);
             if ~local, propertyNames = obj.pendingPropertyValidation(componentId, path, registry); end
+            eligibility = obj.propertyEligibilityContext(prepared, componentId, path, registry, carryValidation);
             entry = component.setProperty(path, value);
             obj.recordHistory(struct("Kind", "property", "ComponentId", componentId, ...
                 "Path", path, "HadOldValue", hadOldValue, "OldValue", {oldValue}, ...
                 "NewValue", {value}, "TargetSettingId", obj.propertySettingId(entry)));
             if ~isempty(prepared)
-                obj.rememberPropertyCheckpoint(prepared, componentId, path, registry, carryValidation, propertyNames);
+                obj.rememberPropertyCheckpoint(prepared, componentId, path, registry, carryValidation, propertyNames, eligibility);
             end
         end
 
@@ -544,6 +545,7 @@ classdef DocumentModel < handle
             carryValidation = local && obj.canCarryPropertyValidation(registry);
             propertyNames = strings(1, 0);
             if ~local, propertyNames = obj.pendingPropertyValidation(componentId, string({requested.Path}), registry); end
+            eligibility = obj.propertyEligibilityContext(prepared, componentId, string({requested.Path}), registry, carryValidation);
 
             % Commit only after every target is known to be editable and reversible.
             entries = macd.model.PropertyEntry.empty;
@@ -565,7 +567,7 @@ classdef DocumentModel < handle
                     "ComponentId", componentId, "Changes", historyChanges));
             end
             if ~isempty(prepared)
-                obj.rememberPropertyCheckpoint(prepared, componentId, string({requested.Path}), registry, carryValidation, propertyNames);
+                obj.rememberPropertyCheckpoint(prepared, componentId, string({requested.Path}), registry, carryValidation, propertyNames, eligibility);
             end
         end
 
@@ -1595,7 +1597,7 @@ classdef DocumentModel < handle
             parsed.GeneratedText = source;
         end
 
-        function rememberPropertyCheckpoint(obj, prepared, componentId, paths, registry, carryValidation, propertyNames)
+        function rememberPropertyCheckpoint(obj, prepared, componentId, paths, registry, carryValidation, propertyNames, eligibility)
             % rememberPropertyCheckpoint Retain private validated records at the exact committed input.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
@@ -1605,13 +1607,14 @@ classdef DocumentModel < handle
                 registry (1, 1) macd.model.ComponentRegistry
                 carryValidation (1, 1) logical
                 propertyNames (1, :) string = strings(1, 0)
+                eligibility macd.model.EvaluationContext = macd.model.EvaluationContext.empty
             end
             context = obj.evaluationContext(registry);
             % The full preflight output is a current source basis independent of disk-save state.
             if strlength(prepared.GeneratedText) > 0 && prepared.GeneratedText == prepared.OriginalText
                 context.remember("complete-insertion-source", prepared.GeneratedText);
             end
-            if carryValidation || ~isempty(propertyNames)
+            if carryValidation || ~isempty(propertyNames) || ~isempty(eligibility)
                 context.rememberOwnedConfiguration("combined", prepared);
             else
                 context.rememberConfiguration("combined", prepared);
@@ -1629,6 +1632,8 @@ classdef DocumentModel < handle
                 % Proven local literals retain ownership and logical placement; measured geometry stays guarded.
                 context.inheritEligibility(obj.PropertyValidationContext);
                 if numericEdit, context.inheritNumericStates(obj.PropertyValidationContext, componentId); end
+            elseif ~isempty(eligibility)
+                context.inheritEligibility(eligibility);
             end
             obj.PropertyCheckpoint = prepared;
             obj.PropertyCheckpointContext = context;
@@ -1683,6 +1688,26 @@ classdef DocumentModel < handle
             if ~isempty(parent) && any(ismember(string({policies.EffectPolicy}), ...
                     ["buttonSelection", "componentReference", "layout"]))
                 names(end + 1) = parent.Name;
+            end
+        end
+
+        function context = propertyEligibilityContext(obj, prepared, id, paths, registry, alreadyCarried)
+            % propertyEligibilityContext Retain availability only after a private preflight proves unchanged dependencies.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                prepared macd.model.DocumentModel
+                id (1, 1) string
+                paths (1, :) string
+                registry macd.model.ComponentRegistry
+                alreadyCarried (1, 1) logical
+            end
+            arguments (Output)
+                context macd.model.EvaluationContext
+            end
+            context = macd.model.EvaluationContext.empty;
+            if alreadyCarried || isempty(prepared) || isempty(registry), return, end
+            if macd.model.DocumentEditAvailability.canInheritProperties(obj, prepared, id, paths, registry)
+                context = obj.evaluationContext(registry);
             end
         end
 
