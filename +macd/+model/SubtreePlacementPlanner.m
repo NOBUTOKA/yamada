@@ -73,8 +73,7 @@ classdef SubtreePlacementPlanner
                 for childId = parent.Children
                     if any(excludedIds == childId), continue, end
                     child = document.getComponent(childId);
-                    childSnapshot = macd.model.SubtreeSnapshot(document, childId);
-                    values = childSnapshot.Records(1).Properties;
+                    values = macd.model.SubtreeSnapshot.gridCoordinates(document, childId, registry);
                     rows = macd.model.SubtreePlacementPlanner.coordinate(values, "Layout.Row");
                     columns = macd.model.SubtreePlacementPlanner.coordinate(values, "Layout.Column");
                     if rows(end) > rowCount || columns(end) > columnCount || isempty(child)

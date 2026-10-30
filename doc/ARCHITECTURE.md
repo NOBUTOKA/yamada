@@ -114,6 +114,8 @@ Parent-before-child creation, deferred component references, and final root visi
 
 ### Subtree editing and clipboard ownership
 
+Destination-grid occupancy reads share immutable coordinate values after one successful hierarchy/value capture for the exact document and catalog inputs. This avoids capturing a nested destination child subtree repeatedly just to read its root placement. The projection retains the original explicit-coordinate validation and does not share native rectangles. If the whole-root capture cannot be proved, the planner uses the previous destination-child capture path so unrelated invalid data or hierarchy cannot introduce a new placement refusal.
+
 Deletion, reparenting, Cut, and Paste share complete-subtree validation, placement planning, detached source preflight, and atomic history. Their responsibilities are split as follows:
 
 | Owner | Responsibility |

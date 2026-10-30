@@ -133,6 +133,59 @@ classdef SubtreeSnapshot
         end
     end
 
+    methods (Static, Access = ?macd.model.SubtreePlacementPlanner)
+        function properties = gridCoordinates(document, id, registry)
+            % gridCoordinates Share validated root coordinates without recapturing destination subtrees.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                id (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                properties struct
+            end
+            context = document.evaluationContext(registry);
+            scope = context.readScope(); %#ok<NASGU>
+            [~, safe] = context.inputs();
+            if safe
+                key = "placement:grid-coordinates";
+                [records, found] = context.lookup(key);
+                if ~found
+                    [~, attempted] = context.lookup(key + ":attempted");
+                    if ~attempted
+                        context.remember(key + ":attempted", true);
+                        try
+                            % Validate the same hierarchy and values once before projecting coordinates.
+                            snapshot = macd.model.SubtreeSnapshot(document, document.RootComponentId);
+                            records = struct("Id", {}, "Properties", {});
+                            for record = snapshot.Records
+                                entries = record.Properties;
+                                entries = entries(ismember(string({entries.Path}), ["Layout.Row", "Layout.Column"]));
+                                records(end + 1) = struct("Id", record.Id, "Properties", entries); %#ok<AGROW>
+                            end
+                            context.remember(key, records);
+                            [records, found] = context.lookup(key);
+                        catch exception
+                            if ~startsWith(string(exception.identifier), "macd:SubtreeSnapshot:")
+                                rethrow(exception)
+                            end
+                        end
+                    end
+                end
+                if found
+                    match = find(string({records.Id}) == id, 1);
+                    if ~isempty(match)
+                        properties = records(match).Properties;
+                        return
+                    end
+                end
+            end
+            % Unrelated invalid records must not add a new refusal to an otherwise legal destination.
+            snapshot = macd.model.SubtreeSnapshot(document, id);
+            properties = snapshot.Records(1).Properties;
+        end
+    end
+
     methods (Static, Access = private)
         function record = capture(component)
             % capture Store all component fields and independent property values.
