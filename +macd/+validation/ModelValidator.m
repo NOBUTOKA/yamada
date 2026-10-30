@@ -5,7 +5,7 @@ classdef ModelValidator
     %   component values or generating source.
 
     methods (Static)
-        function diagnostics = validate(document, registry, propertyNames)
+        function [diagnostics, validatedIds] = validate(document, registry, propertyNames)
             % validate Check names, hierarchy, registry support, and edit safety.
             %   Optional property names bound state checks; structural checks remain document-wide.
             arguments (Input)
@@ -15,6 +15,7 @@ classdef ModelValidator
             end
             arguments (Output)
                 diagnostics macd.model.Diagnostic
+                validatedIds (1, :) string
             end
 
             % Validate the class identity before traversing component records.
@@ -29,6 +30,9 @@ classdef ModelValidator
 
             % Track identities, names, and roots while validating each component.
             propertyNames = macd.validation.ModelValidator.propertyScope(document, propertyNames);
+            selected = document.Components;
+            if ~isempty(propertyNames), selected = selected(ismember(string({selected.Name}), propertyNames)); end
+            validatedIds = reshape(string({selected.Id}), 1, []);
             names = strings(1, 0);
             ids = strings(1, 0);
             roots = 0;

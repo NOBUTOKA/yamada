@@ -61,6 +61,7 @@ classdef DocumentModel < handle
         PropertyCheckpointContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         PropertyValidationContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         PropertyValidationDiagnostics macd.model.Diagnostic = macd.model.Diagnostic.empty
+        PropertyValidationNames string = strings(1, 0)
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
         ComponentLookup containers.Map
@@ -470,12 +471,14 @@ classdef DocumentModel < handle
                     macd.model.PropertyTransaction.singleChange(path, value), registry);
             end
             carryValidation = local && obj.canCarryPropertyValidation(registry);
+            propertyNames = strings(1, 0);
+            if ~local, propertyNames = obj.pendingPropertyValidation(componentId, path, registry); end
             entry = component.setProperty(path, value);
             obj.recordHistory(struct("Kind", "property", "ComponentId", componentId, ...
                 "Path", path, "HadOldValue", hadOldValue, "OldValue", {oldValue}, ...
                 "NewValue", {value}, "TargetSettingId", obj.propertySettingId(entry)));
             if ~isempty(prepared)
-                obj.rememberPropertyCheckpoint(prepared, componentId, path, registry, carryValidation);
+                obj.rememberPropertyCheckpoint(prepared, componentId, path, registry, carryValidation, propertyNames);
             end
         end
 
@@ -539,6 +542,8 @@ classdef DocumentModel < handle
                 end
             end
             carryValidation = local && obj.canCarryPropertyValidation(registry);
+            propertyNames = strings(1, 0);
+            if ~local, propertyNames = obj.pendingPropertyValidation(componentId, string({requested.Path}), registry); end
 
             % Commit only after every target is known to be editable and reversible.
             entries = macd.model.PropertyEntry.empty;
@@ -560,7 +565,7 @@ classdef DocumentModel < handle
                     "ComponentId", componentId, "Changes", historyChanges));
             end
             if ~isempty(prepared)
-                obj.rememberPropertyCheckpoint(prepared, componentId, string({requested.Path}), registry, carryValidation);
+                obj.rememberPropertyCheckpoint(prepared, componentId, string({requested.Path}), registry, carryValidation, propertyNames);
             end
         end
 
@@ -576,11 +581,17 @@ classdef DocumentModel < handle
 
             % Only this editor post-commit path consumes proof; generation and saving still validate fully.
             if ~isempty(obj.PropertyValidationContext) && obj.PropertyValidationContext.matches(obj, registry)
+                if ~isempty(obj.PropertyValidationNames)
+                    [checked, ids] = macd.validation.ModelValidator.validate(obj, registry, obj.PropertyValidationNames);
+                    obj.PropertyValidationDiagnostics = obj.mergePropertyDiagnostics(checked, ids);
+                    obj.PropertyValidationNames = strings(1, 0);
+                end
                 diagnostics = obj.PropertyValidationDiagnostics;
                 obj.Diagnostics = diagnostics;
                 return
             end
             diagnostics = macd.validation.ModelValidator.validate(obj, registry);
+            obj.PropertyValidationNames = strings(1, 0);
             obj.PropertyValidationContext = obj.evaluationContext(registry);
             obj.PropertyValidationDiagnostics = diagnostics;
         end
@@ -1584,7 +1595,7 @@ classdef DocumentModel < handle
             parsed.GeneratedText = source;
         end
 
-        function rememberPropertyCheckpoint(obj, prepared, componentId, paths, registry, carryValidation)
+        function rememberPropertyCheckpoint(obj, prepared, componentId, paths, registry, carryValidation, propertyNames)
             % rememberPropertyCheckpoint Retain private validated records at the exact committed input.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
@@ -1593,13 +1604,14 @@ classdef DocumentModel < handle
                 paths string
                 registry (1, 1) macd.model.ComponentRegistry
                 carryValidation (1, 1) logical
+                propertyNames (1, :) string = strings(1, 0)
             end
             context = obj.evaluationContext(registry);
             % The full preflight output is a current source basis independent of disk-save state.
             if strlength(prepared.GeneratedText) > 0 && prepared.GeneratedText == prepared.OriginalText
                 context.remember("complete-insertion-source", prepared.GeneratedText);
             end
-            if carryValidation
+            if carryValidation || ~isempty(propertyNames)
                 context.rememberOwnedConfiguration("combined", prepared);
             else
                 context.rememberConfiguration("combined", prepared);
@@ -1621,7 +1633,8 @@ classdef DocumentModel < handle
             obj.PropertyCheckpoint = prepared;
             obj.PropertyCheckpointContext = context;
             obj.PropertyValidationContext = macd.model.EvaluationContext.empty;
-            if carryValidation
+            obj.PropertyValidationNames = propertyNames;
+            if carryValidation || ~isempty(propertyNames)
                 obj.PropertyValidationContext = context;
             else
                 obj.PropertyValidationDiagnostics = macd.model.Diagnostic.empty;
@@ -1638,8 +1651,62 @@ classdef DocumentModel < handle
                 result (1, 1) logical
             end
             result = ~isempty(obj.PropertyValidationContext) && ...
+                isempty(obj.PropertyValidationNames) && ...
                 obj.PropertyValidationContext.matches(obj, registry) && ...
                 ~macd.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics);
+        end
+
+        function names = pendingPropertyValidation(obj, componentId, paths, registry)
+            % pendingPropertyValidation Reuse a full baseline only for catalog-modeled property effects.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                componentId (1, 1) string
+                paths (1, :) string
+                registry macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                names (1, :) string
+            end
+            names = strings(1, 0);
+            if isempty(registry) || ~obj.canCarryPropertyValidation(registry), return, end
+            component = obj.getComponent(componentId);
+            parent = obj.getComponent(component.ParentId);
+            parentFactory = "";
+            if ~isempty(parent), parentFactory = parent.Factory; end
+            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+            [found, indices] = ismember(paths, string({definitions.Path}));
+            if ~all(found), return, end
+            policies = [definitions(indices).Application];
+            if any(~ismember(string({policies.EffectStatus}), ["independent", "modeled"])), return, end
+            names = component.Name;
+            % Coupled selection, references and placement may change sibling states as well.
+            if ~isempty(parent) && any(ismember(string({policies.EffectPolicy}), ...
+                    ["buttonSelection", "componentReference", "layout"]))
+                names(end + 1) = parent.Name;
+            end
+        end
+
+        function diagnostics = mergePropertyDiagnostics(obj, checked, ids)
+            % mergePropertyDiagnostics Retain unaffected diagnostics and preserve full-validator component order.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                checked macd.model.Diagnostic
+                ids (1, :) string
+            end
+            arguments (Output)
+                diagnostics macd.model.Diagnostic
+            end
+            diagnostics = checked;
+            for previous = reshape(obj.PropertyValidationDiagnostics, 1, [])
+                if any(ids == previous.ComponentId), continue, end
+                duplicate = any(arrayfun(@(item) isequaln(item, previous), diagnostics));
+                if ~duplicate, diagnostics(end + 1) = previous; end %#ok<AGROW>
+            end
+            if isempty(diagnostics), return, end
+            [known, order] = ismember(string({diagnostics.ComponentId}), string({obj.Components.Id}));
+            order(~known) = 0;
+            [~, indices] = sort(order);
+            diagnostics = diagnostics(indices);
         end
 
         function parsed = localPropertyCandidate(obj, componentId, changes, registry)
