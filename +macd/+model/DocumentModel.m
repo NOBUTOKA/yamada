@@ -1527,19 +1527,43 @@ classdef DocumentModel < handle
             if local, return, end
 
             % Use independent records and avoid recording candidate-only user history.
-            candidate = obj.structuralCandidate(registry);
-            component = candidate.getComponent(componentId);
+            for change = changes
+                try
+                    encoded = macd.source.LiteralEncoder.encode(change.Value);
+                    if any(ismissing(encoded), "all")
+                        error("macd:DocumentModel:MissingLiteral", "Missing text cannot be emitted as a literal.");
+                    end
+                catch exception
+                    error("macd:DocumentModel:UnsafePropertyEdit", "%s", exception.message);
+                end
+            end
+            if ~isempty(obj.PropertyCheckpointContext) && obj.PropertyCheckpointContext.matches(obj, registry)
+                candidate = obj.PropertyCheckpoint.structuralCandidate(registry);
+                component = candidate.getComponentByName(obj.getComponent(componentId).Name);
+                bounded = true;
+            else
+                candidate = obj.structuralCandidate(registry);
+                component = candidate.getComponent(componentId);
+                bounded = false;
+            end
             for change = changes
                 component.setProperty(string(change.Path), change.Value);
             end
-            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            generator = macd.source.RoundTripGenerator(registry);
+            if bounded
+                [source, diagnostics] = generator.generatePropertyCandidate(candidate, component.Name);
+            else
+                [source, diagnostics] = generator.generate(candidate);
+            end
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafePropertyEdit", "%s", ...
                     strjoin(string({diagnostics.Message}), newline));
             end
 
             % Reparse output without executing the app and check each requested literal.
-            [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            propertyNames = strings(1, 0);
+            if bounded, propertyNames = component.Name; end
+            [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry, "", propertyNames);
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafePropertyEdit", "%s", ...
                     strjoin(string({diagnostics.Message}), newline));
@@ -1557,6 +1581,7 @@ classdef DocumentModel < handle
                 end
             end
             obj.assertRequestedStates(states, changes);
+            parsed.GeneratedText = source;
         end
 
         function rememberPropertyCheckpoint(obj, prepared, componentId, paths, registry, carryValidation)
@@ -1570,6 +1595,10 @@ classdef DocumentModel < handle
                 carryValidation (1, 1) logical
             end
             context = obj.evaluationContext(registry);
+            % The full preflight output is a current source basis independent of disk-save state.
+            if strlength(prepared.GeneratedText) > 0 && prepared.GeneratedText == prepared.OriginalText
+                context.remember("complete-insertion-source", prepared.GeneratedText);
+            end
             if carryValidation
                 context.rememberOwnedConfiguration("combined", prepared);
             else
@@ -1714,6 +1743,7 @@ classdef DocumentModel < handle
 
             % Only private candidate records change; preserve every original span and occurrence.
             obj.PropertyCheckpointContext = macd.model.EvaluationContext.empty;
+            checkpoint.GeneratedText = "";
             oldValues = cell(1, numel(changes));
             for index = 1:numel(changes)
                 oldValues{index} = component.getProperty(string(changes(index).Path)).LiteralValue;

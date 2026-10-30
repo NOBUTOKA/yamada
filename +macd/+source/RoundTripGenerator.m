@@ -7,6 +7,7 @@ classdef RoundTripGenerator
     properties (Access = private)
         Registry macd.model.ComponentRegistry
         PreparedInsertions struct = struct([])
+        PropertyValidationNames string = strings(1, 0)
     end
 
     methods
@@ -49,7 +50,7 @@ classdef RoundTripGenerator
             diagnostics = macd.model.Diagnostic.empty;
             % Only the insertion planner may defer validation until its complete source is parsed.
             if isempty(obj.PreparedInsertions)
-                diagnostics = macd.validation.ModelValidator.validate(document, obj.Registry);
+                diagnostics = macd.validation.ModelValidator.validate(document, obj.Registry, obj.PropertyValidationNames);
             end
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 return
@@ -204,6 +205,23 @@ classdef RoundTripGenerator
             source = macd.source.ComponentNameRewriter.rewrite(source, document.RenameEdits);
             document.GeneratedText = source;
             document.Diagnostics = diagnostics;
+        end
+    end
+
+    methods (Access = ?macd.model.DocumentModel)
+        function [source, diagnostics] = generatePropertyCandidate(obj, document, name)
+            % generatePropertyCandidate Bound property validation for an otherwise proven document checkpoint.
+            arguments (Input)
+                obj (1, 1) macd.source.RoundTripGenerator
+                document (1, 1) macd.model.DocumentModel
+                name (1, 1) string
+            end
+            arguments (Output)
+                source string
+                diagnostics macd.model.Diagnostic
+            end
+            obj.PropertyValidationNames = name;
+            [source, diagnostics] = obj.generate(document);
         end
     end
 

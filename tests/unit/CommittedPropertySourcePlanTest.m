@@ -381,7 +381,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                 {40, 80, "1x"});
             document.Metadata.HasUnresolvedInitialization = true;
             states = document.getEffectivePropertyStates(registry, grid.Id);
-            testCase.verifyFalse(any(arrayfun(@(item) item.Resolution.IsKnown, states)));
+            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
+                {40, 80, "1x"});
             document.Metadata.HasUnresolvedInitialization = false;
             states = document.getEffectivePropertyStates(registry, grid.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...

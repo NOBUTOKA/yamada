@@ -2,6 +2,14 @@
 
 Run the benchmark from the project root in the interactive account that owns the MATLAB license. The runner opens a separate MATLAB process for each case and operates editor-owned fixtures; input application code and callbacks are never run.
 
+Run the tests necessary for the changed behavior before measuring performance; a full regression suite is not a prerequisite for each measurement or implementation trial. Use a full regression when a meaningful change affects shared contracts broadly, when consolidating an implementation stage, or before integration as warranted by its scope. Keep regression tests and latency measurements in separate, non-overlapping MATLAB processes. Do not rerun a completed full suite merely because another speed measurement is needed.
+
+Before waiting for a long run, tell the user its estimated completion clock time in their time zone. Base that estimate on comparable past runs and the remaining stages, include a small margin, and wait until that estimate rather than checking at fixed intervals.
+
+Use successive edits to different component/property pairs as the default interactive workload. Include mixed property paths and value kinds where the fixture supports them, and measure selection separately from each property commit. Repeated changes to the same property on the same component are diagnostic controls only: use them when needed to isolate cache, reuse, or history behavior, label them explicitly, and do not substitute their warmed latency for ordinary editing performance. Distinct numeric fields edited once each are a valid focused workload, but do not cover mixed property kinds.
+
+`runYamadaPerformance` visits a different eligible component for every ordinary property sample and records `property-selection` separately. Property samples are capped by the eligible target count; increase fixture size to obtain more distinct samples. Explicit profiling and endurance options may retain repeated-target diagnostic controls.
+
 ```powershell
 & tests/performance/runYamadaPerformance.ps1 -Samples 4 `
     -OutputFolder testResults/performance/comparison

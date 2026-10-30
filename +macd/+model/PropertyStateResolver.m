@@ -65,7 +65,7 @@ classdef PropertyStateResolver
                 states(end + 1) = macd.model.PropertyState(definition, entry, last); %#ok<AGROW>
             end
 
-            % An unexpanded initializer may mutate any reachable object or its hierarchy.
+            % Unknown initialization calls are user-owned; explicit native execution effects remain bounded.
             if ~isempty(document) && macd.model.PropertyStateResolver.hasUnresolvedExecution(document)
                 for index = 1:numel(states)
                     states(index) = states(index).withEffective([], false, "unresolved-call", ...
@@ -215,7 +215,7 @@ classdef PropertyStateResolver
 
     methods (Static)
         function result = hasUnresolvedExecution(document)
-            % hasUnresolvedExecution Return whether source execution prevents static value guarantees.
+            % hasUnresolvedExecution Identify explicit execution effects outside modeled component settings.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
             end
@@ -223,7 +223,7 @@ classdef PropertyStateResolver
                 result (1, 1) logical
             end
             result = any(cellfun(@(field) isfield(document.Metadata, field) && ...
-                document.Metadata.(field), {"HasUnresolvedInitialization", "HasUnresolvedLifecycleEffects", ...
+                document.Metadata.(field), {"HasUnresolvedLifecycleEffects", ...
                 "HasUnresolvedExecutableEffects", "HasUnrecognizedSetter"}));
         end
 

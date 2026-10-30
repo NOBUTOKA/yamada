@@ -69,6 +69,36 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             end
         end
 
+        function committedInsertionsAdvanceThePrivateSourceBasis(testCase)
+            % committedInsertionsAdvanceThePrivateSourceBasis Avoid replaying earlier owners without saving to disk.
+            document = testCase.numericFixture(3);
+            original = document.OriginalText;
+            generator = macd.source.RoundTripGenerator(testCase.Registry);
+            for index = 1:3
+                component = document.getComponentByName("Field" + index);
+                profile clear; profile on; stop = onCleanup(@() profile("off"));
+                document.setProperty(component.Id, "Value", index + 1, testCase.Registry);
+                source = generator.generate(document);
+                profile off; functions = profile("info").FunctionTable; clear stop
+                plans = endsWith(string({functions.FunctionName}), "PropertyInsertionPlanner.evaluate");
+                testCase.verifyLessThanOrEqual(sum([functions(plans).NumCalls]), 1);
+                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                for earlier = 1:index
+                    testCase.verifyEqual(parsed.getComponentByName("Field" + earlier).getProperty("Value").LiteralValue, earlier + 1);
+                end
+                testCase.verifyEqual(document.OriginalText, original);
+                testCase.verifyEqual(document.HistoryIndex, index);
+            end
+            document.undo();
+            undone = generator.generate(document);
+            testCase.verifyFalse(contains(undone, "app.Field3.Value ="));
+            document.redo();
+            testCase.verifyEqual(generator.generate(document), source);
+            document.setProperty(document.getComponentByName("Field1").Id, "Value", 9, testCase.Registry);
+            replaced = macd.source.AppSourceParser.parseText(generator.generate(document), testCase.Registry);
+            testCase.verifyEqual(replaced.getComponentByName("Field1").getProperty("Value").LiteralValue, 9);
+        end
+
         function placementsMatchIndependentOwnersAndReturnedPlansStayPrivate(testCase)
             % placementsMatchIndependentOwnersAndReturnedPlansStayPrivate Reuse syntax without exposing retained models.
             document = testCase.numericFixture(2);
@@ -157,8 +187,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(parsed.getComponentByName("Second").getProperty("Value").LiteralValue, 3);
         end
 
-        function unsafeOwnerCannotBeHiddenByAnotherOwner(testCase)
-            % unsafeOwnerCannotBeHiddenByAnotherOwner Keep initialization boundaries effective for aggregated edits.
+        function aggregatedOwnersMayFollowPrerequisitesBeyondOpaqueCode(testCase)
+            % aggregatedOwnersMayFollowPrerequisitesBeyondOpaqueCode Respect dependency-directed insertion for every owner.
             document = testCase.fixture(["First", "Second"], ...
                 ["app.First = uidropdown(app.UIFigure);", "observed = app.First.Value;", ...
                 "app.First.Items = [""A"" ""B""];", "app.First.ItemsData = [10 20];", ...
@@ -167,7 +197,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             document.getComponentByName("First").setProperty("Value", 20);
             document.getComponentByName("Second").setProperty("Value", 3);
             [~, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(document.OriginalText, original);
             testCase.verifyEmpty(document.History);
         end

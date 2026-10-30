@@ -64,12 +64,14 @@ classdef AppSourceParser
             document.Diagnostics = diagnostics;
         end
 
-        function [document, diagnostics] = parseText(source, registry, filePath)
+        function [document, diagnostics] = parseText(source, registry, filePath, propertyNames)
             % parseText Parse handle-based source text into the shared document model.
+            %   Property names may bound semantic validation of an internally proven candidate.
             arguments (Input)
                 source string
                 registry (1, 1) macd.model.ComponentRegistry
                 filePath string = ""
+                propertyNames (1, :) string = strings(1, 0)
             end
             arguments (Output)
                 document (1, 1) macd.model.DocumentModel
@@ -77,6 +79,7 @@ classdef AppSourceParser
             end
 
             % Split source lexically before applying limited structural recognition.
+            source = join(reshape(source, 1, []), "");
             statements = macd.source.MatlabLexicalScanner.splitStatements(source);
             [className, isHandle] = macd.source.AppSourceParser.findHandleClass( ...
                 statements);
@@ -369,7 +372,7 @@ classdef AppSourceParser
 
             % Combine parser findings with shared model validation diagnostics.
             validationDiagnostics = macd.validation.ModelValidator.validate( ...
-                document, registry);
+                document, registry, propertyNames);
             diagnostics = [diagnostics(:)' validationDiagnostics(:)'];
             document.Diagnostics = diagnostics;
             document.markSaved();

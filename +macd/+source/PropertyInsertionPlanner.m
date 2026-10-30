@@ -371,8 +371,10 @@ classdef PropertyInsertionPlanner
                         if ~isempty(match), lower = max(lower, anchors(match).Visit); end
                     end
                 end
+                upper = boundary(find(boundary > lower, 1));
+                if isempty(upper), upper = inf; end
                 for anchor = anchors
-                    if anchor.Visit < lower || anchor.Visit >= boundary, continue, end
+                    if anchor.Visit < lower || anchor.Visit >= upper, continue, end
                     text = macd.source.PropertyInsertionPlanner.assignment(source, document, name, entry, anchor);
                     edit = struct("Start", anchor.Offset + 1, "End", anchor.Offset, "Text", text);
                     [accepted, candidate, found, failure] = macd.source.PropertyInsertionPlanner.candidate( ...
@@ -443,7 +445,7 @@ classdef PropertyInsertionPlanner
         end
 
         function [anchors, boundary] = anchors(source, statements, order, certain, returns, layout, created, settings, selectionCreations)
-            % anchors Bound proven source slots by the first opaque operation or observable read.
+            % anchors Retain opaque boundaries while collecting certain component-owned insertion slots.
             arguments (Input)
                 source (1, 1) string
                 statements macd.source.SourceStatement
@@ -457,10 +459,10 @@ classdef PropertyInsertionPlanner
             end
             arguments (Output)
                 anchors (1, :) struct
-                boundary (1, 1) double
+                boundary (1, :) double
             end
             anchors = struct("Offset", {}, "Visit", {}, "OwnerMethod", {}, "Indent", {}, "Owned", {});
-            boundary = numel(order) + 1;
+            boundary = zeros(1, 0);
             for visit = created:numel(order)
                 index = order(visit);
                 statement = statements(index);
@@ -479,7 +481,10 @@ classdef PropertyInsertionPlanner
                     local = regexp(code, '^[A-Za-z]\w*\s*=\s*(.*)$', 'tokens', 'once');
                     safe = false;
                     if ~isempty(local), [~, safe] = macd.source.MatlabLiteralParser.parse(string(local{1})); end
-                    if ~safe, boundary = visit; break, end
+                    if ~safe
+                        boundary(end + 1) = visit; %#ok<AGROW>
+                        continue
+                    end
                 end
                 if ~structural && certain(visit) && nnz(order == index) == 1 && layout.StraightLine(index)
                     offset = statement.Span.EndOffset;
@@ -578,7 +583,9 @@ classdef PropertyInsertionPlanner
                 edit = edits(index);
                 source = extractBefore(source, edit.Start) + edit.Text + extractAfter(source, edit.End);
             end
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            propertyNames = name;
+            if isempty(requested), propertyNames = strings(1, 0); end
+            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry, "", propertyNames);
             reason = strjoin(string({diagnostics(string({diagnostics.Severity}) == "error").Message}), newline);
             if macd.validation.ModelValidator.hasErrors(diagnostics), return, end
             component = document.getComponentByName(name);

@@ -87,7 +87,7 @@ for index = 1:normalSamples
     persist(options, results);
     publishProgress(progress, "complete", "same-selection");
 end
-propertySamples = normalSamples;
+propertySamples = min(normalSamples, numel(targets));
 editable = false;
 reason = "";
 if propertySamples > 0, [editable, reason] = canCommitProperty(figure, options.PropertyPath); end
@@ -100,6 +100,15 @@ if propertySamples > 0 && ~editable
     fclose(fid);
 end
 for index = 1:propertySamples
+    % Ordinary samples visit distinct settings; selection has its own clock.
+    publishProgress(progress, "start", "property-selection");
+    started = tic;
+    selectId(figure, targets(index).Id);
+    callback = toc(started);
+    settle(figure, options.RenderAck);
+    results = measure(results, "property-selection", index, callback, toc(started), figure, "distinct-target");
+    persist(options, results);
+    publishProgress(progress, "complete", "property-selection");
     publishProgress(progress, "start", "property");
     started = tic;
     value = measurementValue(options.PropertyPath, 12 + index);
@@ -107,8 +116,7 @@ for index = 1:propertySamples
     callback = toc(started);
     settle(figure, options.RenderAck);
     verifyPropertyValue(app.Document, app.SelectedComponentId, options.PropertyPath, value);
-    phase = "warm";
-    if index == 1, phase = "first"; end
+    phase = "distinct-target";
     results = measure(results, "property", index, callback, toc(started), figure, phase);
     persist(options, results);
     publishProgress(progress, "complete", "property");

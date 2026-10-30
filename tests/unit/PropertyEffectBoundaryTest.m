@@ -98,33 +98,30 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyEqual(states(3).EffectiveValue, "restored");
         end
 
-        function unresolvedInitializerPreservesSourceAndRejectsEdits(testCase)
-            % unresolvedInitializerPreservesSourceAndRejectsEdits Do not treat warning-only reparsing as proof.
+        function unresolvedInitializerPreservesSourceAndPermitsOwnedEdits(testCase)
+            % unresolvedInitializerPreservesSourceAndPermitsOwnedEdits Leave unknown-call effects to the source author.
             registry = macd.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture("externalSetup(app);");
             document = macd.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             states = document.getEffectivePropertyStates(registry, label.Id);
             text = states(arrayfun(@(item) item.Definition.Path == "Text", states)).Resolution;
-            testCase.verifyFalse(text.IsKnown);
-            testCase.verifyEqual(text.ReasonCode, "initialization-call");
-            testCase.verifyFalse(text.IsEditable);
-            testCase.verifyNotEmpty(text.ReadOnlyReason);
+            testCase.verifyTrue(text.IsKnown);
+            testCase.verifyTrue(text.IsEditable);
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
-            testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
-            testCase.verifyFalse(document.IsDirty);
-            testCase.verifyEqual(label.getProperty("Text").LiteralValue, "original");
+            document.setProperty(label.Id, "Text", "changed", registry);
+            testCase.verifyTrue(document.IsDirty);
+            testCase.verifyEqual(label.getProperty("Text").LiteralValue, "changed");
+            testCase.verifySubstring(macd.source.RoundTripGenerator(registry).generate(document), "externalSetup(app);");
         end
 
-        function componentHandleCallIsAnExecutionBarrier(testCase)
-            % componentHandleCallIsAnExecutionBarrier Do not assume an external handle consumer is pure.
+        function componentHandleCallIsPreservedWithoutBlockingEdits(testCase)
+            % componentHandleCallIsPreservedWithoutBlockingEdits Do not execute or infer effects of external consumers.
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture("externalSetup(app.Label);"), registry);
             label = document.getComponentByName("Label");
-            testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
-            testCase.verifyFalse(document.IsDirty);
+            document.setProperty(label.Id, "Text", "changed", registry);
+            testCase.verifyTrue(document.IsDirty);
         end
 
         function constructionCallbackKeepsEarlierComponentsUnknown(testCase)
@@ -180,17 +177,23 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyFalse(document.IsDirty);
         end
 
-        function assignedHandleConsumersRemainExecutionBarriers(testCase)
-            % assignedHandleConsumersRemainExecutionBarriers Cover component assignments and opaque property expressions.
+        function unknownStatementsAndPropertyExpressionsHaveSeparateContracts(testCase)
+            % unknownStatementsAndPropertyExpressionsHaveSeparateContracts Keep expression-backed setter limits explicit.
             registry = macd.model.ComponentRegistry.createDefault();
             for tail = ["app.Extra = externalSetup(app.Label);", ...
                     "app.Label.Text = externalText(app.UIFigure);"]
                 document = macd.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture(tail), registry);
                 label = document.getComponentByName("Label");
-                testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
-                testCase.verifyError(@() document.setProperty(label.Id, "Tooltip", "changed", registry), ...
-                    "macd:DocumentModel:UnsafePropertyEdit");
-                testCase.verifyFalse(document.IsDirty);
+                if startsWith(tail, "app.Label.Text")
+                    testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                    testCase.verifyError(@() document.setProperty(label.Id, "Tooltip", "changed", registry), ...
+                        "macd:DocumentModel:UnsafePropertyEdit");
+                    testCase.verifyFalse(document.IsDirty);
+                else
+                    testCase.verifyFalse(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                    document.setProperty(label.Id, "Tooltip", "changed", registry);
+                    testCase.verifyTrue(document.IsDirty);
+                end
             end
         end
 
@@ -253,15 +256,20 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
         end
 
-        function callsWithoutAppArgumentsStillNeedAnEffectContract(testCase)
-            % callsWithoutAppArgumentsStillNeedAnEffectContract Do not infer purity from a missing receiver argument.
+        function unknownCallsWithoutAppArgumentsAreUserOwned(testCase)
+            % unknownCallsWithoutAppArgumentsAreUserOwned Preserve calls without claiming their effects are modeled.
             registry = macd.model.ComponentRegistry.createDefault();
             for tail = ["externalSetup();", "app.Label.Text = externalText();", "drawnow;"]
                 document = macd.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture(tail), registry);
                 label = document.getComponentByName("Label");
-                testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
-                testCase.verifyError(@() document.setProperty(label.Id, "Tooltip", "changed", registry), ...
-                    "macd:DocumentModel:UnsafePropertyEdit");
+                if startsWith(tail, "app.Label.Text")
+                    testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                    testCase.verifyError(@() document.setProperty(label.Id, "Tooltip", "changed", registry), ...
+                        "macd:DocumentModel:UnsafePropertyEdit");
+                else
+                    testCase.verifyFalse(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                    document.setProperty(label.Id, "Tooltip", "changed", registry);
+                end
             end
         end
 

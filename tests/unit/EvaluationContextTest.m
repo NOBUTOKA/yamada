@@ -255,7 +255,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             [~, found] = context.lookup("states:" + root.Id);
             testCase.verifyFalse(found);
             states = macd.model.PropertyStateResolver.resolve(root, definitions, document, registry);
-            testCase.verifyFalse(any([states.IsKnown]));
+            testCase.verifyTrue(any([states.IsKnown]));
         end
 
         function unchangedAbsoluteSiblingRetainsResolverValues(testCase)

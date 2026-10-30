@@ -186,8 +186,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                     testCase.verifyTrue(literal);
                     testCase.verifyEqual(decoded, values{index});
                     testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
-                else
+                elseif cases(index) == "physical-newline"
                     testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0, cases(index));
+                else
+                    % Unencodable values are rejected before generation or reparsing.
+                    testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
                 end
                 testCase.verifyEqual(first.getProperty("Text").LiteralValue, ...
                     referenceFirst.getProperty("Text").LiteralValue);

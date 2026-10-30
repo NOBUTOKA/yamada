@@ -64,13 +64,13 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(macd.source.RoundTripGenerator(testCase.Registry).generate(reopened), source);
         end
 
-        function insertionFailureLeavesDocumentAndHistoryUntouched(testCase)
-            % insertionFailureLeavesDocumentAndHistoryUntouched Reject boundary conflicts before creating pending history.
+        function invalidInsertionLeavesDocumentAndHistoryUntouched(testCase)
+            % invalidInsertionLeavesDocumentAndHistoryUntouched Reject invalid values without mutating history.
             [document, component] = testCase.fixture(["app.Control = uidropdown(app.UIFigure);", ...
                 "observed = app.Control.Value;", "app.Control.Items = [""A"" ""B""];", ...
                 "app.Control.ItemsData = [10 20];"]);
             before = component.settingSnapshot();
-            testCase.verifyError(@() document.setProperty(component.Id, "Value", 20, testCase.Registry), ...
+            testCase.verifyError(@() document.setProperty(component.Id, "Value", 30, testCase.Registry), ...
                 "macd:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(component.settingSnapshot(), before);
             testCase.verifyEmpty(component.getProperty("Value"));
@@ -154,14 +154,16 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution.EffectiveValue, 50);
         end
 
-        function observableReadsBoundTheInsertionInterval(testCase)
-            % observableReadsBoundTheInsertionInterval Never jump over a property read to append after later prerequisites.
+        function prerequisitesPermitInsertionBeyondOpaqueBoundaries(testCase)
+            % prerequisitesPermitInsertionBeyondOpaqueBoundaries Preserve unknown code while following later prerequisites.
             [document, component] = testCase.fixture(["app.Control = uidropdown(app.UIFigure);", ...
                 "observed = app.Control.Value;", "app.Control.Items = [""A"" ""B""];", ...
                 "app.Control.ItemsData = [10 20];"]);
             component.setProperty("Value", 20);
-            testCase.verifyError(@() macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry), ...
-                "macd:PropertyInsertionPlanner:UnsafePlacement");
+            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            testCase.verifyGreaterThanOrEqual(plan.Placements.Offset, component.getSettings("ItemsData").SourceSpan.EndOffset);
+            testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 20);
+            testCase.verifySubstring(plan.Document.OriginalText, "observed = app.Control.Value;");
         end
 
         function helperOrderUsesExecutionRatherThanFileOffsets(testCase)
@@ -175,6 +177,18 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(setting.OwnerMethod, "configure");
             testCase.verifyTrue(setting.ScopeSpan.isKnown());
             testCase.verifyNotEmpty(setting.InitializationScopeId);
+        end
+
+        function opaqueCallUsesTheDependencySelectedInterval(testCase)
+            % opaqueCallUsesTheDependencySelectedInterval Keep independent edits before calls and dependent edits after them.
+            [document, component] = testCase.fixture(["app.Control = uidropdown(app.UIFigure);", ...
+                "observe(app.Control);", "app.Control.Items = [""A"" ""B""];", ...
+                "observeAgain(app.Control);"]);
+            component.setProperty("Value", "B");
+            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            testCase.verifyGreaterThanOrEqual(plan.Placements.Offset, component.getSettings("Items").SourceSpan.EndOffset);
+            testCase.verifyLessThan(plan.Placements.Offset, strfind(char(document.OriginalText), 'observeAgain('));
+            testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, "B");
         end
 
         function helperReturnKeepsLaterCallerInitializationReachable(testCase)

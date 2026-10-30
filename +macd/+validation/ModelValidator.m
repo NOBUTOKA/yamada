@@ -5,11 +5,13 @@ classdef ModelValidator
     %   component values or generating source.
 
     methods (Static)
-        function diagnostics = validate(document, registry)
+        function diagnostics = validate(document, registry, propertyNames)
             % validate Check names, hierarchy, registry support, and edit safety.
+            %   Optional property names bound state checks; structural checks remain document-wide.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 registry (1, 1) macd.model.ComponentRegistry
+                propertyNames (1, :) string = strings(1, 0)
             end
             arguments (Output)
                 diagnostics macd.model.Diagnostic
@@ -26,6 +28,7 @@ classdef ModelValidator
             end
 
             % Track identities, names, and roots while validating each component.
+            propertyNames = macd.validation.ModelValidator.propertyScope(document, propertyNames);
             names = strings(1, 0);
             ids = strings(1, 0);
             roots = 0;
@@ -88,6 +91,8 @@ classdef ModelValidator
                     end
                 end
 
+                % Retain global structural checks while bounding property-state evaluation.
+                if ~isempty(propertyNames) && ~any(propertyNames == component.Name), continue, end
                 % Resolve direct-parent applicability before reporting unknown paths.
                 parentFactory = "";
                 if strlength(component.ParentId) > 0 && ~isempty(parent)
@@ -167,6 +172,44 @@ classdef ModelValidator
     end
 
     methods (Static, Access = private)
+        function names = propertyScope(document, requested)
+            % propertyScope Include target descendants and ancestors without expanding unrelated sibling branches.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                requested (1, :) string
+            end
+            arguments (Output)
+                names (1, :) string
+            end
+            names = strings(1, 0);
+            if isempty(requested), return, end
+            records = document.Components;
+            if ~all(ismember(requested, string({records.Name}))), return, end
+            targets = records(ismember(string({records.Name}), requested));
+            pending = string({targets.Id});
+            visited = strings(1, 0);
+            while ~isempty(pending)
+                id = pending(1); pending(1) = [];
+                if any(visited == id), continue, end
+                visited(end + 1) = id; %#ok<AGROW>
+                record = document.getComponent(id);
+                if isempty(record), continue, end
+                names(end + 1) = record.Name; %#ok<AGROW>
+                pending = [pending reshape(record.Children, 1, [])]; %#ok<AGROW>
+            end
+            pending = string({targets.ParentId});
+            while ~isempty(pending)
+                id = pending(1); pending(1) = [];
+                if strlength(id) == 0 || any(visited == id), continue, end
+                visited(end + 1) = id; %#ok<AGROW>
+                record = document.getComponent(id);
+                if isempty(record), continue, end
+                names(end + 1) = record.Name; %#ok<AGROW>
+                pending(end + 1) = record.ParentId; %#ok<AGROW>
+            end
+            names = unique(names, "stable");
+        end
+
         function [transaction, states, diagnostics] = propertyTransaction(component, definitions, document, registry)
             % propertyTransaction Resolve audited state before validating the current values.
             arguments (Input)
