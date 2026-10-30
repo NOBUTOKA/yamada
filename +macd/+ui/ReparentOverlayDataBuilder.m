@@ -1,17 +1,16 @@
 classdef ReparentOverlayDataBuilder
     % ReparentOverlayDataBuilder Publish canvas-local destination geometry for subtree dragging.
-    %   This adapter combines validated destination states with public Safe Preview
+    %   This adapter publishes visible container regions from public Safe Preview
     %   geometry. It does not mutate the model or run an opened application.
 
     methods (Static)
-        function [source, targets] = build(document, handles, canvas, id, states, revision, visibleFcn, gridFcn, boundsFcn)
+        function [source, targets] = build(document, handles, canvas, id, revision, visibleFcn, gridFcn, boundsFcn)
             % build Describe the selected source and visible container destinations.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 handles containers.Map
                 canvas (1, 1) matlab.ui.container.Panel
                 id (1, 1) string
-                states struct
                 revision (1, 1) double
                 visibleFcn (1, 1) function_handle
                 gridFcn = []
@@ -35,8 +34,6 @@ classdef ReparentOverlayDataBuilder
                 bounds = boundsFcn(id);
             end
             if any(~isfinite(bounds)) || any(bounds(3:4) <= 0), return, end
-            snapshot = macd.model.SubtreeSnapshot(document, id);
-            subtreeIds = string({snapshot.Records.Id});
             source.id = char(id);
             source.parentId = char(component.ParentId);
             source.bounds = bounds;
@@ -46,10 +43,19 @@ classdef ReparentOverlayDataBuilder
             builder = macd.ui.GridLayoutOverlayDataBuilder();
 
             % Parent-local origins use the same public InnerPosition transform as grid geometry.
-            for state = states
-                parent = document.getComponent(state.Id);
-                if isempty(parent) || any(subtreeIds == parent.Id) || ~visibleFcn(parent.Id), continue, end
+            for parent = document.Components
                 if ~any(parent.Factory == ["uifigure", "uipanel", "uibuttongroup", "uitab", "uitabgroup", "uigridlayout"]), continue, end
+                if ~visibleFcn(parent.Id), continue, end
+                ancestor = parent;
+                excluded = false;
+                depth = 0;
+                while ~isempty(ancestor) && depth <= numel(document.Components)
+                    if ancestor.Id == id, excluded = true; break, end
+                    if strlength(ancestor.ParentId) == 0, break, end
+                    depth = depth + 1;
+                    ancestor = document.getComponent(ancestor.ParentId);
+                end
+                if excluded || depth > numel(document.Components), continue, end
                 if parent.Id == document.RootComponentId
                     rectangle = [0 0 double(canvas.Position(3:4))];
                     origin = [0 0];
@@ -70,9 +76,8 @@ classdef ReparentOverlayDataBuilder
                 end
                 if any(~isfinite(rectangle)) || any(rectangle(3:4) <= 0), continue, end
                 grid = struct();
-                enabled = state.Enabled;
-                reason = state.Reason;
-                if parent.Id == component.ParentId, enabled = component.IsEditable && parent.IsEditable; end
+                enabled = true;
+                reason = "";
                 if parent.Factory == "uigridlayout"
                     if isempty(gridFcn)
                         grid = builder.build(document, handles, canvas, parent.Id, id, revision);
@@ -83,13 +88,6 @@ classdef ReparentOverlayDataBuilder
                         enabled = false;
                         reason = grid.readOnlyReason;
                     end
-                end
-                depth = 0;
-                ancestor = parent;
-                while strlength(ancestor.ParentId) > 0 && depth <= numel(document.Components)
-                    depth = depth + 1;
-                    ancestor = document.getComponent(ancestor.ParentId);
-                    if isempty(ancestor), break, end
                 end
                 targets(end + 1) = struct("id", char(parent.Id), "name", char(parent.Name), ...
                     "bounds", rectangle, "origin", origin, "depth", depth, ...

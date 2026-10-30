@@ -4,7 +4,7 @@ classdef SubtreePlacementPlanner
     %   grid occupancy, and absolute/grid conversion rules.
 
     methods (Static)
-        function plan = prepare(document, snapshot, parentId, registry, excludedIds, measuredPosition, offset, targetCell, targetPosition)
+        function plan = prepare(document, snapshot, parentId, registry, excludedIds, measuredPosition, offset, targetCell, targetPosition, allowOverlap)
             % prepare Resolve valid root placement under an explicit destination parent.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
@@ -16,6 +16,7 @@ classdef SubtreePlacementPlanner
                 offset (1, 2) double {mustBeFinite} = [0 0]
                 targetCell double {mustBeFinite} = []
                 targetPosition double {mustBeFinite} = []
+                allowOverlap (1, 1) logical = false
             end
             arguments (Output)
                 plan (1, 1) struct
@@ -69,40 +70,54 @@ classdef SubtreePlacementPlanner
                 end
                 rowCount = macd.model.SubtreePlacementPlanner.trackCount(parent, "RowHeight", 1, registry);
                 columnCount = macd.model.SubtreePlacementPlanner.trackCount(parent, "ColumnWidth", 2, registry);
-                occupied = false(rowCount, columnCount);
-                for childId = parent.Children
-                    if any(excludedIds == childId), continue, end
-                    child = document.getComponent(childId);
-                    values = macd.model.SubtreeSnapshot.gridCoordinates(document, childId, registry);
-                    rows = macd.model.SubtreePlacementPlanner.coordinate(values, "Layout.Row");
-                    columns = macd.model.SubtreePlacementPlanner.coordinate(values, "Layout.Column");
-                    if rows(end) > rowCount || columns(end) > columnCount || isempty(child)
-                        error("macd:SubtreePlacementPlanner:ImplicitPlacement", "Destination child placement is outside explicit tracks.");
+                if allowOverlap
+                    % Reparenting permits overlap and clips spans at the chosen destination cell.
+                    cell = [1 1];
+                    if ~isempty(targetCell), cell = targetCell; end
+                    if numel(cell) ~= 2 || any(cell < 1) || any(cell ~= floor(cell)) || ...
+                            cell(1) > rowCount || cell(2) > columnCount
+                        error("macd:SubtreePlacementPlanner:InvalidCell", "The requested grid cell is outside the destination tracks.");
                     end
-                    occupied(rows(1):rows(end), columns(1):columns(end)) = true;
-                end
-                found = false;
-                requestedRows = 1:rowCount - height + 1;
-                requestedColumns = 1:columnCount - width + 1;
-                if ~isempty(targetCell)
-                    if numel(targetCell) ~= 2 || any(targetCell < 1) || any(targetCell ~= floor(targetCell)) || ...
-                            targetCell(1) + height - 1 > rowCount || targetCell(2) + width - 1 > columnCount
-                        error("macd:SubtreePlacementPlanner:InvalidCell", "The requested grid rectangle is outside the destination tracks.");
-                    end
-                    requestedRows = targetCell(1);
-                    requestedColumns = targetCell(2);
-                end
-                for row = requestedRows
-                    for column = requestedColumns
-                        if ~any(occupied(row:row + height - 1, column:column + width - 1), 'all')
-                            found = true;
-                            break
+                    row = cell(1);
+                    column = cell(2);
+                    height = min(height, rowCount - row + 1);
+                    width = min(width, columnCount - column + 1);
+                else
+                    occupied = false(rowCount, columnCount);
+                    for childId = parent.Children
+                        if any(excludedIds == childId), continue, end
+                        child = document.getComponent(childId);
+                        values = macd.model.SubtreeSnapshot.gridCoordinates(document, childId, registry);
+                        rows = macd.model.SubtreePlacementPlanner.coordinate(values, "Layout.Row");
+                        columns = macd.model.SubtreePlacementPlanner.coordinate(values, "Layout.Column");
+                        if rows(end) > rowCount || columns(end) > columnCount || isempty(child)
+                            error("macd:SubtreePlacementPlanner:ImplicitPlacement", "Destination child placement is outside explicit tracks.");
                         end
+                        occupied(rows(1):rows(end), columns(1):columns(end)) = true;
                     end
-                    if found, break, end
-                end
-                if ~found
-                    error("macd:SubtreePlacementPlanner:NoSpace", "No unoccupied grid rectangle fits the subtree root.");
+                    found = false;
+                    requestedRows = 1:rowCount - height + 1;
+                    requestedColumns = 1:columnCount - width + 1;
+                    if ~isempty(targetCell)
+                        if numel(targetCell) ~= 2 || any(targetCell < 1) || any(targetCell ~= floor(targetCell)) || ...
+                                targetCell(1) + height - 1 > rowCount || targetCell(2) + width - 1 > columnCount
+                            error("macd:SubtreePlacementPlanner:InvalidCell", "The requested grid rectangle is outside the destination tracks.");
+                        end
+                        requestedRows = targetCell(1);
+                        requestedColumns = targetCell(2);
+                    end
+                    for row = requestedRows
+                        for column = requestedColumns
+                            if ~any(occupied(row:row + height - 1, column:column + width - 1), 'all')
+                                found = true;
+                                break
+                            end
+                        end
+                        if found, break, end
+                    end
+                    if ~found
+                        error("macd:SubtreePlacementPlanner:NoSpace", "No unoccupied grid rectangle fits the subtree root.");
+                    end
                 end
                 changes(end + 1) = macd.model.SubtreePlacementPlanner.change("Layout.Row", ...
                     macd.model.SubtreePlacementPlanner.span(row, height), false);

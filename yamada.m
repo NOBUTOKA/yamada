@@ -37,8 +37,6 @@ classdef yamada < handle
         EditRedoMenuItem matlab.ui.container.Menu
         Clipboard macd.model.ComponentClipboard
         ClipboardMenuItems matlab.ui.container.Menu = matlab.ui.container.Menu.empty
-        DropSourceId string = ""
-        DropStates struct = struct([])
         ReparentRevision double = 0
         Lifecycle macd.ui.DocumentLifecycleService
         SavePathConfirmed logical = false
@@ -571,7 +569,6 @@ classdef yamada < handle
             app.ReparentRevision = app.ReparentRevision + 1;
             app.InteractionComponentId = "";
             app.InteractionKind = "";
-            app.DropSourceId = "";
             if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
             if ~isempty(app.Document.CallbackEdits) || ~isempty(app.Document.RenameEdits) || ...
                     any(cellfun(@(edit) any(edit.Kind == ["callback", "rename"]), app.Document.History))
@@ -802,19 +799,6 @@ classdef yamada < handle
                 app.setStatus(string(exception.message));
                 app.refreshEditCommands();
             end
-        end
-
-        function states = reparentStates(app, id)
-            % reparentStates Check declared placement conditions without rehearsing source edits.
-            arguments (Input)
-                app (1, 1) yamada
-                id (1, 1) string
-            end
-            arguments (Output)
-                states struct
-            end
-            states = macd.model.DocumentEditAvailability.reparenting( ...
-                app.Document, id, app.Registry, app.clipboardPosition(id));
         end
 
         function undoButtonPushed(app)
@@ -1363,8 +1347,6 @@ classdef yamada < handle
             % Invalidate queued work before any of its native handles are released.
             app.cancelOverlayRefresh();
             app.PreviewGeometry = struct();
-            app.DropSourceId = "";
-            app.DropStates = struct([]);
             app.ReparentRevision = app.ReparentRevision + 1;
             app.InteractionComponentId = "";
             app.InteractionKind = "";
@@ -1672,17 +1654,8 @@ classdef yamada < handle
             rootEditable = root.IsEditable && ~isempty(rootPosition) && ...
                 rootPosition.IsEditable && rootPosition.ValueKind == "literal" && ...
                 isnumeric(rootPosition.LiteralValue) && numel(rootPosition.LiteralValue) == 4;
-            app.DropSourceId = app.SelectedComponentId;
-            app.DropStates = struct([]);
-            if ~isempty(selected) && selected.Id ~= root.Id
-                try
-                    app.DropStates = app.reparentStates(selected.Id);
-                catch
-                    app.DropStates = struct([]);
-                end
-            end
             [dragSource, reparentTargets] = macd.ui.ReparentOverlayDataBuilder.build(app.Document, ...
-                app.PreviewHandles, app.PreviewCanvas, app.SelectedComponentId, app.DropStates, ...
+                app.PreviewHandles, app.PreviewCanvas, app.SelectedComponentId, ...
                 revision, @(id) app.isVisibleInSelectedTab(id), ...
                 @(id) app.gridOverlayData(id, revision), @(id) app.previewBounds(id));
             % A newer callback owns publication if layout reentered this update.
@@ -1740,38 +1713,10 @@ classdef yamada < handle
                     (strlength(string(data.gridPlacement.activeGridId)) > 0 && ~data.gridPlacement.geometryAvailable))
                 return
             end
-            % Reparent safety depends on document state even when all measured rectangles are unchanged.
-            selected = app.Document.getComponent(app.SelectedComponentId);
-            if isempty(selected), return, end
-            app.DropSourceId = app.SelectedComponentId;
-            app.DropStates = struct([]);
-            if selected.Id ~= app.Document.RootComponentId
-                try
-                    app.DropStates = app.reparentStates(selected.Id);
-                catch
-                    % Failed availability disables destinations without discarding proven geometry.
-                end
-            end
+            % Reuse destination geometry; command eligibility is checked only on a drop.
             for index = 1:numel(data.reparentTargets)
-                target = data.reparentTargets(index);
-                match = [];
-                if ~isempty(app.DropStates), match = find(string({app.DropStates.Id}) == string(target.id), 1); end
-                target.enabled = false;
-                target.reason = 'Destination availability is unknown.';
-                if ~isempty(match)
-                    target.enabled = app.DropStates(match).Enabled;
-                    target.reason = char(app.DropStates(match).Reason);
-                end
-                parent = app.Document.getComponent(string(target.id));
-                if ~isempty(parent), target.name = char(parent.Name); end
-                if ~isempty(parent) && parent.Id == selected.ParentId
-                    target.enabled = selected.IsEditable && parent.IsEditable;
-                end
-                if isfield(target.grid, "geometryAvailable") && ~target.grid.geometryAvailable
-                    target.enabled = false;
-                    target.reason = target.grid.readOnlyReason;
-                end
-                data.reparentTargets(index) = target;
+                parent = app.Document.getComponent(string(data.reparentTargets(index).id));
+                if ~isempty(parent), data.reparentTargets(index).name = char(parent.Name); end
             end
             revision = app.InteractionOverlayRevision + 1;
             data.reparentRevision = app.ReparentRevision;

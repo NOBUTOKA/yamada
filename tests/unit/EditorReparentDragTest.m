@@ -118,6 +118,64 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
         end
 
+        function displayDoesNotPlanDestinationsAndRejectsAtDrop(testCase)
+            % displayDoesNotPlanDestinationsAndRejectsAtDrop Defer destination checks without changing rejected edits.
+            [app, figure, button, left, grid] = testCase.fixture();
+            cleanup = onCleanup(@() delete(app));
+            profile clear;
+            profile on;
+            profileCleanup = onCleanup(@() profile("off"));
+            testCase.select(figure, left.Id);
+            testCase.select(figure, button.Id);
+            drawnow;
+            profile off;
+            result = profile("info");
+            names = string({result.FunctionTable.FunctionName});
+            testCase.verifyFalse(any(endsWith(names, "DocumentEditAvailability.reparenting")));
+            testCase.verifyFalse(any(endsWith(names, "SubtreePlacementPlanner.prepare")));
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            targets = overlay.Data.reparentTargets;
+            testCase.verifyFalse(any(string({targets.id}) == button.Id));
+            testCase.verifyTrue(targets(string({targets.id}) == grid.Id).enabled);
+            grid.IsEditable = false;
+            history = app.Document.HistoryIndex;
+            testCase.drop(figure, button.Id, grid.Id, [1 1], []);
+            testCase.verifyEqual(button.ParentId, left.Id);
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+        end
+
+        function occupiedGridDropsClipSpansAndRemainUndoable(testCase)
+            % occupiedGridDropsClipSpansAndRemainUndoable Permit overlap and fit a larger span at the chosen cell.
+            [app, figure, button, left, grid] = testCase.fixture();
+            cleanup = onCleanup(@() delete(app));
+            registry = macd.model.ComponentRegistry.createDefault();
+            occupied = app.Document.insertComponent(registry, "uilabel", grid.Id);
+            testCase.select(figure, left.Id);
+            testCase.select(figure, button.Id);
+            testCase.drop(figure, button.Id, grid.Id, [1 1], []);
+            testCase.verifyEqual(button.ParentId, grid.Id);
+            testCase.verifyEqual(occupied.getProperty("Layout.Row").LiteralValue, 1);
+            app.Document.setProperty(button.Id, "Layout.Row", [1 2]);
+            app.Document.setProperty(button.Id, "Layout.Column", [1 2]);
+            source = app.Document.insertComponent(registry, "uigridlayout", left.Id);
+            app.Document.setProperty(source.Id, "RowHeight", {"1x"});
+            app.Document.setProperty(source.Id, "ColumnWidth", {"1x"});
+            testCase.select(figure, left.Id);
+            testCase.select(figure, button.Id);
+            history = app.Document.HistoryIndex;
+            testCase.drop(figure, button.Id, source.Id, [1 1], []);
+            testCase.verifyEqual(button.ParentId, source.Id);
+            testCase.verifyEqual(button.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(button.getProperty("Layout.Column").LiteralValue, 1);
+            testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
+            app.Document.undo();
+            testCase.verifyEqual(button.ParentId, grid.Id);
+            testCase.verifyEqual(button.getProperty("Layout.Row").LiteralValue, [1 2]);
+            app.Document.redo();
+            testCase.verifyEqual(button.ParentId, source.Id);
+            testCase.verifyEqual(button.getProperty("Layout.Row").LiteralValue, 1);
+        end
+
         function cancelInvalidAndStaleDropsDoNotEdit(testCase)
             % cancelInvalidAndStaleDropsDoNotEdit Keep model and history intact across rejected gestures.
             [app, figure, button, left, grid] = testCase.fixture();

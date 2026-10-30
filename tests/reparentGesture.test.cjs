@@ -1,4 +1,4 @@
-// Exercise cross-container target geometry, occupied cells, commit and cancellation.
+// Exercise cross-container target geometry, overlap, clipped spans, commit and cancellation.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -33,14 +33,29 @@ assert.equal(candidate.enabled, true);
 assert.deepEqual(Array.from(candidate.targetCell), [1, 2]);
 assert.deepEqual(Array.from(candidate.bounds), [320, 150, 100, 150]);
 right.grid.children = [{id: 'other', rowStart: 1, rowEnd: 1, columnStart: 2, columnEnd: 2}];
-const blocked = context.dropCandidate(gesture, {x: 350, y: 200});
-assert.equal(blocked.enabled, false);
-context.sendReparent('child', blocked, 4);
-assert.equal(sent.pop().data.parentId, '');
+const overlapping = context.dropCandidate(gesture, {x: 350, y: 200});
+assert.equal(overlapping.enabled, true);
+assert.deepEqual(Array.from(overlapping.targetCell), [1, 2]);
+context.sendReparent('child', overlapping, 4);
+assert.equal(sent.pop().data.parentId, 'right');
 right.grid.children = [];
 source.rowSpan = 2;
+source.columnSpan = 2;
+const clipped = context.dropCandidate(gesture, {x: 350, y: 50});
+assert.equal(clipped.enabled, true);
+assert.deepEqual(Array.from(clipped.targetCell), [2, 2]);
+assert.deepEqual(Array.from(clipped.bounds), [320, 0, 100, 150]);
+right.enabled = false;
+const disabled = context.dropCandidate(gesture, {x: 350, y: 50});
+assert.equal(disabled.enabled, false);
+context.sendReparent('child', disabled, 4);
+assert.equal(sent.pop().data.parentId, '');
+right.enabled = true;
+right.grid.geometryAvailable = false;
 assert.equal(context.dropCandidate(gesture, {x: 350, y: 50}).enabled, false);
+right.grid.geometryAvailable = true;
 source.rowSpan = 1;
+source.columnSpan = 1;
 function gridGesture() { return {child: {id: 'child'}, draft: {parentNode: null}, reparent: candidate, modelRevision: 4}; }
 context.gridGesture = gridGesture();
 context.finishGridChildGesture(false);
@@ -67,7 +82,7 @@ context.sendPointerEvent(event('pointerdown', 15, 15, {componentId: 'child'}));
 context.sendPointerEvent(event('pointerup', 250, 50));
 assert.equal(sent[sent.length - 1].name, 'Reparent');
 assert.deepEqual(Array.from(sent[sent.length - 1].data.targetPosition), [23, 43, 50, 20]);
-console.log('Cross-container drop geometry, occupancy, versioning and cancellation passed.');
+console.log('Cross-container drop geometry, overlap, clipped spans, versioning and cancellation passed.');
 
 // The documented DataChanged contract supplies data on htmlComponent, not on the event.
 const listeners = {};

@@ -262,16 +262,12 @@ function dropCandidate(gesture, point) {
   if (target.grid && target.grid.geometryAvailable) {
     var cell = gridCellAt(target.grid, point);
     if (!cell) { result.enabled = false; result.reason = "Drop inside a grid cell."; return result; }
-    var span = {rowStart: cell.row, rowEnd: cell.row + Number(source.rowSpan) - 1,
-      columnStart: cell.column, columnEnd: cell.column + Number(source.columnSpan) - 1};
+    var span = {rowStart: cell.row, rowEnd: Math.min(target.grid.rowTracks.length, cell.row + Number(source.rowSpan) - 1),
+      columnStart: cell.column, columnEnd: Math.min(target.grid.columnTracks.length, cell.column + Number(source.columnSpan) - 1)};
     result.targetCell = [cell.row, cell.column];
     var bounds = gridSpanBounds(target.grid, span);
     if (!bounds) { result.enabled = false; result.reason = "The span exceeds the destination grid."; return result; }
     result.bounds = bounds;
-    if (componentArray(target.grid.children).some(function(child) {
-      return child.id !== source.id && child.rowStart <= span.rowEnd && child.rowEnd >= span.rowStart &&
-        child.columnStart <= span.columnEnd && child.columnEnd >= span.columnStart;
-    })) { result.enabled = false; result.reason = "The destination cells are occupied."; }
   } else if (target.grid && target.grid.geometryAvailable === false) {
     result.enabled = false;
   } else if (!source.fillsParent) {

@@ -1226,7 +1226,7 @@ classdef DocumentModel < handle
             ids = string({snapshot.Records.Id});
             try
                 plan = macd.model.SubtreePlacementPlanner.prepare(obj, snapshot, parentId, registry, ids, ...
-                    measuredPosition, [0 0], targetCell, targetPosition);
+                    measuredPosition, [0 0], targetCell, targetPosition, true);
             catch exception
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", string(exception.message));
             end
