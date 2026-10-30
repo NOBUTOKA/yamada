@@ -41,6 +41,14 @@ Programmatic-only Cartesian, geographic, and polar axes are cataloged and source
 - Preserve unsupported axes expressions and runtime-only state without executing the input application.
 - Add construction/destruction, generation, and opened-source round-trip tests.
 
+## Recognize Axes Configuration Function Calls
+
+Recognize axes configuration expressed through functions such as `ylabel(ax, ...)`, `xlabel`, `title`, `xlim`, and related calls, alongside direct property assignments. This is separate future work from the current performance changes.
+
+- Audit applicable functions, overloads, target ownership, returned handles, and effects on axes or child text objects.
+- Preserve recognized and unsupported forms without executing user code; expose editing and insertion where source ownership and deterministic generation can be established.
+- Integrate recognized calls into setting order, effective state, localized validation, Preview, and atomic Undo/Redo without treating them as arbitrary property assignments.
+
 ## Support Native Menu, Toolbar, and Tree-Node Hierarchies
 
 Native menus, toolbar tools, and tree nodes are represented in parsed source but do not yet have complete insertion and hierarchy-editing workflows.
