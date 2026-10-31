@@ -122,6 +122,38 @@ classdef PropertySetting
             record = struct("Path", obj.Path, "Value", {obj.LiteralValue}, "Location", location);
         end
 
+        function obj = withLocations(obj, locations)
+            % withLocations Rebind current ranges without changing stable setting, statement or scope identities.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertySetting
+                locations (1, 1) struct
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.PropertySetting
+            end
+            allowed = ["SourceSpan", "ValueSpan", "NameSpan", "PairSpan", "ScopeSpan"];
+            for field = reshape(string(fieldnames(locations)), 1, [])
+                assert(any(allowed == field) && isa(locations.(field), "macd.model.SourceSpan") && ...
+                    numel(locations.(field)) <= 1, "macd:PropertySetting:InvalidLocation", ...
+                    "Only source ranges may change through withLocations.");
+                obj.(field) = locations.(field);
+            end
+        end
+
+        function obj = withLiteral(obj, value)
+            % withLiteral Replace a caller-validated literal while preserving its occurrence identity.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertySetting
+                value
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.PropertySetting
+            end
+            assert(obj.ValueKind == "literal" && obj.IsEditable, ...
+                "macd:PropertySetting:ReadOnly", "Only editable literal settings may change value.");
+            obj.LiteralValue = value;
+        end
+
         function obj = withScope(obj, owner, span)
             % withScope Return a source-version-bound initializer ownership annotation.
             arguments (Input)

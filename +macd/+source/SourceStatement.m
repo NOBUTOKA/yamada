@@ -13,8 +13,15 @@ classdef SourceStatement
         Text string = ""
         % Span - Inclusive offset range of the original statement.
         Span macd.model.SourceSpan = macd.model.SourceSpan.empty
-        % CodeOffsets - Original source offsets for each code unit of Text.
-        CodeOffsets double = zeros(1, 0)
+    end
+
+    properties (Dependent, SetAccess = private)
+        % CodeOffsets - Current absolute offsets projected from the statement-local code positions.
+        CodeOffsets double
+    end
+
+    properties (Access = private)
+        RelativeCodeOffsets double = zeros(1, 0)
     end
 
     methods
@@ -36,7 +43,37 @@ classdef SourceStatement
                 error("macd:SourceStatement:InvalidOffsets", ...
                     "Code offsets must identify every code unit of the statement text.");
             end
-            obj.CodeOffsets = codeOffsets;
+            base = 0;
+            if ~isempty(span), base = span.StartOffset; end
+            obj.RelativeCodeOffsets = codeOffsets - base;
+        end
+
+        function offsets = get.CodeOffsets(obj)
+            % get.CodeOffsets Project current absolute positions without mutating stored local offsets.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceStatement
+            end
+            arguments (Output)
+                offsets (1, :) double
+            end
+            base = 0;
+            if ~isempty(obj.Span), base = obj.Span.StartOffset; end
+            offsets = obj.RelativeCodeOffsets + base;
+        end
+
+        function obj = withSpan(obj, span)
+            % withSpan Relocate unchanged syntax while retaining shared statement-local positions.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceStatement
+                span (1, 1) macd.model.SourceSpan
+            end
+            arguments (Output)
+                obj (1, 1) macd.source.SourceStatement
+            end
+            assert(~isempty(obj.Span) && obj.Span.isKnown() && span.isKnown() && ...
+                span.EndOffset - span.StartOffset == obj.Span.EndOffset - obj.Span.StartOffset, ...
+                "macd:SourceStatement:ChangedSyntax", "Changed statement syntax requires local rescanning.");
+            obj.Span = span;
         end
     end
 end
