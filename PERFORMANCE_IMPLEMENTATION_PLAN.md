@@ -117,6 +117,9 @@ Gridの編集時間増加は両方式に共通した。8段・100編集の遅延
 
 ## 即時局所反映に統一する設計（2026-10-31）
 
+SourceAnalysis.withPatchesを追加し、変更箇所と完全な隣接文を局所スキャンし、残りの文は相対CodeOffsetsを保った位置移動で再利用するようにした。境界に残る文の範囲/本文をguardとして確認し、文が融合する等のケースは字句スキャンを全体へ戻す。現在の字句結果からLayoutは再構築し、trace/callbackの派生キャッシュは失効させる段階であり、それらすべての増分維持が完了したとはしない。独立した全文スキャンとの本文/位置/Layout一致、複数箇所変更、挿入・削除・EOFと公開済み解析の独立性を含む関連51件が合格し、変更6 MATLABファイルの静的指摘は0だった。原記録は`testResults/performance/immediate-foundation-20261031/tests-regression`。
+
+
 実装の第一単位として、現在ソースの期待文字列と重複範囲を確認するSourcePatchBatchを追加した。挿入/置換/削除と逆パッチを同じ規約で扱い、同位置挿入の順序、逆方向で同位置になる削除、Unicode/CRLF、範囲の包含と挿入点の左右を検証する。消えた/部分的に書き換わったトークン位置は推測しない。PropertySetting.withLocations/withLiteralは設定/文/scope IDを変えず値クラスとして更新する。SourceStatementはコード位置を文開始からの相対値に変え、従来の絶対CodeOffsets読取は投影として維持する。変更のない後方文は全コード文字を書き換えずに移動できる。
 
 SourcePatchBatchTestと既存SourceAnalysis/LexicalParsing/PropertySettingHistory/PropertySettingSyntax/AppSourceParserの関連49件が全件合格し、変更4 MATLABファイルの静的指摘は0。これは基盤の検証であり、通常編集・保存・Undo等の即時反映移行が完了した意味ではない。原記録は`testResults/performance/immediate-foundation-20261031/tests-regression`。本体経路の移行と最終プロファイルは引き続き実装対象とする。

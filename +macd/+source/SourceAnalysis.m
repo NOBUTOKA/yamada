@@ -45,6 +45,122 @@ classdef SourceAnalysis < handle
             obj.Layout = macd.source.CallbackSourceAnalyzer.sourceLayout(obj.Statements);
         end
 
+        function [analysis, local, statistics] = withPatches(obj, batch)
+            % withPatches Rescan complete changed windows and relocate unaffected lexical statements.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            arguments (Output)
+                analysis (1, 1) macd.source.SourceAnalysis
+                local (1, 1) logical
+                statistics (1, 1) struct
+            end
+            batch.apply(obj.Source);
+            statistics = struct("ScannedCharacters", 0, "ReusedStatements", 0, "FullScan", false);
+            if isempty(batch.Edits)
+                analysis = obj;
+                local = true;
+                statistics.ReusedStatements = numel(obj.Statements);
+                return
+            end
+            if isempty(obj.Statements)
+                analysis = macd.source.SourceAnalysis(batch.AfterText);
+                local = false;
+                statistics.FullScan = true;
+                statistics.ScannedCharacters = strlength(batch.AfterText);
+                return
+            end
+            % Keep one complete neighboring statement on both sides as lexical guards.
+            windows = zeros(0, 2);
+            for edit = batch.Edits
+                touched = find(obj.StatementStarts <= edit.End + 1 & obj.StatementEnds >= edit.Start - 1);
+                if isempty(touched)
+                    touched = [find(obj.StatementEnds < edit.Start, 1, "last"), ...
+                        find(obj.StatementStarts > edit.End, 1)];
+                end
+                first = max(1, min(touched) - 1);
+                last = min(numel(obj.Statements), max(touched) + 1);
+                windows(end + 1, :) = [min(obj.StatementStarts(first), edit.Start), ...
+                    max(obj.StatementEnds(last), edit.End)]; %#ok<AGROW>
+            end
+            windows = sortrows(windows, 1);
+            merged = windows(1, :);
+            for index = 2:size(windows, 1)
+                if windows(index, 1) <= merged(end, 2) + 1
+                    merged(end, 2) = max(merged(end, 2), windows(index, 2));
+                else
+                    merged(end + 1, :) = windows(index, :); %#ok<AGROW>
+                end
+            end
+            statements = macd.source.SourceStatement.empty;
+            removed = false(size(obj.Statements));
+            for index = 1:size(merged, 1)
+                first = merged(index, 1);
+                last = merged(index, 2);
+                removed = removed | (obj.StatementStarts <= last & obj.StatementEnds >= first);
+                [startBoundary, startValid] = batch.mapBoundary(first - 1, "left");
+                [endBoundary, endValid] = batch.mapBoundary(last, "right");
+                assert(startValid && endValid);
+                if startBoundary == endBoundary, continue, end
+                fragment = extractBetween(batch.AfterText, startBoundary + 1, endBoundary);
+                scanned = macd.source.MatlabLexicalScanner.splitStatements(fragment);
+                statistics.ScannedCharacters = statistics.ScannedCharacters + strlength(fragment);
+                for statement = scanned
+                    span = statement.Span;
+                    statements(end + 1) = statement.withSpan(macd.model.SourceSpan( ...
+                        span.StartOffset + startBoundary, span.EndOffset + startBoundary)); %#ok<AGROW>
+                end
+            end
+            % Guard unchanged boundary syntax before relying on independent window scans.
+            local = true;
+            for index = 1:numel(obj.Statements)
+                old = obj.Statements(index);
+                if removed(index)
+                    changed = false;
+                    for edit = batch.Edits
+                        changed = changed || (edit.End >= edit.Start && ...
+                            old.Span.StartOffset <= edit.End && old.Span.EndOffset >= edit.Start) || ...
+                            (edit.End < edit.Start && edit.Start > old.Span.StartOffset && edit.Start <= old.Span.EndOffset);
+                    end
+                    if changed, continue, end
+                    [span, valid] = batch.mapSpan(old.Span);
+                    matches = [];
+                    if valid && ~isempty(statements)
+                        spans = [statements.Span];
+                        matches = find([spans.StartOffset] == span.StartOffset & [spans.EndOffset] == span.EndOffset);
+                    end
+                    if numel(matches) ~= 1 || statements(matches).Text ~= old.Text
+                        local = false;
+                        break
+                    end
+                else
+                    [span, valid] = batch.mapSpan(old.Span);
+                    assert(valid);
+                    statements(end + 1) = old.withSpan(span); %#ok<AGROW>
+                    statistics.ReusedStatements = statistics.ReusedStatements + 1;
+                end
+            end
+            if ~local
+                analysis = macd.source.SourceAnalysis(batch.AfterText);
+                statistics.FullScan = true;
+                statistics.ScannedCharacters = statistics.ScannedCharacters + strlength(batch.AfterText);
+                statistics.ReusedStatements = 0;
+                return
+            end
+            if ~isempty(statements)
+                spans = [statements.Span];
+                [~, order] = sort([spans.StartOffset]);
+                statements = statements(order);
+            end
+            analysis = macd.source.SourceAnalysis();
+            analysis.Source = batch.AfterText;
+            analysis.Statements = statements;
+            analysis.indexStatements();
+            analysis.Layout = macd.source.CallbackSourceAnalyzer.sourceLayout(statements);
+            % Source-bound trace/callback caches are rebuilt lazily from this exact lexical revision.
+        end
+
         function result = matches(obj, source)
             % matches Require exact text equality before sharing derived source analysis.
             arguments (Input)

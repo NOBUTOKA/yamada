@@ -3,6 +3,51 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
     %   Cached lexical and initialization data must retain the independent
     %   compiler's results, including unsafe input and source-version changes.
     methods (Test)
+        function localPatchesMatchIndependentLexing(testCase)
+            % localPatchesMatchIndependentLexing Rescan bounded windows while preserving all current code offsets.
+            lines = "app.Field" + (1:50) + ".Value = 9;";
+            source = strjoin(lines, string(sprintf("\r\n")));
+            original = macd.source.SourceAnalysis(source);
+            values = strfind(source, " = 9");
+            edits = [struct("Start", values(10) + 3, "End", values(10) + 3, "Text", "10000"), ...
+                struct("Start", values(40) + 3, "End", values(40) + 3, "Text", "123")];
+            batch = macd.source.SourcePatchBatch(source, edits);
+            [actual, local, statistics] = original.withPatches(batch);
+            expected = macd.source.SourceAnalysis(batch.AfterText);
+            testCase.verifyTrue(local);
+            testCase.verifyFalse(statistics.FullScan);
+            testCase.verifyGreaterThan(statistics.ReusedStatements, 0);
+            testCase.verifyLessThan(statistics.ScannedCharacters, strlength(batch.AfterText));
+            testCase.verifyEqual(actual.Statements, expected.Statements);
+            testCase.verifyEqual(actual.Layout, expected.Layout);
+            testCase.verifyTrue(original.matches(source));
+            testCase.verifyEqual(original.Statements, macd.source.SourceAnalysis(source).Statements);
+        end
+
+        function insertDeleteAndLexicalBoundaryChangesMatchFullScan(testCase)
+            % insertDeleteAndLexicalBoundaryChangesMatchFullScan Rebind inserted/deleted statements and reject fused guards.
+            source = "a = 1;" + string(sprintf("\r\n")) + "b = 2;" + string(sprintf("\r\n")) + "c = 3;";
+            original = macd.source.SourceAnalysis(source);
+            first = original.Statements(2).Span;
+            batches = [macd.source.SourcePatchBatch(source, struct("Start", first.StartOffset, ...
+                "End", first.EndOffset, "Text", "")), ...
+                macd.source.SourcePatchBatch(source, struct("Start", first.StartOffset, ...
+                "End", first.StartOffset - 1, "Text", "added = 12;" + string(sprintf("\r\n")))), ...
+                macd.source.SourcePatchBatch(source, struct("Start", strlength(source) + 1, ...
+                "End", strlength(source), "Text", "tail = 4;"))];
+            for batch = batches
+                actual = original.withPatches(batch);
+                expected = macd.source.SourceAnalysis(batch.AfterText);
+                testCase.verifyEqual(actual.Statements, expected.Statements);
+                testCase.verifyEqual(actual.Layout, expected.Layout);
+            end
+            original = macd.source.SourceAnalysis("abc");
+            batch = macd.source.SourcePatchBatch("abc", struct("Start", 4, "End", 3, "Text", "def"));
+            [actual, local] = original.withPatches(batch);
+            testCase.verifyFalse(local);
+            testCase.verifyEqual(actual.Statements, macd.source.SourceAnalysis("abcdef").Statements);
+        end
+
         function numericStatementLookupsMatchIndependentSearch(testCase)
             % numericStatementLookupsMatchIndependentSearch Preserve start-only and complete-range ownership matching.
             registry = macd.model.ComponentRegistry.createDefault();
