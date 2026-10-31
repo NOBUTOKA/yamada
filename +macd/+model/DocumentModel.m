@@ -42,6 +42,11 @@ classdef DocumentModel < handle
         HistoryLimit double = 100
     end
 
+    properties (Dependent, SetAccess = private)
+        % CurrentText - Exact source for the currently published editor state.
+        CurrentText string
+    end
+
     properties (SetAccess = private)
         % RenameEdits - Simultaneous source member renames retained across generation.
         RenameEdits struct = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {})
@@ -54,14 +59,15 @@ classdef DocumentModel < handle
     end
 
     properties (Access = private)
+        CurrentSource macd.model.CurrentSourceState = macd.model.CurrentSourceState.empty
+        SourceRegistry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
+        SourcePublication logical = false
+        SourceInputRevision uint64 = uint64(0)
         SourceAnalysisData macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
         InputClock macd.model.InputChangeClock = macd.model.InputChangeClock.empty
         Evaluation macd.model.EvaluationContext = macd.model.EvaluationContext.empty
-        PropertyCheckpoint macd.model.DocumentModel = macd.model.DocumentModel.empty
-        PropertyCheckpointContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         PropertyValidationContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         PropertyValidationDiagnostics macd.model.Diagnostic = macd.model.Diagnostic.empty
-        PropertyValidationNames string = strings(1, 0)
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
         ComponentLookup containers.Map
@@ -99,8 +105,8 @@ classdef DocumentModel < handle
                 snapshot (1, 1) struct
             end
             % Borrow only private parsed checkpoints that cannot retain their owning editor document.
-            if strlength(obj.OriginalText) == 0 || ~isempty(obj.History) || ...
-                    ~isempty(obj.PropertyCheckpoint) || any(string({obj.Components.Origin}) ~= "parsed")
+            if strlength(obj.CurrentText) == 0 || ~isempty(obj.History) || ...
+                    any(~arrayfun(@macd.model.SourceOwnership.hasSource, obj.Components))
                 error("macd:DocumentModel:UnsafeConfigurationSnapshot", "A detached parsed checkpoint is required.");
             end
             values = struct();
@@ -113,7 +119,7 @@ classdef DocumentModel < handle
             end
             snapshot = struct("ClassName", obj.ClassName, ...
                 "Components", macd.model.SubtreeSnapshot(obj, obj.RootComponentId), ...
-                "Values", values, "Analysis", obj.SourceAnalysisData);
+                "Values", values, "Analysis", obj.SourceAnalysisData, "CurrentSource", obj.CurrentSource, "Registry", obj.SourceRegistry);
         end
     end
 
@@ -133,6 +139,8 @@ classdef DocumentModel < handle
             end
             % SourceAnalysis is a source-only index already shared by structuralCandidate.
             document.SourceAnalysisData = snapshot.Analysis;
+            document.CurrentSource = snapshot.CurrentSource;
+            document.SourceRegistry = snapshot.Registry;
         end
     end
 
@@ -161,19 +169,118 @@ classdef DocumentModel < handle
     end
 
     methods (Access = ?macd.source.AppSourceParser)
-        function rememberSourceAnalysis(obj, analysis)
+        function rememberSourceAnalysis(obj, analysis, registry)
             % rememberSourceAnalysis Attach parser-owned derived data for the exact current source.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 analysis (1, 1) macd.source.SourceAnalysis
+                registry (1, 1) macd.model.ComponentRegistry
             end
-            assert(analysis.matches(obj.OriginalText), "macd:DocumentModel:SourceAnalysisMismatch", ...
+            obj.SourceRegistry = registry;
+            assert(analysis.matches(obj.CurrentText), "macd:DocumentModel:SourceAnalysisMismatch", ...
                 "Derived analysis must match the current source text.");
             obj.SourceAnalysisData = analysis;
+            obj.CurrentSource = macd.model.CurrentSourceState(obj.OriginalText, analysis);
         end
     end
 
     methods
+        function result = isSourceOnlyTransition(obj, previous, kind)
+            % isSourceOnlyTransition Prove one published nonvisual history transition from an earlier exact source.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                previous (1, 1) string
+                kind (1, 1) string {mustBeMember(kind, ["callback", "rename"])}
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            if isempty(obj.CurrentSource) || isempty(obj.InputClock) || ~obj.InputClock.IsTracked || ...
+                    obj.InputClock.Revision ~= obj.SourceInputRevision
+                return
+            end
+            for index = [obj.HistoryIndex obj.HistoryIndex + 1]
+                if index < 1 || index > numel(obj.History), continue, end
+                edit = obj.History{index};
+                if edit.Kind ~= kind || ~isfield(edit, "SourceForward"), continue, end
+                edits = edit.SourceForward;
+                if index > obj.HistoryIndex, edits = edit.SourceInverse; end
+                try
+                    batch = macd.source.SourcePatchBatch(previous, edits);
+                    if batch.AfterText == obj.CurrentText, result = true; return, end
+                catch exception
+                    if ~startsWith(string(exception.identifier), "macd:SourcePatchBatch:"), rethrow(exception), end
+                end
+            end
+        end
+
+        function result = isPropertySourceTransition(obj, previous, request)
+            % isPropertySourceTransition Prove that an exact source transition changes only requested setting targets.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                previous (1, 1) string
+                request (1, 1) macd.ui.RefreshRequest
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            if isempty(obj.CurrentSource) || isempty(obj.InputClock) || ~obj.InputClock.IsTracked || ...
+                    obj.InputClock.Revision ~= obj.SourceInputRevision
+                return
+            end
+            requested = strings(1, 0);
+            for id = request.ComponentIds
+                requested = [requested id + ":" + request.pathsFor(id)]; %#ok<AGROW>
+            end
+            for index = [obj.HistoryIndex obj.HistoryIndex + 1]
+                if index < 1 || index > numel(obj.History), continue, end
+                edit = obj.History{index};
+                if ~isfield(edit, "SourceForward"), continue, end
+                switch edit.Kind
+                    case {"source-property", "property-batch"}
+                        changed = edit.ComponentId + ":" + string({edit.Changes.Path});
+                    case "property"
+                        changed = edit.ComponentId + ":" + edit.Path;
+                    case "grid-layout-edit"
+                        changed = string({edit.Changes.ComponentId}) + ":" + string({edit.Changes.Path});
+                    otherwise
+                        continue
+                end
+                if ~all(ismember(changed, requested)), continue, end
+                edits = edit.SourceForward;
+                if index > obj.HistoryIndex, edits = edit.SourceInverse; end
+                try
+                    batch = macd.source.SourcePatchBatch(previous, edits);
+                    if batch.AfterText == obj.CurrentText, result = true; return, end
+                catch exception
+                    if ~startsWith(string(exception.identifier), "macd:SourcePatchBatch:"), rethrow(exception), end
+                end
+            end
+        end
+
+        function initializeSource(obj, registry)
+            % initializeSource Establish the canonical current source before presenting a new document to the UI.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            obj.ensureCurrentSource(registry);
+        end
+
+        function text = get.CurrentText(obj)
+            % get.CurrentText Read the sole published source or the initial construction input.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+            text = obj.OriginalText;
+            if ~isempty(obj.CurrentSource), text = obj.CurrentSource.Text; end
+        end
+
         function analysis = sourceAnalysis(obj)
             % sourceAnalysis Return read-only derived data without changing semantic inputs.
             arguments (Input)
@@ -182,8 +289,8 @@ classdef DocumentModel < handle
             arguments (Output)
                 analysis (1, 1) macd.source.SourceAnalysis
             end
-            if isempty(obj.SourceAnalysisData) || ~obj.SourceAnalysisData.matches(obj.OriginalText)
-                obj.SourceAnalysisData = macd.source.SourceAnalysis(obj.OriginalText);
+            if isempty(obj.SourceAnalysisData) || ~obj.SourceAnalysisData.matches(obj.CurrentText)
+                obj.SourceAnalysisData = macd.source.SourceAnalysis(obj.CurrentText);
             end
             analysis = obj.SourceAnalysisData;
         end
@@ -215,6 +322,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.OriginalText = value;
+            obj.resetSourceInput();
             obj.noteInput(value);
         end
 
@@ -386,6 +494,7 @@ classdef DocumentModel < handle
                 component (1, 1) macd.model.ComponentRecord
             end
 
+            obj.ensureCurrentSource(registry);
             % Validate the factory and parent before changing document state.
             definition = registry.get(factory, creationArguments);
             if definition.IsRoot || definition.IsProgrammaticOnly || ...
@@ -464,23 +573,19 @@ classdef DocumentModel < handle
                     return
                 end
             end
-            prepared = macd.model.DocumentModel.empty;
-            local = false;
+            changes = macd.model.PropertyTransaction.singleChange(path, value);
+            if obj.tryImmediateProperties(componentId, changes, registry)
+                entry = component.getProperty(path);
+                return
+            end
             if ~isempty(registry)
-                [prepared, local] = obj.preflightPropertyChanges(componentId, ...
+                obj.preflightPropertyChanges(componentId, ...
                     macd.model.PropertyTransaction.singleChange(path, value), registry);
             end
-            carryValidation = local && obj.canCarryPropertyValidation(registry);
-            propertyNames = strings(1, 0);
-            if ~local, propertyNames = obj.pendingPropertyValidation(componentId, path, registry); end
-            eligibility = obj.propertyEligibilityContext(prepared, componentId, path, registry, carryValidation);
             entry = component.setProperty(path, value);
             obj.recordHistory(struct("Kind", "property", "ComponentId", componentId, ...
                 "Path", path, "HadOldValue", hadOldValue, "OldValue", {oldValue}, ...
                 "NewValue", {value}, "TargetSettingId", obj.propertySettingId(entry)));
-            if ~isempty(prepared)
-                obj.rememberPropertyCheckpoint(prepared, componentId, path, registry, carryValidation, propertyNames, eligibility);
-            end
         end
 
         function entries = setPropertyBatch(obj, componentId, changes, registry)
@@ -532,20 +637,19 @@ classdef DocumentModel < handle
             requested = changes;
             historyChanges(unchanged) = [];
             changes(unchanged) = [];
-            prepared = macd.model.DocumentModel.empty;
-            local = false;
+            if ~isempty(changes) && obj.tryImmediateProperties(componentId, requested, registry)
+                entries = macd.model.PropertyEntry.empty;
+                for path = string({changes.Path}), entries(end + 1) = component.getProperty(path); end %#ok<AGROW>
+                return
+            end
             if ~isempty(registry)
                 if ~isempty(changes)
-                    [prepared, local] = obj.preflightPropertyChanges(componentId, requested, registry);
+                    obj.preflightPropertyChanges(componentId, requested, registry);
                 else
                     states = obj.getEffectivePropertyStates(registry, componentId);
                     obj.assertRequestedStates(states, requested);
                 end
             end
-            carryValidation = local && obj.canCarryPropertyValidation(registry);
-            propertyNames = strings(1, 0);
-            if ~local, propertyNames = obj.pendingPropertyValidation(componentId, string({requested.Path}), registry); end
-            eligibility = obj.propertyEligibilityContext(prepared, componentId, string({requested.Path}), registry, carryValidation);
 
             % Commit only after every target is known to be editable and reversible.
             entries = macd.model.PropertyEntry.empty;
@@ -566,9 +670,6 @@ classdef DocumentModel < handle
                 obj.recordHistory(struct("Kind", "property-batch", ...
                     "ComponentId", componentId, "Changes", historyChanges));
             end
-            if ~isempty(prepared)
-                obj.rememberPropertyCheckpoint(prepared, componentId, string({requested.Path}), registry, carryValidation, propertyNames, eligibility);
-            end
         end
 
         function diagnostics = validatePropertyCommit(obj, registry)
@@ -583,17 +684,11 @@ classdef DocumentModel < handle
 
             % Only this editor post-commit path consumes proof; generation and saving still validate fully.
             if ~isempty(obj.PropertyValidationContext) && obj.PropertyValidationContext.matches(obj, registry)
-                if ~isempty(obj.PropertyValidationNames)
-                    [checked, ids] = macd.validation.ModelValidator.validate(obj, registry, obj.PropertyValidationNames);
-                    obj.PropertyValidationDiagnostics = obj.mergePropertyDiagnostics(checked, ids);
-                    obj.PropertyValidationNames = strings(1, 0);
-                end
                 diagnostics = obj.PropertyValidationDiagnostics;
                 obj.Diagnostics = diagnostics;
                 return
             end
             diagnostics = macd.validation.ModelValidator.validate(obj, registry);
-            obj.PropertyValidationNames = strings(1, 0);
             obj.PropertyValidationContext = obj.evaluationContext(registry);
             obj.PropertyValidationDiagnostics = diagnostics;
         end
@@ -610,6 +705,7 @@ classdef DocumentModel < handle
                 entries macd.model.PropertyEntry
             end
 
+            obj.ensureCurrentSource(registry);
             % Preflight every grid-owned and direct-child target before mutation.
             grid = obj.getComponent(gridId);
             if isempty(grid) || grid.Factory ~= "uigridlayout"
@@ -655,8 +751,8 @@ classdef DocumentModel < handle
             end
 
             % Check the combined emitted initialization before changing parsed records.
-            if any(arrayfun(@(id) obj.getComponent(id).Origin == "parsed", componentIds)) && ...
-                    strlength(obj.OriginalText) > 0
+            if any(arrayfun(@(id) macd.model.SourceOwnership.hasSource(obj.getComponent(id)), componentIds)) && ...
+                    strlength(obj.CurrentText) > 0
                 if isempty(registry), registry = macd.model.ComponentRegistry.createDefault(); end
                 candidate = obj.structuralCandidate();
                 for change = changes
@@ -771,10 +867,26 @@ classdef DocumentModel < handle
             oldValue = entry.LiteralValue;
             oldEntry = entry.toStruct();
             beforeSettings = component.settingSnapshot();
+            source = "";
+            if ~isempty(obj.CurrentSource)
+                edits = struct("Start", {}, "End", {}, "Text", {});
+                analysis = obj.sourceAnalysis();
+                for setting = component.getSettings(path)
+                    if setting.Method == "nameValue"
+                        statement = analysis.Statements(analysis.statementIndices(setting.SourceSpan));
+                        edits = [edits macd.source.FactoryCallEditor.remove(statement, setting)]; %#ok<AGROW>
+                    elseif ~isempty(setting.SourceSpan)
+                        edits(end + 1) = struct("Start", setting.SourceSpan.StartOffset, ...
+                            "End", setting.SourceSpan.EndOffset, "Text", ""); %#ok<AGROW>
+                    end
+                end
+                edits = macd.source.SourceFormatting.cleanDeletions(obj.CurrentText, edits);
+                source = macd.source.SourcePatchBatch(obj.CurrentText, edits).AfterText;
+            end
             component.removeProperty(path);
             obj.recordHistory(struct("Kind", "reset-property", ...
                 "ComponentId", componentId, "Path", path, "OldValue", oldValue, ...
-                "OldEntry", oldEntry, "BeforeSettings", beforeSettings));
+                "OldEntry", oldEntry, "BeforeSettings", beforeSettings, "SourceCandidateText", source));
         end
 
         function confirmSavedSource(obj, checkpoint, registry)
@@ -787,6 +899,13 @@ classdef DocumentModel < handle
 
             % Validate before committing metadata or advancing the saved history position.
             checkpoint.assertCurrent(obj, registry);
+            if ~isempty(obj.CurrentSource) && checkpoint.ClassName ~= obj.ClassName
+                [text, history] = macd.model.SourceHistoryRebaser.rename(obj.CurrentText, obj.History, ...
+                    obj.HistoryIndex, checkpoint.ClassName);
+                batch = macd.model.SourceHistoryRebaser.lineChanges(obj.CurrentText, text);
+                obj.publishParsedSource(obj.CurrentSource.withBatch(batch, obj.CurrentSource.StateId), registry);
+                obj.History = history;
+            end
             obj.SavedSource = checkpoint;
             obj.ClassName = checkpoint.ClassName;
             obj.FilePath = checkpoint.FilePath;
@@ -871,6 +990,7 @@ classdef DocumentModel < handle
                 id string
             end
 
+            obj.ensureCurrentSource(obj.SourceRegistry);
             % Locate the record before changing its parent or document ordering.
             component = obj.getComponent(id);
             if isempty(component)
@@ -958,12 +1078,13 @@ classdef DocumentModel < handle
                 registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
             end
 
+            obj.ensureCurrentSource(registry);
             % Validate the complete current source before changing authoritative state.
             component = obj.getComponent(componentId);
             if isempty(component) || ~component.IsEditable
                 error("macd:DocumentModel:UnsafeComponentRename", "This component cannot be renamed safely.");
             end
-            if component.Origin == "parsed" && ...
+            if macd.model.SourceOwnership.hasSource(component) && ...
                     (isempty(component.SourceSpans.Declaration) || ~component.SourceSpans.Declaration.isKnown() || ...
                     isempty(component.SourceSpans.Creation) || ~component.SourceSpans.Creation.isKnown())
                 error("macd:DocumentModel:UnsafeComponentRename", "Component declaration or creation ownership is unknown.");
@@ -1048,6 +1169,11 @@ classdef DocumentModel < handle
                 registry (1, 1) macd.model.ComponentRegistry
             end
 
+            try
+                obj.ensureCurrentSource(registry);
+            catch exception
+                error("macd:DocumentModel:UnsafeCallbackSource", "%s", exception.message);
+            end
             % Validate current availability before changing any document or history state.
             states = macd.source.CallbackSourceAnalyzer.analyze(obj, componentId, registry);
             state = states(string({states.Name}) == name);
@@ -1075,7 +1201,15 @@ classdef DocumentModel < handle
                 suffix = 1;
                 used = [string({obj.Components.Name}), string({after.HandlerName}), ...
                     string({obj.RenameEdits.OldName}), string({obj.RenameEdits.NewName}), obj.ClassName, "createComponents", "delete", "figureDeleted"];
-                while any(used == handler) || ~isempty(regexp(obj.OriginalText, ...
+                for item = obj.History
+                    edit = item{1};
+                    if edit.Kind == "callback"
+                        previous = [edit.Before edit.After];
+                        used = [used string({previous.HandlerName})]; %#ok<AGROW>
+                        if isfield(edit, "DeletedHandler"), used = [used edit.DeletedHandler]; end %#ok<AGROW>
+                    end
+                end
+                while any(used == handler) || ~isempty(regexp(obj.CurrentText, ...
                         '(?<!\w)' + handler + '(?!\w)', 'once'))
                     suffix = suffix + 1;
                     handler = stem + "_" + suffix;
@@ -1086,7 +1220,7 @@ classdef DocumentModel < handle
                     component.Factory == "uifigure" && name == "CloseRequestFcn");
             end
             if action == "Add" || ~isempty(original.BindingSpan) || ~isempty(original.MethodSpan)
-                after(end + 1) = macd.model.CallbackEdit(componentId, name, action, handler, method, original, obj.OriginalText);
+                after(end + 1) = macd.model.CallbackEdit(componentId, name, action, handler, method, original, obj.CurrentText);
             end
 
             % Preflight the complete generated result, restoring every temporary state on failure.
@@ -1106,7 +1240,7 @@ classdef DocumentModel < handle
                 rethrow(exception)
             end
             % Commit only a fully generated intention snapshot; original bodies remain untouched.
-            obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after));
+            obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after, "DeletedHandler", state.HandlerName));
         end
 
         function candidate = structuralCandidate(obj, registry)
@@ -1130,6 +1264,8 @@ classdef DocumentModel < handle
             % Pending deletion records are read-only inputs to generation.
             candidate.PendingEdits = obj.PendingEdits;
             candidate.SourceAnalysisData = obj.SourceAnalysisData;
+            candidate.CurrentSource = obj.CurrentSource;
+            candidate.SourceRegistry = obj.SourceRegistry;
             % Resolver entries are independent values; mutation invalidates their normal scopes.
             if ~isempty(registry) && ~isempty(obj.Evaluation)
                 previous = obj.evaluationContext(registry);
@@ -1146,6 +1282,7 @@ classdef DocumentModel < handle
                 registry (1, 1) macd.model.ComponentRegistry = macd.model.ComponentRegistry.createDefault()
             end
 
+            obj.ensureCurrentSource(registry);
             if id == obj.RootComponentId
                 error("macd:DocumentModel:RootDeletion", "The root component cannot be deleted.");
             end
@@ -1163,15 +1300,15 @@ classdef DocumentModel < handle
             end
             % Source removals retain original ownership even after placement changes.
             sourceRemoved = removed;
-            if strlength(obj.OriginalText) > 0
-                originalDocument = macd.source.AppSourceParser.parseText(obj.OriginalText, registry);
+            if strlength(obj.CurrentText) > 0
+                originalDocument = macd.source.AppSourceParser.parseText(obj.CurrentText, registry);
                 for sourceIndex = 1:numel(sourceRemoved)
                     originalComponent = originalDocument.getComponent(sourceRemoved(sourceIndex).Id);
                     if ~isempty(originalComponent), sourceRemoved(sourceIndex) = originalComponent; end
                 end
             end
             rewrittenReferences = macd.source.SubtreeSourceEdits.detachedParentReferences(obj, ids);
-            macd.source.SubtreeSourceEdits.deletion(obj.OriginalText, sourceRemoved, rewrittenReferences);
+            macd.source.SubtreeSourceEdits.deletion(obj.CurrentText, sourceRemoved, rewrittenReferences);
 
             % Preflight on independent records before changing document or history.
             candidate = obj.structuralCandidate();
@@ -1230,6 +1367,7 @@ classdef DocumentModel < handle
             catch exception
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", string(exception.message));
             end
+            obj.ensureCurrentSource(registry);
             root = obj.getComponent(id);
             if root.ParentId == parentId, return, end
             oldParent = obj.getComponent(root.ParentId);
@@ -1349,12 +1487,12 @@ classdef DocumentModel < handle
                     end
                     macd.source.LiteralEncoder.encode(property.LiteralValue);
                 end
-                if record.Origin == "parsed"
+                if macd.model.SourceOwnership.hasSource(record)
                     if isempty(record.SourceSpans.Creation) || ~record.SourceSpans.Creation.isKnown() || ...
                             isempty(record.SourceSpans.Declaration) || ~record.SourceSpans.Declaration.isKnown()
                         error("macd:DocumentModel:UnsafeSubtreeCopy", "Creation or declaration ownership is missing.");
                     end
-                    statements = macd.source.MatlabLexicalScanner.splitStatements(obj.OriginalText);
+                    statements = macd.source.MatlabLexicalScanner.splitStatements(obj.CurrentText);
                     [direct, ~] = macd.source.SubtreeReparentSourceEdits.directScope(statements);
                     span = record.SourceSpans.Creation;
                     matches = find(arrayfun(@(statement) statement.Span.StartOffset == span.StartOffset && ...
@@ -1402,7 +1540,7 @@ classdef DocumentModel < handle
                 if ~preserveNames, usedNames = [usedNames string({mappings.NewName})]; end
             end
             % Reserve identifiers in the effective source after pending deletions.
-            namingSource = obj.OriginalText;
+            namingSource = obj.CurrentText;
             if preserveNames
                 namingSource = macd.source.RoundTripGenerator(registry).generate(candidate);
                 sourceMembers = macd.source.ComponentNameRewriter.memberNames(namingSource);
@@ -1477,6 +1615,7 @@ classdef DocumentModel < handle
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({parsedDiagnostics.Message}), newline));
             end
             macd.model.SubtreeCopyPlanner.verify(reparsed, configuration, inserted, plan.Changes, registry);
+            obj.ensureCurrentSource(registry);
             parent = obj.getComponent(parentId);
             beforeChildren = parent.Children;
             beforeComponents = obj.Components;
@@ -1498,7 +1637,15 @@ classdef DocumentModel < handle
                 error("macd:DocumentModel:NoUndo", "There is no edit to undo.");
             end
             edit = obj.History{obj.HistoryIndex};
-            obj.applyHistory(edit, false);
+            obj.assertHistorySource(edit, false);
+            if edit.Kind == "source-property"
+                obj.applySourcePropertyHistory(edit, false);
+            else
+                obj.SourcePublication = isfield(edit, "SourceForward");
+                cleanup = onCleanup(@() obj.endSourcePublication());
+                obj.applyHistory(edit, false);
+                obj.restoreHistorySource(edit, false);
+            end
             obj.HistoryIndex = obj.HistoryIndex - 1;
             obj.IsDirty = ~(obj.HasSavedHistoryCheckpoint && ...
                 obj.HistoryIndex == obj.SavedHistoryIndex);
@@ -1513,7 +1660,15 @@ classdef DocumentModel < handle
                 error("macd:DocumentModel:NoRedo", "There is no edit to redo.");
             end
             edit = obj.History{obj.HistoryIndex + 1};
-            obj.applyHistory(edit, true);
+            obj.assertHistorySource(edit, true);
+            if edit.Kind == "source-property"
+                obj.applySourcePropertyHistory(edit, true);
+            else
+                obj.SourcePublication = isfield(edit, "SourceForward");
+                cleanup = onCleanup(@() obj.endSourcePublication());
+                obj.applyHistory(edit, true);
+                obj.restoreHistorySource(edit, true);
+            end
             obj.HistoryIndex = obj.HistoryIndex + 1;
             % Redo remains conservatively dirty even when it revisits a save point.
             obj.IsDirty = true;
@@ -1521,7 +1676,280 @@ classdef DocumentModel < handle
     end
 
     methods (Access = private)
-        function [parsed, local] = preflightPropertyChanges(obj, componentId, changes, registry)
+        function resetSourceInput(obj)
+            % resetSourceInput Invalidate derived revisions after an explicit input replacement.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            obj.CurrentSource = macd.model.CurrentSourceState.empty;
+        end
+
+        function ensureCurrentSource(obj, registry)
+            % ensureCurrentSource Emit the initial canonical source once before the first user mutation.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                registry macd.model.ComponentRegistry
+            end
+            if isempty(registry), registry = obj.SourceRegistry; end
+            if isempty(registry), return, end
+            obj.SourceRegistry = registry;
+            if ~isempty(obj.CurrentSource), return, end
+            if strlength(obj.OriginalText) > 0
+                obj.CurrentSource = macd.model.CurrentSourceState(obj.OriginalText, obj.sourceAnalysis());
+            else
+                previousDiagnostics = obj.Diagnostics;
+                previousText = obj.GeneratedText;
+                [text, diagnostics] = macd.source.NewAppGenerator(registry).generate(obj);
+                obj.Diagnostics = previousDiagnostics;
+                obj.GeneratedText = previousText;
+                if macd.validation.ModelValidator.hasErrors(diagnostics)
+                    error("macd:DocumentModel:UnsafeInitialSource", "%s", strjoin(string({diagnostics.Message}), newline));
+                end
+                obj.publishParsedSource(macd.model.CurrentSourceState(text), registry);
+            end
+        end
+
+        function result = tryImmediateProperties(obj, id, changes, registry)
+            % tryImmediateProperties Prove local literals and publish source, bindings and history as one edit.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                id (1, 1) string
+                changes (1, :) struct
+                registry macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            if isempty(registry), registry = obj.SourceRegistry; end
+            if isempty(registry), return, end
+            obj.ensureCurrentSource(registry);
+            component = obj.getComponent(id);
+            beforeSettings = component.settingSnapshot();
+            beforeArguments = component.CreationArguments;
+            before = obj.CurrentSource;
+            if isfield(obj.Metadata, "SourceSnapshotText") && obj.Metadata.SourceSnapshotText ~= before.Text
+                error("macd:DocumentModel:UnsafePropertyEdit", "The input source changed without parsing.");
+            end
+            try
+                prepared = macd.model.SourceLiteralTransaction(obj, before, id, changes, registry);
+            catch exception
+                if any(string(exception.identifier) == ["macd:SourceLiteralTransaction:WiderProof", "macd:SourceLiteralTransaction:InvalidValue", ...
+                        "macd:SourceSettingRebinder:NeedsModelParse", "macd:PropertyInsertionPlanner:UnsafePlacement"])
+                    return
+                end
+                rethrow(exception)
+            end
+            prepared.applyModel(obj, before, registry);
+            obj.publishCurrentSource(prepared.AfterSource);
+            edit = struct("Kind", "source-property", "ComponentId", id, "Changes", changes, ...
+                "BeforeSettings", beforeSettings, "AfterSettings", component.settingSnapshot(), ...
+                "BeforeArguments", {beforeArguments}, "AfterArguments", {component.CreationArguments}, ...
+                "SourceForward", prepared.Batch.Edits, "SourceInverse", prepared.Batch.InverseEdits, ...
+                "SourceBeforeId", before.StateId, "SourceAfterId", obj.CurrentSource.StateId);
+            obj.SourcePublication = true;
+            cleanup = onCleanup(@() obj.endSourcePublication());
+            obj.recordHistory(edit);
+            result = true;
+        end
+
+        function endSourcePublication(obj)
+            % endSourcePublication Release the internal commit barrier even if history publication fails.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            obj.SourcePublication = false;
+        end
+
+        function publishCurrentSource(obj, state)
+            % publishCurrentSource Retain one exact current source and retire command-local generation intentions.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                state (1, 1) macd.model.CurrentSourceState
+            end
+            obj.CurrentSource = state;
+            obj.SourceAnalysisData = state.Analysis;
+            obj.GeneratedText = state.Text;
+            obj.PendingEdits = {};
+            obj.CallbackEdits = macd.model.CallbackEdit.empty;
+            obj.RenameEdits = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
+            obj.PropertyValidationContext = macd.model.EvaluationContext.empty;
+            obj.Metadata.SourceSnapshotText = state.Text;
+            [clock, revision] = obj.inputStamp();
+            obj.SourceInputRevision = revision;
+            assert(~isempty(clock));
+        end
+
+        function publishParsedSource(obj, state, registry)
+            % publishParsedSource Adopt a broader proof while preserving live component and occurrence identities.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                state (1, 1) macd.model.CurrentSourceState
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            [parsed, diagnostics] = macd.source.AppSourceParser.parseText(state.Text, registry);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+            assert(numel(parsed.Components) == numel(obj.Components), ...
+                "macd:DocumentModel:SourceComponentMismatch", "Current source must retain the committed component set.");
+            % Validate the complete join before changing any live record.
+            for component = obj.Components
+                other = parsed.getComponentByName(component.Name);
+                assert(~isempty(other) && component.Factory == other.Factory);
+            end
+            for component = obj.Components
+                other = parsed.getComponentByName(component.Name);
+                settings = other.Settings;
+                for index = 1:numel(settings)
+                    setting = settings(index);
+                    previous = component.Settings(string({component.Settings.Path}) == setting.Path & ...
+                        string({component.Settings.Method}) == setting.Method);
+                    ordinal = nnz(string({settings(1:index).Path}) == setting.Path & ...
+                        string({settings(1:index).Method}) == setting.Method);
+                    if ordinal <= numel(previous)
+                        record = setting.toStruct();
+                        record.Location.Id = previous(ordinal).Id;
+                        record.Location.SourceSnapshotId = previous(ordinal).SourceSnapshotId;
+                        record.Location.StatementId = previous(ordinal).StatementId;
+                        record.Location.InitializationScopeId = previous(ordinal).InitializationScopeId;
+                        settings(index) = macd.model.PropertySetting(record.Path, record.Value, record.Location);
+                    end
+                end
+                component.SourceSpans = other.SourceSpans;
+                component.Metadata = other.Metadata;
+                component.synchronizeSourceSettings(settings, other.CreationArguments);
+            end
+            obj.Diagnostics = parsed.Diagnostics;
+            obj.UnknownRegions = parsed.UnknownRegions;
+            obj.Metadata = parsed.Metadata;
+            obj.publishCurrentSource(state);
+        end
+
+        function assertHistorySource(obj, edit, forward)
+            % assertHistorySource Verify the current node before replaying any model history mutation.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                edit (1, 1) struct
+                forward (1, 1) logical
+            end
+            if ~isfield(edit, "SourceForward"), return, end
+            stateId = edit.SourceAfterId;
+            if forward, stateId = edit.SourceBeforeId; end
+            obj.CurrentSource.assertRevision(obj.CurrentSource.Revision, stateId);
+        end
+
+        function restoreHistorySource(obj, edit, forward)
+            % restoreHistorySource Restore an already validated structural source patch after semantic history replay.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                edit (1, 1) struct
+                forward (1, 1) logical
+            end
+            if ~isfield(edit, "SourceForward"), return, end
+            if forward
+                edits = edit.SourceForward;
+                stateId = edit.SourceAfterId;
+            else
+                edits = edit.SourceInverse;
+                stateId = edit.SourceBeforeId;
+            end
+            batch = macd.source.SourcePatchBatch(obj.CurrentText, edits);
+            obj.publishParsedSource(obj.CurrentSource.withBatch(batch, stateId), obj.SourceRegistry);
+        end
+
+        function applySourcePropertyHistory(obj, edit, forward)
+            % applySourcePropertyHistory Restore exact source and only the edited component's setting bindings.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                edit (1, 1) struct
+                forward (1, 1) logical
+            end
+            if forward
+                edits = edit.SourceForward;
+                settings = edit.AfterSettings;
+                factoryArguments = edit.AfterArguments;
+                stateId = edit.SourceAfterId;
+            else
+                edits = edit.SourceInverse;
+                settings = edit.BeforeSettings;
+                factoryArguments = edit.BeforeArguments;
+                stateId = edit.SourceBeforeId;
+            end
+            owner = obj.getComponent(edit.ComponentId);
+            expected = edit.AfterSettings;
+            if forward, expected = edit.BeforeSettings; end
+            for change = edit.Changes
+                entry = owner.getProperty(change.Path);
+                candidates = expected(string({expected.Path}) == change.Path);
+                if isempty(candidates), continue, end
+                assert(~isempty(entry) && isfield(entry.Metadata, "SourceSettingId") && ...
+                    entry.Metadata.SourceSettingId == candidates(end).Location.Id, ...
+                    "macd:DocumentModel:StalePropertySetting", "History no longer owns the same value projection.");
+            end
+            batch = macd.source.SourcePatchBatch(obj.CurrentText, edits);
+            state = obj.CurrentSource.withBatch(batch, stateId);
+            execution = macd.model.SourceSettingRebinder.executionSequences(obj, state, batch, obj.SourceRegistry);
+            [diagnostics, regions] = macd.model.SourceLocationUpdate.annotations(obj, batch);
+            owner = obj.getComponent(edit.ComponentId);
+            updates = macd.model.SourceLocationUpdate.empty;
+            for component = obj.Components
+                if component.Id == owner.Id, continue, end
+                update = macd.model.SourceLocationUpdate(component, batch, ...
+                    struct("SettingId", {}, "Value", {}), execution, state.Analysis);
+                update.assertCurrent(component);
+                updates(end + 1) = update; %#ok<AGROW>
+            end
+            [creation, valid] = batch.mapSpan(owner.SourceSpans.Creation);
+            assert(valid);
+            [declaration, valid] = batch.mapSpan(owner.SourceSpans.Declaration);
+            assert(valid);
+            for update = updates, update.apply(obj.getComponent(update.ComponentId)); end
+            owner.SourceSpans = struct("Declaration", declaration, "Creation", creation);
+            restored = macd.model.PropertySetting.empty;
+            for record = settings
+                restored(end + 1) = macd.model.PropertySetting(record.Path, record.Value, record.Location); %#ok<AGROW>
+            end
+            owner.synchronizeSourceSettings(restored, factoryArguments);
+            obj.Diagnostics = diagnostics;
+            obj.UnknownRegions = regions;
+            visits = find(execution.Trace.Order == state.Analysis.statementIndices(creation));
+            owner.Metadata.InitializationCreationSequence = execution.Creation(visits);
+            trace = execution.Trace;
+            obj.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
+                "Returns", trace.Returns, "Layout", state.Analysis.Layout);
+            obj.publishCurrentSource(state);
+        end
+
+        function batch = sourceDifference(~, before, after)
+            % sourceDifference Bound a broader source rewrite with exact common prefix and suffix guards.
+            arguments (Input)
+                ~
+                before (1, 1) string
+                after (1, 1) string
+            end
+            arguments (Output)
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            old = char(before);
+            current = char(after);
+            limit = min(numel(old), numel(current));
+            first = 1;
+            while first <= limit && old(first) == current(first), first = first + 1; end
+            lastOld = numel(old);
+            lastNew = numel(current);
+            while lastOld >= first && lastNew >= first && old(lastOld) == current(lastNew)
+                lastOld = lastOld - 1;
+                lastNew = lastNew - 1;
+            end
+            edits = struct("Start", {}, "End", {}, "Text", {});
+            if first <= lastOld || first <= lastNew
+                edits = struct("Start", first, "End", lastOld, "Text", string(current(first:lastNew)));
+            end
+            batch = macd.source.SourcePatchBatch(before, edits);
+        end
+
+        function parsed = preflightPropertyChanges(obj, componentId, changes, registry)
             % preflightPropertyChanges Validate generated candidate source before mutating live records.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
@@ -1531,13 +1959,7 @@ classdef DocumentModel < handle
             end
             arguments (Output)
                 parsed (1, 1) macd.model.DocumentModel
-                local (1, 1) logical
             end
-
-            % Re-edit proven inserted or existing literals without replaying the document.
-            parsed = obj.localPropertyCandidate(componentId, changes, registry);
-            local = ~isempty(parsed);
-            if local, return, end
 
             % Use independent records and avoid recording candidate-only user history.
             for change = changes
@@ -1550,24 +1972,13 @@ classdef DocumentModel < handle
                     error("macd:DocumentModel:UnsafePropertyEdit", "%s", exception.message);
                 end
             end
-            if ~isempty(obj.PropertyCheckpointContext) && obj.PropertyCheckpointContext.matches(obj, registry)
-                candidate = obj.PropertyCheckpoint.structuralCandidate(registry);
-                component = candidate.getComponentByName(obj.getComponent(componentId).Name);
-                bounded = true;
-            else
-                candidate = obj.structuralCandidate(registry);
-                component = candidate.getComponent(componentId);
-                bounded = false;
-            end
+            candidate = obj.structuralCandidate(registry);
+            component = candidate.getComponent(componentId);
             for change = changes
                 component.setProperty(string(change.Path), change.Value);
             end
             generator = macd.source.RoundTripGenerator(registry);
-            if bounded
-                [source, diagnostics] = generator.generatePropertyCandidate(candidate, component.Name);
-            else
-                [source, diagnostics] = generator.generate(candidate);
-            end
+            [source, diagnostics] = generator.generate(candidate);
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafePropertyEdit", "%s", ...
                     strjoin(string({diagnostics.Message}), newline));
@@ -1575,7 +1986,6 @@ classdef DocumentModel < handle
 
             % Reparse output without executing the app and check each requested literal.
             propertyNames = strings(1, 0);
-            if bounded, propertyNames = component.Name; end
             [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry, "", propertyNames);
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafePropertyEdit", "%s", ...
@@ -1595,266 +2005,6 @@ classdef DocumentModel < handle
             end
             obj.assertRequestedStates(states, changes);
             parsed.GeneratedText = source;
-        end
-
-        function rememberPropertyCheckpoint(obj, prepared, componentId, paths, registry, carryValidation, propertyNames, eligibility)
-            % rememberPropertyCheckpoint Retain private validated records at the exact committed input.
-            arguments (Input)
-                obj (1, 1) macd.model.DocumentModel
-                prepared (1, 1) macd.model.DocumentModel
-                componentId (1, 1) string
-                paths string
-                registry (1, 1) macd.model.ComponentRegistry
-                carryValidation (1, 1) logical
-                propertyNames (1, :) string = strings(1, 0)
-                eligibility macd.model.EvaluationContext = macd.model.EvaluationContext.empty
-            end
-            context = obj.evaluationContext(registry);
-            % The full preflight output is a current source basis independent of disk-save state.
-            if strlength(prepared.GeneratedText) > 0 && prepared.GeneratedText == prepared.OriginalText
-                context.remember("complete-insertion-source", prepared.GeneratedText);
-            end
-            if carryValidation || ~isempty(propertyNames) || ~isempty(eligibility)
-                context.rememberOwnedConfiguration("combined", prepared);
-            else
-                context.rememberConfiguration("combined", prepared);
-            end
-            component = obj.getComponent(componentId);
-            parentFactory = "";
-            parent = obj.getComponent(component.ParentId);
-            if ~isempty(parent), parentFactory = parent.Factory; end
-            definitions = registry.getEffectiveProperties(component.Factory, ...
-                parentFactory, component.CreationArguments);
-            valueIndex = find([definitions.Path] == "Value", 1);
-            numericEdit = isequal(paths, "Value") && ~isempty(valueIndex) && ...
-                definitions(valueIndex).Application.EffectPolicy == "numericValue";
-            if carryValidation
-                % Proven local literals retain ownership and logical placement; measured geometry stays guarded.
-                context.inheritEligibility(obj.PropertyValidationContext);
-                if numericEdit, context.inheritNumericStates(obj.PropertyValidationContext, componentId); end
-            elseif ~isempty(eligibility)
-                context.inheritEligibility(eligibility);
-            end
-            obj.PropertyCheckpoint = prepared;
-            obj.PropertyCheckpointContext = context;
-            obj.PropertyValidationContext = macd.model.EvaluationContext.empty;
-            obj.PropertyValidationNames = propertyNames;
-            if carryValidation || ~isempty(propertyNames)
-                obj.PropertyValidationContext = context;
-            else
-                obj.PropertyValidationDiagnostics = macd.model.Diagnostic.empty;
-            end
-        end
-
-        function result = canCarryPropertyValidation(obj, registry)
-            % canCarryPropertyValidation Check actual full diagnostics before the live literal mutation.
-            arguments (Input)
-                obj (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-            end
-            arguments (Output)
-                result (1, 1) logical
-            end
-            result = ~isempty(obj.PropertyValidationContext) && ...
-                isempty(obj.PropertyValidationNames) && ...
-                obj.PropertyValidationContext.matches(obj, registry) && ...
-                ~macd.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics);
-        end
-
-        function names = pendingPropertyValidation(obj, componentId, paths, registry)
-            % pendingPropertyValidation Reuse a full baseline only for catalog-modeled property effects.
-            arguments (Input)
-                obj (1, 1) macd.model.DocumentModel
-                componentId (1, 1) string
-                paths (1, :) string
-                registry macd.model.ComponentRegistry
-            end
-            arguments (Output)
-                names (1, :) string
-            end
-            names = strings(1, 0);
-            if isempty(registry) || ~obj.canCarryPropertyValidation(registry), return, end
-            component = obj.getComponent(componentId);
-            parent = obj.getComponent(component.ParentId);
-            parentFactory = "";
-            if ~isempty(parent), parentFactory = parent.Factory; end
-            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
-            [found, indices] = ismember(paths, string({definitions.Path}));
-            if ~all(found), return, end
-            policies = [definitions(indices).Application];
-            if any(~ismember(string({policies.EffectStatus}), ["independent", "modeled"])), return, end
-            names = component.Name;
-            % Coupled selection, references and placement may change sibling states as well.
-            if ~isempty(parent) && any(ismember(string({policies.EffectPolicy}), ...
-                    ["buttonSelection", "componentReference", "layout"]))
-                names(end + 1) = parent.Name;
-            end
-        end
-
-        function context = propertyEligibilityContext(obj, prepared, id, paths, registry, alreadyCarried)
-            % propertyEligibilityContext Retain availability only after a private preflight proves unchanged dependencies.
-            arguments (Input)
-                obj (1, 1) macd.model.DocumentModel
-                prepared macd.model.DocumentModel
-                id (1, 1) string
-                paths (1, :) string
-                registry macd.model.ComponentRegistry
-                alreadyCarried (1, 1) logical
-            end
-            arguments (Output)
-                context macd.model.EvaluationContext
-            end
-            context = macd.model.EvaluationContext.empty;
-            if alreadyCarried || isempty(prepared) || isempty(registry), return, end
-            if macd.model.DocumentEditAvailability.canInheritProperties(obj, prepared, id, paths, registry)
-                context = obj.evaluationContext(registry);
-            end
-        end
-
-        function diagnostics = mergePropertyDiagnostics(obj, checked, ids)
-            % mergePropertyDiagnostics Retain unaffected diagnostics and preserve full-validator component order.
-            arguments (Input)
-                obj (1, 1) macd.model.DocumentModel
-                checked macd.model.Diagnostic
-                ids (1, :) string
-            end
-            arguments (Output)
-                diagnostics macd.model.Diagnostic
-            end
-            diagnostics = checked;
-            for previous = reshape(obj.PropertyValidationDiagnostics, 1, [])
-                if any(ids == previous.ComponentId), continue, end
-                duplicate = any(arrayfun(@(item) isequaln(item, previous), diagnostics));
-                if ~duplicate, diagnostics(end + 1) = previous; end %#ok<AGROW>
-            end
-            if isempty(diagnostics), return, end
-            [known, order] = ismember(string({diagnostics.ComponentId}), string({obj.Components.Id}));
-            order(~known) = 0;
-            [~, indices] = sort(order);
-            diagnostics = diagnostics(indices);
-        end
-
-        function parsed = localPropertyCandidate(obj, componentId, changes, registry)
-            % localPropertyCandidate Validate bounded literal replacements in a private proven source plan.
-            arguments (Input)
-                obj (1, 1) macd.model.DocumentModel
-                componentId (1, 1) string
-                changes (1, :) struct
-                registry (1, 1) macd.model.ComponentRegistry
-            end
-            arguments (Output)
-                parsed macd.model.DocumentModel
-            end
-            parsed = macd.model.DocumentModel.empty;
-            live = obj.getComponent(componentId);
-            if isempty(live), return, end
-            if ~isempty(obj.PropertyCheckpointContext) && obj.PropertyCheckpointContext.matches(obj, registry)
-                checkpoint = obj.PropertyCheckpoint;
-            else
-                % Preview and state evaluation may already own a fully generated, reparsed configuration.
-                context = obj.evaluationContext(registry);
-                [plan, found] = context.configuration("combined", live.Name);
-                if ~found, return, end
-                checkpoint = plan.Document;
-                checkpoint.FilePath = obj.FilePath;
-            end
-
-            % The complete matching configuration proves ownership across all components and paths.
-            component = checkpoint.getComponentByName(live.Name);
-            if isempty(component), return, end
-            paths = string({changes.Path});
-            states = checkpoint.getEffectivePropertyStates(registry, component.Id);
-            definitions = [states.Definition];
-            valueIndex = find([definitions.Path] == "Value", 1);
-            numericValue = isequal(paths, "Value") && ~isempty(valueIndex) && ...
-                definitions(valueIndex).Application.EffectStatus == "modeled" && ...
-                definitions(valueIndex).Application.EffectPolicy == "numericValue";
-            constraints = ["Value", "Limits", "AllowEmpty", "RoundFractionalValues", ...
-                "LowerLimitInclusive", "UpperLimitInclusive"];
-            if numericValue
-                % The complete checkpoint owns every constraint and the target's original setting order.
-                [found, indices] = ismember(constraints, string({definitions.Path}));
-                if ~all(found) || ~all(arrayfun(@(state) state.Resolution.IsKnown, states(indices)))
-                    return
-                end
-                transaction = macd.model.PropertyStateResolver.transaction([states.Resolution]);
-            else
-                transaction = macd.model.PropertyTransaction(paths, {changes.Value});
-            end
-            for change = changes
-                index = find([definitions.Path] == string(change.Path), 1);
-                if isempty(index), return, end
-                definition = definitions(index);
-                entry = component.getProperty(string(change.Path));
-                schema = definition.ValueSchema;
-                independent = definition.Application.EffectStatus == "independent" && ...
-                    definition.Application.EffectPolicy == "none" && isempty(definition.Application.ApplyAfter) && ...
-                    ~(isfield(schema, "constraints") && ~isempty(schema.constraints));
-                numeric = numericValue && definition.Application.EffectStatus == "modeled" && ...
-                    definition.Application.EffectPolicy == "numericValue" && ...
-                    all(ismember(definition.Application.ApplyAfter, constraints));
-                finiteNumber = isfield(schema, "kind") && string(schema.kind) == "number" && ...
-                    isa(change.Value, "double") && isscalar(change.Value) && ...
-                    isreal(change.Value) && isfinite(change.Value);
-                independentLiteral = independent && isempty(definition.Application.AffectedPaths);
-                % Descendant geometry still needs complete source validation when its owner changes layout.
-                if independentLiteral && ~isempty(live.Children) && ...
-                        (definition.AbsoluteGeometryImpact || definition.GridGeometryImpact == "required")
-                    return
-                end
-                if ~(independentLiteral || (numeric && finiteNumber)) || ...
-                        isempty(entry) || isempty(entry.SourceSpan) || ~entry.IsEditable || ...
-                        entry.ValueKind ~= "literal" || ~states(index).Resolution.IsKnown
-                    return
-                end
-                for other = definitions
-                    if any(ismember(other.Application.ApplyAfter, paths)) && ...
-                            ~(numeric && any(constraints == other.Path) && ...
-                            other.Application.EffectPolicy == "numericValue")
-                        return
-                    end
-                end
-                % Every independent literal uses the same schema, encoding, and exact decoding proof.
-                try
-                    encoded = macd.source.LiteralEncoder.encode(change.Value);
-                catch
-                    return
-                end
-                % A physical line break inside quotes needs the full source-syntax checks.
-                if contains(encoded, string(newline)) || contains(encoded, string(char(13)))
-                    return
-                end
-                [decoded, literal] = macd.source.MatlabLiteralParser.parse(encoded);
-                if ~literal || ~isequaln(decoded, change.Value), return, end
-                transaction.stage(string(change.Path), change.Value);
-            end
-            message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
-            if strlength(message) > 0
-                error("macd:DocumentModel:UnsafePropertyEdit", "%s", message);
-            end
-
-            % Only private candidate records change; preserve every original span and occurrence.
-            obj.PropertyCheckpointContext = macd.model.EvaluationContext.empty;
-            checkpoint.GeneratedText = "";
-            oldValues = cell(1, numel(changes));
-            for index = 1:numel(changes)
-                oldValues{index} = component.getProperty(string(changes(index).Path)).LiteralValue;
-                component.setProperty(string(changes(index).Path), changes(index).Value);
-            end
-            try
-                [states, diagnostics] = checkpoint.getEffectivePropertyStates(registry, component.Id);
-                if numericValue && macd.validation.ModelValidator.hasErrors(diagnostics)
-                    errors = diagnostics(string({diagnostics.Severity}) == "error");
-                    error("macd:DocumentModel:UnsafePropertyEdit", "%s", strjoin(string({errors.Message}), newline));
-                end
-                obj.assertRequestedStates(states, changes);
-            catch exception
-                for index = 1:numel(changes)
-                    component.setProperty(string(changes(index).Path), oldValues{index});
-                end
-                rethrow(exception)
-            end
-            parsed = checkpoint;
         end
 
         function assertRequestedStates(~, states, changes)
@@ -1914,6 +2064,7 @@ classdef DocumentModel < handle
                 forward (1, 1) logical
             end
 
+            if obj.SourcePublication, return, end
             if ~isfield(change, "TargetSettingId") || strlength(change.TargetSettingId) == 0, return, end
             entry = component.getProperty(string(change.Path));
             if forward && ~change.HadOldValue && isempty(entry), return, end
@@ -1972,7 +2123,7 @@ classdef DocumentModel < handle
         function index = addDeletionIntent(obj, component)
             % addDeletionIntent Retain a parsed deletion for conservative generation.
             index = 0;
-            if component.Origin ~= "parsed"
+            if ~macd.model.SourceOwnership.hasSource(component)
                 return
             end
             pending = struct("Kind", "delete-component", "Component", component);
@@ -1982,6 +2133,32 @@ classdef DocumentModel < handle
 
         function recordHistory(obj, edit)
             % recordHistory Append an edit and discard any redo branch.
+            if ~obj.SourcePublication && ~isempty(obj.SourceRegistry)
+                obj.ensureCurrentSource(obj.SourceRegistry);
+                before = obj.CurrentSource;
+                try
+                    if isfield(edit, "SourceCandidateText") && strlength(edit.SourceCandidateText) > 0
+                        text = edit.SourceCandidateText;
+                        diagnostics = macd.model.Diagnostic.empty;
+                    else
+                        [text, diagnostics] = macd.source.RoundTripGenerator(obj.SourceRegistry).generate(obj);
+                    end
+                if macd.validation.ModelValidator.hasErrors(diagnostics)
+                    error("macd:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
+                end
+                batch = obj.sourceDifference(before.Text, text);
+                obj.publishParsedSource(before.withBatch(batch), obj.SourceRegistry);
+                catch exception
+                    obj.SourcePublication = true;
+                    cleanup = onCleanup(@() obj.endSourcePublication());
+                    obj.applyHistory(edit, false);
+                    rethrow(exception)
+                end
+                edit.SourceForward = batch.Edits;
+                edit.SourceInverse = batch.InverseEdits;
+                edit.SourceBeforeId = before.StateId;
+                edit.SourceAfterId = obj.CurrentSource.StateId;
+            end
             if obj.HistoryIndex < numel(obj.History)
                 % A replacement branch makes every previous checkpoint uncertain.
                 obj.History = obj.History(1:obj.HistoryIndex);
@@ -2210,6 +2387,10 @@ classdef DocumentModel < handle
             name = string(matlab.lang.makeValidName(char(base)));
             suffix = 1;
             reserved = [string({obj.RenameEdits.OldName}), string({obj.RenameEdits.NewName})];
+            for item = obj.History
+                edit = item{1};
+                if edit.Kind == "rename", reserved = [reserved edit.OldName edit.NewName]; end %#ok<AGROW>
+            end
             while ~isempty(obj.getComponentByName(name)) || any(reserved == name)
                 suffix = suffix + 1;
                 name = string(matlab.lang.makeValidName(char(base + suffix)));

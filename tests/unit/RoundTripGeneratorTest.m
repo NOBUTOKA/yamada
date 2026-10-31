@@ -172,11 +172,10 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             source = document.OriginalText + newline + "app.LeftValueLabel.Visible = 'on';";
             document = macd.source.AppSourceParser.parseText(source, ...
                 macd.model.ComponentRegistry.createDefault());
-            document.removeComponent("parsed-LeftValueLabel");
-            [generated, diagnostics] = generator.generate(document);
-
-            testCase.verifyEqual(generated, source);
-            testCase.verifyTrue(any([diagnostics.Code] == "ambiguous-component-deletion"));
+            testCase.verifyError(@() document.removeComponent("parsed-LeftValueLabel"), ...
+                "macd:DocumentModel:UnsafeSourceCommit");
+            testCase.verifyNotEmpty(document.getComponent("parsed-LeftValueLabel"));
+            testCase.verifyEqual(generator.generate(document), source);
         end
 
         function checkboxTreePreservesWritableGeometrySettings(testCase)

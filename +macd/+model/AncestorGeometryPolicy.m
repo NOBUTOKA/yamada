@@ -12,7 +12,7 @@ classdef AncestorGeometryPolicy
                 offset (1, 1) double
                 sequence (1, 1) double
             end
-            parsed = document.Components(string({document.Components.Origin}) == "parsed");
+            parsed = document.Components(arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             visits = arrayfun(@(item) item.Metadata.InitializationCreationSequence, parsed);
             [~, last] = max(visits);
             anchor = parsed(last);
@@ -40,7 +40,7 @@ classdef AncestorGeometryPolicy
                 offset = setting.SourceSpan.EndOffset;
                 sequence = setting.Sequence;
             end
-            generated = document.Components(string({document.Components.Origin}) == "generated");
+            generated = document.Components(~arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             for member = generated
                 parent = document.getComponent(member.ParentId);
                 while ~isempty(parent)
@@ -59,7 +59,7 @@ classdef AncestorGeometryPolicy
                 end
             end
             % Keep an inline comment attached to its original source statement.
-            tail = extractAfter(document.OriginalText, offset);
+            tail = extractAfter(document.CurrentText, offset);
             lineEnd = regexp(char(tail), '\r?\n', 'start', 'once');
             if isempty(lineEnd), lineEnd = strlength(tail) + 1; end
             suffix = extractBefore(tail, lineEnd);
@@ -93,7 +93,7 @@ classdef AncestorGeometryPolicy
             arguments (Output)
                 states macd.model.PropertyState
             end
-            if component.Origin ~= "parsed", return, end
+            if ~macd.model.SourceOwnership.hasSource(component), return, end
             paths = ["Position", "InnerPosition", "OuterPosition"];
             sequence = 0;
             if isfield(component.Metadata, "InitializationCreationSequence")

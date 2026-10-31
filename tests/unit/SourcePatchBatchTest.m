@@ -225,6 +225,64 @@ classdef SourcePatchBatchTest < matlab.unittest.TestCase
                 "macd:SourceLocationUpdate:StaleComponent");
         end
 
+        function documentPublishesCurrentTextAndExactHistory(testCase)
+            % documentPublishesCurrentTextAndExactHistory Exercise distinct insertions and replacements without deferred source.
+            registry = macd.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            original = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            document = macd.source.AppSourceParser.parseText(original, registry);
+            owner = document.getComponentByName("TopLeftLabel");
+            entry = owner.getProperty("Text");
+            document.setProperty(owner.Id, "Text", "Longer changed text", registry);
+            first = document.CurrentText;
+            document.setProperty(owner.Id, "FontSize", 23, registry);
+            second = document.CurrentText;
+            testCase.verifyNotEqual(first, second);
+            testCase.verifyEqual(document.OriginalText, original);
+            testCase.verifyEqual(owner.getProperty("Text"), entry);
+            testCase.verifyEmpty(document.PendingEdits);
+            testCase.verifyTrue(document.sourceAnalysis().matches(second));
+            generated = macd.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyEqual(generated, second);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, first);
+            testCase.verifyEmpty(owner.getProperty("FontSize"));
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, original);
+            document.redo();
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, second);
+            testCase.verifyEqual(owner.getProperty("FontSize").LiteralValue, 23);
+        end
+
+        function immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges(testCase)
+            % immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges Apply source additions and replacements through native diffs.
+            registry = macd.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            owner = document.getComponentByName("TopLeftLabel");
+            figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
+            renderer = macd.ui.PreviewRenderer(registry);
+            handles = renderer.render(document, figure);
+            native = handles(char(owner.Id));
+            for path = ["Text", "FontSize"]
+                value = "Longer changed text";
+                if path == "FontSize", value = 23; end
+                document.setProperty(owner.Id, path, value, registry);
+                [applied, diagnostics] = renderer.synchronize(document, handles, ...
+                    macd.ui.RefreshRequest("properties", owner.Id, path));
+                testCase.verifyTrue(applied, renderer.statistics().fallbackReason);
+                testCase.verifyEmpty(diagnostics);
+                testCase.verifyEqual(handles(char(owner.Id)), native);
+            end
+            document.setProperty(owner.Id, "Text", "Another change", registry);
+            owner.Metadata.UnrelatedInput = true;
+            applied = renderer.synchronize(document, handles, ...
+                macd.ui.RefreshRequest("properties", owner.Id, "Text"));
+            testCase.verifyFalse(applied);
+        end
+
         function deletedAndInteriorRangesNeedRebinding(testCase)
             % deletedAndInteriorRangesNeedRebinding Avoid inventing source ownership inside replaced syntax.
             batch = macd.source.SourcePatchBatch("abcdef", change(2, 4, "X"));

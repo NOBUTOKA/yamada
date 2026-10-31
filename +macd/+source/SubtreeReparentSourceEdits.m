@@ -37,7 +37,7 @@ classdef SubtreeReparentSourceEdits
                 pending = document.PendingEdits{index};
                 if ~isstruct(pending) || ~isfield(pending, "Kind") || pending.Kind ~= "reparent-subtree", continue, end
                 for record = pending.OriginalRecords
-                    if record.Origin ~= "parsed" || isempty(document.getComponent(record.Id)), continue, end
+                    if ~macd.model.SourceOwnership.hasSource(record) || isempty(document.getComponent(record.Id)), continue, end
                     if ~any(movedIds == record.Id)
                         movedIds(end + 1) = record.Id; %#ok<AGROW>
                         if isempty(originals), originals = record; else, originals(end + 1) = record; end %#ok<AGROW>
@@ -45,11 +45,11 @@ classdef SubtreeReparentSourceEdits
                 end
             end
             if isempty(movedIds), return, end
-            source = document.OriginalText;
+            source = document.CurrentText;
             analysis = document.sourceAnalysis();
             statements = analysis.Statements;
             [direct, methodSpan] = macd.source.SubtreeReparentSourceEdits.directScope(statements);
-            parsed = document.Components([document.Components.Origin] == "parsed");
+            parsed = document.Components(arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             offsets = arrayfun(@(item) item.SourceSpans.Creation.StartOffset, parsed);
             initialization = analysis.initialization(offsets);
             order = initialization.Order;
@@ -129,7 +129,7 @@ classdef SubtreeReparentSourceEdits
 
             % Preserve original interleaving subject to the destination creation dependencies.
             for component = document.Components
-                if component.Origin == "generated"
+                if ~macd.model.SourceOwnership.hasSource(component)
                     text = macd.source.SubtreeReparentSourceEdits.generatedInitialization(document, component, registry, ending);
                     events(end + 1) = struct("Id", component.Id, "ParentId", component.ParentId, ...
                         "Creates", true, "SourceOrder", Inf, "Text", text); %#ok<AGROW>
@@ -148,7 +148,7 @@ classdef SubtreeReparentSourceEdits
                     error("macd:SubtreeReparentSourceEdits:UnsafeSource", "The creation parent is not a static component reference.");
                 end
                 parentName = parent.Name;
-                if parent.Origin == "parsed"
+                if macd.model.SourceOwnership.hasSource(parent)
                     parentCreation = extractBetween(source, parent.SourceSpans.Creation.StartOffset, parent.SourceSpans.Creation.EndOffset);
                     token = regexp(parentCreation, '^app\.(\w+)\s*=', 'tokens', 'once');
                     parentName = string(token{1});
@@ -165,7 +165,7 @@ classdef SubtreeReparentSourceEdits
                 deferredParsedReferences = [deferredParsedReferences deferred]; %#ok<AGROW>
             end
             for event = macd.source.SubtreeReparentSourceEdits.orderEvents(events), block = block + event.Text; end
-            generated = document.Components([document.Components.Origin] == "generated");
+            generated = document.Components(~arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             references = macd.model.SubtreeReferencePolicy.assignments(document, generated, registry);
             for reference = [deferredParsedReferences references], block = block + ending + "            " + reference; end
             for span = spans
@@ -430,8 +430,8 @@ classdef SubtreeReparentSourceEdits
                 candidate (1, 1) macd.model.DocumentModel
             end
             prefix = macd.source.SubtreeReparentSourceEdits.applyRange( ...
-                document.OriginalText, macd.model.SourceSpan(1, anchor), removals);
-            suffix = extractAfter(document.OriginalText, anchor);
+                document.CurrentText, macd.model.SourceSpan(1, anchor), removals);
+            suffix = extractAfter(document.CurrentText, anchor);
             source = prefix + block + suffix;
             [candidate, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
             hasPending = false;
@@ -440,7 +440,7 @@ classdef SubtreeReparentSourceEdits
             for id = movedIds
                 original = document.getComponent(id);
                 configured = candidate.getComponentByName(document.sourceComponentName(id));
-                pending = original.Properties(string({original.Properties.Origin}) == "generated");
+                pending = original.Properties(arrayfun(@(entry) isempty(entry.SourceSpan), original.Properties));
                 pending = pending(arrayfun(@(entry) isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
                     ~isfield(entry.Metadata, "SubtreeReferenceId"), pending));
                 for entry = pending, configured.setProperty(entry.Path, entry.LiteralValue); end

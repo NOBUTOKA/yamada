@@ -29,7 +29,8 @@ classdef PropertySetting
         NameSpan macd.model.SourceSpan = macd.model.SourceSpan.empty
         % PairSpan - Complete constructor pair or property assignment range.
         PairSpan macd.model.SourceSpan = macd.model.SourceSpan.empty
-        % SourceSnapshotId - Identity of the source version owning all spans.
+        % SourceSnapshotId - Provenance epoch used when allocating this occurrence identity.
+        % Current positions belong to the document CurrentText and are guarded by its revision.
         SourceSnapshotId string = ""
         % StatementId - Identity shared by arguments of one factory call.
         StatementId string = ""

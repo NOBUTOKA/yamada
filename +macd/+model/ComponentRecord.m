@@ -324,7 +324,7 @@ classdef ComponentRecord < handle
             paths = string({settings.Path});
             for index = numel(obj.Properties):-1:1
                 entry = obj.Properties(index);
-                if isfield(entry.Metadata, "SourceSettingId") && ~any(paths == entry.Path)
+                if ~any(paths == entry.Path)
                     obj.Properties(index) = [];
                 end
             end

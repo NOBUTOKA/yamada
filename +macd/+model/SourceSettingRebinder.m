@@ -4,7 +4,7 @@ classdef SourceSettingRebinder
     %   other component models. Existing physical occurrences keep their identities.
 
     methods (Static)
-        function [settings, creationSequence, factoryArguments] = rebind(document, component, state, batch, registry)
+        function [settings, creationSequence, factoryArguments, sequences] = rebind(document, component, state, batch, registry)
             % rebind Recover actual current setting order and preserve surviving occurrence identities.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
@@ -17,6 +17,7 @@ classdef SourceSettingRebinder
                 settings macd.model.PropertySetting
                 creationSequence (1, 1) double
                 factoryArguments cell
+                sequences (1, 1) struct
             end
             assert(state.Text == batch.AfterText);
             analysis = state.Analysis;
@@ -35,7 +36,8 @@ classdef SourceSettingRebinder
             assert(isscalar(index), "macd:SourceSettingRebinder:NeedsModelParse", "Factory ownership is not unique.");
             visits = find(trace.Order == index);
             assert(isscalar(visits), "macd:SourceSettingRebinder:NeedsModelParse", "Factory execution is not unique.");
-            creationSequence = visits;
+            sequences = macd.model.SourceSettingRebinder.executionSequences(document, state, batch, registry);
+            creationSequence = sequences.Creation(visits);
             definition = registry.get(component.Factory, component.CreationArguments);
             [~, factoryArguments, factory, ~, supported] = macd.source.PropertySettingSyntax.factory( ...
                 analysis.Statements(index), definition, state.StateId);
@@ -43,7 +45,7 @@ classdef SourceSettingRebinder
             settings = macd.model.PropertySetting.empty;
             for originalSetting = factory
                 record = originalSetting.toStruct();
-                record.Location.Sequence = creationSequence;
+                record.Location.Sequence = creationSequence + numel(settings) + 1;
                 setting = macd.model.PropertySetting(record.Path, record.Value, record.Location);
                 setting = macd.model.SourceSettingRebinder.scoped(setting, analysis.Layout, index);
                 settings(end + 1) = macd.model.SourceSettingRebinder.identity(setting, component.Settings, batch); %#ok<AGROW>
@@ -53,7 +55,7 @@ classdef SourceSettingRebinder
                 index = trace.Order(visit);
                 statement = analysis.Statements(index);
                 if isempty(regexp(statement.Text, pattern, "once")), continue, end
-                setting = macd.source.PropertySettingSyntax.assignment(statement, state.StateId, visit, trace.Certain(visit));
+                setting = macd.source.PropertySettingSyntax.assignment(statement, state.StateId, sequences.Assignment(visit), trace.Certain(visit));
                 setting = macd.model.SourceSettingRebinder.scoped(setting, analysis.Layout, index);
                 settings(end + 1) = macd.model.SourceSettingRebinder.identity(setting, component.Settings, batch); %#ok<AGROW>
             end
@@ -66,6 +68,63 @@ classdef SourceSettingRebinder
                     record.Location.StatementId = previous(1).StatementId;
                     settings(index) = macd.model.PropertySetting(record.Path, record.Value, record.Location);
                 end
+            end
+        end
+
+        function result = executionSequences(document, state, batch, registry)
+            % executionSequences Count recognized execution events exactly as the full parser does.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                state (1, 1) macd.model.CurrentSourceState
+                batch (1, 1) macd.source.SourcePatchBatch
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            analysis = state.Analysis;
+            offsets = zeros(1, numel(document.Components));
+            owners = zeros(size(offsets));
+            counts = zeros(size(offsets));
+            for index = 1:numel(offsets)
+                component = document.Components(index);
+                [span, valid] = batch.mapSpan(component.SourceSpans.Creation);
+                assert(valid && ~isempty(span));
+                offsets(index) = span.StartOffset;
+                owners(index) = analysis.statementIndices(span);
+                changed = any(arrayfun(@(edit) edit.Start <= component.SourceSpans.Creation.EndOffset && ...
+                    edit.End >= component.SourceSpans.Creation.StartOffset, batch.Edits));
+                if changed
+                    definition = registry.get(component.Factory, component.CreationArguments);
+                    [~, ~, settings, ~, supported] = macd.source.PropertySettingSyntax.factory( ...
+                        analysis.Statements(owners(index)), definition, state.StateId);
+                    assert(supported);
+                    counts(index) = numel(settings);
+                else
+                    counts(index) = nnz(string({component.Settings.Method}) == "nameValue");
+                end
+            end
+            trace = analysis.initialization(offsets);
+            result = struct("Trace", trace, "Creation", zeros(size(trace.Order)), ...
+                "Assignment", zeros(size(trace.Order)), "Owners", owners);
+            sequence = 0;
+            created = strings(1, 0);
+            names = string({document.Components.Name});
+            for visit = 1:numel(trace.Order)
+                index = trace.Order(visit);
+                owner = find(owners == index, 1);
+                if ~isempty(owner)
+                    sequence = sequence + 1;
+                    result.Creation(visit) = sequence;
+                    sequence = sequence + counts(owner);
+                    created(end + 1) = names(owner); %#ok<AGROW>
+                    continue
+                end
+                assignment = regexp(analysis.Statements(index).Text, ...
+                    "^app\.([A-Za-z]\w*)\.[A-Za-z]\w*(?:\.\w+)*\s*=", "tokens", "once");
+                if isempty(assignment) || ~any(created == string(assignment{1})), continue, end
+                sequence = sequence + 1;
+                result.Assignment(visit) = sequence;
             end
         end
     end
@@ -104,6 +163,7 @@ classdef SourceSettingRebinder
                 if valid && isequaln(span, current.ValueSpan)
                     record = current.toStruct();
                     record.Location.Id = old.Id;
+                    record.Location.SourceSnapshotId = old.SourceSnapshotId;
                     record.Location.StatementId = old.StatementId;
                     record.Location.InitializationScopeId = old.InitializationScopeId;
                     current = macd.model.PropertySetting(record.Path, record.Value, record.Location);

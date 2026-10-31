@@ -30,7 +30,7 @@ classdef PropertySourcePlan
             reused = reused && candidateContext.matches(candidate, registry) && emitted == source;
             if reused
                 [validated, reused] = candidateContext.configuration("combined", component.Name);
-                reused = reused && validated.Document.OriginalText == source;
+                reused = reused && validated.Document.CurrentText == source;
             end
             if reused
                 parsed = validated.Document;
@@ -57,7 +57,7 @@ classdef PropertySourcePlan
             arguments (Output)
                 result (1, 1) logical
             end
-            result = component.Origin == "parsed" && ...
+            result = macd.model.SourceOwnership.hasSource(component) && ...
                 (macd.source.SubtreeReparentSourceEdits.contains(document, component.Id) || ...
                 macd.source.PropertyInsertionPlanner.needsPlan(document, component));
         end

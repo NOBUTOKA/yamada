@@ -40,7 +40,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             states = document.getEffectivePropertyStates(testCase.Registry, component.Id);
             value = states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution;
             testCase.verifyEqual(value.EffectiveValue, 20);
-            testCase.verifyEqual(value.ExplicitKind, "pending");
+            testCase.verifyEqual(value.ExplicitKind, "literal");
             testCase.verifyEqual(value.LastSettingId, component.getSettings("Value").Id);
             document.undo();
             testCase.verifyEqual(macd.source.RoundTripGenerator(testCase.Registry).generate(document), document.OriginalText);

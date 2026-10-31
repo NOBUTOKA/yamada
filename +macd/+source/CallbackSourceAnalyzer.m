@@ -75,14 +75,14 @@ classdef CallbackSourceAnalyzer
                 if ~isempty(parent), parentFactory = parent.Factory; end
             end
             definitions = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
-            source = document.OriginalText;
+            source = document.CurrentText;
             analysis = document.sourceAnalysis();
             statements = analysis.Statements;
             layout = analysis.Layout;
 
             % Generated binding anchors are identical for every catalog callback on this component.
             generatedInsertion = ~isempty(definitions) && strlength(source) > 0 && ...
-                component.Origin == "generated" && ...
+                ~macd.model.SourceOwnership.hasSource(component) && ...
                 macd.source.CallbackSourceAnalyzer.canInsertGenerated(document, analysis);
 
             % Classify each binding using source occurrences rather than the last parsed value.
@@ -153,7 +153,7 @@ classdef CallbackSourceAnalyzer
             result = analysis.Layout.Valid && analysis.Layout.MethodAnchor > 0;
             if ~result, return, end
             % Source spans are mutable, so capture the current parsed set before sharing its answer.
-            parsed = document.Components([document.Components.Origin] == "parsed");
+            parsed = document.Components(arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             offsets = zeros(1, numel(parsed));
             for index = 1:numel(parsed)
                 span = parsed(index).SourceSpans.Creation;

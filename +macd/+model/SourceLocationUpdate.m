@@ -13,6 +13,8 @@ classdef SourceLocationUpdate
     properties (Access = private)
         BeforeSpans struct = struct()
         AfterSpans struct = struct()
+        BeforeMetadata struct = struct()
+        AfterMetadata struct = struct()
         BeforeSettings struct = struct([])
         BeforeProperties struct = struct([])
         AfterSettings struct = struct([])
@@ -20,18 +22,22 @@ classdef SourceLocationUpdate
     end
 
     methods
-        function obj = SourceLocationUpdate(component, batch, literalChanges)
+        function obj = SourceLocationUpdate(component, batch, literalChanges, execution, analysis)
             % SourceLocationUpdate Stage source positions and already validated literal replacements.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
                 batch (1, 1) macd.source.SourcePatchBatch
                 literalChanges struct = struct("SettingId", {}, "Value", {})
+                execution struct = struct()
+                analysis macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
             end
             arguments (Output)
                 obj (1, 1) macd.model.SourceLocationUpdate
             end
             obj.ComponentId = component.Id;
             obj.BeforeSpans = component.SourceSpans;
+            obj.BeforeMetadata = component.Metadata;
+            obj.AfterMetadata = component.Metadata;
             obj.BeforeSettings = component.settingSnapshot();
             obj.BeforeProperties = macd.model.SourceLocationUpdate.captureProperties(component);
             [obj.AfterSpans, obj.CanApply] = macd.model.SourceLocationUpdate.mapRanges(component.SourceSpans, batch);
@@ -41,9 +47,35 @@ classdef SourceLocationUpdate
                 [location, valid] = macd.model.SourceLocationUpdate.mapRanges(record.Location, batch);
                 obj.CanApply = obj.CanApply && valid;
                 record.Location = location;
+                if isfield(execution, "Trace") && valid
+                    indices = analysis.statementIndices(location.SourceSpan);
+                    visits = find(ismember(execution.Trace.Order, indices));
+                    if isscalar(visits)
+                        if record.Location.Method == "nameValue"
+                            peers = obj.BeforeSettings(1:index);
+                            ordinal = nnz(arrayfun(@(item) item.Location.Method == "nameValue" && ...
+                                item.Location.StatementId == record.Location.StatementId, peers));
+                            record.Location.Sequence = execution.Creation(visits) + ordinal;
+                        else
+                            record.Location.Sequence = execution.Assignment(visits);
+                        end
+                    else
+                        obj.CanApply = false;
+                    end
+                end
                 change = find(string({literalChanges.SettingId}) == record.Location.Id, 1);
                 if ~isempty(change), record.Value = literalChanges(change).Value; end
                 obj.AfterSettings(index) = record;
+            end
+            if isfield(execution, "Trace") && obj.CanApply
+                indices = analysis.statementIndices(obj.AfterSpans.Creation);
+                visits = find(ismember(execution.Trace.Order, indices));
+                if isscalar(visits)
+                    obj.AfterMetadata.InitializationCreationSequence = execution.Creation(visits);
+                    obj.AfterMetadata.InitializationCreationCertain = execution.Trace.Certain(visits);
+                else
+                    obj.CanApply = false;
+                end
             end
             if ~isempty(literalChanges)
                 ids = strings(1, numel(obj.AfterSettings));
@@ -71,6 +103,7 @@ classdef SourceLocationUpdate
             end
             assert(obj.CanApply, "macd:SourceLocationUpdate:NeedsRescan", "Changed token ownership requires syntax rebinding.");
             assert(component.Id == obj.ComponentId && isequaln(component.SourceSpans, obj.BeforeSpans) && ...
+                isequaln(component.Metadata, obj.BeforeMetadata) && ...
                 isequaln(component.settingSnapshot(), obj.BeforeSettings) && ...
                 isequaln(macd.model.SourceLocationUpdate.captureProperties(component), obj.BeforeProperties), ...
                 "macd:SourceLocationUpdate:StaleComponent", "The component changed after preparing its location update.");
@@ -84,6 +117,7 @@ classdef SourceLocationUpdate
             end
             obj.assertCurrent(component);
             component.SourceSpans = obj.AfterSpans;
+            component.Metadata = obj.AfterMetadata;
             component.restoreSettings(obj.AfterSettings);
             for projected = obj.Properties
                 entry = component.getProperty(projected.Path);
@@ -94,6 +128,49 @@ classdef SourceLocationUpdate
                     match = find(string({settings.Id}) == string(projected.Metadata.SourceSettingId), 1);
                     if ~isempty(match), entry.applySourceSetting(settings(match)); end
                 end
+            end
+        end
+    end
+
+    methods (Static)
+        function [diagnostics, regions] = annotations(document, batch)
+            % annotations Relocate preserved diagnostic and opaque-statement boundaries before publication.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            arguments (Output)
+                diagnostics macd.model.Diagnostic
+                regions macd.model.UnknownSourceRegion
+            end
+            diagnostics = macd.model.Diagnostic.empty;
+            for previous = document.Diagnostics
+                [span, valid] = batch.mapSpan(previous.SourceSpan);
+                assert(valid, "macd:SourceLiteralTransaction:WiderProof", "Diagnostic ownership changed.");
+                diagnostics(end + 1) = macd.model.Diagnostic(previous.Code, previous.Severity, ...
+                    previous.Message, previous.ComponentId, span); %#ok<AGROW>
+            end
+            regions = macd.model.UnknownSourceRegion.empty;
+            for previous = document.UnknownRegions
+                [span, valid] = batch.mapSpan(previous.Span);
+                assert(valid, "macd:SourceLiteralTransaction:WiderProof", "Opaque statement ownership changed.");
+                regions(end + 1) = macd.model.UnknownSourceRegion(previous.Text, span, previous.Reason); %#ok<AGROW>
+            end
+        end
+
+        function records = relocateSettings(records, batch)
+            % relocateSettings Rebase history-owned setting locations without changing occurrence identities.
+            arguments (Input)
+                records struct
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            arguments (Output)
+                records struct
+            end
+            for index = 1:numel(records)
+                [location, valid] = macd.model.SourceLocationUpdate.mapRanges(records(index).Location, batch);
+                assert(valid, "macd:SourceLocationUpdate:NeedsRescan", "History source locations cannot be rebased.");
+                records(index).Location = location;
             end
         end
     end

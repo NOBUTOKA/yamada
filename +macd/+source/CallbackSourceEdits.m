@@ -20,7 +20,7 @@ classdef CallbackSourceEdits
 
             % Validate snapshots and preserve removed handler bodies outside component spans.
             for edit = document.CallbackEdits(:)'
-                if edit.OriginalSource ~= document.OriginalText
+                if edit.OriginalSource ~= document.CurrentText
                     diagnostics(end + 1) = macd.model.Diagnostic("stale-callback-source", "error", ...
                         "Callback ownership belongs to a different source snapshot."); %#ok<AGROW>
                     return
@@ -48,7 +48,7 @@ classdef CallbackSourceEdits
                 if ~isempty(edit.BindingSpan)
                     edits(end + 1) = struct("Start", edit.BindingSpan.StartOffset, ...
                         "End", edit.BindingSpan.EndOffset, "Text", binding); %#ok<AGROW>
-                elseif edit.Action == "Add" && component.Origin == "parsed"
+                elseif edit.Action == "Add" && macd.model.SourceOwnership.hasSource(component)
                     if edit.BindingAnchor <= 0
                         diagnostics(end + 1) = macd.model.Diagnostic("unsafe-callback-anchor", "error", ...
                             "The callback binding insertion anchor is unavailable."); %#ok<AGROW>

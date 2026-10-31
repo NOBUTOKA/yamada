@@ -410,9 +410,8 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
 
-            % Generate through the matching source owner without writing a file.
-            [source, diagnostics] = app.generateSource();
-            app.refreshDiagnostics(diagnostics);
+            % Diff reads the committed source without generating or revalidating it.
+            source = app.Document.CurrentText;
             if strlength(source) == 0
                 app.setStatus("Diff preview is unavailable while generation has errors.");
                 app.focusEditor();
@@ -482,6 +481,7 @@ classdef yamada < handle
                 status (1, 1) string
             end
 
+            document.initializeSource(app.Registry);
             app.closeCallbackDialog();
             app.clearInspector();
             app.Document = document;
@@ -532,11 +532,6 @@ classdef yamada < handle
             if ~retainHierarchy && strlength(app.HierarchyRenameId) > 0
                 app.endHierarchyRename(false);
             end
-            if ~isempty(app.Document.CallbackEdits) || ...
-                    ~isempty(app.Document.RenameEdits) || ...
-                    any(cellfun(@(edit) any(edit.Kind == ["callback", "rename"]), app.Document.History))
-                app.generateSource();
-            end
             if ~retainHierarchy
                 app.refreshHierarchy();
             end
@@ -570,10 +565,6 @@ classdef yamada < handle
             app.InteractionComponentId = "";
             app.InteractionKind = "";
             if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
-            if ~isempty(app.Document.CallbackEdits) || ~isempty(app.Document.RenameEdits) || ...
-                    any(cellfun(@(edit) any(edit.Kind == ["callback", "rename"]), app.Document.History))
-                app.generateSource();
-            end
             [applied, diagnostics, geometryChanged] = app.PreviewRenderer.synchronize( ...
                 app.Document, app.PreviewHandles, request);
             if ~applied
@@ -819,8 +810,7 @@ classdef yamada < handle
             if retainHierarchy, app.refreshHierarchyLabels(); end
             if (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
                     (retainHierarchy && app.PreviewRenderer.acknowledgeRenameChanges(app.Document))
-                % History restores intentions; refresh generated source without rebuilding Preview.
-                app.generateSource();
+                % History already restored exact current source without rebuilding Preview.
                 app.refreshSourceViews();
             else
                 app.refreshShell(retainHierarchy);
@@ -846,8 +836,7 @@ classdef yamada < handle
             if retainHierarchy, app.refreshHierarchyLabels(); end
             if (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
                     (retainHierarchy && app.PreviewRenderer.acknowledgeRenameChanges(app.Document))
-                % History restores intentions; refresh generated source without rebuilding Preview.
-                app.generateSource();
+                % History already restored exact current source without rebuilding Preview.
                 app.refreshSourceViews();
             else
                 app.refreshShell(retainHierarchy);
@@ -3610,13 +3599,13 @@ classdef yamada < handle
                 diagnostics macd.model.Diagnostic
             end
 
-            % RoundTripGenerator delegates new documents to the canonical generator.
+            % All editor commands publish current source before the save/output boundary.
             if strlength(targetClassName) == 0
                 targetClassName = app.Document.ClassName;
             end
-            document = app.Document;
-            if ~updatePreview, document = document.structuralCandidate(); end
-            [source, diagnostics] = macd.source.RoundTripGenerator(app.Registry).generate(document);
+            app.Document.initializeSource(app.Registry);
+            source = app.Document.CurrentText;
+            diagnostics = app.Document.validatePropertyCommit(app.Registry);
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                 return
             end

@@ -76,7 +76,7 @@ classdef PropertyStateResolver
             end
 
             % Conditional or unvisited factories cannot prove that their object exists.
-            if ~isempty(document) && strlength(document.OriginalText) > 0 && component.Origin == "parsed" && ...
+            if ~isempty(document) && strlength(document.CurrentText) > 0 && macd.model.SourceOwnership.hasSource(component) && ...
                     (~isfield(component.Metadata, "InitializationCreationCertain") || ...
                     ~component.Metadata.InitializationCreationCertain)
                 for index = 1:numel(states)
@@ -184,7 +184,7 @@ classdef PropertyStateResolver
 
             % New settings have no source span yet; legacy entries also use this path.
             entries = component.Properties;
-            if ~isempty(settings), entries = entries([entries.Origin] == "generated"); end
+            if ~isempty(settings), entries = entries(arrayfun(@(entry) isempty(entry.SourceSpan), entries)); end
             if ~isempty(entries), entries = macd.model.PropertyApplicationPlanner.order(entries, definitions); end
             for entry = entries
                 id = "pending:" + component.Id + ":" + entry.Path;
@@ -376,7 +376,7 @@ classdef PropertyStateResolver
                 names (1, :) string
             end
             names = strings(1, 0);
-            if component.Origin == "parsed" || isempty(registry), return, end
+            if macd.model.SourceOwnership.hasSource(component) || isempty(registry), return, end
             definition = registry.get(component.Factory, component.CreationArguments);
             first = macd.model.PropertyApplicationPlanner.nameValueStart(definition, component.CreationArguments);
             for index = first:2:numel(component.CreationArguments) - 1

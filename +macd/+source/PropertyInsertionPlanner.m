@@ -14,10 +14,10 @@ classdef PropertyInsertionPlanner
             arguments (Output)
                 result (1, 1) logical
             end
-            result = component.Origin == "parsed" && ...
-                any(arrayfun(@(entry) entry.Origin == "generated" && isempty(entry.SourceSpan) && ...
+            result = macd.model.SourceOwnership.hasSource(component) && ...
+                any(arrayfun(@(entry) isempty(entry.SourceSpan) && ...
                 entry.ValueKind == "literal" && ~isfield(entry.Metadata, "SubtreeReferenceId"), component.Properties)) && ...
-                isscalar(document.OriginalText) && strlength(document.OriginalText) > 0;
+                isscalar(document.CurrentText) && strlength(document.CurrentText) > 0;
             if ~result, return, end
             for pending = document.PendingEdits
                 edit = pending{1};
@@ -194,7 +194,7 @@ classdef PropertyInsertionPlanner
                 if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics), return, end
                 edits = struct("Start", {}, "End", {}, "Text", {});
             else
-                source = document.OriginalText;
+                source = document.CurrentText;
             end
             [accepted, candidate] = macd.source.PropertyInsertionPlanner.candidate( ...
                 source, edits, document.sourceComponentName(owners(1).Id), ...
@@ -235,7 +235,7 @@ classdef PropertyInsertionPlanner
             entries = macd.model.PropertyEntry.empty;
             for entry = reshape(component.Properties, 1, [])
                 if entry.ValueKind ~= "literal" || isfield(entry.Metadata, "SubtreeReferenceId"), continue, end
-                if entry.Origin == "generated" && isempty(entry.SourceSpan)
+                if isempty(entry.SourceSpan)
                     entries(end + 1) = entry; %#ok<AGROW>
                 elseif isfield(entry.Metadata, "SourceSettingId")
                     settings = component.getSettings(entry.Path);
@@ -265,7 +265,7 @@ classdef PropertyInsertionPlanner
             entries = entries(arrayfun(@(entry) isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
                 ~isfield(entry.Metadata, "SubtreeReferenceId"), entries));
             if isempty(entries), return, end
-            source = document.OriginalText;
+            source = document.CurrentText;
             if isfield(document.Metadata, "SourceSnapshotText") && document.Metadata.SourceSnapshotText ~= source
                 error("macd:PropertyInsertionPlanner:UnsafePlacement", "The source baseline changed without reparsing.");
             end
@@ -276,6 +276,8 @@ classdef PropertyInsertionPlanner
             parentFactory = "";
             if ~isempty(parent), parentFactory = parent.Factory; end
             definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+            entries = entries(ismember(string({entries.Path}), string({definitions([definitions.IsEditable]).Path})));
+            if isempty(entries), return, end
             entries = macd.model.PropertyApplicationPlanner.order(entries, definitions);
             sourceSettings = component.Settings(string({component.Settings.Method}) ~= "generated");
             if any(ismember(string({entries.Path}), string({sourceSettings.Path})))
@@ -290,7 +292,7 @@ classdef PropertyInsertionPlanner
             if ~isscalar(creation)
                 error("macd:PropertyInsertionPlanner:UnsafePlacement", "The factory statement is not uniquely owned.");
             end
-            parsed = document.Components([document.Components.Origin] == "parsed");
+            parsed = document.Components(arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             offsets = arrayfun(@(record) record.SourceSpans.Creation.StartOffset, parsed);
             initialization = analysis.initialization(offsets);
             order = initialization.Order;

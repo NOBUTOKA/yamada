@@ -42,14 +42,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             states = document.getEffectivePropertyStates(registry, component.Id);
             state = states(arrayfun(@(entry) entry.Definition.Path == "Value", states)).Resolution;
             testCase.verifyEqual(state.EffectiveValue, 75);
-            testCase.verifyEqual(state.ExplicitValue, 20);
+            testCase.verifyEqual(state.ExplicitValue, 75);
             testCase.verifyEqual(state.LastSettingId, original.Id);
             document.undo();
             states = document.getEffectivePropertyStates(registry, component.Id);
             testCase.verifyEqual(states(arrayfun(@(entry) entry.Definition.Path == "Value", states)).Resolution.EffectiveValue, 50);
             testCase.verifyFalse(document.IsDirty);
             document.redo();
-            testCase.verifyEqual(component.getSettings("Value").LiteralValue, 20);
+            testCase.verifyEqual(component.getSettings("Value").LiteralValue, 75);
             testCase.verifyEqual(component.getProperty("Value").LiteralValue, 75);
         end
 
@@ -132,8 +132,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             [document, registry, component] = testCase.fixture();
             original = component.getSettings("Text");
             document.setProperty(component.Id, "Text", "Changed", registry);
-            testCase.verifyEqual(document.History{end}.TargetSettingId, original.Id);
-            testCase.verifyEqual(component.getSettings("Text").LiteralValue, "First");
+            testCase.verifyEqual(component.getSettings("Text").Id, original.Id);
+            testCase.verifyEqual(component.getSettings("Text").LiteralValue, "Changed");
             document.setProperty(component.Id, "Text", "Changed", registry);
             document.setPropertyBatch(component.Id, ...
                 macd.model.PropertyTransaction.singleChange("Text", "Changed"), registry);
@@ -166,14 +166,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             component = document.insertComponent(registry, "uilabel", document.RootComponentId);
             document.setProperty(component.Id, "Text", "First");
             original = component.getSettings("Text");
-            testCase.verifyEqual(original.Method, "generated");
-            testCase.verifyEmpty(original.SourceSpan);
+            testCase.verifyEqual(original.Method, "assignment");
+            testCase.verifyNotEmpty(original.SourceSpan);
             document.setProperty(component.Id, "Text", "Second");
             document.resetProperty(component.Id, "Text");
             testCase.verifyEmpty(component.getSettings("Text"));
             document.undo();
             testCase.verifyEqual(component.getSettings("Text").Id, original.Id);
-            testCase.verifyEqual(component.getSettings("Text").LiteralValue, "First");
+            testCase.verifyEqual(component.getSettings("Text").LiteralValue, "Second");
             testCase.verifyEqual(component.getProperty("Text").LiteralValue, "Second");
             document.undo();
             testCase.verifyEqual(component.getProperty("Text").LiteralValue, "First");

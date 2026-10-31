@@ -19,7 +19,7 @@ classdef SubtreeSourceEdits
             spans = macd.model.SourceSpan.empty;
             names = strings(1, 0);
             for component = components
-                if component.Origin ~= "parsed", continue, end
+                if ~macd.model.SourceOwnership.hasSource(component), continue, end
                 own = [component.SourceSpans.Declaration component.SourceSpans.Creation];
                 if numel(own) ~= 2 || any(~arrayfun(@(span) span.isKnown(), own))
                     error("macd:SubtreeSourceEdits:UnsafeDeletion", "Declaration or creation ownership is unknown.");
@@ -33,7 +33,7 @@ classdef SubtreeSourceEdits
                 for entry = component.Properties
                     if isempty(entry.SourceSpan) || ~entry.SourceSpan.isKnown()
                         % Generated literal assignments do not exist in original source.
-                        if entry.Origin == "generated", continue, end
+                        if isempty(entry.SourceSpan), continue, end
                         error("macd:SubtreeSourceEdits:UnsafeDeletion", "Property ownership is unknown.");
                     end
                     own(end + 1) = entry.SourceSpan; %#ok<AGROW>
@@ -85,12 +85,12 @@ classdef SubtreeSourceEdits
                     if any(visited == record.Id), continue, end
                     visited(end + 1) = record.Id; %#ok<AGROW>
                     component = document.getComponent(record.Id);
-                    if record.Origin ~= "parsed" || isempty(component) || any(deletedIds == record.Id) || ...
+                    if ~macd.model.SourceOwnership.hasSource(record) || isempty(component) || any(deletedIds == record.Id) || ...
                             ~any(deletedIds == record.ParentId) || component.ParentId == record.ParentId
                         continue
                     end
                     sourceSpan = record.SourceSpans.Creation;
-                    creation = extractBetween(document.OriginalText, sourceSpan.StartOffset, sourceSpan.EndOffset);
+                    creation = extractBetween(document.CurrentText, sourceSpan.StartOffset, sourceSpan.EndOffset);
                     pattern = '^app\.\w+\s*=\s*\w+\s*\(\s*(?<reference>app\s*\.\s*\w+)';
                     token = regexp(creation, pattern, 'names', 'once');
                     prefix = regexp(creation, pattern, 'match', 'once');

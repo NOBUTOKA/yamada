@@ -27,7 +27,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
                     macd.model.PropertyTransaction.singleChange("FontSize", 31), registry);
                 testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), ...
                     replace(source, target, replacement));
-                testCase.verifyEqual(label.Settings, settings);
+                testCase.verifyEqual(string({label.Settings.Id}), string({settings.Id}));
+                testCase.verifyEqual([label.getSettings("FontSize").LiteralValue], [settings(1:end - 1).LiteralValue 31]);
                 testCase.verifyEqual(document.OriginalText, source);
                 document.undo();
                 document.undo();
@@ -74,7 +75,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
             [generated, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(generated, replace(source, """Third""", """Updated"""));
-            testCase.verifyEqual([component.getSettings("Text").LiteralValue], ["First", "Second", "Third"]);
+            testCase.verifyEqual([component.getSettings("Text").LiteralValue], ["First", "Second", "Updated"]);
         end
 
         function constructorEditPreservesBothSyntaxSpellingsAndComments(testCase)
@@ -147,7 +148,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
             restored = snapshot.materialize();
             restored.setProperty("Text", "Other");
             testCase.verifyEqual(component.getProperty("Text").LiteralValue, "Requested");
-            testCase.verifyEqual([restored.getSettings("Text").LiteralValue], ["First", "Second"]);
+            testCase.verifyEqual([restored.getSettings("Text").LiteralValue], ["First", "Requested"]);
             restoredSettings = restored.getSettings("Text");
             originalSettings = component.getSettings("Text");
             testCase.verifyEqual(string({restoredSettings.Id}), string({originalSettings.Id}));

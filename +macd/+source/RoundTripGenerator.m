@@ -34,19 +34,19 @@ classdef RoundTripGenerator
 
             % New documents keep the canonical generator as their source owner.
             evaluationScope = document.evaluationContext(obj.Registry).readScope(); %#ok<NASGU>
-            if strlength(document.OriginalText) == 0
+            if strlength(document.CurrentText) == 0
                 [source, diagnostics] = macd.source.NewAppGenerator(obj.Registry).generate(document);
                 return
             end
             if isfield(document.Metadata, "SourceSnapshotText") && ...
-                    document.Metadata.SourceSnapshotText ~= document.OriginalText
+                    document.Metadata.SourceSnapshotText ~= document.CurrentText
                 source = "";
                 diagnostics = macd.model.Diagnostic("stale-source-snapshot", "error", ...
                     "The source baseline changed without reparsing its setting locations.");
                 document.Diagnostics = diagnostics;
                 return
             end
-            source = document.OriginalText;
+            source = document.CurrentText;
             diagnostics = macd.model.Diagnostic.empty;
             % Only the insertion planner may defer validation until its complete source is parsed.
             if isempty(obj.PreparedInsertions)
@@ -178,7 +178,7 @@ classdef RoundTripGenerator
             end
 
             % Add generated components only beside a parsed declaration/init section.
-            generated = document.Components([document.Components.Origin] == "generated");
+            generated = document.Components(~arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             if ~isempty(generated)
                 [additionEdits, diagnostic] = obj.additionEdits(source, document, generated, relocationAnchor, ~isempty(movedIds));
                 if ~isempty(diagnostic)
@@ -316,7 +316,7 @@ classdef RoundTripGenerator
             end
             edits = struct("Start", {}, "End", {}, "Text", {});
             diagnostic = macd.model.Diagnostic.empty;
-            parsed = document.Components([document.Components.Origin] == "parsed");
+            parsed = document.Components(arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             if isempty(parsed)
                 diagnostic = macd.model.Diagnostic("ambiguous-component-insertion", ...
                     "error", "No parsed component section is available for safe insertion.");
@@ -348,7 +348,7 @@ classdef RoundTripGenerator
             for index = 1:numel(components)
                 component = components(index);
                 parent = document.getComponent(component.ParentId);
-                if isempty(parent) || parent.Origin == "generated" && ...
+                if isempty(parent) || ~macd.model.SourceOwnership.hasSource(parent) && ...
                         ~any(string({components(1:index - 1).Id}) == parent.Id)
                     diagnostic = obj.error("ambiguous-component-insertion", component, ...
                         "Generated component parent initialization is not anchored.");

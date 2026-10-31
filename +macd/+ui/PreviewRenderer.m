@@ -54,7 +54,14 @@ classdef PreviewRenderer < handle
                 applied = true;
                 return
             end
-            if ~isequaln(obj.maskRequestedInputs(obj.RenderedInputs, request), obj.maskRequestedInputs(inputs, request))
+            beforeComparison = obj.RenderedInputs;
+            afterComparison = inputs;
+            if document.isPropertySourceTransition(obj.RenderedInputs.OriginalText, request)
+                mappings = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
+                beforeComparison = obj.visualSourceInputs(beforeComparison, mappings);
+                afterComparison = obj.visualSourceInputs(afterComparison, mappings);
+            end
+            if ~isequaln(obj.maskRequestedInputs(beforeComparison, request), obj.maskRequestedInputs(afterComparison, request))
                 obj.FallbackReason = "unrelated-inputs";
                 return
             end
@@ -142,10 +149,11 @@ classdef PreviewRenderer < handle
             if ~safe || isempty(fieldnames(obj.RenderedInputs)) || obj.RenderedRegistryRevision ~= obj.Registry.Revision
                 return
             end
-            % Callback bindings are never installed in Safe Preview; every visual input must still match.
-            before = obj.RenderedInputs;
-            before.CallbackEdits = inputs.CallbackEdits;
-            if ~isequaln(before, inputs), return, end
+            % Source position changes are harmless only for an exact published callback transaction.
+            if ~document.isSourceOnlyTransition(obj.RenderedInputs.OriginalText, "callback") || ...
+                    ~obj.sameSourceOnlyInputs(obj.RenderedInputs, inputs, false)
+                return
+            end
             obj.RenderedInputs = inputs;
             obj.FallbackReason = "";
             applied = true;
@@ -166,14 +174,10 @@ classdef PreviewRenderer < handle
                     obj.RenderedRegistryRevision ~= obj.Registry.Revision
                 return
             end
-            before = obj.RenderedInputs;
-            if numel(before.Components) ~= numel(inputs.Components), return, end
-            % Native identity, properties, order, hierarchy, and source inputs must all remain identical.
-            before.RenameEdits = inputs.RenameEdits;
-            for index = 1:numel(before.Components)
-                before.Components(index).Name = inputs.Components(index).Name;
+            if ~document.isSourceOnlyTransition(obj.RenderedInputs.OriginalText, "rename") || ...
+                    ~obj.sameSourceOnlyInputs(obj.RenderedInputs, inputs, true)
+                return
             end
-            if ~isequaln(before, inputs), return, end
             obj.RenderedInputs = inputs;
             obj.FallbackReason = "";
             applied = true;
@@ -267,6 +271,86 @@ classdef PreviewRenderer < handle
     end
 
     methods (Access = private)
+        function result = sameSourceOnlyInputs(obj, before, after, allowRename)
+            % sameSourceOnlyInputs Compare visual model values independently from published source coordinates.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                before (1, 1) struct
+                after (1, 1) struct
+                allowRename (1, 1) logical
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            if numel(before.Components) ~= numel(after.Components), return, end
+            mappings = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
+            if allowRename
+                for index = 1:numel(before.Components)
+                    old = before.Components(index);
+                    current = after.Components(index);
+                    if old.Id ~= current.Id, return, end
+                    if old.Name ~= current.Name
+                        mappings(end + 1) = struct("ComponentId", old.Id, "Kind", "property", ...
+                            "OldName", old.Name, "NewName", current.Name); %#ok<AGROW>
+                    end
+                end
+            end
+            before = obj.visualSourceInputs(before, mappings);
+            after = obj.visualSourceInputs(after, struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {}));
+            result = isequaln(before, after);
+        end
+
+        function inputs = visualSourceInputs(obj, inputs, mappings)
+            % visualSourceInputs Strip only source ownership from a proven source-only command's visual comparison.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                inputs (1, 1) struct
+                mappings struct
+            end
+            arguments (Output)
+                inputs (1, 1) struct
+            end
+            inputs = rmfield(inputs, ["OriginalText", "Metadata", "UnknownRegions", "CallbackEdits", "RenameEdits"]);
+            for index = 1:numel(inputs.Components)
+                component = inputs.Components(index);
+                parentFactory = "";
+                parent = inputs.Components(string({inputs.Components.Id}) == component.ParentId);
+                if ~isempty(parent), parentFactory = parent.Factory; end
+                callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+                callbackPaths = string({callbacks.Path});
+                properties = component.Properties;
+                properties = properties(~ismember(string({properties.Path}), callbackPaths));
+                if ~isempty(properties), properties = rmfield(properties, ["SourceSpan", "Metadata"]); end
+                for propertyIndex = 1:numel(properties)
+                    properties(propertyIndex).SourceExpression = macd.source.ComponentNameRewriter.rewrite( ...
+                        properties(propertyIndex).SourceExpression, mappings);
+                end
+                settings = component.Settings;
+                settings = settings(~ismember(string({settings.Path}), callbackPaths));
+                for settingIndex = 1:numel(settings)
+                    location = settings(settingIndex).Location;
+                    expression = "";
+                    if isfield(location, "SourceExpression")
+                        expression = macd.source.ComponentNameRewriter.rewrite(location.SourceExpression, mappings);
+                    end
+                    settings(settingIndex).Location = struct("IsCertain", location.IsCertain, ...
+                        "IsEditable", location.IsEditable, "Method", location.Method, "SourceExpression", expression);
+                end
+                if isempty(properties), properties = struct([]); end
+                if isempty(settings), settings = struct([]); end
+                definition = obj.Registry.get(component.Factory, component.CreationArguments);
+                first = macd.model.PropertyApplicationPlanner.nameValueStart(definition, component.CreationArguments);
+                inputs.Components(index).CreationArguments = component.CreationArguments(1:first - 1);
+                inputs.Components(index).Properties = properties;
+                inputs.Components(index).Settings = settings;
+                inputs.Components(index).Metadata = struct();
+                inputs.Components(index).SourceSpans = struct();
+                match = find(string({mappings.ComponentId}) == component.Id, 1);
+                if ~isempty(match), inputs.Components(index).Name = mappings(match).NewName; end
+            end
+        end
+
         function prepared = prepareNativeTransition(~, target, states, indices)
             % prepareNativeTransition Bridge disjoint valid ranges and item-data replacements.
             arguments (Input)

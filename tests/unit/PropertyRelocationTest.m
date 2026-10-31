@@ -22,7 +22,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             testCase.verifyEqual(string({history.Method}), ["nameValue" "assignment" "assignment"]);
             testCase.verifyEqual([history.LiteralValue], [10 10 10]);
             original = component.Settings(string({component.Settings.Method}) ~= "generated");
-            testCase.verifyEqual(string({original.Id}), ids);
+            testCase.verifyEqual(string({original(ismember(string({original.Id}), ids)).Id}), ids);
             document.undo();
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), before);
             document.redo();
@@ -83,7 +83,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             value = states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution;
             testCase.verifyEqual(value.EffectiveValue, 20);
             testCase.verifyEqual(value.LastSettingId, pendingId);
-            testCase.verifyEqual(value.ExplicitKind, "pending");
+            testCase.verifyEqual(value.ExplicitKind, "literal");
             testCase.verifyNumElements(strfind(source, "app.Control.Value = 20;"), 1);
         end
 

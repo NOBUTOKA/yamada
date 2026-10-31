@@ -40,7 +40,7 @@ classdef DocumentEditAvailability
                 end
                 removed = document.Components(ismember(string({document.Components.Id}), ids));
                 references = macd.source.SubtreeSourceEdits.detachedParentReferences(document, ids);
-                macd.source.SubtreeSourceEdits.deletion(document.OriginalText, removed, references);
+                macd.source.SubtreeSourceEdits.deletion(document.CurrentText, removed, references);
                 state.Enabled = true;
             catch exception
                 state.Reason = string(exception.message);
@@ -298,7 +298,7 @@ classdef DocumentEditAvailability
                 snapshot (1, 1) macd.model.SubtreeSnapshot
                 moving (1, 1) logical = false
             end
-            parsed = snapshot.Records(string({snapshot.Records.Origin}) == "parsed");
+            parsed = snapshot.Records(arrayfun(@macd.model.SourceOwnership.hasSource, snapshot.Records));
             if isempty(parsed), return, end
             analysis = document.sourceAnalysis();
             statements = analysis.Statements;

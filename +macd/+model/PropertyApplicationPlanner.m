@@ -83,7 +83,7 @@ classdef PropertyApplicationPlanner
 
             % Native preview construction already consumes projected name-value arguments.
             canonical = macd.model.PropertyApplicationPlanner.forComponent(component, document, registry);
-            if component.Origin ~= "parsed" || isempty(canonical)
+            if ~macd.model.SourceOwnership.hasSource(component) || isempty(canonical)
                 entries = canonical;
                 [entries, positionReason] = macd.model.PositionAliasPolicy.forPreview(entries, component, document, registry);
                 [entries, gridReason] = macd.model.GridLayoutStatePolicy.forPreview(entries, component, document, registry);
@@ -108,7 +108,7 @@ classdef PropertyApplicationPlanner
             end
 
             % Source ownership is fixed; pending source placement is planned separately.
-            pending = canonical([canonical.Origin] == "generated");
+            pending = canonical(arrayfun(@(entry) isempty(entry.SourceSpan), canonical));
             entries = [entries pending];
             image = canonical(string({canonical.Path}) == "ImageSource");
             if ~isempty(image) && ~any(string({entries.Path}) == "ImageSource")

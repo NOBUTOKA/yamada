@@ -24,7 +24,7 @@ classdef GridLayoutStatePolicy
                 members = [grid, document.Components(string({document.Components.ParentId}) == grid.Id)];
                 planned = macd.model.GridLayoutStatePolicy.pendingGridPlans(members, document, registry);
                 result = result || nnz(planned) > 1 || ...
-                    (any(planned) && any(string({members.Origin}) ~= "parsed"));
+                    (any(planned) && any(~arrayfun(@macd.model.SourceOwnership.hasSource, members)));
             end
         end
 
@@ -233,7 +233,7 @@ classdef GridLayoutStatePolicy
             children = document.Components(string({document.Components.ParentId}) == grid.Id);
             members = [grid children];
             planned = macd.model.GridLayoutStatePolicy.pendingGridPlans(members, document, registry);
-            if nnz(planned) == 1 && all(string({members.Origin}) == "parsed")
+            if nnz(planned) == 1 && all(arrayfun(@macd.model.SourceOwnership.hasSource, members))
                 % Reuse actual source placement when a different member owns the pending setting.
                 try
                     context = document.evaluationContext(registry);
@@ -356,15 +356,15 @@ classdef GridLayoutStatePolicy
             tail = 0;
             for member = members
                 if ~isempty(member.Settings), tail = max(tail, max([member.Settings.Sequence])); end
-                if member.Origin == "parsed" && isfield(member.Metadata, "InitializationCreationSequence")
+                if macd.model.SourceOwnership.hasSource(member) && isfield(member.Metadata, "InitializationCreationSequence")
                     tail = max(tail, member.Metadata.InitializationCreationSequence);
                 end
             end
             for index = 1:numel(members)
                 member = members(index);
                 sequence = tail + 1;
-                known = member.Origin ~= "parsed";
-                if member.Origin == "parsed" && isfield(member.Metadata, "InitializationCreationSequence")
+                known = ~macd.model.SourceOwnership.hasSource(member);
+                if macd.model.SourceOwnership.hasSource(member) && isfield(member.Metadata, "InitializationCreationSequence")
                     sequence = member.Metadata.InitializationCreationSequence;
                     known = member.Metadata.InitializationCreationCertain;
                 end
@@ -384,7 +384,7 @@ classdef GridLayoutStatePolicy
                         "Value", {value}, "Known", setting.IsCertain && setting.ValueKind == "literal", "Id", setting.Id); %#ok<AGROW>
                 end
                 entries = member.Properties;
-                if member.Origin == "parsed", entries = entries(string({entries.Origin}) == "generated"); end
+                if macd.model.SourceOwnership.hasSource(member), entries = entries(arrayfun(@(entry) isempty(entry.SourceSpan), entries)); end
                 definition = registry.getEffectiveProperties(member.Factory, "uigridlayout", member.CreationArguments);
                 entries = macd.model.PropertyApplicationPlanner.order(entries, definition);
                 for entry = entries
@@ -395,7 +395,7 @@ classdef GridLayoutStatePolicy
                         "Id", "pending:" + member.Id + ":" + entry.Path); %#ok<AGROW>
                 end
             end
-            generated = string({members.Origin}) ~= "parsed";
+            generated = ~arrayfun(@macd.model.SourceOwnership.hasSource, members);
             if any(generated) && any(~generated)
                 % Use the generator's shared anchor, including later ancestor geometry.
                 certain = true;
@@ -445,8 +445,7 @@ classdef GridLayoutStatePolicy
                 end
                 % Individual insertion checks still validate ownership, literals, and source order.
                 entries = member.Properties;
-                entries = entries(arrayfun(@(entry) entry.Origin == "generated" && ...
-                    isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
+                entries = entries(arrayfun(@(entry) isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
                     ~isfield(entry.Metadata, "SubtreeReferenceId"), entries));
                 if isempty(entries), continue, end
                 parent = document.getComponent(member.ParentId);

@@ -40,6 +40,11 @@ classdef NewAppGenerator
                 diagnostics macd.model.Diagnostic
             end
 
+            % Once canonical source exists, use the same source-preserving path as opened documents.
+            if strlength(document.CurrentText) > 0
+                [source, diagnostics] = macd.source.RoundTripGenerator(obj.Registry).generate(document);
+                return
+            end
             % Block generation when shared validation finds unsafe state.
             evaluationScope = document.evaluationContext(obj.Registry).readScope(); %#ok<NASGU>
             diagnostics = macd.validation.ModelValidator.validate( ...

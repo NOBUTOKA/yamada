@@ -34,7 +34,7 @@ classdef SubtreeCopyPlanner
                 registry (1, 1) macd.model.ComponentRegistry
                 callbackPaths (1, :) string
             end
-            if record.Origin ~= "parsed", return, end
+            if ~macd.model.SourceOwnership.hasSource(record), return, end
             analysis = document.sourceAnalysis();
             statements = analysis.Statements;
             span = record.SourceSpans.Creation;
@@ -72,10 +72,11 @@ classdef SubtreeCopyPlanner
             frozen = snapshot.materialize();
             for component = frozen
                 sources = component.Settings(string({component.Settings.Method}) ~= "generated");
-                if component.Origin == "parsed" && ~isempty(sources) && ...
-                        isfield(context.Metadata, "SourceSnapshotId") && ...
-                        any(string({sources.SourceSnapshotId}) ~= string(context.Metadata.SourceSnapshotId))
-                    error("macd:DocumentModel:UnsafeSubtreeCopy", "The unprepared snapshot belongs to a different source version.");
+                current = document.getComponent(component.Id);
+                if macd.model.SourceOwnership.hasSource(component) && ~isempty(sources) && ...
+                        (isempty(current) || ~isequaln(component.SourceSpans, current.SourceSpans) || ...
+                        ~isequaln(component.settingSnapshot(), current.settingSnapshot()))
+                    error("macd:DocumentModel:UnsafeSubtreeCopy", "The unprepared snapshot belongs to a different source state.");
                 end
                 index = find(string({context.Components.Id}) == component.Id, 1);
                 if isempty(index), context.Components(end + 1) = component; else, context.Components(index) = component; end

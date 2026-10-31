@@ -25,6 +25,7 @@ classdef SavedSourceCheckpoint
     end
 
     properties (Access = private)
+        InputContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         BaselineText string = ""
         BaselineSnapshotId string = ""
         BaselineClassName string = ""
@@ -48,7 +49,7 @@ classdef SavedSourceCheckpoint
             obj.SourceText = macd.source.SourceWriter.normalize(source, document.LineEnding);
             obj.FilePath = filePath;
             obj.HistoryIndex = document.HistoryIndex;
-            obj.BaselineText = document.OriginalText;
+            obj.BaselineText = document.CurrentText;
             obj.BaselineClassName = document.ClassName;
             obj.LineEnding = document.LineEnding;
             if isfield(document.Metadata, "SourceSnapshotId")
@@ -88,6 +89,7 @@ classdef SavedSourceCheckpoint
                     "SavedId", matches.Id, "Name", component.Name);
             end
             obj.Snapshot = macd.model.SubtreeSnapshot(saved, saved.RootComponentId);
+            obj.InputContext = document.evaluationContext(registry);
             obj.assertCurrent(document, registry);
         end
 
@@ -102,7 +104,7 @@ classdef SavedSourceCheckpoint
             % Never attach saved locations to a changed source epoch or history branch.
             epoch = "";
             if isfield(document.Metadata, "SourceSnapshotId"), epoch = string(document.Metadata.SourceSnapshotId); end
-            if document.HistoryIndex ~= obj.HistoryIndex || document.OriginalText ~= obj.BaselineText || ...
+            if document.HistoryIndex ~= obj.HistoryIndex || document.CurrentText ~= obj.BaselineText || ...
                     epoch ~= obj.BaselineSnapshotId || document.ClassName ~= obj.BaselineClassName || ...
                     document.LineEnding ~= obj.LineEnding || ...
                     ~isequal(string({document.Components.Id}), string({obj.ComponentMap.ComponentId})) || ...
@@ -110,10 +112,14 @@ classdef SavedSourceCheckpoint
                 error("macd:SavedSourceCheckpoint:StaleCheckpoint", "The document changed while saving.");
             end
 
-            % Recheck detached intentions, including callback, rename, and subtree edits.
-            candidate = document.structuralCandidate();
-            [current, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
-            macd.model.SavedSourceCheckpoint.assertDiagnostics(diagnostics);
+            % Current source is already published; the input stamp guards low-level mutations too.
+            if isempty(obj.InputContext) || ~obj.InputContext.matches(document, registry)
+                error("macd:SavedSourceCheckpoint:StaleCheckpoint", "The document changed while saving.");
+            end
+            current = document.CurrentText;
+            if strlength(current) == 0
+                current = macd.source.RoundTripGenerator(registry).generate(document.structuralCandidate());
+            end
             [current, diagnostics] = macd.source.AppClassIdentityRewriter.rewrite(current, obj.ClassName);
             macd.model.SavedSourceCheckpoint.assertDiagnostics(diagnostics);
             if macd.source.SourceWriter.normalize(current, obj.LineEnding) ~= obj.SourceText

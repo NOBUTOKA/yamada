@@ -31,8 +31,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = macd.source.NewAppGenerator(registry).generate(document);
-            source = replace(source, "        Button               matlab.ui.control.Button", ...
-                "        % Button - UI component handle." + newline + "        Button               matlab.ui.control.Button");
+            source = replace(source, "        Button matlab.ui.control.Button", ...
+                "        % Button - UI component handle." + newline + "        Button matlab.ui.control.Button");
             source = replace(source, "% ButtonButtonPushed Handle the ButtonPushedFcn callback.", ...
                 "% ButtonButtonPushed Handle the ButtonPushedFcn callback." + newline + ...
                 "            %   Example: ButtonButtonPushed(app, event); app.Button.Text = 'Run';");
@@ -55,7 +55,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             result = parsed.GeneratedText;
             testCase.verifyEqual(parsed.OriginalText, source);
             testCase.verifySubstring(result, "% GoButton - UI component handle.");
-            testCase.verifySubstring(result, "GoButton               matlab.ui.control.Button");
+            testCase.verifySubstring(result, "GoButton matlab.ui.control.Button");
             testCase.verifySubstring(result, "x = app.GoButton.Position'");
             testCase.verifySubstring(result, "y = app . GoButton.Text");
             testCase.verifySubstring(result, "z = app.GoButton.Text");

@@ -33,7 +33,7 @@ classdef ButtonSelectionPolicy
             members = document.Components(string({document.Components.ParentId}) == group.Id | ...
                 string({document.Components.Id}) == group.Id);
             for member = members
-                if member.Origin ~= "parsed" || ~member.IsEditable, continue, end
+                if ~macd.model.SourceOwnership.hasSource(member) || ~member.IsEditable, continue, end
                 constructor = member.Settings(string({member.Settings.Method}) == "nameValue");
                 safe = all([constructor.IsCertain]) && all(string({constructor.ValueKind}) == "literal");
                 for setting = constructor
@@ -69,7 +69,7 @@ classdef ButtonSelectionPolicy
             members = document.Components(string({document.Components.ParentId}) == group.Id | ...
                 string({document.Components.Id}) == group.Id);
             result = any(arrayfun(@(member) macd.source.PropertySourcePlan.needsPlan(document, member), members)) || ...
-                (any(string({members.Origin}) == "parsed") && any(string({members.Origin}) ~= "parsed"));
+                (any(arrayfun(@macd.model.SourceOwnership.hasSource, members)) && any(~arrayfun(@macd.model.SourceOwnership.hasSource, members)));
         end
 
         function [states, diagnostics] = resolve(states, component, document, registry)
@@ -226,14 +226,14 @@ classdef ButtonSelectionPolicy
                 member = members(index);
                 tail = tail + 1;
                 sequence = tail;
-                known = member.Origin ~= "parsed";
-                if member.Origin == "parsed" && isfield(member.Metadata, "InitializationCreationSequence")
+                known = ~macd.model.SourceOwnership.hasSource(member);
+                if macd.model.SourceOwnership.hasSource(member) && isfield(member.Metadata, "InitializationCreationSequence")
                     sequence = member.Metadata.InitializationCreationSequence;
                     known = member.Metadata.InitializationCreationCertain;
                 end
                 events(end + 1) = struct("Sequence", sequence, "Member", index, "Path", "creation", ...
                     "Value", [], "Known", known, "Expression", "", "Id", "creation:" + member.Id, "Constructor", true); %#ok<AGROW>
-                if member.Origin ~= "parsed"
+                if ~macd.model.SourceOwnership.hasSource(member)
                     % Legacy constructor pairs precede canonical post-construction entries.
                     definition = registry.get(member.Factory, member.CreationArguments);
                     first = macd.model.PropertyApplicationPlanner.nameValueStart(definition, member.CreationArguments);
@@ -261,7 +261,7 @@ classdef ButtonSelectionPolicy
                         "Value", {value}, "Known", known, "Expression", expression, "Id", setting.Id, "Constructor", setting.Method == "nameValue"); %#ok<AGROW>
                 end
                 entries = macd.model.PropertyApplicationPlanner.forComponent(member, document, registry);
-                if member.Origin == "parsed", entries = entries(string({entries.Origin}) == "generated"); end
+                if macd.model.SourceOwnership.hasSource(member), entries = entries(arrayfun(@(entry) isempty(entry.SourceSpan), entries)); end
                 for entry = entries
                     if ~any(entry.Path == ["Value", "SelectedObject"]), continue, end
                     tail = tail + 1;
@@ -274,7 +274,7 @@ classdef ButtonSelectionPolicy
             end
             % Generated emitters configure exclusive values only after all siblings exist.
             deferred = find(~[events.Constructor] & string({events.Path}) == "Value" & ...
-                arrayfun(@(event) members(event.Member).Origin ~= "parsed", events));
+                arrayfun(@(event) ~macd.model.SourceOwnership.hasSource(members(event.Member)), events));
             for index = deferred
                 tail = tail + 1;
                 events(index).Sequence = tail;

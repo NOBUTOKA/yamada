@@ -22,7 +22,10 @@ classdef SourceLiteralTransaction
         Settings macd.model.PropertySetting
         FactoryArguments cell
         Updates macd.model.SourceLocationUpdate = macd.model.SourceLocationUpdate.empty
+        Diagnostics macd.model.Diagnostic
+        Regions macd.model.UnknownSourceRegion
         Metadata struct
+        Catalog macd.model.ComponentRegistry
         CatalogRevision uint64
     end
 
@@ -75,7 +78,7 @@ classdef SourceLiteralTransaction
                 assert(literal && isequaln(decoded, change.Value), ...
                     "macd:SourceLiteralTransaction:WiderProof", "Literal encoding needs complete syntax validation.");
                 entry = component.getProperty(path);
-                if ~isempty(entry)
+                if ~isempty(entry) && ~isequaln(entry.LiteralValue, change.Value)
                     assert(entry.IsEditable && entry.ValueKind == "literal" && isfield(entry.Metadata, "ValueSpan"), ...
                         "macd:SourceLiteralTransaction:WiderProof", "Existing value ownership is not proven.");
                     span = entry.Metadata.ValueSpan;
@@ -90,7 +93,7 @@ classdef SourceLiteralTransaction
             end
             obj.Batch = macd.source.SourcePatchBatch(source.Text, edits);
             obj.AfterSource = source.withBatch(obj.Batch);
-            [obj.Settings, ~, obj.FactoryArguments] = macd.model.SourceSettingRebinder.rebind( ...
+            [obj.Settings, ~, obj.FactoryArguments, execution] = macd.model.SourceSettingRebinder.rebind( ...
                 document, component, obj.AfterSource, obj.Batch, registry);
             candidate.synchronizeSourceSettings(obj.Settings, obj.FactoryArguments);
             [states, diagnostics] = macd.model.PropertyStateResolver.resolve(candidate, definitions);
@@ -107,16 +110,22 @@ classdef SourceLiteralTransaction
             end
             % Prepare every source position before any live property handle changes.
             for owner = document.Components
-                update = macd.model.SourceLocationUpdate(owner, obj.Batch);
+                update = macd.model.SourceLocationUpdate(owner, obj.Batch, ...
+                    struct("SettingId", {}, "Value", {}), execution, obj.AfterSource.Analysis);
                 assert(update.CanApply, "macd:SourceLiteralTransaction:WiderProof", "Changed syntax requires range rebinding.");
                 obj.Updates(end + 1) = update;
             end
+            [obj.Diagnostics, obj.Regions] = macd.model.SourceLocationUpdate.annotations(document, obj.Batch);
             obj.Metadata = document.Metadata;
             obj.Metadata.SourceSnapshotText = obj.AfterSource.Text;
+            trace = execution.Trace;
+            obj.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
+                "Returns", trace.Returns, "Layout", obj.AfterSource.Analysis.Layout);
             obj.BeforeRevision = source.Revision;
             obj.BeforeStateId = source.StateId;
             obj.ComponentId = id;
             obj.Changes = changes;
+            obj.Catalog = registry;
             obj.CatalogRevision = registry.Revision;
         end
 
@@ -129,7 +138,7 @@ classdef SourceLiteralTransaction
                 registry (1, 1) macd.model.ComponentRegistry
             end
             source.assertRevision(obj.BeforeRevision, obj.BeforeStateId);
-            assert(registry.Revision == obj.CatalogRevision, ...
+            assert(registry == obj.Catalog && registry.Revision == obj.CatalogRevision, ...
                 "macd:SourceLiteralTransaction:StaleCatalog", "The catalog changed during source preparation.");
             for update = obj.Updates
                 update.assertCurrent(document.getComponent(update.ComponentId));
@@ -139,6 +148,8 @@ classdef SourceLiteralTransaction
             end
             owner = document.getComponent(obj.ComponentId);
             owner.synchronizeSourceSettings(obj.Settings, obj.FactoryArguments);
+            document.Diagnostics = obj.Diagnostics;
+            document.UnknownRegions = obj.Regions;
             document.Metadata = obj.Metadata;
         end
     end

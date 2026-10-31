@@ -36,6 +36,14 @@ classdef SourceStrategyExperiment < handle
             obj.Source = source;
             [obj.Document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
             assert(~macd.validation.ModelValidator.hasErrors(diagnostics));
+            parsed = obj.Document;
+            obj.Document = macd.model.DocumentModel(parsed.ClassName);
+            obj.Document.Components = macd.model.SubtreeSnapshot(parsed, parsed.RootComponentId).materialize();
+            obj.Document.RootComponentId = parsed.RootComponentId;
+            obj.Document.OriginalText = source;
+            obj.Document.Metadata = parsed.Metadata;
+            obj.Document.Diagnostics = parsed.Diagnostics;
+            obj.Document.LineEnding = parsed.LineEnding;
             obj.Document.HistoryLimit = 200;
             obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
             % Retain every model span, not only the ranges changed by the workload.

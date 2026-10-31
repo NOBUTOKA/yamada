@@ -10,8 +10,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
                     "app.Control = uidropdown(app.Left, 'Items', [""A"" ""B""], 'Value', 'A');"]
                 [document, registry, control] = testCase.fixture([creation, "app.Control.Value = 'A';"]);
                 baseline = document.OriginalText;
-                original = control.settingSnapshot();
                 document.setProperty(control.Id, "Value", 'B', registry);
+                original = control.settingSnapshot();
                 history = document.HistoryIndex;
                 checkpoint = testCase.save(document, registry);
                 testCase.verifyEqual(document.OriginalText, baseline);
@@ -72,7 +72,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), second.SourceText);
             testCase.verifyTrue(document.IsDirty);
             testCase.verifyEqual(document.SavedSource.SourceText, second.SourceText);
-            testCase.verifyEqual(string({control.Settings(string({control.Settings.Method}) ~= "generated").Id}), settingIds);
+            testCase.verifyEqual(string({control.Settings(ismember(string({control.Settings.Id}), settingIds)).Id}), settingIds);
             testCase.verifyEqual(document.OriginalText, original);
             testCase.save(document, registry);
             testCase.verifyFalse(document.IsDirty);
@@ -107,6 +107,46 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             next = testCase.save(document, registry);
             testCase.verifySubstring(next.SourceText, "classdef RenamedSavedApp");
             testCase.verifySubstring(next.SourceText, "保存値 日本語");
+        end
+
+        function saveAsRebasesUndoAndRedoWithoutAnExtraEdit(testCase)
+            % saveAsRebasesUndoAndRedoWithoutAnExtraEdit Keep the saved class identity through both history branches.
+            [document, registry, control] = testCase.fixture("app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value='A');");
+            document.setProperty(control.Id, "Tooltip", "Long changed length", registry);
+            document.setProperty(control.Id, "Value", 'B', registry);
+            document.undo();
+            source = macd.source.AppClassIdentityRewriter.rewrite(document.CurrentText, "RenamedHistoryApp");
+            checkpoint = macd.model.SavedSourceCheckpoint(document, source, "RenamedHistoryApp.m", registry);
+            document.confirmSavedSource(checkpoint, registry);
+            testCase.verifyEqual(document.HistoryIndex, 1);
+            document.undo();
+            testCase.verifySubstring(document.CurrentText, "classdef RenamedHistoryApp");
+            testCase.verifyEmpty(control.getProperty("Tooltip"));
+            document.redo();
+            document.redo();
+            testCase.verifySubstring(document.CurrentText, "classdef RenamedHistoryApp");
+            testCase.verifyEqual(control.getProperty("Value").LiteralValue, 'B');
+            testCase.verifyEqual(control.getProperty("Tooltip").LiteralValue, "Long changed length");
+        end
+
+        function saveAsKeepsSeparatedPatchesAcrossUnrelatedSettings(testCase)
+            % saveAsKeepsSeparatedPatchesAcrossUnrelatedSettings Rebase insertion and replacement without consuming another component's ranges.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uidropdown(app.Left, Items=[""A"" ""B""]);", ...
+                "app.Left.Title = 'Independent';", "app.Control.Value = 'A';"]);
+            changes = [macd.model.PropertyTransaction.singleChange("Tooltip", "Long changed hint"), ...
+                macd.model.PropertyTransaction.singleChange("Value", 'B')];
+            document.setPropertyBatch(control.Id, changes, registry);
+            source = macd.source.AppClassIdentityRewriter.rewrite(document.CurrentText, "RenamedSeparatedApp");
+            checkpoint = macd.model.SavedSourceCheckpoint(document, source, "RenamedSeparatedApp.m", registry);
+            document.confirmSavedSource(checkpoint, registry);
+            document.undo();
+            testCase.verifyEmpty(control.getProperty("Tooltip"));
+            testCase.verifyEqual(control.getProperty("Value").LiteralValue, 'A');
+            testCase.verifyEqual(document.getComponentByName("Left").getProperty("Title").LiteralValue, 'Independent');
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, source);
+            testCase.verifyEqual(control.getProperty("Value").LiteralValue, 'B');
         end
 
         function changedKnownStateAndStalePlansAreRejected(testCase)
