@@ -313,6 +313,36 @@ classdef ComponentRecord < handle
             entry.applySourceSetting(setting);
         end
 
+        function synchronizeSourceSettings(obj, settings, factoryArguments)
+            % synchronizeSourceSettings Publish validated current source bindings while retaining live property handles.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                settings macd.model.PropertySetting
+                factoryArguments cell
+            end
+            % Drop projections only when their last owned source occurrence disappeared.
+            paths = string({settings.Path});
+            for index = numel(obj.Properties):-1:1
+                entry = obj.Properties(index);
+                if isfield(entry.Metadata, "SourceSettingId") && ~any(paths == entry.Path)
+                    obj.Properties(index) = [];
+                end
+            end
+            obj.CreationArgumentData = factoryArguments;
+            obj.Settings = settings;
+            for setting = settings
+                entry = obj.getProperty(setting.Path);
+                if isempty(entry)
+                    entry = macd.model.PropertyEntry(setting.Path, [], obj.Origin);
+                    obj.Properties(end + 1) = entry;
+                end
+                entry.applySourceSetting(setting);
+                if isfield(entry.Metadata, "PendingSettingId")
+                    entry.Metadata = rmfield(entry.Metadata, "PendingSettingId");
+                end
+            end
+        end
+
         function settings = getSettings(obj, path)
             % getSettings Return a property's original occurrences with the last at the end.
             arguments (Input)

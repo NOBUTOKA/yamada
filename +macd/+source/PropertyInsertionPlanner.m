@@ -61,6 +61,21 @@ classdef PropertyInsertionPlanner
         end
     end
 
+    methods (Static, Access = ?macd.model.SourceLiteralTransaction)
+        function plan = tentative(document, component, registry)
+            % tentative Prepare owned insertion edits for mandatory transaction-level local validation.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                plan (1, 1) struct
+            end
+            plan = macd.source.PropertyInsertionPlanner.evaluate(document, component, registry, true);
+        end
+    end
+
     methods (Static, Access = ?macd.source.RoundTripGenerator)
         function edits = generationEdits(document, component, registry)
             % generationEdits Read validated insertion values without materializing public document copies.

@@ -113,6 +113,118 @@ classdef SourcePatchBatchTest < matlab.unittest.TestCase
             testCase.verifyError(@() current.withBatch(batch), "macd:SourcePatchBatch:StaleSource");
         end
 
+        function liveLocationsAndBindingsKeepTheirHandles(testCase)
+            % liveLocationsAndBindingsKeepTheirHandles Match an independent parser while retaining live identities.
+            registry = macd.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            owner = document.getComponentByName("TopLeftLabel");
+            entry = owner.getProperty("Text");
+            setting = owner.getSettings("Text");
+            span = entry.Metadata.ValueSpan;
+            replacement = "A longer source string";
+            batch = macd.source.SourcePatchBatch(source, change(span.StartOffset, span.EndOffset, ...
+                macd.source.LiteralEncoder.encode(replacement)));
+            updates = macd.model.SourceLocationUpdate.empty;
+            for component = document.Components
+                changes = struct("SettingId", {}, "Value", {});
+                if component.Id == owner.Id
+                    changes = struct("SettingId", setting(end).Id, "Value", replacement);
+                end
+                updates(end + 1) = macd.model.SourceLocationUpdate(component, batch, changes); %#ok<AGROW>
+            end
+            for index = 1:numel(updates), updates(index).apply(document.Components(index)); end
+            expected = macd.source.AppSourceParser.parseText(batch.AfterText, registry);
+            testCase.verifyEqual(owner.getProperty("Text"), entry);
+            testCase.verifyEqual(entry.LiteralValue, replacement);
+            testCase.verifyEqual(owner.getSettings("Text").Id, setting.Id);
+            for component = document.Components
+                parsed = expected.getComponentByName(component.Name);
+                testCase.verifyEqual(component.SourceSpans, parsed.SourceSpans);
+                for actual = component.Settings
+                    candidates = parsed.getSettings(actual.Path);
+                    ordinal = find(string({component.getSettings(actual.Path).Id}) == actual.Id, 1);
+                    other = candidates(ordinal);
+                    testCase.verifyEqual(actual.SourceSpan, other.SourceSpan);
+                    testCase.verifyEqual(actual.ValueSpan, other.ValueSpan);
+                end
+            end
+        end
+
+        function liveValueChangesRejectPreparedLocationUpdates(testCase)
+            % liveValueChangesRejectPreparedLocationUpdates Preserve edits made after source-location preparation.
+            registry = macd.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            owner = document.getComponentByName("TopLeftLabel");
+            span = owner.getProperty("Text").Metadata.ValueSpan;
+            batch = macd.source.SourcePatchBatch(source, change(span.StartOffset, span.EndOffset, "'Changed'"));
+            update = macd.model.SourceLocationUpdate(owner, batch);
+            owner.setProperty("Text", "A different later value");
+            testCase.verifyError(@() update.apply(owner), "macd:SourceLocationUpdate:StaleComponent");
+            testCase.verifyEqual(owner.getProperty("Text").LiteralValue, "A different later value");
+        end
+
+        function componentRebindingMatchesActualInsertedOrder(testCase)
+            % componentRebindingMatchesActualInsertedOrder Rebind only the owner while preserving existing setting IDs.
+            registry = macd.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            owner = document.getComponentByName("TopLeftLabel");
+            previous = owner.Settings;
+            spans = [previous.SourceSpan];
+            last = max([spans.EndOffset]);
+            batch = macd.source.SourcePatchBatch(source, change(last + 1, last, ...
+                string(sprintf("\r\n")) + "            app.TopLeftLabel.FontSize = 19;"));
+            before = macd.model.CurrentSourceState(source, document.sourceAnalysis());
+            after = before.withBatch(batch);
+            [actual, ~, factoryArguments] = macd.model.SourceSettingRebinder.rebind(document, owner, after, batch, registry);
+            parsed = macd.source.AppSourceParser.parseText(batch.AfterText, registry);
+            expected = parsed.getComponentByName(owner.Name).Settings;
+            testCase.verifyEqual(string({actual.Path}), string({expected.Path}));
+            for index = 1:numel(actual)
+                testCase.verifyEqual(actual(index).LiteralValue, expected(index).LiteralValue);
+                testCase.verifyEqual(actual(index).ValueSpan, expected(index).ValueSpan);
+                testCase.verifyEqual(actual(index).Sequence, expected(index).Sequence);
+            end
+            for old = previous
+                testCase.verifyTrue(any(string({actual.Id}) == old.Id));
+            end
+            entry = owner.getProperty("Text");
+            owner.synchronizeSourceSettings(actual, factoryArguments);
+            testCase.verifyEqual(owner.getProperty("Text"), entry);
+            testCase.verifyEqual(owner.getProperty("FontSize").LiteralValue, 19);
+            testCase.verifyEqual(owner.getProperty("FontSize").Metadata.SourceSettingId, actual(end).Id);
+        end
+
+        function literalCandidatePublishesInsertedAndExistingValues(testCase)
+            % literalCandidatePublishesInsertedAndExistingValues Prepare exact current syntax before changing live handles.
+            registry = macd.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            owner = document.getComponentByName("TopLeftLabel");
+            entry = owner.getProperty("Text");
+            state = macd.model.CurrentSourceState(source, document.sourceAnalysis());
+            changes = struct("Path", {"Text", "FontSize"}, "Value", {"Longer changed text", 23});
+            candidate = macd.model.SourceLiteralTransaction(document, state, owner.Id, changes, registry);
+            testCase.verifyNotEqual(entry.LiteralValue, "Longer changed text");
+            testCase.verifyEmpty(owner.getProperty("FontSize"));
+            parsed = macd.source.AppSourceParser.parseText(candidate.AfterSource.Text, registry);
+            expected = parsed.getComponentByName(owner.Name);
+            candidate.applyModel(document, state, registry);
+            testCase.verifyEqual(owner.getProperty("Text"), entry);
+            testCase.verifyEqual(entry.LiteralValue, "Longer changed text");
+            testCase.verifyEqual(owner.getProperty("FontSize").LiteralValue, 23);
+            testCase.verifyEqual(string({owner.Settings.Path}), string({expected.Settings.Path}));
+            testCase.verifyEqual([owner.Settings.Sequence], [expected.Settings.Sequence]);
+            testCase.verifyError(@() candidate.applyModel(document, state, registry), ...
+                "macd:SourceLocationUpdate:StaleComponent");
+        end
+
         function deletedAndInteriorRangesNeedRebinding(testCase)
             % deletedAndInteriorRangesNeedRebinding Avoid inventing source ownership inside replaced syntax.
             batch = macd.source.SourcePatchBatch("abcdef", change(2, 4, "X"));
