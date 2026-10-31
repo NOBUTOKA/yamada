@@ -89,6 +89,10 @@ classdef SourcePatchBatchTest < matlab.unittest.TestCase
             testCase.verifyEqual(original.LiteralValue, "Old");
             testCase.verifyEqual(original.ValueSpan.StartOffset, 20);
             testCase.verifyEqual(current.ValueSpan.StartOffset, 25);
+            record = current.toStruct();
+            restored = macd.model.PropertySetting(record.Path, record.Value, record.Location);
+            testCase.verifyEqual(restored.Id, original.Id);
+            testCase.verifyEqual(restored, current);
         end
 
         function deletedAndInteriorRangesNeedRebinding(testCase)
