@@ -95,6 +95,24 @@ classdef SourcePatchBatchTest < matlab.unittest.TestCase
             testCase.verifyEqual(restored, current);
         end
 
+        function workingStateSeparatesRevisionAndHistoryIdentity(testCase)
+            % workingStateSeparatesRevisionAndHistoryIdentity Restore history without reviving old source revisions.
+            original = macd.model.CurrentSourceState("app.A.Value = 9;");
+            batch = macd.source.SourcePatchBatch(original.Text, change(15, 15, "1000"));
+            current = original.withBatch(batch);
+            testCase.verifyEqual(original.Text, "app.A.Value = 9;");
+            testCase.verifyEqual(current.Revision, original.Revision + uint64(1));
+            testCase.verifyNotEqual(current.StateId, original.StateId);
+            restored = current.withBatch(batch.inverse(), original.StateId);
+            testCase.verifyEqual(restored.Text, original.Text);
+            testCase.verifyEqual(restored.StateId, original.StateId);
+            testCase.verifyGreaterThan(restored.Revision, current.Revision);
+            testCase.verifyTrue(restored.Analysis.matches(original.Text));
+            testCase.verifyError(@() restored.assertRevision(original.Revision, original.StateId), ...
+                "macd:CurrentSourceState:StaleCandidate");
+            testCase.verifyError(@() current.withBatch(batch), "macd:SourcePatchBatch:StaleSource");
+        end
+
         function deletedAndInteriorRangesNeedRebinding(testCase)
             % deletedAndInteriorRangesNeedRebinding Avoid inventing source ownership inside replaced syntax.
             batch = macd.source.SourcePatchBatch("abcdef", change(2, 4, "X"));

@@ -117,6 +117,9 @@ Gridの編集時間増加は両方式に共通した。8段・100編集の遅延
 
 ## 即時局所反映に統一する設計（2026-10-31）
 
+CurrentSourceStateを追加し、現在本文とその字句解析を同じ不変な候補状態に保持する。確定ごとに進むRevisionと、Undo/Redoで復元する履歴StateIdを分離した。古い候補/本文の拒否、逆パッチでの本文復元、Undo後もRevisionが進むことを含む最小8件が合格し、関連7 MATLABファイルの静的指摘は0だった。まだDocumentModel/UIへ公開する段階ではなく、モデル差分と同時に確定する次の接続で使用する。根拠は`testResults/performance/immediate-foundation-20261031/tests-smoke`。
+
+
 SourceAnalysis.withPatchesを追加し、変更箇所と完全な隣接文を局所スキャンし、残りの文は相対CodeOffsetsを保った位置移動で再利用するようにした。境界に残る文の範囲/本文をguardとして確認し、文が融合する等のケースは字句スキャンを全体へ戻す。現在の字句結果からLayoutは再構築し、trace/callbackの派生キャッシュは失効させる段階であり、それらすべての増分維持が完了したとはしない。独立した全文スキャンとの本文/位置/Layout一致、複数箇所変更、挿入・削除・EOFと公開済み解析の独立性を含む関連51件が合格し、変更6 MATLABファイルの静的指摘は0だった。原記録は`testResults/performance/immediate-foundation-20261031/tests-regression`。
 
 位置更新後の固定SettingIdがtoStruct/restoreSettingsでも保持されるよう、設定の直列化にIdを含めた。初回解析は従来のID割当を使い、復元時には明示された固定IDを受け入れる。位置から再計算してIDを変える経路を防ぎ、関連51件の再検証も全件合格した。
