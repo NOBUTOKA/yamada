@@ -165,22 +165,27 @@ classdef PropertyEntry < handle
                 setting (1, 1) macd.model.PropertySetting
             end
 
-            % Parsed occurrences may replace earlier expressions without editing source.
-            obj.ValueKind = setting.ValueKind;
-            obj.LiteralValue = setting.LiteralValue;
-            obj.SourceExpression = setting.SourceExpression;
-            obj.IsEditable = setting.IsEditable;
-            if ~obj.IsEditable && setting.ValueKind == "literal"
-                obj.ValueKind = "expression";
-                obj.SourceExpression = macd.source.LiteralEncoder.encode(setting.LiteralValue);
-                obj.LiteralValue = [];
+            % Compute the final projection before publishing only changed fields.
+            kind = setting.ValueKind;
+            value = setting.LiteralValue;
+            expression = setting.SourceExpression;
+            if ~setting.IsEditable && kind == "literal"
+                kind = "expression";
+                expression = macd.source.LiteralEncoder.encode(value);
+                value = [];
             end
-            obj.SourceSpan = setting.SourceSpan;
-            obj.Metadata.SourceSettingId = setting.Id;
-            obj.Metadata.SettingMethod = setting.Method;
-            obj.Metadata.SettingSyntax = setting.Syntax;
-            obj.Metadata.ValueSpan = setting.ValueSpan;
-            obj.Metadata.SourceSnapshotId = setting.SourceSnapshotId;
+            if obj.ValueKind ~= kind, obj.ValueKind = kind; end
+            if ~isequaln(obj.LiteralValue, value), obj.LiteralValue = value; end
+            if obj.SourceExpression ~= expression, obj.SourceExpression = expression; end
+            if obj.IsEditable ~= setting.IsEditable, obj.IsEditable = setting.IsEditable; end
+            if ~isequaln(obj.SourceSpan, setting.SourceSpan), obj.SourceSpan = setting.SourceSpan; end
+            metadata = obj.Metadata;
+            metadata.SourceSettingId = setting.Id;
+            metadata.SettingMethod = setting.Method;
+            metadata.SettingSyntax = setting.Syntax;
+            metadata.ValueSpan = setting.ValueSpan;
+            metadata.SourceSnapshotId = setting.SourceSnapshotId;
+            if ~isequaln(obj.Metadata, metadata), obj.Metadata = metadata; end
         end
 
         function obj = PropertyEntry(path, value, origin)

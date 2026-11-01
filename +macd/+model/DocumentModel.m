@@ -76,7 +76,7 @@ classdef DocumentModel < handle
         ComponentLookupReady logical = false
     end
 
-    methods (Access = ?macd.model.EvaluationContext)
+    methods (Access = {?macd.model.EvaluationContext, ?macd.model.SourceLiteralTransaction})
         function [clock, revision, tracked] = inputStamp(obj)
             % inputStamp Attach one acyclic write token and return its current state.
             arguments (Input)
@@ -1837,7 +1837,10 @@ classdef DocumentModel < handle
             end
             prepared.applyModel(obj, before, registry);
             obj.publishCurrentSource(prepared.AfterSource);
-            currentContext = obj.evaluationContext(registry);
+            [updates, token] = prepared.inputProjection();
+            currentContext = macd.model.EvaluationContext.projectSource(obj, registry, previousContext, ...
+                updates, id, string({changes.Path}), token);
+            obj.Evaluation = currentContext;
             if prepared.CanReuseStates
                 currentContext.inheritLiteralStates(previousContext, id, prepared.Batch);
             end
@@ -1978,6 +1981,9 @@ classdef DocumentModel < handle
                 edit (1, 1) struct
                 forward (1, 1) logical
             end
+            previousContext = obj.evaluationContext(obj.SourceRegistry);
+            [token, tracked] = previousContext.revisionToken();
+            if ~tracked, token = struct(); end
             if forward
                 edits = edit.SourceForward;
                 settings = edit.AfterSettings;
@@ -2032,6 +2038,8 @@ classdef DocumentModel < handle
             obj.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
                 "Returns", trace.Returns, "Layout", state.Analysis.Layout);
             obj.publishCurrentSource(state);
+            obj.Evaluation = macd.model.EvaluationContext.projectSource(obj, obj.SourceRegistry, ...
+                previousContext, updates, edit.ComponentId, string({edit.Changes.Path}), token);
         end
 
         function batch = sourceDifference(~, before, after)

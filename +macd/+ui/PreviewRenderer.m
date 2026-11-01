@@ -16,6 +16,7 @@ classdef PreviewRenderer < handle
         UsesCombinedConfiguration logical = false
         RenderedInputs struct = struct()
         RenderedVisualInputs struct = struct()
+        RenderedToken struct = struct()
         RenderedRegistryRevision uint64 = uint64(0)
         RenderCount double = 0
         SynchronizationCount double = 0
@@ -44,13 +45,15 @@ classdef PreviewRenderer < handle
             geometryChanged = false;
             obj.FallbackReason = "unsupported-change";
             if request.Kind ~= "properties" || isempty(request.Paths) || isempty(request.ComponentIds), return, end
-            [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
+            context = document.evaluationContext(obj.Registry);
+            [inputs, safe] = context.inputs();
             if ~safe || isempty(fieldnames(obj.RenderedInputs)) || ...
                     obj.RenderedRegistryRevision ~= obj.Registry.Revision
                 obj.FallbackReason = "untracked-inputs";
                 return
             end
-            if isequaln(inputs, obj.RenderedInputs)
+            certified = context.isLiteralTransition(obj.RenderedToken, request);
+            if inputs.OriginalText == obj.RenderedInputs.OriginalText && isequaln(inputs, obj.RenderedInputs)
                 obj.FallbackReason = "";
                 applied = true;
                 return
@@ -58,7 +61,15 @@ classdef PreviewRenderer < handle
             beforeComparison = obj.RenderedInputs;
             afterComparison = inputs;
             visualAfter = struct();
-            if document.isPropertySourceTransition(obj.RenderedInputs.OriginalText, request)
+            if certified
+                mappings = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
+                if isempty(fieldnames(obj.RenderedVisualInputs))
+                    obj.RenderedVisualInputs = obj.visualSourceInputs(beforeComparison, mappings);
+                end
+                visualAfter = obj.patchVisualInputs(obj.RenderedVisualInputs, inputs, request);
+                beforeComparison = visualAfter;
+                afterComparison = visualAfter;
+            elseif document.isPropertySourceTransition(obj.RenderedInputs.OriginalText, request)
                 mappings = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
                 if isempty(fieldnames(obj.RenderedVisualInputs))
                     obj.RenderedVisualInputs = obj.visualSourceInputs(beforeComparison, mappings);
@@ -67,7 +78,7 @@ classdef PreviewRenderer < handle
                 afterComparison = obj.visualSourceInputs(afterComparison, mappings);
                 visualAfter = afterComparison;
             end
-            if ~isequaln(obj.maskRequestedInputs(beforeComparison, request), obj.maskRequestedInputs(afterComparison, request))
+            if ~certified && ~isequaln(obj.maskRequestedInputs(beforeComparison, request), obj.maskRequestedInputs(afterComparison, request))
                 obj.FallbackReason = "unrelated-inputs";
                 return
             end
@@ -136,6 +147,7 @@ classdef PreviewRenderer < handle
                 end
             end
             obj.RenderedInputs = inputs;
+            obj.RenderedToken = document.evaluationContext(obj.Registry).revisionToken();
             obj.RenderedVisualInputs = visualAfter;
             obj.SynchronizationCount = obj.SynchronizationCount + 1;
             if ~reconstructed, obj.FallbackReason = ""; end
@@ -162,6 +174,7 @@ classdef PreviewRenderer < handle
                 return
             end
             obj.RenderedInputs = inputs;
+            obj.RenderedToken = document.evaluationContext(obj.Registry).revisionToken();
             obj.RenderedVisualInputs = struct();
             obj.FallbackReason = "";
             applied = true;
@@ -187,6 +200,7 @@ classdef PreviewRenderer < handle
                 return
             end
             obj.RenderedInputs = inputs;
+            obj.RenderedToken = document.evaluationContext(obj.Registry).revisionToken();
             obj.RenderedVisualInputs = struct();
             obj.FallbackReason = "";
             applied = true;
@@ -234,6 +248,7 @@ classdef PreviewRenderer < handle
             % Dispose stale editor-owned controls before constructing the new tree.
             obj.RenderCount = obj.RenderCount + 1;
             obj.RenderedInputs = struct();
+            obj.RenderedToken = struct();
             obj.RenderedVisualInputs = struct();
             delete(parent.Children);
             handles = containers.Map("KeyType", "char", "ValueType", "any");
@@ -271,7 +286,10 @@ classdef PreviewRenderer < handle
             diagnostics = obj.Diagnostics;
             obj.Diagnostics = macd.model.Diagnostic.empty;
             [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
-            if safe, obj.RenderedInputs = inputs; end
+            if safe
+                obj.RenderedInputs = inputs;
+                obj.RenderedToken = document.evaluationContext(obj.Registry).revisionToken();
+            end
             obj.RenderedRegistryRevision = obj.Registry.Revision;
         end
     end
@@ -323,46 +341,78 @@ classdef PreviewRenderer < handle
             end
             inputs = rmfield(inputs, ["OriginalText", "Metadata", "UnknownRegions", "CallbackEdits", "RenameEdits"]);
             for index = 1:numel(inputs.Components)
-                component = inputs.Components(index);
-                parentFactory = "";
-                parent = inputs.Components(string({inputs.Components.Id}) == component.ParentId);
-                if ~isempty(parent), parentFactory = parent.Factory; end
-                callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
-                callbackPaths = string({callbacks.Path});
-                properties = component.Properties;
-                if ~isempty(properties)
-                    properties = properties(~ismember(string({properties.Path}), callbackPaths));
-                end
-                if ~isempty(properties), properties = rmfield(properties, ["SourceSpan", "Metadata"]); end
-                for propertyIndex = 1:numel(properties)
-                    properties(propertyIndex).SourceExpression = macd.source.ComponentNameRewriter.rewrite( ...
-                        properties(propertyIndex).SourceExpression, mappings);
-                end
-                settings = component.Settings;
-                if ~isempty(settings)
-                    settings = settings(~ismember(string({settings.Path}), callbackPaths));
-                end
-                for settingIndex = 1:numel(settings)
-                    location = settings(settingIndex).Location;
-                    expression = "";
-                    if isfield(location, "SourceExpression")
-                        expression = macd.source.ComponentNameRewriter.rewrite(location.SourceExpression, mappings);
-                    end
-                    settings(settingIndex).Location = struct("IsCertain", location.IsCertain, ...
-                        "IsEditable", location.IsEditable, "Method", location.Method, "SourceExpression", expression);
-                end
-                if isempty(properties), properties = struct([]); end
-                if isempty(settings), settings = struct([]); end
-                definition = obj.Registry.get(component.Factory, component.CreationArguments);
-                first = macd.model.PropertyApplicationPlanner.nameValueStart(definition, component.CreationArguments);
-                inputs.Components(index).CreationArguments = component.CreationArguments(1:first - 1);
-                inputs.Components(index).Properties = properties;
-                inputs.Components(index).Settings = settings;
-                inputs.Components(index).Metadata = struct();
-                inputs.Components(index).SourceSpans = struct();
-                match = find(string({mappings.ComponentId}) == component.Id, 1);
-                if ~isempty(match), inputs.Components(index).Name = mappings(match).NewName; end
+                inputs.Components(index) = obj.visualComponentInputs(inputs.Components(index), inputs.Components, mappings);
             end
+        end
+
+        function inputs = patchVisualInputs(obj, inputs, after, request)
+            % patchVisualInputs Rebuild only owners certified by the current source transition.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                inputs (1, 1) struct
+                after (1, 1) struct
+                request (1, 1) macd.ui.RefreshRequest
+            end
+            arguments (Output)
+                inputs (1, 1) struct
+            end
+            mappings = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
+            for id = request.ComponentIds
+                index = find(string({after.Components.Id}) == id, 1);
+                assert(~isempty(index));
+                inputs.Components(index) = obj.visualComponentInputs(after.Components(index), after.Components, mappings);
+            end
+        end
+
+        function component = visualComponentInputs(obj, component, components, mappings)
+            % visualComponentInputs Normalize one immutable record without traversing unrelated component values.
+            arguments (Input)
+                obj (1, 1) macd.ui.PreviewRenderer
+                component (1, 1) struct
+                components struct
+                mappings struct
+            end
+            arguments (Output)
+                component (1, 1) struct
+            end
+            parentFactory = "";
+            parent = components(string({components.Id}) == component.ParentId);
+            if ~isempty(parent), parentFactory = parent.Factory; end
+            callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            callbackPaths = string({callbacks.Path});
+            properties = component.Properties;
+            if ~isempty(properties)
+                properties = properties(~ismember(string({properties.Path}), callbackPaths));
+            end
+            if ~isempty(properties), properties = rmfield(properties, ["SourceSpan", "Metadata"]); end
+            for propertyIndex = 1:numel(properties)
+                properties(propertyIndex).SourceExpression = macd.source.ComponentNameRewriter.rewrite( ...
+                    properties(propertyIndex).SourceExpression, mappings);
+            end
+            settings = component.Settings;
+            if ~isempty(settings)
+                settings = settings(~ismember(string({settings.Path}), callbackPaths));
+            end
+            for settingIndex = 1:numel(settings)
+                location = settings(settingIndex).Location;
+                expression = "";
+                if isfield(location, "SourceExpression")
+                    expression = macd.source.ComponentNameRewriter.rewrite(location.SourceExpression, mappings);
+                end
+                settings(settingIndex).Location = struct("IsCertain", location.IsCertain, ...
+                    "IsEditable", location.IsEditable, "Method", location.Method, "SourceExpression", expression);
+            end
+            if isempty(properties), properties = struct([]); end
+            if isempty(settings), settings = struct([]); end
+            definition = obj.Registry.get(component.Factory, component.CreationArguments);
+            first = macd.model.PropertyApplicationPlanner.nameValueStart(definition, component.CreationArguments);
+            component.CreationArguments = component.CreationArguments(1:first - 1);
+            component.Properties = properties;
+            component.Settings = settings;
+            component.Metadata = struct();
+            component.SourceSpans = struct();
+            match = find(string({mappings.ComponentId}) == component.Id, 1);
+            if ~isempty(match), component.Name = mappings(match).NewName; end
         end
 
         function prepared = prepareNativeTransition(~, target, states, indices)

@@ -16,6 +16,9 @@ classdef EvaluationContext < handle
         Plans containers.Map
         Cacheable logical = false
         ReadDepth double = 0
+        TransitionToken struct = struct()
+        TransitionOwner string = ""
+        TransitionPaths string = strings(1, 0)
     end
 
     methods
@@ -100,6 +103,23 @@ classdef EvaluationContext < handle
             if safe, inputs = obj.Key; end
         end
 
+        function result = isLiteralTransition(obj, token, request)
+            % isLiteralTransition Certify a view's exact previous version and the locally proven changed paths.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                token (1, 1) struct
+                request (1, 1) macd.ui.RefreshRequest
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            [~, tracked] = obj.revisionToken();
+            result = tracked && ~isempty(fieldnames(obj.TransitionToken)) && ...
+                macd.model.EvaluationContext.sameToken(obj.TransitionToken, token) && request.Kind == "properties" && ...
+                isscalar(request.ComponentIds) && request.ComponentIds == obj.TransitionOwner && ...
+                all(ismember(obj.TransitionPaths, request.pathsFor(obj.TransitionOwner)));
+        end
+
         function result = isReading(obj, registry)
             % isReading Identify nested pure evaluation in the same registry version.
             arguments (Input)
@@ -130,15 +150,16 @@ classdef EvaluationContext < handle
         function obj = EvaluationContext(document, registry)
             % EvaluationContext Capture semantic inputs without retaining live component records.
             arguments (Input)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
+                document macd.model.DocumentModel = macd.model.DocumentModel.empty
+                registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
             end
+            obj.Values = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.Plans = containers.Map("KeyType", "char", "ValueType", "any");
+            if isempty(document), return, end
             [obj.Key, obj.Cacheable] = macd.model.EvaluationContext.capture(document);
             [obj.InputClock, obj.InputRevision] = document.inputStamp();
             obj.Registry = registry;
             obj.RegistryRevision = registry.Revision;
-            obj.Values = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.Plans = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
         function result = matches(obj, document, registry)
@@ -286,6 +307,65 @@ classdef EvaluationContext < handle
             if obj.Cacheable
                 obj.Plans(char(name)) = document.structuralCandidate();
             end
+        end
+    end
+
+    methods (Static, Access = ?macd.model.DocumentModel)
+        function obj = projectSource(document, registry, previous, updates, ownerId, paths, token)
+            % projectSource Publish a value-only key from a document-certified source transaction without whole-tree freezing.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+                previous (1, 1) macd.model.EvaluationContext
+                updates macd.model.SourceLocationUpdate
+                ownerId (1, 1) string
+                paths (1, :) string
+                token (1, 1) struct
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.EvaluationContext
+            end
+            [oldToken, ~] = previous.revisionToken();
+            [clock, revision, tracked] = document.inputStamp();
+            reusable = previous.Cacheable && tracked && ~isempty(fieldnames(token)) && ...
+                macd.model.EvaluationContext.sameToken(oldToken, token) && clock == previous.InputClock && ...
+                registry == previous.Registry && registry.Revision == previous.RegistryRevision;
+            if ~reusable
+                obj = macd.model.EvaluationContext(document, registry); return
+            end
+            key = previous.Key;
+            assert(numel(key.Components) == numel(document.Components));
+            ids = string({key.Components.Id});
+            for update = updates
+                index = find(ids == update.ComponentId, 1);
+                assert(~isempty(index));
+                if update.ComponentId ~= ownerId
+                    key.Components(index) = update.projectInputs(key.Components(index));
+                end
+            end
+            % Only the changed owner can introduce new values, types, or source occurrences.
+            [owner, safe] = macd.model.EvaluationContext.freeze(document.getComponent(ownerId), true, registry);
+            if ~safe
+                obj = macd.model.EvaluationContext(document, registry); return
+            end
+            key.Components(ids == ownerId) = owner;
+            key.OriginalText = document.CurrentText;
+            key.Metadata.SourceSnapshotText = document.Metadata.SourceSnapshotText;
+            key.Metadata.InitializationContext = document.Metadata.InitializationContext;
+            key.UnknownRegions = document.UnknownRegions;
+            key.PendingEdits = document.PendingEdits;
+            key.CallbackEdits = document.CallbackEdits;
+            key.RenameEdits = document.RenameEdits;
+            obj = macd.model.EvaluationContext();
+            obj.Key = key;
+            obj.Cacheable = true;
+            obj.InputClock = clock;
+            obj.InputRevision = revision;
+            obj.Registry = registry;
+            obj.RegistryRevision = registry.Revision;
+            obj.TransitionToken = token;
+            obj.TransitionOwner = ownerId;
+            obj.TransitionPaths = paths;
         end
     end
 
@@ -444,6 +524,25 @@ classdef EvaluationContext < handle
     end
 
     methods (Static, Access = private)
+        function result = sameToken(first, second)
+            % sameToken Require owner identity as well as input and catalog revision numbers.
+            arguments (Input)
+                first (1, 1) struct
+                second (1, 1) struct
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            fields = ["Clock", "Revision", "Registry", "RegistryRevision"];
+            result = all(isfield(first, fields)) && all(isfield(second, fields)) && ...
+                isa(first.Clock, "macd.model.InputChangeClock") && isscalar(first.Clock) && ...
+                isa(second.Clock, "macd.model.InputChangeClock") && isscalar(second.Clock) && ...
+                isa(first.Registry, "macd.model.ComponentRegistry") && isscalar(first.Registry) && ...
+                isa(second.Registry, "macd.model.ComponentRegistry") && isscalar(second.Registry) && ...
+                isequal(first.Revision, second.Revision) && isequal(first.RegistryRevision, second.RegistryRevision) && ...
+                first.Clock == second.Clock && first.Registry == second.Registry;
+        end
+
         function [key, safe] = capture(document)
             % capture Snapshot all source and model inputs while excluding derived output diagnostics.
             arguments (Input)

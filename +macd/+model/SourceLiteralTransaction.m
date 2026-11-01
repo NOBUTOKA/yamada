@@ -30,6 +30,9 @@ classdef SourceLiteralTransaction
         Regions macd.model.UnknownSourceRegion
         Metadata struct
         Catalog macd.model.ComponentRegistry
+        InputClock macd.model.InputChangeClock
+        InputRevision uint64
+        InputsTracked logical = false
         CatalogRevision uint64
     end
 
@@ -46,6 +49,7 @@ classdef SourceLiteralTransaction
             arguments (Output)
                 obj (1, 1) macd.model.SourceLiteralTransaction
             end
+            [obj.InputClock, obj.InputRevision, obj.InputsTracked] = document.inputStamp();
             component = document.getComponent(id);
             assert(~isempty(component) && component.IsEditable);
             assert(document.sourceAnalysis().matches(source.Text), ...
@@ -147,6 +151,23 @@ classdef SourceLiteralTransaction
             obj.CatalogRevision = registry.Revision;
         end
 
+        function [updates, token] = inputProjection(obj)
+            % inputProjection Return immutable position candidates and the exact input version used for preparation.
+            arguments (Input)
+                obj (1, 1) macd.model.SourceLiteralTransaction
+            end
+            arguments (Output)
+                updates macd.model.SourceLocationUpdate
+                token (1, 1) struct
+            end
+            updates = obj.Updates;
+            token = struct();
+            if obj.InputsTracked
+                token = struct("Clock", obj.InputClock, "Revision", obj.InputRevision, ...
+                    "Registry", obj.Catalog, "RegistryRevision", obj.CatalogRevision);
+            end
+        end
+
         function applyModel(obj, document, source, registry)
             % applyModel Publish a completely prepared model projection inside the document commit barrier.
             arguments (Input)
@@ -161,6 +182,9 @@ classdef SourceLiteralTransaction
             for update = obj.Updates
                 update.assertCurrent(document.getComponent(update.ComponentId));
             end
+            [clock, revision, tracked] = document.inputStamp();
+            assert(~obj.InputsTracked || (tracked && clock == obj.InputClock && revision == obj.InputRevision), ...
+                "macd:SourceLiteralTransaction:StaleInputs", "The document changed during source preparation.");
             for update = obj.Updates
                 update.applyValidated(document.getComponent(update.ComponentId));
             end

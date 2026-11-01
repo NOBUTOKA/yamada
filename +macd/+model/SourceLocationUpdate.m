@@ -141,11 +141,34 @@ classdef SourceLocationUpdate
                         isequaln(entry.Metadata, projected.Metadata), continue, end
                 if ~isequaln(entry.SourceSpan, projected.SourceSpan), entry.SourceSpan = projected.SourceSpan; end
                 if ~isequaln(entry.Metadata, projected.Metadata), entry.Metadata = projected.Metadata; end
-                if isfield(projected.Metadata, "SourceSettingId")
+                if projected.ValueChanged && isfield(projected.Metadata, "SourceSettingId")
                     settings = component.getSettings(projected.Path);
                     match = find(string({settings.Id}) == string(projected.Metadata.SourceSettingId), 1);
                     if ~isempty(match), entry.applySourceSetting(settings(match)); end
                 end
+            end
+        end
+    end
+
+    methods (Access = ?macd.model.EvaluationContext)
+        function record = projectInputs(obj, record)
+            % projectInputs Carry prepared source locations into a previously independent component snapshot.
+            arguments (Input)
+                obj (1, 1) macd.model.SourceLocationUpdate
+                record (1, 1) struct
+            end
+            arguments (Output)
+                record (1, 1) struct
+            end
+            assert(obj.CanApply && record.Id == obj.ComponentId && ~any([obj.Properties.ValueChanged]));
+            record.SourceSpans = obj.AfterSpans;
+            record.Metadata = obj.AfterMetadata;
+            record.Settings = obj.AfterSettings;
+            for projected = obj.Properties
+                index = find(string({record.Properties.Path}) == projected.Path, 1);
+                assert(~isempty(index));
+                record.Properties(index).SourceSpan = projected.SourceSpan;
+                record.Properties(index).Metadata = projected.Metadata;
             end
         end
     end
