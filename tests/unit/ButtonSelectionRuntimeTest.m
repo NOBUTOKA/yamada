@@ -21,6 +21,8 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
             right = document.getComponentByName(right.Name);
             snapshot = document.copySubtree(left.Id, registry);
             pasted = document.pasteSubtree(snapshot, right.Id, registry);
+            tag = className + "-pasted";
+            pasted.setProperty("Tag", tag);
             source = macd.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyLessThan(strfind(source, "app." + right.Name + ".Position ="), ...
                 strfind(source, "app." + pasted.Name + " = uipanel"));
@@ -33,7 +35,9 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
             app = feval(className);
             appCleanup = onCleanup(@() delete(app));
             drawnow;
-            testCase.verifyEqual(app.(pasted.Name).Position, pasted.getProperty("Position").LiteralValue);
+            native = findall(0, "Tag", tag);
+            testCase.assertNumElements(native, 1);
+            testCase.verifyEqual(native.Position, pasted.getProperty("Position").LiteralValue);
             % Release native handles before removing the owned source directory.
             clear appCleanup cleanup
         end

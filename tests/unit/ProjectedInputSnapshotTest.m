@@ -38,6 +38,22 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             end
         end
 
+        function equalValuesOfDifferentClassesStillReplaceTheLiteral(testCase)
+            % equalValuesOfDifferentClassesStillReplaceTheLiteral Preserve empty text and nested numeric storage types.
+            cases = {[], ''; 1, single(1); {1}, {single(1)}; struct("Value", 1), struct("Value", single(1))};
+            for index = 1:size(cases, 1)
+                entry = macd.model.PropertyEntry("Value", cases{index, 1}, "parsed");
+                setting = macd.model.PropertySetting("Value", cases{index, 2}, ...
+                    struct("Id", "setting", "Method", "assignment", "IsEditable", true));
+                entry.applySourceSetting(setting);
+                testCase.verifyEqual(entry.LiteralValue, cases{index, 2});
+                if index == 1, testCase.verifyClass(entry.LiteralValue, "char"); end
+                if index == 2, testCase.verifyClass(entry.LiteralValue, "single"); end
+                if index == 3, testCase.verifyClass(entry.LiteralValue{1}, "single"); end
+                if index == 4, testCase.verifyClass(entry.LiteralValue.Value, "single"); end
+            end
+        end
+
         function identicalSourceSettingsDoNotInvalidateInputs(testCase)
             % identicalSourceSettingsDoNotInvalidateInputs Retain the input revision when a current binding is reapplied.
             registry = macd.model.ComponentRegistry.createDefault();

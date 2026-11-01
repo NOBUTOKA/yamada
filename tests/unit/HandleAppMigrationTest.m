@@ -71,13 +71,16 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             % generatedCallbacksReceiveSourceAndEvent Exercise the documented bound-method calling convention.
             [document, registry] = testCase.runtimeDocument();
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
+            tag = document.ClassName + "-button";
+            button.setProperty("Tag", tag);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = macd.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "% Add callback behavior here.", ...
                 "app." + button.Name + ".Text = source.Text + event.Suffix;");
             app = testCase.instantiate(document, source);
             cleanup = onCleanup(@() delete(app));
-            control = app.(button.Name);
+            control = findall(0, "Tag", tag);
+            testCase.assertNumElements(control, 1);
             before = string(control.Text);
             callback = control.ButtonPushedFcn;
             callback(control, struct("Suffix", " changed"));
@@ -90,7 +93,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             for action = ["close", "delete"]
                 [document, registry] = testCase.runtimeDocument();
                 app = testCase.instantiate(document, macd.source.NewAppGenerator(registry).generate(document));
-                figure = app.UIFigure;
+                figure = findall(0, "Type", "figure", "Name", document.ClassName);
+                testCase.assertNumElements(figure, 1);
                 cleanup = onCleanup(@() delete(app));
                 if action == "close", close(figure); else, delete(app); end
                 testCase.verifyFalse(isvalid(app));
@@ -104,7 +108,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             % figureDeletionPreservesUserDeleteCallback Keep user callbacks while releasing the owner.
             [document, registry] = testCase.runtimeDocument();
             app = testCase.instantiate(document, macd.source.NewAppGenerator(registry).generate(document));
-            figure = app.UIFigure;
+            figure = findall(0, "Type", "figure", "Name", document.ClassName);
+            testCase.assertNumElements(figure, 1);
             cleanup = onCleanup(@() delete(app));
             observer = uifigure("Visible", "off", "UserData", false);
             observerCleanup = onCleanup(@() delete(observer));
@@ -140,7 +145,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             source = replace(source, "            delete(app);", "            return");
             app = testCase.instantiate(document, source);
             cleanup = onCleanup(@() delete(app));
-            figure = app.UIFigure;
+            figure = findall(0, "Type", "figure", "Name", document.ClassName);
+            testCase.assertNumElements(figure, 1);
             close(figure);
             testCase.verifyTrue(isvalid(app));
             testCase.verifyTrue(isvalid(figure));

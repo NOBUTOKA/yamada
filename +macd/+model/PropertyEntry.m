@@ -50,6 +50,44 @@ classdef PropertyEntry < handle
         end
     end
 
+    methods (Static, Access = private)
+        function same = sameLiteral(first, second)
+            % sameLiteral Preserve literal classes and nested representations when suppressing redundant writes.
+            arguments (Input)
+                first
+                second
+            end
+            arguments (Output)
+                same (1, 1) logical
+            end
+            same = strcmp(class(first), class(second)) && isequal(size(first), size(second));
+            if ~same, return, end
+            if iscell(first)
+                for index = 1:numel(first)
+                    if ~macd.model.PropertyEntry.sameLiteral(first{index}, second{index}), same = false; return, end
+                end
+            elseif isstruct(first)
+                fields = fieldnames(first);
+                same = isequal(fields, fieldnames(second));
+                if ~same, return, end
+                for index = 1:numel(first)
+                    for field = 1:numel(fields)
+                        if ~macd.model.PropertyEntry.sameLiteral(first(index).(fields{field}), second(index).(fields{field}))
+                            same = false; return
+                        end
+                    end
+                end
+            elseif isnumeric(first) || islogical(first)
+                same = isreal(first) == isreal(second) && issparse(first) == issparse(second) && isequaln(first, second);
+            elseif ischar(first) || isstring(first)
+                same = isequaln(first, second);
+            else
+                % Objects retain assignment semantics rather than relying on their equality overloads.
+                same = false;
+            end
+        end
+    end
+
     methods (Access = private)
         function noteInput(obj, value)
             % noteInput Notify the token only after evaluation has attached it to a complete object.
@@ -175,7 +213,7 @@ classdef PropertyEntry < handle
                 value = [];
             end
             if obj.ValueKind ~= kind, obj.ValueKind = kind; end
-            if ~isequaln(obj.LiteralValue, value), obj.LiteralValue = value; end
+            if ~macd.model.PropertyEntry.sameLiteral(obj.LiteralValue, value), obj.LiteralValue = value; end
             if obj.SourceExpression ~= expression, obj.SourceExpression = expression; end
             if obj.IsEditable ~= setting.IsEditable, obj.IsEditable = setting.IsEditable; end
             if ~isequaln(obj.SourceSpan, setting.SourceSpan), obj.SourceSpan = setting.SourceSpan; end

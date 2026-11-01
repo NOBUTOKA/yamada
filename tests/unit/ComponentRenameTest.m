@@ -180,8 +180,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = macd.source.NewAppGenerator(registry).generate(document);
             canonicalSource = source;
-            source = replace(source, "    properties (Access = public)", ...
-                "    properties (Access = public)" + newline + "        UserData double" + newline + "        RunButtonButtonPushed double");
+            source = replace(source, "    properties (Access = private)", ...
+                "    properties (Access = private)" + newline + "        UserData double" + newline + "        RunButtonButtonPushed double");
             parsed = macd.source.AppSourceParser.parseText(source, registry);
             button = parsed.getComponentByName("Button");
             testCase.verifyError(@() parsed.renameComponent(button.Id, "UserData", registry), "macd:DocumentModel:ComponentNameCollision");
