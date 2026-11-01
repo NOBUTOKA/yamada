@@ -38,6 +38,7 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifyFalse(contains(source, "This class owns its generated"));
             testCase.verifySubstring(source, ...
                 "app.UIFigure = uifigure(""Visible"", ""off"");");
+            testCase.verifySubstring(source, "properties (Access = private)");
             testCase.verifyFalse(contains(source, "Generated UI component handle"));
             testCase.verifyFalse(contains(source, "% Create a"));
             testCase.verifyFalse(contains(source, "% Configure safe literal properties"));
