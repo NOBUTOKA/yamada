@@ -163,7 +163,7 @@ classdef SubtreePlacementPlanner
         end
     end
 
-    methods (Static, Access = ?macd.model.DocumentEditAvailability)
+    methods (Static, Access = {?macd.model.DocumentEditAvailability, ?macd.model.SourceLiteralTransaction})
         function paths = inputPropertyPaths()
             % inputPropertyPaths Identify stored settings consumed by placement and occupancy planning.
             arguments (Output)

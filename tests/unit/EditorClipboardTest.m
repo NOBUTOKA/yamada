@@ -315,7 +315,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(pasted.ParentId, rootId);
             testCase.verifyEqual(numel(pasted.Children), 1);
             testCase.verifyEmpty(pasted.getProperty("SizeChangedFcn"));
-            testCase.verifyEqual(numel(app.Document.CallbackEdits), 1);
+            testCase.verifyEmpty(app.Document.CallbackEdits);
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
             testCase.invoke(figure, "Cut", route, pastedId);
             testCase.verifyEmpty(app.Document.getComponent(pastedId));

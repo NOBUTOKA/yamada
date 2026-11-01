@@ -47,7 +47,9 @@ classdef SourceLocationUpdate
                 [location, valid] = macd.model.SourceLocationUpdate.mapRanges(record.Location, batch);
                 obj.CanApply = obj.CanApply && valid;
                 record.Location = location;
-                if isfield(execution, "Trace") && valid
+                if isfield(execution, "Trace") && isempty(location.SourceSpan)
+                    obj.CanApply = false;
+                elseif isfield(execution, "Trace") && valid
                     indices = analysis.statementIndices(location.SourceSpan);
                     visits = find(ismember(execution.Trace.Order, indices));
                     if isscalar(visits)
@@ -143,18 +145,30 @@ classdef SourceLocationUpdate
                 diagnostics macd.model.Diagnostic
                 regions macd.model.UnknownSourceRegion
             end
-            diagnostics = macd.model.Diagnostic.empty;
-            for previous = document.Diagnostics
-                [span, valid] = batch.mapSpan(previous.SourceSpan);
-                assert(valid, "macd:SourceLiteralTransaction:WiderProof", "Diagnostic ownership changed.");
-                diagnostics(end + 1) = macd.model.Diagnostic(previous.Code, previous.Severity, ...
-                    previous.Message, previous.ComponentId, span); %#ok<AGROW>
-            end
+            diagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(document.Diagnostics, batch);
             regions = macd.model.UnknownSourceRegion.empty;
             for previous = document.UnknownRegions
                 [span, valid] = batch.mapSpan(previous.Span);
                 assert(valid, "macd:SourceLiteralTransaction:WiderProof", "Opaque statement ownership changed.");
                 regions(end + 1) = macd.model.UnknownSourceRegion(previous.Text, span, previous.Reason); %#ok<AGROW>
+            end
+        end
+
+        function diagnostics = relocateDiagnostics(previousDiagnostics, batch)
+            % relocateDiagnostics Retain immutable diagnostic positions across a proven literal patch.
+            arguments (Input)
+                previousDiagnostics macd.model.Diagnostic
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            arguments (Output)
+                diagnostics macd.model.Diagnostic
+            end
+            diagnostics = macd.model.Diagnostic.empty;
+            for previous = previousDiagnostics
+                [span, valid] = batch.mapSpan(previous.SourceSpan);
+                assert(valid, "macd:SourceLiteralTransaction:WiderProof", "Diagnostic ownership changed.");
+                diagnostics(end + 1) = macd.model.Diagnostic(previous.Code, previous.Severity, ...
+                    previous.Message, previous.ComponentId, span); %#ok<AGROW>
             end
         end
 

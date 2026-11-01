@@ -1,4 +1,4 @@
-classdef SourceStrategyExperimentTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'model', 'generation'}) SourceStrategyExperimentTest < matlab.unittest.TestCase
     % SourceStrategyExperimentTest Verify equivalent deferred and eager prototype source semantics.
     %   Tests compare saved values, growing and shrinking literals, positions, and model history.
 

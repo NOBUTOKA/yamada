@@ -63,9 +63,11 @@ classdef DocumentModel < handle
         SourceRegistry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
         SourcePublication logical = false
         SourceInputRevision uint64 = uint64(0)
+        HasPublishedInputStamp logical = false
         SourceAnalysisData macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
         InputClock macd.model.InputChangeClock = macd.model.InputChangeClock.empty
         Evaluation macd.model.EvaluationContext = macd.model.EvaluationContext.empty
+        PropertyValidationNames string = strings(1, 0)
         PropertyValidationContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         PropertyValidationDiagnostics macd.model.Diagnostic = macd.model.Diagnostic.empty
         SavedHistoryIndex double = NaN
@@ -169,6 +171,16 @@ classdef DocumentModel < handle
     end
 
     methods (Access = ?macd.source.AppSourceParser)
+        function finishParsedSource(obj)
+            % finishParsedSource Stamp a fully assembled parser result after all semantic inputs are known.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            [~, revision] = obj.inputStamp();
+            obj.SourceInputRevision = revision;
+            obj.HasPublishedInputStamp = true;
+        end
+
         function rememberSourceAnalysis(obj, analysis, registry)
             % rememberSourceAnalysis Attach parser-owned derived data for the exact current source.
             arguments (Input)
@@ -196,7 +208,7 @@ classdef DocumentModel < handle
                 result (1, 1) logical
             end
             result = false;
-            if isempty(obj.CurrentSource) || isempty(obj.InputClock) || ~obj.InputClock.IsTracked || ...
+            if ~obj.HasPublishedInputStamp || isempty(obj.CurrentSource) || isempty(obj.InputClock) || ~obj.InputClock.IsTracked || ...
                     obj.InputClock.Revision ~= obj.SourceInputRevision
                 return
             end
@@ -226,7 +238,7 @@ classdef DocumentModel < handle
                 result (1, 1) logical
             end
             result = false;
-            if isempty(obj.CurrentSource) || isempty(obj.InputClock) || ~obj.InputClock.IsTracked || ...
+            if ~obj.HasPublishedInputStamp || isempty(obj.CurrentSource) || isempty(obj.InputClock) || ~obj.InputClock.IsTracked || ...
                     obj.InputClock.Revision ~= obj.SourceInputRevision
                 return
             end
@@ -258,6 +270,18 @@ classdef DocumentModel < handle
                     if ~startsWith(string(exception.identifier), "macd:SourcePatchBatch:"), rethrow(exception), end
                 end
             end
+        end
+
+        function result = hasPublishedModel(obj)
+            % hasPublishedModel Identify an exact managed source/model state without rebuilding source on a read.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = obj.HasPublishedInputStamp && ~isempty(obj.CurrentSource) && ~isempty(obj.InputClock) && obj.InputClock.IsTracked && ...
+                obj.InputClock.Revision == obj.SourceInputRevision;
         end
 
         function initializeSource(obj, registry)
@@ -549,6 +573,7 @@ classdef DocumentModel < handle
                 entry (1, 1) macd.model.PropertyEntry
             end
 
+            if isempty(registry), registry = obj.SourceRegistry; end
             % Validate the component before capturing the reversible old value.
             component = obj.getComponent(componentId);
             if isempty(component)
@@ -600,6 +625,7 @@ classdef DocumentModel < handle
                 entries macd.model.PropertyEntry
             end
 
+            if isempty(registry), registry = obj.SourceRegistry; end
             % Preflight every target before changing any component property.
             component = obj.getComponent(componentId);
             if isempty(component)
@@ -684,11 +710,19 @@ classdef DocumentModel < handle
 
             % Only this editor post-commit path consumes proof; generation and saving still validate fully.
             if ~isempty(obj.PropertyValidationContext) && obj.PropertyValidationContext.matches(obj, registry)
+                if ~isempty(obj.PropertyValidationNames)
+                    [checked, ids] = macd.validation.ModelValidator.validate(obj, registry, obj.PropertyValidationNames);
+                    retained = obj.PropertyValidationDiagnostics;
+                    if ~isempty(retained), retained = retained(~ismember(string({retained.ComponentId}), ids)); end
+                    obj.PropertyValidationDiagnostics = [retained checked];
+                    obj.PropertyValidationNames = strings(1, 0);
+                end
                 diagnostics = obj.PropertyValidationDiagnostics;
                 obj.Diagnostics = diagnostics;
                 return
             end
             diagnostics = macd.validation.ModelValidator.validate(obj, registry);
+            obj.PropertyValidationNames = strings(1, 0);
             obj.PropertyValidationContext = obj.evaluationContext(registry);
             obj.PropertyValidationDiagnostics = diagnostics;
         end
@@ -1682,6 +1716,7 @@ classdef DocumentModel < handle
                 obj (1, 1) macd.model.DocumentModel
             end
             obj.CurrentSource = macd.model.CurrentSourceState.empty;
+            obj.HasPublishedInputStamp = false;
         end
 
         function ensureCurrentSource(obj, registry)
@@ -1693,7 +1728,10 @@ classdef DocumentModel < handle
             if isempty(registry), registry = obj.SourceRegistry; end
             if isempty(registry), return, end
             obj.SourceRegistry = registry;
-            if ~isempty(obj.CurrentSource), return, end
+            if ~isempty(obj.CurrentSource)
+                obj.discardUnownedReadOnlyInputs(registry);
+                return
+            end
             if strlength(obj.OriginalText) > 0
                 obj.CurrentSource = macd.model.CurrentSourceState(obj.OriginalText, obj.sourceAnalysis());
             else
@@ -1707,6 +1745,52 @@ classdef DocumentModel < handle
                 end
                 obj.publishParsedSource(macd.model.CurrentSourceState(text), registry);
             end
+        end
+
+        function discardUnownedReadOnlyInputs(obj, registry)
+            % discardUnownedReadOnlyInputs Omit legacy builder requests that never owned writable source.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            for component = obj.Components
+                if ~registry.contains(component.Factory), continue, end
+                for entry = component.Properties
+                    if entry.Origin ~= "generated" || ~isempty(entry.SourceSpan), continue, end
+                    settings = component.getSettings(entry.Path);
+                    if any(string({settings.Method}) ~= "generated"), continue, end
+                    if registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments)
+                        component.removeProperty(entry.Path);
+                    end
+                end
+            end
+        end
+
+        function result = currentModelIsBound(obj)
+            % currentModelIsBound Keep staged builder changes out of the already-published literal fast path.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            if ~isempty(obj.PendingEdits) || ~isempty(obj.CallbackEdits) || ~isempty(obj.RenameEdits), return, end
+            for component = obj.Components
+                if isempty(component.SourceSpans.Creation) || any(string({component.Settings.Method}) == "generated"), return, end
+                for entry = component.Properties
+                    if ~isfield(entry.Metadata, "SourceSettingId"), return, end
+                    settings = component.getSettings(entry.Path);
+                    index = find(string({settings.Id}) == entry.Metadata.SourceSettingId, 1);
+                    if isempty(index), return, end
+                    setting = settings(index);
+                    if setting.IsEditable && (setting.ValueKind ~= entry.ValueKind || ...
+                            (entry.ValueKind == "literal" && ~isequaln(setting.LiteralValue, entry.LiteralValue)))
+                        return
+                    end
+                end
+            end
+            result = true;
         end
 
         function result = tryImmediateProperties(obj, id, changes, registry)
@@ -1724,7 +1808,13 @@ classdef DocumentModel < handle
             if isempty(registry), registry = obj.SourceRegistry; end
             if isempty(registry), return, end
             obj.ensureCurrentSource(registry);
+            if ~obj.currentModelIsBound(), return, end
             component = obj.getComponent(id);
+            previousContext = obj.evaluationContext(registry);
+            carryValidation = ~isempty(obj.PropertyValidationContext) && isempty(obj.PropertyValidationNames) && ...
+                obj.PropertyValidationContext.matches(obj, registry) && ...
+                ~macd.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics);
+            previousDiagnostics = obj.PropertyValidationDiagnostics;
             beforeSettings = component.settingSnapshot();
             beforeArguments = component.CreationArguments;
             before = obj.CurrentSource;
@@ -1734,6 +1824,11 @@ classdef DocumentModel < handle
             try
                 prepared = macd.model.SourceLiteralTransaction(obj, before, id, changes, registry);
             catch exception
+                if startsWith(string(exception.identifier), "macd:LiteralEncoder:") || ...
+                        (string(exception.identifier) == "macd:SourceLiteralTransaction:InvalidValue" && ...
+                        all(ismember(string({changes.Path}), string({beforeSettings.Path}))))
+                    error("macd:DocumentModel:UnsafePropertyEdit", "%s", exception.message);
+                end
                 if any(string(exception.identifier) == ["macd:SourceLiteralTransaction:WiderProof", "macd:SourceLiteralTransaction:InvalidValue", ...
                         "macd:SourceSettingRebinder:NeedsModelParse", "macd:PropertyInsertionPlanner:UnsafePlacement"])
                     return
@@ -1742,6 +1837,22 @@ classdef DocumentModel < handle
             end
             prepared.applyModel(obj, before, registry);
             obj.publishCurrentSource(prepared.AfterSource);
+            currentContext = obj.evaluationContext(registry);
+            if prepared.CanReuseStates
+                currentContext.inheritLiteralStates(previousContext, id, prepared.Batch);
+            end
+            if prepared.CanReuseEligibility
+                currentContext.inheritEligibility(previousContext);
+            end
+            if carryValidation && prepared.CanReuseStates
+                obj.PropertyValidationContext = currentContext;
+                obj.PropertyValidationNames = component.Name;
+                if all(ismember(string({changes.Path}), string({beforeSettings.Path})))
+                    % Existing owned slots need no second check after their finite local proof.
+                    obj.PropertyValidationNames = strings(1, 0);
+                end
+                obj.PropertyValidationDiagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(previousDiagnostics, prepared.Batch);
+            end
             edit = struct("Kind", "source-property", "ComponentId", id, "Changes", changes, ...
                 "BeforeSettings", beforeSettings, "AfterSettings", component.settingSnapshot(), ...
                 "BeforeArguments", {beforeArguments}, "AfterArguments", {component.CreationArguments}, ...
@@ -1774,9 +1885,11 @@ classdef DocumentModel < handle
             obj.CallbackEdits = macd.model.CallbackEdit.empty;
             obj.RenameEdits = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
             obj.PropertyValidationContext = macd.model.EvaluationContext.empty;
+            obj.PropertyValidationNames = strings(1, 0);
             obj.Metadata.SourceSnapshotText = state.Text;
             [clock, revision] = obj.inputStamp();
             obj.SourceInputRevision = revision;
+            obj.HasPublishedInputStamp = true;
             assert(~isempty(clock));
         end
 

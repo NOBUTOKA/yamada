@@ -74,8 +74,7 @@ classdef SubtreeCopyPlanner
                 sources = component.Settings(string({component.Settings.Method}) ~= "generated");
                 current = document.getComponent(component.Id);
                 if macd.model.SourceOwnership.hasSource(component) && ~isempty(sources) && ...
-                        (isempty(current) || ~isequaln(component.SourceSpans, current.SourceSpans) || ...
-                        ~isequaln(component.settingSnapshot(), current.settingSnapshot()))
+                        (isempty(current) || ~all(ismember(string({sources.Id}), string({current.Settings.Id}))))
                     error("macd:DocumentModel:UnsafeSubtreeCopy", "The unprepared snapshot belongs to a different source state.");
                 end
                 index = find(string({context.Components.Id}) == component.Id, 1);

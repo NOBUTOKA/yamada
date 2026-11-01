@@ -13,7 +13,8 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             checkpoint = document.HistoryIndex;
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             testCase.verifyEqual(document.HistoryIndex, checkpoint + 1);
-            added = document.CallbackEdits;
+            added = document.History{end}.After;
+            addedText = document.CurrentText;
             testCase.verifyEqual(numel(added), 1);
             testCase.verifySubstring(added.MethodText, "function " + added.HandlerName + "(app, source, event)");
             testCase.verifySubstring(added.MethodText, "% " + added.HandlerName);
@@ -21,11 +22,11 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             testCase.verifyEmpty(document.CallbackEdits);
             testCase.verifyFalse(document.IsDirty);
             document.redo();
-            testCase.verifyEqual(document.CallbackEdits, added);
+            testCase.verifyEqual(document.CurrentText, addedText);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
             testCase.verifyEmpty(document.CallbackEdits);
             document.undo();
-            testCase.verifyEqual(document.CallbackEdits, added);
+            testCase.verifyEqual(document.CurrentText, addedText);
             document.redo();
             testCase.verifyEmpty(document.CallbackEdits);
         end
@@ -76,11 +77,11 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             document = macd.model.NewAppFactory.createEmpty("UIFigureSizeChanged", registry);
             root = document.RootComponentId;
             document.applyCallbackAction(root, "SizeChangedFcn", "Add", registry);
-            first = document.CallbackEdits(1);
+            first = document.History{end}.After(1);
             testCase.verifyNotEqual(first.HandlerName, document.ClassName);
             testCase.verifyTrue(isvarname(first.HandlerName));
             document.applyCallbackAction(root, "CloseRequestFcn", "Add", registry);
-            testCase.verifyNotEqual(document.CallbackEdits(2).HandlerName, first.HandlerName);
+            testCase.verifyNotEqual(document.History{end}.After(1).HandlerName, first.HandlerName);
         end
 
         function parsedDeletionPreservesOriginalBodyAndCanBeReplaced(testCase)
@@ -91,19 +92,20 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             component = document.getComponentByName("CalculateButton");
             original = document.OriginalText;
             document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry);
-            removed = document.CallbackEdits;
+            removed = document.History{end}.After;
+            deletedText = document.CurrentText;
             testCase.verifyTrue(removed.MethodSpan.isKnown());
             testCase.verifyTrue(removed.BindingSpan.isKnown());
             testCase.verifyEqual(document.OriginalText, original);
             document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Add", registry);
-            testCase.verifyEqual(document.CallbackEdits.MethodSpan, removed.MethodSpan);
-            testCase.verifyNotEqual(document.CallbackEdits.HandlerName, "CalculateButtonPushed");
-            document.OriginalText = original + newline;
-            testCase.verifyError(@() document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry), ...
+            testCase.verifySubstring(document.CurrentText, document.History{end}.After.HandlerName + "(app");
+            testCase.verifyNotEqual(document.History{end}.After.HandlerName, "CalculateButtonPushed");
+            stale = document.structuralCandidate();
+            stale.OriginalText = original + newline;
+            testCase.verifyError(@() stale.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry), ...
                 "macd:DocumentModel:UnsafeCallbackEdit");
-            document.OriginalText = original;
             document.undo();
-            testCase.verifyEqual(document.CallbackEdits, removed);
+            testCase.verifyEqual(document.CurrentText, deletedText);
             document.undo();
             testCase.verifyEmpty(document.CallbackEdits);
             testCase.verifyFalse(document.IsDirty);

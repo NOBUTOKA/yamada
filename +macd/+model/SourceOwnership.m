@@ -3,15 +3,15 @@ classdef SourceOwnership
     %   Parsed and newly inserted components use the same checks after publication.
     methods (Static)
         function result = hasSource(record)
-            % hasSource Return whether a component or value snapshot owns a current factory statement.
+            % hasSource Recognize imported ownership and already published generated factory statements.
             arguments (Input)
                 record
             end
             arguments (Output)
                 result (1, 1) logical
             end
-            result = ~isempty(record.SourceSpans.Creation) && ...
-                isa(record.SourceSpans.Creation, "macd.model.SourceSpan") && record.SourceSpans.Creation.isKnown();
+            result = record.Origin == "parsed" || (~isempty(record.SourceSpans.Creation) && ...
+                isa(record.SourceSpans.Creation, "macd.model.SourceSpan") && record.SourceSpans.Creation.isKnown());
         end
     end
 end

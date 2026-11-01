@@ -39,6 +39,10 @@ classdef PropertyInsertionPlanner
             arguments (Output)
                 plan (1, 1) struct
             end
+            if ~macd.source.PropertyInsertionPlanner.needsPlan(document, component)
+                plan = macd.source.PropertySourcePlan.combined(document, component, registry);
+                return
+            end
             context = document.evaluationContext(registry);
             scope = context.readScope(); %#ok<NASGU>
             [plan, found] = macd.source.PropertyInsertionPlanner.sharedBatch(document, component, registry, context);

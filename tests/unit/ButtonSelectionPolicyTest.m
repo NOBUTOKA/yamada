@@ -123,8 +123,10 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             document = macd.model.NewAppFactory.createEmpty("LegacySelection", registry);
             group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);
             document.insertComponent(registry, "uiradiobutton", group.Id);
-            second = document.insertComponent(registry, "uiradiobutton", group.Id);
+            definition = registry.get("uiradiobutton");
+            second = macd.model.ComponentRecord("legacy-second", "Second", "uiradiobutton", definition.DeclaredType);
             second.CreationArguments = {"Value", 1};
+            document.addComponent(second, group.Id);
             states = document.getEffectivePropertyStates(registry, second.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.EffectiveValue, 1);
             source = macd.source.NewAppGenerator(registry).generate(document);

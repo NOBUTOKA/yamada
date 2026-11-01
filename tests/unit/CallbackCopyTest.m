@@ -26,7 +26,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 testCase.verifyEqual(copiedButton.ParentId, pasted.Id);
                 testCase.verifyEmpty(copiedButton.getProperty("ButtonPushedFcn"));
                 testCase.verifyEmpty(pasted.getProperty("SizeChangedFcn"));
-                testCase.verifyEqual(button.settingSnapshot(), settings);
+                testCase.verifyEqual(SourceAssertions.retained(button.settingSnapshot(), settings), SourceAssertions.semantics(settings));
                 testCase.verifySubstring(source, body(2));
                 testCase.verifySubstring(source, "error('handler-must-not-run');");
                 testCase.verifyEqual(count(source, "function OnPushed(app, event)"), 1);

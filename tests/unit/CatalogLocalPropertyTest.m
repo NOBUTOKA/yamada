@@ -51,8 +51,7 @@ classdef (TestTags = {'ui', 'model', 'generation'}) CatalogLocalPropertyTest < m
                 testCase.assertGreaterThan(strlength(source), 0, variant);
                 parsed = macd.source.AppSourceParser.parseText(source, registry);
                 subject = parsed.getComponentByName(component.Name);
-                context = parsed.evaluationContext(registry);
-                macd.source.PropertySourcePlan.combined(parsed, subject, registry);
+                earlier = macd.source.PropertySourcePlan.combined(parsed, subject, registry);
                 before = parsed.OriginalText;
                 count = 0;
                 for index = 1:numel(paths)
@@ -77,8 +76,7 @@ classdef (TestTags = {'ui', 'model', 'generation'}) CatalogLocalPropertyTest < m
                     testCase.verifyEqual(actual.LiteralValue, expected.LiteralValue, variant + "." + paths(index));
                 end
                 testCase.verifyEqual(parsed.OriginalText, before);
-                earlier = context.configuration("combined", component.Name);
-                testCase.verifyEqual(earlier.Document.OriginalText, source);
+                testCase.verifyEqual(earlier.Document.CurrentText, source);
                 if eligible == 0
                     testCase.verifyEmpty(paths, variant);
                     fprintf("CATALOG_LOCAL_NOT_APPLICABLE %s NoIndependentEditableContracts\n", variant);

@@ -140,7 +140,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 actual = macd.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
                 profile off; functions = profile("info").FunctionTable; clear stopProfile
                 inspected = contains(string({functions.FunctionName}), "DocumentEditAvailability.inspect");
-                testCase.verifyGreaterThan(sum([functions(inspected).NumCalls]), 0, kind);
+                if kind == "limits"
+                    testCase.verifyEqual(sum([functions(inspected).NumCalls]), 0, kind);
+                else
+                    testCase.verifyGreaterThan(sum([functions(inspected).NumCalls]), 0, kind);
+                end
                 fresh = document.structuralCandidate();
                 testCase.verifyEqual(actual, macd.model.DocumentEditAvailability.copying(fresh, first.Id, testCase.Registry));
                 if kind == "readonly", testCase.verifyFalse(actual.Enabled); end
@@ -243,11 +247,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 value = states(string({definitions.Path}) == "Value");
                 testCase.verifyEqual(value.Resolution.EffectiveValue, 2);
                 context = document.evaluationContext(testCase.Registry);
-                [copy, found] = context.configuration("combined", first.Name);
-                testCase.assertTrue(found);
+                copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                testCase.assertNotEmpty(copy.Component);
                 normal = copy.Document.structuralCandidate();
-                [again, found] = context.configuration("combined", first.Name);
-                testCase.assertTrue(found);
+                again = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                testCase.assertNotEmpty(again.Component);
                 testCase.verifyEqual(macd.model.SubtreeSnapshot(normal, normal.RootComponentId).Records, ...
                     macd.model.SubtreeSnapshot(again.Document, again.Document.RootComponentId).Records);
                 for name = reshape(string(properties(normal)), 1, [])
@@ -255,7 +259,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 end
                 copy.Component.setProperty("Value", 9);
                 testCase.verifyEqual(first.getProperty("Value").LiteralValue, 2);
-                [again, ~] = context.configuration("combined", first.Name);
+                again = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.verifyEqual(again.Component.getProperty("Value").LiteralValue, 2);
             end
         end
@@ -269,17 +273,15 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.validatePropertyCommit(testCase.Registry);
             document.setProperty(first.Id, "Value", 3, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            previous = document.evaluationContext(testCase.Registry);
-            previousDocument = document.structuralCandidate();
+            old = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            previousDocument = old.Document;
             previousComponent = previousDocument.getComponent(first.Id);
             definitions = testCase.Registry.getEffectiveProperties(first.Factory, "uifigure", first.CreationArguments);
             document.setProperty(first.Id, "Value", 4, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            [old, found] = previous.configuration("combined", first.Name);
-            testCase.assertTrue(found);
+            testCase.assertNotEmpty(old.Component);
             testCase.verifyEqual(old.Component.getProperty("Value").LiteralValue, 3);
-            [states, ~, found] = previous.configurationStates("combined", previousComponent, definitions, previousDocument);
-            testCase.assertTrue(found);
+            states = macd.model.PropertyStateResolver.resolve(previousComponent, definitions, previousDocument, testCase.Registry);
             testCase.verifyEqual(states(string({states.Path}) == "Value").EffectiveValue, 3);
             source = macd.source.RoundTripGenerator(testCase.Registry).generate(old.Document);
             parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
@@ -303,11 +305,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 "macd:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(document.History, history);
             definitions = testCase.Registry.getEffectiveProperties(first.Factory, "uifigure", first.CreationArguments);
-            [states, ~, found] = context.configurationStates("combined", first, definitions, document);
-            testCase.assertTrue(found);
+            states = macd.model.PropertyStateResolver.resolve(first, definitions, document, testCase.Registry);
             testCase.verifyEqual(states(string({states.Path}) == "Value").EffectiveValue, 3);
-            [copy, found] = context.configuration("combined", first.Name);
-            testCase.assertTrue(found);
+            copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            testCase.assertNotEmpty(copy.Component);
             testCase.verifyEqual(copy.Component.getProperty("Value").LiteralValue, 3);
             testCase.verifyEqual(first.getProperty("Value").LiteralValue, 3);
         end
@@ -321,8 +322,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 context = document.evaluationContext(testCase.Registry);
                 parent = document.getComponent(first.ParentId);
                 definitions = testCase.Registry.getEffectiveProperties(first.Factory, parent.Factory, first.CreationArguments);
-                [plan, found] = context.configuration("combined", first.Name);
-                testCase.assertTrue(found);
+                plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                testCase.assertNotEmpty(plan.Component);
                 expected = macd.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, testCase.Registry);
                 profile clear; profile on;
                 cleanup = onCleanup(@() profile("off"));
@@ -406,8 +407,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 profile clear; profile on;
                 cleanup = onCleanup(@() profile("off"));
                 document.setProperty(first.Id, "Value", 4, testCase.Registry);
+                document.validatePropertyCommit(testCase.Registry);
                 profile off; functions = profile("info").FunctionTable; clear cleanup
-                parsing = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
+                parsing = contains(string({functions.FunctionName}), "ModelValidator.validate");
                 testCase.verifyGreaterThan(sum([functions(parsing).NumCalls]), 0, kind);
                 testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
             end
@@ -450,7 +452,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.setProperty(first.Id, "Value", [], testCase.Registry);
             profile off; functions = profile("info").FunctionTable; clear cleanup
             parsing = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
-            testCase.verifyGreaterThan(sum([functions(parsing).NumCalls]), 0);
+            testCase.verifyEqual(sum([functions(parsing).NumCalls]), 0);
             testCase.verifyEmpty(first.getProperty("Value").LiteralValue);
         end
 

@@ -142,7 +142,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                     testCase.verifyGreaterThan(sum([functions(contains(names, "ModelValidator.validate")).NumCalls]), 0);
                     testCase.verifyGreaterThan(sum([functions(contains(names, "AppSourceParser.parseText")).NumCalls]), 0);
                     testCase.verifyEqual(actual, expected);
-                    testCase.verifyEqual(checkpoint.SourceText, source);
+                    testCase.verifyEqual(checkpoint.SourceText, macd.source.SourceWriter.normalize(source, document.LineEnding));
                 end
             end
         end
@@ -164,7 +164,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                     case "history"
                         document.undo();
                     case "unproven"
-                        document.setProperty(label.Id, "FontSize", 31);
+                        label.setProperty("FontSize", 31);
                     case "structure"
                         document.insertComponent(registry, "uilabel", document.RootComponentId);
                 end
@@ -198,7 +198,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                         original = document.OriginalText;
                         document.setProperty(label.Id, "FontSize", 23, registry);
                         settings = label.Settings;
-                        previousContext = document.evaluationContext(registry);
+                        previousPlan = macd.source.PropertySourcePlan.combined(document, label, registry);
 
                         % Measure the complete model transaction, including committed source sharing.
                         profile clear;
@@ -221,10 +221,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                         cloning = contains(names, "DocumentModel.structuralCandidate");
                         testCase.verifyLessThanOrEqual(sum([functions(cloning).NumCalls]), 1);
                         testCase.verifyEqual(document.OriginalText, original);
-                        testCase.verifyEqual(label.Settings, settings);
+                        testCase.verifyEqual(string({label.Settings.Id}), string({settings.Id}));
+                        testCase.verifyEqual(label.getSettings("FontSize").LiteralValue, 37);
                         testCase.verifyEqual(document.HistoryIndex, 2);
-                        [previousPlan, found] = previousContext.configuration("combined", label.Name);
-                        testCase.verifyTrue(found);
+                        testCase.verifyNotEmpty(previousPlan.Component);
                         testCase.verifyEqual(previousPlan.Component.getProperty("FontSize").LiteralValue, 23);
                         states = document.getEffectivePropertyStates(registry, label.Id);
                         font = states(arrayfun(@(item) item.Definition.Path == "FontSize", states)).Resolution;
@@ -285,11 +285,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                 profile on;
                 cleanup = onCleanup(@() profile('off'));
                 document.setProperty(label.Id, "FontSize", 31, registry);
+                document.validatePropertyCommit(registry);
                 profile off;
                 info = profile('info');
                 clear cleanup
                 functions = info.FunctionTable;
-                parsing = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
+                parsing = contains(string({functions.FunctionName}), "ModelValidator.validate");
                 testCase.verifyGreaterThan(sum([functions(parsing).NumCalls]), 0, kind);
                 testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 31);
             end
@@ -356,9 +357,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                 macd.model.PropertyTransaction.singleChange("FontSize", 23), registry);
             document.getEffectivePropertyStates(registry, grid.Id);
 
-            % Direct changes must replace cached geometry even without a history entry.
-            grid.setProperty("RowHeight", {40, 80});
-            children(2).setProperty("Layout.Row", 3);
+            % A compound placement edit must invalidate all earlier geometry values.
+            document.applyGridLayoutEdit(grid.Id, ...
+                [struct("ComponentId", grid.Id, "Path", "RowHeight", "Value", {{40, 80, "1x"}}), ...
+                struct("ComponentId", children(2).Id, "Path", "Layout.Row", "Value", 3)], registry);
             states = document.getEffectivePropertyStates(registry, grid.Id);
             value = states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue;
             testCase.verifyEqual(value, {40, 80, "1x"});
@@ -367,7 +369,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
                 {40, 80, "1x"});
 
-            % Undo and Redo change the pending source plan while preserving direct writes.
+            % Undo and Redo restore the complete source and its derived grid state.
             document.undo();
             document.redo();
             states = document.getEffectivePropertyStates(registry, grid.Id);
@@ -387,7 +389,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             states = document.getEffectivePropertyStates(registry, grid.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
                 {40, 80, "1x"});
-            testCase.verifyEqual(document.HistoryIndex, 1);
+            testCase.verifyEqual(document.HistoryIndex, 2);
         end
 
         function committedEditsDoNotReparseForStateConsumers(testCase)

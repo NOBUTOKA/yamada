@@ -1080,7 +1080,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             editor.Value = 75;
             editor.ValueChangedFcn(editor, struct());
             testCase.verifyEqual(document.HistoryIndex, 1);
-            testCase.verifyEqual(component.getSettings("Value").LiteralValue, 20);
+            testCase.verifyEqual(component.getSettings("Value").LiteralValue, 75);
             testCase.verifyEqual(component.getProperty("Value").LiteralValue, 75);
             menus = findall(figure, "Type", "uimenu");
             undo = menus(erase(string({menus.Text}), "&") == "Undo");

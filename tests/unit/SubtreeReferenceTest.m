@@ -30,7 +30,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             copied = clipboard.paste(document, document.RootComponentId, registry);
             testCase.verifyEqual(copied.getProperty("ContextMenu").Metadata.SubtreeReferenceId, menu.Id);
             testCase.verifySubstring(document.GeneratedText, "app." + copied.Name + ".ContextMenu = app.RenamedMenu;");
-            testCase.verifyEqual(button.getProperty("ContextMenu").SourceExpression, "app.Menu");
+            testCase.verifyEqual(button.getProperty("ContextMenu").SourceExpression, "app.RenamedMenu");
         end
 
         function referenceScopeBlocksMovingOrDeletingCopiedSelectedTab(testCase)
@@ -43,7 +43,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             history = document.HistoryIndex;
             testCase.verifyError(@() document.reparentSubtree(target.Id, group.Id, registry), "macd:DocumentModel:UnsafeSubtreeEdit");
             testCase.verifyEqual(target.ParentId, copied.Id);
-            testCase.verifyError(@() document.removeSubtree(target.Id, registry), "macd:DocumentModel:UnsafeSubtreeEdit");
+            testCase.verifyError(@() document.removeSubtree(target.Id, registry), "macd:SubtreeSourceEdits:UnsafeDeletion");
             testCase.verifyEqual(document.HistoryIndex, history);
         end
 
@@ -102,7 +102,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             end
             registry = macd.model.ComponentRegistry.createDefault();
             original = macd.model.NewAppFactory.createEmpty("ReferenceApp", registry);
-            group = original.insertComponent(registry, "uitabgroup", original.RootComponentId);
+            group = macd.model.ComponentRecord("group", "Group", "uitabgroup", "matlab.ui.container.TabGroup", "generated");
+            group.setProperty("Position", [10 10 300 200]);
+            original.addComponent(group, original.RootComponentId);
             first = macd.model.ComponentRecord("first-tab", "FirstTab", "uitab", "matlab.ui.container.Tab", "generated");
             original.addComponent(first, group.Id);
             second = macd.model.ComponentRecord("second-tab", "SecondTab", "uitab", "matlab.ui.container.Tab", "generated");
@@ -113,7 +115,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             definition = registry.get("uicontextmenu");
             menu = macd.model.ComponentRecord("menu", "Menu", definition.Factory, definition.DeclaredType, "generated");
             original.addComponent(menu, original.RootComponentId);
-            button = original.insertComponent(registry, "uibutton", original.RootComponentId);
+            button = macd.model.ComponentRecord("button", "Button", "uibutton", "matlab.ui.control.Button", "generated");
+            button.setProperty("Position", [10 10 100 22]);
+            original.addComponent(button, original.RootComponentId);
             entry = button.setProperty("ContextMenu", []);
             entry.setSourceExpression("app.Menu");
             entry.Metadata.SubtreeReferenceId = menu.Id;

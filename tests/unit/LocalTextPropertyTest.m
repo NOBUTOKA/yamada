@@ -99,6 +99,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                     case "other-owner"
                         second = document.getComponentByName("Second");
                         document.setProperty(second.Id, "Text", "Different owner", registry);
+                        document.validatePropertyCommit(registry);
                     case "metadata"
                         document.Metadata.RecheckText = true;
                     case "registry"
@@ -112,9 +113,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                     identifier = testCase.attempt(document, first.Id, "After invalidation", registry);
                 else
                     document.setProperty(first.Id, "Text", "After invalidation", registry);
+                    document.validatePropertyCommit(registry);
                 end
                 profile off; functions = profile("info").FunctionTable; clear stopProfile
-                if kind == "other-owner"
+                if any(kind == ["other-owner", "source"])
                     % The second owned edit established a complete configuration for both owners.
                     testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, kind);
                 else
@@ -134,22 +136,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             [document, first] = testCase.fixture("nested");
             document.setProperty(first.Id, "Text", "One", testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            previous = document.evaluationContext(testCase.Registry);
-            [old, found] = previous.configuration("combined", first.Name);
-            testCase.assertTrue(found);
+            old = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             document.setPropertyBatch(first.Id, ...
                 macd.model.PropertyTransaction.singleChange("Text", "Two"), testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
             testCase.verifyEqual(old.Component.getProperty("Text").LiteralValue, "One");
-            [again, found] = previous.configuration("combined", first.Name);
-            testCase.assertTrue(found);
-            testCase.verifyEqual(again.Component.getProperty("Text").LiteralValue, "One");
-            context = document.evaluationContext(testCase.Registry);
-            [copy, found] = context.configuration("combined", first.Name);
-            testCase.assertTrue(found);
+            copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             copy.Component.setProperty("Text", "External mutation");
-            [copy, found] = context.configuration("combined", first.Name);
-            testCase.assertTrue(found);
+            copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             testCase.verifyEqual(copy.Component.getProperty("Text").LiteralValue, "Two");
             document.undo();
             testCase.verifyEqual(first.getProperty("Text").LiteralValue, "One");
@@ -158,7 +152,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
             checkpoint = macd.model.SavedSourceCheckpoint(document, source, ...
                 fullfile(tempdir, "LocalTextFixture.m"), testCase.Registry);
-            testCase.verifyEqual(checkpoint.SourceText, source);
+            testCase.verifyEqual(checkpoint.SourceText, macd.source.SourceWriter.normalize(source, document.LineEnding));
             testCase.verifyEqual(document.HistoryIndex, 2);
         end
 
@@ -187,7 +181,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                     testCase.verifyEqual(decoded, values{index});
                     testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
                 elseif cases(index) == "physical-newline"
-                    testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0, cases(index));
+                    testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
                 else
                     % Unencodable values are rejected before generation or reparsing.
                     testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
@@ -255,7 +249,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             stopProfile = onCleanup(@() profile("off"));
             document.setProperty(field.Id, "Value", "Two", registry);
             profile off; functions = profile("info").FunctionTable; clear stopProfile
-            testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0);
+            testCase.verifyEqual(testCase.fullWorkCalls(functions), 0);
         end
     end
 

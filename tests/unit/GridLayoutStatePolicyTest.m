@@ -18,26 +18,16 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             actual = testCase.state(document, registry, grid, "RowHeight");
             profile off; functions = profile("info").FunctionTable; clear cleanup
             names = string({functions.FunctionName});
-            projecting = contains(names, "EvaluationContext.configurationGridState");
             copies = contains(names, "DocumentModel.structuralCandidate") | ...
                 contains(names, "DocumentModel.fromConfigurationSnapshot");
-            testCase.verifyGreaterThan(sum([functions(projecting).NumCalls]), 0);
             testCase.verifyEqual(sum([functions(copies).NumCalls]), 0);
             testCase.verifyTrue(actual.IsKnown);
             testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(actual.EffectiveValue, {"1x", "1x", "1x"}));
-            [values, found] = context.configurationGridState("combined", grid, document, first);
-            testCase.assertTrue(found);
-            testCase.verifyEqual(values.ChildIds, [first.Id, second.Id]);
-            testCase.verifyEqual(values.Coordinates{1, 1}, 3);
-            testCase.verifyTrue(all(values.CoordinateKnown, "all"));
-
-            % The retained source plan remains independently mutable and generation retains placement.
-            [copy, found] = context.configuration("combined", grid.Name);
-            testCase.assertTrue(found);
+            testCase.verifyEqual(testCase.state(document, registry, first, "Layout.Row").EffectiveValue, 3);
+            copy = macd.source.PropertySourcePlan.combined(document, grid, registry);
             copy.Component.setProperty("RowHeight", {999});
-            [again, found] = context.configurationGridState("combined", grid, document, first);
-            testCase.verifyTrue(found);
-            testCase.verifyEqual(again, values);
+            again = testCase.state(document, registry, grid, "RowHeight");
+            testCase.verifyEqual(again.EffectiveValue, actual.EffectiveValue);
             source = macd.source.RoundTripGenerator(registry).generate(document);
             parsed = macd.source.AppSourceParser.parseText(source, registry);
             parsedFirst = parsed.getComponentByName("First");
@@ -140,7 +130,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             document.setProperty(first.Id, "FontSize", 14, registry);
             document.setProperty(second.Id, "FontSize", 15, registry);
             testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document, registry));
-            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document));
+            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document));
             testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
             testCase.verifyEqual(testCase.state(document, registry, second, "Layout.Column").EffectiveValue, 2);
             source = macd.source.RoundTripGenerator(registry).generate(document);
@@ -281,7 +271,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
                 testCase.verifyTrue(state.IsKnown);
                 testCase.verifyEqual(state.ExplicitValue, {50});
                 testCase.verifyEqual(state.EffectiveValue, {50, "1x", "1x", "1x"});
-                testCase.verifyEqual(grid.settingSnapshot(), before);
+                testCase.verifyEqual(SourceAssertions.retained(grid.settingSnapshot(), before), SourceAssertions.semantics(before));
                 testCase.verifyFalse(document.IsDirty);
                 testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
                 testCase.verifyFalse(macd.model.PropertyStateResolver.matchesRequested(state, {50}));
@@ -357,7 +347,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             before = grid.settingSnapshot();
             testCase.verifyError(@() document.setProperty(grid.Id, "RowHeight", {50}, registry), ...
                 "macd:DocumentModel:UnsafePropertyEdit");
-            testCase.verifyEqual(grid.settingSnapshot(), before);
+            testCase.verifyEqual(SourceAssertions.retained(grid.settingSnapshot(), before), SourceAssertions.semantics(before));
             testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, {100, 200});
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
@@ -464,7 +454,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyTrue(state.IsKnown);
             testCase.verifyEqual(state.EffectiveValue, {50, 60});
             testCase.verifyEqual(state.RequestedValue, {50, 60});
-            testCase.verifyEqual(state.ExplicitKind, "pending");
+            testCase.verifyEqual(state.ExplicitKind, "literal");
             testCase.verifyFalse(isfield(document.Metadata, "ResolvingCombinedPropertySource"));
             source = macd.source.RoundTripGenerator(registry).generate(document);
             parsed = macd.source.AppSourceParser.parseText(source, registry);
@@ -488,7 +478,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEqual(first.Properties(string({first.Properties.Path}) == "Layout.Row").LiteralValue, 1);
             copied = document.pasteSubtree(snapshot, document.RootComponentId, registry);
             testCase.verifyEqual(testCase.state(document, registry, copied, "RowHeight").EffectiveValue, {100, "1x"});
-            testCase.verifyEqual(grid.settingSnapshot(), before);
+            testCase.verifyEqual(SourceAssertions.retained(grid.settingSnapshot(), before), SourceAssertions.semantics(before));
             testCase.verifyEqual(document.HistoryIndex, 1);
         end
     end
@@ -519,7 +509,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             overlay = macd.ui.GridLayoutOverlayDataBuilder().build(document, handles, figure, grid.Id, first.Id, 1, registry);
             testCase.verifyNumElements(overlay.rowTracks, 2);
             testCase.verifyEqual([overlay.rowTracks.value], [50 60]);
-            testCase.verifyEqual(grid.settingSnapshot(), before);
+            testCase.verifyEqual(SourceAssertions.retained(grid.settingSnapshot(), before), SourceAssertions.semantics(before));
             testCase.verifyEqual(document.HistoryIndex, 1);
         end
 

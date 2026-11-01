@@ -87,14 +87,22 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
 
         function generatedSelectedTabReferencesConstrainLaterEdits(testCase)
             % generatedSelectedTabReferencesConstrainLaterEdits Keep editor-generated internal links valid.
-            [document, registry, ~, right] = EditAvailabilityTest.fixture(false);
-            group = document.insertComponent(registry, "uitabgroup", document.RootComponentId);
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("GeneratedReferenceFixture", registry);
+            right = macd.model.ComponentRecord("right", "Right", "uipanel", "matlab.ui.container.Panel", "generated");
+            right.setProperty("Position", [10 10 300 200]);
+            document.addComponent(right, document.RootComponentId);
+            group = macd.model.ComponentRecord("group", "Group", "uitabgroup", "matlab.ui.container.TabGroup", "generated");
+            group.setProperty("Position", [10 10 200 150]);
+            document.addComponent(group, document.RootComponentId);
             tab = macd.model.ComponentRecord("tab", "Selected", "uitab", "matlab.ui.container.Tab", "generated");
             document.addComponent(tab, group.Id);
             entry = group.setProperty("SelectedTab", []);
             entry.setSourceExpression("app.Selected");
             entry.Metadata.SubtreeReferenceId = tab.Id;
-            second = document.insertComponent(registry, "uitabgroup", right.Id);
+            second = macd.model.ComponentRecord("second-group", "SecondGroup", "uitabgroup", "matlab.ui.container.TabGroup", "generated");
+            second.setProperty("Position", [10 10 200 150]);
+            document.addComponent(second, right.Id);
             states = macd.model.DocumentEditAvailability.reparenting(document, tab.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == second.Id).Enabled);
             testCase.verifyFalse(macd.model.DocumentEditAvailability.deletion(document, tab.Id, registry).Enabled);

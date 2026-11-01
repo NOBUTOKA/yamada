@@ -70,7 +70,10 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
             % emptyRequestsAndDeadHandlesUseTheExistingRenderer Keep unsupported values and disposed widgets outside reuse.
             for kind = ["empty", "deleted"]
                 [document, registry, first] = numericPreviewFixture("absolute");
-                first.setProperty("AllowEmpty", "on");
+                source = replace(document.CurrentText, "app.First.Value = 1;", ...
+                    "app.First.AllowEmpty = ""on"";" + newline + "app.First.Value = 1;");
+                document = macd.source.AppSourceParser.parseText(source, registry);
+                first = document.getComponentByName("First");
                 figure = uifigure(Visible="off");
                 cleanup = onCleanup(@() delete(figure));
                 renderer = macd.ui.PreviewRenderer(registry);

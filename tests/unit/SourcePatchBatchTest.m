@@ -1,4 +1,4 @@
-classdef SourcePatchBatchTest < matlab.unittest.TestCase
+classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatchTest < matlab.unittest.TestCase
     % SourcePatchBatchTest Verify reversible source edits and position transforms.
     %   These cases protect transaction boundaries before model integration.
 
@@ -255,32 +255,22 @@ classdef SourcePatchBatchTest < matlab.unittest.TestCase
             testCase.verifyEqual(owner.getProperty("FontSize").LiteralValue, 23);
         end
 
-        function immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges(testCase)
-            % immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges Apply source additions and replacements through native diffs.
+        function detachedCandidatesNeverMasqueradeAsPublishedSource(testCase)
+            % detachedCandidatesNeverMasqueradeAsPublishedSource Prevent zero input revisions from enabling recursive source-plan snapshots.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
             source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
-            owner = document.getComponentByName("TopLeftLabel");
-            figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry);
-            handles = renderer.render(document, figure);
-            native = handles(char(owner.Id));
-            for path = ["Text", "FontSize"]
-                value = "Longer changed text";
-                if path == "FontSize", value = 23; end
-                document.setProperty(owner.Id, path, value, registry);
-                [applied, diagnostics] = renderer.synchronize(document, handles, ...
-                    macd.ui.RefreshRequest("properties", owner.Id, path));
-                testCase.verifyTrue(applied, renderer.statistics().fallbackReason);
-                testCase.verifyEmpty(diagnostics);
-                testCase.verifyEqual(handles(char(owner.Id)), native);
-            end
-            document.setProperty(owner.Id, "Text", "Another change", registry);
-            owner.Metadata.UnrelatedInput = true;
-            applied = renderer.synchronize(document, handles, ...
-                macd.ui.RefreshRequest("properties", owner.Id, "Text"));
-            testCase.verifyFalse(applied);
+            testCase.verifyTrue(document.hasPublishedModel());
+            candidate = document.structuralCandidate();
+            testCase.verifyFalse(candidate.hasPublishedModel());
+            candidate.evaluationContext(registry);
+            testCase.verifyFalse(candidate.hasPublishedModel());
+            owner = candidate.getComponentByName("TopLeftLabel");
+            owner.setProperty("FontSize", 23);
+            plan = macd.source.PropertySourcePlan.plan(candidate, owner, registry);
+            testCase.verifyEqual(plan.Component.getProperty("FontSize").LiteralValue, 23);
+            testCase.verifyEmpty(document.getComponentByName(owner.Name).getProperty("FontSize"));
         end
 
         function deletedAndInteriorRangesNeedRebinding(testCase)

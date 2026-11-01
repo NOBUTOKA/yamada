@@ -3,6 +3,34 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
     %   Every registered variant participates; specific cases exercise policies
     %   with state transitions that cannot be represented by one plain setter.
     methods (Test)
+        function immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges(testCase)
+            % immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges Apply source additions and replacements through native diffs.
+            registry = macd.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            owner = document.getComponentByName("TopLeftLabel");
+            figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
+            renderer = macd.ui.PreviewRenderer(registry);
+            handles = renderer.render(document, figure);
+            native = handles(char(owner.Id));
+            for path = ["Text", "FontSize"]
+                value = "Longer changed text";
+                if path == "FontSize", value = 23; end
+                document.setProperty(owner.Id, path, value, registry);
+                [applied, diagnostics] = renderer.synchronize(document, handles, ...
+                    macd.ui.RefreshRequest("properties", owner.Id, path));
+                testCase.verifyTrue(applied, renderer.statistics().fallbackReason);
+                testCase.verifyEmpty(diagnostics);
+                testCase.verifyEqual(handles(char(owner.Id)), native);
+            end
+            document.setProperty(owner.Id, "Text", "Another change", registry);
+            owner.Metadata.UnrelatedInput = true;
+            applied = renderer.synchronize(document, handles, ...
+                macd.ui.RefreshRequest("properties", owner.Id, "Text"));
+            testCase.verifyFalse(applied);
+        end
+
         function appliesIndependentPropertiesAcrossAllCatalogVariants(testCase)
             % appliesIndependentPropertiesAcrossAllCatalogVariants Reuse native handles across every eligible variant.
             registry = macd.model.ComponentRegistry.createDefault();

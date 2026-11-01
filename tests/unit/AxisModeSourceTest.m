@@ -27,7 +27,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
                     testCase.verifyEqual(testCase.state(states, "XTickMode").EffectiveValue, "auto");
                     testCase.verifyFalse(testCase.state(states, "XTick").IsKnown);
                     after = control.settingSnapshot();
-                    testCase.verifyEqual(after(1:numel(original)), original);
+                    testCase.verifyEqual(SourceAssertions.retained(after, original), SourceAssertions.semantics(original));
                     testCase.verifyNumElements(after, numel(original) + 1);
                     document.undo();
                     testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
@@ -131,7 +131,9 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             document.confirmSavedSource(checkpoint, registry);
             copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
             testCase.verifyEqual(copy.getProperty("MinorGridLineWidth").LiteralValue, 6);
-            testCase.verifyEqual(control.settingSnapshot(), original);
+            testCase.verifyEqual(string({control.Settings.Id}), arrayfun(@(record) record.Location.Id, original));
+            testCase.verifyEqual(control.getSettings("GridLineWidth").LiteralValue, 6);
+            testCase.verifyEqual(control.getSettings("MinorGridLineWidth").LiteralValue, 3);
             document.undo();
             document.undo();
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);

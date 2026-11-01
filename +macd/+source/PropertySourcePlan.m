@@ -14,6 +14,11 @@ classdef PropertySourcePlan
             arguments (Output)
                 plan (1, 1) struct
             end
+            if document.hasPublishedModel()
+                current = document.structuralCandidate(registry);
+                plan = struct("Document", current, "Component", current.getComponent(component.Id));
+                return
+            end
             context = document.evaluationContext(registry);
             [plan, found] = context.configuration("combined", component.Name);
             if found, return, end
@@ -73,6 +78,11 @@ classdef PropertySourcePlan
                 plan (1, 1) struct
             end
             % A committed preflight already owns the complete emitted configuration.
+            if document.hasPublishedModel()
+                current = document.structuralCandidate(registry);
+                plan = struct("Document", current, "Component", current.getComponent(component.Id));
+                return
+            end
             context = document.evaluationContext(registry);
             [plan, found] = context.configuration("combined", component.Name);
             if found, return, end

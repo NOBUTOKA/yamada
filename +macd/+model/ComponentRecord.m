@@ -37,7 +37,7 @@ classdef ComponentRecord < handle
         % Diagnostics - Diagnostics currently associated with this component.
         Diagnostics macd.model.Diagnostic = macd.model.Diagnostic.empty
         % SourceSpans - Named source locations retained from parsed code.
-        SourceSpans struct = struct("Declaration", [], "Creation", [])
+        SourceSpans struct = struct("Declaration", macd.model.SourceSpan.empty, "Creation", macd.model.SourceSpan.empty)
         % Metadata - Extensible component-specific data not interpreted by the model.
         Metadata struct = struct()
     end

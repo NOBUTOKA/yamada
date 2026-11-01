@@ -320,14 +320,18 @@ classdef PreviewRenderer < handle
                 callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
                 callbackPaths = string({callbacks.Path});
                 properties = component.Properties;
-                properties = properties(~ismember(string({properties.Path}), callbackPaths));
+                if ~isempty(properties)
+                    properties = properties(~ismember(string({properties.Path}), callbackPaths));
+                end
                 if ~isempty(properties), properties = rmfield(properties, ["SourceSpan", "Metadata"]); end
                 for propertyIndex = 1:numel(properties)
                     properties(propertyIndex).SourceExpression = macd.source.ComponentNameRewriter.rewrite( ...
                         properties(propertyIndex).SourceExpression, mappings);
                 end
                 settings = component.Settings;
-                settings = settings(~ismember(string({settings.Path}), callbackPaths));
+                if ~isempty(settings)
+                    settings = settings(~ismember(string({settings.Path}), callbackPaths));
+                end
                 for settingIndex = 1:numel(settings)
                     location = settings(settingIndex).Location;
                     expression = "";

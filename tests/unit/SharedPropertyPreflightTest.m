@@ -31,7 +31,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                 testCase.verifyEqual(testCase.sourceWorkCalls(functions), 0, layout);
                 testCase.verifyEqual(field.getProperty("Value").LiteralValue, 2);
                 testCase.verifyEqual(plan.Document.getComponentByName("Field").getProperty("Value").LiteralValue, 1);
-                older = context.configuration("combined", parent.Name);
+                older = plan;
                 testCase.verifyEqual(older.Document.getComponentByName("Field").getProperty("Value").LiteralValue, 1);
                 testCase.verifyEqual(document.OriginalText, original);
                 document.undo(); document.redo();
@@ -100,8 +100,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             document.Metadata.AdditionalInput = "changed after shared proof";
             profile clear; profile on; cleanup = onCleanup(@() profile("off"));
             document.setProperty(field.Id, "Value", 2, testCase.Registry);
+            document.validatePropertyCommit(testCase.Registry);
             profile off; functions = profile("info").FunctionTable; clear cleanup
-            testCase.verifyGreaterThan(testCase.sourceWorkCalls(functions), 0);
+            testCase.verifyGreaterThan(sum([functions(contains(string({functions.FunctionName}), "ModelValidator.validate")).NumCalls]), 0);
             testCase.verifyEqual(field.getProperty("Value").LiteralValue, 2);
         end
 
@@ -131,8 +132,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             macd.source.PropertySourcePlan.combined(document, root, testCase.Registry);
             profile clear; profile on; cleanup = onCleanup(@() profile("off"));
             document.setProperty(root.Id, "AutoResizeChildren", "on", testCase.Registry);
+            document.validatePropertyCommit(testCase.Registry);
             profile off; functions = profile("info").FunctionTable; clear cleanup
-            testCase.verifyGreaterThan(testCase.sourceWorkCalls(functions), 0);
+            testCase.verifyGreaterThan(sum([functions(contains(string({functions.FunctionName}), "ModelValidator.validate")).NumCalls]), 0);
             testCase.verifyEqual(root.getProperty("AutoResizeChildren").LiteralValue, "on");
         end
     end

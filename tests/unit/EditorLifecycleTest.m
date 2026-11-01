@@ -334,7 +334,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyFalse(app.Document.IsDirty);
             testCase.verifyEqual(app.Document.SavedSource.SourceText, string(fileread(target)));
             testCase.verifyEqual(app.Document.OriginalText, source);
-            testCase.verifyEqual(control.settingSnapshot(), settings);
+            testCase.verifyEqual(string({control.Settings.Id}), arrayfun(@(record) record.Location.Id, settings));
+            testCase.verifyEqual([control.getSettings("Value").LiteralValue], 'AA');
             app.Document.undo();
             invokeEditorMenu("Save");
             testCase.verifyFalse(app.Document.IsDirty);
@@ -343,7 +344,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Save");
             testCase.verifyFalse(app.Document.IsDirty);
             testCase.verifySubstring(string(fileread(target)), "app.Choice.Value = 'A';");
-            testCase.verifyEqual(control.settingSnapshot(), settings);
+            testCase.verifyEqual(string({control.Settings.Id}), arrayfun(@(record) record.Location.Id, settings));
+            testCase.verifyEqual([control.getSettings("Value").LiteralValue], 'AA');
             clear appCleanup
 
             app = yamada(lifecycleForTest(struct("OpenPath", target)));

@@ -156,14 +156,14 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             target = document.getComponentByName("LeftValueLabel");
             document.removeComponent(target.Id);
             testCase.verifyEmpty(document.getComponent(target.Id));
-            testCase.verifyEqual(numel(document.PendingEdits), 1);
+            testCase.verifyEmpty(document.PendingEdits);
             document.undo();
             testCase.verifyEqual(document.getComponent(target.Id).Name, ...
                 "LeftValueLabel");
             testCase.verifyEmpty(document.PendingEdits);
             document.redo();
             testCase.verifyEmpty(document.getComponent(target.Id));
-            testCase.verifyEqual(numel(document.PendingEdits), 1);
+            testCase.verifyEmpty(document.PendingEdits);
         end
 
         function geometryValidationRejectsUnsafeLiterals(testCase)
@@ -174,10 +174,10 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
-            label.setProperty("Position", [10 10 -1 30]);
             grid = document.insertComponent(registry, "uigridlayout", ...
                 document.RootComponentId);
             gridLabel = document.insertComponent(registry, "uilabel", grid.Id);
+            label.setProperty("Position", [10 10 -1 30]);
             gridLabel.setProperty("Layout.Row", [0 2]);
             diagnostics = macd.validation.ModelValidator.validate(document, registry);
 
@@ -362,8 +362,9 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
 
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
-            picker = document.insertComponent(registry, "uidatepicker", ...
-                document.RootComponentId);
+            definition = registry.get("uidatepicker");
+            picker = macd.model.ComponentRecord("picker", "Picker", "uidatepicker", definition.DeclaredType);
+            document.addComponent(picker, document.RootComponentId);
             picker.setProperty("Limits", [datetime(2024, 12, 31) datetime(2024, 1, 1)]);
 
             diagnostics = macd.validation.ModelValidator.validate(document, registry);

@@ -376,6 +376,7 @@ classdef AppSourceParser
             diagnostics = [diagnostics(:)' validationDiagnostics(:)'];
             document.Diagnostics = diagnostics;
             document.markSaved();
+            document.finishParsedSource();
         end
     end
 

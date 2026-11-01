@@ -105,7 +105,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
             first = document.insertComponent(registry, "uigridlayout", left.Id);
             second = document.insertComponent(registry, "uigridlayout", right.Id);
             leaf = document.insertComponent(registry, "uilabel", first.Id);
-            leaf.setProperty("Layout.Column", [1 2]);
+            document.setProperty(leaf.Id, "Layout.Column", [1 2], registry);
             history = document.HistoryIndex;
             document.reparentSubtree(leaf.Id, second.Id, registry);
             testCase.verifyEqual(document.HistoryIndex, history + 1);

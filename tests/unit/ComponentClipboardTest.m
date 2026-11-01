@@ -83,7 +83,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
         function longNamesRemainValidAcrossRepeatedPastes(testCase)
             % longNamesRemainValidAcrossRepeatedPastes Bound generated identifiers to MATLAB name length.
             [document, registry, left, right] = ComponentClipboardTest.fixture();
-            left.Name = string(repmat('A', 1, namelengthmax));
+            document.renameComponent(left.Id, string(repmat('A', 1, namelengthmax)), registry);
             clipboard = macd.model.ComponentClipboard();
             clipboard.copy(document, left.Id, registry);
             first = clipboard.paste(document, right.Id, registry);

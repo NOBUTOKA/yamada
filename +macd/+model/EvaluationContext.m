@@ -312,6 +312,32 @@ classdef EvaluationContext < handle
                 "Clock", clock, "Revision", revision, "Tracked", tracked);
         end
 
+        function inheritLiteralStates(obj, previous, componentId, batch)
+            % inheritLiteralStates Retain other owners' immutable states after a document-proven local semantic change.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                previous (1, 1) macd.model.EvaluationContext
+                componentId (1, 1) string
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+                    obj.RegistryRevision ~= previous.RegistryRevision
+                return
+            end
+            before = previous.Key.Components;
+            after = obj.Key.Components;
+            if numel(before) ~= numel(after), return, end
+            for field = ["Id", "Name", "Factory", "DeclaredType", "Origin", "ParentId", "Children"]
+                if ~isequaln({before.(field)}, {after.(field)}), return, end
+            end
+            for name = string(keys(previous.Values))
+                if ~startsWith(name, "states:") || name == "states:" + componentId, continue, end
+                value = previous.Values(char(name));
+                value.Diagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(value.Diagnostics, batch);
+                obj.Values(char(name)) = value;
+            end
+        end
+
         function inheritNumericStates(obj, previous, componentId)
             % inheritNumericStates Retain other component states after a document-proven bounded Value replacement.
             arguments (Input)

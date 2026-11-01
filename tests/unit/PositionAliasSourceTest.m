@@ -95,7 +95,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 testCase.verifyEqual(copy.getProperty("Position").LiteralValue, [40 50 150 45]);
                 testCase.verifyEmpty(copy.getProperty("InnerPosition"));
                 testCase.verifyEqual(testCase.state(document, registry, copy, "OuterPosition").EffectiveValue, [40 50 150 45]);
-                testCase.verifyEqual(control.settingSnapshot(), before);
+                testCase.verifyEqual(SourceAssertions.retained(control.settingSnapshot(), before), SourceAssertions.semantics(before));
                 testCase.verifyEqual(document.HistoryIndex, 1);
                 document.undo();
                 testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);

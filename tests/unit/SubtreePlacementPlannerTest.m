@@ -84,7 +84,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
             snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
             plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id);
             testCase.verifyEqual([plan.Changes(1:2).Value], [1 1]);
-            grid.CreationArguments = {[1 3]};
+            document.setProperty(grid.Id, "RowHeight", {100}, registry);
+            document.setProperty(grid.Id, "ColumnWidth", {100, 100, 100}, registry);
             existing = document.insertComponent(registry, "uilabel", grid.Id);
             existing.setProperty("Layout.Column", [1 2]);
             plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id);

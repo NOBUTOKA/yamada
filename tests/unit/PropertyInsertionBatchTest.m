@@ -227,7 +227,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 first = document.getComponentByName("Field1");
                 second = document.getComponentByName("Field2");
                 first.setProperty("Value", 3); second.setProperty("Value", 4);
-                added = document.insertComponent(testCase.Registry, "uilabel", first.ParentId);
+                added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+                document.addComponent(added, first.ParentId);
                 added.setProperty("FontSize", 14);
                 original = document.OriginalText;
                 profile clear; profile on; stop = onCleanup(@() profile("off"));
@@ -249,7 +250,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
                 testCase.verifyEqual(source, expected, layout);
                 testCase.verifyEqual(document.OriginalText, original);
-                testCase.verifyEqual(document.HistoryIndex, 1);
+                testCase.verifyEqual(document.HistoryIndex, 0);
             end
         end
 
@@ -260,7 +261,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "app.Second = uieditfield(app.UIFigure,'numeric');"]);
             document.getComponentByName("First").setProperty("Limits", [50 100]);
             document.getComponentByName("Second").setProperty("Value", 3);
-            added = document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            document.addComponent(added, document.RootComponentId);
             [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
@@ -277,7 +279,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);
             document.getComponentByName("Field2").setProperty("Value", 4);
-            added = document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            document.addComponent(added, document.RootComponentId);
             added.setProperty("FontSize", -2);
             macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             [~, found] = document.evaluationContext(testCase.Registry).configuration("combined", first.Name);
@@ -292,7 +295,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);
             document.getComponentByName("Field2").setProperty("Value", 4);
-            added = document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            document.addComponent(added, document.RootComponentId);
             added.setProperty("FontSize", 14);
             before = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             added.setProperty("FontSize", 18);
@@ -359,7 +363,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 first = document.getComponentByName("Field1");
                 first.setProperty("Value", 3);
                 document.getComponentByName("Field2").setProperty("Value", 4);
-                added = document.insertComponent(testCase.Registry, "uilabel", first.ParentId);
+                added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+                document.addComponent(added, first.ParentId);
                 original = document.OriginalText;
                 profile clear; profile on; stop = onCleanup(@() profile("off"));
                 plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
@@ -384,7 +389,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);
             document.getComponentByName("Field2").setProperty("Value", 4);
-            document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            document.addComponent(added, document.RootComponentId);
             plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             expected = plan.Document.OriginalText;
             plan.Document.getComponentByName("Field2").setProperty("Value", 99);
@@ -407,7 +413,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first.setProperty("Value", 3);
             second = document.getComponentByName("Field2");
             second.setProperty("Value", 4);
-            added = document.insertComponent(testCase.Registry, "uilabel", document.RootComponentId);
+            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            document.addComponent(added, document.RootComponentId);
             macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             [~, found] = document.evaluationContext(testCase.Registry).lookup("complete-insertion-source");
             testCase.verifyTrue(found);

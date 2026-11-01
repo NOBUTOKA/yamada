@@ -22,8 +22,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             testCase.verifyEqual(document.HistoryIndex, history + 1);
             ids = string({pasted.Settings.Id});
             testCase.verifyFalse(any(ismember(ids, string({component.Settings.Id}))));
-            testCase.verifyTrue(all(string({pasted.Settings.Method}) == "generated"));
-            testCase.verifyTrue(all(arrayfun(@(setting) isempty(setting.SourceSpan), pasted.Settings)));
+            testCase.verifyTrue(all(string({pasted.Settings.Method}) == "assignment"));
+            testCase.verifyTrue(all(arrayfun(@(setting) ~isempty(setting.SourceSpan), pasted.Settings)));
             document.undo();
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             document.redo();
@@ -111,7 +111,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             testCase.verifyEmpty(component.getSettings("Value"));
             testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 10);
             testCase.verifyNumElements(pasted.getSettings("Value"), 1);
-            testCase.verifyEqual(pasted.getSettings("Value").Method, "generated");
+            testCase.verifyEqual(pasted.getSettings("Value").Method, "assignment");
         end
 
         function clipboardConfigurationStaysFrozenAfterLaterEdits(testCase)

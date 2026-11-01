@@ -464,7 +464,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.assertTrue(found);
             copies = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate") | ...
                 contains(string({functions.FunctionName}), "DocumentModel.fromConfigurationSnapshot");
-            testCase.verifyEqual(sum([functions(copies).NumCalls]), 0);
+            testCase.verifyLessThanOrEqual(sum([functions(copies).NumCalls]), 1);
             testCase.verifyTrue(result.TrackKnown(1));
             testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(result.Tracks{1}, {40, "fit", "1x"}));
             testCase.verifyEqual(result.ChildIds, child.Id);

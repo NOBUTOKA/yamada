@@ -16,6 +16,10 @@ classdef SourceLiteralTransaction
         ComponentId string
         % Changes - Requested literal values retained for UI invalidation and history.
         Changes struct
+        % CanReuseStates - Whether the finite proof excludes semantic effects on other component owners.
+        CanReuseStates logical = true
+        % CanReuseEligibility - Whether placement and source-edit conditions retain their previous meaning.
+        CanReuseEligibility logical = true
     end
 
     properties (Access = private)
@@ -73,6 +77,15 @@ classdef SourceLiteralTransaction
                     any(definition.Application.EffectStatus == ["independent", "modeled"]) && ...
                     ~any(definition.Application.EffectPolicy == ["buttonSelection", "componentReference", "layout", "gridTracks"]), ...
                     "macd:SourceLiteralTransaction:WiderProof", "This setting needs its coupled model scope.");
+                policy = definition.Application;
+                independent = policy.EffectStatus == "independent" && policy.EffectPolicy == "none";
+                numeric = policy.EffectStatus == "modeled" && policy.EffectPolicy == "numericValue";
+                obj.CanReuseStates = obj.CanReuseStates && (independent || numeric) && ...
+                    (isempty(component.Children) || (~definition.AbsoluteGeometryImpact && definition.GridGeometryImpact ~= "required"));
+                dependencies = macd.model.SubtreePlacementPlanner.inputPropertyPaths();
+                obj.CanReuseEligibility = obj.CanReuseEligibility && ...
+                    ~any(ismember([path policy.AffectedPaths], dependencies)) && ...
+                    ~(isfield(definition.ValueSchema, "kind") && string(definition.ValueSchema.kind) == "callback");
                 encoded = macd.source.LiteralEncoder.encode(change.Value);
                 [decoded, literal] = macd.source.MatlabLiteralParser.parse(encoded);
                 assert(literal && isequaln(decoded, change.Value), ...
@@ -91,6 +104,7 @@ classdef SourceLiteralTransaction
                 plan = macd.source.PropertyInsertionPlanner.tentative(document, candidate, registry);
                 edits = [edits plan.Edits];
             end
+            edits = macd.source.SourceFormatting.separateComponents(source.Text, edits);
             obj.Batch = macd.source.SourcePatchBatch(source.Text, edits);
             obj.AfterSource = source.withBatch(obj.Batch);
             [obj.Settings, ~, obj.FactoryArguments, execution] = macd.model.SourceSettingRebinder.rebind( ...
@@ -100,6 +114,10 @@ classdef SourceLiteralTransaction
             assert(~macd.validation.ModelValidator.hasErrors(diagnostics), ...
                 "macd:SourceLiteralTransaction:InvalidValue", "%s", strjoin(string({diagnostics.Message}), newline));
             transaction = macd.model.PropertyStateResolver.transaction(states);
+            % Validate requested schemas against the proven final cross-property state.
+            for change = changes
+                transaction.stage(string(change.Path), change.Value);
+            end
             message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
             assert(strlength(message) == 0, "macd:SourceLiteralTransaction:InvalidValue", "%s", message);
             for change = changes
