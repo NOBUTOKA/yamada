@@ -4,7 +4,7 @@ classdef ReparentOverlayDataBuilder
     %   geometry. It does not mutate the model or run an opened application.
 
     methods (Static)
-        function [source, targets] = build(document, handles, canvas, id, revision, visibleFcn, gridFcn, boundsFcn)
+        function [source, targets] = build(document, handles, canvas, id, revision, visibleFcn, gridFcn, boundsFcn, snapshot)
             % build Describe the selected source and visible container destinations.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
@@ -15,6 +15,7 @@ classdef ReparentOverlayDataBuilder
                 visibleFcn (1, 1) function_handle
                 gridFcn = []
                 boundsFcn = []
+                snapshot (1, 1) struct = struct()
             end
             arguments (Output)
                 source (1, 1) struct
@@ -57,7 +58,12 @@ classdef ReparentOverlayDataBuilder
                 end
                 if excluded || depth > numel(document.Components), continue, end
                 if parent.Id == document.RootComponentId
-                    rectangle = [0 0 double(canvas.Position(3:4))];
+                    if isempty(fieldnames(snapshot))
+                        size = double(canvas.Position(3:4));
+                    else
+                        size = snapshot.Ancestors{1}.Position(3:4);
+                    end
+                    rectangle = [0 0 size];
                     origin = [0 0];
                 else
                     if ~isKey(handles, char(parent.Id)), continue, end
@@ -68,9 +74,17 @@ classdef ReparentOverlayDataBuilder
                     else
                         rectangle = boundsFcn(parent.Id);
                     end
-                    if isprop(parentPreview, "Units") && string(parentPreview.Units) ~= "pixels", continue, end
-                    inner = double(parentPreview.InnerPosition);
-                    position = double(parentPreview.Position);
+                    if isempty(fieldnames(snapshot))
+                        if isprop(parentPreview, "Units") && string(parentPreview.Units) ~= "pixels", continue, end
+                        inner = double(parentPreview.InnerPosition);
+                        position = double(parentPreview.Position);
+                    else
+                        item = macd.ui.GridLayoutOverlayDataBuilder.snapshotItem(snapshot, parent.Id);
+                        if ~item.pixelValid || ~isfield(item, "InnerPosition"), continue, end
+                        if isfield(item, "units") && item.units ~= "pixels", continue, end
+                        inner = item.InnerPosition;
+                        position = item.Position;
+                    end
                     origin = rectangle(1:2) + inner(1:2) - position(1:2);
                     rectangle = [origin inner(3:4)];
                 end

@@ -18,7 +18,7 @@ classdef SourceLocationUpdate
         BeforeSettings struct = struct([])
         BeforeProperties struct = struct([])
         AfterSettings struct = struct([])
-        Properties struct = struct("Path", {}, "SourceSpan", {}, "Metadata", {})
+        Properties struct = struct("Path", {}, "SourceSpan", {}, "Metadata", {}, "ValueChanged", {})
     end
 
     methods
@@ -93,7 +93,10 @@ classdef SourceLocationUpdate
                     [metadata.ValueSpan, valid] = batch.mapSpan(metadata.ValueSpan);
                     obj.CanApply = obj.CanApply && valid;
                 end
-                obj.Properties(end + 1) = struct("Path", entry.Path, "SourceSpan", span, "Metadata", metadata);
+                valueChanged = isfield(metadata, "SourceSettingId") && ...
+                    any(string({literalChanges.SettingId}) == string(metadata.SourceSettingId));
+                obj.Properties(end + 1) = struct("Path", entry.Path, "SourceSpan", span, ...
+                    "Metadata", metadata, "ValueChanged", valueChanged);
             end
         end
 
@@ -118,13 +121,26 @@ classdef SourceLocationUpdate
                 component (1, 1) macd.model.ComponentRecord
             end
             obj.assertCurrent(component);
-            component.SourceSpans = obj.AfterSpans;
-            component.Metadata = obj.AfterMetadata;
-            component.restoreSettings(obj.AfterSettings);
+            obj.applyValidated(component);
+        end
+    end
+
+    methods (Access = ?macd.model.SourceLiteralTransaction)
+        function applyValidated(obj, component)
+            % applyValidated Publish a member after the transaction validated every owner without yielding.
+            arguments (Input)
+                obj (1, 1) macd.model.SourceLocationUpdate
+                component (1, 1) macd.model.ComponentRecord
+            end
+            if ~isequaln(component.SourceSpans, obj.AfterSpans), component.SourceSpans = obj.AfterSpans; end
+            if ~isequaln(component.Metadata, obj.AfterMetadata), component.Metadata = obj.AfterMetadata; end
+            if ~isequaln(obj.BeforeSettings, obj.AfterSettings), component.restoreSettings(obj.AfterSettings); end
             for projected = obj.Properties
                 entry = component.getProperty(projected.Path);
-                entry.SourceSpan = projected.SourceSpan;
-                entry.Metadata = projected.Metadata;
+                if ~projected.ValueChanged && isequaln(entry.SourceSpan, projected.SourceSpan) && ...
+                        isequaln(entry.Metadata, projected.Metadata), continue, end
+                if ~isequaln(entry.SourceSpan, projected.SourceSpan), entry.SourceSpan = projected.SourceSpan; end
+                if ~isequaln(entry.Metadata, projected.Metadata), entry.Metadata = projected.Metadata; end
                 if isfield(projected.Metadata, "SourceSettingId")
                     settings = component.getSettings(projected.Path);
                     match = find(string({settings.Id}) == string(projected.Metadata.SourceSettingId), 1);

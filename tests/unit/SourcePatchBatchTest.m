@@ -152,6 +152,28 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             end
         end
 
+        function equalLengthValueChangesStillUpdateLiveBindings(testCase)
+            % equalLengthValueChangesStillUpdateLiveBindings Preserve semantic changes when all source offsets stay equal.
+            registry = macd.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            owner = document.getComponentByName("TopLeftLabel");
+            entry = owner.getProperty("Text");
+            setting = owner.getSettings("Text");
+            span = entry.Metadata.ValueSpan;
+            replacement = string(repmat('X', 1, strlength(string(entry.LiteralValue))));
+            batch = macd.source.SourcePatchBatch(source, change(span.StartOffset, span.EndOffset, ...
+                macd.source.LiteralEncoder.encode(replacement)));
+            testCase.verifyEqual(strlength(batch.AfterText), strlength(source));
+            update = macd.model.SourceLocationUpdate(owner, batch, ...
+                struct("SettingId", setting(end).Id, "Value", replacement));
+            update.apply(owner);
+            testCase.verifyEqual(owner.getProperty("Text"), entry);
+            testCase.verifyEqual(entry.LiteralValue, replacement);
+            testCase.verifyEqual(entry.Metadata.ValueSpan, span);
+        end
+
         function liveValueChangesRejectPreparedLocationUpdates(testCase)
             % liveValueChangesRejectPreparedLocationUpdates Preserve edits made after source-location preparation.
             registry = macd.model.ComponentRegistry.createDefault();

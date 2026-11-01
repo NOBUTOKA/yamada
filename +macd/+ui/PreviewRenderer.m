@@ -15,6 +15,7 @@ classdef PreviewRenderer < handle
         CombinedConfiguration macd.model.DocumentModel = macd.model.DocumentModel.empty
         UsesCombinedConfiguration logical = false
         RenderedInputs struct = struct()
+        RenderedVisualInputs struct = struct()
         RenderedRegistryRevision uint64 = uint64(0)
         RenderCount double = 0
         SynchronizationCount double = 0
@@ -56,10 +57,15 @@ classdef PreviewRenderer < handle
             end
             beforeComparison = obj.RenderedInputs;
             afterComparison = inputs;
+            visualAfter = struct();
             if document.isPropertySourceTransition(obj.RenderedInputs.OriginalText, request)
                 mappings = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
-                beforeComparison = obj.visualSourceInputs(beforeComparison, mappings);
+                if isempty(fieldnames(obj.RenderedVisualInputs))
+                    obj.RenderedVisualInputs = obj.visualSourceInputs(beforeComparison, mappings);
+                end
+                beforeComparison = obj.RenderedVisualInputs;
                 afterComparison = obj.visualSourceInputs(afterComparison, mappings);
+                visualAfter = afterComparison;
             end
             if ~isequaln(obj.maskRequestedInputs(beforeComparison, request), obj.maskRequestedInputs(afterComparison, request))
                 obj.FallbackReason = "unrelated-inputs";
@@ -130,6 +136,7 @@ classdef PreviewRenderer < handle
                 end
             end
             obj.RenderedInputs = inputs;
+            obj.RenderedVisualInputs = visualAfter;
             obj.SynchronizationCount = obj.SynchronizationCount + 1;
             if ~reconstructed, obj.FallbackReason = ""; end
             applied = true;
@@ -155,6 +162,7 @@ classdef PreviewRenderer < handle
                 return
             end
             obj.RenderedInputs = inputs;
+            obj.RenderedVisualInputs = struct();
             obj.FallbackReason = "";
             applied = true;
         end
@@ -179,6 +187,7 @@ classdef PreviewRenderer < handle
                 return
             end
             obj.RenderedInputs = inputs;
+            obj.RenderedVisualInputs = struct();
             obj.FallbackReason = "";
             applied = true;
         end
@@ -225,6 +234,7 @@ classdef PreviewRenderer < handle
             % Dispose stale editor-owned controls before constructing the new tree.
             obj.RenderCount = obj.RenderCount + 1;
             obj.RenderedInputs = struct();
+            obj.RenderedVisualInputs = struct();
             delete(parent.Children);
             handles = containers.Map("KeyType", "char", "ValueType", "any");
             diagnostics = macd.model.Diagnostic.empty;

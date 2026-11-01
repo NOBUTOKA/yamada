@@ -163,7 +163,7 @@ function setup(htmlComponent) {
     if (event.key === "Escape" && absoluteGesture) {
       absoluteGesture = null;
       clearReparentGuide();
-      component.sendEventToMATLAB("Pointer", {phase: "pointercancel", x: 0, y: 0, componentId: "", handle: ""});
+      component.sendEventToMATLAB("Pointer", {nativeGeometryRevision: currentData.nativeGeometryRevision, phase: "pointercancel", x: 0, y: 0, componentId: "", handle: ""});
     }
   });
   svg.addEventListener("pointerdown", sendPointerEvent);
@@ -312,7 +312,7 @@ function finishAbsoluteDrop(point) {
   var candidate = dropCandidate(gesture, point);
   clearReparentGuide();
   if (candidate) sendReparent(gesture.id, candidate, gesture.modelRevision);
-  else component.sendEventToMATLAB("Pointer", {phase: "pointerup", x: point.x, y: point.y, componentId: "", handle: ""});
+  else component.sendEventToMATLAB("Pointer", {nativeGeometryRevision: currentData.nativeGeometryRevision, phase: "pointerup", x: point.x, y: point.y, componentId: "", handle: ""});
 }
 
 function sendPointerEvent(event) {
@@ -333,7 +333,7 @@ function sendPointerEvent(event) {
     if (distance < 3) {
       absoluteGesture = null;
       clearReparentGuide();
-      component.sendEventToMATLAB("Pointer", {phase: "pointerup", x: point.x, y: point.y, componentId: "", handle: ""});
+      component.sendEventToMATLAB("Pointer", {nativeGeometryRevision: currentData.nativeGeometryRevision, phase: "pointerup", x: point.x, y: point.y, componentId: "", handle: ""});
     } else if (!currentData.dragSource || currentData.dragSource.id !== absoluteGesture.id) absoluteGesture.pendingPoint = point;
     else finishAbsoluteDrop(point);
     return;
@@ -343,7 +343,7 @@ function sendPointerEvent(event) {
       svg.releasePointerCapture(event.pointerId);
     }
   }
-  component.sendEventToMATLAB("Pointer", {
+  component.sendEventToMATLAB("Pointer", {nativeGeometryRevision: currentData.nativeGeometryRevision,
     phase: event.type,
     x: point.x,
     y: point.y,
@@ -373,7 +373,7 @@ function renderTabControls(components) {
     });
     selector.value = String(item.tabSelected || 1);
     selector.addEventListener("change", function() {
-      component.sendEventToMATLAB("Pointer", {
+      component.sendEventToMATLAB("Pointer", {nativeGeometryRevision: currentData.nativeGeometryRevision,
         phase: "tabselect", componentId: item.id,
         tabIndex: Number(selector.value), x: 0, y: 0, handle: ""
       });

@@ -64,6 +64,10 @@ classdef yamada < handle
         PreviewCanvas matlab.ui.container.Panel
         PreviewEditingBounds double = [0 0 1 1]
         PreviewGeometry struct = struct()
+        NativeGeometryRevision double = 0
+        PreviewUpdateDepth double = 0
+        PreviewWriteDepth double = 0
+        PreviewLayoutPending logical = false
         LastOverlayValue struct = struct()
         OverlayGeometryRevision double = 0
         InspectorPanel matlab.ui.container.Panel
@@ -517,7 +521,7 @@ classdef yamada < handle
                 app.SelectedComponentId = componentId;
                 app.refreshInspector();
             end
-            app.updateInteractionOverlay();
+            app.completePreviewUpdate(false);
             app.refreshEditCommands();
         end
 
@@ -528,6 +532,8 @@ classdef yamada < handle
                 retainHierarchy (1, 1) logical = false
             end
 
+            app.PreviewWriteDepth = app.PreviewWriteDepth + 1;
+            batch = onCleanup(@() app.endPreviewWrites());
             % Set the drawer state before measuring the preview panel geometry.
             if ~retainHierarchy && strlength(app.HierarchyRenameId) > 0
                 app.endHierarchyRename(false);
@@ -545,9 +551,9 @@ classdef yamada < handle
             if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog)
                 app.CallbackDialog.refresh();
             end
-            % Publish geometry after every shell surface has finished native layout.
-            drawnow;
-            app.updateInteractionOverlay();
+            % Publish one settled snapshot after all shell surfaces are updated.
+            clear batch
+            app.completePreviewUpdate(true);
         end
 
         function refreshViews(app, request)
@@ -560,6 +566,8 @@ classdef yamada < handle
                 app.refreshShell();
                 return
             end
+            app.PreviewWriteDepth = app.PreviewWriteDepth + 1;
+            batch = onCleanup(@() app.endPreviewWrites());
             % Invalidate gestures before applying setters that can trigger native layout.
             app.ReparentRevision = app.ReparentRevision + 1;
             app.InteractionComponentId = "";
@@ -579,10 +587,9 @@ classdef yamada < handle
             app.refreshEditCommands();
             app.refreshTitle();
             if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog), app.CallbackDialog.refresh(); end
-            % Publish settled geometry once; only layout-changing setters need polling.
-            drawnow;
-            app.updateInteractionOverlay(applied && ~geometryChanged);
-            if applied && geometryChanged, app.scheduleOverlayRefresh(); end
+            % All native writes precede the single stable geometry publication.
+            clear batch
+            app.completePreviewUpdate(~applied || geometryChanged);
             if isappdata(app.UIFigure, "macdPerformanceMeasurement") && getappdata(app.UIFigure, "macdPerformanceMeasurement")
                 setappdata(app.UIFigure, "macdPreviewStatistics", app.PreviewRenderer.statistics());
             end
@@ -1298,10 +1305,10 @@ classdef yamada < handle
             app.InteractionComponentId = "";
             app.InteractionKind = "";
             % Publish only availability and command revisions using existing measured regions.
-            app.reuseInteractionGeometry(false);
             if refreshDialog && ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog)
                 app.CallbackDialog.refresh();
             end
+            app.completePreviewUpdate(false);
         end
 
         function node = addHierarchyNode(app, parentNode, componentId)
@@ -1336,6 +1343,7 @@ classdef yamada < handle
             % Invalidate queued work before any of its native handles are released.
             app.cancelOverlayRefresh();
             app.PreviewGeometry = struct();
+            app.PreviewLayoutPending = true;
             app.ReparentRevision = app.ReparentRevision + 1;
             app.InteractionComponentId = "";
             app.InteractionKind = "";
@@ -1350,14 +1358,8 @@ classdef yamada < handle
             app.PreviewPanel.Title = "Safe preview: " + root.Name;
             [app.PreviewHandles, diagnostics, app.PreviewCanvas] = app.PreviewRenderer.render( ...
                 app.Document, app.PreviewScrollPanel);
-            app.layoutPreviewCanvas();
             app.restorePreviewTabSelections();
             app.createInteractionOverlay();
-            app.updateInteractionOverlay();
-            app.scheduleOverlayRefresh();
-            % Publish hit targets once more after MATLAB finishes initial layout.
-            drawnow;
-            app.updateInteractionOverlay();
             if ~isempty(diagnostics)
                 app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
                 app.refreshDiagnostics(app.Document.Diagnostics);
@@ -1380,6 +1382,7 @@ classdef yamada < handle
             if isempty(app.PreviewCanvas) || ~isvalid(app.PreviewCanvas)
                 return
             end
+            if ~isfield(app.PreviewGeometry, "Bounds"), return, end
             frame = app.PreviewCanvas.Parent;
             content = frame.Parent;
             viewport = double(app.PreviewScrollPanel.InnerPosition(3:4));
@@ -1479,7 +1482,6 @@ classdef yamada < handle
                 "Tag", "macd-interaction-overlay", ...
                 "HTMLEventReceivedFcn", @(~, event) ...
                 app.interactionOverlayEvent(event));
-            app.layoutPreviewCanvas();
         end
 
         function createRootResizeGuide(app)
@@ -1525,23 +1527,26 @@ classdef yamada < handle
             app.RootResizeGuide.Visible = "on";
         end
 
-        function updateInteractionOverlay(app, reuseGeometry)
+        function updateInteractionOverlay(app, reuseGeometry, settled)
             % updateInteractionOverlay Publish geometry only when catalog or native layout inputs require it.
             arguments (Input)
                 app (1, 1) yamada
                 reuseGeometry (1, 1) logical = false
+                settled (1, 1) logical = false
             end
-            if reuseGeometry && app.reuseInteractionGeometry(), return, end
+            if (app.PreviewUpdateDepth > 0 || app.PreviewWriteDepth > 0 || app.PreviewLayoutPending) && ~settled, return, end
+            if reuseGeometry && app.reuseInteractionGeometry(false), return, end
 
             if isempty(app.InteractionOverlay) || ~isvalid(app.InteractionOverlay) || ...
                     ~isa(app.PreviewHandles, "containers.Map")
                 return
             end
             % Reserve one version before native layout can reenter publication.
+            generation = app.TabLayoutGeneration;
             previousRevision = app.InteractionOverlayRevision;
             revision = previousRevision + 1;
             app.InteractionOverlayRevision = revision;
-            app.capturePreviewGeometry();
+            if ~isfield(app.PreviewGeometry, "Bounds"), app.capturePreviewGeometry(); end
             app.layoutPreviewCanvas();
             components = struct("id", {}, "x", {}, "y", {}, "width", {}, ...
                 "height", {}, "shape", {}, "selected", {}, "tabGroup", {}, ...
@@ -1646,7 +1651,7 @@ classdef yamada < handle
             [dragSource, reparentTargets] = macd.ui.ReparentOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, app.SelectedComponentId, ...
                 revision, @(id) app.isVisibleInSelectedTab(id), ...
-                @(id) app.gridOverlayData(id, revision), @(id) app.previewBounds(id));
+                @(id) app.gridOverlayData(id, revision), @(id) app.previewBounds(id), app.PreviewGeometry.Stamp);
             % A newer callback owns publication if layout reentered this update.
             if revision ~= app.InteractionOverlayRevision
                 return
@@ -1663,6 +1668,8 @@ classdef yamada < handle
                 "selectedComponentId", char(app.SelectedComponentId), ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);
+            if generation ~= app.TabLayoutGeneration, return, end
+            data.nativeGeometryRevision = app.NativeGeometryRevision;
             data.geometryRevision = revision;
             comparable = data;
             comparable.geometryRevision = 0;
@@ -1729,24 +1736,18 @@ classdef yamada < handle
                 app (1, 1) yamada
                 stamp (1, 1) struct = struct()
             end
-            keys = app.PreviewHandles.keys();
             if isempty(fieldnames(stamp))
                 stamp = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
             end
-            geometry = app.PreviewGeometry;
-            changed = ~stamp.Cacheable || ~isfield(geometry, "Stamp") || ~isequaln(geometry.Stamp, stamp);
-            if changed
-                geometry = struct("Stamp", {stamp}, ...
-                    "Bounds", containers.Map("KeyType", "char", "ValueType", "any"), ...
-                    "Grids", containers.Map("KeyType", "char", "ValueType", "any"));
-                for index = 1:numel(keys)
-                    preview = app.PreviewHandles(keys{index});
-                    if isvalid(preview) && isprop(preview, "Position")
-                        geometry.Bounds(keys{index}) = app.previewDisplayPosition(preview);
-                    end
-                end
+            geometry = struct("Stamp", {stamp}, ...
+                "Bounds", containers.Map("KeyType", "char", "ValueType", "any"), ...
+                "Grids", containers.Map("KeyType", "char", "ValueType", "any"));
+            for index = 1:numel(stamp.Controls)
+                item = stamp.Controls{index};
+                if item.pixelValid, geometry.Bounds(char(item.id)) = item.pixels; end
             end
             app.PreviewGeometry = geometry;
+            app.NativeGeometryRevision = app.NativeGeometryRevision + 1;
         end
 
         function rectangle = previewBounds(app, id)
@@ -1758,10 +1759,9 @@ classdef yamada < handle
             arguments (Output)
                 rectangle (1, 4) double
             end
+            rectangle = NaN(1, 4);
             if isfield(app.PreviewGeometry, "Bounds") && isKey(app.PreviewGeometry.Bounds, char(id))
                 rectangle = app.PreviewGeometry.Bounds(char(id));
-            else
-                rectangle = app.previewDisplayPosition(app.PreviewHandles(char(id)));
             end
         end
 
@@ -1777,7 +1777,7 @@ classdef yamada < handle
             end
             if strlength(id) == 0
                 data = app.GridLayoutOverlayDataBuilder.build(app.Document, app.PreviewHandles, ...
-                    app.PreviewCanvas, id, app.SelectedComponentId, revision, app.Registry);
+                    app.PreviewCanvas, id, app.SelectedComponentId, revision, app.Registry, app.PreviewGeometry.Stamp);
                 return
             end
             present = isfield(app.PreviewGeometry, "Grids") && isKey(app.PreviewGeometry.Grids, char(id));
@@ -1797,11 +1797,11 @@ classdef yamada < handle
                 data = saved.Data;
             else
                 data = app.GridLayoutOverlayDataBuilder.build(app.Document, app.PreviewHandles, ...
-                    app.PreviewCanvas, id, app.SelectedComponentId, revision, app.Registry);
+                    app.PreviewCanvas, id, app.SelectedComponentId, revision, app.Registry, app.PreviewGeometry.Stamp);
             end
-            % Native geometry changes clear this map; unresolved measurements must be retried.
+            % Each native snapshot owns one result per grid, including pending or read-only geometry.
             if isfield(app.PreviewGeometry, "Grids")
-                if safe && data.geometryAvailable
+                if safe
                     app.PreviewGeometry.Grids(char(id)) = struct("Inputs", inputs, "Data", data, ...
                         "Token", token);
                 elseif present
@@ -1830,6 +1830,18 @@ classdef yamada < handle
                         isequal(data.revision, app.InteractionOverlayRevision)
                     setappdata(app.UIFigure, "macdRenderedRevision", data.revision);
                 end
+                return
+            end
+            coordinateEvent = any(eventName == ["Pointer", "GridAction", "Reparent", "ContextMenu"]);
+            tabSelection = eventName == "Pointer" && isstruct(event.HTMLEventData) && ...
+                isfield(event.HTMLEventData, "phase") && string(event.HTMLEventData.phase) == "tabselect";
+            if coordinateEvent && ~tabSelection && ...
+                    (app.PreviewUpdateDepth > 0 || app.PreviewWriteDepth > 0 || app.PreviewLayoutPending)
+                return
+            end
+            if eventName == "Pointer" && isstruct(event.HTMLEventData) && ...
+                    isfield(event.HTMLEventData, "nativeGeometryRevision") && ...
+                    ~isequal(event.HTMLEventData.nativeGeometryRevision, app.NativeGeometryRevision)
                 return
             end
             if eventName == "Reparent"
@@ -2215,9 +2227,8 @@ classdef yamada < handle
             try
                 group.SelectedTab = group.Children(tabIndex);
                 app.PreviewTabSelections(char(componentId)) = tabIndex;
-                % Remove hidden-tab controls before waiting for settled geometry.
-                app.updateInteractionOverlay();
-                app.scheduleOverlayRefresh();
+                % Wait once before publishing the newly active tab geometry.
+                app.completePreviewUpdate(true);
             catch exception
                 app.setStatus(string(exception.message));
             end
@@ -2290,6 +2301,90 @@ classdef yamada < handle
                     return
                 end
             end
+        end
+
+        function completePreviewUpdate(app, geometryChanged)
+            % completePreviewUpdate Coalesce reentrant updates and publish only the latest settled geometry.
+            arguments (Input)
+                app (1, 1) yamada
+                geometryChanged (1, 1) logical
+            end
+            app.PreviewLayoutPending = app.PreviewLayoutPending || geometryChanged;
+            app.TabLayoutGeneration = app.TabLayoutGeneration + 1;
+            if app.PreviewUpdateDepth > 0 || app.PreviewWriteDepth > 0, return, end
+            app.PreviewUpdateDepth = app.PreviewUpdateDepth + 1;
+            cleanup = onCleanup(@() app.endPreviewUpdate());
+            while isvalid(app) && ~app.IsClosingProgrammatically && ~isempty(app.PreviewCanvas) && isvalid(app.PreviewCanvas)
+                generation = app.TabLayoutGeneration;
+                needsGeometry = app.PreviewLayoutPending || ~isfield(app.PreviewGeometry, "Bounds");
+                app.PreviewLayoutPending = false;
+                if needsGeometry
+                    app.cancelOverlayRefresh();
+                    generation = app.TabLayoutGeneration;
+                    canvas = app.PreviewCanvas;
+                    try
+                        drawnow;
+                        macd.ui.waitForPreviewLayout(app.UIFigure, canvas);
+                        drawnow;
+                    catch exception
+                        % Unsupported native versions retain the bounded legacy recovery path.
+                        if ~isvalid(app) || app.IsClosingProgrammatically || ~isvalid(canvas), return, end
+                        warning("macd:PreviewLayout:Fallback", "Layout synchronization failed: %s", exception.message);
+                        if generation ~= app.TabLayoutGeneration, app.PreviewLayoutPending = true; continue, end
+                        app.capturePreviewGeometry();
+                        app.updateInteractionOverlay(false, true);
+                        app.scheduleOverlayRefresh();
+                        return
+                    end
+                    if ~isvalid(app) || app.IsClosingProgrammatically || ~isvalid(canvas), return, end
+                    if generation ~= app.TabLayoutGeneration || ~isequal(canvas, app.PreviewCanvas)
+                        app.PreviewLayoutPending = true;
+                        continue
+                    end
+                    app.capturePreviewGeometry();
+                end
+                if needsGeometry || ~app.reuseInteractionGeometry(false)
+                    app.updateInteractionOverlay(false, true);
+                end
+                if generation == app.TabLayoutGeneration
+                    % Incomplete native geometry retains explicit legacy recovery, never guessed rectangles.
+                    if needsGeometry && app.hasPendingGridGeometry(), app.scheduleOverlayRefresh(); end
+                    break
+                end
+            end
+        end
+
+        function pending = hasPendingGridGeometry(app)
+            % hasPendingGridGeometry Recognize incomplete grid measurements that still need bounded recovery.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            arguments (Output)
+                pending (1, 1) logical
+            end
+            data = app.LastOverlayValue;
+            pending = false;
+            if isempty(fieldnames(data)), return, end
+            pending = data.gridEditor.geometryPending || data.gridPlacement.geometryPending;
+            for target = reshape(data.reparentTargets, 1, [])
+                if isfield(target.grid, "geometryPending"), pending = pending || target.grid.geometryPending; end
+            end
+        end
+
+        function endPreviewWrites(app)
+            % endPreviewWrites Release a native-write batch without publishing an intermediate view.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            if isvalid(app), app.PreviewWriteDepth = max(0, app.PreviewWriteDepth - 1); end
+        end
+
+        function endPreviewUpdate(app)
+            % endPreviewUpdate Release the coordinator even after a failed native response.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            if isvalid(app), app.PreviewUpdateDepth = max(0, app.PreviewUpdateDepth - 1); end
         end
 
         function scheduleOverlayRefresh(app)
@@ -2618,8 +2713,7 @@ classdef yamada < handle
                     ~isnumeric(position.LiteralValue) || parent.Factory == "uigridlayout"
                 return
             end
-            preview = app.PreviewHandles(char(component.Id));
-            displayPosition = app.previewDisplayPosition(preview);
+            displayPosition = app.previewBounds(component.Id);
             kinds = ["sw", "s", "se", "w", "e", "nw", "n", "ne"];
             for index = 1:numel(kinds)
                 point = app.resizeHandlePosition(displayPosition, kinds(index));
@@ -2629,22 +2723,6 @@ classdef yamada < handle
                     app.resizeHandleButtonDown(kinds(index)));
                 app.ResizeHandles(end + 1) = handle;
             end
-        end
-
-        function position = previewDisplayPosition(app, preview)
-            % previewDisplayPosition Return a preview handle rectangle in panel pixels.
-            arguments (Input)
-                app (1, 1) yamada
-                preview
-            end
-            arguments (Output)
-                position (1, 4) double
-            end
-
-            % Use MATLAB's pixel conversion so nested panels and borders are included.
-            position = double(getpixelposition(preview, true));
-            parentPosition = double(getpixelposition(app.PreviewCanvas, true));
-            position(1:2) = position(1:2) - parentPosition(1:2);
         end
 
         function position = resizeHandlePosition(~, target, kind)
@@ -2901,8 +2979,7 @@ classdef yamada < handle
             end
             ratio = startPosition(3) / max(startPosition(4), 1);
             if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
-                runtimePosition = app.previewDisplayPosition( ...
-                    app.PreviewHandles(char(component.Id)));
+                runtimePosition = app.previewBounds(component.Id);
                 ratio = runtimePosition(3) / max(runtimePosition(4), eps);
             end
             horizontal = contains(kind, "e") || contains(kind, "w");

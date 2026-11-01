@@ -2,6 +2,8 @@
 
 Run the benchmark from the project root in the interactive account that owns the MATLAB license. The runner opens a separate MATLAB process for each case and operates editor-owned fixtures; input application code and callbacks are never run.
 
+Choose the comparison baseline at the start of each implementation stage: use the latest completed, established commit, excluding experimental and minimal-test commits, unless the user specifies another revision. Record the exact baseline and candidate revisions and freeze both source trees, fixtures, and workload hashes. Do not continue using a historical fixed baseline for later stages.
+
 Run the tests necessary for the changed behavior before measuring performance; a full regression suite is not a prerequisite for each measurement or implementation trial. Use a full regression when a meaningful change affects shared contracts broadly, when consolidating an implementation stage, or before integration as warranted by its scope. Keep regression tests and latency measurements in separate, non-overlapping MATLAB processes. Do not rerun a completed full suite merely because another speed measurement is needed.
 
 Before waiting for a long run, tell the user its estimated completion clock time in their time zone. Base that estimate on comparable past runs and the remaining stages, include a small margin, and wait until that estimate rather than checking at fixed intervals.

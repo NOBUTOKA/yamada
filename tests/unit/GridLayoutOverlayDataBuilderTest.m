@@ -30,6 +30,25 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
     end
 
     methods (Test)
+        function sharedSnapshotRemainsIndependentOfLaterNativeGeometry(testCase)
+            % sharedSnapshotRemainsIndependentOfLaterNativeGeometry Use one observation for all grid consumers.
+            [document, handles, panel, grid, first, ~, cleanup, registry] = ...
+                testCase.renderGrid([40 50], [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            snapshot = builder.nativeInputs(handles, panel);
+            expected = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry, snapshot);
+            preview = handles(char(grid.Id));
+            preview.RowHeight = {80, 90};
+            drawnow;
+            macd.ui.waitForPreviewLayout(ancestor(panel, "figure"), preview);
+            drawnow;
+            actual = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry, snapshot);
+            testCase.verifyEqual(actual, expected);
+            fresh = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry);
+            testCase.verifyNotEqual(fresh.children, expected.children);
+        end
+
         function cacheInputsReuseOnlyUnchangedLogicalGridState(testCase)
             % cacheInputsReuseOnlyUnchangedLogicalGridState Isolate track, placement, and editability dependencies from text.
             [document, handles, panel, grid, first, second, cleanup, registry] = ...

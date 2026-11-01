@@ -162,7 +162,7 @@ classdef SourceLiteralTransaction
                 update.assertCurrent(document.getComponent(update.ComponentId));
             end
             for update = obj.Updates
-                update.apply(document.getComponent(update.ComponentId));
+                update.applyValidated(document.getComponent(update.ComponentId));
             end
             owner = document.getComponent(obj.ComponentId);
             owner.synchronizeSourceSettings(obj.Settings, obj.FactoryArguments);

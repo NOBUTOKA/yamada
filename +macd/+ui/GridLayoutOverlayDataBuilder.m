@@ -55,7 +55,7 @@ classdef GridLayoutOverlayDataBuilder
         end
 
         function data = build(~, document, previewHandles, previewPanel, ...
-                activeGridId, selectedComponentId, revision, registry)
+                activeGridId, selectedComponentId, revision, registry, snapshot)
             % build Return one versioned overlay payload for the active Grid Layout.
             arguments (Input)
                 ~
@@ -66,6 +66,7 @@ classdef GridLayoutOverlayDataBuilder
                 selectedComponentId (1, 1) string
                 revision (1, 1) double
                 registry macd.model.ComponentRegistry = macd.model.ComponentRegistry.empty
+                snapshot (1, 1) struct = struct()
             end
             arguments (Output)
                 data (1, 1) struct
@@ -84,8 +85,12 @@ classdef GridLayoutOverlayDataBuilder
                 return
             end
 
+            if isempty(fieldnames(snapshot))
+                snapshot = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(previewHandles, previewPanel);
+            end
+            item = macd.ui.GridLayoutOverlayDataBuilder.snapshotItem(snapshot, activeGridId);
             [outerBounds, innerBounds, geometryMessage] = ...
-                macd.ui.GridLayoutOverlayDataBuilder.gridBounds(preview, previewPanel);
+                macd.ui.GridLayoutOverlayDataBuilder.gridBounds(item);
             if strlength(geometryMessage) > 0
                 data.readOnlyReason = geometryMessage;
                 data.geometryPending = true;
@@ -98,9 +103,9 @@ classdef GridLayoutOverlayDataBuilder
             states = macd.ui.GridLayoutOverlayDataBuilder.trackStates(document, registry, grid);
             resolveTracks = ~isempty(registry);
             [rowValue, rowEditable, rowReason] = ...
-                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "RowHeight", states, resolveTracks);
+                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, item, "RowHeight", states, resolveTracks);
             [columnValue, columnEditable, columnReason] = ...
-                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, preview, "ColumnWidth", states, resolveTracks);
+                macd.ui.GridLayoutOverlayDataBuilder.trackValue(grid, item, "ColumnWidth", states, resolveTracks);
             if strlength(rowReason) > 0 || strlength(columnReason) > 0
                 data.readOnlyReason = macd.ui.GridLayoutOverlayDataBuilder.joinMessages( ...
                     [rowReason columnReason]);
@@ -117,14 +122,14 @@ classdef GridLayoutOverlayDataBuilder
 
             % Publish child rectangles even when track boundaries cannot be resolved.
             [data.children, expectedChildren] = macd.ui.GridLayoutOverlayDataBuilder.children( ...
-                document, previewHandles, previewPanel, grid, selectedComponentId);
+                document, previewHandles, snapshot, grid, selectedComponentId);
             measurementChildren = macd.ui.GridLayoutOverlayDataBuilder.outerMeasurementChildren( ...
-                data.children, previewHandles, previewPanel);
+                data.children, snapshot);
 
             [rowBounds, rowMessage, rowPending] = macd.ui.GridLayoutOverlayDataBuilder.trackBounds( ...
-                rowTracks, innerBounds, double(preview.RowSpacing), true, measurementChildren, expectedChildren);
+                rowTracks, innerBounds, double(item.RowSpacing), true, measurementChildren, expectedChildren);
             [columnBounds, columnMessage, columnPending] = macd.ui.GridLayoutOverlayDataBuilder.trackBounds( ...
-                columnTracks, innerBounds, double(preview.ColumnSpacing), false, measurementChildren, expectedChildren);
+                columnTracks, innerBounds, double(item.ColumnSpacing), false, measurementChildren, expectedChildren);
             if strlength(rowMessage) > 0 || strlength(columnMessage) > 0
                 data.readOnlyReason = macd.ui.GridLayoutOverlayDataBuilder.joinMessages( ...
                     [rowMessage columnMessage]);
@@ -154,6 +159,7 @@ classdef GridLayoutOverlayDataBuilder
                 stamp (1, 1) struct
             end
             origin = [NaN NaN];
+            reference = NaN(1, 4);
             safe = false;
             try
                 reference = double(getpixelposition(previewPanel, true));
@@ -181,11 +187,36 @@ classdef GridLayoutOverlayDataBuilder
             end
             ancestors = cell(1, numel(parents));
             for index = 1:numel(parents)
-                ancestors{index} = macd.ui.GridLayoutOverlayDataBuilder.nativeItem(parents{index}, string(index), origin);
+                match = find(cellfun(@(item) item.handle == parents{index}, controls), 1);
+                if parents{index} == previewPanel
+                    ancestors{index} = macd.ui.GridLayoutOverlayDataBuilder.nativeItem( ...
+                        parents{index}, string(index), origin, reference);
+                elseif isempty(match)
+                    ancestors{index} = macd.ui.GridLayoutOverlayDataBuilder.nativeItem(parents{index}, string(index), origin);
+                else
+                    ancestors{index} = controls{match};
+                end
                 safe = safe && ancestors{index}.pixelValid;
             end
             stamp = struct("Controls", {controls}, "Ancestors", {ancestors}, "Cacheable", safe);
         end
+        function item = snapshotItem(snapshot, id)
+            % snapshotItem Resolve one measured component without reading native geometry again.
+            arguments (Input)
+                snapshot (1, 1) struct
+                id (1, 1) string
+            end
+            arguments (Output)
+                item (1, 1) struct
+            end
+            item = struct("pixelValid", false);
+            for index = 1:numel(snapshot.Controls)
+                if snapshot.Controls{index}.id == id
+                    item = snapshot.Controls{index}; return
+                end
+            end
+        end
+
     end
 
     methods (Static, Access = private)
@@ -230,20 +261,22 @@ classdef GridLayoutOverlayDataBuilder
             end
         end
 
-        function item = nativeItem(preview, id, origin)
+        function item = nativeItem(preview, id, origin, absolutePixels)
             % nativeItem Retain native dimensions, fit decorations, track inputs, and parent identity.
             arguments (Input)
                 preview
                 id (1, 1) string
                 origin (1, 2) double
+                absolutePixels double = []
             end
             arguments (Output)
                 item (1, 1) struct
             end
-            item = struct("id", id, "valid", isvalid(preview), "pixels", [], "pixelValid", false);
+            item = struct("id", id, "valid", isvalid(preview), "pixels", [], "pixelValid", false, "handle", {preview});
             if ~item.valid, return, end
             try
-                pixels = double(getpixelposition(preview, true));
+                pixels = absolutePixels;
+                if isempty(pixels), pixels = double(getpixelposition(preview, true)); end
                 pixels(1:2) = pixels(1:2) - origin;
                 item.pixels = pixels;
                 item.pixelValid = all(isfinite(pixels));
@@ -301,37 +334,26 @@ classdef GridLayoutOverlayDataBuilder
             message = strjoin(messages(strlength(messages) > 0), " ");
         end
 
-        function [outerBounds, innerBounds, message] = gridBounds(preview, previewPanel)
-            % gridBounds Convert public GridLayout bounds into preview-panel pixels.
+        function [outerBounds, innerBounds, message] = gridBounds(item)
+            % gridBounds Convert one shared grid observation into inner and outer rectangles.
             outerBounds = zeros(1, 4);
             innerBounds = zeros(1, 4);
-            message = "";
-            try
-                outerPosition = double(getpixelposition(preview, true));
-                panelPosition = double(getpixelposition(previewPanel, true));
-                innerPosition = double(preview.InnerPosition);
-                position = double(preview.Position);
-            catch
-                message = "Grid geometry is not available yet.";
-                return
-            end
-            outerBounds = outerPosition;
-            outerBounds(1:2) = outerBounds(1:2) - panelPosition(1:2);
+            message = "Grid geometry is not available yet.";
+            if ~item.pixelValid || ~isfield(item, "InnerPosition") || ~isfield(item, "Position"), return, end
+            outerBounds = item.pixels;
+            innerPosition = item.InnerPosition;
+            position = item.Position;
             if any(~isfinite([outerBounds innerPosition])) || any(outerBounds(3:4) <= 0) || ...
-                    any(innerPosition(3:4) <= 0)
-                message = "Grid geometry is not available yet.";
-                return
-            end
-            % InnerPosition and Position share the parent's coordinate system.
-            innerBounds = [outerBounds(1:2) + innerPosition(1:2) - position(1:2), ...
-                innerPosition(3:4)];
+                    any(innerPosition(3:4) <= 0), return, end
+            innerBounds = [outerBounds(1:2) + innerPosition(1:2) - position(1:2), innerPosition(3:4)];
+            message = "";
         end
 
-        function [value, editable, reason] = trackValue(grid, preview, path, states, resolveTracks)
+        function [value, editable, reason] = trackValue(grid, item, path, states, resolveTracks)
             % trackValue Prefer shared effective tracks while retaining explicit edit ownership.
             arguments (Input)
                 grid (1, 1) macd.model.ComponentRecord
-                preview (1, 1) matlab.ui.container.GridLayout
+                item (1, 1) struct
                 path (1, 1) string
                 states struct
                 resolveTracks (1, 1) logical
@@ -354,7 +376,7 @@ classdef GridLayoutOverlayDataBuilder
                 end
                 value = entry.LiteralValue;
             else
-                value = preview.(char(path));
+                value = item.(char(path));
             end
             if resolveTracks
                 state = states(arrayfun(@(item) item.Definition.Path == path, states));
@@ -546,30 +568,21 @@ classdef GridLayoutOverlayDataBuilder
             extents(observed) = upper(observed) - lower(observed);
         end
 
-        function measured = outerMeasurementChildren(children, previewHandles, previewPanel)
-            % outerMeasurementChildren Use decorated control bounds only for fit measurements.
+        function measured = outerMeasurementChildren(children, snapshot)
+            % outerMeasurementChildren Share decorated bounds and measured parent origins for fit tracks.
             measured = children;
-            panelPosition = double(getpixelposition(previewPanel, true));
             for index = 1:numel(measured)
-                id = measured(index).id;
-                if ~isKey(previewHandles, id)
-                    continue
-                end
-                preview = previewHandles(id);
-                if ~isvalid(preview) || ~isprop(preview, "OuterPosition")
-                    continue
-                end
-                try
-                    rectangle = double(preview.OuterPosition);
-                    parentPosition = double(getpixelposition(preview.Parent, true));
-                    rectangle(1:2) = rectangle(1:2) + ...
-                        parentPosition(1:2) - panelPosition(1:2) - 1;
-                    if numel(rectangle) == 4 && all(isfinite(rectangle)) && ...
-                            all(rectangle(3:4) > 0)
+                item = macd.ui.GridLayoutOverlayDataBuilder.snapshotItem(snapshot, string(measured(index).id));
+                if ~isfield(item, "OuterPosition") || ~isfield(item, "parent"), continue, end
+                for parentIndex = 1:numel(snapshot.Ancestors)
+                    parent = snapshot.Ancestors{parentIndex};
+                    if parent.handle ~= item.parent || ~parent.pixelValid, continue, end
+                    rectangle = item.OuterPosition;
+                    rectangle(1:2) = rectangle(1:2) + parent.pixels(1:2) - 1;
+                    if all(isfinite(rectangle)) && all(rectangle(3:4) > 0)
                         measured(index).bounds = rectangle;
                     end
-                catch
-                    % Retain the ordinary control rectangle if outer geometry is unavailable.
+                    break
                 end
             end
         end
@@ -636,12 +649,12 @@ classdef GridLayoutOverlayDataBuilder
             end
         end
 
-        function [children, expectedCount] = children(document, previewHandles, previewPanel, grid, selectedComponentId)
+        function [children, expectedCount] = children(document, previewHandles, snapshot, grid, selectedComponentId)
             % children Publish realized bounds and literal placement of immediate grid children.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 previewHandles containers.Map
-                previewPanel
+                snapshot (1, 1) struct
                 grid (1, 1) macd.model.ComponentRecord
                 selectedComponentId (1, 1) string
             end
@@ -661,11 +674,11 @@ classdef GridLayoutOverlayDataBuilder
                     continue
                 end
                 expectedCount = expectedCount + 1;
-                [bounds, message] = macd.ui.GridLayoutOverlayDataBuilder.childBounds( ...
-                    preview, previewPanel);
-                if strlength(message) > 0
+                item = macd.ui.GridLayoutOverlayDataBuilder.snapshotItem(snapshot, child.Id);
+                if ~item.pixelValid || any(item.pixels(3:4) <= 0)
                     continue
                 end
+                bounds = item.pixels;
                 [rowStart, rowEnd, rowMode, rowEditable] = ...
                     macd.ui.GridLayoutOverlayDataBuilder.coordinate(child, "Layout.Row");
                 [columnStart, columnEnd, columnMode, columnEditable] = ...
@@ -680,23 +693,6 @@ classdef GridLayoutOverlayDataBuilder
                     "bounds", bounds, "placementMode", char(mode), ...
                     "selected", child.Id == selectedComponentId, ...
                     "editable", child.IsEditable && rowEditable && columnEditable); %#ok<AGROW>
-            end
-        end
-
-        function [bounds, message] = childBounds(preview, previewPanel)
-            % childBounds Convert one realized child rectangle into preview-panel pixels.
-            bounds = zeros(1, 4);
-            message = "";
-            try
-                bounds = double(getpixelposition(preview, true));
-                panelPosition = double(getpixelposition(previewPanel, true));
-                bounds(1:2) = bounds(1:2) - panelPosition(1:2);
-            catch
-                message = "Child geometry is not available yet.";
-                return
-            end
-            if any(~isfinite(bounds)) || any(bounds(3:4) <= 0)
-                message = "Child geometry is not available yet.";
             end
         end
 

@@ -63,8 +63,8 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             end
         end
 
-        function obsoleteLayoutCallbackCannotStopNewPreviewWork(testCase)
-            % obsoleteLayoutCallbackCannotStopNewPreviewWork Ignore notifications from a replaced layout request.
+        function gridCommandPublishesOneSettledSnapshotWithoutPolling(testCase)
+            % gridCommandPublishesOneSettledSnapshotWithoutPolling Share native geometry and publish one atomic result.
             app = yamada();
             cleanup = onCleanup(@() delete(app));
             figure = findall(0, "Tag", "macd-yamada-editor");
@@ -73,40 +73,50 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             row = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
             gridId = app.SelectedComponentId;
-            timers = timerfindall();
-            timers = timers(arrayfun(@(item) isa(item.TimerFcn, "function_handle") && ...
-                contains(string(func2str(item.TimerFcn)), "refreshOverlayAfterTabLayout"), timers));
-            testCase.assertNumElements(timers, 1);
-            layoutTimer = timers(1);
-            obsoleteCallback = layoutTimer.TimerFcn;
-            obsoleteErrorCallback = layoutTimer.ErrorFcn;
-
-            % Rebuild through a real command, then retain its current polling callback.
             overlay = findall(figure, "Tag", "macd-interaction-overlay");
             data = overlay.Data.gridEditor;
+            revision = overlay.Data.geometryRevision;
+            profile clear; profile on;
+            stop = onCleanup(@() profile("off"));
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "GridAction", ...
                 "HTMLEventData", struct("action", "set-track", "revision", data.revision, ...
                 "activeGridId", gridId, "axis", "row", "index", 1, "mode", "fixed", "value", 40)));
-            currentCallback = layoutTimer.TimerFcn;
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
-            before = overlay.Data;
-            stop(layoutTimer);
-            layoutTimer.StartDelay = 30;
-            setappdata(figure, "layoutRequestStopped", false);
-            layoutTimer.StopFcn = @(~, ~) setappdata(figure, "layoutRequestStopped", true);
-            start(layoutTimer);
-
-            % Exceed the polling cap: stale work must neither stop nor publish the new request.
-            for index = 1:45, obsoleteCallback(layoutTimer, []); end
-            obsoleteErrorCallback(layoutTimer, []);
-            testCase.verifyEqual(string(layoutTimer.Running), "on");
-            testCase.verifyFalse(getappdata(figure, "layoutRequestStopped"));
-            testCase.verifyEqual(overlay.Data, before);
-            for index = 1:45, currentCallback(layoutTimer, []); end
-            testCase.verifyEqual(string(layoutTimer.Running), "off");
-            testCase.verifyTrue(getappdata(figure, "layoutRequestStopped"));
+            profile off; info = profile("info"); clear stop
+            names = string({info.FunctionTable.FunctionName});
+            captures = contains(names, "yamada.capturePreviewGeometry");
+            if ~any(captures), captures = endsWith(names, "capturePreviewGeometry"); end
+            testCase.verifyEqual(sum([info.FunctionTable(captures).NumCalls]), 1);
+            testCase.verifyEqual(overlay.Data.geometryRevision, revision + 1);
+            testCase.verifyTrue(overlay.Data.gridEditor.geometryAvailable);
             testCase.verifyEqual(app.Document.getComponent(gridId).getProperty("RowHeight").LiteralValue{1}, 40);
-            layoutTimer.StopFcn = [];
+            timers = timerfindall();
+            polling = arrayfun(@(item) isa(item.TimerFcn, "function_handle") && ...
+                contains(string(func2str(item.TimerFcn)), "refreshOverlayAfterTabLayout") && ...
+                string(item.Running) == "on", timers);
+            testCase.verifyFalse(any(polling));
+        end
+
+        function obsoletePointerCannotSelectFromReplacedGeometry(testCase)
+            % obsoletePointerCannotSelectFromReplacedGeometry Reject delayed coordinates after native reconstruction.
+            app = yamada();
+            cleanup = onCleanup(@() delete(app));
+            figure = findall(0, "Tag", "macd-yamada-editor");
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            old = overlay.Data.nativeGeometryRevision;
+            palette = findall(figure, "Type", "uitable");
+            palette = palette(arrayfun(@(item) ~isempty(item.DoubleClickedFcn), palette));
+            row = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
+            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
+            selected = app.SelectedComponentId;
+            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            data = struct("phase", "pointerdown", "x", 1, "y", 1, ...
+                "componentId", app.Document.RootComponentId, "handle", "root-e", ...
+                "nativeGeometryRevision", old);
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", "HTMLEventData", data));
+            testCase.verifyEqual(app.SelectedComponentId, selected);
+            data.nativeGeometryRevision = overlay.Data.nativeGeometryRevision;
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Pointer", "HTMLEventData", data));
+            testCase.verifyEqual(app.SelectedComponentId, app.Document.RootComponentId);
         end
 
         function preservedNavigationHandlesNonvisualTreeNodes(testCase)
