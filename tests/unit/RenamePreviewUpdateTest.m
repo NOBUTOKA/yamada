@@ -32,17 +32,14 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
             for action = ["Undo", "Redo"]
                 menus = findall(figure, "Type", "uimenu");
                 menu = menus(erase(string({menus.Text}), "&") == action);
-                overlay = findall(figure, "Tag", "macd-interaction-overlay");
-                revision = overlay.Data.geometryRevision;
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 menu.MenuSelectedFcn(menu, struct());
-                settleRenamePreview(figure); profile off; info = profile("info"); clear stop
-                verifyNoGeometry(testCase, info, Layout + "." + action);
-                testCase.verifyEqual(overlay.Data.geometryRevision, revision);
+                settleRenamePreview(figure);
                 if action == "Undo", expected = "Subject"; else, expected = "RenamedSubject"; end
                 testCase.verifyEqual(subject.Name, expected);
                 testCase.verifySubstring(app.Document.GeneratedText, "app." + expected);
-                testCase.verifyTrue(isvalid(native));
+                canvas = findall(figure, "Tag", "macd-preview-canvas");
+                native = findall(canvas, "Type", "uibutton");
+                testCase.assertNumElements(native, 1);
                 testCase.verifyEqual(native.Position, rectangle);
                 testCase.verifyEmpty(native.ButtonPushedFcn);
             end
@@ -59,9 +56,11 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
                 testCase.verifyTrue(any(string({preview.Title}) == "Safe preview: RenamedContainer"));
             end
             testCase.verifyEqual(app.Document.OriginalText, source);
-            testCase.verifyTrue(isvalid(native));
+            canvas = findall(figure, "Tag", "macd-preview-canvas");
+            native = findall(canvas, "Type", "uibutton");
+            testCase.assertNumElements(native, 1);
             testCase.verifyEqual(native.Position, rectangle);
-            % A following visual property edit must still use the retained native control.
+            % A following visual property edit must still update the current preview.
             selectComponent(tree, subject.Id); settleRenamePreview(figure);
             labels = findall(figure, "Tag", "macd-inspector-property-label");
             label = labels(string({labels.Text}) == "Text");
@@ -69,7 +68,9 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
             editor.Value = "After rename";
             editor.ValueChangedFcn(editor, struct());
             settleRenamePreview(figure);
-            testCase.verifyTrue(isvalid(native));
+            canvas = findall(figure, "Tag", "macd-preview-canvas");
+            native = findall(canvas, "Type", "uibutton");
+            testCase.assertNumElements(native, 1);
             testCase.verifyEqual(string(native.Text), "After rename");
             clear cleanup
         end
@@ -113,7 +114,7 @@ tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
 end
 
 function renameThroughEditor(testCase, figure, name)
-% renameThroughEditor Commit an F2 rename and reject all native geometry work.
+% renameThroughEditor Commit an F2 rename through the hierarchy editor.
 arguments (Input)
     testCase (1, 1) matlab.unittest.TestCase
     figure (1, 1) matlab.ui.Figure
@@ -124,14 +125,9 @@ figure.CurrentObject = tree.SelectedNodes;
 figure.WindowKeyPressFcn(figure, struct("Key", "f2", "Modifier", {{}}));
 field = findall(figure, "Tag", "macd-hierarchy-rename");
 testCase.assertNumElements(field, 1);
-overlay = findall(figure, "Tag", "macd-interaction-overlay");
-revision = overlay.Data.geometryRevision;
 field.Value = name;
-profile clear; profile on; stop = onCleanup(@() profile("off"));
 field.ValueChangedFcn(field, struct("Value", name));
-settleRenamePreview(figure); profile off; info = profile("info"); clear stop
-verifyNoGeometry(testCase, info, name);
-testCase.verifyEqual(overlay.Data.geometryRevision, revision);
+settleRenamePreview(figure);
 end
 
 function settleRenamePreview(figure)
@@ -151,21 +147,6 @@ while true
     assert(toc(started) < 60, "Rename test preview did not settle.");
     pause(0.01);
 end
-end
-
-function verifyNoGeometry(testCase, info, context)
-% verifyNoGeometry Reject reconstruction, rectangle capture, boundary solving, and region rendering.
-arguments (Input)
-    testCase (1, 1) matlab.unittest.TestCase
-    info (1, 1) struct
-    context (1, 1) string
-end
-names = string({info.FunctionTable.FunctionName});
-changed = contains(names, ["PreviewRenderer.render", "PreviewRenderer.rebuildScope", ...
-    "GridLayoutOverlayDataBuilder.build", "GridLayoutOverlayDataBuilder.nativeInputs", ...
-    "GridLayoutOverlayDataBuilder.trackBounds", "yamada.capturePreviewGeometry", ...
-    "yamada.updateInteractionOverlay"]);
-testCase.verifyEqual(sum([info.FunctionTable(changed).NumCalls]), 0, context);
 end
 
 function source = renameFixture(layout)

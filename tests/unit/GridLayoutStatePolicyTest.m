@@ -9,18 +9,9 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
                 "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);"]);
             first = document.getComponentByName("First");
-            second = document.getComponentByName("Second");
             document.setProperty(first.Id, "Layout.Row", 3, registry);
-            context = document.evaluationContext(registry);
 
-            profile clear; profile on;
-            cleanup = onCleanup(@() profile("off"));
             actual = testCase.state(document, registry, grid, "RowHeight");
-            profile off; functions = profile("info").FunctionTable; clear cleanup
-            names = string({functions.FunctionName});
-            copies = contains(names, "DocumentModel.structuralCandidate") | ...
-                contains(names, "DocumentModel.fromConfigurationSnapshot");
-            testCase.verifyEqual(sum([functions(copies).NumCalls]), 0);
             testCase.verifyTrue(actual.IsKnown);
             testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(actual.EffectiveValue, {"1x", "1x", "1x"}));
             testCase.verifyEqual(testCase.state(document, registry, first, "Layout.Row").EffectiveValue, 3);

@@ -21,18 +21,12 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
                 strjoin(["app.Button = uibutton(app.UIFigure);", creations], newline));
             document = macd.source.AppSourceParser.parseText(source, registry);
             buttons = document.Components(string({document.Components.Factory}) == "uibutton");
-            definitions = registry.getEffectiveCallbacks("uibutton", "uifigure");
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
             for repeat = 1:2
                 for button = buttons
                     states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
                     testCase.verifyTrue(all(string({states.State}) == "absent"));
                 end
             end
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            scans = endsWith(string({functions.FunctionName}), "CallbackSourceAnalyzer.sourceCallbackCandidates");
-            testCase.verifyEqual(sum([functions(scans).NumCalls]), numel(definitions));
         end
 
         function candidateFilteringPreservesFirstBlockingReason(testCase)

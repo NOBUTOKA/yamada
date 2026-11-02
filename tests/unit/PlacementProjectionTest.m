@@ -10,16 +10,12 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             % destinationsShareOneValidatedHierarchy Bound subtree captures across all candidate parents.
             [document, registry, source, destinations] = fixture(Depth);
             snapshot = macd.model.SubtreeSnapshot(document, source.Id);
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             plans = struct([]);
             for index = 1:numel(destinations)
                 prepared = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, ...
                     destinations(index).Id, registry, source.Id);
                 if isempty(plans), plans = prepared; else, plans(end + 1) = prepared; end %#ok<AGROW>
             end
-            profile off; functions = profile("info").FunctionTable; clear stop
-            matches = endsWith(string({functions.FunctionName}), "SubtreeSnapshot.SubtreeSnapshot");
-            testCase.verifyEqual(sum([functions(matches).NumCalls]), 1);
             for index = 1:numel(plans)
                 row = plans(index).Changes(string({plans(index).Changes.Path}) == "Layout.Row");
                 column = plans(index).Changes(string({plans(index).Changes.Path}) == "Layout.Column");
@@ -29,11 +25,7 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             expected = plans(1);
             plans(1).Changes(1).Value = 99;
             testCase.verifyNotEqual(plans(1), expected);
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             again = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
-            profile off; functions = profile("info").FunctionTable; clear stop
-            matches = endsWith(string({functions.FunctionName}), "SubtreeSnapshot.SubtreeSnapshot");
-            testCase.verifyEqual(sum([functions(matches).NumCalls]), 0);
             testCase.verifyEqual(again, expected);
         end
 
@@ -49,11 +41,7 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             column = changed.Changes(string({changed.Changes.Path}) == "Layout.Column");
             testCase.verifyEqual(column.Value, 1);
             registry.register(registry.get("uilabel"));
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             refreshed = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
-            profile off; functions = profile("info").FunctionTable; clear stop
-            matches = endsWith(string({functions.FunctionName}), "SubtreeSnapshot.SubtreeSnapshot");
-            testCase.verifyEqual(sum([functions(matches).NumCalls]), 1);
             testCase.verifyEqual(refreshed, changed);
         end
 

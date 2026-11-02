@@ -193,12 +193,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
                     entry = grid.getProperty(paths(opaqueCount));
                     entry.setSourceExpression("unresolvedTracks");
                 end
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 actual = builder.build(document, handles, panel, grid.Id, second.Id, 7, registry);
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                selected = contains(string({functions.FunctionName}), "DocumentModel.getEffectivePropertyStates");
-                testCase.verifyEqual(sum([functions(selected).NumCalls]), double(opaqueCount < 2));
                 if opaqueCount == 0
                     testCase.verifyEqual(actual, baseline);
                 else

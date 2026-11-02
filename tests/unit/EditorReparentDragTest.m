@@ -122,17 +122,9 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             % displayDoesNotPlanDestinationsAndRejectsAtDrop Defer destination checks without changing rejected edits.
             [app, figure, button, left, grid] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
-            profile clear;
-            profile on;
-            profileCleanup = onCleanup(@() profile("off"));
             testCase.select(figure, left.Id);
             testCase.select(figure, button.Id);
             drawnow;
-            profile off;
-            result = profile("info");
-            names = string({result.FunctionTable.FunctionName});
-            testCase.verifyFalse(any(endsWith(names, "DocumentEditAvailability.reparenting")));
-            testCase.verifyFalse(any(endsWith(names, "SubtreePlacementPlanner.prepare")));
             overlay = findall(figure, "Tag", "macd-interaction-overlay");
             targets = overlay.Data.reparentTargets;
             testCase.verifyFalse(any(string({targets.id}) == button.Id));

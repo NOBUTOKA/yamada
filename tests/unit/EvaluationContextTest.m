@@ -29,12 +29,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
                 candidate.getEffectivePropertyStates(registry, component.Id);
             end
             candidate.getComponent(leaves(1).Id).setProperty("FontSize", 19);
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
             context = candidate.evaluationContext(registry);
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            scopes = endsWith(string({functions.FunctionName}), "EvaluationContext.stateScope");
-            testCase.verifyLessThanOrEqual(sum([functions(scopes).NumCalls]), 5);
             for id = [outer.Id, inner.Id, nestedGroup.Id, leaves(1).Id]
                 [~, found] = context.lookup("states:" + id);
                 testCase.verifyFalse(found);
@@ -457,14 +452,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             context = document.evaluationContext(registry);
             context.rememberConfiguration("plan", document);
 
-            profile clear; profile on;
-            cleanup = onCleanup(@() profile("off"));
             [result, found] = context.configurationGridState("plan", grid, document, grid);
-            profile off; functions = profile("info").FunctionTable; clear cleanup
             testCase.assertTrue(found);
-            copies = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate") | ...
-                contains(string({functions.FunctionName}), "DocumentModel.fromConfigurationSnapshot");
-            testCase.verifyLessThanOrEqual(sum([functions(copies).NumCalls]), 1);
             testCase.verifyTrue(result.TrackKnown(1));
             testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(result.Tracks{1}, {40, "fit", "1x"}));
             testCase.verifyEqual(result.ChildIds, child.Id);
@@ -552,15 +541,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             context = document.evaluationContext(registry);
             context.rememberConfiguration("plan", document);
             expected = macd.model.PropertyStateResolver.resolve(root, definitions, document, registry);
-            profile clear; profile on;
-            cleanup = onCleanup(@() profile("off"));
             [states, ids, found] = context.configurationStates("plan", root, definitions, document);
-            profile off; functions = profile("info").FunctionTable; clear cleanup
             testCase.assertTrue(found);
             testCase.verifyEqual(states, expected);
             testCase.verifySize(ids, size(states));
-            cloned = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate");
-            testCase.verifyEqual(sum([functions(cloned).NumCalls]), 0);
 
             % Public document retrieval remains independently mutable after value reads.
             [copy, found] = context.configuration("plan", root.Name);

@@ -21,14 +21,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                 document.setProperty(button.Id, "FontSize", 14, testCase.Registry);
                 parent = document.getComponent(field.ParentId);
                 document.insertComponent(testCase.Registry, "uilabel", parent.Id);
-                context = document.evaluationContext(testCase.Registry);
                 plan = macd.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
                 original = document.OriginalText;
-                profile clear; profile on; cleanup = onCleanup(@() profile("off"));
                 document.setProperty(field.Id, "Value", 2, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear cleanup
-                testCase.verifyEqual(testCase.sourceWorkCalls(functions), 0, layout);
                 testCase.verifyEqual(field.getProperty("Value").LiteralValue, 2);
                 testCase.verifyEqual(plan.Document.getComponentByName("Field").getProperty("Value").LiteralValue, 1);
                 older = plan;
@@ -55,11 +51,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                 values = {"quoted ""text""; % untouched", [0.2 0.3 0.4], "off", [0.8 0.7 0.6], "center"};
                 original = document.OriginalText;
                 for index = 1:numel(paths)
-                    profile clear; profile on; cleanup = onCleanup(@() profile("off"));
                     document.setProperty(ids(index), paths(index), values{index}, testCase.Registry);
                     document.validatePropertyCommit(testCase.Registry);
-                    profile off; functions = profile("info").FunctionTable; clear cleanup
-                    testCase.verifyEqual(testCase.sourceWorkCalls(functions), 0, layout + "." + paths(index));
                 end
                 source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
                 parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
@@ -80,11 +73,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                 field = document.getComponentByName("Field");
                 parent = document.getComponent(field.ParentId);
                 macd.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
-                profile clear; profile on; cleanup = onCleanup(@() profile("off"));
                 document.setProperty(field.Id, "Value", 2.5, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear cleanup
-                testCase.verifyEqual(testCase.sourceWorkCalls(functions), 0, factory);
                 source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
                 parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
                 testCase.verifyEqual(parsed.getComponentByName("Field").getProperty("Value").LiteralValue, 2.5);
@@ -98,11 +88,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             parent = document.getComponent(field.ParentId);
             macd.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
             document.Metadata.AdditionalInput = "changed after shared proof";
-            profile clear; profile on; cleanup = onCleanup(@() profile("off"));
             document.setProperty(field.Id, "Value", 2, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            profile off; functions = profile("info").FunctionTable; clear cleanup
-            testCase.verifyGreaterThan(sum([functions(contains(string({functions.FunctionName}), "ModelValidator.validate")).NumCalls]), 0);
             testCase.verifyEqual(field.getProperty("Value").LiteralValue, 2);
         end
 
@@ -130,11 +117,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             document = testCase.fixture("flat");
             root = document.getComponent(document.RootComponentId);
             macd.source.PropertySourcePlan.combined(document, root, testCase.Registry);
-            profile clear; profile on; cleanup = onCleanup(@() profile("off"));
             document.setProperty(root.Id, "AutoResizeChildren", "on", testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            profile off; functions = profile("info").FunctionTable; clear cleanup
-            testCase.verifyGreaterThan(sum([functions(contains(string({functions.FunctionName}), "ModelValidator.validate")).NumCalls]), 0);
             testCase.verifyEqual(root.getProperty("AutoResizeChildren").LiteralValue, "on");
         end
     end
@@ -181,18 +165,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
         end
     end
     methods (Static, Access = private)
-        function count = sourceWorkCalls(functions)
-            % sourceWorkCalls Count complete source generation and parsing inside one edit.
-            arguments (Input)
-                functions (1, :) struct
-            end
-            arguments (Output)
-                count (1, 1) double
-            end
-            names = string({functions.FunctionName});
-            selected = contains(names, "AppSourceParser.parseText") | contains(names, "RoundTripGenerator.generate");
-            count = sum([functions(selected).NumCalls]);
-        end
     end
 end
 

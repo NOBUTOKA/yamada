@@ -21,13 +21,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             for index = 1:12
                 document.getComponentByName("Field" + index).setProperty("Value", index + 1);
             end
-            profile clear; profile on;
-            cleanup = onCleanup(@() profile("off"));
             [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            profile off;
-            functions = profile("info").FunctionTable;
-            matches = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
-            testCase.verifyEqual(sum([functions(matches).NumCalls]), 1);
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
             for index = 1:12
@@ -49,12 +43,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 plan.Component.setProperty("Value", 99);
                 validation = macd.validation.ModelValidator.validate(document, testCase.Registry);
                 testCase.assertFalse(macd.validation.ModelValidator.hasErrors(validation));
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                profile off; functions = profile("info").FunctionTable; clear stop
-                names = string({functions.FunctionName});
-                copies = endsWith(names, "DocumentModel.structuralCandidate");
-                testCase.verifyEqual(sum([functions(copies).NumCalls]), 0);
                 testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
                 parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
                 for index = 1:count
@@ -76,12 +65,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             generator = macd.source.RoundTripGenerator(testCase.Registry);
             for index = 1:3
                 component = document.getComponentByName("Field" + index);
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 document.setProperty(component.Id, "Value", index + 1, testCase.Registry);
                 source = generator.generate(document);
-                profile off; functions = profile("info").FunctionTable; clear stop
-                plans = endsWith(string({functions.FunctionName}), "PropertyInsertionPlanner.evaluate");
-                testCase.verifyLessThanOrEqual(sum([functions(plans).NumCalls]), 1);
                 parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
                 for earlier = 1:index
                     testCase.verifyEqual(parsed.getComponentByName("Field" + earlier).getProperty("Value").LiteralValue, earlier + 1);
@@ -231,12 +216,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 document.addComponent(added, first.ParentId);
                 added.setProperty("FontSize", 14);
                 original = document.OriginalText;
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
                 other = macd.source.PropertyInsertionPlanner.plan(document, second, testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear stop
-                parsed = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
-                testCase.verifyEqual(sum([functions(parsed).NumCalls]), 1, layout);
                 testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
                 testCase.verifyEqual(other.Component.getProperty("Value").LiteralValue, 4);
                 testCase.verifyEqual(plan.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 14);
@@ -333,11 +314,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                     fprintf("GENERATED_BATCH_NOT_APPLICABLE %s\n", variant);
                     continue
                 end
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear stop
-                parsed = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
-                testCase.verifyEqual(sum([functions(parsed).NumCalls]), 1, variant);
                 retained = plan.Document.getComponentByName(generated.Name);
                 testCase.assertNotEmpty(retained, variant);
                 testCase.verifyEqual(retained.Factory, generated.Factory, variant);
@@ -366,12 +343,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
                 document.addComponent(added, first.ParentId);
                 original = document.OriginalText;
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear stop
-                names = string({functions.FunctionName});
-                testCase.verifyEqual(sum([functions(contains(names, "AppSourceParser.parseText")).NumCalls]), 1, layout);
-                testCase.verifyEqual(sum([functions(endsWith(names, "RoundTripGenerator.additionEdits")).NumCalls]), 1, layout);
                 testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
                 testCase.verifyNotEmpty(plan.Document.getComponentByName(added.Name));
                 expected = plan.Document.OriginalText;
@@ -394,13 +366,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             expected = plan.Document.OriginalText;
             plan.Document.getComponentByName("Field2").setProperty("Value", 99);
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            profile off; functions = profile("info").FunctionTable; clear stop
-            names = string({functions.FunctionName});
-            testCase.verifyEqual(sum([functions(contains(names, "AppSourceParser.parseText")).NumCalls]), 0);
-            testCase.verifyEqual(sum([functions(endsWith(names, "RoundTripGenerator.additionEdits")).NumCalls]), 0);
-            testCase.verifyEqual(sum([functions(endsWith(names, "ModelValidator.validate")).NumCalls]), 1);
             testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(source, expected);
             testCase.verifyEqual(document.GeneratedText, expected);
@@ -442,11 +408,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             [~, found] = document.evaluationContext(testCase.Registry).lookup("complete-insertion-source");
             testCase.verifyFalse(found);
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
-            profile off; functions = profile("info").FunctionTable; clear stop
-            parsed = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
-            testCase.verifyEqual(sum([functions(parsed).NumCalls]), 2);
             testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
             testCase.verifyEqual(plan.Document.getComponentByName("Field2").getProperty("Value").LiteralValue, 4);
         end

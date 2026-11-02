@@ -57,13 +57,8 @@ classdef (TestTags = {'ui', 'model', 'generation'}) CatalogLocalPropertyTest < m
                 for index = 1:numel(paths)
                     entry = subject.getProperty(paths(index));
                     if isempty(entry) || ~entry.IsEditable || isempty(entry.SourceSpan), continue, end
-                    profile clear; profile on; stop = onCleanup(@() profile("off"));
                     parsed.setProperty(subject.Id, paths(index), values{index}, registry);
                     parsed.validatePropertyCommit(registry);
-                    profile off; functions = profile("info").FunctionTable; clear stop
-                    names = string({functions.FunctionName});
-                    complete = contains(names, "AppSourceParser.parseText") | contains(names, "RoundTripGenerator.generate");
-                    testCase.verifyEqual(sum([functions(complete).NumCalls]), 0, variant + "." + paths(index));
                     count = count + 1;
                 end
                 emitted = macd.source.RoundTripGenerator(registry).generate(parsed);

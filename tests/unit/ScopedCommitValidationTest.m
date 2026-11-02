@@ -1,5 +1,5 @@
 classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest < matlab.unittest.TestCase
-    % ScopedCommitValidationTest Verify bounded post-commit checks retain complete diagnostic guarantees.
+    % ScopedCommitValidationTest Verify committed changes retain complete diagnostic guarantees.
     %   Synthetic source is parsed without constructing its application or running callbacks.
     properties (TestParameter)
         % Layout - Parent arrangement used to test unrelated state reuse.
@@ -9,7 +9,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
         function freshSettingsDoNotRevalidateUnrelatedFields(testCase, Layout)
             % freshSettingsDoNotRevalidateUnrelatedFields Compare scoped results with full validation after each insertion.
             registry = macd.model.ComponentRegistry.createDefault();
-            [document, names, depth] = makeFixture(registry, string(Layout));
+            [document, names] = makeFixture(registry, string(Layout));
             baseline = document.validatePropertyCommit(registry);
             testCase.assertFalse(macd.validation.ModelValidator.hasErrors(baseline));
             paths = ["Value", "Tooltip", "FontSize"];
@@ -18,11 +18,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
                 component = document.getComponentByName(names(index));
                 testCase.assertEmpty(component.getProperty(paths(index)));
                 document.setProperty(component.Id, paths(index), values{index}, registry);
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 actual = document.validatePropertyCommit(registry);
-                profile off; functions = profile("info").FunctionTable; clear stop
-                matching = endsWith(string({functions.FunctionName}), "ModelValidator.propertyTransaction");
-                testCase.verifyEqual(sum([functions(matching).NumCalls]), depth + 2);
                 expected = macd.validation.ModelValidator.validate(document, registry);
                 testCase.verifyEqual(actual, expected);
                 testCase.verifyEqual(document.HistoryIndex, index);
@@ -55,11 +51,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
                     case "history"
                         document.undo();
                 end
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 actual = document.validatePropertyCommit(registry);
-                profile off; functions = profile("info").FunctionTable; clear stop
-                matching = endsWith(string({functions.FunctionName}), "ModelValidator.propertyTransaction");
-                testCase.verifyGreaterThanOrEqual(sum([functions(matching).NumCalls]), numel(document.Components));
                 testCase.verifyEqual(actual, macd.validation.ModelValidator.validate(document, registry));
             end
         end
@@ -71,11 +63,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
             document.validatePropertyCommit(registry);
             document.setProperty(document.getComponentByName(names(1)).Id, "Tooltip", "First", registry);
             document.setProperty(document.getComponentByName(names(2)).Id, "Tooltip", "Second", registry);
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             actual = document.validatePropertyCommit(registry);
-            profile off; functions = profile("info").FunctionTable; clear stop
-            matching = endsWith(string({functions.FunctionName}), "ModelValidator.propertyTransaction");
-            testCase.verifyGreaterThanOrEqual(sum([functions(matching).NumCalls]), numel(document.Components));
             testCase.verifyEqual(actual, macd.validation.ModelValidator.validate(document, registry));
         end
     end

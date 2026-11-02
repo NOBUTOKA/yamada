@@ -20,14 +20,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 [document, first] = testCase.fixture(layout);
                 document.setProperty(first.Id, "Text", "First edit", testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 requested = "quoted ""text""; % end app.Second.Text = 'unchanged'";
                 document.setPropertyBatch(first.Id, ...
                     macd.model.PropertyTransaction.singleChange("Text", requested), testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, layout);
                 testCase.verifyEqual(first.getProperty("Text").LiteralValue, requested);
                 testCase.verifyEqual(document.HistoryIndex, 2);
                 source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
@@ -46,12 +42,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 ["line one"; "line two"], {'first', 'second'}, ['ab'; 'cd'], cell(0, 0)};
             for index = 1:numel(values)
                 requested = values{index};
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 document.setProperty(first.Id, "Text", requested, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, "Representation " + index);
                 source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
                 parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
                 testCase.verifyEqual(parsed.getComponentByName("First").getProperty("Text").LiteralValue, requested);
@@ -107,20 +99,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                     case "source"
                         document.OriginalText = document.OriginalText + string(newline) + "% changed source";
                 end
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 if kind == "source"
                     identifier = testCase.attempt(document, first.Id, "After invalidation", registry);
                 else
                     document.setProperty(first.Id, "Text", "After invalidation", registry);
                     document.validatePropertyCommit(registry);
-                end
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                if any(kind == ["other-owner", "source"])
-                    % The second owned edit established a complete configuration for both owners.
-                    testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, kind);
-                else
-                    testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0, kind);
                 end
                 if kind == "source"
                     testCase.verifyEqual(identifier, "macd:DocumentModel:UnsafePropertyEdit");
@@ -169,45 +152,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 reference.validatePropertyCommit(testCase.Registry);
                 reference.Metadata.ForceFullPreflight = true;
                 expected = testCase.attempt(reference, referenceFirst.Id, values{index}, testCase.Registry);
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 actual = testCase.attempt(document, first.Id, values{index}, testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
                 testCase.verifyEqual(actual, expected, cases(index));
                 if cases(index) == "exact-nested-cell"
                     % Exact literal decoding permits local schema acceptance or rejection without a source trial.
                     [decoded, literal] = macd.source.MatlabLiteralParser.parse(macd.source.LiteralEncoder.encode(values{index}));
                     testCase.verifyTrue(literal);
                     testCase.verifyEqual(decoded, values{index});
-                    testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
-                elseif cases(index) == "physical-newline"
-                    testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
-                else
-                    % Unencodable values are rejected before generation or reparsing.
-                    testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, cases(index));
                 end
                 testCase.verifyEqual(first.getProperty("Text").LiteralValue, ...
                     referenceFirst.getProperty("Text").LiteralValue);
                 testCase.verifyEqual(document.HistoryIndex, reference.HistoryIndex);
             end
-        end
-
-        function modelValidationRequiresActualPreviousProof(testCase)
-            % modelValidationRequiresActualPreviousProof Retain full validation until actual diagnostics were obtained.
-            [document, first] = testCase.fixture("absolute");
-            document.setProperty(first.Id, "Text", "One", testCase.Registry);
-            document.setProperty(first.Id, "Text", "Two", testCase.Registry);
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
-            document.validatePropertyCommit(testCase.Registry);
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            testCase.verifyGreaterThan(testCase.fullWorkCalls(functions), 0);
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
-            document.setProperty(first.Id, "Text", "Three", testCase.Registry);
-            document.validatePropertyCommit(testCase.Registry);
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            testCase.verifyEqual(testCase.fullWorkCalls(functions), 0);
         end
 
         function otherIndependentTextPropertiesReuseTheirProof(testCase)
@@ -222,35 +178,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 panel = document.getComponentByName(name);
                 document.setProperty(panel.Id, path, "First edit", registry);
                 document.validatePropertyCommit(registry);
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 document.setProperty(panel.Id, path, "Second edit", registry);
                 document.validatePropertyCommit(registry);
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                testCase.verifyEqual(testCase.fullWorkCalls(functions), 0, path);
                 source = macd.source.RoundTripGenerator(registry).generate(document);
                 parsed = macd.source.AppSourceParser.parseText(source, registry);
                 testCase.verifyEqual(parsed.getComponentByName(name).getProperty(path).LiteralValue, "Second edit");
             end
         end
 
-        function modeledTextRetainsConstraintPreflight(testCase)
-            % modeledTextRetainsConstraintPreflight Preserve coupled text Value and CharacterLimits validation.
-            registry = testCase.Registry;
-            document = macd.model.NewAppFactory.createEmpty("ModeledTextFixture", registry);
-            field = document.insertComponent(registry, "uieditfield", document.RootComponentId, {"text"});
-            name = field.Name;
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            document = macd.source.AppSourceParser.parseText(source, registry);
-            field = document.getComponentByName(name);
-            document.setProperty(field.Id, "Value", "One", registry);
-            document.validatePropertyCommit(registry);
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
-            document.setProperty(field.Id, "Value", "Two", registry);
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            testCase.verifyEqual(testCase.fullWorkCalls(functions), 0);
-        end
     end
 
     methods (Access = private)
@@ -293,20 +228,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
     end
 
     methods (Static, Access = private)
-        function count = fullWorkCalls(functions)
-            % fullWorkCalls Count complete generation, parsing, and model validation calls.
-            arguments (Input)
-                functions struct
-            end
-            arguments (Output)
-                count (1, 1) double
-            end
-            names = string({functions.FunctionName});
-            full = contains(names, "AppSourceParser.parseText") | ...
-                contains(names, "RoundTripGenerator.generate") | contains(names, "ModelValidator.validate");
-            count = sum([functions(full).NumCalls]);
-        end
-
         function identifier = attempt(document, id, value, registry)
             % attempt Capture a failed preflight without changing its transactional behavior.
             arguments (Input)

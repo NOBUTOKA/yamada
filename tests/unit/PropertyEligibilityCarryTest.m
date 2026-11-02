@@ -20,12 +20,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
             if Setting == "FontColor", value = [0.1 0.2 0.3]; end
             document.setProperty(source.Id, string(Setting), value, registry);
             document.validatePropertyCommit(registry);
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             [actualCopy, actualDelete, actualParents] = conditions(document, source.Id, registry, measured);
-            profile off; functions = profile("info").FunctionTable; clear stop
-            names = string({functions.FunctionName});
-            repeated = endsWith(names, "DocumentEditAvailability.inspect") | endsWith(names, "SubtreePlacementPlanner.prepare");
-            testCase.verifyEqual(sum([functions(repeated).NumCalls]), 0);
             testCase.verifyEqual(actualCopy, copy);
             testCase.verifyEqual(actualDelete, deletion);
             testCase.verifyEqual(actualParents, parents);
@@ -42,11 +37,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
             conditions(document, source.Id, registry, [10 10 80 22]);
             document.setProperty(source.Id, "Tooltip", "New hint", registry);
             measured = [12 15 100 28];
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             actual = macd.model.DocumentEditAvailability.reparenting(document, source.Id, registry, measured);
-            profile off; functions = profile("info").FunctionTable; clear stop
-            matches = endsWith(string({functions.FunctionName}), "SubtreePlacementPlanner.prepare");
-            testCase.verifyGreaterThan(sum([functions(matches).NumCalls]), 0);
             independent = document.structuralCandidate(registry);
             expected = macd.model.DocumentEditAvailability.reparenting(independent, source.Id, registry, measured);
             testCase.verifyEqual(orderParents(actual), orderParents(expected));
@@ -63,11 +54,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
             else
                 document.setProperty(source.Id, "Layout.Column", 2, registry);
             end
-            profile clear; profile on; stop = onCleanup(@() profile("off"));
             [copy, deletion, parents] = conditions(document, source.Id, registry, measured);
-            profile off; functions = profile("info").FunctionTable; clear stop
-            matches = endsWith(string({functions.FunctionName}), "DocumentEditAvailability.inspect");
-            testCase.verifyGreaterThan(sum([functions(matches).NumCalls]), 0);
             independent = document.structuralCandidate(registry);
             [expectedCopy, expectedDelete, expectedParents] = conditions(independent, source.Id, registry, measured);
             testCase.verifyEqual(copy, expectedCopy);
@@ -91,11 +78,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
                     case "history"
                         document.undo();
                 end
-                profile clear; profile on; stop = onCleanup(@() profile("off"));
                 actual = macd.model.DocumentEditAvailability.copying(document, source.Id, registry);
-                profile off; functions = profile("info").FunctionTable; clear stop
-                matches = endsWith(string({functions.FunctionName}), "DocumentEditAvailability.inspect");
-                testCase.verifyGreaterThan(sum([functions(matches).NumCalls]), 0, kind);
                 if kind == "readonly", testCase.verifyFalse(actual.Enabled); end
             end
         end

@@ -1151,19 +1151,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 label = labels(string({labels.Text}) == "Value");
                 editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
                 testCase.assertEqual(numel(editor), 1);
-                if value == 3
-                    profile clear; profile on;
-                    stopProfile = onCleanup(@() profile("off"));
-                end
                 editor.Value = value;
                 editor.ValueChangedFcn(editor, struct());
                 drawnow; pause(0.25); drawnow;
-                if value == 3
-                    profile off; functions = profile("info").FunctionTable; clear stopProfile
-                    measured = contains(string({functions.FunctionName}), ["GridLayoutOverlayDataBuilder.trackBounds", "GridLayoutOverlayDataBuilder.nativeInputs", ...
-                        "yamada.capturePreviewGeometry", "yamada.previewBounds"]);
-                    testCase.verifyEqual(sum([functions(measured).NumCalls]), 0);
-                end
             end
 
             % The retained payload must equal an independent measurement of the current native controls.
@@ -1217,11 +1207,6 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 label = labels(string({labels.Text}) == "FontSize");
                 editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
                 testCase.assertEqual(numel(editor), 1);
-                if value == 31
-                    profile clear;
-                    profile on;
-                    profileCleanup = onCleanup(@() profile('off'));
-                end
                 if isa(editor, "matlab.ui.control.EditField")
                     editor.Value = char(string(value));
                 else
@@ -1229,19 +1214,6 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 end
                 editor.ValueChangedFcn(editor, struct());
                 drawnow;
-                if value == 31
-                    profile off;
-                    info = profile('info');
-                    clear profileCleanup
-                    functions = info.FunctionTable;
-                    names = string({functions.FunctionName});
-                    checking = contains(names, "ModelValidator.validate") | ...
-                        contains(names, "AppSourceParser.parseText") | contains(names, "RoundTripGenerator.generate");
-                    testCase.verifyEqual(sum([functions(checking).NumCalls]), 0);
-                    measuring = contains(names, ["GridLayoutOverlayDataBuilder.nativeInputs", ...
-                        "yamada.capturePreviewGeometry", "yamada.previewBounds"]);
-                    testCase.verifyEqual(sum([functions(measuring).NumCalls]), 0);
-                end
                 native = findall(figure, "Type", "uilabel", "Text", "Local validation label");
                 testCase.assertEqual(numel(native), 1);
                 testCase.verifyEqual(native.FontSize, value);

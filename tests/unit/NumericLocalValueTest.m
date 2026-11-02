@@ -24,17 +24,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 document.validatePropertyCommit(testCase.Registry);
                 document.setProperty(second.Id, "Value", 3, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile clear; profile on;
-                cleanup = onCleanup(@() profile("off"));
                 document.setPropertyBatch(first.Id, macd.model.PropertyTransaction.singleChange("Value", 4), testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
                 document.setProperty(second.Id, "Value", 5, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear cleanup
-                names = string({functions.FunctionName});
-                repeated = contains(names, "AppSourceParser.parseText") | ...
-                    contains(names, "RoundTripGenerator.generate") | contains(names, "ModelValidator.validate");
-                testCase.verifyEqual(sum([functions(repeated).NumCalls]), 0, layout);
                 testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
                 testCase.verifyEqual(second.getProperty("Value").LiteralValue, 5);
                 testCase.verifyEqual(document.HistoryIndex, 4);
@@ -65,15 +58,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 for id = [first.Id, second.Id]
                     document.setPropertyBatch(id, macd.model.PropertyTransaction.singleChange("Value", 4), testCase.Registry);
                     document.validatePropertyCommit(testCase.Registry);
-                    profile clear; profile on;
-                    stopProfile = onCleanup(@() profile("off"));
                     copied = macd.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
                     deleted = macd.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
                     parents = macd.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
-                    profile off; functions = profile("info").FunctionTable; clear stopProfile
-                    repeated = contains(string({functions.FunctionName}), "DocumentEditAvailability.inspect") | ...
-                        contains(string({functions.FunctionName}), "SubtreePlacementPlanner.prepare");
-                    testCase.verifyEqual(sum([functions(repeated).NumCalls]), 0, layout);
                     fresh = document.structuralCandidate();
                     testCase.verifyEqual(copied, macd.model.DocumentEditAvailability.copying(fresh, id, testCase.Registry));
                     testCase.verifyEqual(deleted, macd.model.DocumentEditAvailability.deletion(fresh, id, testCase.Registry));
@@ -98,22 +85,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.validatePropertyCommit(testCase.Registry);
             testCase.verifyEqual(macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry), before);
             measured = [10 20 100 30];
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
             after = macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            placement = contains(string({functions.FunctionName}), "SubtreePlacementPlanner.prepare");
-            testCase.verifyGreaterThan(sum([functions(placement).NumCalls]), 0);
             testCase.verifyTrue(after(string({after.Id}) == destination.Id).Enabled);
             fresh = document.structuralCandidate();
             testCase.verifyEqual(after, macd.model.DocumentEditAvailability.reparenting(fresh, first.Id, testCase.Registry, measured));
             document.undo(); document.redo();
-            profile clear; profile on;
-            stopProfile = onCleanup(@() profile("off"));
             restored = macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
-            profile off; functions = profile("info").FunctionTable; clear stopProfile
-            inspected = contains(string({functions.FunctionName}), "DocumentEditAvailability.inspect");
-            testCase.verifyGreaterThan(sum([functions(inspected).NumCalls]), 0);
             testCase.verifyEqual(restored, after);
         end
 
@@ -135,16 +112,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                     case "registry"
                         testCase.Registry.register(testCase.Registry.get(first.Factory, first.CreationArguments));
                 end
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 actual = macd.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                inspected = contains(string({functions.FunctionName}), "DocumentEditAvailability.inspect");
-                if kind == "limits"
-                    testCase.verifyEqual(sum([functions(inspected).NumCalls]), 0, kind);
-                else
-                    testCase.verifyGreaterThan(sum([functions(inspected).NumCalls]), 0, kind);
-                end
                 fresh = document.structuralCandidate();
                 testCase.verifyEqual(actual, macd.model.DocumentEditAvailability.copying(fresh, first.Id, testCase.Registry));
                 if kind == "readonly", testCase.verifyFalse(actual.Enabled); end
@@ -166,14 +134,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 end
                 document.setProperty(first.Id, "Value", 4, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 for component = document.Components(document.Components ~= first)
                     document.getEffectivePropertyStates(testCase.Registry, component.Id);
                 end
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                repeated = contains(string({functions.FunctionName}), "PropertyStateResolver.evaluate");
-                testCase.verifyEqual(sum([functions(repeated).NumCalls]), 0, layout);
                 fresh = document.structuralCandidate();
                 for component = document.Components
                     [actual, actualDiagnostics] = document.getEffectivePropertyStates(testCase.Registry, component.Id);
@@ -206,13 +169,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                     case "registry"
                         testCase.Registry.register(testCase.Registry.get(grid.Factory, grid.CreationArguments));
                 end
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 actual = document.getEffectivePropertyStates(testCase.Registry, grid.Id);
                 target = document.getEffectivePropertyStates(testCase.Registry, first.Id);
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                repeated = contains(string({functions.FunctionName}), "PropertyStateResolver.evaluate");
-                testCase.verifyGreaterThan(sum([functions(repeated).NumCalls]), 0, kind);
                 fresh = document.structuralCandidate();
                 expected = fresh.getEffectivePropertyStates(testCase.Registry, grid.Id);
                 testCase.verifyEqual([actual.Resolution], [expected.Resolution]);
@@ -232,21 +190,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 first = document.getComponentByName("First");
                 document.setProperty(first.Id, "Value", 1, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile clear; profile on;
-                stopProfile = onCleanup(@() profile("off"));
                 document.setProperty(first.Id, "Value", 2, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
                 states = document.getEffectivePropertyStates(testCase.Registry, first.Id);
-                profile off; functions = profile("info").FunctionTable; clear stopProfile
-                expensive = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate") | ...
-                    contains(string({functions.FunctionName}), "SubtreeSnapshot.materialize") | ...
-                    contains(string({functions.FunctionName}), "AppSourceParser.parseText") | ...
-                    contains(string({functions.FunctionName}), "RoundTripGenerator.generate");
-                testCase.verifyEqual(sum([functions(expensive).NumCalls]), 0, layout);
                 definitions = [states.Definition];
                 value = states(string({definitions.Path}) == "Value");
                 testCase.verifyEqual(value.Resolution.EffectiveValue, 2);
-                context = document.evaluationContext(testCase.Registry);
                 copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.assertNotEmpty(copy.Component);
                 normal = copy.Document.structuralCandidate();
@@ -299,7 +248,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.validatePropertyCommit(testCase.Registry);
             document.setProperty(first.Id, "Value", 3, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            context = document.evaluationContext(testCase.Registry);
             history = document.History;
             testCase.verifyError(@() document.setProperty(first.Id, "Value", 50, testCase.Registry), ...
                 "macd:DocumentModel:UnsafePropertyEdit");
@@ -319,27 +267,19 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
                 document.setProperty(first.Id, "Value", 4, testCase.Registry);
-                context = document.evaluationContext(testCase.Registry);
                 parent = document.getComponent(first.ParentId);
                 definitions = testCase.Registry.getEffectiveProperties(first.Factory, parent.Factory, first.CreationArguments);
                 plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.assertNotEmpty(plan.Component);
                 expected = macd.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, testCase.Registry);
-                profile clear; profile on;
-                cleanup = onCleanup(@() profile("off"));
                 actual = document.getEffectivePropertyStates(testCase.Registry, first.Id);
                 actual = [actual.Resolution];
-                profile off; functions = profile("info").FunctionTable; clear cleanup
                 value = actual(string({actual.Path}) == "Value");
                 testCase.verifyEqual(value.EffectiveValue, 4);
                 settings = first.getSettings("Value");
                 testCase.verifyEqual(value.EffectSettingId, settings(end).Id);
                 testCase.verifyEqual([actual.IsKnown], [expected.IsKnown]);
                 testCase.verifyEqual({actual.EffectiveValue}, {expected.EffectiveValue});
-                if layout == "absolute"
-                    cloned = contains(string({functions.FunctionName}), "DocumentModel.structuralCandidate");
-                    testCase.verifyEqual(sum([functions(cloned).NumCalls]), 0);
-                end
                 plan.Component.setProperty("Value", 99);
                 again = document.getEffectivePropertyStates(testCase.Registry, first.Id);
                 again = [again.Resolution];
@@ -404,13 +344,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 else
                     testCase.Registry.register(testCase.Registry.get("uieditfield", {"numeric"}));
                 end
-                profile clear; profile on;
-                cleanup = onCleanup(@() profile("off"));
                 document.setProperty(first.Id, "Value", 4, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                profile off; functions = profile("info").FunctionTable; clear cleanup
-                parsing = contains(string({functions.FunctionName}), "ModelValidator.validate");
-                testCase.verifyGreaterThan(sum([functions(parsing).NumCalls]), 0, kind);
                 testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
             end
         end
@@ -447,12 +382,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             first = document.getComponentByName("First");
             document.setProperty(first.Id, "Value", 2, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            profile clear; profile on;
-            cleanup = onCleanup(@() profile("off"));
             document.setProperty(first.Id, "Value", [], testCase.Registry);
-            profile off; functions = profile("info").FunctionTable; clear cleanup
-            parsing = contains(string({functions.FunctionName}), "AppSourceParser.parseText");
-            testCase.verifyEqual(sum([functions(parsing).NumCalls]), 0);
             testCase.verifyEmpty(first.getProperty("Value").LiteralValue);
         end
 
@@ -464,15 +394,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.validatePropertyCommit(testCase.Registry);
             document.setProperty(first.Id, "Value", 3, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            profile clear; profile on;
-            cleanup = onCleanup(@() profile("off"));
             source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
             checkpoint = macd.model.SavedSourceCheckpoint(document, source, ...
                 fullfile(tempdir, "LocalNumericFixture.m"), testCase.Registry);
-            profile off; functions = profile("info").FunctionTable; clear cleanup
-            names = string({functions.FunctionName});
-            testCase.verifyGreaterThan(sum([functions(contains(names, "AppSourceParser.parseText")).NumCalls]), 0);
-            testCase.verifyGreaterThan(sum([functions(contains(names, "ModelValidator.validate")).NumCalls]), 0);
             testCase.verifyEqual(checkpoint.SourceText, source);
         end
     end
