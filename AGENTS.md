@@ -35,6 +35,10 @@
 - Do not create a commit when the user explicitly requests no commit, requests review-only work, or the relevant tests do not pass.
 - Commit changes to this `AGENTS.md` file separately from source, tests, and other documentation. An `AGENTS.md` commit must contain no unrelated files.
 
+## Main integration scope
+
+- Keep investigation reports, benchmark result reports, experimental design documents, and generated measurement artifacts on the investigation branch or in ignored local results. Do not include them when integrating changes into `main`. Keep durable developer contracts in `doc/ARCHITECTURE.md`; implementation plans may remain where still needed.
+
 ## License notices
 
 - The project is licensed under GNU GPL version 3 or any later version (`GPL-3.0-or-later`).
