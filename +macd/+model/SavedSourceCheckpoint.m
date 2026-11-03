@@ -25,6 +25,7 @@ classdef SavedSourceCheckpoint
     end
 
     properties (Access = private)
+        Validation macd.model.DocumentValidationProof = macd.model.DocumentValidationProof.empty
         InputContext macd.model.EvaluationContext = macd.model.EvaluationContext.empty
         BaselineText string = ""
         BaselineSnapshotId string = ""
@@ -88,6 +89,7 @@ classdef SavedSourceCheckpoint
                 obj.ComponentMap(end + 1) = struct("ComponentId", component.Id, ...
                     "SavedId", matches.Id, "Name", component.Name);
             end
+            obj.Validation = saved.captureValidationProof(registry);
             obj.Snapshot = macd.model.SubtreeSnapshot(saved, saved.RootComponentId);
             obj.InputContext = document.evaluationContext(registry);
             obj.assertCurrent(document, registry);
@@ -125,6 +127,19 @@ classdef SavedSourceCheckpoint
             if macd.source.SourceWriter.normalize(current, obj.LineEnding) ~= obj.SourceText
                 error("macd:SavedSourceCheckpoint:StaleCheckpoint", "The document changed while saving.");
             end
+        end
+    end
+
+    methods (Access = ?macd.model.DocumentModel)
+        function proof = validationProof(obj)
+            % validationProof Return immutable saved-output validation without exposing the checkpoint's input context.
+            arguments (Input)
+                obj (1, 1) macd.model.SavedSourceCheckpoint
+            end
+            arguments (Output)
+                proof macd.model.DocumentValidationProof
+            end
+            proof = obj.Validation;
         end
     end
 

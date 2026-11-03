@@ -92,6 +92,39 @@ classdef PropertyState
             end
         end
 
+        function [obj, valid] = remapIdentities(obj, sourceSettings, targetSettings, sourceOwners, targetOwners)
+            % remapIdentities Rebind immutable occurrence and creation references after a proven semantic publication.
+            arguments (Input)
+                obj macd.model.PropertyState
+                sourceSettings (1, :) double
+                targetSettings (1, :) double
+                sourceOwners (1, :) string
+                targetOwners (1, :) string
+            end
+            arguments (Output)
+                obj macd.model.PropertyState
+                valid (1, 1) logical
+            end
+            valid = true;
+            for index = find([obj.LastSettingId] ~= 0 | strlength(string({obj.EffectKey})) > 0)
+                if obj(index).LastSettingId ~= 0
+                    position = find(sourceSettings == obj(index).LastSettingId, 1);
+                    if isempty(position), valid = false; return, end
+                    obj(index).LastSettingId = targetSettings(position);
+                end
+                if obj(index).EffectSettingId ~= 0
+                    position = find(sourceSettings == obj(index).EffectSettingId, 1);
+                    if isempty(position), valid = false; return, end
+                    obj(index).EffectSettingId = targetSettings(position);
+                    obj(index).EffectKey = string(targetSettings(position));
+                elseif startsWith(obj(index).EffectKey, "creation:")
+                    position = find(sourceOwners == extractAfter(obj(index).EffectKey, "creation:"), 1);
+                    if isempty(position), valid = false; return, end
+                    obj(index).EffectKey = "creation:" + targetOwners(position);
+                end
+            end
+        end
+
         function obj = withReadOnly(obj, reason)
             % withReadOnly Preserve catalog intent while exposing an implementation edit boundary.
             arguments (Input)

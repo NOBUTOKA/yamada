@@ -116,7 +116,7 @@ classdef EvaluationContext < handle
             [~, tracked] = obj.revisionToken();
             result = tracked && ~isempty(fieldnames(obj.TransitionToken)) && ...
                 macd.model.EvaluationContext.sameToken(obj.TransitionToken, token) && request.Kind == "properties" && ...
-                isscalar(request.ComponentIds) && request.ComponentIds == obj.TransitionOwner && ...
+                isscalar(request.ComponentIds) && isscalar(obj.TransitionOwner) && request.ComponentIds == obj.TransitionOwner && ...
                 all(ismember(obj.TransitionPaths, request.pathsFor(obj.TransitionOwner)));
         end
 
@@ -311,6 +311,48 @@ classdef EvaluationContext < handle
     end
 
     methods (Static, Access = ?macd.model.DocumentModel)
+        function obj = fromValidated(document, registry)
+            % fromValidated Snapshot source-certified values while checking all metadata outside the semantic publication proof.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.EvaluationContext
+            end
+            [clock, revision, tracked] = document.inputStamp();
+            % Only DocumentModel calls this after DocumentValidationProof checks every primary value and binding.
+            safe = tracked && macd.model.InputChangeClock.isValueData(document.Metadata) && ...
+                macd.model.InputChangeClock.isValueData(document.UnknownRegions) && isempty(document.PendingEdits) && ...
+                isempty(document.CallbackEdits) && isempty(document.RenameEdits);
+            components = struct([]);
+            for component = document.Components
+                safe = safe && macd.model.InputChangeClock.isValueData(component.Metadata);
+                properties = struct([]);
+                for entry = component.Properties
+                    safe = safe && macd.model.InputChangeClock.isValueData(entry.Metadata);
+                    value = rmfield(entry.toStruct(), "Diagnostics");
+                    if isempty(properties), properties = value; else, properties(end + 1) = value; end %#ok<AGROW>
+                end
+                record = struct("Id", component.Id, "Name", component.Name, ...
+                    "Factory", component.Factory, "DeclaredType", component.DeclaredType, ...
+                    "Origin", component.Origin, "ParentId", component.ParentId, "Children", component.Children, ...
+                    "CreationArguments", {component.CreationArguments}, "IsEditable", component.IsEditable, ...
+                    "Metadata", component.Metadata, "SourceSpans", component.SourceSpans, "Settings", component.settingSnapshot());
+                record.Properties = properties;
+                if isempty(components), components = record; else, components(end + 1) = record; end %#ok<AGROW>
+            end
+            if ~safe, obj = macd.model.EvaluationContext(document, registry); return, end
+            obj = macd.model.EvaluationContext();
+            obj.Key = struct("ClassName", document.ClassName, "FilePath", document.FilePath, ...
+                "OriginalText", document.CurrentText, "RootComponentId", document.RootComponentId, ...
+                "Encoding", document.Encoding, "LineEnding", document.LineEnding, ...
+                "Metadata", document.Metadata, "UnknownRegions", document.UnknownRegions, ...
+                "PendingEdits", {document.PendingEdits}, "CallbackEdits", document.CallbackEdits, "RenameEdits", document.RenameEdits);
+            obj.Key.Components = components; obj.Cacheable = true;
+            obj.InputClock = clock; obj.InputRevision = revision; obj.Registry = registry; obj.RegistryRevision = registry.Revision;
+        end
+
         function obj = projectSource(document, registry, previous, updates, ownerId, paths, token)
             % projectSource Publish a value-only key from a document-certified source transaction without whole-tree freezing.
             arguments (Input)
@@ -318,7 +360,7 @@ classdef EvaluationContext < handle
                 registry (1, 1) macd.model.ComponentRegistry
                 previous (1, 1) macd.model.EvaluationContext
                 updates macd.model.SourceLocationUpdate
-                ownerId (1, 1) string
+                ownerId (1, :) string
                 paths (1, :) string
                 token (1, 1) struct
             end
@@ -339,16 +381,18 @@ classdef EvaluationContext < handle
             for update = updates
                 index = find(ids == update.ComponentId, 1);
                 assert(~isempty(index));
-                if update.ComponentId ~= ownerId
+                if ~ismember(update.ComponentId, ownerId)
                     key.Components(index) = update.projectInputs(key.Components(index));
                 end
             end
             % Only the changed owner can introduce new values, types, or source occurrences.
-            [owner, safe] = macd.model.EvaluationContext.freeze(document.getComponent(ownerId), true, registry);
-            if ~safe
-                obj = macd.model.EvaluationContext(document, registry); return
+            for id = ownerId
+                [owner, safe] = macd.model.EvaluationContext.freeze(document.getComponent(id), true, registry);
+                if ~safe
+                    obj = macd.model.EvaluationContext(document, registry); return
+                end
+                key.Components(ids == id) = owner;
             end
-            key.Components(ids == ownerId) = owner;
             key.OriginalText = document.CurrentText;
             key.Metadata.SourceSnapshotText = document.Metadata.SourceSnapshotText;
             key.Metadata.InitializationContext = document.Metadata.InitializationContext;
@@ -370,6 +414,49 @@ classdef EvaluationContext < handle
     end
 
     methods (Access = ?macd.model.DocumentModel)
+        function inheritSourceStates(obj, previous, changedIds, batch)
+            % inheritSourceStates Retain only scopes independent of owners changed by one certified literal source patch.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                previous (1, 1) macd.model.EvaluationContext
+                changedIds (1, :) string
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+                    obj.RegistryRevision ~= previous.RegistryRevision, return, end
+            before = previous.Key.Components; after = obj.Key.Components;
+            if numel(before) ~= numel(after), return, end
+            for field = ["Id", "Name", "Factory", "DeclaredType", "Origin", "ParentId", "Children"]
+                if ~isequaln({before.(field)}, {after.(field)}), return, end
+            end
+            groups = macd.model.EvaluationContext.scopeGroups(after);
+            ids = string({after.Id}); checked = false(size(groups)); reusable = checked;
+            for name = string(keys(previous.Values))
+                if ~startsWith(name, "states:"), continue, end
+                index = find(ids == extractAfter(name, "states:"), 1);
+                if isempty(index) || groups(index) == 0, continue, end
+                group = groups(index);
+                if ~checked(group)
+                    scope = macd.model.EvaluationContext.stateScope(after, ids(index));
+                    reusable(group) = ~any(ismember(ids(scope), changedIds)); checked(group) = true;
+                end
+                if ~reusable(group), continue, end
+                value = previous.Values(char(name));
+                value.Diagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(value.Diagnostics, batch);
+                obj.Values(char(name)) = value;
+            end
+        end
+
+        function rememberValidatedStates(obj, id, resolved)
+            % rememberValidatedStates Adopt already independent values after DocumentValidationProof verifies their semantic join.
+            arguments (Input)
+                obj (1, 1) macd.model.EvaluationContext
+                id (1, 1) string
+                resolved (1, 1) struct
+            end
+            if obj.Cacheable, obj.Values(char("states:" + id)) = resolved; end
+        end
+
         function rememberOwnedConfiguration(obj, name, document)
             % rememberOwnedConfiguration Retain a model-owned checkpoint with an independent value snapshot.
             arguments (Input)

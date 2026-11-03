@@ -175,6 +175,16 @@ classdef SourceLocationUpdate
     end
 
     methods (Access = {?macd.model.SourceLiteralTransaction, ?macd.model.SourceLiteralBatchTransaction, ?macd.model.DocumentModel})
+        function applyToCandidate(obj, component)
+            % applyToCandidate Project prepared positions into an independent candidate without its live central-store publication.
+            arguments (Input)
+                obj (1, 1) macd.model.SourceLocationUpdate
+                component (1, 1) macd.model.ComponentRecord
+            end
+            obj.applyValidated(component);
+            if obj.CentralSettings, component.applyProjectedSettings(obj.AfterSettingValues); end
+        end
+
         function applyValidated(obj, component)
             % applyValidated Publish a member after the transaction validated every owner without yielding.
             arguments (Input)

@@ -118,6 +118,29 @@ classdef DocumentModel < handle
         end
     end
 
+    methods (Access = ?macd.model.SavedSourceCheckpoint)
+        function proof = captureValidationProof(obj, registry)
+            % captureValidationProof Capture only a tracked, exact and fully validated immutable result set.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                proof macd.model.DocumentValidationProof
+            end
+            proof = macd.model.DocumentValidationProof.empty;
+            context = obj.PropertyValidationContext;
+            if isempty(context) || ~isempty(obj.PropertyValidationNames) || ~context.matches(obj, registry) || ...
+                    macd.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics), return, end
+            [~, tracked] = context.revisionToken(); if ~tracked, return, end
+            for owner = obj.Components
+                [~, found] = context.lookup("states:" + owner.Id);
+                if ~found, return, end
+            end
+            proof = macd.model.DocumentValidationProof(obj, registry, obj.PropertyValidationDiagnostics);
+        end
+    end
+
     methods (Access = {?macd.model.SourceLiteralTransaction, ?macd.model.SourceLiteralBatchTransaction})
         function result = validateIndexedCandidate(obj, settings, factoryArguments, updates, state, diagnostics, regions, metadata, id, changes, registry)
             % validateIndexedCandidate Validate document-dependent literal policies without reparsing their known source edits.
@@ -138,12 +161,12 @@ classdef DocumentModel < handle
                 result (1, 1) struct
             end
             candidate = obj.structuralCandidate();
-            for update = updates, update.applyValidated(candidate.getComponent(update.ComponentId)); end
+            for update = updates, update.applyToCandidate(candidate.getComponent(update.ComponentId)); end
             owner = candidate.getComponent(id);
             owner.synchronizeSourceSettings(settings, factoryArguments);
             candidate.Diagnostics = diagnostics; candidate.UnknownRegions = regions; candidate.Metadata = metadata;
             candidate.publishCurrentSource(state);
-            diagnostics = macd.validation.ModelValidator.validate(candidate, registry);
+            diagnostics = candidate.validatePropertyCommit(registry);
             assert(~macd.validation.ModelValidator.hasErrors(diagnostics), ...
                 "macd:SourceLiteralTransaction:InvalidValue", "%s", strjoin(string({diagnostics.Message}), newline));
             states = candidate.getEffectivePropertyStates(registry, id);
@@ -154,7 +177,8 @@ classdef DocumentModel < handle
                     "macd:SourceLiteralTransaction:WiderProof", "A dependent setting needs a complete proven final value.");
             end
             result = struct("Ready", true, "States", resolutions, "Definitions", definitions, ...
-                "StateDiagnostics", macd.model.Diagnostic.empty, "Diagnostics", diagnostics);
+                "StateDiagnostics", macd.model.Diagnostic.empty, "Diagnostics", diagnostics, ...
+                "Proof", candidate.captureValidationProof(registry));
         end
 
         function result = validateIndexedBatchCandidate(obj, bindings, updates, state, diagnostics, regions, metadata, specs, registry)
@@ -174,13 +198,13 @@ classdef DocumentModel < handle
                 result (1, 1) struct
             end
             candidate = obj.structuralCandidate();
-            for update = updates, update.applyValidated(candidate.getComponent(update.ComponentId)); end
+            for update = updates, update.applyToCandidate(candidate.getComponent(update.ComponentId)); end
             for binding = bindings
                 candidate.getComponent(binding.ComponentId).synchronizeSourceSettings(binding.Settings, binding.FactoryArguments);
             end
             candidate.Diagnostics = diagnostics; candidate.UnknownRegions = regions; candidate.Metadata = metadata;
             candidate.publishCurrentSource(state);
-            diagnostics = macd.validation.ModelValidator.validate(candidate, registry);
+            diagnostics = candidate.validatePropertyCommit(registry);
             assert(~macd.validation.ModelValidator.hasErrors(diagnostics), ...
                 "macd:SourceLiteralTransaction:InvalidValue", "%s", strjoin(string({diagnostics.Message}), newline));
             owners = struct("ComponentId", {}, "Definitions", {}, "States", {});
@@ -195,7 +219,7 @@ classdef DocumentModel < handle
                 owners(end + 1) = struct("ComponentId", spec.ComponentId, "Definitions", definitions, ...
                     "States", resolutions); %#ok<AGROW>
             end
-            result = struct("Diagnostics", diagnostics, "Owners", owners);
+            result = struct("Diagnostics", diagnostics, "Owners", owners, "Proof", candidate.captureValidationProof(registry));
         end
 
         function result = preparePropertyValidation(obj, component, definitions, states, paths, batch, registry)
@@ -1173,6 +1197,10 @@ classdef DocumentModel < handle
             obj.FilePath = checkpoint.FilePath;
             obj.GeneratedText = checkpoint.SourceText;
             obj.markSaved();
+            if ~isempty(obj.CurrentSource)
+                obj.publishCurrentSource(obj.CurrentSource);
+                obj.adoptValidationProof(checkpoint.validationProof(), registry);
+            end
         end
 
         function markSaved(obj)
@@ -2082,7 +2110,9 @@ classdef DocumentModel < handle
                 currentContext.inheritEligibility(previousContext);
             end
             validation = prepared.validationResult();
-            if validation.Ready
+            if isfield(validation, "Proof") && obj.adoptValidationProof(validation.Proof, registry, currentContext)
+                % The exact complete candidate already supplied every dependency-scoped state.
+            elseif validation.Ready
                 currentContext.remember("states:" + id, struct("Definitions", validation.Definitions, ...
                     "States", validation.States, "Diagnostics", validation.StateDiagnostics));
                 obj.PropertyValidationContext = currentContext;
@@ -2140,14 +2170,16 @@ classdef DocumentModel < handle
             end
             prepared.applyModel(obj, before, registry);
             obj.publishCurrentSource(prepared.AfterSource);
-            context = obj.evaluationContext(registry);
             validation = prepared.validationResult();
-            for owner = validation.Owners
-                context.remember("states:" + owner.ComponentId, struct("Definitions", owner.Definitions, ...
-                    "States", owner.States, "Diagnostics", macd.model.Diagnostic.empty));
+            if ~obj.adoptValidationProof(validation.Proof, registry)
+                context = obj.evaluationContext(registry);
+                for owner = validation.Owners
+                    context.remember("states:" + owner.ComponentId, struct("Definitions", owner.Definitions, ...
+                        "States", owner.States, "Diagnostics", macd.model.Diagnostic.empty));
+                end
+                obj.PropertyValidationContext = context; obj.PropertyValidationNames = strings(1, 0);
+                obj.PropertyValidationDiagnostics = validation.Diagnostics;
             end
-            obj.PropertyValidationContext = context; obj.PropertyValidationNames = strings(1, 0);
-            obj.PropertyValidationDiagnostics = validation.Diagnostics;
             owners = struct("ComponentId", {}, "Changes", {}, "SettingIdentities", {}, "Insertions", {});
             for index = 1:numel(prepared.Specs)
                 spec = prepared.Specs(index); component = obj.getComponent(spec.ComponentId);
@@ -2160,6 +2192,101 @@ classdef DocumentModel < handle
                 "SourceBeforeId", before.StateId, "SourceAfterId", obj.CurrentSource.StateId);
             obj.SourcePublication = true; cleanup = onCleanup(@() obj.endSourcePublication());
             obj.recordHistory(edit); result = true;
+        end
+
+        function ready = hasCurrentValidation(obj, registry)
+            % hasCurrentValidation Require a fully checked baseline for carrying unrelated validation through a local patch.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                ready (1, 1) logical
+            end
+            ready = ~isempty(obj.PropertyValidationContext) && isempty(obj.PropertyValidationNames) && ...
+                obj.PropertyValidationContext.matches(obj, registry) && ...
+                ~macd.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics);
+            if ready, [~, ready] = obj.PropertyValidationContext.revisionToken(); end
+        end
+
+        function carryHistoryValidation(obj, previous, ready, diagnostics, batch, changes)
+            % carryHistoryValidation Check changed dependency scopes and preserve the proven unrelated document baseline.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                previous (1, 1) macd.model.EvaluationContext
+                ready (1, 1) logical
+                diagnostics macd.model.Diagnostic
+                batch (1, 1) macd.source.SourcePatchBatch
+                changes (1, :) struct
+            end
+            if ~ready, return, end
+            registry = obj.SourceRegistry; context = obj.evaluationContext(registry);
+            ids = unique(string({changes.ComponentId}), "stable");
+            if isscalar(ids)
+                component = obj.getComponent(ids); parent = obj.getComponent(component.ParentId); parentFactory = "";
+                if ~isempty(parent), parentFactory = parent.Factory; end
+                definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+                paths = string({changes.Path}); localPaths = macd.model.PropertyStateResolver.ownerLocalPaths(definitions);
+                local = all(ismember(paths, localPaths));
+                for path = paths
+                    definition = definitions([definitions.Path] == path);
+                    local = local && (isempty(component.Children) || ...
+                        (~definition.AbsoluteGeometryImpact && definition.GridGeometryImpact ~= "required"));
+                end
+                [baseline, found] = previous.lookup("states:" + ids);
+                if local && found && isequaln(baseline.Definitions, definitions)
+                    context.inheritLiteralStates(previous, ids, batch, true);
+                    [states, stateDiagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions, obj, registry);
+                    if isempty(stateDiagnostics)
+                        try
+                            result = macd.validation.ModelValidator.prepareIndependentProperties(component, definitions, ...
+                                states, baseline.States, paths, diagnostics, batch);
+                        catch exception
+                            if string(exception.identifier) ~= "macd:SourceLiteralTransaction:InvalidValue", rethrow(exception), end
+                            result = struct("Ready", false);
+                        end
+                        if result.Ready
+                            context.rememberValidatedStates(ids, struct("Definitions", definitions, "States", result.States, ...
+                                "Diagnostics", result.StateDiagnostics));
+                            obj.PropertyValidationContext = context; obj.PropertyValidationNames = strings(1, 0);
+                            obj.PropertyValidationDiagnostics = result.Diagnostics; obj.Diagnostics = result.Diagnostics;
+                            return
+                        end
+                    end
+                end
+            end
+            % True Grid, sibling and ancestor effects retain their bounded model validation.
+            context.inheritSourceStates(previous, ids, batch);
+            obj.PropertyValidationContext = context;
+            obj.PropertyValidationNames = arrayfun(@(id) obj.getComponent(id).Name, ids);
+            obj.PropertyValidationDiagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(diagnostics, batch);
+            obj.validatePropertyCommit(registry);
+        end
+
+        function adopted = adoptValidationProof(obj, proof, registry, context)
+            % adoptValidationProof Publish independent proven values only after exact source, input and catalog joins.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                proof macd.model.DocumentValidationProof
+                registry (1, 1) macd.model.ComponentRegistry
+                context macd.model.EvaluationContext = macd.model.EvaluationContext.empty
+            end
+            arguments (Output)
+                adopted (1, 1) logical
+            end
+            adopted = false;
+            if isempty(proof), return, end
+            [clock, revision, tracked] = obj.inputStamp(); if ~tracked, return, end
+            [owners, diagnostics, ready] = proof.rebind(obj, registry);
+            if ~ready, return, end
+            if isempty(context), context = macd.model.EvaluationContext.fromValidated(obj, registry); end
+            if ~context.matches(obj, registry), return, end
+            [currentClock, currentRevision, currentTracked] = obj.inputStamp();
+            if ~currentTracked || currentClock ~= clock || currentRevision ~= revision, return, end
+            for owner = owners, context.rememberValidatedStates(owner.ComponentId, owner.Resolved); end
+            obj.Evaluation = context; obj.PropertyValidationContext = context;
+            obj.PropertyValidationNames = strings(1, 0); obj.PropertyValidationDiagnostics = diagnostics;
+            obj.Diagnostics = diagnostics; adopted = true;
         end
 
         function endSourcePublication(obj)
@@ -2238,6 +2365,7 @@ classdef DocumentModel < handle
             obj.UnknownRegions = parsed.UnknownRegions;
             obj.Metadata = parsed.Metadata;
             obj.publishCurrentSource(state.withAnalysis(parsed.sourceAnalysis()));
+            obj.adoptValidationProof(parsed.captureValidationProof(registry), registry);
         end
 
         function assertHistorySource(obj, edit, forward)
@@ -2280,6 +2408,7 @@ classdef DocumentModel < handle
                 forward (1, 1) logical
             end
             previousContext = obj.evaluationContext(obj.SourceRegistry);
+            carryValidation = obj.hasCurrentValidation(obj.SourceRegistry); previousDiagnostics = obj.PropertyValidationDiagnostics;
             [token, tracked] = previousContext.revisionToken();
             if ~tracked, token = struct(); end
             if forward
@@ -2344,6 +2473,9 @@ classdef DocumentModel < handle
             obj.publishCurrentSource(state);
             obj.Evaluation = macd.model.EvaluationContext.projectSource(obj, obj.SourceRegistry, ...
                 previousContext, updates, edit.ComponentId, string({edit.Changes.Path}), token);
+            changed = struct("ComponentId", {}, "Path", {});
+            for path = string({edit.Changes.Path}), changed(end + 1) = struct("ComponentId", edit.ComponentId, "Path", path); end %#ok<AGROW>
+            obj.carryHistoryValidation(previousContext, carryValidation, previousDiagnostics, batch, changed);
         end
 
         function applySourceBatchHistory(obj, edit, forward)
@@ -2353,6 +2485,9 @@ classdef DocumentModel < handle
                 edit (1, 1) struct
                 forward (1, 1) logical
             end
+            previousContext = obj.evaluationContext(obj.SourceRegistry);
+            carryValidation = obj.hasCurrentValidation(obj.SourceRegistry); previousDiagnostics = obj.PropertyValidationDiagnostics;
+            [token, tracked] = previousContext.revisionToken(); if ~tracked, token = struct(); end
             if forward, edits = edit.SourceForward; stateId = edit.SourceAfterId;
             else, edits = edit.SourceInverse; stateId = edit.SourceBeforeId; end
             batch = macd.source.SourcePatchBatch(obj.CurrentText, edits);
@@ -2412,6 +2547,9 @@ classdef DocumentModel < handle
             obj.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
                 "Returns", trace.Returns, "Layout", state.Analysis.Layout);
             obj.publishCurrentSource(state);
+            obj.Evaluation = macd.model.EvaluationContext.projectSource(obj, obj.SourceRegistry, previousContext, ...
+                updates, ids, unique(string({edit.Changes.Path})), token);
+            obj.carryHistoryValidation(previousContext, carryValidation, previousDiagnostics, batch, edit.Changes);
         end
 
         function batch = sourceDifference(~, before, after)
