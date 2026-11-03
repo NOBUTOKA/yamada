@@ -73,8 +73,15 @@ classdef SubtreeCopyPlanner
             for component = frozen
                 sources = component.Settings(string({component.Settings.Method}) ~= "generated");
                 current = document.getComponent(component.Id);
-                if macd.model.SourceOwnership.hasSource(component) && ~isempty(sources) && ...
-                        (isempty(current) || ~all(ismember(string({sources.Id}), string({current.Settings.Id}))))
+                same = ~isempty(current);
+                if same
+                    settings = current.Settings;
+                    for source = sources
+                        matches = settings([settings.Id] == source.Id);
+                        same = same && isscalar(matches) && matches.SourceSnapshotId == source.SourceSnapshotId;
+                    end
+                end
+                if macd.model.SourceOwnership.hasSource(component) && ~isempty(sources) && ~same
                     error("macd:DocumentModel:UnsafeSubtreeCopy", "The unprepared snapshot belongs to a different source state.");
                 end
                 index = find(string({context.Components.Id}) == component.Id, 1);
@@ -143,7 +150,7 @@ classdef SubtreeCopyPlanner
                             state.Definition.AuditDisposition ~= "editable" && state.Resolution.ReasonCode == "native-geometry", continue, end
                     resolution = state.Resolution;
                     explicit = any(string({record.Properties.Path}) == state.Definition.Path);
-                    affected = strlength(resolution.EffectSettingId) > 0;
+                    affected = strlength(resolution.EffectKey) > 0;
                     if ~explicit && ~affected, continue, end
                     if ~resolution.IsKnown
                         if macd.model.SubtreeCopyPlanner.isAutomatic(state, states), continue, end

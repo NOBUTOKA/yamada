@@ -25,7 +25,7 @@ classdef PreviewUpdatePlanner
                 effects(index, ismember(paths, policy.AffectedPaths)) = true;
             end
             % Final implicit values follow the write that resolved their state.
-            ids = string(arrayfun(@(state) state.Resolution.EffectSettingId, states));
+            ids = string(arrayfun(@(state) state.Resolution.EffectKey, states));
             for index = find(direct)
                 if strlength(ids(index)) == 0, continue, end
                 affected = ids == ids(index) & ~direct & arrayfun(@(state) state.Resolution.IsKnown, states);

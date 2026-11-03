@@ -61,6 +61,21 @@ classdef SourceStatement
             offsets = obj.RelativeCodeOffsets + base;
         end
 
+        function obj = withSpans(obj, spans)
+            % withSpans Adopt vector-prepared positions without per-statement reconstruction.
+            arguments (Input)
+                obj macd.source.SourceStatement
+                spans cell
+            end
+            arguments (Output)
+                obj macd.source.SourceStatement
+            end
+            assert(numel(obj) == numel(spans));
+            for index = 1:numel(obj)
+                obj(index).Span = spans{index};
+            end
+        end
+
         function obj = withSpan(obj, span)
             % withSpan Relocate unchanged syntax while retaining shared statement-local positions.
             arguments (Input)

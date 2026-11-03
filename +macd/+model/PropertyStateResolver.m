@@ -111,7 +111,7 @@ classdef PropertyStateResolver
                         effectIds = strings(size(resolved));
                         for index = 1:numel(resolved)
                             effectIds(index) = macd.model.PropertyStateResolver.originalEffectId(component, plan.Component, ...
-                                resolved(index).EffectSettingId, document, plan.Document);
+                                resolved(index).EffectKey, document, plan.Document);
                         end
                     end
                     incomplete = ~combined && macd.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document, registry);
@@ -163,7 +163,7 @@ classdef PropertyStateResolver
                     value = setting.LiteralValue;
                     known = setting.ValueKind == "literal" && setting.IsCertain;
                     if known && isfield(entry.Metadata, "SourceSettingId") && ...
-                            string(entry.Metadata.SourceSettingId) == setting.Id && entry.ValueKind == "literal"
+                            string(entry.Metadata.SourceSettingId) == string(setting.Id) && entry.ValueKind == "literal"
                         value = entry.LiteralValue;
                     end
                     [states, message] = macd.model.PropertyStateResolver.apply( ...
@@ -415,7 +415,7 @@ classdef PropertyStateResolver
                 if isempty(affected), affected = paths; end
                 for index = find(ismember(paths, [definition.Path affected]))
                     % A later confirmed independent write can restore its own stored input.
-                    restores = component.Settings(string({component.Settings.Id}) == states(index).EffectSettingId & ...
+                    restores = component.Settings(string({component.Settings.Id}) == states(index).EffectKey & ...
                         string({component.Settings.Path}) == states(index).Path);
                     if states(index).IsKnown && definitions(index).Application.EffectStatus == "independent" && ...
                             ~isempty(restores) && restores(end).Sequence > sequence
@@ -665,12 +665,12 @@ classdef PropertyStateResolver
                 mode = states(paths == receiver + "Mode");
                 parent = states(paths == upstream);
                 if isempty(mode) || isempty(parent), continue, end
-                id = mode.EffectSettingId;
+                id = mode.EffectKey;
                 if mode.IsKnown
-                    candidates = [mode.EffectSettingId, parent.EffectSettingId];
+                    candidates = [mode.EffectKey, parent.EffectKey];
                     id = "";
                     for setting = group
-                        if any(candidates == setting.Id), id = setting.Id; end
+                        if any(candidates == string(setting.Id)), id = setting.Id; end
                     end
                 end
                 states = followWidth(states, upstream, receiver, id);

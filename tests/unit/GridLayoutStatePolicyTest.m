@@ -37,6 +37,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             uncertain = macd.model.PropertySetting("Layout", [], struct( ...
                 "SourceSnapshotId", "changed-layout", "SourceExpression", "layoutValue"));
             first.restoreSettings([before, uncertain.toStruct()]);
+            uncertain = first.getSettings("Layout");
             for target = [grid, second]
                 path = "Layout.Row";
                 if target == grid, path = "RowHeight"; end
@@ -51,6 +52,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             % Uncacheable metadata must retain the same uncached uncertainty behavior.
             document.Metadata.Live = containers.Map("entry", 1);
             first.restoreSettings([before, uncertain.toStruct()]);
+            uncertain = first.getSettings("Layout");
             actual = testCase.state(document, registry, grid, "RowHeight");
             testCase.verifyFalse(actual.IsKnown);
             testCase.verifyEqual(actual.EffectSettingId, uncertain.Id);
@@ -97,6 +99,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
                 "SourceSnapshotId", "second-layout", "SourceExpression", "secondLayout"));
             first.restoreSettings([first.settingSnapshot(), firstEffect.toStruct()]);
             second.restoreSettings([second.settingSnapshot(), secondEffect.toStruct()]);
+            firstEffect = first.getSettings("Layout");
+            secondEffect = second.getSettings("Layout");
             testCase.verifyEqual(testCase.state(document, registry, firstGrid, "RowHeight").EffectSettingId, firstEffect.Id);
             testCase.verifyEqual(testCase.state(document, registry, secondGrid, "RowHeight").EffectSettingId, secondEffect.Id);
 
@@ -345,8 +349,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             document.setProperty(grid.Id, "RowHeight", {50, 60}, registry);
             source = macd.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyTrue(contains(source, "app.Grid.RowHeight = {50, 60};"));
-            testCase.verifyEqual(grid.getSettings("RowHeight").Id, before(1).Location.SourceSnapshotId + ...
-                ":" + string(before(1).Location.ValueSpan.StartOffset) + ":RowHeight");
+            testCase.verifyEqual(grid.getSettings("RowHeight").Id, before(1).Location.Id);
             document.undo();
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             document.redo();

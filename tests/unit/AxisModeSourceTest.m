@@ -131,7 +131,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             document.confirmSavedSource(checkpoint, registry);
             copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
             testCase.verifyEqual(copy.getProperty("MinorGridLineWidth").LiteralValue, 6);
-            testCase.verifyEqual(string({control.Settings.Id}), arrayfun(@(record) record.Location.Id, original));
+            testCase.verifyEqual([control.Settings.Id], arrayfun(@(record) record.Location.Id, original));
             testCase.verifyEqual(control.getSettings("GridLineWidth").LiteralValue, 6);
             testCase.verifyEqual(control.getSettings("MinorGridLineWidth").LiteralValue, 3);
             document.undo();

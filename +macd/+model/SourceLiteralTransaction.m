@@ -16,13 +16,20 @@ classdef SourceLiteralTransaction
         ComponentId string
         % Changes - Requested literal values retained for UI invalidation and history.
         Changes struct
+        % Placements - Primary insertion recipes retained for exact history replay.
+        Placements struct = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {})
         % CanReuseStates - Whether the finite proof excludes semantic effects on other component owners.
         CanReuseStates logical = true
         % CanReuseEligibility - Whether placement and source-edit conditions retain their previous meaning.
         CanReuseEligibility logical = true
+        % CanPreserveDocumentStates - Whether unchanged document-dependent policy inputs retain their meaning.
+        CanPreserveDocumentStates logical = false
     end
 
     properties (Access = private)
+        PreparedValidation struct = struct("Ready", false)
+        NeedsDocumentValidation logical = false
+        SettingProjection struct = struct()
         Settings macd.model.PropertySetting
         FactoryArguments cell
         Updates macd.model.SourceLocationUpdate = macd.model.SourceLocationUpdate.empty
@@ -72,18 +79,18 @@ classdef SourceLiteralTransaction
                 if isempty(properties), properties = record; else, properties(end + 1) = record; end %#ok<AGROW>
             end
             candidate.restoreProperties(properties);
-            candidate.restoreSettings(component.settingSnapshot());
+            candidate.applyProjectedSettings(component.Settings);
             edits = struct("Start", {}, "End", {}, "Text", {});
             for change = changes
                 path = string(change.Path);
                 definition = definitions(string({definitions.Path}) == path);
                 assert(isscalar(definition) && definition.IsEditable && ...
-                    any(definition.Application.EffectStatus == ["independent", "modeled"]) && ...
-                    ~any(definition.Application.EffectPolicy == ["buttonSelection", "componentReference", "layout", "gridTracks"]), ...
+                    any(definition.Application.EffectStatus == ["independent", "modeled"]), ...
                     "macd:SourceLiteralTransaction:WiderProof", "This setting needs its coupled model scope.");
                 policy = definition.Application;
                 independent = policy.EffectStatus == "independent" && policy.EffectPolicy == "none";
                 numeric = policy.EffectStatus == "modeled" && policy.EffectPolicy == "numericValue";
+                obj.NeedsDocumentValidation = obj.NeedsDocumentValidation || ~(independent || numeric);
                 obj.CanReuseStates = obj.CanReuseStates && (independent || numeric) && ...
                     (isempty(component.Children) || (~definition.AbsoluteGeometryImpact && definition.GridGeometryImpact ~= "required"));
                 dependencies = macd.model.SubtreePlacementPlanner.inputPropertyPaths();
@@ -107,33 +114,55 @@ classdef SourceLiteralTransaction
             if macd.source.PropertyInsertionPlanner.needsPlan(document, candidate)
                 plan = macd.source.PropertyInsertionPlanner.tentative(document, candidate, registry);
                 edits = [edits plan.Edits];
+                obj.Placements = plan.Placements;
             end
-            edits = macd.source.SourceFormatting.separateComponents(source.Text, edits);
+            edits = macd.source.SourceFormatting.separateLiteralComponents(source.Text, edits, source.Analysis, document.sourceComponentName(id));
             obj.Batch = macd.source.SourcePatchBatch(source.Text, edits);
-            obj.AfterSource = source.withBatch(obj.Batch);
-            [obj.Settings, ~, obj.FactoryArguments, execution] = macd.model.SourceSettingRebinder.rebind( ...
-                document, component, obj.AfterSource, obj.Batch, registry);
+            [obj.AfterSource, obj.Settings, obj.FactoryArguments, execution] = macd.model.IndexedSettingEdit.prepare( ...
+                document, source, component, obj.Batch, changes, obj.Placements, registry);
             candidate.synchronizeSourceSettings(obj.Settings, obj.FactoryArguments);
             [states, diagnostics] = macd.model.PropertyStateResolver.resolve(candidate, definitions);
             assert(~macd.validation.ModelValidator.hasErrors(diagnostics), ...
                 "macd:SourceLiteralTransaction:InvalidValue", "%s", strjoin(string({diagnostics.Message}), newline));
-            transaction = macd.model.PropertyStateResolver.transaction(states);
-            % Validate requested schemas against the proven final cross-property state.
+            affected = string({changes.Path});
             for change = changes
-                transaction.stage(string(change.Path), change.Value);
+                definition = definitions([definitions.Path] == string(change.Path));
+                affected = union(affected, definition.Application.AffectedPaths, "stable");
             end
-            message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
-            assert(strlength(message) == 0, "macd:SourceLiteralTransaction:InvalidValue", "%s", message);
+            dependent = [macd.model.GridLayoutStatePolicy.inputPropertyPaths(), ...
+                macd.model.AncestorGeometryPolicy.inputPropertyPaths()];
+            sameDefinitions = true;
+            if ~isequaln(component.CreationArguments, obj.FactoryArguments)
+                afterDefinitions = registry.getEffectiveProperties(component.Factory, parentFactory, obj.FactoryArguments);
+                sameDefinitions = isequaln(definitions, afterDefinitions);
+            end
+            obj.CanPreserveDocumentStates = obj.CanReuseStates && sameDefinitions && ~any(ismember(affected, dependent));
+            if obj.CanPreserveDocumentStates && isempty(diagnostics)
+                obj.PreparedValidation = document.preparePropertyValidation(candidate, definitions, states, ...
+                    string({changes.Path}), obj.Batch, registry);
+                if obj.PreparedValidation.Ready, states = obj.PreparedValidation.States; end
+            end
+            if ~obj.PreparedValidation.Ready
+                transaction = macd.model.PropertyStateResolver.transaction(states);
+                % Validate requested schemas against the proven final cross-property state.
+                for change = changes
+                    transaction.stage(string(change.Path), change.Value);
+                end
+                message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
+                assert(strlength(message) == 0, "macd:SourceLiteralTransaction:InvalidValue", "%s", message);
+            end
             for change = changes
                 index = find(string({states.Path}) == string(change.Path), 1);
                 assert(~isempty(index) && states(index).IsKnown && ...
                     macd.model.PropertyStateResolver.matchesRequested(states(index), change.Value), ...
                     "macd:SourceLiteralTransaction:WiderProof", "The final requested value needs a broader proof.");
             end
-            % Prepare every source position before any live property handle changes.
+            % Transform the maintained setting index once, then prepare component/property bindings.
+            obj.SettingProjection = document.prepareSettingProjection(obj.Batch, execution, id);
             for owner = document.Components
                 update = macd.model.SourceLocationUpdate(owner, obj.Batch, ...
-                    struct("SettingId", {}, "Value", {}), execution, obj.AfterSource.Analysis);
+                    struct("SettingId", {}, "Value", {}), execution, obj.AfterSource.Analysis, ...
+                    document.ownerSettingProjection(owner, obj.SettingProjection));
                 assert(update.CanApply, "macd:SourceLiteralTransaction:WiderProof", "Changed syntax requires range rebinding.");
                 obj.Updates(end + 1) = update;
             end
@@ -149,6 +178,21 @@ classdef SourceLiteralTransaction
             obj.Changes = changes;
             obj.Catalog = registry;
             obj.CatalogRevision = registry.Revision;
+            if obj.NeedsDocumentValidation
+                obj.PreparedValidation = document.validateIndexedCandidate(obj.Settings, obj.FactoryArguments, ...
+                    obj.Updates, obj.AfterSource, obj.Diagnostics, obj.Regions, obj.Metadata, id, changes, registry);
+            end
+        end
+
+        function result = validationResult(obj)
+            % validationResult Return independent validated states and diagnostics from the exact published candidate.
+            arguments (Input)
+                obj (1, 1) macd.model.SourceLiteralTransaction
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            result = obj.PreparedValidation;
         end
 
         function [updates, token] = inputProjection(obj)
@@ -185,6 +229,7 @@ classdef SourceLiteralTransaction
             [clock, revision, tracked] = document.inputStamp();
             assert(~obj.InputsTracked || (tracked && clock == obj.InputClock && revision == obj.InputRevision), ...
                 "macd:SourceLiteralTransaction:StaleInputs", "The document changed during source preparation.");
+            document.publishSettingProjection(obj.SettingProjection);
             for update = obj.Updates
                 update.applyValidated(document.getComponent(update.ComponentId));
             end

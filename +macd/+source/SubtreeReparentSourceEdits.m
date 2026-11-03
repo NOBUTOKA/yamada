@@ -327,7 +327,7 @@ classdef SubtreeReparentSourceEdits
                     error("macd:SubtreeReparentSourceEdits:UnsafeSource", "An uncertain occurrence cannot be relocated.");
                 end
                 if entry.ValueKind == "literal" && isfield(entry.Metadata, "SourceSettingId") && ...
-                        string(entry.Metadata.SourceSettingId) == setting.Id && ~isequaln(entry.LiteralValue, setting.LiteralValue)
+                        string(entry.Metadata.SourceSettingId) == string(setting.Id) && ~isequaln(entry.LiteralValue, setting.LiteralValue)
                     span = setting.ValueSpan;
                     if isempty(span) || ~span.isKnown()
                         error("macd:SubtreeReparentSourceEdits:UnsafeSource", "A replacement has no proven value token.");

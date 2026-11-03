@@ -32,19 +32,26 @@ classdef CurrentSourceState
             obj.StateId = string(java.util.UUID.randomUUID());
         end
 
-        function [candidate, statistics] = withBatch(obj, batch, restoredStateId)
+        function [candidate, statistics] = withBatch(obj, batch, restoredStateId, preparedAnalysis)
             % withBatch Prepare a new source revision without changing already published state.
             arguments (Input)
                 obj (1, 1) macd.model.CurrentSourceState
                 batch (1, 1) macd.source.SourcePatchBatch
                 restoredStateId (1, 1) string = ""
+                preparedAnalysis macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
             end
             arguments (Output)
                 candidate (1, 1) macd.model.CurrentSourceState
                 statistics (1, 1) struct
             end
             batch.apply(obj.Text);
-            [analysis, ~, statistics] = obj.Analysis.withPatches(batch);
+            if isempty(preparedAnalysis)
+                [analysis, ~, statistics] = obj.Analysis.withPatches(batch);
+            else
+                assert(preparedAnalysis.matches(batch.AfterText));
+                analysis = preparedAnalysis;
+                statistics = struct("ScannedCharacters", 0, "ReusedStatements", numel(analysis.Statements), "FullScan", false);
+            end
             candidate = obj;
             candidate.Text = batch.AfterText;
             candidate.Analysis = analysis;
@@ -55,6 +62,19 @@ classdef CurrentSourceState
             else
                 candidate.StateId = string(java.util.UUID.randomUUID());
             end
+        end
+
+        function obj = withAnalysis(obj, analysis)
+            % withAnalysis Adopt an already validated exact-source index without changing revision or history identity.
+            arguments (Input)
+                obj (1, 1) macd.model.CurrentSourceState
+                analysis (1, 1) macd.source.SourceAnalysis
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.CurrentSourceState
+            end
+            assert(analysis.matches(obj.Text));
+            obj.Analysis = analysis;
         end
 
         function assertRevision(obj, revision, stateId)

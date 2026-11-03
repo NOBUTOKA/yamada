@@ -134,6 +134,52 @@ classdef SourcePatchBatch
             offset = offset + shift;
         end
 
+        function [spans, valid] = mapSpanCells(obj, spans)
+            % mapSpanCells Transform optional ranges together using one vector pass per edit.
+            arguments (Input)
+                obj (1, 1) macd.source.SourcePatchBatch
+                spans cell
+            end
+            arguments (Output)
+                spans cell
+                valid logical
+            end
+            valid = true(size(spans));
+            present = find(~cellfun(@isempty, spans));
+            if isempty(present), return, end
+            ranges = [spans{present}];
+            assert(isa(ranges, "macd.model.SourceSpan") && numel(ranges) == numel(present));
+            first = [ranges.StartOffset] - 1;
+            last = [ranges.EndOffset];
+            known = first >= 0;
+            assert(all(last(known) <= strlength(obj.BeforeText)), ...
+                "macd:SourcePatchBatch:InvalidBoundary", "The boundary is outside the original source.");
+            starts = first;
+            ends = last;
+            surviving = true(size(first));
+            % Original coordinates determine every shift, including shared insertion boundaries.
+            for edit = obj.Edits
+                left = edit.Start - 1;
+                right = edit.End;
+                delta = strlength(edit.Text) - (right - left);
+                if left == right
+                    starts = starts + delta * (known & first >= left);
+                    ends = ends + delta * (known & last > left);
+                else
+                    surviving = surviving & ~(known & ((first > left & first < right) | (last > left & last < right)));
+                    starts = starts + delta * (known & first >= right);
+                    ends = ends + delta * (known & last >= right);
+                end
+            end
+            surviving = surviving & (~known | ends > starts);
+            ranges = ranges.withMappedOffsets(starts + 1, ends, known & surviving);
+            for index = 1:numel(present)
+                if surviving(index), spans{present(index)} = ranges(index);
+                else, spans{present(index)} = macd.model.SourceSpan.empty; end
+            end
+            valid(present) = surviving;
+        end
+
         function [span, valid] = mapSpan(obj, span)
             % mapSpan Shift a surviving range or invalidate removed/partially changed tokens.
             arguments (Input)

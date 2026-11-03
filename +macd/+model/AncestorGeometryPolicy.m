@@ -3,6 +3,14 @@ classdef AncestorGeometryPolicy
     %   It preserves explicit inputs while leaving native child reflow unresolved.
 
     methods (Static)
+        function paths = inputPropertyPaths()
+            % inputPropertyPaths Declare source settings that can change this policy's document-dependent result.
+            arguments (Output)
+                paths (1, :) string
+            end
+            paths = ["Position", "InnerPosition", "OuterPosition", "AutoResizeChildren"];
+        end
+
         function [offset, sequence] = creationAnchor(document)
             % creationAnchor Place new blocks after proven geometry of existing ancestors.
             arguments (Input)

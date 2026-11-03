@@ -15,14 +15,15 @@ classdef SourceLocationUpdate
         AfterSpans struct = struct()
         BeforeMetadata struct = struct()
         AfterMetadata struct = struct()
-        BeforeSettings struct = struct([])
+        BeforeSettingValues macd.model.PropertySetting = macd.model.PropertySetting.empty
+        CentralSettings logical = false
         BeforeProperties struct = struct([])
-        AfterSettings struct = struct([])
+        AfterSettingValues macd.model.PropertySetting = macd.model.PropertySetting.empty
         Properties struct = struct("Path", {}, "SourceSpan", {}, "Metadata", {}, "ValueChanged", {})
     end
 
     methods
-        function obj = SourceLocationUpdate(component, batch, literalChanges, execution, analysis)
+        function obj = SourceLocationUpdate(component, batch, literalChanges, execution, analysis, settingProjection)
             % SourceLocationUpdate Stage source positions and already validated literal replacements.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
@@ -30,6 +31,7 @@ classdef SourceLocationUpdate
                 literalChanges struct = struct("SettingId", {}, "Value", {})
                 execution struct = struct()
                 analysis macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
+                settingProjection (1, 1) struct = struct()
             end
             arguments (Output)
                 obj (1, 1) macd.model.SourceLocationUpdate
@@ -38,40 +40,89 @@ classdef SourceLocationUpdate
             obj.BeforeSpans = component.SourceSpans;
             obj.BeforeMetadata = component.Metadata;
             obj.AfterMetadata = component.Metadata;
-            obj.BeforeSettings = component.settingSnapshot();
+            obj.BeforeSettingValues = component.Settings;
             obj.BeforeProperties = macd.model.SourceLocationUpdate.captureProperties(component);
-            [obj.AfterSpans, obj.CanApply] = macd.model.SourceLocationUpdate.mapRanges(component.SourceSpans, batch);
-            obj.AfterSettings = obj.BeforeSettings;
-            for index = 1:numel(obj.AfterSettings)
-                record = obj.AfterSettings(index);
-                [location, valid] = macd.model.SourceLocationUpdate.mapRanges(record.Location, batch);
+
+            obj.AfterSettingValues = obj.BeforeSettingValues;
+            obj.CentralSettings = isfield(settingProjection, "Before");
+            groups = {component.SourceSpans};
+            records = struct("Path", {}, "Value", {}, "Location", {});
+            if obj.CentralSettings
+                assert(isequaln(obj.BeforeSettingValues, settingProjection.Before));
+                obj.AfterSettingValues = settingProjection.After;
+            else
+                records = component.settingSnapshot();
+                for record = records, groups{end + 1} = record.Location; end %#ok<AGROW>
+            end
+            settingCount = numel(groups);
+            for entry = component.Properties
+                ranges = struct("SourceSpan", entry.SourceSpan);
+                if isfield(entry.Metadata, "ValueSpan"), ranges.ValueSpan = entry.Metadata.ValueSpan; end
+                groups{end + 1} = ranges; %#ok<AGROW>
+            end
+            [mapped, valid] = macd.model.SourceLocationUpdate.mapGroups(groups, batch);
+            obj.AfterSpans = mapped{1};
+            obj.CanApply = obj.CanApply && valid;
+            preparedVisits = zeros(1, settingCount);
+            if isfield(execution, "RangeStarts")
+                starts = zeros(1, settingCount);
+                ends = starts;
+                for index = 1:settingCount
+                    if index == 1, span = mapped{index}.Creation; else, span = mapped{index}.SourceSpan; end
+                    if isempty(span), continue, end
+                    starts(index) = span.StartOffset;
+                    ends(index) = span.EndOffset;
+                end
+                [found, positions] = ismember([starts(:) ends(:)], ...
+                    [execution.RangeStarts(:) execution.RangeEnds(:)], "rows");
+                preparedVisits(found) = execution.Visits(positions(found));
+            end
+            for index = 1:numel(records)
+                record = records(index);
+                location = mapped{index + 1};
+                valid = obj.CanApply;
                 obj.CanApply = obj.CanApply && valid;
                 record.Location = location;
                 if isfield(execution, "Trace") && isempty(location.SourceSpan)
                     obj.CanApply = false;
                 elseif isfield(execution, "Trace") && valid
-                    indices = analysis.statementIndices(location.SourceSpan);
-                    visits = find(ismember(execution.Trace.Order, indices));
+                    if isfield(execution, "SequenceMap") && record.Location.Sequence > 0
+                        record.Location.Sequence = execution.SequenceMap(record.Location.Sequence);
+                        visits = [];
+                    elseif isfield(execution, "RangeStarts")
+                        visits = preparedVisits(index + 1);
+                        if visits == 0, visits = []; end
+                    else
+                        indices = analysis.statementIndices(location.SourceSpan);
+                        visits = find(ismember(execution.Trace.Order, indices));
+                    end
                     if isscalar(visits)
                         if record.Location.Method == "nameValue"
-                            peers = obj.BeforeSettings(1:index);
+                            peers = records(1:index);
                             ordinal = nnz(arrayfun(@(item) item.Location.Method == "nameValue" && ...
                                 item.Location.StatementId == record.Location.StatementId, peers));
                             record.Location.Sequence = execution.Creation(visits) + ordinal;
                         else
                             record.Location.Sequence = execution.Assignment(visits);
                         end
-                    else
+                    elseif ~isfield(execution, "SequenceMap")
                         obj.CanApply = false;
                     end
                 end
-                change = find(string({literalChanges.SettingId}) == record.Location.Id, 1);
+                change = find([literalChanges.SettingId] == record.Location.Id, 1);
                 if ~isempty(change), record.Value = literalChanges(change).Value; end
-                obj.AfterSettings(index) = record;
+                projected = obj.AfterSettingValues(index).withProjectedLocation(record.Location);
+                if ~isempty(change), projected = projected.withLiteral(record.Value); end
+                obj.AfterSettingValues(index) = projected;
             end
             if isfield(execution, "Trace") && obj.CanApply
-                indices = analysis.statementIndices(obj.AfterSpans.Creation);
-                visits = find(ismember(execution.Trace.Order, indices));
+                if isfield(execution, "RangeStarts")
+                    visits = preparedVisits(1);
+                    if visits == 0, visits = []; end
+                else
+                    indices = analysis.statementIndices(obj.AfterSpans.Creation);
+                    visits = find(ismember(execution.Trace.Order, indices));
+                end
                 if isscalar(visits)
                     obj.AfterMetadata.InitializationCreationSequence = execution.Creation(visits);
                     obj.AfterMetadata.InitializationCreationCertain = execution.Trace.Certain(visits);
@@ -80,19 +131,17 @@ classdef SourceLocationUpdate
                 end
             end
             if ~isempty(literalChanges)
-                ids = strings(1, numel(obj.AfterSettings));
-                for index = 1:numel(ids), ids(index) = obj.AfterSettings(index).Location.Id; end
+                ids = string({obj.AfterSettingValues.Id});
                 assert(all(ismember(string({literalChanges.SettingId}), ids)), ...
                     "macd:SourceLocationUpdate:UnknownSetting", "Literal changes must target an existing owned occurrence.");
             end
+            propertyIndex = settingCount;
             for entry = component.Properties
-                [span, valid] = batch.mapSpan(entry.SourceSpan);
-                obj.CanApply = obj.CanApply && valid;
+                propertyIndex = propertyIndex + 1;
+                ranges = mapped{propertyIndex};
+                span = ranges.SourceSpan;
                 metadata = entry.Metadata;
-                if isfield(metadata, "ValueSpan")
-                    [metadata.ValueSpan, valid] = batch.mapSpan(metadata.ValueSpan);
-                    obj.CanApply = obj.CanApply && valid;
-                end
+                if isfield(ranges, "ValueSpan"), metadata.ValueSpan = ranges.ValueSpan; end
                 valueChanged = isfield(metadata, "SourceSettingId") && ...
                     any(string({literalChanges.SettingId}) == string(metadata.SourceSettingId));
                 obj.Properties(end + 1) = struct("Path", entry.Path, "SourceSpan", span, ...
@@ -109,7 +158,7 @@ classdef SourceLocationUpdate
             assert(obj.CanApply, "macd:SourceLocationUpdate:NeedsRescan", "Changed token ownership requires syntax rebinding.");
             assert(component.Id == obj.ComponentId && isequaln(component.SourceSpans, obj.BeforeSpans) && ...
                 isequaln(component.Metadata, obj.BeforeMetadata) && ...
-                isequaln(component.settingSnapshot(), obj.BeforeSettings) && ...
+                isequaln(component.Settings, obj.BeforeSettingValues) && ...
                 isequaln(macd.model.SourceLocationUpdate.captureProperties(component), obj.BeforeProperties), ...
                 "macd:SourceLocationUpdate:StaleComponent", "The component changed after preparing its location update.");
         end
@@ -125,7 +174,7 @@ classdef SourceLocationUpdate
         end
     end
 
-    methods (Access = ?macd.model.SourceLiteralTransaction)
+    methods (Access = {?macd.model.SourceLiteralTransaction, ?macd.model.DocumentModel})
         function applyValidated(obj, component)
             % applyValidated Publish a member after the transaction validated every owner without yielding.
             arguments (Input)
@@ -134,7 +183,9 @@ classdef SourceLocationUpdate
             end
             if ~isequaln(component.SourceSpans, obj.AfterSpans), component.SourceSpans = obj.AfterSpans; end
             if ~isequaln(component.Metadata, obj.AfterMetadata), component.Metadata = obj.AfterMetadata; end
-            if ~isequaln(obj.BeforeSettings, obj.AfterSettings), component.restoreSettings(obj.AfterSettings); end
+            if ~obj.CentralSettings && ~isequaln(obj.BeforeSettingValues, obj.AfterSettingValues)
+                component.applyProjectedSettings(obj.AfterSettingValues);
+            end
             for projected = obj.Properties
                 entry = component.getProperty(projected.Path);
                 if ~projected.ValueChanged && isequaln(entry.SourceSpan, projected.SourceSpan) && ...
@@ -163,7 +214,9 @@ classdef SourceLocationUpdate
             assert(obj.CanApply && record.Id == obj.ComponentId && ~any([obj.Properties.ValueChanged]));
             record.SourceSpans = obj.AfterSpans;
             record.Metadata = obj.AfterMetadata;
-            record.Settings = obj.AfterSettings;
+            settings = struct("Path", {}, "Value", {}, "Location", {});
+            for setting = obj.AfterSettingValues, settings(end + 1) = setting.toStruct(); end %#ok<AGROW>
+            record.Settings = settings;
             for projected = obj.Properties
                 index = find(string({record.Properties.Path}) == projected.Path, 1);
                 assert(~isempty(index));
@@ -244,27 +297,47 @@ classdef SourceLocationUpdate
             end
         end
 
-        function [value, valid] = mapRanges(value, batch)
-            % mapRanges Transform owned span fields without touching literal payloads or opaque identities.
+        function [groups, valid] = mapGroups(groups, batch)
+            % mapGroups Transform only direct range fields together, excluding literal data and identities.
             arguments (Input)
-                value
+                groups cell
                 batch (1, 1) macd.source.SourcePatchBatch
             end
             arguments (Output)
-                value
+                groups cell
                 valid (1, 1) logical
             end
-            valid = true;
-            if isa(value, "macd.model.SourceSpan")
-                [value, valid] = batch.mapSpan(value);
-            elseif isstruct(value)
-                for index = 1:numel(value)
-                    for field = reshape(string(fieldnames(value)), 1, [])
-                        [value(index).(field), fieldValid] = macd.model.SourceLocationUpdate.mapRanges(value(index).(field), batch);
-                        valid = valid && fieldValid;
-                    end
+            spans = {};
+            owners = zeros(1, 0);
+            names = strings(1, 0);
+            for index = 1:numel(groups)
+                fields = reshape(string(fieldnames(groups{index})), 1, []);
+                for field = fields
+                    if ~isa(groups{index}.(field), "macd.model.SourceSpan"), continue, end
+                    spans{end + 1} = groups{index}.(field); %#ok<AGROW>
+                    owners(end + 1) = index; %#ok<AGROW>
+                    names(end + 1) = field; %#ok<AGROW>
                 end
             end
+            [spans, flags] = batch.mapSpanCells(spans);
+            valid = all(flags);
+            for index = 1:numel(spans)
+                groups{owners(index)}.(names(index)) = spans{index};
+            end
+        end
+
+        function [value, valid] = mapRanges(value, batch)
+            % mapRanges Transform named range records without walking literal payloads.
+            arguments (Input)
+                value (1, 1) struct
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            arguments (Output)
+                value (1, 1) struct
+                valid (1, 1) logical
+            end
+            [groups, valid] = macd.model.SourceLocationUpdate.mapGroups({value}, batch);
+            value = groups{1};
         end
     end
 end

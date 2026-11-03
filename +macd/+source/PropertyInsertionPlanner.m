@@ -308,8 +308,8 @@ classdef PropertyInsertionPlanner
                 error("macd:PropertyInsertionPlanner:UnsafePlacement", "The factory is conditional, repeated, or outside a proven initializer.");
             end
             [selectionSettings, selectionCreations] = macd.model.ButtonSelectionPolicy.insertionSurface(component, document);
-            [anchors, boundary] = macd.source.PropertyInsertionPlanner.anchors(source, statements, order, certain, returns, layout, created, ...
-                [sourceSettings selectionSettings], selectionCreations);
+            [anchors, boundary] = macd.source.PropertyInsertionPlanner.anchors(statements, order, certain, returns, layout, created, ...
+                [sourceSettings selectionSettings], selectionCreations, analysis.Facts);
             paths = string({definitions.Path});
             if any(~ismember(string({entries.Path}), paths))
                 error("macd:PropertyInsertionPlanner:UnsafePlacement", "A new property is not supported in this parent context.");
@@ -353,7 +353,7 @@ classdef PropertyInsertionPlanner
                     prerequisites = paths(reaches(:, paths == entry.Path));
                     for argument = 1:numel(constructor)
                         if any(prerequisites == constructor(argument).Path) || ...
-                                any(string({protectors.Id}) == constructor(argument).Id), lower = argument; end
+                                any([protectors.Id] == constructor(argument).Id), lower = argument; end
                     end
                     for slot = lower:numel(constructor)
                         before = macd.model.PropertySetting.empty;
@@ -380,7 +380,7 @@ classdef PropertyInsertionPlanner
                 prerequisites = paths(reaches(:, paths == entry.Path));
                 lower = created;
                 for setting = sourceSettings
-                    if any(prerequisites == setting.Path) || any(string({protectors.Id}) == setting.Id)
+                    if any(prerequisites == setting.Path) || any([protectors.Id] == setting.Id)
                         visits = find(arrayfun(@(statement) statement.Span.StartOffset, statements(order)) == ...
                             setting.SourceSpan.StartOffset);
                         if ~isempty(visits), lower = max(lower, max(visits)); end
@@ -456,7 +456,7 @@ classdef PropertyInsertionPlanner
                 value = setting.LiteralValue;
                 entry = component.getProperty(setting.Path);
                 if ~isempty(entry) && entry.ValueKind == "literal" && isfield(entry.Metadata, "SourceSettingId") && ...
-                        string(entry.Metadata.SourceSettingId) == setting.Id
+                        string(entry.Metadata.SourceSettingId) == string(setting.Id)
                     value = entry.LiteralValue;
                 end
                 if ((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && string(value) == "manual"
@@ -465,10 +465,9 @@ classdef PropertyInsertionPlanner
             end
         end
 
-        function [anchors, boundary] = anchors(source, statements, order, certain, returns, layout, created, settings, selectionCreations)
+        function [anchors, boundary] = anchors(statements, order, certain, returns, layout, created, settings, selectionCreations, facts)
             % anchors Retain opaque boundaries while collecting certain component-owned insertion slots.
             arguments (Input)
-                source (1, 1) string
                 statements macd.source.SourceStatement
                 order double
                 certain logical
@@ -477,6 +476,7 @@ classdef PropertyInsertionPlanner
                 created (1, 1) double
                 settings macd.model.PropertySetting
                 selectionCreations double
+                facts (1, 1) struct
             end
             arguments (Output)
                 anchors (1, :) struct
@@ -487,8 +487,7 @@ classdef PropertyInsertionPlanner
             for visit = created:numel(order)
                 index = order(visit);
                 statement = statements(index);
-                code = char(strtrim(statement.Text));
-                structural = ~isempty(regexp(code, '^(end|arguments|function|return)(?!\w)', 'once'));
+                structural = facts.Structural(index);
                 call = returns(visit) > visit;
                 owned = settings(arrayfun(@(setting) ~isempty(setting.SourceSpan) && ...
                     setting.SourceSpan.StartOffset == statement.Span.StartOffset, settings));
@@ -498,27 +497,15 @@ classdef PropertyInsertionPlanner
                     all(string({owned.ValueKind}) == "literal" | simpleReference);
                 write = write || any(selectionCreations == statement.Span.StartOffset);
                 if visit > created && ~structural && ~call && ~write
-                    % Literal local assignments cannot call or observe a component.
-                    local = regexp(code, '^[A-Za-z]\w*\s*=\s*(.*)$', 'tokens', 'once');
-                    safe = false;
-                    if ~isempty(local), [~, safe] = macd.source.MatlabLiteralParser.parse(string(local{1})); end
+                    safe = facts.SafeLocal(index);
                     if ~safe
                         boundary(end + 1) = visit; %#ok<AGROW>
                         continue
                     end
                 end
                 if ~structural && certain(visit) && nnz(order == index) == 1 && layout.StraightLine(index)
-                    offset = statement.Span.EndOffset;
-                    tail = extractAfter(source, offset);
-                    lineEnd = regexp(char(tail), '\r?\n', 'start', 'once');
-                    if isempty(lineEnd), lineEnd = strlength(tail) + 1; end
-                    suffix = extractBefore(tail, lineEnd);
-                    if ~isempty(regexp(suffix, '^\s*(%[^\r\n]*)?$', 'once')), offset = offset + strlength(suffix); end
-                    before = extractBefore(source, statement.Span.StartOffset);
-                    starts = regexp(char(before), '\n', 'end');
-                    start = 0;
-                    if ~isempty(starts), start = starts(end); end
-                    indent = string(regexp(char(extractBetween(source, start + 1, statement.Span.StartOffset - 1)), '^\s*', 'match', 'once'));
+                    offset = facts.AnchorOffset(index);
+                    indent = facts.Indent(index);
                     anchors(end + 1) = struct("Offset", offset, "Visit", returns(visit), ...
                         "OwnerMethod", layout.Owner(index), "Indent", indent, ...
                         "Owned", visit == created || ~isempty(owned)); %#ok<AGROW>

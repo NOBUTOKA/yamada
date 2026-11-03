@@ -224,7 +224,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                     macd.model.PropertyTransaction.singleChange("FontSize", 23), registry);
                 original = document.OriginalText;
                 rows = zeros(1, count);
-                effects = strings(1, count);
+                effects = zeros(1, count);
 
                 % Read effective values and verify independently mutable public results.
                 document.getEffectivePropertyStates(registry, grid.Id);

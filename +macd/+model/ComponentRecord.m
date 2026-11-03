@@ -23,8 +23,6 @@ classdef ComponentRecord < handle
         Children string = strings(1, 0)
         % Properties - Ordered macd.model.PropertyEntry handle objects.
         Properties macd.model.PropertyEntry = macd.model.PropertyEntry.empty
-        % Settings - Original source occurrences and pending generated occurrences.
-        Settings macd.model.PropertySetting = macd.model.PropertySetting.empty
     end
 
     properties
@@ -42,6 +40,11 @@ classdef ComponentRecord < handle
         Metadata struct = struct()
     end
 
+    properties (Dependent, SetAccess = private)
+        % Settings - Independent values read through this owner's slots in the canonical document store.
+        Settings macd.model.PropertySetting
+    end
+
     properties (Dependent)
         % CreationArguments - Factory arguments projected from source settings and requested values.
         CreationArguments cell
@@ -50,6 +53,11 @@ classdef ComponentRecord < handle
     properties (Access = private)
         InputClock macd.model.InputChangeClock = macd.model.InputChangeClock.empty
         CreationArgumentData cell = {}
+        SettingStore macd.model.SourceSettingStore = macd.model.SourceSettingStore.empty
+        SettingSlots double = zeros(1, 0)
+        SettingData macd.model.PropertySetting = macd.model.PropertySetting.empty
+        SettingView macd.model.PropertySetting = macd.model.PropertySetting.empty
+        SettingViewRevision uint64 = intmax("uint64")
     end
 
     methods (Access = ?macd.model.DocumentModel)
@@ -68,6 +76,89 @@ classdef ComponentRecord < handle
             end
             obj.InputClock = clock;
             for entry = reshape(obj.Properties, 1, []), entry.bindInputClock(clock); end
+        end
+    end
+
+    methods (Access = ?macd.model.DocumentModel)
+        function bindSettingStore(obj, store)
+            % bindSettingStore Move detached value records into one acyclic document-owned canonical table.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                store (1, 1) macd.model.SourceSettingStore
+            end
+            if ~isempty(obj.SettingStore), return, end
+            before = obj.SettingData;
+            obj.SettingSlots = store.replace(obj.Id, zeros(1, 0), before);
+            obj.rebindSettingReferences(before, store.get(obj.SettingSlots));
+            obj.SettingStore = store;
+            obj.SettingData = macd.model.PropertySetting.empty;
+            obj.SettingViewRevision = intmax("uint64");
+        end
+
+        function rebindSettingReferences(obj, before, after)
+            % rebindSettingReferences Retarget property projections when detached records receive canonical IDs.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                before macd.model.PropertySetting
+                after macd.model.PropertySetting
+            end
+            for entry = obj.Properties
+                for field = ["SourceSettingId", "PendingSettingId"]
+                    if ~isfield(entry.Metadata, field), continue, end
+                    index = find(string({before.Id}) == string(entry.Metadata.(field)), 1);
+                    if ~isempty(index), entry.Metadata.(field) = after(index).Id; end
+                end
+            end
+        end
+
+        function detachSettingStore(obj, store)
+            % detachSettingStore Preserve removed components as independent values for structural history.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                store (1, 1) macd.model.SourceSettingStore
+            end
+            if isempty(obj.SettingStore) || obj.SettingStore ~= store, return, end
+            obj.SettingData = store.get(obj.SettingSlots);
+            store.replace(obj.Id, obj.SettingSlots, macd.model.PropertySetting.empty);
+            obj.SettingSlots = zeros(1, 0);
+            obj.SettingStore = macd.model.SourceSettingStore.empty;
+            obj.SettingView = macd.model.PropertySetting.empty;
+            obj.SettingViewRevision = intmax("uint64");
+        end
+
+        function result = usesSettingStore(obj, store)
+            % usesSettingStore Reject shared component ownership instead of stealing another document's storage.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                store (1, 1) macd.model.SourceSettingStore
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = ~isempty(obj.SettingStore) && obj.SettingStore == store;
+        end
+
+        function values = projectedSettings(obj, projection)
+            % projectedSettings Select this owner's prepared value records using stable slot indexes.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                projection (1, 1) struct
+            end
+            arguments (Output)
+                values (1, 1) struct
+            end
+            values = struct("Before", projection.Before(obj.SettingSlots), "After", projection.After(obj.SettingSlots));
+        end
+    end
+
+    methods (Access = {?macd.model.SourceLocationUpdate, ?macd.model.SourceLiteralTransaction})
+        function applyProjectedSettings(obj, settings)
+            % applyProjectedSettings Adopt transaction-validated value records without reconstructing unchanged payloads.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+                settings macd.model.PropertySetting
+            end
+            obj.Settings = settings;
         end
     end
 
@@ -155,13 +246,38 @@ classdef ComponentRecord < handle
             obj.noteInputCollection(obj.Properties);
         end
 
+        function value = get.Settings(obj)
+            % get.Settings Read a value view without serializing or exposing shared mutable Setting instances.
+            arguments (Input)
+                obj (1, 1) macd.model.ComponentRecord
+            end
+            arguments (Output)
+                value macd.model.PropertySetting
+            end
+            if isempty(obj.SettingStore)
+                value = obj.SettingData;
+            else
+                revision = obj.SettingStore.Revision;
+                if obj.SettingViewRevision ~= revision
+                    obj.SettingView = obj.SettingStore.Records(obj.SettingSlots);
+                    obj.SettingViewRevision = revision;
+                end
+                value = obj.SettingView;
+            end
+        end
+
         function set.Settings(obj, value)
             % set.Settings Track assignments that affect semantic evaluation inputs.
             arguments (Input)
                 obj (1, 1) macd.model.ComponentRecord
                 value
             end
-            obj.Settings = value;
+            if isempty(obj.SettingStore)
+                obj.SettingData = value;
+            else
+                obj.SettingSlots = obj.SettingStore.replace(obj.Id, obj.SettingSlots, value);
+                obj.rebindSettingReferences(value, obj.SettingStore.get(obj.SettingSlots));
+            end
             obj.noteInput(value);
         end
 
@@ -304,7 +420,12 @@ classdef ComponentRecord < handle
             end
 
             % Original occurrences and editable requested values have distinct owners.
+            if any([obj.Settings.Id] == setting.Id)
+                id = macd.model.SettingIdAllocator.temporary();
+                setting = setting.withIdentity(id, setting.SourceSnapshotId);
+            end
             obj.Settings(end + 1) = setting;
+            setting = obj.Settings(end);
             entry = obj.getProperty(setting.Path);
             if isempty(entry)
                 entry = macd.model.PropertyEntry(setting.Path, [], obj.Origin);
@@ -330,6 +451,7 @@ classdef ComponentRecord < handle
             end
             obj.CreationArgumentData = factoryArguments;
             obj.Settings = settings;
+            settings = obj.Settings;
             for setting = settings
                 entry = obj.getProperty(setting.Path);
                 if isempty(entry)
@@ -353,7 +475,8 @@ classdef ComponentRecord < handle
                 settings macd.model.PropertySetting
             end
 
-            settings = obj.Settings(string({obj.Settings.Path}) == path);
+            values = obj.Settings;
+            settings = values(string({values.Path}) == path);
         end
 
         function restoreSettings(obj, records)
@@ -441,6 +564,7 @@ classdef ComponentRecord < handle
                 setting = macd.model.PropertySetting(path, value, struct( ...
                     "SourceSnapshotId", "pending:" + obj.Id, "Sequence", sequence));
                 obj.Settings(end + 1) = setting;
+                setting = obj.Settings(end);
                 entry.Metadata.PendingSettingId = setting.Id;
                 obj.Properties(end + 1) = entry;
             else

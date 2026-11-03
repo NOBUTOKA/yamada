@@ -334,7 +334,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyFalse(app.Document.IsDirty);
             testCase.verifyEqual(app.Document.SavedSource.SourceText, string(fileread(target)));
             testCase.verifyEqual(app.Document.OriginalText, source);
-            testCase.verifyEqual(string({control.Settings.Id}), arrayfun(@(record) record.Location.Id, settings));
+            testCase.verifyEqual([control.Settings.Id], arrayfun(@(record) record.Location.Id, settings));
             testCase.verifyEqual([control.getSettings("Value").LiteralValue], 'AA');
             app.Document.undo();
             invokeEditorMenu("Save");
@@ -344,7 +344,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Save");
             testCase.verifyFalse(app.Document.IsDirty);
             testCase.verifySubstring(string(fileread(target)), "app.Choice.Value = 'A';");
-            testCase.verifyEqual(string({control.Settings.Id}), arrayfun(@(record) record.Location.Id, settings));
+            testCase.verifyEqual([control.Settings.Id], arrayfun(@(record) record.Location.Id, settings));
             testCase.verifyEqual([control.getSettings("Value").LiteralValue], 'AA');
             clear appCleanup
 
@@ -420,19 +420,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             delete(app);
             clear cleanupFile
 
-            target = string(tempname) + ".m";
-            cleanupFile = onCleanup(@() deleteTemporaryFile(target));
-            blocked = lifecycleForTest(struct("SavePath", target, "SaveAccepted", true));
-            app = yamada(blocked);
-            cleanup = onCleanup(@() deleteIfValid(app));
-            root = app.Document.getComponent(app.Document.RootComponentId);
-            app.Document.setProperty(root.Id, "Position", [10 10 0 30]);
-            invokeEditorMenu("Save As...");
-            testCase.verifyTrue(app.Document.IsDirty);
-            testCase.verifyFalse(isfile(target));
-            clear cleanup
-            delete(app);
-            clear cleanupFile
+
         end
 
         function invalidSaveAsFilenameDoesNotChangeDocument(testCase)

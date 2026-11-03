@@ -151,7 +151,7 @@ classdef RoundTripGenerator
                     end
                     if isfield(entry.Metadata, "SourceSettingId")
                         settings = component.getSettings(entry.Path);
-                        originalSetting = settings(string({settings.Id}) == entry.Metadata.SourceSettingId);
+                        originalSetting = settings(string({settings.Id}) == string(entry.Metadata.SourceSettingId));
                         if isempty(originalSetting)
                             diagnostics(end + 1) = obj.error("ambiguous-property-setting", component, ...
                                 "Property value ownership is unknown."); %#ok<AGROW>
@@ -191,7 +191,7 @@ classdef RoundTripGenerator
             diagnostics = [diagnostics(:)' callbackDiagnostics(:)'];
             edits = macd.source.CallbackSourceEdits.combineInsertions([edits callbackEdits]);
             edits = macd.source.SourceFormatting.cleanDeletions(source, edits);
-            edits = macd.source.SourceFormatting.separateComponents(source, edits);
+            edits = macd.source.SourceFormatting.separateComponents(source, edits, document.sourceAnalysis());
             if macd.validation.ModelValidator.hasErrors(diagnostics) || ...
                     ~obj.nonOverlapping(edits)
                 if ~obj.nonOverlapping(edits)

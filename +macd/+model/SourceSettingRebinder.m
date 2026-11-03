@@ -29,6 +29,7 @@ classdef SourceSettingRebinder
                 assert(valid, "macd:SourceSettingRebinder:NeedsModelParse", "Factory ownership changed.");
                 offsets(end + 1) = current.StartOffset; %#ok<AGROW>
             end
+            projectedTrace = analysis.inheritInitialization(document.sourceAnalysis(), batch, offsets, component.Name);
             trace = analysis.initialization(offsets);
             [creation, valid] = batch.mapSpan(component.SourceSpans.Creation);
             assert(valid);
@@ -37,6 +38,7 @@ classdef SourceSettingRebinder
             visits = find(trace.Order == index);
             assert(isscalar(visits), "macd:SourceSettingRebinder:NeedsModelParse", "Factory execution is not unique.");
             sequences = macd.model.SourceSettingRebinder.executionSequences(document, state, batch, registry);
+            sequences.ProjectedInitialization = projectedTrace;
             creationSequence = sequences.Creation(visits);
             definition = registry.get(component.Factory, component.CreationArguments);
             [~, factoryArguments, factory, ~, supported] = macd.source.PropertySettingSyntax.factory( ...
@@ -51,7 +53,9 @@ classdef SourceSettingRebinder
                 settings(end + 1) = macd.model.SourceSettingRebinder.identity(setting, component.Settings, batch); %#ok<AGROW>
             end
             pattern = "^app\." + regexptranslate("escape", component.Name) + "\.[A-Za-z]\w*(?:\.\w+)*\s*=";
-            for visit = 1:numel(trace.Order)
+            texts = string({analysis.Statements(trace.Order).Text});
+            candidates = find(startsWith(texts, "app." + component.Name + "."));
+            for visit = candidates
                 index = trace.Order(visit);
                 statement = analysis.Statements(index);
                 if isempty(regexp(statement.Text, pattern, "once")), continue, end
@@ -59,6 +63,7 @@ classdef SourceSettingRebinder
                 setting = macd.model.SourceSettingRebinder.scoped(setting, analysis.Layout, index);
                 settings(end + 1) = macd.model.SourceSettingRebinder.identity(setting, component.Settings, batch); %#ok<AGROW>
             end
+            settings = document.canonicalizeSettings(settings);
             % New constructor arguments belong to the surviving factory occurrence group.
             constructor = settings(string({settings.Method}) == "nameValue");
             previous = component.Settings(string({component.Settings.Method}) == "nameValue");
@@ -83,6 +88,8 @@ classdef SourceSettingRebinder
                 result (1, 1) struct
             end
             analysis = state.Analysis;
+            result = analysis.executionIndex();
+            if ~isempty(fieldnames(result)), return, end
             offsets = zeros(1, numel(document.Components));
             owners = zeros(size(offsets));
             counts = zeros(size(offsets));
@@ -106,7 +113,16 @@ classdef SourceSettingRebinder
             end
             trace = analysis.initialization(offsets);
             result = struct("Trace", trace, "Creation", zeros(size(trace.Order)), ...
-                "Assignment", zeros(size(trace.Order)), "Owners", owners);
+                "Assignment", zeros(size(trace.Order)), "Owners", owners, "Counts", zeros(size(trace.Order)));
+            % Index unique execution visits once for every owner's position projection.
+            [uniqueStatements, ~, groups] = unique(trace.Order);
+            occurrences = accumarray(groups(:), 1);
+            uniqueStatements = uniqueStatements(occurrences == 1);
+            [~, visits] = ismember(uniqueStatements, trace.Order);
+            spans = [analysis.Statements(uniqueStatements).Span];
+            result.RangeStarts = [spans.StartOffset];
+            result.RangeEnds = [spans.EndOffset];
+            result.Visits = visits;
             sequence = 0;
             created = strings(1, 0);
             names = string({document.Components.Name});
@@ -117,6 +133,7 @@ classdef SourceSettingRebinder
                     sequence = sequence + 1;
                     result.Creation(visit) = sequence;
                     sequence = sequence + counts(owner);
+                    result.Counts(visit) = 1 + counts(owner);
                     created(end + 1) = names(owner); %#ok<AGROW>
                     continue
                 end
@@ -125,7 +142,9 @@ classdef SourceSettingRebinder
                 if isempty(assignment) || ~any(created == string(assignment{1})), continue, end
                 sequence = sequence + 1;
                 result.Assignment(visit) = sequence;
+                result.Counts(visit) = 1;
             end
+            analysis.rememberExecution(result);
         end
     end
 

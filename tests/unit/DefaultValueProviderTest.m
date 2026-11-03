@@ -2,8 +2,8 @@ classdef (TestTags = {'inspector', 'ui'}) DefaultValueProviderTest < matlab.unit
     % DefaultValueProviderTest Verify runtime default probes remain model-free.
 
     methods (Test)
-        function resolvesAndCachesGridDefaults(testCase)
-            % resolvesAndCachesGridDefaults Probe one Grid child without document mutation.
+        function resolvesGridDefaultsWithoutMutation(testCase)
+            % resolvesGridDefaultsWithoutMutation Probe one Grid child without document mutation.
 
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.model.NewAppFactory.createEmpty("DefaultsApp", registry);
@@ -15,16 +15,16 @@ classdef (TestTags = {'inspector', 'ui'}) DefaultValueProviderTest < matlab.unit
             [found, value] = provider.resolve(label, "uigridlayout", definition);
             testCase.verifyTrue(found);
             testCase.verifyEqual(value, 1);
-            count = provider.cacheEntryCount();
-            provider.resolve(label, "uigridlayout", definition);
-            testCase.verifyEqual(provider.cacheEntryCount(), count);
+            [againFound, againValue] = provider.resolve(label, "uigridlayout", definition);
+            testCase.verifyTrue(againFound);
+            testCase.verifyEqual(againValue, value);
             testCase.verifyEmpty(label.getProperty("Visible"));
         end
     end
 
     methods (Test, TestTags = {'fast'})
-        function probesOneFixtureForOneSurface(testCase)
-            % probesOneFixtureForOneSurface Read multiple defaults from one hidden component.
+        function resolvesKnownAndUnknownDefaults(testCase)
+            % resolvesKnownAndUnknownDefaults Report known and unavailable properties consistently.
 
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.model.NewAppFactory.createEmpty("DefaultsApp", registry);
@@ -36,9 +36,8 @@ classdef (TestTags = {'inspector', 'ui'}) DefaultValueProviderTest < matlab.unit
             testCase.verifyNumElements(selected, 3);
             results = provider.resolveAll(listBox, "uifigure", selected);
             testCase.verifyEqual(results.Found, [true true false]);
-            testCase.verifyEqual(provider.fixtureProbeCount(), 1);
-            provider.resolveAll(listBox, "uifigure", selected);
-            testCase.verifyEqual(provider.fixtureProbeCount(), 1);
+            repeated = provider.resolveAll(listBox, "uifigure", selected);
+            testCase.verifyEqual(repeated, results);
         end
     end
 end

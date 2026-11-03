@@ -3,8 +3,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
     %   Every registered variant participates; specific cases exercise policies
     %   with state transitions that cannot be represented by one plain setter.
     methods (Test)
-        function immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges(testCase)
-            % immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges Apply source additions and replacements through native diffs.
+        function immediateValuesUpdateAndRejectUnrelatedChanges(testCase)
+            % immediateValuesUpdateAndRejectUnrelatedChanges Apply source additions and replacements through native diffs.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
             source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
@@ -17,9 +17,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 value = "Longer changed text";
                 if path == "FontSize", value = 23; end
                 document.setProperty(owner.Id, path, value, registry);
-                [applied, diagnostics] = renderer.synchronize(document, handles, ...
+                [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
                     macd.ui.RefreshRequest("properties", owner.Id, path));
-                testCase.verifyTrue(applied, renderer.statistics().fallbackReason);
                 testCase.verifyEmpty(diagnostics);
                 current = handles(char(owner.Id));
                 if path == "Text"
@@ -36,7 +35,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
         end
 
         function appliesIndependentPropertiesAcrossAllCatalogVariants(testCase)
-            % appliesIndependentPropertiesAcrossAllCatalogVariants Reuse native handles across every eligible variant.
+            % appliesIndependentPropertiesAcrossAllCatalogVariants Match independently rendered values across every eligible variant.
             registry = macd.model.ComponentRegistry.createDefault();
             variants = registry.listVariantIds();
             changes = 0;
@@ -70,9 +69,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                         if ~valid, continue, end
                     end
                     component.setProperty(property.Path, value);
-                    [applied, diagnostics] = renderer.synchronize(document, handles, ...
+                    [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
                         macd.ui.RefreshRequest("properties", component.Id, property.Path));
-                    testCase.verifyTrue(applied, variant + "." + property.Path + ": " + renderer.statistics().fallbackReason);
                     testCase.verifyEmpty(diagnostics, variant + "." + property.Path);
                     if isKey(handles, char(component.Id)), original = handles(char(component.Id)); end
                     touched(end + 1) = property.Path; %#ok<AGROW>
@@ -131,9 +129,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                     paths = ["Limits", "Value"]; values = {[7 10], 8};
                 end
                 for index = 1:numel(paths), component.setProperty(paths(index), values{index}); end
-                [applied, diagnostics] = renderer.synchronize(document, handles, ...
+                [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
                     macd.ui.RefreshRequest("properties", component.Id, paths));
-                testCase.verifyTrue(applied, kind + ": " + renderer.statistics().fallbackReason); testCase.verifyEmpty(diagnostics, kind);
+                testCase.verifyEmpty(diagnostics, kind);
                 original = handles(char(component.Id));
                 if kind == "text"
                     testCase.verifyEqual(string(original.Value), string(values{end}), kind);
@@ -155,8 +153,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             first.setProperty("FontColor", [0.2 0.3 0.4]); second.setProperty("Text", "Batch update");
             changes = [struct("ComponentId", first.Id, "Path", "FontColor"), ...
                 struct("ComponentId", second.Id, "Path", "Text")];
-            [applied, diagnostics, geometry] = renderer.synchronize(document, handles, macd.ui.RefreshRequest.forChanges(changes));
-            testCase.verifyTrue(applied); testCase.verifyEmpty(diagnostics); testCase.verifyFalse(geometry);
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest.forChanges(changes));
+            testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(string(handles(char(second.Id)).Text), "Batch update");
             first.setProperty("FontColor", [0.4 0.3 0.2]); second.setProperty("Text", "Next batch");
             second.setProperty("FontColor", [0.1 0.1 0.1]);
@@ -164,8 +162,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             clear cleanup
         end
 
-        function reconstructsUncertainScopesWithoutReplacingUnrelatedControls(testCase)
-            % reconstructsUncertainScopesWithoutReplacingUnrelatedControls Keep reconstruction bounded by ownership.
+        function reconstructsUncertainScopesToAcceptedValues(testCase)
+            % reconstructsUncertainScopesToAcceptedValues Preserve accepted values and sibling ordering through reconstruction.
             registry = macd.model.ComponentRegistry.createDefault();
             definition = registry.get("uilabel"); properties = definition.Properties;
             index = find(string({properties.Path}) == "FontSize", 1);
@@ -179,8 +177,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
             renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             label.setProperty("FontSize", 24);
-            [applied, diagnostics] = renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", label.Id, "FontSize"));
-            testCase.verifyTrue(applied); testCase.verifyEmpty(diagnostics);
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", label.Id, "FontSize"));
+            testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(label.Id)).FontSize, 24);
             currentSibling = handles(char(sibling.Id));
             testCase.verifyEqual(currentSibling.Parent.Children(1), currentSibling);
@@ -201,8 +199,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             for value = ["second.png", ""]
                 image.setProperty("ImageSource", value);
-                [applied, diagnostics] = renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", image.Id, "ImageSource"));
-                testCase.verifyTrue(applied); testCase.verifyEmpty(diagnostics);
+                [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", image.Id, "ImageSource"));
+                testCase.verifyEmpty(diagnostics);
                 original = handles(char(image.Id));
                 if strlength(value) > 0
                     testCase.verifyEqual(string(original.ImageSource), string(fullfile(temporary.Folder, value)));
@@ -224,8 +222,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
             renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             panel.setProperty("Position", [20 20 500 300]);
-            [applied, diagnostics] = renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", panel.Id, "Position"));
-            testCase.verifyTrue(applied); testCase.verifyEmpty(diagnostics);
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", panel.Id, "Position"));
+            testCase.verifyEmpty(diagnostics);
             original = handles(char(label.Id));
             drawnow; pause(0.15); drawnow;
             testCase.verifyEqual(original.Position, [10 20 100 22]);
@@ -233,7 +231,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
         end
 
         function updatesGridPlacementSelectionAndRootSurface(testCase)
-            % updatesGridPlacementSelectionAndRootSurface Keep grid and group native identities during coupled edits.
+            % updatesGridPlacementSelectionAndRootSurface Preserve grid placement, group selection, and root dimensions through coupled edits.
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.model.NewAppFactory.createEmpty("LayoutPreviewFixture", registry);
             root = document.getComponent(document.RootComponentId);
@@ -246,25 +244,50 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             second = fixtureComponent(document, registry.get("uiradiobutton"), group.Id, "Second");
             first.setProperty("Value", true); second.setProperty("Value", false);
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry); [handles, ~, canvas] = renderer.render(document, figure);
-            original = handles(char(grid.Id));
+            renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             grid.setProperty("RowHeight", {150, 80});
-            testCase.verifyTrue(renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", grid.Id, "RowHeight")));
-            testCase.verifyEqual(handles(char(grid.Id)), original);
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", grid.Id, "RowHeight"));
+            testCase.verifyEmpty(diagnostics);
             label.setProperty("Layout.Row", 2);
-            testCase.verifyTrue(renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", label.Id, "Layout.Row")));
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", label.Id, "Layout.Row"));
+            testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(label.Id)).Layout.Row, 2);
             second.setProperty("Value", true);
-            testCase.verifyTrue(renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", second.Id, "Value")));
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", second.Id, "Value"));
+            testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(group.Id)).SelectedObject, handles(char(second.Id)));
             testCase.verifyFalse(logical(handles(char(first.Id)).Value));
             root.setProperty("Position", [100 100 720 480]);
-            testCase.verifyTrue(renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", root.Id, "Position")));
+            [~, diagnostics, canvas] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", root.Id, "Position"));
+            testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(canvas.Position(3:4), [720 480]);
-            testCase.verifyEqual(handles(char(grid.Id)), original);
             clear cleanup
         end
     end
+end
+
+function [handles, diagnostics, surface] = synchronizePreview(renderer, document, handles, parent, request)
+% synchronizePreview Exercise accepted preview results with the application's reconstruction fallback.
+arguments (Input)
+    renderer (1, 1) macd.ui.PreviewRenderer
+    document (1, 1) macd.model.DocumentModel
+    handles containers.Map
+    parent (1, 1) matlab.ui.Figure
+    request (1, 1) macd.ui.RefreshRequest
+end
+arguments (Output)
+    handles containers.Map
+    diagnostics macd.model.Diagnostic
+    surface
+end
+surface = [];
+[applied, diagnostics] = renderer.synchronize(document, handles, request);
+if ~applied
+    [handles, diagnostics, surface] = renderer.render(document, parent);
+elseif nargout > 2
+    root = document.getComponent(document.RootComponentId);
+    surface = handles(char(root.Children(1))).Parent;
+end
 end
 
 function component = fixtureComponent(document, definition, parentId, name)

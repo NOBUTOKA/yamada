@@ -144,7 +144,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
                 testCase.verifyEqual(component.SourceSpans, parsed.SourceSpans);
                 for actual = component.Settings
                     candidates = parsed.getSettings(actual.Path);
-                    ordinal = find(string({component.getSettings(actual.Path).Id}) == actual.Id, 1);
+                    ordinal = find([component.getSettings(actual.Path).Id] == actual.Id, 1);
                     other = candidates(ordinal);
                     testCase.verifyEqual(actual.SourceSpan, other.SourceSpan);
                     testCase.verifyEqual(actual.ValueSpan, other.ValueSpan);
@@ -213,7 +213,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
                 testCase.verifyEqual(actual(index).Sequence, expected(index).Sequence);
             end
             for old = previous
-                testCase.verifyTrue(any(string({actual.Id}) == old.Id));
+                testCase.verifyTrue(any([actual.Id] == old.Id));
             end
             entry = owner.getProperty("Text");
             owner.synchronizeSourceSettings(actual, factoryArguments);

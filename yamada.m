@@ -3522,7 +3522,7 @@ classdef yamada < handle
                 if resolved.IsKnown
                     values{index} = resolved.EffectiveValue;
                     known(index) = true;
-                elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index) && ...
+                elseif isempty(entry) && strlength(resolved.EffectKey) == 0 && defaults.Found(index) && ...
                         states(index).Definition.Application.EffectStatus ~= "unsupported"
                     values{index} = defaults.Values{index};
                     known(index) = true;
@@ -3567,7 +3567,7 @@ classdef yamada < handle
                 if resolved.IsKnown
                     rawValue = resolved.EffectiveValue;
                     isKnown = true;
-                elseif isempty(entry) && strlength(resolved.EffectSettingId) == 0 && defaults.Found(index) && ...
+                elseif isempty(entry) && strlength(resolved.EffectKey) == 0 && defaults.Found(index) && ...
                         states(index).Definition.Application.EffectStatus ~= "unsupported"
                     rawValue = defaults.Values{index};
                     isKnown = true;

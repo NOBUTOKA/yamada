@@ -50,6 +50,25 @@ classdef SourceSpan
             result = obj.StartOffset > 0 && obj.EndOffset >= obj.StartOffset;
         end
     end
+    methods (Access = ?macd.source.SourcePatchBatch)
+        function obj = withMappedOffsets(obj, starts, ends, changed)
+            % withMappedOffsets Publish vector-validated positions without repeating scalar construction checks.
+            arguments (Input)
+                obj macd.model.SourceSpan
+                starts double
+                ends double
+                changed logical
+            end
+            arguments (Output)
+                obj macd.model.SourceSpan
+            end
+            for index = find(changed)
+                obj(index).StartOffset = starts(index);
+                obj(index).EndOffset = ends(index);
+            end
+        end
+    end
+
 end
 
 %{

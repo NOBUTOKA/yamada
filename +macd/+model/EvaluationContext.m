@@ -265,7 +265,7 @@ classdef EvaluationContext < handle
             effectIds = strings(size(states));
             for index = 1:numel(states)
                 effectIds(index) = macd.model.PropertyStateResolver.originalEffectId(original, component, ...
-                    states(index).EffectSettingId, document, saved);
+                    states(index).EffectKey, document, saved);
             end
         end
 
@@ -392,13 +392,14 @@ classdef EvaluationContext < handle
                 "Clock", clock, "Revision", revision, "Tracked", tracked);
         end
 
-        function inheritLiteralStates(obj, previous, componentId, batch)
+        function inheritLiteralStates(obj, previous, componentId, batch, preserveDocumentStates)
             % inheritLiteralStates Retain other owners' immutable states after a document-proven local semantic change.
             arguments (Input)
                 obj (1, 1) macd.model.EvaluationContext
                 previous (1, 1) macd.model.EvaluationContext
                 componentId (1, 1) string
                 batch (1, 1) macd.source.SourcePatchBatch
+                preserveDocumentStates (1, 1) logical = false
             end
             if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
                     obj.RegistryRevision ~= previous.RegistryRevision
@@ -411,9 +412,12 @@ classdef EvaluationContext < handle
                 if ~isequaln({before.(field)}, {after.(field)}), return, end
             end
             for name = string(keys(previous.Values))
-                if ~startsWith(name, "states:") || name == "states:" + componentId, continue, end
+                state = startsWith(name, "states:") && name ~= "states:" + componentId;
+                auxiliary = preserveDocumentStates && (startsWith(name, "grid-configuration:") || ...
+                    startsWith(name, "grid-unresolved-effect:"));
+                if ~state && ~auxiliary, continue, end
                 value = previous.Values(char(name));
-                value.Diagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(value.Diagnostics, batch);
+                if state, value.Diagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(value.Diagnostics, batch); end
                 obj.Values(char(name)) = value;
             end
         end

@@ -175,6 +175,65 @@ classdef ModelValidator
         end
     end
 
+    methods (Static, Access = ?macd.model.DocumentModel)
+        function result = prepareIndependentProperties(component, definitions, states, previous, paths, diagnostics, batch)
+            % prepareIndependentProperties Complete unaffected effective states and validate only the proven changed closure.
+            arguments (Input)
+                component (1, 1) macd.model.ComponentRecord
+                definitions macd.model.PropertyDefinition
+                states macd.model.PropertyState
+                previous macd.model.PropertyState
+                paths (1, :) string
+                diagnostics macd.model.Diagnostic
+                batch (1, 1) macd.source.SourcePatchBatch
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            result = struct("Ready", false);
+            if numel(states) ~= numel(previous) || ...
+                    ~isequal(string({states.Path}), string({previous.Path})) || ...
+                    any(string({diagnostics.ComponentId}) == component.Id)
+                return
+            end
+            affected = paths;
+            for path = paths
+                definition = definitions([definitions.Path] == path);
+                affected = union(affected, definition.Application.AffectedPaths, "stable");
+            end
+            dependent = [macd.model.GridLayoutStatePolicy.inputPropertyPaths(), ...
+                macd.model.AncestorGeometryPolicy.inputPropertyPaths()];
+            if any(ismember(affected, dependent)), return, end
+            for index = 1:numel(states)
+                if any(affected == states(index).Path), continue, end
+                old = previous(index);
+                states(index) = states(index).withEffective(old.EffectiveValue, old.IsKnown, ...
+                    old.EffectKey, old.Reason, old.ReasonCode);
+                if ~old.IsEditable, states(index) = states(index).withReadOnly(old.ReadOnlyReason); end
+            end
+            % The baseline validated every other property and document structure already.
+            transaction = macd.model.PropertyStateResolver.transaction(states);
+            for entry = component.Properties
+                if ~any(affected == entry.Path), continue, end
+                index = find([definitions.Path] == entry.Path, 1);
+                if isempty(index) || entry.ValueKind ~= "literal", return, end
+                state = states(index);
+                if ~state.IsKnown || ~state.IsEditable, return, end
+                value = state.EffectiveValue;
+                if any(paths == entry.Path), value = entry.LiteralValue; end
+                transaction.stage(entry.Path, value);
+                diagnostic = macd.validation.ModelValidator.validateGeometry(entry, component.Id, component.Factory, definitions(index));
+                assert(isempty(diagnostic), "macd:SourceLiteralTransaction:InvalidValue", ...
+                    "The prepared geometry must satisfy the existing model contract.");
+            end
+            message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
+            assert(strlength(message) == 0, "macd:SourceLiteralTransaction:InvalidValue", "%s", message);
+            diagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(diagnostics, batch);
+            result = struct("Ready", true, "States", states, "Definitions", definitions, ...
+                "StateDiagnostics", macd.model.Diagnostic.empty, "Diagnostics", diagnostics);
+        end
+    end
+
     methods (Static, Access = private)
         function names = propertyScope(document, requested)
             % propertyScope Include target descendants and ancestors without expanding unrelated sibling branches.

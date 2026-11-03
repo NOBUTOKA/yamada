@@ -27,7 +27,7 @@ classdef PositionAliasPolicy
             if ~any(string({aliases.Path}) == "Position"), return, end
             states = macd.model.PropertyStateResolver.resolve(component, definitions, document, registry);
             position = states(string({states.Path}) == "Position");
-            if strlength(position.EffectSettingId) == 0, return, end
+            if strlength(position.EffectKey) == 0, return, end
             if position.IsKnown
                 entries(end + 1) = macd.model.PropertyEntry("Position", position.EffectiveValue, "generated");
             else

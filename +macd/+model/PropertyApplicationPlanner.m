@@ -101,7 +101,7 @@ classdef PropertyApplicationPlanner
                 entry = macd.model.PropertyEntry(setting.Path, setting.LiteralValue, "parsed");
                 entry.applySourceSetting(setting);
                 if setting.IsEditable && isfield(current.Metadata, "SourceSettingId") && ...
-                        string(current.Metadata.SourceSettingId) == setting.Id && current.ValueKind == "literal"
+                        string(current.Metadata.SourceSettingId) == string(setting.Id) && current.ValueKind == "literal"
                     entry.setLiteral(current.LiteralValue);
                 end
                 entries(end + 1) = entry; %#ok<AGROW>

@@ -44,7 +44,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             for index = 1:size(cases, 1)
                 entry = macd.model.PropertyEntry("Value", cases{index, 1}, "parsed");
                 setting = macd.model.PropertySetting("Value", cases{index, 2}, ...
-                    struct("Id", "setting", "Method", "assignment", "IsEditable", true));
+                    struct("Id", 1, "Method", "assignment", "IsEditable", true));
                 entry.applySourceSetting(setting);
                 testCase.verifyEqual(entry.LiteralValue, cases{index, 2});
                 if index == 1, testCase.verifyClass(entry.LiteralValue, "char"); end

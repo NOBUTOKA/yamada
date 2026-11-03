@@ -188,7 +188,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             [document, ~, component] = testCase.fixture();
             document.setProperty(component.Id, "Text", "Changed");
             entry = component.getProperty("Text");
-            entry.Metadata.SourceSettingId = "different occurrence";
+            entry.Metadata.SourceSettingId = entry.Metadata.SourceSettingId + 1000;
             testCase.verifyError(@() document.undo(), "macd:DocumentModel:StalePropertySetting");
             testCase.verifyEqual(document.HistoryIndex, 1);
             testCase.verifyEqual(entry.LiteralValue, "Changed");

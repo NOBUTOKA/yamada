@@ -4,18 +4,69 @@ classdef SourceFormatting
     %   It preserves comments, inline statements, and unrelated blank lines.
 
     methods (Static)
-        function edits = separateComponents(source, edits)
+        function edits = separateLiteralComponents(source, edits, analysis, name)
+            % separateLiteralComponents Format known emitted assignments from indexed neighbors without lexical scanning.
+            arguments (Input)
+                source (1, 1) string
+                edits struct
+                analysis (1, 1) macd.source.SourceAnalysis
+                name (1, 1) string
+            end
+            arguments (Output)
+                edits struct
+            end
+            assert(analysis.matches(source));
+            edits = macd.source.CallbackSourceEdits.combineInsertions(edits);
+            for index = 1:numel(edits), edits(index).Text = string(edits(index).Text); end
+            ending = string(newline);
+            if contains(source, sprintf("\r\n")), ending = string(sprintf("\r\n")); end
+            for index = find([edits.Start] > [edits.End])
+                edit = edits(index);
+                [before, after] = analysis.statementNeighbors(edit.End);
+                if ~isempty(after) && analysis.Statements(after).Span.StartOffset < edit.Start, continue, end
+                starts = strfind(edit.Text, "app." + name + ".");
+                if isempty(starts), continue, end
+                first = starts(1); last = find(char(edit.Text) == ';', 1, 'last');
+                assert(~isempty(last));
+                addBefore = false; addAfter = false;
+                if ~isempty(before) && strlength(analysis.Facts.ComponentName(before)) > 0 && analysis.Facts.ComponentName(before) ~= name
+                    gap = extractBetween(source, analysis.Statements(before).Span.EndOffset + 1, edit.End) + extractBefore(edit.Text, first);
+                    addBefore = ~isempty(regexp(gap, '^[ \t]*(?:%[^\r\n]*)?\r?\n[ \t]*$', 'once'));
+                end
+                if ~isempty(after) && strlength(analysis.Facts.ComponentName(after)) > 0 && analysis.Facts.ComponentName(after) ~= name
+                    gap = extractAfter(edit.Text, last) + extractBetween(source, edit.Start, analysis.Statements(after).Span.StartOffset - 1);
+                    addAfter = ~isempty(regexp(gap, '^[ \t]*(?:%[^\r\n]*)?\r?\n[ \t]*$', 'once'));
+                end
+                if addBefore, edit.Text = ending + edit.Text; end
+                if addAfter, edit.Text = edit.Text + ending; end
+                edits(index).Text = edit.Text;
+            end
+        end
+
+        function edits = separateComponents(source, edits, analysis)
             % separateComponents Add one blank line at component boundaries touched by insertions.
             arguments (Input)
                 source (1, 1) string
                 edits struct
+                analysis macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
             end
             arguments (Output)
                 edits struct
             end
             insertions = find([edits.Start] > [edits.End] & string({edits.Text}) ~= "");
             if isempty(insertions), return, end
-            statements = macd.source.MatlabLexicalScanner.splitStatements(source);
+            if isempty(analysis)
+                statements = macd.source.MatlabLexicalScanner.splitStatements(source);
+                starts = zeros(1, 0); ends = starts;
+                if ~isempty(statements)
+                    spans = [statements.Span];
+                    starts = [spans.StartOffset]; ends = [spans.EndOffset];
+                end
+            else
+                assert(isscalar(analysis) && analysis.matches(source), ...
+                    "macd:SourceFormatting:StaleAnalysis", "Formatting analysis must own the exact source.");
+                statements = analysis.Statements;
+            end
             ending = string(newline);
             if contains(source, sprintf("\r\n")) || ...
                     strlength(source) == 0 && any(contains(string({edits.Text}), sprintf("\r\n")))
@@ -25,8 +76,12 @@ classdef SourceFormatting
             % Include the neighboring statements so new blocks also separate from existing code.
             for index = insertions
                 edit = edits(index);
-                before = find(arrayfun(@(item) item.Span.EndOffset <= edit.End, statements), 1, "last");
-                after = find(arrayfun(@(item) item.Span.StartOffset > edit.End, statements), 1);
+                if isempty(analysis)
+                    before = find(ends <= edit.End, 1, "last");
+                    after = find(starts > edit.End, 1);
+                else
+                    [before, after] = analysis.statementNeighbors(edit.End);
+                end
                 prefix = "";
                 suffix = "";
                 if ~isempty(before)

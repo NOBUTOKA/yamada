@@ -252,7 +252,7 @@ classdef ButtonSelectionPolicy
                     value = setting.LiteralValue;
                     entry = member.getProperty(setting.Path);
                     if ~isempty(entry) && entry.ValueKind == "literal" && isfield(entry.Metadata, "SourceSettingId") && ...
-                            string(entry.Metadata.SourceSettingId) == setting.Id, value = entry.LiteralValue; end
+                            string(entry.Metadata.SourceSettingId) == string(setting.Id), value = entry.LiteralValue; end
                     known = setting.IsCertain && setting.ValueKind == "literal";
                     if setting.Path == "Value", known = known && isValidValue(value); end
                     expression = "";

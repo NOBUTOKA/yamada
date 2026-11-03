@@ -12,7 +12,7 @@ classdef PropertyState
         % EffectStatus - Review status; unknown literals use a stored-input assumption.
         EffectStatus string = "unknown"
         % LastSettingId - Last original occurrence or pending-setting identity.
-        LastSettingId string = ""
+        LastSettingId double = 0
         % ExplicitKind - absent, pending, literal, or expression source form.
         ExplicitKind string = "absent"
         % ExplicitValue - Original literal retained by the last setting record.
@@ -27,8 +27,10 @@ classdef PropertyState
         EffectiveValue = []
         % IsKnown - Whether the finite model resolves a value, including unaudited stored inputs.
         IsKnown logical = false
-        % EffectSettingId - Occurrence or pending intent that last determined the state.
-        EffectSettingId string = ""
+        % EffectKey - Opaque setting, creation, or pending-intent reference within its document context.
+        EffectKey string = ""
+        % EffectSettingId - Numeric occurrence address, or zero when the effect is not a Setting.
+        EffectSettingId double = 0
         % IsEditable - Whether catalog and source ownership permit a replacement request.
         IsEditable logical = false
         % Reason - Explanation when the effective value cannot be resolved.
@@ -117,7 +119,10 @@ classdef PropertyState
                 obj (1, 1) macd.model.PropertyState
             end
             obj.IsKnown = known;
-            obj.EffectSettingId = settingId;
+            obj.EffectKey = settingId;
+            numeric = str2double(settingId);
+            obj.EffectSettingId = 0;
+            if isfinite(numeric) && numeric ~= 0 && fix(numeric) == numeric, obj.EffectSettingId = numeric; end
             obj.Reason = reason;
             obj.ReasonCode = reasonCode;
             obj.EffectiveValue = [];

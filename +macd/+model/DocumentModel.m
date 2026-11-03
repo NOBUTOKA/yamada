@@ -74,6 +74,7 @@ classdef DocumentModel < handle
         HasSavedHistoryCheckpoint logical = false
         ComponentLookup containers.Map
         ComponentLookupReady logical = false
+        SettingStore macd.model.SourceSettingStore = macd.model.SourceSettingStore.empty
     end
 
     methods (Access = {?macd.model.EvaluationContext, ?macd.model.SourceLiteralTransaction})
@@ -89,11 +90,160 @@ classdef DocumentModel < handle
             end
             if isempty(obj.InputClock)
                 obj.InputClock = macd.model.InputChangeClock();
-                for component = reshape(obj.Components, 1, []), component.bindInputClock(obj.InputClock); end
+                obj.SettingStore = macd.model.SourceSettingStore();
+                for component = reshape(obj.Components, 1, []), obj.SettingStore.reserveIds([component.Settings.Id]); end
+                for component = reshape(obj.Components, 1, [])
+                    component.bindSettingStore(obj.SettingStore);
+                    component.bindInputClock(obj.InputClock);
+                end
             end
             clock = obj.InputClock;
             revision = clock.Revision;
             tracked = clock.IsTracked;
+        end
+    end
+
+    methods
+        function settings = canonicalizeSettings(obj, settings)
+            % canonicalizeSettings Reserve identities in the live document's canonical address space.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                settings macd.model.PropertySetting
+            end
+            arguments (Output)
+                settings macd.model.PropertySetting
+            end
+            obj.inputStamp();
+            for index = 1:numel(settings), settings(index) = obj.SettingStore.canonicalize(settings(index)); end
+        end
+    end
+
+    methods (Access = ?macd.model.SourceLiteralTransaction)
+        function result = validateIndexedCandidate(obj, settings, factoryArguments, updates, state, diagnostics, regions, metadata, id, changes, registry)
+            % validateIndexedCandidate Validate document-dependent literal policies without reparsing their known source edits.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                settings macd.model.PropertySetting
+                factoryArguments cell
+                updates macd.model.SourceLocationUpdate
+                state (1, 1) macd.model.CurrentSourceState
+                diagnostics macd.model.Diagnostic
+                regions macd.model.UnknownSourceRegion
+                metadata (1, 1) struct
+                id (1, 1) string
+                changes (1, :) struct
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            candidate = obj.structuralCandidate();
+            for update = updates, update.applyValidated(candidate.getComponent(update.ComponentId)); end
+            owner = candidate.getComponent(id);
+            owner.synchronizeSourceSettings(settings, factoryArguments);
+            candidate.Diagnostics = diagnostics; candidate.UnknownRegions = regions; candidate.Metadata = metadata;
+            candidate.publishCurrentSource(state);
+            diagnostics = macd.validation.ModelValidator.validate(candidate, registry);
+            assert(~macd.validation.ModelValidator.hasErrors(diagnostics), ...
+                "macd:SourceLiteralTransaction:InvalidValue", "%s", strjoin(string({diagnostics.Message}), newline));
+            states = candidate.getEffectivePropertyStates(registry, id);
+            definitions = [states.Definition]; resolutions = [states.Resolution];
+            for change = changes
+                target = resolutions(string({definitions.Path}) == string(change.Path));
+                assert(isscalar(target) && target.IsKnown && macd.model.PropertyStateResolver.matchesRequested(target, change.Value), ...
+                    "macd:SourceLiteralTransaction:WiderProof", "A dependent setting needs a complete proven final value.");
+            end
+            result = struct("Ready", true, "States", resolutions, "Definitions", definitions, ...
+                "StateDiagnostics", macd.model.Diagnostic.empty, "Diagnostics", diagnostics);
+        end
+
+        function result = preparePropertyValidation(obj, component, definitions, states, paths, batch, registry)
+            % preparePropertyValidation Complete a local candidate only from an exact fully validated baseline.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                component (1, 1) macd.model.ComponentRecord
+                definitions macd.model.PropertyDefinition
+                states macd.model.PropertyState
+                paths (1, :) string
+                batch (1, 1) macd.source.SourcePatchBatch
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            result = struct("Ready", false);
+            context = obj.PropertyValidationContext;
+            if isempty(context) || ~isempty(obj.PropertyValidationNames) || ~context.matches(obj, registry) || ...
+                    macd.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics), return, end
+            [~, tracked] = context.revisionToken();
+            if ~tracked, return, end
+            [previous, found] = context.lookup("states:" + component.Id);
+            if ~found || ~isequaln(previous.Definitions, definitions), return, end
+            result = macd.validation.ModelValidator.prepareIndependentProperties(component, definitions, ...
+                states, previous.States, paths, obj.PropertyValidationDiagnostics, batch);
+        end
+
+        function projection = prepareSettingProjection(obj, batch, execution, excludedOwner)
+            % prepareSettingProjection Use the persistent canonical range index for every live source setting.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                batch (1, 1) macd.source.SourcePatchBatch
+                execution (1, 1) struct
+                excludedOwner (1, 1) string
+            end
+            arguments (Output)
+                projection (1, 1) struct
+            end
+            projection = struct();
+            if isempty(obj.SettingStore), return, end
+            for component = obj.Components
+                if ~component.usesSettingStore(obj.SettingStore), return, end
+            end
+            projection = obj.SettingStore.prepare(batch, execution, excludedOwner);
+        end
+
+        function settings = ownerSettingProjection(~, component, projection)
+            % ownerSettingProjection Slice prepared values using an owner's stable canonical slots.
+            arguments (Input)
+                ~
+                component (1, 1) macd.model.ComponentRecord
+                projection (1, 1) struct
+            end
+            arguments (Output)
+                settings (1, 1) struct
+            end
+            settings = struct();
+            if isfield(projection, "Before"), settings = component.projectedSettings(projection); end
+        end
+
+        function publishSettingProjection(obj, projection)
+            % publishSettingProjection Commit derived positions without storing them as independent history edits.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                projection (1, 1) struct
+            end
+            if ~isfield(projection, "Before"), return, end
+            obj.SettingStore.publish(projection);
+            obj.noteInput([]);
+        end
+    end
+
+    methods
+        function [settings, owners] = settingsInSourceOrder(obj)
+            % settingsInSourceOrder Return independent canonical values in maintained physical source order.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+            end
+            arguments (Output)
+                settings macd.model.PropertySetting
+                owners (1, :) string
+            end
+            obj.inputStamp();
+            for component = obj.Components
+                assert(component.usesSettingStore(obj.SettingStore), ...
+                    "macd:DocumentModel:SharedSettingOwner", "A source-order view requires exclusive component ownership.");
+            end
+            [settings, owners] = obj.SettingStore.inSourceOrder();
         end
     end
 
@@ -157,6 +307,18 @@ classdef DocumentModel < handle
             if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
         end
 
+        function detachRemovedSettings(obj, components)
+            % detachRemovedSettings Keep structural-history components independent when they leave the document.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                components macd.model.ComponentRecord
+            end
+            if isempty(obj.SettingStore), return, end
+            for component = obj.Components
+                if ~any(components == component), component.detachSettingStore(obj.SettingStore); end
+            end
+        end
+
         function noteInputCollection(obj, value)
             % noteInputCollection Invalidate identity reuse and attach records before their collection write.
             arguments (Input)
@@ -165,20 +327,36 @@ classdef DocumentModel < handle
             end
             obj.ComponentLookupReady = false;
             if isempty(obj.InputClock), return, end
-            for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
+            for item = reshape(value, 1, []), obj.SettingStore.reserveIds([item.Settings.Id]); end
+            for item = reshape(value, 1, [])
+                item.bindSettingStore(obj.SettingStore);
+                item.bindInputClock(obj.InputClock);
+            end
             obj.InputClock.touch([]);
         end
     end
 
     methods (Access = ?macd.source.AppSourceParser)
-        function finishParsedSource(obj)
-            % finishParsedSource Stamp a fully assembled parser result after all semantic inputs are known.
+        function finishParsedSource(obj, registry, diagnostics, fullValidation)
+            % finishParsedSource Bind completed full-load diagnostics and resolved states to the final input revision.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
+                diagnostics macd.model.Diagnostic
+                fullValidation (1, 1) logical
             end
             [~, revision] = obj.inputStamp();
             obj.SourceInputRevision = revision;
             obj.HasPublishedInputStamp = true;
+            if fullValidation && ~macd.validation.ModelValidator.hasErrors(diagnostics)
+                if all(arrayfun(@macd.model.SourceOwnership.hasSource, obj.Components))
+                    macd.model.SourceSettingRebinder.executionSequences(obj, obj.CurrentSource, ...
+                        macd.source.SourcePatchBatch(obj.CurrentText), registry);
+                end
+                obj.PropertyValidationContext = obj.evaluationContext(registry);
+                obj.PropertyValidationNames = strings(1, 0);
+                obj.PropertyValidationDiagnostics = diagnostics;
+            end
         end
 
         function rememberSourceAnalysis(obj, analysis, registry)
@@ -356,6 +534,7 @@ classdef DocumentModel < handle
                 obj (1, 1) macd.model.DocumentModel
                 value
             end
+            obj.detachRemovedSettings(value);
             obj.Components = value;
             obj.noteInputCollection(obj.Components);
         end
@@ -642,7 +821,7 @@ classdef DocumentModel < handle
                     "Property batch paths must be nonempty and unique.");
             end
             historyChanges = repmat(struct("Path", "", "HadOldValue", false, ...
-                "OldValue", [], "NewValue", [], "TargetSettingId", ""), 1, numel(changes));
+                "OldValue", [], "NewValue", [], "TargetSettingId", 0), 1, numel(changes));
             for index = 1:numel(changes)
                 entry = component.getProperty(paths(index));
                 if ~isempty(entry) && ~entry.IsEditable
@@ -1781,7 +1960,7 @@ classdef DocumentModel < handle
                 for entry = component.Properties
                     if ~isfield(entry.Metadata, "SourceSettingId"), return, end
                     settings = component.getSettings(entry.Path);
-                    index = find(string({settings.Id}) == entry.Metadata.SourceSettingId, 1);
+                    index = find(string({settings.Id}) == string(entry.Metadata.SourceSettingId), 1);
                     if isempty(index), return, end
                     setting = settings(index);
                     if setting.IsEditable && (setting.ValueKind ~= entry.ValueKind || ...
@@ -1815,8 +1994,7 @@ classdef DocumentModel < handle
                 obj.PropertyValidationContext.matches(obj, registry) && ...
                 ~macd.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics);
             previousDiagnostics = obj.PropertyValidationDiagnostics;
-            beforeSettings = component.settingSnapshot();
-            beforeArguments = component.CreationArguments;
+            beforeSettings = component.Settings;
             before = obj.CurrentSource;
             if isfield(obj.Metadata, "SourceSnapshotText") && obj.Metadata.SourceSnapshotText ~= before.Text
                 error("macd:DocumentModel:UnsafePropertyEdit", "The input source changed without parsing.");
@@ -1842,12 +2020,20 @@ classdef DocumentModel < handle
                 updates, id, string({changes.Path}), token);
             obj.Evaluation = currentContext;
             if prepared.CanReuseStates
-                currentContext.inheritLiteralStates(previousContext, id, prepared.Batch);
+                currentContext.inheritLiteralStates(previousContext, id, prepared.Batch, prepared.CanPreserveDocumentStates);
             end
             if prepared.CanReuseEligibility
                 currentContext.inheritEligibility(previousContext);
             end
-            if carryValidation && prepared.CanReuseStates
+            validation = prepared.validationResult();
+            if validation.Ready
+                currentContext.remember("states:" + id, struct("Definitions", validation.Definitions, ...
+                    "States", validation.States, "Diagnostics", validation.StateDiagnostics));
+                obj.PropertyValidationContext = currentContext;
+                obj.PropertyValidationNames = strings(1, 0);
+                obj.PropertyValidationDiagnostics = validation.Diagnostics;
+                obj.Diagnostics = validation.Diagnostics;
+            elseif carryValidation && prepared.CanReuseStates
                 obj.PropertyValidationContext = currentContext;
                 obj.PropertyValidationNames = component.Name;
                 if all(ismember(string({changes.Path}), string({beforeSettings.Path})))
@@ -1857,8 +2043,8 @@ classdef DocumentModel < handle
                 obj.PropertyValidationDiagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(previousDiagnostics, prepared.Batch);
             end
             edit = struct("Kind", "source-property", "ComponentId", id, "Changes", changes, ...
-                "BeforeSettings", beforeSettings, "AfterSettings", component.settingSnapshot(), ...
-                "BeforeArguments", {beforeArguments}, "AfterArguments", {component.CreationArguments}, ...
+                "SettingIdentities", macd.model.SourcePropertyHistory.capture(beforeSettings, component.Settings, string({changes.Path})), ...
+                "Insertions", prepared.Placements, ...
                 "SourceForward", prepared.Batch.Edits, "SourceInverse", prepared.Batch.InverseEdits, ...
                 "SourceBeforeId", before.StateId, "SourceAfterId", obj.CurrentSource.StateId);
             obj.SourcePublication = true;
@@ -1930,8 +2116,11 @@ classdef DocumentModel < handle
                         record.Location.StatementId = previous(ordinal).StatementId;
                         record.Location.InitializationScopeId = previous(ordinal).InitializationScopeId;
                         settings(index) = macd.model.PropertySetting(record.Path, record.Value, record.Location);
+                    else
+                        settings(index) = setting.withIdentity(macd.model.SettingIdAllocator.temporary(), setting.SourceSnapshotId);
                     end
                 end
+                settings = obj.canonicalizeSettings(settings);
                 component.SourceSpans = other.SourceSpans;
                 component.Metadata = other.Metadata;
                 component.synchronizeSourceSettings(settings, other.CreationArguments);
@@ -1939,7 +2128,7 @@ classdef DocumentModel < handle
             obj.Diagnostics = parsed.Diagnostics;
             obj.UnknownRegions = parsed.UnknownRegions;
             obj.Metadata = parsed.Metadata;
-            obj.publishCurrentSource(state);
+            obj.publishCurrentSource(state.withAnalysis(parsed.sourceAnalysis()));
         end
 
         function assertHistorySource(obj, edit, forward)
@@ -1975,7 +2164,7 @@ classdef DocumentModel < handle
         end
 
         function applySourcePropertyHistory(obj, edit, forward)
-            % applySourcePropertyHistory Restore exact source and only the edited component's setting bindings.
+            % applySourcePropertyHistory Apply primary text edits and derive current settings, positions and indexes anew.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 edit (1, 1) struct
@@ -1986,36 +2175,45 @@ classdef DocumentModel < handle
             if ~tracked, token = struct(); end
             if forward
                 edits = edit.SourceForward;
-                settings = edit.AfterSettings;
-                factoryArguments = edit.AfterArguments;
+                identities = edit.SettingIdentities.Added;
                 stateId = edit.SourceAfterId;
             else
                 edits = edit.SourceInverse;
-                settings = edit.BeforeSettings;
-                factoryArguments = edit.BeforeArguments;
+                identities = edit.SettingIdentities.Removed;
                 stateId = edit.SourceBeforeId;
             end
             owner = obj.getComponent(edit.ComponentId);
-            expected = edit.AfterSettings;
-            if forward, expected = edit.BeforeSettings; end
-            for change = edit.Changes
-                entry = owner.getProperty(change.Path);
-                candidates = expected(string({expected.Path}) == change.Path);
-                if isempty(candidates), continue, end
+            for target = edit.SettingIdentities.Targets
+                expected = target.AfterId;
+                if forward, expected = target.BeforeId; end
+                if expected == 0, continue, end
+                entry = owner.getProperty(target.Path);
                 assert(~isempty(entry) && isfield(entry.Metadata, "SourceSettingId") && ...
-                    entry.Metadata.SourceSettingId == candidates(end).Location.Id, ...
+                    entry.Metadata.SourceSettingId == expected, ...
                     "macd:DocumentModel:StalePropertySetting", "History no longer owns the same value projection.");
             end
             batch = macd.source.SourcePatchBatch(obj.CurrentText, edits);
-            state = obj.CurrentSource.withBatch(batch, stateId);
-            execution = macd.model.SourceSettingRebinder.executionSequences(obj, state, batch, obj.SourceRegistry);
+            changes = struct("Path", {}, "Value", {});
+            placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {});
+            if forward, placements = edit.Insertions; end
+            for target = edit.SettingIdentities.Targets
+                if forward, id = target.AfterId; value = target.AfterValue;
+                else, id = target.BeforeId; value = target.BeforeValue; end
+                if id > 0, changes(end + 1) = struct("Path", target.Path, "Value", {value}); end %#ok<AGROW>
+            end
+            removed = edit.SettingIdentities.Added;
+            if forward, removed = edit.SettingIdentities.Removed; end
+            [state, settings, factoryArguments, execution] = macd.model.IndexedSettingEdit.prepare( ...
+                obj, obj.CurrentSource, owner, batch, changes, placements, obj.SourceRegistry, [removed.Id], stateId);
+            settings = macd.model.SourcePropertyHistory.restoreIdentities(settings, identities);
+            projection = obj.prepareSettingProjection(batch, execution, owner.Id);
             [diagnostics, regions] = macd.model.SourceLocationUpdate.annotations(obj, batch);
-            owner = obj.getComponent(edit.ComponentId);
             updates = macd.model.SourceLocationUpdate.empty;
             for component = obj.Components
                 if component.Id == owner.Id, continue, end
                 update = macd.model.SourceLocationUpdate(component, batch, ...
-                    struct("SettingId", {}, "Value", {}), execution, state.Analysis);
+                    struct("SettingId", {}, "Value", {}), execution, state.Analysis, ...
+                    obj.ownerSettingProjection(component, projection));
                 update.assertCurrent(component);
                 updates(end + 1) = update; %#ok<AGROW>
             end
@@ -2023,13 +2221,10 @@ classdef DocumentModel < handle
             assert(valid);
             [declaration, valid] = batch.mapSpan(owner.SourceSpans.Declaration);
             assert(valid);
-            for update = updates, update.apply(obj.getComponent(update.ComponentId)); end
+            obj.publishSettingProjection(projection);
+            for update = updates, update.applyValidated(obj.getComponent(update.ComponentId)); end
             owner.SourceSpans = struct("Declaration", declaration, "Creation", creation);
-            restored = macd.model.PropertySetting.empty;
-            for record = settings
-                restored(end + 1) = macd.model.PropertySetting(record.Path, record.Value, record.Location); %#ok<AGROW>
-            end
-            owner.synchronizeSourceSettings(restored, factoryArguments);
+            owner.synchronizeSourceSettings(settings, factoryArguments);
             obj.Diagnostics = diagnostics;
             obj.UnknownRegions = regions;
             visits = find(execution.Trace.Order == state.Analysis.statementIndices(creation));
@@ -2165,10 +2360,10 @@ classdef DocumentModel < handle
                 entry (1, 1) macd.model.PropertyEntry
             end
             arguments (Output)
-                id (1, 1) string
+                id (1, 1) double
             end
 
-            id = "";
+            id = 0;
             if isfield(entry.Metadata, "SourceSettingId")
                 id = entry.Metadata.SourceSettingId;
             elseif isfield(entry.Metadata, "PendingSettingId")
@@ -2186,7 +2381,7 @@ classdef DocumentModel < handle
             end
 
             if obj.SourcePublication, return, end
-            if ~isfield(change, "TargetSettingId") || strlength(change.TargetSettingId) == 0, return, end
+            if ~isfield(change, "TargetSettingId") || change.TargetSettingId == 0, return, end
             entry = component.getProperty(string(change.Path));
             if forward && ~change.HadOldValue && isempty(entry), return, end
             if isempty(entry) || obj.propertySettingId(entry) ~= change.TargetSettingId

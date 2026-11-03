@@ -56,8 +56,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
             end
         end
 
-        function unconsumedScopesCannotBecomeFullProofs(testCase, Layout)
-            % unconsumedScopesCannotBecomeFullProofs Fall back when edits are chained without validating the prior commit.
+        function preparedCommitsCanChainFullProofs(testCase, Layout)
+            % preparedCommitsCanChainFullProofs Reuse complete pre-commit proofs across distinct edits without a post-check.
             registry = macd.model.ComponentRegistry.createDefault();
             [document, names] = makeFixture(registry, string(Layout));
             document.validatePropertyCommit(registry);

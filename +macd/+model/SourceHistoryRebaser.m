@@ -39,7 +39,7 @@ classdef SourceHistoryRebaser
                     renamed(cursor), renamed(cursor + 1), mappings{cursor}, mappings{cursor + 1});
                 edit.SourceForward = transition.Edits;
                 edit.SourceInverse = transition.InverseEdits;
-                if edit.Kind == "source-property"
+                if edit.Kind == "source-property" && isfield(edit, "BeforeSettings")
                     edit.BeforeSettings = macd.model.SourceLocationUpdate.relocateSettings(edit.BeforeSettings, mappings{cursor});
                     edit.AfterSettings = macd.model.SourceLocationUpdate.relocateSettings(edit.AfterSettings, mappings{cursor + 1});
                 end

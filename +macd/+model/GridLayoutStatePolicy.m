@@ -5,6 +5,14 @@ classdef GridLayoutStatePolicy
     %   1x padding. Computed pixel geometry and fit measurements are not inferred.
 
     methods (Static)
+        function paths = inputPropertyPaths()
+            % inputPropertyPaths Declare source settings that can change this policy's document-dependent result.
+            arguments (Output)
+                paths (1, :) string
+            end
+            paths = ["RowHeight", "ColumnWidth", "Layout", "Layout.Row", "Layout.Column"];
+        end
+
         function result = requiresCombinedPlan(component, document, registry)
             % requiresCombinedPlan Identify grid states needing a complete emitted candidate.
             arguments (Input)

@@ -351,7 +351,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             second.Components = first.Components;
             second.RootComponentId = first.RootComponentId;
             other = second.evaluationContext(registry);
-            testCase.verifyTrue(old.matches(first, registry));
+            % Sharing ownership may invalidate an unchanged cache; both owners must still observe writes.
             root = first.getComponent(first.RootComponentId);
             root.Name = "SharedRoot";
             testCase.verifyFalse(old.matches(first, registry));

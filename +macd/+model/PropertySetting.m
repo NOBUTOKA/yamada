@@ -7,8 +7,8 @@ classdef PropertySetting
     %       setting = macd.model.PropertySetting("Text", "Ready");
 
     properties (SetAccess = private)
-        % Id - Stable identity of this occurrence within its source snapshot.
-        Id string = ""
+        % Id - Canonical positive array address, or a negative token before document registration.
+        Id double = 0
         % Path - Component property path written by this occurrence.
         Path string = ""
         % ValueKind - Literal or unevaluated expression storage form.
@@ -74,7 +74,7 @@ classdef PropertySetting
             obj.Path = path;
             obj.LiteralValue = value;
             for field = allowed
-                if isfield(location, field), obj.(field) = location.(field); end
+                if isfield(location, field) && field ~= "Id", obj.(field) = location.(field); end
             end
             if ~isscalar(obj.Method) || ~any(obj.Method == ["generated", "assignment", "nameValue"]) || ...
                     ~isscalar(obj.Syntax) || ~any(obj.Syntax == ["generated", "dot", "quotedPair", "nameEquals"])
@@ -94,13 +94,15 @@ classdef PropertySetting
             % An occurrence identity remains independent of future requested values.
             start = 0;
             if ~isempty(obj.SourceSpan), start = obj.SourceSpan.StartOffset; end
-            valueStart = start;
-            if ~isempty(obj.ValueSpan), valueStart = obj.ValueSpan.StartOffset; end
-            if ~isfield(location, "Id")
-                obj.Id = obj.SourceSnapshotId + ":" + string(valueStart) + ":" + path;
-            else
-                assert(isstring(obj.Id) && isscalar(obj.Id) && ~ismissing(obj.Id) && strlength(obj.Id) > 0, ...
-                    "macd:PropertySetting:InvalidLocation", "A restored occurrence needs a nonempty stable identity.");
+            if strlength(path) > 0
+                if ~isfield(location, "Id")
+                    obj.Id = macd.model.SettingIdAllocator.temporary();
+                elseif isnumeric(location.Id)
+                    obj.Id = double(location.Id);
+                    validateattributes(obj.Id, "double", {"scalar", "integer", "nonzero", "finite"});
+                else
+                    error("macd:PropertySetting:InvalidLocation", "Setting IDs must be positive integers.");
+                end
             end
             if strlength(obj.StatementId) == 0
                 obj.StatementId = obj.SourceSnapshotId + ":" + string(start);
@@ -177,6 +179,76 @@ classdef PropertySetting
             end
         end
     end
+    methods (Access = ?macd.model.SourcePropertyHistory)
+        function obj = withHistoryIdentity(obj, identity)
+            % withHistoryIdentity Restore occurrence identity while keeping newly derived positions and execution order.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertySetting
+                identity (1, 1) struct
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.PropertySetting
+            end
+            for field = ["Id", "SourceSnapshotId", "StatementId", "InitializationScopeId"]
+                obj.(field) = identity.(field);
+            end
+        end
+    end
+
+    methods
+        function obj = withIdentity(obj, id, epoch)
+            % withIdentity Bind an occurrence to its canonical document-local numeric address.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertySetting
+                id (1, 1) double {mustBeInteger}
+                epoch (1, 1) string
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.PropertySetting
+            end
+            obj.Id = id;
+            obj.SourceSnapshotId = epoch;
+        end
+    end
+
+    methods (Access = ?macd.model.SourceSettingStore)
+        function obj = withIndexedLocations(obj, ranges, sequences)
+            % withIndexedLocations Apply one vector-prepared range index without rebuilding semantic records.
+            arguments (Input)
+                obj macd.model.PropertySetting
+                ranges cell
+                sequences double
+            end
+            arguments (Output)
+                obj macd.model.PropertySetting
+            end
+            for index = 1:numel(obj)
+                obj(index).SourceSpan = ranges{1, index};
+                obj(index).ValueSpan = ranges{2, index};
+                obj(index).NameSpan = ranges{3, index};
+                obj(index).PairSpan = ranges{4, index};
+                obj(index).ScopeSpan = ranges{5, index};
+                obj(index).Sequence = sequences(index);
+            end
+        end
+    end
+
+    methods (Access = ?macd.model.SourceLocationUpdate)
+        function obj = withProjectedLocation(obj, location)
+            % withProjectedLocation Adopt prepared ranges and execution order while retaining immutable payloads.
+            arguments (Input)
+                obj (1, 1) macd.model.PropertySetting
+                location (1, 1) struct
+            end
+            arguments (Output)
+                obj (1, 1) macd.model.PropertySetting
+            end
+            for field = ["SourceSpan", "ValueSpan", "NameSpan", "PairSpan", "ScopeSpan", "Sequence"]
+                obj.(field) = location.(field);
+            end
+        end
+    end
+
 end
 
 %{
