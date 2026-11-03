@@ -1385,7 +1385,11 @@ classdef DocumentModel < handle
             previousDiagnostics = obj.Diagnostics;
             before = obj.RenameEdits;
             try
-                [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(obj);
+                if obj.hasCurrentValidation(registry) && obj.currentModelIsBound()
+                    source = obj.CurrentText; diagnostics = obj.PropertyValidationDiagnostics;
+                else
+                    [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(obj);
+                end
                 if macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:DocumentModel:UnsafeComponentRename", "Resolve source generation errors before renaming.");
                 end
@@ -1446,7 +1450,7 @@ classdef DocumentModel < handle
                 rethrow(exception)
             end
             obj.recordHistory(struct("Kind", "rename", "ComponentId", componentId, ...
-                "OldName", oldName, "NewName", newName, "Before", before, "After", after));
+                "OldName", oldName, "NewName", newName, "Before", before, "After", after), renamedSource);
         end
 
         function applyCallbackAction(obj, componentId, name, action, registry)
@@ -1518,7 +1522,7 @@ classdef DocumentModel < handle
             previousDiagnostics = obj.Diagnostics;
             obj.CallbackEdits = after;
             try
-                [~, diagnostics] = macd.source.RoundTripGenerator(registry).generate(obj);
+                [callbackSource, diagnostics] = macd.source.RoundTripGenerator(registry).generate(obj);
                 if macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:DocumentModel:UnsafeCallbackSource", "%s", ...
                         strjoin(string({diagnostics.Message}), newline));
@@ -1530,7 +1534,7 @@ classdef DocumentModel < handle
                 rethrow(exception)
             end
             % Commit only a fully generated intention snapshot; original bodies remain untouched.
-            obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after, "DeletedHandler", state.HandlerName));
+            obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after, "DeletedHandler", state.HandlerName), callbackSource);
         end
 
         function candidate = structuralCandidate(obj, registry)
@@ -1724,7 +1728,7 @@ classdef DocumentModel < handle
                 "BeforeRoot", snapshot.Records(1), "AfterRoot", afterRoot, ...
                 "BeforeParents", beforeParents, "AfterParents", afterParents, ...
                 "BeforeComponents", beforeComponents, "AfterComponents", afterComponents, ...
-                "BeforePending", {beforePending}, "AfterPending", {candidate.PendingEdits}));
+                "BeforePending", {beforePending}, "AfterPending", {candidate.PendingEdits}), source, placedDocument);
         end
 
         function snapshot = copySubtree(obj, id, registry)
@@ -2318,14 +2322,21 @@ classdef DocumentModel < handle
             assert(~isempty(clock));
         end
 
-        function publishParsedSource(obj, state, registry)
+        function publishParsedSource(obj, state, registry, parsed)
             % publishParsedSource Adopt a broader proof while preserving live component and occurrence identities.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 state (1, 1) macd.model.CurrentSourceState
                 registry (1, 1) macd.model.ComponentRegistry
+                parsed macd.model.DocumentModel = macd.model.DocumentModel.empty
             end
-            [parsed, diagnostics] = macd.source.AppSourceParser.parseText(state.Text, registry);
+            % A command-local candidate is reusable only while its exact complete source proof still holds.
+            if isempty(parsed) || ~isscalar(parsed) || parsed.CurrentText ~= state.Text || ...
+                    ~parsed.hasCurrentValidation(registry) || ~parsed.currentModelIsBound()
+                [parsed, diagnostics] = macd.source.AppSourceParser.parseText(state.Text, registry);
+            else
+                diagnostics = parsed.PropertyValidationDiagnostics;
+            end
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
@@ -2762,13 +2773,21 @@ classdef DocumentModel < handle
             index = numel(obj.PendingEdits);
         end
 
-        function recordHistory(obj, edit)
-            % recordHistory Append an edit and discard any redo branch.
+        function recordHistory(obj, edit, preparedSource, parsedCandidate)
+            % recordHistory Publish an already prepared source candidate and retain only primary reversible edits.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                edit (1, 1) struct
+                preparedSource (1, 1) string = ""
+                parsedCandidate macd.model.DocumentModel = macd.model.DocumentModel.empty
+            end
             if ~obj.SourcePublication && ~isempty(obj.SourceRegistry)
                 obj.ensureCurrentSource(obj.SourceRegistry);
                 before = obj.CurrentSource;
                 try
-                    if isfield(edit, "SourceCandidateText") && strlength(edit.SourceCandidateText) > 0
+                    if strlength(preparedSource) > 0
+                        text = preparedSource; diagnostics = macd.model.Diagnostic.empty;
+                    elseif isfield(edit, "SourceCandidateText") && strlength(edit.SourceCandidateText) > 0
                         text = edit.SourceCandidateText;
                         diagnostics = macd.model.Diagnostic.empty;
                     else
@@ -2778,7 +2797,7 @@ classdef DocumentModel < handle
                     error("macd:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
                 end
                 batch = obj.sourceDifference(before.Text, text);
-                obj.publishParsedSource(before.withBatch(batch), obj.SourceRegistry);
+                obj.publishParsedSource(before.withBatch(batch), obj.SourceRegistry, parsedCandidate);
                 catch exception
                     obj.SourcePublication = true;
                     cleanup = onCleanup(@() obj.endSourcePublication());
@@ -2790,6 +2809,7 @@ classdef DocumentModel < handle
                 edit.SourceBeforeId = before.StateId;
                 edit.SourceAfterId = obj.CurrentSource.StateId;
             end
+            if isfield(edit, "SourceCandidateText"), edit = rmfield(edit, "SourceCandidateText"); end
             if obj.HistoryIndex < numel(obj.History)
                 % A replacement branch makes every previous checkpoint uncertain.
                 obj.History = obj.History(1:obj.HistoryIndex);
