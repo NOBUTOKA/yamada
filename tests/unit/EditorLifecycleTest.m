@@ -4,6 +4,58 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     %   only native dialogs and filesystem decisions through the lifecycle service.
 
     methods (Test)
+        function activationRemembersOnlyDismissedRevision(testCase)
+            % activationRemembersOnlyDismissedRevision Suppress repeats while retaining manual reload and resets.
+            [target, source] = reloadFixture();
+            fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+            [confirm, count] = externalPromptCounter();
+            service = macd.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() deal(true, target), ...
+                "ConfirmExternalSourceChangeFcn", confirm));
+            app = yamada(service);
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            window = editorFigure();
+            original = app.Document;
+            notify(window, "FigureActivated");
+            testCase.verifyEqual(count(), 0);
+
+            % Repeated activation of one dismissed revision leaves model and history intact.
+            revisionA = source + "% Revision A" + newline;
+            revisionB = source + "% Revision B" + newline;
+            macd.source.SourceWriter.write(target, revisionA, "CRLF");
+            notify(window, "FigureActivated");
+            notify(window, "FigureActivated");
+            testCase.verifyEqual(count(), 1);
+            testCase.verifyTrue(app.Document == original);
+            macd.source.SourceWriter.write(target, revisionB, "CRLF");
+            notify(window, "FigureActivated");
+            testCase.verifyEqual(count(), 2);
+
+            % Explicit reload bypasses dismissal and replaces the document normally.
+            invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
+            testCase.verifyFalse(app.Document == original);
+            testCase.verifyEqual(app.Document.OriginalText, string(fileread(target)));
+            macd.source.SourceWriter.write(target, revisionA, "CRLF");
+            notify(window, "FigureActivated");
+            testCase.verifyEqual(count(), 3);
+
+            % Save clears the dismissed revision even when its text returns later.
+            invokeEditorMenu("Save");
+            macd.source.SourceWriter.write(target, revisionA, "CRLF");
+            notify(window, "FigureActivated");
+            testCase.verifyEqual(count(), 4);
+            notify(window, "FigureActivated");
+            testCase.verifyEqual(count(), 4);
+
+            % Reopening establishes a new comparison and dismissal scope.
+            macd.source.SourceWriter.write(target, revisionB, "CRLF");
+            invokeEditorMenu("Open...");
+            macd.source.SourceWriter.write(target, revisionA, "CRLF");
+            notify(window, "FigureActivated");
+            testCase.verifyEqual(count(), 5);
+        end
+
         function activationChecksOriginalSourceAndPreservesCanceledEdits(testCase)
             % activationChecksOriginalSourceAndPreservesCanceledEdits Exercise the real figure event listener.
             for accepted = [false true]
@@ -668,6 +720,28 @@ assert(~isempty(row), "macd:EditorLifecycleTest:MissingPaletteComponent", ...
     "Expected palette component ""%s"".", name);
 palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
 drawnow;
+end
+
+function [confirm, count] = externalPromptCounter()
+% externalPromptCounter Count native prompt requests while deterministically canceling them.
+arguments (Output)
+    confirm (1, 1) function_handle
+    count (1, 1) function_handle
+end
+requests = 0;
+confirm = @dismiss;
+count = @currentCount;
+
+    function accepted = dismiss()
+        % dismiss Record one external-source prompt and leave the document unchanged.
+        requests = requests + 1;
+        accepted = false;
+    end
+
+    function value = currentCount()
+        % currentCount Return the number of prompt decisions requested so far.
+        value = requests;
+    end
 end
 
 function figure = editorFigure()

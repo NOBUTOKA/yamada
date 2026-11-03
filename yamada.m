@@ -41,6 +41,7 @@ classdef yamada < handle
         Lifecycle macd.ui.DocumentLifecycleService
         SavePathConfirmed logical = false
         SavedSourceText string = ""
+        DismissedExternalSourceText string = string.empty
         IsCheckingExternalSource logical = false
         IsReloading logical = false
         IsClosingProgrammatically logical = false
@@ -491,6 +492,7 @@ classdef yamada < handle
             app.Document = document;
             app.Clipboard.clear();
             app.SavedSourceText = document.OriginalText;
+            app.DismissedExternalSourceText = string.empty;
             if ~isempty(document.Components)
                 app.SelectedComponentId = document.RootComponentId;
             else
@@ -3797,6 +3799,7 @@ classdef yamada < handle
             end
             app.Document.Diagnostics = diagnostics;
             app.SavedSourceText = source;
+            app.DismissedExternalSourceText = string.empty;
             app.SavePathConfirmed = true;
             app.updateSaveState(diagnostics);
             app.refreshTitle();
@@ -3846,9 +3849,17 @@ classdef yamada < handle
                 return
             end
             if source == app.SavedSourceText, return, end
+            if ~isempty(app.DismissedExternalSourceText) && source == app.DismissedExternalSourceText
+                return
+            end
             accepted = app.Lifecycle.confirmExternalSourceChange();
-            if accepted && isvalid(app) && app.Document == document
+            if ~isvalid(app) || app.Document ~= document, return, end
+
+            % Remember only explicit dismissal of the snapshot shown by this prompt.
+            if accepted
                 app.reloadSourceRequested();
+            else
+                app.DismissedExternalSourceText = source;
             end
         end
 
