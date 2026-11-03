@@ -412,7 +412,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             % Resolve from this test location so tests run from any work folder.
             testPath = mfilename("fullpath");
             testRoot = fileparts(fileparts(testPath));
-            result = string(fullfile(testRoot, "fixtures", "handle", name));
+            result = string(fullfile(testRoot, "fixtures", name));
         end
 
         function filePath = writeTemporaryBytes(bytes)

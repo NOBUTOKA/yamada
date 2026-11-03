@@ -108,7 +108,7 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
         function preservedNavigationHandlesNonvisualTreeNodes(testCase)
             % preservedNavigationHandlesNonvisualTreeNodes Exclude records without pixel bounds from geometry.
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            fixture = string(fullfile(root, "tests", "fixtures", "handle", "NavigationDataApp.m"));
+            fixture = string(fullfile(root, "tests", "fixtures", "NavigationDataApp.m"));
             lifecycle = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() delete(app));

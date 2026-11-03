@@ -283,7 +283,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
         function saveAsRenamesOpenedClassAndLaterSaveKeepsItsIdentity(testCase)
             % saveAsRenamesOpenedClassAndLaterSaveKeepsItsIdentity Preserve parsed source edits across saves.
             fixture = string(fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
-                "fixtures", "handle", "SimpleCalculatorApp.m"));
+                "fixtures", "SimpleCalculatorApp.m"));
             target = string(tempname) + ".m";
             cleanupFile = onCleanup(@() deleteTemporaryFile(target));
             service = lifecycleForTest(struct("OpenPath", fixture, "SavePath", target));
@@ -454,7 +454,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % newAndOpenUseOneDiscardOrCancelGuard Preserve or replace only after the selected answer.
 
             fixture = fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
-                "fixtures", "handle", "SimpleCalculatorApp.m");
+                "fixtures", "SimpleCalculatorApp.m");
             canceled = lifecycleForTest(struct("NewClassName", "NextApp", ...
                 "OpenPath", fixture, "UnsavedChoice", "Cancel"));
             app = yamada(canceled);

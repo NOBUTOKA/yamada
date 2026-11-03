@@ -1,4 +1,4 @@
-classdef ControlGalleryApp < matlab.apps.AppBase
+classdef ControlGalleryApp < handle
 
     properties (Access = public)
         UIFigure matlab.ui.Figure
@@ -22,6 +22,7 @@ classdef ControlGalleryApp < matlab.apps.AppBase
     methods (Access = private)
         function createComponents(app)
             app.UIFigure = uifigure("Visible", "off");
+            app.UIFigure.CloseRequestFcn = @(~, ~) delete(app);
             app.UIFigure.Position = [100 100 580 460];
             app.UIFigure.Name = "Control Gallery";
 
@@ -113,11 +114,13 @@ classdef ControlGalleryApp < matlab.apps.AppBase
     methods (Access = public)
         function app = ControlGalleryApp
             createComponents(app);
-            registerApp(app, app.UIFigure);
 
-            if nargout == 0
-                clear app
-            end
+            addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
+        end
+
+        function figureDeleted(app, source, event)
+            % figureDeleted Release the owner when its figure is destroyed.
+            if isvalid(app), delete(app); end
         end
 
         function delete(app)

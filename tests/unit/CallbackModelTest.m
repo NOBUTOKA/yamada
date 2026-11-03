@@ -52,7 +52,7 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
         function rejectsSharedMethodsAndGeneratesPendingCallbacks(testCase)
             % rejectsSharedMethodsAndGeneratesPendingCallbacks Protect unsafe source while generating validated operations.
             registry = macd.model.ComponentRegistry.createDefault();
-            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "handle", "SimpleCalculatorApp.m");
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
             source = string(fileread(path));
             source = replace(source, "app.CalculateButton = uibutton(app.GridLayout, 'push');", ...
                 "app.CalculateButton = uibutton(app.GridLayout, 'push');" + newline + ...
@@ -87,7 +87,7 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
         function parsedDeletionPreservesOriginalBodyAndCanBeReplaced(testCase)
             % parsedDeletionPreservesOriginalBodyAndCanBeReplaced Retain original spans through delete/add and history.
             registry = macd.model.ComponentRegistry.createDefault();
-            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "handle", "SimpleCalculatorApp.m");
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
             document = macd.source.AppSourceParser.parseFile(path, registry);
             component = document.getComponentByName("CalculateButton");
             original = document.OriginalText;

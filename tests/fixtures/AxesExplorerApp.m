@@ -1,4 +1,4 @@
-classdef AxesExplorerApp < matlab.apps.AppBase
+classdef AxesExplorerApp < handle
 
     properties (Access = public)
         UIFigure matlab.ui.Figure
@@ -11,6 +11,7 @@ classdef AxesExplorerApp < matlab.apps.AppBase
     methods (Access = private)
         function createComponents(app)
             app.UIFigure = uifigure("Visible", "off");
+            app.UIFigure.CloseRequestFcn = @(~, ~) delete(app);
             app.UIFigure.Position = [100 100 760 440];
             app.UIFigure.Name = "Axes Explorer";
 
@@ -40,11 +41,13 @@ classdef AxesExplorerApp < matlab.apps.AppBase
     methods (Access = public)
         function app = AxesExplorerApp
             createComponents(app);
-            registerApp(app, app.UIFigure);
 
-            if nargout == 0
-                clear app
-            end
+            addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
+        end
+
+        function figureDeleted(app, source, event)
+            % figureDeleted Release the owner when its figure is destroyed.
+            if isvalid(app), delete(app); end
         end
 
         function delete(app)

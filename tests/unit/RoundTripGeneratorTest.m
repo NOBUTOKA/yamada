@@ -268,7 +268,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
             testPath = mfilename("fullpath");
             fixturePath = string(fullfile(fileparts(fileparts(testPath)), ...
-                "fixtures", "handle", "SimpleCalculatorApp.m"));
+                "fixtures", "SimpleCalculatorApp.m"));
             registry = macd.model.ComponentRegistry.createDefault();
             document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
             generator = macd.source.RoundTripGenerator(registry);

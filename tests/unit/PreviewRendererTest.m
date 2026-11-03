@@ -24,7 +24,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             registry = macd.model.ComponentRegistry.createDefault();
             testPath = mfilename("fullpath");
             fixtureFolder = fullfile(fileparts(fileparts(fileparts(testPath))), ...
-                "tests", "fixtures", "handle");
+                "tests", "fixtures");
             figure = uifigure("Visible", "off", "Position", [100 100 750 550]);
             cleanup = onCleanup(@() deleteIfValid(figure));
             cases = {"SmallPreviewFixtureApp", [320 240], [220 10 90 26]; ...
@@ -68,7 +68,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             registry = macd.model.ComponentRegistry.createDefault();
             testPath = mfilename("fullpath");
             fixtureFolder = fullfile(fileparts(fileparts(fileparts(testPath))), ...
-                "tests", "fixtures", "handle");
+                "tests", "fixtures");
             previewFigure = uifigure("Visible", "off", ...
                 "Position", [100 100 900 700]);
             previewCleanup = onCleanup(@() deleteIfValid(previewFigure));
@@ -338,7 +338,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
             fixtures = struct("Path", string(fullfile(projectRoot, "tests", ...
-                "fixtures", "handle", "SimpleCalculatorApp.m")));
+                "fixtures", "SimpleCalculatorApp.m")));
         end
 
         function value = propertyValue(target, path)

@@ -88,7 +88,7 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
         function openedCallbacksPreserveUnrelatedTextAndCombineInsertions(testCase)
             % openedCallbacksPreserveUnrelatedTextAndCombineInsertions Remove owned bodies and preserve surrounding source.
             registry = macd.model.ComponentRegistry.createDefault();
-            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "handle", "SimpleCalculatorApp.m");
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
             document = macd.source.AppSourceParser.parseFile(path, registry);
             original = document.OriginalText;
             button = document.getComponentByName("CalculateButton");
@@ -111,7 +111,7 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
         function generatedComponentsInOpenedAppsReceiveCallbacks(testCase)
             % generatedComponentsInOpenedAppsReceiveCallbacks Insert bindings beside newly generated initialization.
             registry = macd.model.ComponentRegistry.createDefault();
-            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "handle", "SimpleCalculatorApp.m");
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
             document = macd.source.AppSourceParser.parseFile(path, registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);

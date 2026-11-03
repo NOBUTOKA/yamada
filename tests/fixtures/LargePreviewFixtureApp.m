@@ -1,4 +1,4 @@
-classdef LargePreviewFixtureApp < matlab.apps.AppBase
+classdef LargePreviewFixtureApp < handle
     % LargePreviewFixtureApp Exercise a client area larger than Safe Preview.
     %   Edge controls and a center grid expose both scrolling directions.
 
@@ -21,6 +21,7 @@ classdef LargePreviewFixtureApp < matlab.apps.AppBase
         function createComponents(app)
             % createComponents Build the oversized visual test application.
             app.UIFigure = uifigure("Visible", "off");
+            app.UIFigure.CloseRequestFcn = @(~, ~) delete(app);
             app.UIFigure.Position = [100 100 1200 900];
             app.UIFigure.Name = "Large Safe Preview Fixture";
 
@@ -51,10 +52,13 @@ classdef LargePreviewFixtureApp < matlab.apps.AppBase
         function app = LargePreviewFixtureApp
             % LargePreviewFixtureApp Construct and register the test application.
             createComponents(app);
-            registerApp(app, app.UIFigure);
-            if nargout == 0
-                clear app
-            end
+
+            addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
+        end
+
+        function figureDeleted(app, source, event)
+            % figureDeleted Release the owner when its figure is destroyed.
+            if isvalid(app), delete(app); end
         end
 
         function delete(app)

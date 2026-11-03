@@ -117,7 +117,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             % liveLocationsAndBindingsKeepTheirHandles Match an independent parser while retaining live identities.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             entry = owner.getProperty("Text");
@@ -156,7 +156,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             % equalLengthValueChangesStillUpdateLiveBindings Preserve semantic changes when all source offsets stay equal.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             entry = owner.getProperty("Text");
@@ -178,7 +178,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             % liveValueChangesRejectPreparedLocationUpdates Preserve edits made after source-location preparation.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             span = owner.getProperty("Text").Metadata.ValueSpan;
@@ -193,7 +193,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             % componentRebindingMatchesActualInsertedOrder Rebind only the owner while preserving existing setting IDs.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             previous = owner.Settings;
@@ -226,7 +226,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             % literalCandidatePublishesInsertedAndExistingValues Prepare exact current syntax before changing live handles.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             entry = owner.getProperty("Text");
@@ -251,7 +251,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             % documentPublishesCurrentTextAndExactHistory Exercise distinct insertions and replacements without deferred source.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            original = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            original = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(original, registry);
             owner = document.getComponentByName("TopLeftLabel");
             entry = owner.getProperty("Text");
@@ -281,7 +281,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             % detachedCandidatesNeverMasqueradeAsPublishedSource Prevent zero input revisions from enabling recursive source-plan snapshots.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
             testCase.verifyTrue(document.hasPublishedModel());
             candidate = document.structuralCandidate();

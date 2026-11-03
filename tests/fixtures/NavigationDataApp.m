@@ -1,4 +1,4 @@
-classdef NavigationDataApp < matlab.apps.AppBase
+classdef NavigationDataApp < handle
 
     properties (Access = public)
         UIFigure matlab.ui.Figure
@@ -25,6 +25,7 @@ classdef NavigationDataApp < matlab.apps.AppBase
     methods (Access = private)
         function createComponents(app)
             app.UIFigure = uifigure("Visible", "off");
+            app.UIFigure.CloseRequestFcn = @(~, ~) delete(app);
             app.UIFigure.Position = [100 100 680 420];
             app.UIFigure.Name = "Navigation and Data";
 
@@ -113,11 +114,13 @@ classdef NavigationDataApp < matlab.apps.AppBase
     methods (Access = public)
         function app = NavigationDataApp
             createComponents(app);
-            registerApp(app, app.UIFigure);
 
-            if nargout == 0
-                clear app
-            end
+            addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
+        end
+
+        function figureDeleted(app, source, event)
+            % figureDeleted Release the owner when its figure is destroyed.
+            if isvalid(app), delete(app); end
         end
 
         function delete(app)

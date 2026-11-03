@@ -767,7 +767,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            fixture = string(fullfile(projectRoot, "tests", "fixtures", "handle", "SimpleCalculatorApp.m"));
+            fixture = string(fullfile(projectRoot, "tests", "fixtures", "SimpleCalculatorApp.m"));
             lifecycle = macd.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
@@ -894,7 +894,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            fixture = string(fullfile(projectRoot, "tests", "fixtures", "handle", "ControlGalleryApp.m"));
+            fixture = string(fullfile(projectRoot, "tests", "fixtures", "ControlGalleryApp.m"));
             lifecycle = macd.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
@@ -1738,7 +1738,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % largeActualSizeFixtureScrollsAndRootResizeIsUndoable Exercise real editor geometry.
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            fixture = string(fullfile(projectRoot, "tests", "fixtures", "handle", ...
+            fixture = string(fullfile(projectRoot, "tests", "fixtures", ...
                 "LargePreviewFixtureApp.m"));
             lifecycle = macd.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
@@ -1878,7 +1878,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
         function shrinkingFigureKeepsStrandedComponentsReachable(testCase)
             % shrinkingFigureKeepsStrandedComponentsReachable Recover components outside the root.
             projectRoot = fileparts(which("yamada"));
-            fixture = string(fullfile(projectRoot, "tests", "fixtures", "handle", ...
+            fixture = string(fullfile(projectRoot, "tests", "fixtures", ...
                 "LargePreviewFixtureApp.m"));
             lifecycle = macd.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));

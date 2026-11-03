@@ -1,10 +1,10 @@
 # Handle-class input fixtures
 
-These fixtures were adapted on 2026-10-21 from the sibling original files in `tests/fixtures/`. The originals are retained unchanged. Original notices are retained in each adapted file; no editor license was newly imposed on user output.
+These fixtures were adapted from AppBase inputs on 2026-10-21 and consolidated directly in `tests/fixtures/` on 2026-11-03. They replace the pre-migration versions at the same paths; earlier versions remain available in Git history. Original notices are retained in each file; no editor license was newly imposed on user output.
 
 Adaptations: inherit from `handle`, replace the App Designer callback wrapper with a bound method accepting source and event, replace app registration with a default close callback and a figure destruction listener, and remove the App Designer no-output clear idiom. The fixture class identities and UI data remain unchanged. These files are preserved input data, not editor runtime code.
 
-| Original file | Original SHA-256 |
+| Pre-migration file | Pre-migration SHA-256 |
 | --- | --- |
 | `AxesExplorerApp.m` | `76b71271d4ba685d4fd7d6f9eba78d1f3d89ffa9f488428cf4f0ced3836b4709` |
 | `ControlGalleryApp.m` | `c7858e4ac78899ee9925915ab328fd8ab2a9f489a2057268f55979fbc483fa27` |

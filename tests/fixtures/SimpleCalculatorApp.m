@@ -16,7 +16,7 @@
 % You should have received a copy of the GNU General Public License
 % along with yamada. If not, see <https://www.gnu.org/licenses/>.
 
-classdef SimpleCalculatorApp < matlab.apps.AppBase
+classdef SimpleCalculatorApp < handle
 
     properties (Access = public)
         UIFigure        matlab.ui.Figure
@@ -34,7 +34,7 @@ classdef SimpleCalculatorApp < matlab.apps.AppBase
 
     methods (Access = private)
 
-        function CalculateButtonPushed(app, ~)
+        function CalculateButtonPushed(app, source, event)
             leftValue = app.LeftValueField.Value;
             rightValue = app.RightValueField.Value;
 
@@ -62,6 +62,7 @@ classdef SimpleCalculatorApp < matlab.apps.AppBase
 
         function createComponents(app)
             app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.CloseRequestFcn = @(~, ~) delete(app);
             app.UIFigure.Position = [100 100 360 250];
             app.UIFigure.Name = 'Simple Calculator';
 
@@ -104,8 +105,7 @@ classdef SimpleCalculatorApp < matlab.apps.AppBase
             app.CalculateButton.Text = 'Calculate';
             app.CalculateButton.Layout.Row = 4;
             app.CalculateButton.Layout.Column = [1 2];
-            app.CalculateButton.ButtonPushedFcn = createCallbackFcn( ...
-                app, @CalculateButtonPushed, true);
+            app.CalculateButton.ButtonPushedFcn = @app.CalculateButtonPushed;
 
             app.ResultLabel = uilabel(app.GridLayout);
             app.ResultLabel.Text = 'Result';
@@ -125,11 +125,13 @@ classdef SimpleCalculatorApp < matlab.apps.AppBase
 
         function app = SimpleCalculatorApp
             createComponents(app);
-            registerApp(app, app.UIFigure);
 
-            if nargout == 0
-                clear app
-            end
+            addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
+        end
+
+        function figureDeleted(app, source, event)
+            % figureDeleted Release the owner when its figure is destroyed.
+            if isvalid(app), delete(app); end
         end
 
         function delete(app)

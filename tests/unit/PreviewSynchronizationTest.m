@@ -7,7 +7,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             % immediateValuesKeepNativeHandlesAndRejectUnrelatedChanges Apply source additions and replacements through native diffs.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            source = string(fileread(fullfile(root, "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));

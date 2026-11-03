@@ -1,4 +1,4 @@
-classdef FigureToolsApp < matlab.apps.AppBase
+classdef FigureToolsApp < handle
 
     properties (Access = public)
         UIFigure matlab.ui.Figure
@@ -15,6 +15,7 @@ classdef FigureToolsApp < matlab.apps.AppBase
     methods (Access = private)
         function createComponents(app)
             app.UIFigure = uifigure("Visible", "off");
+            app.UIFigure.CloseRequestFcn = @(~, ~) delete(app);
             app.UIFigure.Position = [100 100 420 260];
             app.UIFigure.Name = "Figure Tools";
 
@@ -53,11 +54,13 @@ classdef FigureToolsApp < matlab.apps.AppBase
     methods (Access = public)
         function app = FigureToolsApp
             createComponents(app);
-            registerApp(app, app.UIFigure);
 
-            if nargout == 0
-                clear app
-            end
+            addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
+        end
+
+        function figureDeleted(app, source, event)
+            % figureDeleted Release the owner when its figure is destroyed.
+            if isvalid(app), delete(app); end
         end
 
         function delete(app)

@@ -50,7 +50,7 @@ Save, Save As, New, Open, and editor close pass through the injected [`DocumentL
 | [`resources/component-catalog/R2024a`](../resources/component-catalog/R2024a) | Runtime component, property, grouping, ordering, context, and Inspector-row data |
 | [`resources/EditorInteractionOverlay.html`](../resources/EditorInteractionOverlay.html) | Transparent HTML/SVG pointer and selection layer for the canvas |
 | [`dev/component-data`](../dev/component-data) | Audited source data, design artifacts, and reproducible catalog-generation scripts |
-| [`tests`](../tests) | Unit tests, preserved original inputs, and adapted handle-class fixtures |
+| [`tests`](../tests) | Unit tests and preserved handle-class input fixtures |
 
 ## Callback Management
 
@@ -361,7 +361,7 @@ Tests are organized by architectural boundary:
 
 Run focused tests for a change before the complete `tests/unit` suite. Current known failures and unfinished product capabilities belong in [ROADMAP.md](../ROADMAP.md), not in this architecture reference.
 
-HTML overlay tests cover DOM pointer/key dispatch through the real iframe handlers and MATLAB event bridge, as well as isolated Node gesture tests. Synthetic DOM dispatch does not prove OS mouse or physical keyboard automation. Preserved input fixtures retain their original bytes and provenance; adapted handle-class inputs live separately under `tests/fixtures/handle`.
+HTML overlay tests cover DOM pointer/key dispatch through the real iframe handlers and MATLAB event bridge, as well as isolated Node gesture tests. Synthetic DOM dispatch does not prove OS mouse or physical keyboard automation. Preserved handle-class inputs live directly under `tests/fixtures/`, with their notices and adaptation provenance retained. Pre-migration AppBase versions remain in Git history; there is no parallel fixture copy.
 
 ## Preview Layout Completion (MATLAB R2024a)
 

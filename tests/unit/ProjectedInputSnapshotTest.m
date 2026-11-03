@@ -5,7 +5,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             % distinctChangesAndHistoryMatchFullCapture Preserve all values and source ranges across replacements and insertions.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            source = string(fileread(fullfile(root, "tests", "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "tests", "fixtures", "SmallPreviewFixtureApp.m")));
             document = macd.source.AppSourceParser.parseText(source, registry);
             operations = {"TopLeftLabel", "Text", "A much longer label"; ...
                 "BottomRightButton", "Tooltip", "New tooltip"; ...
@@ -59,7 +59,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             document = macd.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
-                "tests", "fixtures", "handle", "SmallPreviewFixtureApp.m"))), registry);
+                "tests", "fixtures", "SmallPreviewFixtureApp.m"))), registry);
             owner = document.getComponentByName("TopLeftLabel");
             entry = owner.getProperty("Text");
             settings = owner.getSettings("Text");
@@ -74,7 +74,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             % foreignDocumentTokensNeverCertifyTransitions Require exact clock ownership even for identical revision numbers.
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            source = string(fileread(fullfile(root, "tests", "fixtures", "handle", "SmallPreviewFixtureApp.m")));
+            source = string(fileread(fullfile(root, "tests", "fixtures", "SmallPreviewFixtureApp.m")));
             first = macd.source.AppSourceParser.parseText(source, registry);
             second = macd.source.AppSourceParser.parseText(source, registry);
             foreign = first.evaluationContext(registry).revisionToken();
@@ -93,7 +93,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             registry = macd.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             document = macd.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
-                "tests", "fixtures", "handle", "SmallPreviewFixtureApp.m"))), registry);
+                "tests", "fixtures", "SmallPreviewFixtureApp.m"))), registry);
             owner = document.getComponentByName("TopLeftLabel");
             context = document.evaluationContext(registry);
             token = context.revisionToken();
