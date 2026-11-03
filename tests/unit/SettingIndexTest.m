@@ -25,6 +25,35 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.
             verifyIndexes(testCase, document, registry);
         end
 
+        function pastedValuesRemainIndependentAcrossHistory(testCase)
+            % pastedValuesRemainIndependentAcrossHistory Preserve canonical source views and frozen copy data after publication.
+            for name = ["TopLeftLabel", "CenterPanel"]
+                [document, registry] = fixture();
+                original = document.getComponentByName(name);
+                snapshot = document.copySubtree(original.Id, registry);
+                frozen = snapshot.Records;
+                before = document.CurrentText;
+                entry = original.getProperty("BackgroundColor");
+                hadColor = ~isempty(entry); value = [];
+                if hadColor, value = entry.LiteralValue; end
+                pasted = document.pasteSubtree(snapshot, original.ParentId, registry);
+                verifyIndexes(testCase, document, registry);
+                document.setProperty(pasted.Id, "BackgroundColor", [0.11 0.22 0.33], registry);
+                testCase.verifyEqual(snapshot.Records, frozen);
+                if hadColor
+                    testCase.verifyEqual(original.getProperty("BackgroundColor").LiteralValue, value);
+                else
+                    testCase.verifyEmpty(original.getProperty("BackgroundColor"));
+                end
+                verifyIndexes(testCase, document, registry);
+                document.undo(); document.undo();
+                testCase.verifyEqual(document.CurrentText, before);
+                verifyIndexes(testCase, document, registry);
+                document.redo(); verifyIndexes(testCase, document, registry);
+                document.redo(); verifyIndexes(testCase, document, registry);
+            end
+        end
+
         function historyRetainsPrimaryPatchesAndOnlyNewOccurrenceIdentities(testCase)
             % historyRetainsPrimaryPatchesAndOnlyNewOccurrenceIdentities Exclude derived positions and whole setting snapshots.
             [document, registry] = fixture();

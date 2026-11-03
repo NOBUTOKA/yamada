@@ -1828,6 +1828,9 @@ classdef DocumentModel < handle
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({parsedDiagnostics.Message}), newline));
             end
             macd.model.SubtreeCopyPlanner.verify(reparsed, configuration, inserted, plan.Changes, registry);
+            % Publish independent values; candidate-owned handles must never acquire a second document owner.
+            inserted = macd.model.SubtreeSnapshot(candidate, component.Id).materialize();
+            component = inserted(1);
             obj.ensureCurrentSource(registry);
             parent = obj.getComponent(parentId);
             beforeChildren = parent.Children;
