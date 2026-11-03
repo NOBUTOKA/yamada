@@ -128,14 +128,14 @@ classdef SourceSettingStore < handle
                 obj (1, 1) macd.model.SourceSettingStore
                 batch (1, 1) macd.source.SourcePatchBatch
                 execution (1, 1) struct
-                excludedOwner (1, 1) string
+                excludedOwner (1, :) string
             end
             arguments (Output)
                 projection (1, 1) struct
             end
-            slots = obj.SourceOrder(obj.Owners(obj.SourceOrder) ~= excludedOwner);
+            slots = obj.SourceOrder(~ismember(obj.Owners(obj.SourceOrder), excludedOwner));
             indexed = obj.Ranges;
-            excluded = find(obj.Active & obj.Owners == excludedOwner);
+            excluded = find(obj.Active & ismember(obj.Owners, excludedOwner));
             indexed(:, excluded) = repmat({macd.model.SourceSpan.empty}, 5, numel(excluded));
             [ranges, valid] = batch.mapSpanCells(indexed);
             ranges(:, excluded) = obj.Ranges(:, excluded);

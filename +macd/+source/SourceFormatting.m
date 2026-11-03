@@ -10,7 +10,7 @@ classdef SourceFormatting
                 source (1, 1) string
                 edits struct
                 analysis (1, 1) macd.source.SourceAnalysis
-                name (1, 1) string
+                name (1, :) string
             end
             arguments (Output)
                 edits struct
@@ -24,16 +24,22 @@ classdef SourceFormatting
                 edit = edits(index);
                 [before, after] = analysis.statementNeighbors(edit.End);
                 if ~isempty(after) && analysis.Statements(after).Span.StartOffset < edit.Start, continue, end
-                starts = strfind(edit.Text, "app." + name + ".");
+                starts = zeros(1, 0); owners = strings(1, 0);
+                for owner = name
+                    offsets = strfind(edit.Text, "app." + owner + ".");
+                    starts = [starts offsets]; owners = [owners repmat(owner, size(offsets))]; %#ok<AGROW>
+                end
                 if isempty(starts), continue, end
-                first = starts(1); last = find(char(edit.Text) == ';', 1, 'last');
+                [first, firstIndex] = min(starts); [~, lastIndex] = max(starts);
+                firstOwner = owners(firstIndex); lastOwner = owners(lastIndex);
+                last = find(char(edit.Text) == ';', 1, 'last');
                 assert(~isempty(last));
                 addBefore = false; addAfter = false;
-                if ~isempty(before) && strlength(analysis.Facts.ComponentName(before)) > 0 && analysis.Facts.ComponentName(before) ~= name
+                if ~isempty(before) && strlength(analysis.Facts.ComponentName(before)) > 0 && analysis.Facts.ComponentName(before) ~= firstOwner
                     gap = extractBetween(source, analysis.Statements(before).Span.EndOffset + 1, edit.End) + extractBefore(edit.Text, first);
                     addBefore = ~isempty(regexp(gap, '^[ \t]*(?:%[^\r\n]*)?\r?\n[ \t]*$', 'once'));
                 end
-                if ~isempty(after) && strlength(analysis.Facts.ComponentName(after)) > 0 && analysis.Facts.ComponentName(after) ~= name
+                if ~isempty(after) && strlength(analysis.Facts.ComponentName(after)) > 0 && analysis.Facts.ComponentName(after) ~= lastOwner
                     gap = extractAfter(edit.Text, last) + extractBetween(source, edit.Start, analysis.Statements(after).Span.StartOffset - 1);
                     addAfter = ~isempty(regexp(gap, '^[ \t]*(?:%[^\r\n]*)?\r?\n[ \t]*$', 'once'));
                 end

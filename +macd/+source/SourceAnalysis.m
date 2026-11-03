@@ -79,7 +79,7 @@ classdef SourceAnalysis < handle
                 removed double
                 constructorDelta double
                 execution (1, 1) struct
-                addedOwner (1, 1) string
+                addedOwner (1, :) string
             end
             arguments (Output)
                 analysis (1, 1) macd.source.SourceAnalysis
@@ -218,9 +218,11 @@ classdef SourceAnalysis < handle
             offsets = NaN(size(obj.Facts.AnchorOffset));
             for index = find(valid), offsets(index) = anchorSpans{index}.StartOffset; end
             facts.AnchorOffset = offsets(parents);
-            for position = addedPositions
+            assert(numel(addedOwner) == numel(addedPositions));
+            for additionIndex = 1:numel(addedPositions)
+                position = addedPositions(additionIndex);
                 facts.Structural(position) = false; facts.SafeLocal(position) = false;
-                facts.ComponentName(position) = addedOwner;
+                facts.ComponentName(position) = addedOwner(additionIndex);
                 facts.AnchorOffset(position) = statements(position).Span.EndOffset;
             end
             analysis.Facts = facts;

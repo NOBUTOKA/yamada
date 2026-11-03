@@ -57,65 +57,12 @@ classdef SourceLiteralTransaction
                 obj (1, 1) macd.model.SourceLiteralTransaction
             end
             [obj.InputClock, obj.InputRevision, obj.InputsTracked] = document.inputStamp();
-            component = document.getComponent(id);
-            assert(~isempty(component) && component.IsEditable);
-            assert(document.sourceAnalysis().matches(source.Text), ...
-                "macd:SourceLiteralTransaction:StaleSource", "The model analysis does not own this source revision.");
-            assert(~macd.model.PropertyStateResolver.hasUnresolvedExecution(document), ...
-                "macd:SourceLiteralTransaction:WiderProof", "Executable effects require the established broader proof.");
-            parent = document.getComponent(component.ParentId);
-            parentFactory = "";
-            if ~isempty(parent), parentFactory = parent.Factory; end
-            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
-            candidate = macd.model.ComponentRecord(component.Id, component.Name, component.Factory, ...
-                component.DeclaredType, component.Origin);
-            candidate.ParentId = component.ParentId;
-            candidate.CreationArguments = component.CreationArguments;
-            candidate.SourceSpans = component.SourceSpans;
-            candidate.Metadata = component.Metadata;
-            properties = struct([]);
-            for entry = component.Properties
-                record = entry.toStruct();
-                if isempty(properties), properties = record; else, properties(end + 1) = record; end %#ok<AGROW>
-            end
-            candidate.restoreProperties(properties);
-            candidate.applyProjectedSettings(component.Settings);
-            edits = struct("Start", {}, "End", {}, "Text", {});
-            for change = changes
-                path = string(change.Path);
-                definition = definitions(string({definitions.Path}) == path);
-                assert(isscalar(definition) && definition.IsEditable && ...
-                    any(definition.Application.EffectStatus == ["independent", "modeled"]), ...
-                    "macd:SourceLiteralTransaction:WiderProof", "This setting needs its coupled model scope.");
-                policy = definition.Application;
-                independent = policy.EffectStatus == "independent" && policy.EffectPolicy == "none";
-                numeric = policy.EffectStatus == "modeled" && policy.EffectPolicy == "numericValue";
-                obj.NeedsDocumentValidation = obj.NeedsDocumentValidation || ~(independent || numeric);
-                obj.CanReuseStates = obj.CanReuseStates && (independent || numeric) && ...
-                    (isempty(component.Children) || (~definition.AbsoluteGeometryImpact && definition.GridGeometryImpact ~= "required"));
-                dependencies = macd.model.SubtreePlacementPlanner.inputPropertyPaths();
-                obj.CanReuseEligibility = obj.CanReuseEligibility && ...
-                    ~any(ismember([path policy.AffectedPaths], dependencies)) && ...
-                    ~(isfield(definition.ValueSchema, "kind") && string(definition.ValueSchema.kind) == "callback");
-                encoded = macd.source.LiteralEncoder.encode(change.Value);
-                [decoded, literal] = macd.source.MatlabLiteralParser.parse(encoded);
-                assert(literal && isequaln(decoded, change.Value), ...
-                    "macd:SourceLiteralTransaction:WiderProof", "Literal encoding needs complete syntax validation.");
-                entry = component.getProperty(path);
-                if ~isempty(entry) && ~isequaln(entry.LiteralValue, change.Value)
-                    assert(entry.IsEditable && entry.ValueKind == "literal" && isfield(entry.Metadata, "ValueSpan"), ...
-                        "macd:SourceLiteralTransaction:WiderProof", "Existing value ownership is not proven.");
-                    span = entry.Metadata.ValueSpan;
-                    assert(~isempty(span) && span.isKnown());
-                    edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", encoded); %#ok<AGROW>
-                end
-                candidate.setProperty(path, change.Value);
-            end
-            if macd.source.PropertyInsertionPlanner.needsPlan(document, candidate)
-                plan = macd.source.PropertyInsertionPlanner.tentative(document, candidate, registry);
-                edits = [edits plan.Edits];
-                obj.Placements = plan.Placements;
-            end
+            plan = macd.model.SourceLiteralTransaction.plan(document, source, id, changes, registry);
+            component = document.getComponent(id); candidate = plan.Candidate;
+            parentFactory = plan.ParentFactory; definitions = plan.Definitions; edits = plan.Edits;
+            obj.NeedsDocumentValidation = plan.NeedsDocumentValidation;
+            obj.CanReuseStates = plan.CanReuseStates; obj.CanReuseEligibility = plan.CanReuseEligibility;
+            obj.Placements = plan.Placements;
             edits = macd.source.SourceFormatting.separateLiteralComponents(source.Text, edits, source.Analysis, document.sourceComponentName(id));
             obj.Batch = macd.source.SourcePatchBatch(source.Text, edits);
             [obj.AfterSource, obj.Settings, obj.FactoryArguments, execution] = macd.model.IndexedSettingEdit.prepare( ...
@@ -238,6 +185,85 @@ classdef SourceLiteralTransaction
             document.Diagnostics = obj.Diagnostics;
             document.UnknownRegions = obj.Regions;
             document.Metadata = obj.Metadata;
+        end
+    end
+    methods (Static, Access = ?macd.model.SourceLiteralBatchTransaction)
+        function result = plan(document, source, id, changes, registry)
+            % plan Prove owned literal syntax and insertion recipes against one unchanged source revision.
+            arguments (Input)
+                document (1, 1) macd.model.DocumentModel
+                source (1, 1) macd.model.CurrentSourceState
+                id (1, 1) string
+                changes (1, :) struct
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            needsDocumentValidation = false; canReuseStates = true; canReuseEligibility = true;
+            placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {});
+            component = document.getComponent(id);
+            assert(~isempty(component) && component.IsEditable);
+            assert(document.sourceAnalysis().matches(source.Text), ...
+                "macd:SourceLiteralTransaction:StaleSource", "The model analysis does not own this source revision.");
+            assert(~macd.model.PropertyStateResolver.hasUnresolvedExecution(document), ...
+                "macd:SourceLiteralTransaction:WiderProof", "Executable effects require the established broader proof.");
+            parent = document.getComponent(component.ParentId);
+            parentFactory = "";
+            if ~isempty(parent), parentFactory = parent.Factory; end
+            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+            candidate = macd.model.ComponentRecord(component.Id, component.Name, component.Factory, ...
+                component.DeclaredType, component.Origin);
+            candidate.ParentId = component.ParentId;
+            candidate.CreationArguments = component.CreationArguments;
+            candidate.SourceSpans = component.SourceSpans;
+            candidate.Metadata = component.Metadata;
+            properties = struct([]);
+            for entry = component.Properties
+                record = entry.toStruct();
+                if isempty(properties), properties = record; else, properties(end + 1) = record; end %#ok<AGROW>
+            end
+            candidate.restoreProperties(properties);
+            candidate.applyProjectedSettings(component.Settings);
+            edits = struct("Start", {}, "End", {}, "Text", {});
+            for change = changes
+                path = string(change.Path);
+                definition = definitions(string({definitions.Path}) == path);
+                assert(isscalar(definition) && definition.IsEditable && ...
+                    any(definition.Application.EffectStatus == ["independent", "modeled"]), ...
+                    "macd:SourceLiteralTransaction:WiderProof", "This setting needs its coupled model scope.");
+                policy = definition.Application;
+                independent = policy.EffectStatus == "independent" && policy.EffectPolicy == "none";
+                numeric = policy.EffectStatus == "modeled" && policy.EffectPolicy == "numericValue";
+                needsDocumentValidation = needsDocumentValidation || ~(independent || numeric);
+                canReuseStates = canReuseStates && (independent || numeric) && ...
+                    (isempty(component.Children) || (~definition.AbsoluteGeometryImpact && definition.GridGeometryImpact ~= "required"));
+                dependencies = macd.model.SubtreePlacementPlanner.inputPropertyPaths();
+                canReuseEligibility = canReuseEligibility && ...
+                    ~any(ismember([path policy.AffectedPaths], dependencies)) && ...
+                    ~(isfield(definition.ValueSchema, "kind") && string(definition.ValueSchema.kind) == "callback");
+                encoded = macd.source.LiteralEncoder.encode(change.Value);
+                [decoded, literal] = macd.source.MatlabLiteralParser.parse(encoded);
+                assert(literal && isequaln(decoded, change.Value), ...
+                    "macd:SourceLiteralTransaction:WiderProof", "Literal encoding needs complete syntax validation.");
+                entry = component.getProperty(path);
+                if ~isempty(entry) && ~isequaln(entry.LiteralValue, change.Value)
+                    assert(entry.IsEditable && entry.ValueKind == "literal" && isfield(entry.Metadata, "ValueSpan"), ...
+                        "macd:SourceLiteralTransaction:WiderProof", "Existing value ownership is not proven.");
+                    span = entry.Metadata.ValueSpan;
+                    assert(~isempty(span) && span.isKnown());
+                    edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", encoded); %#ok<AGROW>
+                end
+                candidate.setProperty(path, change.Value);
+            end
+            if macd.source.PropertyInsertionPlanner.needsPlan(document, candidate)
+                plan = macd.source.PropertyInsertionPlanner.tentative(document, candidate, registry);
+                edits = [edits plan.Edits];
+                placements = plan.Placements;
+            end
+            result = struct("Candidate", candidate, "ParentFactory", parentFactory, "Definitions", definitions, ...
+                "Edits", edits, "Placements", placements, "NeedsDocumentValidation", needsDocumentValidation, ...
+                "CanReuseStates", canReuseStates, "CanReuseEligibility", canReuseEligibility);
         end
     end
 end

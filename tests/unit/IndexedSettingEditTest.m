@@ -59,6 +59,62 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
             verifyIndependent(testCase, document, registry);
         end
 
+        function multiOwnerGridEditsPreserveTextPositionsAndIdentities(testCase)
+            % multiOwnerGridEditsPreserveTextPositionsAndIdentities Replay mixed constructor, assignment and new child settings atomically.
+            registry = macd.model.ComponentRegistry.createDefault();
+            source = gridSource(); document = macd.source.AppSourceParser.parseText(source, registry);
+            grid = document.getComponentByName("Grid"); first = document.getComponentByName("First");
+            second = document.getComponentByName("Second");
+            original = [grid.Settings first.Settings second.Settings];
+            changes = [struct("ComponentId", grid.Id, "Path", "RowHeight", "Value", {{55}}), ...
+                struct("ComponentId", first.Id, "Path", "Layout.Row", "Value", 1), ...
+                struct("ComponentId", second.Id, "Path", "Layout.Row", "Value", 1), ...
+                struct("ComponentId", second.Id, "Path", "Layout.Column", "Value", 2)];
+            document.applyGridLayoutEdit(grid.Id, changes, registry);
+            testCase.verifyEqual(document.HistoryIndex, 1);
+            testCase.verifyEqual(first.getProperty("Layout.Row").LiteralValue, 1);
+            testCase.verifyEqual(second.getProperty("Layout.Column").LiteralValue, 2);
+            verifyIndependent(testCase, document, registry);
+            after = document.CurrentText;
+            ids = [grid.Settings.Id first.Settings.Id second.Settings.Id];
+            testCase.verifyTrue(all(ismember([original.Id], ids)));
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, source);
+            testCase.verifyEqual([grid.Settings.Id first.Settings.Id second.Settings.Id], [original.Id]);
+            verifyIndependent(testCase, document, registry);
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, after);
+            testCase.verifyEqual([grid.Settings.Id first.Settings.Id second.Settings.Id], ids);
+            verifyIndependent(testCase, document, registry);
+            % Save As changes class-name lengths without introducing a history node.
+            renamed = macd.source.AppClassIdentityRewriter.rewrite(after, "LongerIndexedGridFixture");
+            checkpoint = macd.model.SavedSourceCheckpoint(document, renamed, fullfile(tempdir, "LongerIndexedGridFixture.m"), registry);
+            document.confirmSavedSource(checkpoint, registry);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, macd.source.AppClassIdentityRewriter.rewrite(source, "LongerIndexedGridFixture"));
+            verifyIndependent(testCase, document, registry);
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, renamed);
+            testCase.verifyEqual([grid.Settings.Id first.Settings.Id second.Settings.Id], ids);
+            verifyIndependent(testCase, document, registry);
+        end
+
+        function rejectedMultiOwnerGridEditRetainsEveryOwner(testCase)
+            % rejectedMultiOwnerGridEditRetainsEveryOwner Keep source, settings and history unchanged when any requested value cannot survive.
+            registry = macd.model.ComponentRegistry.createDefault();
+            source = gridSource(); document = macd.source.AppSourceParser.parseText(source, registry);
+            grid = document.getComponentByName("Grid"); second = document.getComponentByName("Second");
+            original = [grid.Settings second.Settings];
+            changes = [struct("ComponentId", grid.Id, "Path", "RowHeight", "Value", {{55}}), ...
+                struct("ComponentId", second.Id, "Path", "Layout.Column", "Value", 2)];
+            testCase.verifyError(@() document.applyGridLayoutEdit(grid.Id, changes, registry), ...
+                "macd:DocumentModel:UnsafePropertyEdit");
+            testCase.verifyEqual(document.CurrentText, source);
+            testCase.verifyEqual(document.HistoryIndex, 0);
+            testCase.verifyEqual([grid.Settings second.Settings], original);
+            verifyIndependent(testCase, document, registry);
+        end
+
         function historyBranchNeverReusesAnIssuedOccurrence(testCase)
             % historyBranchNeverReusesAnIssuedOccurrence Keep old identities distinct after an insertion is undone.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -74,6 +130,21 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
             verifyIndependent(testCase, document, registry);
         end
     end
+end
+
+function source = gridSource()
+% gridSource Provide mixed inline, constructor and assignment source with untouched comments.
+arguments (Output)
+    source (1, 1) string
+end
+source = strjoin(["classdef IndexedGridFixture < handle", "properties", ...
+    "UIFigure matlab.ui.Figure", "Grid matlab.ui.container.GridLayout", ...
+    "First matlab.ui.control.Button", "Second matlab.ui.control.Button", "end", ...
+    "methods", "function app = IndexedGridFixture", "createComponents(app);", "end", ...
+    "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+    "app.Grid = uigridlayout(app.UIFigure, RowHeight={100,200}); % retained grid comment", ...
+    "app.First = uibutton(app.Grid); app.First.Layout.Row = 2; % retained inline comment", ...
+    "app.Second = uibutton(app.Grid, Text=""second"");", "end", "end", "end"], sprintf('\r\n'));
 end
 
 function verifyIndependent(testCase, document, registry)

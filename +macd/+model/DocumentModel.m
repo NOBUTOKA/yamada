@@ -77,7 +77,7 @@ classdef DocumentModel < handle
         SettingStore macd.model.SourceSettingStore = macd.model.SourceSettingStore.empty
     end
 
-    methods (Access = {?macd.model.EvaluationContext, ?macd.model.SourceLiteralTransaction})
+    methods (Access = {?macd.model.EvaluationContext, ?macd.model.SourceLiteralTransaction, ?macd.model.SourceLiteralBatchTransaction})
         function [clock, revision, tracked] = inputStamp(obj)
             % inputStamp Attach one acyclic write token and return its current state.
             arguments (Input)
@@ -118,7 +118,7 @@ classdef DocumentModel < handle
         end
     end
 
-    methods (Access = ?macd.model.SourceLiteralTransaction)
+    methods (Access = {?macd.model.SourceLiteralTransaction, ?macd.model.SourceLiteralBatchTransaction})
         function result = validateIndexedCandidate(obj, settings, factoryArguments, updates, state, diagnostics, regions, metadata, id, changes, registry)
             % validateIndexedCandidate Validate document-dependent literal policies without reparsing their known source edits.
             arguments (Input)
@@ -157,6 +157,47 @@ classdef DocumentModel < handle
                 "StateDiagnostics", macd.model.Diagnostic.empty, "Diagnostics", diagnostics);
         end
 
+        function result = validateIndexedBatchCandidate(obj, bindings, updates, state, diagnostics, regions, metadata, specs, registry)
+            % validateIndexedBatchCandidate Validate the complete final multi-owner state without regenerating or parsing source.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                bindings (1, :) struct
+                updates macd.model.SourceLocationUpdate
+                state (1, 1) macd.model.CurrentSourceState
+                diagnostics macd.model.Diagnostic
+                regions macd.model.UnknownSourceRegion
+                metadata (1, 1) struct
+                specs (1, :) struct
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) struct
+            end
+            candidate = obj.structuralCandidate();
+            for update = updates, update.applyValidated(candidate.getComponent(update.ComponentId)); end
+            for binding = bindings
+                candidate.getComponent(binding.ComponentId).synchronizeSourceSettings(binding.Settings, binding.FactoryArguments);
+            end
+            candidate.Diagnostics = diagnostics; candidate.UnknownRegions = regions; candidate.Metadata = metadata;
+            candidate.publishCurrentSource(state);
+            diagnostics = macd.validation.ModelValidator.validate(candidate, registry);
+            assert(~macd.validation.ModelValidator.hasErrors(diagnostics), ...
+                "macd:SourceLiteralTransaction:InvalidValue", "%s", strjoin(string({diagnostics.Message}), newline));
+            owners = struct("ComponentId", {}, "Definitions", {}, "States", {});
+            for spec = specs
+                states = candidate.getEffectivePropertyStates(registry, spec.ComponentId);
+                definitions = [states.Definition]; resolutions = [states.Resolution];
+                transaction = macd.model.PropertyStateResolver.transaction(resolutions);
+                for change = spec.Changes, transaction.stage(string(change.Path), change.Value); end
+                message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
+                assert(strlength(message) == 0, "macd:SourceLiteralTransaction:InvalidValue", "%s", message);
+                obj.assertRequestedStates(states, spec.Changes);
+                owners(end + 1) = struct("ComponentId", spec.ComponentId, "Definitions", definitions, ...
+                    "States", resolutions); %#ok<AGROW>
+            end
+            result = struct("Diagnostics", diagnostics, "Owners", owners);
+        end
+
         function result = preparePropertyValidation(obj, component, definitions, states, paths, batch, registry)
             % preparePropertyValidation Complete a local candidate only from an exact fully validated baseline.
             arguments (Input)
@@ -189,7 +230,7 @@ classdef DocumentModel < handle
                 obj (1, 1) macd.model.DocumentModel
                 batch (1, 1) macd.source.SourcePatchBatch
                 execution (1, 1) struct
-                excludedOwner (1, 1) string
+                excludedOwner (1, :) string
             end
             arguments (Output)
                 projection (1, 1) struct
@@ -433,7 +474,7 @@ classdef DocumentModel < handle
                         changed = edit.ComponentId + ":" + string({edit.Changes.Path});
                     case "property"
                         changed = edit.ComponentId + ":" + edit.Path;
-                    case "grid-layout-edit"
+                    case {"grid-layout-edit", "source-property-batch"}
                         changed = string({edit.Changes.ComponentId}) + ":" + string({edit.Changes.Path});
                     otherwise
                         continue
@@ -961,6 +1002,14 @@ classdef DocumentModel < handle
                     historyChanges(index).OldValue = entry.LiteralValue;
                 end
                 historyChanges(index).NewValue = changes(index).Value;
+            end
+
+            if obj.tryImmediatePropertyBatch(changes, registry)
+                entries = macd.model.PropertyEntry.empty;
+                for change = changes
+                    entries(end + 1) = obj.getComponent(string(change.ComponentId)).getProperty(string(change.Path)); %#ok<AGROW>
+                end
+                return
             end
 
             % Check the combined emitted initialization before changing parsed records.
@@ -1856,6 +1905,8 @@ classdef DocumentModel < handle
             obj.assertHistorySource(edit, false);
             if edit.Kind == "source-property"
                 obj.applySourcePropertyHistory(edit, false);
+            elseif edit.Kind == "source-property-batch"
+                obj.applySourceBatchHistory(edit, false);
             else
                 obj.SourcePublication = isfield(edit, "SourceForward");
                 cleanup = onCleanup(@() obj.endSourcePublication());
@@ -1879,6 +1930,8 @@ classdef DocumentModel < handle
             obj.assertHistorySource(edit, true);
             if edit.Kind == "source-property"
                 obj.applySourcePropertyHistory(edit, true);
+            elseif edit.Kind == "source-property-batch"
+                obj.applySourceBatchHistory(edit, true);
             else
                 obj.SourcePublication = isfield(edit, "SourceForward");
                 cleanup = onCleanup(@() obj.endSourcePublication());
@@ -2054,6 +2107,59 @@ classdef DocumentModel < handle
             cleanup = onCleanup(@() obj.endSourcePublication());
             obj.recordHistory(edit);
             result = true;
+        end
+
+        function result = tryImmediatePropertyBatch(obj, changes, registry)
+            % tryImmediatePropertyBatch Publish multiple literal owners as one exact-source and history transaction.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                changes (1, :) struct
+                registry macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            if isempty(registry), registry = obj.SourceRegistry; end
+            if isempty(registry), return, end
+            obj.ensureCurrentSource(registry);
+            if ~obj.currentModelIsBound(), return, end
+            before = obj.CurrentSource;
+            ids = unique(string({changes.ComponentId}), "stable");
+            beforeSettings = cell(1, numel(ids));
+            for index = 1:numel(ids), beforeSettings{index} = obj.getComponent(ids(index)).Settings; end
+            try
+                prepared = macd.model.SourceLiteralBatchTransaction(obj, before, changes, registry);
+            catch exception
+                if any(string(exception.identifier) == ["macd:SourceLiteralTransaction:WiderProof", ...
+                        "macd:SourceLiteralTransaction:InvalidValue", "macd:SourceSettingRebinder:NeedsModelParse", ...
+                        "macd:PropertyInsertionPlanner:UnsafePlacement"])
+                    return
+                end
+                rethrow(exception)
+            end
+            prepared.applyModel(obj, before, registry);
+            obj.publishCurrentSource(prepared.AfterSource);
+            context = obj.evaluationContext(registry);
+            validation = prepared.validationResult();
+            for owner = validation.Owners
+                context.remember("states:" + owner.ComponentId, struct("Definitions", owner.Definitions, ...
+                    "States", owner.States, "Diagnostics", macd.model.Diagnostic.empty));
+            end
+            obj.PropertyValidationContext = context; obj.PropertyValidationNames = strings(1, 0);
+            obj.PropertyValidationDiagnostics = validation.Diagnostics;
+            owners = struct("ComponentId", {}, "Changes", {}, "SettingIdentities", {}, "Insertions", {});
+            for index = 1:numel(prepared.Specs)
+                spec = prepared.Specs(index); component = obj.getComponent(spec.ComponentId);
+                identities = macd.model.SourcePropertyHistory.capture(beforeSettings{index}, component.Settings, string({spec.Changes.Path}));
+                owners(end + 1) = struct("ComponentId", spec.ComponentId, "Changes", spec.Changes, ...
+                    "SettingIdentities", identities, "Insertions", spec.Placements); %#ok<AGROW>
+            end
+            edit = struct("Kind", "source-property-batch", "Changes", changes, "Owners", owners, ...
+                "SourceForward", prepared.Batch.Edits, "SourceInverse", prepared.Batch.InverseEdits, ...
+                "SourceBeforeId", before.StateId, "SourceAfterId", obj.CurrentSource.StateId);
+            obj.SourcePublication = true; cleanup = onCleanup(@() obj.endSourcePublication());
+            obj.recordHistory(edit); result = true;
         end
 
         function endSourcePublication(obj)
@@ -2238,6 +2344,74 @@ classdef DocumentModel < handle
             obj.publishCurrentSource(state);
             obj.Evaluation = macd.model.EvaluationContext.projectSource(obj, obj.SourceRegistry, ...
                 previousContext, updates, edit.ComponentId, string({edit.Changes.Path}), token);
+        end
+
+        function applySourceBatchHistory(obj, edit, forward)
+            % applySourceBatchHistory Replay primary multi-owner edits and derive all positions from one maintained index.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                edit (1, 1) struct
+                forward (1, 1) logical
+            end
+            if forward, edits = edit.SourceForward; stateId = edit.SourceAfterId;
+            else, edits = edit.SourceInverse; stateId = edit.SourceBeforeId; end
+            batch = macd.source.SourcePatchBatch(obj.CurrentText, edits);
+            specs = struct("ComponentId", {}, "Changes", {}, "Placements", {}, "RemovedIds", {});
+            for owned = edit.Owners
+                component = obj.getComponent(owned.ComponentId);
+                changes = struct("Path", {}, "Value", {});
+                placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {});
+                if forward, placements = owned.Insertions; removed = owned.SettingIdentities.Removed;
+                else, removed = owned.SettingIdentities.Added; end
+                for target = owned.SettingIdentities.Targets
+                    if forward, expected = target.BeforeId; id = target.AfterId; value = target.AfterValue;
+                    else, expected = target.AfterId; id = target.BeforeId; value = target.BeforeValue; end
+                    if expected > 0
+                        entry = component.getProperty(target.Path);
+                        assert(~isempty(entry) && isfield(entry.Metadata, "SourceSettingId") && entry.Metadata.SourceSettingId == expected, ...
+                            "macd:DocumentModel:StalePropertySetting", "History no longer owns the same value projection.");
+                    end
+                    if id > 0, changes(end + 1) = struct("Path", target.Path, "Value", {value}); end %#ok<AGROW>
+                end
+                specs(end + 1) = struct("ComponentId", owned.ComponentId, "Changes", changes, ...
+                    "Placements", placements, "RemovedIds", [removed.Id]); %#ok<AGROW>
+            end
+            [state, bindings, execution] = macd.model.IndexedSettingEdit.prepareMany( ...
+                obj, obj.CurrentSource, specs, batch, obj.SourceRegistry, stateId);
+            ids = string({specs.ComponentId});
+            projection = obj.prepareSettingProjection(batch, execution, ids);
+            [diagnostics, regions] = macd.model.SourceLocationUpdate.annotations(obj, batch);
+            updates = macd.model.SourceLocationUpdate.empty;
+            for component = obj.Components
+                if ismember(component.Id, ids), continue, end
+                update = macd.model.SourceLocationUpdate(component, batch, ...
+                    struct("SettingId", {}, "Value", {}), execution, state.Analysis, obj.ownerSettingProjection(component, projection));
+                update.assertCurrent(component); updates(end + 1) = update; %#ok<AGROW>
+            end
+            % Prepare every changed owner's occurrence identities and spans before any publication.
+            spans = cell(1, numel(bindings));
+            for index = 1:numel(bindings)
+                owner = obj.getComponent(bindings(index).ComponentId); owned = edit.Owners(index);
+                if forward, identities = owned.SettingIdentities.Added; else, identities = owned.SettingIdentities.Removed; end
+                bindings(index).Settings = macd.model.SourcePropertyHistory.restoreIdentities(bindings(index).Settings, identities);
+                [creation, valid] = batch.mapSpan(owner.SourceSpans.Creation); assert(valid);
+                [declaration, valid] = batch.mapSpan(owner.SourceSpans.Declaration); assert(valid);
+                spans{index} = struct("Declaration", declaration, "Creation", creation);
+            end
+            obj.publishSettingProjection(projection);
+            for update = updates, update.applyValidated(obj.getComponent(update.ComponentId)); end
+            for index = 1:numel(bindings)
+                binding = bindings(index); owner = obj.getComponent(binding.ComponentId);
+                owner.SourceSpans = spans{index};
+                owner.synchronizeSourceSettings(binding.Settings, binding.FactoryArguments);
+                visit = find(execution.Trace.Order == state.Analysis.statementIndices(spans{index}.Creation));
+                owner.Metadata.InitializationCreationSequence = execution.Creation(visit);
+            end
+            obj.Diagnostics = diagnostics; obj.UnknownRegions = regions;
+            trace = execution.Trace;
+            obj.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
+                "Returns", trace.Returns, "Layout", state.Analysis.Layout);
+            obj.publishCurrentSource(state);
         end
 
         function batch = sourceDifference(~, before, after)

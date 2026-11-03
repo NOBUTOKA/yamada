@@ -174,7 +174,7 @@ classdef SourceLocationUpdate
         end
     end
 
-    methods (Access = {?macd.model.SourceLiteralTransaction, ?macd.model.DocumentModel})
+    methods (Access = {?macd.model.SourceLiteralTransaction, ?macd.model.SourceLiteralBatchTransaction, ?macd.model.DocumentModel})
         function applyValidated(obj, component)
             % applyValidated Publish a member after the transaction validated every owner without yielding.
             arguments (Input)

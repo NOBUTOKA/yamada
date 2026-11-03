@@ -43,6 +43,16 @@ classdef SourceHistoryRebaser
                     edit.BeforeSettings = macd.model.SourceLocationUpdate.relocateSettings(edit.BeforeSettings, mappings{cursor});
                     edit.AfterSettings = macd.model.SourceLocationUpdate.relocateSettings(edit.AfterSettings, mappings{cursor + 1});
                 end
+                % Insertion anchors belong to the before-source coordinate system, including nested batch owners.
+                if isfield(edit, "Insertions")
+                    edit.Insertions = macd.model.SourceHistoryRebaser.mapInsertions(edit.Insertions, mappings{cursor});
+                end
+                if isfield(edit, "Owners")
+                    for ownerIndex = 1:numel(edit.Owners)
+                        edit.Owners(ownerIndex).Insertions = macd.model.SourceHistoryRebaser.mapInsertions( ...
+                            edit.Owners(ownerIndex).Insertions, mappings{cursor});
+                    end
+                end
                 history{cursor} = edit;
             end
             text = renamed(index + 1);
@@ -110,6 +120,22 @@ classdef SourceHistoryRebaser
             batch = macd.source.SourcePatchBatch(renamedBefore, edits);
             assert(batch.AfterText == renamedAfter, "macd:SourceHistoryRebaser:TransitionMismatch", ...
                 "Renamed history must reproduce the exact current source.");
+        end
+
+        function placements = mapInsertions(placements, mapping)
+            % mapInsertions Retain primary insertion anchors when Save As shifts source positions.
+            arguments (Input)
+                placements (1, :) struct
+                mapping (1, 1) macd.source.SourcePatchBatch
+            end
+            arguments (Output)
+                placements (1, :) struct
+            end
+            for index = 1:numel(placements)
+                [offset, valid] = mapping.mapBoundary(placements(index).Offset, "right");
+                assert(valid, "macd:SourceHistoryRebaser:InsertionMismatch", "Save As must preserve an owned insertion anchor.");
+                placements(index).Offset = offset;
+            end
         end
 
         function edits = changedRange(old, current, offset)
