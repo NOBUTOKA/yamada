@@ -201,6 +201,17 @@ classdef ModelValidator
                 definition = definitions([definitions.Path] == path);
                 affected = union(affected, definition.Application.AffectedPaths, "stable");
             end
+            % A finite owner-local setter can change followers without adding explicit source settings.
+            % Compare already-resolved local results; retain document-dependent states from the proven baseline.
+            localPaths = macd.model.PropertyStateResolver.ownerLocalPaths(definitions);
+            for index = find(ismember(string({states.Path}), localPaths))
+                current = states(index); old = previous(index);
+                if current.IsKnown ~= old.IsKnown || current.IsEditable ~= old.IsEditable || ...
+                        ~isequaln(current.EffectiveValue, old.EffectiveValue) || current.EffectKey ~= old.EffectKey || ...
+                        current.ReadOnlyReason ~= old.ReadOnlyReason
+                    affected = union(affected, current.Path, "stable");
+                end
+            end
             dependent = [macd.model.GridLayoutStatePolicy.inputPropertyPaths(), ...
                 macd.model.AncestorGeometryPolicy.inputPropertyPaths()];
             if any(ismember(affected, dependent)), return, end
@@ -218,10 +229,13 @@ classdef ModelValidator
                 index = find([definitions.Path] == entry.Path, 1);
                 if isempty(index) || entry.ValueKind ~= "literal", return, end
                 state = states(index);
-                if ~state.IsKnown || ~state.IsEditable, return, end
-                value = state.EffectiveValue;
-                if any(paths == entry.Path), value = entry.LiteralValue; end
-                transaction.stage(entry.Path, value);
+                requested = any(paths == entry.Path);
+                if requested && (~state.IsKnown || ~state.IsEditable), return, end
+                if state.IsKnown && definitions(index).IsEditable && definitions(index).AuditDisposition == "editable"
+                    value = state.EffectiveValue;
+                    if requested, value = entry.LiteralValue; end
+                    transaction.stage(entry.Path, value);
+                end
                 diagnostic = macd.validation.ModelValidator.validateGeometry(entry, component.Id, component.Factory, definitions(index));
                 assert(isempty(diagnostic), "macd:SourceLiteralTransaction:InvalidValue", ...
                     "The prepared geometry must satisfy the existing model contract.");

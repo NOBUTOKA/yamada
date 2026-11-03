@@ -226,6 +226,7 @@ classdef SourceLiteralTransaction
             candidate.restoreProperties(properties);
             candidate.applyProjectedSettings(component.Settings);
             edits = struct("Start", {}, "End", {}, "Text", {});
+            localPaths = macd.model.PropertyStateResolver.ownerLocalPaths(definitions);
             for change = changes
                 path = string(change.Path);
                 definition = definitions(string({definitions.Path}) == path);
@@ -233,10 +234,9 @@ classdef SourceLiteralTransaction
                     any(definition.Application.EffectStatus == ["independent", "modeled"]), ...
                     "macd:SourceLiteralTransaction:WiderProof", "This setting needs its coupled model scope.");
                 policy = definition.Application;
-                independent = policy.EffectStatus == "independent" && policy.EffectPolicy == "none";
-                numeric = policy.EffectStatus == "modeled" && policy.EffectPolicy == "numericValue";
-                needsDocumentValidation = needsDocumentValidation || ~(independent || numeric);
-                canReuseStates = canReuseStates && (independent || numeric) && ...
+                ownerLocal = any(localPaths == path);
+                needsDocumentValidation = needsDocumentValidation || ~ownerLocal;
+                canReuseStates = canReuseStates && ownerLocal && ...
                     (isempty(component.Children) || (~definition.AbsoluteGeometryImpact && definition.GridGeometryImpact ~= "required"));
                 dependencies = macd.model.SubtreePlacementPlanner.inputPropertyPaths();
                 canReuseEligibility = canReuseEligibility && ...

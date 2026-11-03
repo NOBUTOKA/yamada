@@ -214,6 +214,39 @@ classdef PropertyStateResolver
     end
 
     methods (Static)
+        function paths = ownerLocalPaths(definitions)
+            % ownerLocalPaths Classify finite setter dependencies using the complete component policy surface.
+            arguments (Input)
+                definitions macd.model.PropertyDefinition
+            end
+            arguments (Output)
+                paths (1, :) string
+            end
+            paths = [definitions.Path];
+            if isempty(definitions), paths = strings(1, 0); return, end
+            applications = [definitions.Application];
+            policies = [applications.EffectPolicy]; statuses = [applications.EffectStatus];
+            localPolicies = ["itemSelection", "boundedValue", "numericValue", "textValue", ...
+                "tickMode", "valueMode", "modeFlag", "axisWidth"];
+            local = (statuses == "independent" & policies == "none") | ...
+                (statuses == "modeled" & ismember(policies, localPolicies));
+            companions = statuses == "modeled" & policies == "none";
+            % Mode companions use their reviewed value policy; native units and geometry retain wider proof.
+            modes = companions & endsWith(paths, "Mode");
+            local(modes) = ismember(extractBefore(paths(modes), strlength(paths(modes)) - 3), paths(local));
+            value = find(paths == "Value", 1);
+            inputs = strings(1, 0);
+            if ~isempty(value)
+                switch policies(value)
+                    case "boundedValue", inputs = ["Value", "Limits"];
+                    case "numericValue", inputs = ["Value", "Limits", "LowerLimitInclusive", "UpperLimitInclusive", "RoundFractionalValues", "AllowEmpty"];
+                    case "itemSelection", inputs = ["Value", "Items", "ItemsData", "Editable", "Multiselect"];
+                    case "textValue", inputs = ["Value", "CharacterLimits"];
+                end
+            end
+            paths = paths(local | (companions & ismember(paths, inputs)));
+        end
+
         function result = hasUnresolvedExecution(document)
             % hasUnresolvedExecution Identify explicit execution effects outside modeled component settings.
             arguments (Input)

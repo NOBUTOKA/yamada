@@ -422,56 +422,6 @@ classdef EvaluationContext < handle
             end
         end
 
-        function inheritNumericStates(obj, previous, componentId)
-            % inheritNumericStates Retain other component states after a document-proven bounded Value replacement.
-            arguments (Input)
-                obj (1, 1) macd.model.EvaluationContext
-                previous (1, 1) macd.model.EvaluationContext
-                componentId (1, 1) string
-            end
-            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
-                    obj.RegistryRevision ~= previous.RegistryRevision || ...
-                    ~isequaln(rmfield(obj.Key, "Components"), rmfield(previous.Key, "Components"))
-                return
-            end
-            % Generic inheritance already covers independent scopes; compare only when coupled results are missing.
-            names = string(keys(previous.Values));
-            names = names(startsWith(names, "states:") & names ~= "states:" + componentId);
-            if isempty(names), return, end
-            names = names(~isKey(obj.Values, cellstr(names)));
-            if isempty(names), return, end
-            before = previous.Key.Components;
-            after = obj.Key.Components;
-            target = find(string({after.Id}) == componentId, 1);
-            if isempty(target) || numel(before) ~= numel(after) || ...
-                    ~isequal(string({before.Id}), string({after.Id}))
-                return
-            end
-            % The catalog defines the same bounded numeric semantics for every eligible factory.
-            parentFactory = "";
-            parent = find(string({after.Id}) == after(target).ParentId, 1);
-            if ~isempty(parent), parentFactory = after(parent).Factory; end
-            definitions = obj.Registry.getEffectiveProperties(after(target).Factory, ...
-                parentFactory, after(target).CreationArguments);
-            index = find([definitions.Path] == "Value", 1);
-            if isempty(index) || definitions(index).Application.EffectStatus ~= "modeled" || ...
-                    definitions(index).Application.EffectPolicy ~= "numericValue"
-                return
-            end
-            % Prove that only the owned Value literal changed; settings and every other input remain exact.
-            oldValue = find(string({before(target).Properties.Path}) == "Value", 1);
-            newValue = find(string({after(target).Properties.Path}) == "Value", 1);
-            if isempty(oldValue) || isempty(newValue), return, end
-            before(target).Properties(oldValue).LiteralValue = [];
-            after(target).Properties(newValue).LiteralValue = [];
-            if ~isequaln(before, after), return, end
-
-            % Numeric Value has no grid, button-selection, or ancestor-geometry effect on other owners.
-            for name = names
-                obj.Values(char(name)) = previous.Values(char(name));
-            end
-        end
-
         function inheritEligibility(obj, previous)
             % inheritEligibility Carry immutable condition answers after a document-proven local literal edit.
             arguments (Input)
