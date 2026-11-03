@@ -77,7 +77,9 @@ classdef RoundTripGenerator
                     try
                         rewrittenReferences = macd.model.SourceSpan.empty;
                         if isfield(pending, "RewrittenReferences"), rewrittenReferences = pending.RewrittenReferences; end
-                        removals = macd.source.SubtreeSourceEdits.deletion(source, pending.Components, rewrittenReferences);
+                        if isfield(pending, "Records"), records = pending.Records;
+                        else, records = macd.model.SourceOwnership.snapshot(pending.Components); end
+                        removals = macd.source.SubtreeSourceEdits.deletion(source, records, rewrittenReferences);
                         edits = [edits removals]; %#ok<AGROW>
                     catch exception
                         diagnostics(end + 1) = macd.model.Diagnostic("unsafe-subtree-deletion", ...
@@ -247,12 +249,14 @@ classdef RoundTripGenerator
     methods (Access = private)
         function result = deletedComponents(~, document)
             % deletedComponents Return component records captured by explicit deletion.
-            result = macd.model.ComponentRecord.empty;
+            result = struct([]);
             for index = 1:numel(document.PendingEdits)
                 pending = document.PendingEdits{index};
                 if isstruct(pending) && isfield(pending, "Kind") && ...
                         pending.Kind == "delete-component"
-                    result(end + 1) = pending.Component; %#ok<AGROW>
+                    if isfield(pending, "Record"), record = pending.Record;
+                    else, record = macd.model.SourceOwnership.snapshot(pending.Component); end
+                    if isempty(result), result = record; else, result(end + 1) = record; end %#ok<AGROW>
                 end
             end
         end

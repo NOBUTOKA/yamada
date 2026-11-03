@@ -72,6 +72,29 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
             testCase.verifySubstring(document.GeneratedText, "disp(""" + marker + """); % " + marker);
         end
 
+        function frozenOwnershipSurvivesLaterModelChanges(testCase)
+            % frozenOwnershipSurvivesLaterModelChanges Preserve deletion proof from independent source values.
+            [original, registry, panel] = SubtreeDeletionTest.fixture();
+            name = panel.Name;
+            source = macd.source.NewAppGenerator(registry).generate(original);
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            panel = document.getComponentByName(name);
+            subtree = macd.model.SubtreeSnapshot(document, panel.Id);
+            records = document.Components(ismember(string({document.Components.Id}), string({subtree.Records.Id})));
+            ownership = macd.model.SourceOwnership.snapshot(records);
+            expected = macd.source.SubtreeSourceEdits.deletion(source, ownership);
+            for record = records
+                record.Name = record.Name + "Changed";
+                record.SourceSpans = struct("Declaration", macd.model.SourceSpan.empty, "Creation", macd.model.SourceSpan.empty);
+            end
+            actual = macd.source.SubtreeSourceEdits.deletion(source, ownership);
+            testCase.verifyEqual(actual, expected);
+            result = macd.source.SourcePatchBatch(source, actual).AfterText;
+            parsed = macd.source.AppSourceParser.parseText(result, registry);
+            testCase.verifyEmpty(parsed.getComponentByName(name));
+            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(parsed.Diagnostics));
+        end
+
         function candidateDoesNotShareComponentOrPropertyHandles(testCase)
             % candidateDoesNotShareComponentOrPropertyHandles Isolate speculative changes from the real document.
             [document, ~, panel] = SubtreeDeletionTest.fixture();

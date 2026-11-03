@@ -2,6 +2,30 @@ classdef SourceOwnership
     % SourceOwnership Distinguish current physical source ownership from original provenance.
     %   Parsed and newly inserted components use the same checks after publication.
     methods (Static)
+        function snapshots = snapshot(records)
+            % snapshot Freeze only source ownership values needed by deletion, without retaining model handles.
+            arguments (Input)
+                records macd.model.ComponentRecord
+            end
+            arguments (Output)
+                snapshots struct
+            end
+            snapshots = struct("Id", {}, "Name", {}, "Origin", {}, "SourceSpans", {}, "Properties", {}, "Settings", {});
+            for record = reshape(records, 1, [])
+                properties = struct("SourceSpan", {});
+                for entry = reshape(record.Properties, 1, [])
+                    properties(end + 1) = struct("SourceSpan", entry.SourceSpan); %#ok<AGROW>
+                end
+                settings = struct("SourceSpan", {});
+                for setting = reshape(record.Settings, 1, [])
+                    settings(end + 1) = struct("SourceSpan", setting.SourceSpan); %#ok<AGROW>
+                end
+                spans = struct("Declaration", record.SourceSpans.Declaration, "Creation", record.SourceSpans.Creation);
+                snapshots(end + 1) = struct("Id", record.Id, "Name", record.Name, "Origin", record.Origin, ...
+                    "SourceSpans", spans, "Properties", properties, "Settings", settings); %#ok<AGROW>
+            end
+        end
+
         function result = hasSource(record)
             % hasSource Recognize imported ownership and already published generated factory statements.
             arguments (Input)

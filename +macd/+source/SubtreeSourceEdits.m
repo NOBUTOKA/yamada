@@ -8,13 +8,15 @@ classdef SubtreeSourceEdits
             % deletion Return source removals only after proving complete ownership.
             arguments (Input)
                 source (1, 1) string
-                components macd.model.ComponentRecord
+                components
                 rewrittenReferences macd.model.SourceSpan = macd.model.SourceSpan.empty
             end
             arguments (Output)
                 edits struct
             end
 
+            % Accept live API inputs at the boundary; command state retains source-only values.
+            if ~isstruct(components), components = macd.model.SourceOwnership.snapshot(components); end
             % Collect complete owned spans before checking any references.
             spans = macd.model.SourceSpan.empty;
             names = strings(1, 0);

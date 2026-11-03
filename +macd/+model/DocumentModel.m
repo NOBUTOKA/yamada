@@ -1531,7 +1531,7 @@ classdef DocumentModel < handle
             beforeComponents = obj.Components;
             beforePending = obj.PendingEdits;
             afterPending = beforePending;
-            afterPending{end + 1} = struct("Kind", "delete-subtree", "Components", sourceRemoved, ...
+            afterPending{end + 1} = struct("Kind", "delete-subtree", "Records", macd.model.SourceOwnership.snapshot(sourceRemoved), ...
                 "RewrittenReferences", rewrittenReferences);
             candidate.Components(ismember(string({candidate.Components.Id}), ids)) = [];
             candidateParent = candidate.getComponent(parent.Id);
@@ -2445,7 +2445,7 @@ classdef DocumentModel < handle
             if ~macd.model.SourceOwnership.hasSource(component)
                 return
             end
-            pending = struct("Kind", "delete-component", "Component", component);
+            pending = struct("Kind", "delete-component", "Record", macd.model.SourceOwnership.snapshot(component));
             obj.PendingEdits{end + 1} = pending;
             index = numel(obj.PendingEdits);
         end
@@ -2637,9 +2637,11 @@ classdef DocumentModel < handle
             % removeDeletionIntent Remove only the matching parsed deletion record.
             for index = numel(obj.PendingEdits):-1:1
                 pending = obj.PendingEdits{index};
-                if isstruct(pending) && isfield(pending, "Kind") && ...
-                        pending.Kind == "delete-component" && ...
-                        pending.Component.Id == component.Id
+                if ~isstruct(pending) || ~isfield(pending, "Kind") || pending.Kind ~= "delete-component", continue, end
+                id = "";
+                if isfield(pending, "Record"), id = pending.Record.Id;
+                elseif isfield(pending, "Component"), id = pending.Component.Id; end
+                if id == component.Id
                     obj.PendingEdits(index) = [];
                     return
                 end
