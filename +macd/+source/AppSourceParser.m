@@ -78,6 +78,16 @@ classdef AppSourceParser
                 diagnostics macd.model.Diagnostic
             end
 
+            % Every whole-source parse uses one central, exception-safe UI notification.
+            display = macd.source.SourceParseProgress.find(registry);
+            if ~isempty(display) && display.Parent.Visible == "on" && isempty(display.Dialog)
+                dialog = uiprogressdlg(display.Parent, "Title", "Loading", ...
+                    "Message", "Loading source...", "Indeterminate", "on", "Cancelable", "off");
+                progressCleanup = onCleanup(@() display.finish(dialog));
+                display.start(dialog);
+                drawnow nocallbacks
+            end
+
             % Split source lexically before applying limited structural recognition.
             source = join(reshape(source, 1, []), "");
             statements = macd.source.MatlabLexicalScanner.splitStatements(source);

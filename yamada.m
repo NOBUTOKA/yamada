@@ -17,6 +17,7 @@ classdef yamada < handle
     end
 
     properties (Access = private)
+        ParseProgress macd.source.SourceParseProgress = macd.source.SourceParseProgress.empty
         Registry macd.model.ComponentRegistry
         DefaultValueProvider macd.ui.inspector.DefaultValueProvider
         PreviewRenderer macd.ui.PreviewRenderer
@@ -134,6 +135,7 @@ classdef yamada < handle
             app.GridLayoutOverlayDataBuilder = macd.ui.GridLayoutOverlayDataBuilder();
             try
                 app.createComponents();
+                app.ParseProgress = macd.source.SourceParseProgress(app.Registry, app.UIFigure);
                 addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
                 app.createMenus();
                 app.newDocument("UntitledApp");
@@ -153,6 +155,7 @@ classdef yamada < handle
             % delete Release the editor figure when the application is deleted.
             % Stop deferred UI work before releasing the editor figure.
             app.IsClosingProgrammatically = true;
+            if ~isempty(app.ParseProgress), delete(app.ParseProgress); end
             app.cancelOverlayRefresh();
             app.closeCallbackDialog();
             if ~isempty(app.HierarchyContextMenu), delete(app.HierarchyContextMenu), end
