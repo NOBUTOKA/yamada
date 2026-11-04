@@ -42,6 +42,8 @@ classdef PropertyDefinition
         ValueSchema struct = struct()
         % CallbackSignature - Reviewed event argument contract, unresolved when absent.
         CallbackSignature macd.model.CallbackSignature = macd.model.CallbackSignature()
+        % HandlerSuffix - Reviewed generated method suffix, empty for legacy catalogs.
+        HandlerSuffix string = ""
         % Application - Initialization dependencies independent of display order.
         Application macd.model.PropertyApplicationPolicy = macd.model.PropertyApplicationPolicy()
         % ApplicableStyles - Styles for which this property definition applies.
@@ -83,6 +85,16 @@ classdef PropertyDefinition
             if isfield(metadata, "valueSchema"), obj.ValueSchema = metadata.valueSchema; end
             if isfield(metadata, "callbackSignature")
                 obj.CallbackSignature = macd.model.CallbackSignature(metadata.callbackSignature);
+            end
+            if isfield(metadata, "handlerSuffix")
+                value = metadata.handlerSuffix;
+                if ~(isstring(value) && isscalar(value) && ~ismissing(value) || ischar(value) && isrow(value)) || ...
+                        ~isvarname(string(value)) || iskeyword(string(value)) || ...
+                        ~isfield(obj.ValueSchema, "kind") || string(obj.ValueSchema.kind) ~= "callback"
+                    error("macd:ComponentCatalogLoader:InvalidCatalog", ...
+                        "property.%s.handlerSuffix requires a nonempty callback suffix identifier.", path);
+                end
+                obj.HandlerSuffix = string(value);
             end
             if isfield(metadata, "application")
                 obj.Application = macd.model.PropertyApplicationPolicy( ...

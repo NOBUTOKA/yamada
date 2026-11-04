@@ -4,6 +4,30 @@ classdef (TestTags = {'fast', 'catalog'}) CallbackDiscoveryTest < matlab.unittes
     %   discovery does not change property editability or Safe Preview policy.
 
     methods (Test)
+        function reviewedSuffixesAvoidComponentWordsWithoutMouseEventGuessing(testCase)
+            % reviewedSuffixesAvoidComponentWordsWithoutMouseEventGuessing Use explicit suffixes and preserve legacy catalog behavior.
+            registry = macd.model.ComponentRegistry.createDefault();
+            cases = {"uibutton", {}, "ButtonPushedFcn", "HogeButton", "HogeButtonPushed"; ...
+                "uibutton", {'state'}, "ValueChangedFcn", "HogeButton", "HogeButtonValueChanged"; ...
+                "uimenu", {}, "MenuSelectedFcn", "FileMenu", "FileMenuSelected"; ...
+                "uifigure", {}, "WindowButtonDownFcn", "MainFigure", "MainFigureWindowButtonDown"; ...
+                "uiaxes", {}, "ButtonDownFcn", "PlotAxes", "PlotAxesButtonDown"};
+            for index = 1:size(cases, 1)
+                definitions = registry.getEffectiveCallbacks(cases{index, 1}, "", cases{index, 2});
+                definition = definitions(string({definitions.Path}) == cases{index, 3});
+                testCase.verifyEqual(macd.source.ComponentNameRewriter.defaultHandler( ...
+                    cases{index, 4}, cases{index, 3}, definition.HandlerSuffix), cases{index, 5});
+            end
+            testCase.verifyEqual(macd.source.ComponentNameRewriter.defaultHandler("HogeButton", "ButtonPushedFcn"), ...
+                "HogeButtonButtonPushed");
+            metadata = struct("valueSchema", struct("kind", "callback"), "handlerSuffix", "");
+            testCase.verifyError(@() macd.model.PropertyDefinition("ButtonPushedFcn", [], false, false, metadata), ...
+                "macd:ComponentCatalogLoader:InvalidCatalog");
+            metadata.handlerSuffix = "Pushed();delete(app)";
+            testCase.verifyError(@() macd.model.PropertyDefinition("ButtonPushedFcn", [], false, false, metadata), ...
+                "macd:ComponentCatalogLoader:InvalidCatalog");
+        end
+
         function discoversEveryVariantInCatalogOrder(testCase)
             % discoversEveryVariantInCatalogOrder Compare discovery with each concrete catalog surface.
             registry = macd.model.ComponentRegistry.createDefault();

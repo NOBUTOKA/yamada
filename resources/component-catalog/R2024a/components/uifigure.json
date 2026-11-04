@@ -875,7 +875,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "ButtonDown"
           }
         },
         {
@@ -920,7 +921,8 @@
                   0
                 ]
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -962,7 +964,8 @@
                 "className": "event.EventData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]
@@ -1011,7 +1014,8 @@
                 "className": "matlab.ui.eventdata.KeyData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "KeyPress"
           }
         },
         {
@@ -1053,7 +1057,8 @@
                 "className": "matlab.ui.eventdata.KeyData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "KeyRelease"
           }
         }
       ]
@@ -1102,7 +1107,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "CloseRequest"
           }
         },
         {
@@ -1144,7 +1150,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "SizeChanged"
           }
         },
         {
@@ -1186,7 +1193,8 @@
                 "className": "matlab.ui.eventdata.WindowMouseData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "WindowButtonDown"
           }
         },
         {
@@ -1228,7 +1236,8 @@
                 "className": "matlab.ui.eventdata.WindowMouseData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "WindowButtonMotion"
           }
         },
         {
@@ -1270,7 +1279,8 @@
                 "className": "matlab.ui.eventdata.WindowMouseData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "WindowButtonUp"
           }
         },
         {
@@ -1312,7 +1322,8 @@
                 "className": "matlab.ui.eventdata.KeyData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "WindowKeyPress"
           }
         },
         {
@@ -1354,7 +1365,8 @@
                 "className": "matlab.ui.eventdata.KeyData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "WindowKeyRelease"
           }
         },
         {
@@ -1396,7 +1408,8 @@
                 "className": "matlab.ui.eventdata.ScrollWheelData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "WindowScrollWheel"
           }
         }
       ]

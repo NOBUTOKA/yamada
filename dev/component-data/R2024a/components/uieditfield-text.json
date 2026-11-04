@@ -1104,7 +1104,8 @@
             "detail": "ValueChangedFcn: The callback documents the ValueChangedData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "ValueChanged"
     },
     {
       "path": "ValueChangingFcn",
@@ -1170,7 +1171,8 @@
             "detail": "ValueChangingFcn: The callback documents the ValueChangingData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "ValueChanging"
     },
     {
       "path": "CreateFcn",
@@ -1236,7 +1238,8 @@
             "detail": "CreateFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Create"
     },
     {
       "path": "DeleteFcn",
@@ -1302,7 +1305,8 @@
             "detail": "DeleteFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Delete"
     },
     {
       "path": "Interruptible",

@@ -871,7 +871,8 @@
                 "className": "matlab.ui.eventdata.ValueChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "ValueChanged"
           }
         },
         {
@@ -913,7 +914,8 @@
                 "className": "matlab.ui.eventdata.DropDownOpeningData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "DropDownOpening"
           }
         },
         {
@@ -955,7 +957,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Clicked"
           }
         },
         {
@@ -997,7 +1000,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -1039,7 +1043,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

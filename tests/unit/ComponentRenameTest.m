@@ -4,6 +4,23 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
     %   references, and rejection of unresolved or conflicting names.
 
     methods (Test)
+        function legacyGeneratedNamesMigrateOnlyDuringExplicitRename(testCase)
+            % legacyGeneratedNamesMigrateOnlyDuringExplicitRename Preserve legacy source until a proven default method follows its owner.
+            [document, button, registry] = ComponentRenameTest.newButton();
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            source = regexprep(document.CurrentText, '(?<!\w)ButtonPushed(?!\w)', "ButtonButtonPushed");
+            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(parsed), source);
+            target = parsed.getComponentByName("Button");
+            parsed.renameComponent(target.Id, "HogeButton", registry);
+            testCase.verifySubstring(parsed.CurrentText, "@app.HogeButtonPushed");
+            testCase.verifySubstring(parsed.CurrentText, "function HogeButtonPushed(app, source, event)");
+            parsed.undo();
+            testCase.verifyEqual(parsed.CurrentText, source);
+            parsed.redo();
+            testCase.verifySubstring(parsed.CurrentText, "@app.HogeButtonPushed");
+        end
+
         function generatedCallbacksAndHistoryFollowTheName(testCase)
             % generatedCallbacksAndHistoryFollowTheName Rename the property and default handler atomically.
             [document, button, registry] = ComponentRenameTest.newButton();
@@ -15,10 +32,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             testCase.verifyEqual(document.HistoryIndex, checkpoint + 1);
             testCase.verifyEqual(button.Id, id);
             testCase.verifySubstring(document.GeneratedText, "app.RunButton = uibutton(app.UIFigure)");
-            testCase.verifySubstring(document.GeneratedText, "@app.RunButtonButtonPushed");
-            testCase.verifySubstring(document.GeneratedText, "% RunButtonButtonPushed Handle");
+            testCase.verifySubstring(document.GeneratedText, "@app.RunButtonPushed");
+            testCase.verifySubstring(document.GeneratedText, "% RunButtonPushed Handle");
             states = macd.source.CallbackSourceAnalyzer.analyze(document, id, registry);
-            testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").HandlerName, "RunButtonButtonPushed");
+            testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").HandlerName, "RunButtonPushed");
             document.undo();
             testCase.verifyEqual(button.Name, "Button");
             testCase.verifyFalse(document.IsDirty);
@@ -33,20 +50,20 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             source = macd.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "        Button matlab.ui.control.Button", ...
                 "        % Button - UI component handle." + newline + "        Button matlab.ui.control.Button");
-            source = replace(source, "% ButtonButtonPushed Handle the ButtonPushedFcn callback.", ...
-                "% ButtonButtonPushed Handle the ButtonPushedFcn callback." + newline + ...
-                "            %   Example: ButtonButtonPushed(app, event); app.Button.Text = 'Run';");
+            source = replace(source, "% ButtonPushed Handle the ButtonPushedFcn callback.", ...
+                "% ButtonPushed Handle the ButtonPushedFcn callback." + newline + ...
+                "            %   Example: ButtonPushed(app, event); app.Button.Text = 'Run';");
             body = ["            x = app.Button.Position';"; ...
                 "            y = app . Button.Text;"; ...
                 "            a = 'app.Button'; b = ""app.Button"";"; ...
-                "            % app.Button and ButtonButtonPushed remain prose."; ...
+                "            % app.Button and ButtonPushed remain prose."; ...
                 "            %{ "; "            app.Button is a block comment"; "            %}"; ...
                 "            value = ""app.Button""'; after = app.Button.Text;"; ...
                 "            continued = app. ..."; "                Button.Text;"; ...
                 "            properties(app); Button = app.Button;"; ...
                 "            Button.Text = 'Local alias';"; ...
-                "            other.ButtonButtonPushed = @(~, ~) [];"; ...
-                "            other.ButtonButtonPushed(app, event);"; ...
+                "            other.ButtonPushed = @(~, ~) [];"; ...
+                "            other.ButtonPushed(app, event);"; ...
                 "            z = app.Button.Text;"];
             source = replace(source, "            % Add callback behavior here.", strjoin(body, newline));
             parsed = macd.source.AppSourceParser.parseText(source, registry);
@@ -60,16 +77,16 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             testCase.verifySubstring(result, "y = app . GoButton.Text");
             testCase.verifySubstring(result, "z = app.GoButton.Text");
             testCase.verifySubstring(result, "a = 'app.Button'; b = ""app.Button""");
-            testCase.verifySubstring(result, "% app.Button and ButtonButtonPushed remain prose.");
+            testCase.verifySubstring(result, "% app.Button and ButtonPushed remain prose.");
             testCase.verifySubstring(result, "app.Button is a block comment");
             testCase.verifySubstring(result, "after = app.GoButton.Text");
             testCase.verifySubstring(result, "                GoButton.Text;");
             testCase.verifySubstring(result, "properties(app); Button = app.GoButton;");
             testCase.verifySubstring(result, "Button.Text = 'Local alias';");
-            testCase.verifySubstring(result, "other.ButtonButtonPushed = @(~, ~) [];");
-            testCase.verifySubstring(result, "other.ButtonButtonPushed(app, event);");
-            testCase.verifySubstring(result, "% GoButtonButtonPushed Handle");
-            testCase.verifySubstring(result, "%   Example: GoButtonButtonPushed(app, event); app.GoButton.Text = 'Run';");
+            testCase.verifySubstring(result, "other.ButtonPushed = @(~, ~) [];");
+            testCase.verifySubstring(result, "other.ButtonPushed(app, event);");
+            testCase.verifySubstring(result, "% GoButtonPushed Handle");
+            testCase.verifySubstring(result, "%   Example: GoButtonPushed(app, event); app.GoButton.Text = 'Run';");
             parsed.undo();
             testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(parsed), source);
         end
@@ -79,26 +96,26 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = macd.source.NewAppGenerator(registry).generate(document);
-            custom = replace(source, "ButtonButtonPushed", "performAction");
+            custom = replace(source, "ButtonPushed", "performAction");
             parsed = macd.source.AppSourceParser.parseText(custom, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
             testCase.verifySubstring(parsed.GeneratedText, "@app.performAction");
             testCase.verifySubstring(parsed.GeneratedText, "% performAction Handle");
             shared = replace(source, "app.UIFigure.Position =", ...
-                "app.UIFigure.CloseRequestFcn = @app.ButtonButtonPushed;" + newline + "            app.UIFigure.Position =");
+                "app.UIFigure.CloseRequestFcn = @app.ButtonPushed;" + newline + "            app.UIFigure.Position =");
             parsed = macd.source.AppSourceParser.parseText(shared, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
-            testCase.verifySubstring(parsed.GeneratedText, "@app.ButtonButtonPushed");
-            testCase.verifySubstring(parsed.GeneratedText, "function ButtonButtonPushed");
+            testCase.verifySubstring(parsed.GeneratedText, "@app.ButtonPushed");
+            testCase.verifySubstring(parsed.GeneratedText, "function ButtonPushed");
             shadowed = replace(source, "            % Add callback behavior here.", ...
-                "            ButtonButtonPushed = 1; data = who('ButtonButtonPushed');");
+                "            ButtonPushed = 1; data = who('ButtonPushed');");
             parsed = macd.source.AppSourceParser.parseText(shadowed, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
-            testCase.verifySubstring(parsed.GeneratedText, "@app.ButtonButtonPushed");
-            testCase.verifySubstring(parsed.GeneratedText, "ButtonButtonPushed = 1; data = who('ButtonButtonPushed');");
+            testCase.verifySubstring(parsed.GeneratedText, "@app.ButtonPushed");
+            testCase.verifySubstring(parsed.GeneratedText, "ButtonPushed = 1; data = who('ButtonPushed');");
         end
 
         function rejectionLeavesAllStateUnchanged(testCase)
@@ -144,16 +161,16 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
             parsed.renameComponent(button.Id, "RunButton", registry);
-            testCase.verifySubstring(parsed.GeneratedText, "% RunButtonButtonPushed Handle");
+            testCase.verifySubstring(parsed.GeneratedText, "% RunButtonPushed Handle");
             parsed.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
-            testCase.verifyFalse(contains(parsed.GeneratedText, "function RunButtonButtonPushed"));
+            testCase.verifyFalse(contains(parsed.GeneratedText, "function RunButtonPushed"));
             parsed.undo();
-            testCase.verifySubstring(macd.source.RoundTripGenerator(registry).generate(parsed), "@app.RunButtonButtonPushed");
+            testCase.verifySubstring(macd.source.RoundTripGenerator(registry).generate(parsed), "@app.RunButtonPushed");
             parsed.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
             parsed.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            testCase.verifySubstring(parsed.GeneratedText, "@app.RunButtonButtonPushed_2");
+            testCase.verifySubstring(parsed.GeneratedText, "@app.RunButtonPushed_2");
             parsed.renameComponent(button.Id, "ExecuteButton", registry);
-            testCase.verifySubstring(parsed.GeneratedText, "% ExecuteButtonButtonPushed_2 Handle");
+            testCase.verifySubstring(parsed.GeneratedText, "% ExecuteButtonPushed_2 Handle");
         end
 
         function parentReferencesAndLaterPropertyEditsUseCurrentNames(testCase)
@@ -181,19 +198,19 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             source = macd.source.NewAppGenerator(registry).generate(document);
             canonicalSource = source;
             source = replace(source, "    properties (Access = private)", ...
-                "    properties (Access = private)" + newline + "        UserData double" + newline + "        RunButtonButtonPushed double");
+                "    properties (Access = private)" + newline + "        UserData double" + newline + "        RunButtonPushed double");
             parsed = macd.source.AppSourceParser.parseText(source, registry);
             button = parsed.getComponentByName("Button");
             testCase.verifyError(@() parsed.renameComponent(button.Id, "UserData", registry), "macd:DocumentModel:ComponentNameCollision");
             parsed.renameComponent(button.Id, "RunButton", registry);
-            testCase.verifySubstring(parsed.GeneratedText, "@app.RunButtonButtonPushed_2");
-            testCase.verifySubstring(parsed.GeneratedText, "% RunButtonButtonPushed_2 Handle");
+            testCase.verifySubstring(parsed.GeneratedText, "@app.RunButtonPushed_2");
+            testCase.verifySubstring(parsed.GeneratedText, "% RunButtonPushed_2 Handle");
             % A Save As identity can differ from the preserved source snapshot.
             parsed = macd.source.AppSourceParser.parseText(canonicalSource, registry);
-            parsed.ClassName = "RunButtonButtonPushed";
+            parsed.ClassName = "RunButtonPushed";
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "RunButton", registry);
-            testCase.verifySubstring(parsed.GeneratedText, "@app.RunButtonButtonPushed_2");
+            testCase.verifySubstring(parsed.GeneratedText, "@app.RunButtonPushed_2");
         end
 
         function insertionCannotReuseHistoricalSourceNames(testCase)
@@ -214,12 +231,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = macd.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "            % Add callback behavior here.", ...
-                "            ButtonButtonPushed(app, event);");
+                "            ButtonPushed(app, event);");
             parsed = macd.source.AppSourceParser.parseText(source, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "RunButton", registry);
-            testCase.verifySubstring(parsed.GeneratedText, "RunButtonButtonPushed(app, event);");
-            testCase.verifySubstring(parsed.GeneratedText, "% RunButtonButtonPushed Handle");
+            testCase.verifySubstring(parsed.GeneratedText, "RunButtonPushed(app, event);");
+            testCase.verifySubstring(parsed.GeneratedText, "% RunButtonPushed Handle");
         end
     end
 

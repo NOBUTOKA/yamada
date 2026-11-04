@@ -1175,7 +1175,8 @@
             "detail": "ButtonDownFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "ButtonDown"
     },
     {
       "path": "CreateFcn",
@@ -1246,7 +1247,8 @@
             "detail": "CreateFcn receives an empty 0-by-0 double, not event.EventData."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Create"
     },
     {
       "path": "DeleteFcn",
@@ -1314,7 +1316,8 @@
             "detail": "DeleteFcn receives event.EventData; no more specific public type is required."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Delete"
     },
     {
       "path": "KeyPressFcn",
@@ -1377,7 +1380,8 @@
             "detail": "KeyPressFcn: The callback documents the KeyData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "KeyPress"
     },
     {
       "path": "KeyReleaseFcn",
@@ -1440,7 +1444,8 @@
             "detail": "KeyReleaseFcn: The callback documents the KeyData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "KeyRelease"
     },
     {
       "path": "CloseRequestFcn",
@@ -1503,7 +1508,8 @@
             "detail": "CloseRequestFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "CloseRequest"
     },
     {
       "path": "SizeChangedFcn",
@@ -1566,7 +1572,8 @@
             "detail": "SizeChangedFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "SizeChanged"
     },
     {
       "path": "WindowButtonDownFcn",
@@ -1629,7 +1636,8 @@
             "detail": "WindowButtonDownFcn: The callback documents the WindowMouseData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "WindowButtonDown"
     },
     {
       "path": "WindowButtonMotionFcn",
@@ -1692,7 +1700,8 @@
             "detail": "WindowButtonMotionFcn: The callback documents the WindowMouseData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "WindowButtonMotion"
     },
     {
       "path": "WindowButtonUpFcn",
@@ -1755,7 +1764,8 @@
             "detail": "WindowButtonUpFcn: The callback documents the WindowMouseData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "WindowButtonUp"
     },
     {
       "path": "WindowKeyPressFcn",
@@ -1818,7 +1828,8 @@
             "detail": "WindowKeyPressFcn: The callback documents the KeyData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "WindowKeyPress"
     },
     {
       "path": "WindowKeyReleaseFcn",
@@ -1881,7 +1892,8 @@
             "detail": "WindowKeyReleaseFcn: The callback documents the KeyData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "WindowKeyRelease"
     },
     {
       "path": "WindowScrollWheelFcn",
@@ -1944,7 +1956,8 @@
             "detail": "WindowScrollWheelFcn: The callback documents the ScrollWheelData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "WindowScrollWheel"
     },
     {
       "path": "Interruptible",

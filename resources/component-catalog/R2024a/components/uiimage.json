@@ -647,7 +647,8 @@
                 "className": "matlab.ui.eventdata.ImageClickedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Clicked"
           }
         },
         {
@@ -689,7 +690,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -731,7 +733,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

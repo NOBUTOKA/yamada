@@ -105,6 +105,9 @@ function Get-PropertyMetadata {
     if ($null -ne $SourceProperty.PSObject.Properties['callbackSignature']) {
         $metadata.callbackSignature = [ordered]@{ eventArgument = $SourceProperty.callbackSignature.eventArgument }
     }
+    if ($null -ne $SourceProperty.PSObject.Properties['handlerSuffix']) {
+        $metadata.handlerSuffix = [string]$SourceProperty.handlerSuffix
+    }
     return $metadata
 }
 

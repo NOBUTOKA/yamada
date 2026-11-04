@@ -1561,6 +1561,9 @@ classdef DocumentModel < handle
 
                 % Only exclusively owned default handler names follow the component.
                 states = macd.source.CallbackSourceAnalyzer.analyze(obj, componentId, registry);
+                parentFactory = "";
+                if component.ParentId ~= "", parentFactory = obj.getComponent(component.ParentId).Factory; end
+                definitions = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
                 members = names.Members;
                 code = names.Code;
                 identifiers = string(regexp(code, '[A-Za-z]\w*', 'match'));
@@ -1576,12 +1579,18 @@ classdef DocumentModel < handle
                             continue
                         end
                     end
-                    stem = macd.source.ComponentNameRewriter.defaultHandler(oldName, state.Name);
-                    if handler ~= stem && isempty(regexp(handler, "^" + stem + "_[2-9][0-9]*$|^" + stem + "_1[0-9]+$", 'once'))
-                        continue
+                    definition = definitions(string({definitions.Path}) == state.Name);
+                    stems = unique([macd.source.ComponentNameRewriter.defaultHandler(oldName, state.Name, definition.HandlerSuffix), ...
+                        macd.source.ComponentNameRewriter.defaultHandler(oldName, state.Name)], "stable");
+                    stem = "";
+                    for candidate = stems
+                        if handler == candidate || ~isempty(regexp(handler, "^" + candidate + "_(?:[2-9][0-9]*|1[0-9]+)$", 'once'))
+                            stem = candidate; break
+                        end
                     end
+                    if stem == "", continue, end
                     suffix = extractAfter(handler, strlength(stem));
-                    newStem = macd.source.ComponentNameRewriter.defaultHandler(newName, state.Name);
+                    newStem = macd.source.ComponentNameRewriter.defaultHandler(newName, state.Name, definition.HandlerSuffix);
                     newHandler = newStem + suffix;
                     number = 1;
                     while any(used(used ~= handler) == newHandler) || any(inherited == newHandler)
@@ -1652,8 +1661,12 @@ classdef DocumentModel < handle
             handler = "";
             method = "";
             if action == "Add"
+                parentFactory = "";
+                if component.ParentId ~= "", parentFactory = obj.getComponent(component.ParentId).Factory; end
+                definition = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+                definition = definition(string({definition.Path}) == name);
                 % Avoid all source tokens, component names, and pending generated method names.
-                stem = macd.source.ComponentNameRewriter.defaultHandler(component.Name, name);
+                stem = macd.source.ComponentNameRewriter.defaultHandler(component.Name, name, definition.HandlerSuffix);
                 handler = stem;
                 suffix = 1;
                 used = [string({obj.Components.Name}), string({after.HandlerName}), ...
@@ -1673,12 +1686,6 @@ classdef DocumentModel < handle
                 end
                 ending = string(newline);
                 if obj.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
-                parentFactory = "";
-                if component.ParentId ~= ""
-                    parentFactory = obj.getComponent(component.ParentId).Factory;
-                end
-                definition = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
-                definition = definition(string({definition.Path}) == name);
                 method = macd.source.CallbackSourceEdits.handlerText(handler, name, obj.ClassName, ending, ...
                     component.Factory == "uifigure" && name == "CloseRequestFcn", definition.CallbackSignature);
             end

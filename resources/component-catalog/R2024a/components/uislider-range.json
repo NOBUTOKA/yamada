@@ -1018,7 +1018,8 @@
                 "className": "matlab.ui.eventdata.ValueChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "ValueChanged"
           }
         },
         {
@@ -1060,7 +1061,8 @@
                 "className": "matlab.ui.eventdata.ValueChangingData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "ValueChanging"
           }
         },
         {
@@ -1102,7 +1104,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -1144,7 +1147,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

@@ -124,17 +124,19 @@ classdef ComponentNameRewriter
             end
         end
 
-        function stem = defaultHandler(componentName, callbackName)
+        function stem = defaultHandler(componentName, callbackName, handlerSuffix)
             % defaultHandler Return the same bounded stem used by callback generation.
             arguments (Input)
                 componentName (1, 1) string
                 callbackName (1, 1) string
+                handlerSuffix (1, 1) string = ""
             end
             arguments (Output)
                 stem (1, 1) string
             end
 
-            stem = string(matlab.lang.makeValidName(componentName + erase(callbackName, "Fcn")));
+            if handlerSuffix == "", handlerSuffix = erase(callbackName, "Fcn"); end
+            stem = string(matlab.lang.makeValidName(componentName + handlerSuffix));
             stem = extractBefore(stem, min(strlength(stem) + 1, namelengthmax - 8));
         end
 

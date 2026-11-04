@@ -100,7 +100,7 @@ Checkpoint: generated Button handlers have the audited event type; differing and
 
 ## Avoid Duplicated Component Words in Handler Names
 
-Status: agreed naming/data policy, implementation pending. This roadmap update does not implement the schema, ledger population or generation changes.
+Status: implemented in the isolated callback integration branch; full integration verification remains pending. All 181 callback ledger entries carry explicit handlerSuffix metadata. The 51 focused catalog, discovery, model, generation, rename and convention tests pass.
 
 Current code uses ComponentNameRewriter.defaultHandler to concatenate the component name and callback name with `Fcn` removed, bound the identifier length, and feed collision handling. DocumentModel uses this helper both for Add and for identifying which default handler names follow an explicit component rename. Both consumers must agree on the same naming policy.
 

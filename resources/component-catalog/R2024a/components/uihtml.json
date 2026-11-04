@@ -409,7 +409,8 @@
                 "className": "matlab.ui.eventdata.DataChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "DataChanged"
           }
         },
         {
@@ -451,7 +452,8 @@
                 "className": "matlab.ui.eventdata.HTMLEventReceivedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "EventReceived"
           }
         },
         {
@@ -493,7 +495,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -535,7 +538,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

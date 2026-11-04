@@ -828,7 +828,8 @@
                 "className": "matlab.ui.eventdata.HyperlinkClickedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Clicked"
           }
         },
         {
@@ -870,7 +871,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -912,7 +914,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

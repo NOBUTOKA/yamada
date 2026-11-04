@@ -1118,7 +1118,8 @@
             "detail": "ButtonPushedFcn: The callback documents the ButtonPushedData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Pushed"
     },
     {
       "path": "CreateFcn",
@@ -1189,7 +1190,8 @@
             "detail": "CreateFcn receives an empty 0-by-0 double, not event.EventData."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Create"
     },
     {
       "path": "DeleteFcn",
@@ -1257,7 +1259,8 @@
             "detail": "DeleteFcn receives event.EventData; no more specific public type is required."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Delete"
     },
     {
       "path": "Interruptible",

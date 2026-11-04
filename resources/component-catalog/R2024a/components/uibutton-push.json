@@ -839,7 +839,8 @@
                 "className": "matlab.ui.eventdata.ButtonPushedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Pushed"
           }
         },
         {
@@ -884,7 +885,8 @@
                   0
                 ]
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -926,7 +928,8 @@
                 "className": "event.EventData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

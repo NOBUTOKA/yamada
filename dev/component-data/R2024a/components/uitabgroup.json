@@ -512,7 +512,8 @@
             "detail": "SelectionChangedFcn: The callback documents the SelectionChangedData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "SelectionChanged"
     },
     {
       "path": "SizeChangedFcn",
@@ -575,7 +576,8 @@
             "detail": "SizeChangedFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "SizeChanged"
     },
     {
       "path": "ButtonDownFcn",
@@ -638,7 +640,8 @@
             "detail": "ButtonDownFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "ButtonDown"
     },
     {
       "path": "CreateFcn",
@@ -701,7 +704,8 @@
             "detail": "CreateFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Create"
     },
     {
       "path": "DeleteFcn",
@@ -764,7 +768,8 @@
             "detail": "DeleteFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Delete"
     },
     {
       "path": "Interruptible",

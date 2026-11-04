@@ -233,7 +233,7 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
 
                 % Default handler renames preserve the wrapper's inputs and forwarding convention.
                 parsed.renameComponent(target.Id, "ForwardedButton", registry);
-                renamedHandler = macd.source.ComponentNameRewriter.defaultHandler("ForwardedButton", "ButtonPushedFcn");
+                renamedHandler = macd.source.ComponentNameRewriter.defaultHandler("ForwardedButton", "ButtonPushedFcn", definition.HandlerSuffix);
                 renamed = generator.generate(parsed);
                 testCase.verifySubstring(renamed, replace(expression, "app." + handler, "app." + renamedHandler));
                 testCase.verifySubstring(renamed, "function " + renamedHandler + "(" + inputs + ")");

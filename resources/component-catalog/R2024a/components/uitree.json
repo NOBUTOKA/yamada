@@ -746,7 +746,8 @@
                 "className": "matlab.ui.eventdata.SelectedNodesChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "SelectionChanged"
           }
         },
         {
@@ -788,7 +789,8 @@
                 "className": "matlab.ui.eventdata.NodeExpandedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "NodeExpanded"
           }
         },
         {
@@ -830,7 +832,8 @@
                 "className": "matlab.ui.eventdata.NodeCollapsedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "NodeCollapsed"
           }
         },
         {
@@ -872,7 +875,8 @@
                 "className": "matlab.ui.eventdata.NodeTextChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "NodeTextChanged"
           }
         },
         {
@@ -914,7 +918,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Clicked"
           }
         },
         {
@@ -956,7 +961,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "DoubleClicked"
           }
         },
         {
@@ -998,7 +1004,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -1040,7 +1047,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

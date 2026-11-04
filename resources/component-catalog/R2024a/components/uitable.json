@@ -994,7 +994,8 @@
                 "className": "matlab.ui.eventdata.CellEditData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "CellEditCallback"
           }
         },
         {
@@ -1036,7 +1037,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "ButtonDown"
           }
         },
         {
@@ -1078,7 +1080,8 @@
                 "className": "matlab.ui.eventdata.KeyData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "KeyPress"
           }
         },
         {
@@ -1120,7 +1123,8 @@
                 "className": "matlab.ui.eventdata.KeyData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "KeyRelease"
           }
         },
         {
@@ -1162,7 +1166,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -1204,7 +1209,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         },
         {
@@ -1246,7 +1252,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "CellSelectionCallback"
           }
         }
       ]
@@ -1921,7 +1928,8 @@
                 "className": "matlab.ui.eventdata.SelectionChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "SelectionChanged"
           }
         },
         {
@@ -1963,7 +1971,8 @@
                 "className": "matlab.ui.eventdata.DisplayDataChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "DisplayDataChanged"
           }
         },
         {
@@ -2005,7 +2014,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Clicked"
           }
         },
         {
@@ -2047,7 +2057,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "DoubleClicked"
           }
         },
         {

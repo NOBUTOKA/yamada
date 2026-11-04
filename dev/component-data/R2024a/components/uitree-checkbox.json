@@ -1043,7 +1043,8 @@
             "detail": "CheckedNodesChangedFcn: The callback documents the CheckedNodesChangedData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "CheckedNodesChanged"
     },
     {
       "path": "SelectionChangedFcn",
@@ -1109,7 +1110,8 @@
             "detail": "SelectionChangedFcn: The callback documents the SelectedNodesChangedData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "SelectionChanged"
     },
     {
       "path": "NodeExpandedFcn",
@@ -1175,7 +1177,8 @@
             "detail": "NodeExpandedFcn: The callback documents the NodeExpandedData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "NodeExpanded"
     },
     {
       "path": "NodeCollapsedFcn",
@@ -1241,7 +1244,8 @@
             "detail": "NodeCollapsedFcn: The callback documents the NodeCollapsedData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "NodeCollapsed"
     },
     {
       "path": "NodeTextChangedFcn",
@@ -1307,7 +1311,8 @@
             "detail": "NodeTextChangedFcn: The callback documents the NodeTextChangedData event object. The qualified class is present in initialized MATLAB R2024a."
           }
         ]
-      }
+      },
+      "handlerSuffix": "NodeTextChanged"
     },
     {
       "path": "ClickedFcn",
@@ -1373,7 +1378,8 @@
             "detail": "ClickedFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Clicked"
     },
     {
       "path": "DoubleClickedFcn",
@@ -1439,7 +1445,8 @@
             "detail": "DoubleClickedFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "DoubleClicked"
     },
     {
       "path": "CreateFcn",
@@ -1505,7 +1512,8 @@
             "detail": "CreateFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Create"
     },
     {
       "path": "DeleteFcn",
@@ -1571,7 +1579,8 @@
             "detail": "DeleteFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
           }
         ]
-      }
+      },
+      "handlerSuffix": "Delete"
     },
     {
       "path": "Interruptible",

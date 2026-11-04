@@ -397,7 +397,8 @@
                 "className": "matlab.ui.eventdata.SelectionChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "SelectionChanged"
           }
         },
         {
@@ -439,7 +440,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "SizeChanged"
           }
         },
         {
@@ -481,7 +483,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "ButtonDown"
           }
         },
         {
@@ -523,7 +526,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -565,7 +569,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

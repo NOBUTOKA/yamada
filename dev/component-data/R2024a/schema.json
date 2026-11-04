@@ -389,14 +389,29 @@
             "eventArgument",
             "evidence"
           ]
+        },
+        "handlerSuffix": {
+          "minLength": 1,
+          "maxLength": 63,
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+          "type": "string"
         }
       },
       "allOf": [
         {
           "else": {
             "not": {
-              "required": [
-                "callbackSignature"
+              "anyOf": [
+                {
+                  "required": [
+                    "callbackSignature"
+                  ]
+                },
+                {
+                  "required": [
+                    "handlerSuffix"
+                  ]
+                }
               ]
             }
           },
@@ -416,7 +431,8 @@
           },
           "then": {
             "required": [
-              "callbackSignature"
+              "callbackSignature",
+              "handlerSuffix"
             ]
           }
         }

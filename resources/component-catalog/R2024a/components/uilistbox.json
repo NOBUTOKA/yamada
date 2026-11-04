@@ -837,7 +837,8 @@
                 "className": "matlab.ui.eventdata.ValueChangedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "ValueChanged"
           }
         },
         {
@@ -879,7 +880,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Clicked"
           }
         },
         {
@@ -921,7 +923,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "DoubleClicked"
           }
         },
         {
@@ -963,7 +966,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -1005,7 +1009,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

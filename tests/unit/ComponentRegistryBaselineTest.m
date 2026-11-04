@@ -73,6 +73,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     testCase.verifyTrue(isequaln(actual.Application.InitialValue, policy.InitialValue));
                     testCase.verifyFalse(isfield(actual.Metadata, "applicationEvidence"));
                     if string(expected.valueContract.kind) == "callback"
+                        testCase.verifyEqual(actual.HandlerSuffix, string(expected.handlerSuffix));
                         contract = rmfield(expected.callbackSignature, "evidence");
                         testCase.verifyEqual(actual.CallbackSignature, macd.model.CallbackSignature(contract));
                         testCase.verifyFalse(isfield(actual.Metadata.callbackSignature, "evidence"));

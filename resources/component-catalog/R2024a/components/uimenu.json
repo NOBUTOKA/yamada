@@ -369,7 +369,8 @@
                 "className": "matlab.ui.eventdata.MenuSelectedData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Selected"
           }
         },
         {
@@ -411,7 +412,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -453,7 +455,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]

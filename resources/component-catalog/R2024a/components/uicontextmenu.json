@@ -60,7 +60,8 @@
                 "className": "matlab.ui.eventdata.ContextMenuOpeningData",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "ContextMenuOpening"
           }
         },
         {
@@ -102,7 +103,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Create"
           }
         },
         {
@@ -144,7 +146,8 @@
                 "className": "",
                 "shape": []
               }
-            }
+            },
+            "handlerSuffix": "Delete"
           }
         }
       ]
