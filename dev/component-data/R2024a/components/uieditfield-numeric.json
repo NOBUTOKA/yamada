@@ -1329,7 +1329,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.ValueChangedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+            "detail": "ValueChangedFcn: The callback documents the ValueChangedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "CreateFcn",
@@ -1382,7 +1395,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+            "detail": "CreateFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "DeleteFcn",
@@ -1435,7 +1461,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.numericeditfield-properties.html",
+            "detail": "DeleteFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "Interruptible",

@@ -102,6 +102,9 @@ function Get-PropertyMetadata {
     if ($null -ne $Capability.PSObject.Properties['application']) {
         $metadata.application = ConvertTo-ApplicationPolicy $Capability.application
     }
+    if ($null -ne $SourceProperty.PSObject.Properties['callbackSignature']) {
+        $metadata.callbackSignature = [ordered]@{ eventArgument = $SourceProperty.callbackSignature.eventArgument }
+    }
     return $metadata
 }
 

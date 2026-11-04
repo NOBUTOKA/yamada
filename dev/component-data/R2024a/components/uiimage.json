@@ -854,7 +854,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.ImageClickedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.image-properties.html",
+            "detail": "ImageClickedFcn: The callback documents the ImageClickedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "CreateFcn",
@@ -904,7 +917,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.image-properties.html",
+            "detail": "CreateFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "DeleteFcn",
@@ -954,7 +980,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.image-properties.html",
+            "detail": "DeleteFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "Interruptible",

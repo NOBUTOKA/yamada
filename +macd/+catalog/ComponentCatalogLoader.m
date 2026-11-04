@@ -657,9 +657,19 @@ classdef ComponentCatalogLoader
                     ["editor", "validator", "previewPolicy", "resetPolicy", ...
                     "displayName", "category", "order", "valueSchema", ...
                     "applicableStyles", "auditDisposition", "description", ...
-                    "categoryId", "groupId", "application", "gridGeometryImpact", "absoluteGeometryImpact"], ...
+                    "categoryId", "groupId", "application", "gridGeometryImpact", "absoluteGeometryImpact", "callbackSignature"], ...
                     context + ".metadata");
                 macd.catalog.PropertyBehaviorRegistry.validateMetadata(metadata, context);
+                if isfield(metadata, "callbackSignature")
+                    if ~isfield(metadata, "valueSchema") || ~isfield(metadata.valueSchema, "kind") || string(metadata.valueSchema.kind) ~= "callback"
+                        macd.catalog.ComponentCatalogLoader.fail(context, "Callback signatures require a callback property.");
+                    end
+                    try
+                        macd.model.CallbackSignature(metadata.callbackSignature);
+                    catch exception
+                        macd.catalog.ComponentCatalogLoader.fail(context + ".callbackSignature", string(exception.message));
+                    end
+                end
                 if isfield(metadata, "application")
                     macd.model.PropertyApplicationPolicy(metadata.application, context + ".metadata.application");
                 end

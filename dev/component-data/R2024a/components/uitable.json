@@ -1292,7 +1292,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.CellEditData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "CellEditCallback: The callback documents the CellEditData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "ButtonDownFcn",
@@ -1342,7 +1355,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "ButtonDownFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "KeyPressFcn",
@@ -1392,7 +1418,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.KeyData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "KeyPressFcn: The callback documents the KeyData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "KeyReleaseFcn",
@@ -1442,7 +1481,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.KeyData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "KeyReleaseFcn: The callback documents the KeyData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "CreateFcn",
@@ -1492,7 +1544,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "CreateFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "DeleteFcn",
@@ -1542,7 +1607,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "DeleteFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "CellSelectionCallback",
@@ -1591,7 +1669,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "CellSelectionCallback: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "Interruptible",
@@ -2444,7 +2535,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.SelectionChangedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "SelectionChangedFcn: The callback documents the SelectionChangedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "DisplayDataChangedFcn",
@@ -2494,7 +2598,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.DisplayDataChangedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "DisplayDataChangedFcn: The callback documents the DisplayDataChangedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "ClickedFcn",
@@ -2544,7 +2661,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "ClickedFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "DoubleClickedFcn",
@@ -2594,7 +2724,20 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.control.table-properties.html",
+            "detail": "DoubleClickedFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "Layout",

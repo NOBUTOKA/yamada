@@ -68,15 +68,15 @@ Provide a dedicated editing workflow for menu bars, submenus, context menus, too
 
 ## Generate Documented Event Argument Types
 
-Status: planning only. Callback method generation currently uses an untyped `event` argument.
+Status: event-contract audit, promotion and typed stub generation are implemented; final verification is in progress. The ledger has 181 callback entries: 59 carry a reviewed type and 122 explicitly leave the class name empty. No runtime audit-status enumeration is introduced.
 
 Data flow: release-specific audited callback contracts -> catalog promotion -> validated PropertyDefinition/ComponentRegistry projection -> DocumentModel method stub construction -> NewAppGenerator/RoundTripGenerator output. The popup remains a thin command view; ValueSchema continues to describe callback binding values, not the event argument passed to a handler.
 
 ### Audit and define callback signature metadata
 
-- Extend per-property records and `schema.json` under `dev/component-data/R2024a`. Record a distinct `callbackSignature` contract with event representation, verified fully qualified class name where applicable, verified shape if available, audit status and release-specific source evidence. Field names are proposed schema design, not existing runtime fields.
+- Extend per-property records and `schema.json` under `dev/component-data/R2024a`. Record `callbackSignature.eventArgument.className` and an optional reviewed two-dimensional `shape`, with release-specific evidence retained in the ledger. An empty class name leaves event untyped; do not add a separate runtime verified/unresolved state machine.
 - Key contracts by concrete component variant/style and callback property; account for effective parent-context projection where applicable. Do not assume that a shared callback name implies the same argument contract across components.
-- Distinguish verified object types, verified non-object/empty event data, and unresolved documentation. Unknown event data remains untyped; do not replace it with a universal `event.EventData` base class or presume every event is scalar.
+- Record concrete object classes and confirmed built-in types in the same class-name field, with a reviewed size only when established. Unknown event data remains untyped; do not replace it with a universal `event.EventData` base class or presume every event is scalar. R2024a owned UI fixtures confirm that CreateFcn can receive an empty double while DeleteFcn receives event.EventData.
 - For example, audit `uibutton-push` / `ButtonPushedFcn` against the R2024a official contract and installed public `matlab.ui.eventdata.ButtonPushedData` class. Verify `ValueChangedFcn`, `ValueChangingFcn`, CreateFcn/DeleteFcn and inherited callbacks independently instead of inferring types from property names.
 
 Checkpoint: review the callback/variant inventory and evidence for representative Button, state-button, numeric/text edit-field, slider, table, tree and figure callbacks. Missing evidence is explicitly unresolved. No opened application or user callback may execute during discovery or audit.

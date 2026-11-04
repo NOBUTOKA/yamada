@@ -6,6 +6,16 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
     %   versioned runtime catalog and its strict validation boundary.
 
     methods (Test)
+        function rejectsCallbackSignaturesOnOrdinaryProperties(testCase)
+            % rejectsCallbackSignaturesOnOrdinaryProperties Keep callback argument contracts independent of literal value schemas.
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.properties{2}.metadata.callbackSignature = struct("eventArgument", struct("className", "double", "shape", []));
+            testCase.writeJson(root, "components/uilabel.json", component);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "Callback signatures require a callback property");
+        end
+
         function loadsAndValidatesGeometryMetadata(testCase)
             % loadsAndValidatesGeometryMetadata Reject unsafe classification data and default old catalogs conservatively.
             root = testCase.createCatalog();

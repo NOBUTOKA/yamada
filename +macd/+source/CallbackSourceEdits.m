@@ -95,7 +95,7 @@ classdef CallbackSourceEdits
             result = ~isempty(regexp(expression, '^@\(\s*~\s*,\s*~\s*\)\s*delete\(\s*app\s*\)$', 'once'));
         end
 
-        function text = handlerText(handler, name, className, ending, closesApp)
+        function text = handlerText(handler, name, className, ending, closesApp, signature)
             % handlerText Emit a source-and-event callback stub with optional default shutdown.
             arguments (Input)
                 handler (1, 1) string
@@ -103,6 +103,7 @@ classdef CallbackSourceEdits
                 className (1, 1) string
                 ending (1, 1) string
                 closesApp (1, 1) logical = false
+                signature (1, 1) macd.model.CallbackSignature = macd.model.CallbackSignature()
             end
             arguments (Output)
                 text (1, 1) string
@@ -110,7 +111,7 @@ classdef CallbackSourceEdits
             lines = ["        function " + handler + "(app, source, event)"; ...
                 "            % " + handler + " Handle the " + name + " callback."; ...
                 "            arguments (Input)"; "                app (1, 1) " + className; ...
-                "                source"; "                event"; "            end"; ""; ...
+                "                source"; "                " + signature.argumentLine(); "            end"; ""; ...
                 "            % Add callback behavior here."];
             if closesApp, lines(end + 1) = "            delete(app);"; end
             text = strjoin([lines; "        end"], ending);

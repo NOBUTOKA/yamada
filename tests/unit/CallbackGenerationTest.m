@@ -4,6 +4,44 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
     %   method-body deletion and atomic preflight failure without running apps.
 
     methods (Test)
+        function documentedEventTypesSurviveCallbackHistory(testCase)
+            % documentedEventTypesSurviveCallbackHistory Generate typed handlers and preserve their source through callback history.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("TypedCallbackApp", registry);
+            button = document.insertComponent(registry, "uibutton", document.RootComponentId);
+            original = document.CurrentText;
+
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            typed = document.CurrentText;
+            testCase.verifySubstring(typed, "event matlab.ui.eventdata.ButtonPushedData");
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, original);
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, typed);
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, typed);
+        end
+
+        function signatureContractsRejectMalformedValuesAndKeepFallback(testCase)
+            % signatureContractsRejectMalformedValuesAndKeepFallback Validate optional type data without a universal event base.
+            testCase.verifyEqual(macd.model.CallbackSignature().argumentLine(), "event");
+            contract = struct("eventArgument", struct("className", "double", "shape", [0 0]));
+            testCase.verifyEqual(macd.model.CallbackSignature(contract).argumentLine(), "event (0, 0) double");
+            contract.eventArgument.className = "matlab.ui.eventdata.ButtonPushedData";
+            contract.eventArgument.shape = [];
+            testCase.verifyEqual(macd.model.CallbackSignature(contract).argumentLine(), ...
+                "event matlab.ui.eventdata.ButtonPushedData");
+            contract.eventArgument.className = "double; delete(app)";
+            testCase.verifyError(@() macd.model.CallbackSignature(contract), "macd:CallbackSignature:InvalidContract");
+            contract.eventArgument.className = "";
+            contract.eventArgument.shape = [1 1];
+            testCase.verifyError(@() macd.model.CallbackSignature(contract), "macd:CallbackSignature:InvalidContract");
+            contract.eventArgument.className = "struct";
+            contract.eventArgument.shape = [1 1 1];
+            testCase.verifyError(@() macd.model.CallbackSignature(contract), "macd:CallbackSignature:InvalidContract");
+        end
+
         function generatesNewAndEditedEmptyItems(testCase)
             % generatesNewAndEditedEmptyItems Encode empty list contents for new and parsed documents.
             registry = macd.model.ComponentRegistry.createDefault();
@@ -168,8 +206,11 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
                     inputs = "app, source, event";
                 end
                 source = replace(source, "@app." + handler + ";", expression + ";");
+                definitions = registry.getEffectiveCallbacks("uibutton");
+                definition = definitions(string({definitions.Path}) == "ButtonPushedFcn");
                 originalMethod = macd.source.CallbackSourceEdits.handlerText( ...
-                    handler, "ButtonPushedFcn", document.ClassName, ending);
+                    handler, "ButtonPushedFcn", document.ClassName, ending, false, definition.CallbackSignature);
+                testCase.assertSubstring(source, originalMethod);
                 method = strjoin(["        function " + handler + "(" + inputs + ")"; ...
                     "            % " + handler + " Keep forwarded callback behavior inert."; ...
                     "            assignin('base','macdForwardedCallbackSentinel',true);"; ...

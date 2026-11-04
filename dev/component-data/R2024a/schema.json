@@ -319,8 +319,108 @@
               }
             }
           }
+        },
+        "callbackSignature": {
+          "properties": {
+            "evidence": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "properties": {
+                  "source": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "detail": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "kind": {
+                    "enum": [
+                      "mathworksDocumentation",
+                      "installedReleaseSource",
+                      "nativeObservation"
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "kind",
+                  "source",
+                  "detail"
+                ]
+              }
+            },
+            "eventArgument": {
+              "properties": {
+                "className": {
+                  "pattern": "^$|^[A-Za-z]\\w*(\\.[A-Za-z]\\w*)*$",
+                  "type": "string"
+                },
+                "shape": {
+                  "type": "array",
+                  "oneOf": [
+                    {
+                      "maxItems": 0
+                    },
+                    {
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  ],
+                  "items": {
+                    "minimum": 0,
+                    "type": "integer"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "className",
+                "shape"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "required": [
+            "eventArgument",
+            "evidence"
+          ]
         }
-      }
+      },
+      "allOf": [
+        {
+          "else": {
+            "not": {
+              "required": [
+                "callbackSignature"
+              ]
+            }
+          },
+          "if": {
+            "properties": {
+              "valueContract": {
+                "properties": {
+                  "kind": {
+                    "const": "callback"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "callbackSignature"
+            ]
+          }
+        }
+      ]
     },
     "application": {
       "type": "object",

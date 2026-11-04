@@ -1673,8 +1673,14 @@ classdef DocumentModel < handle
                 end
                 ending = string(newline);
                 if obj.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
+                parentFactory = "";
+                if component.ParentId ~= ""
+                    parentFactory = obj.getComponent(component.ParentId).Factory;
+                end
+                definition = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+                definition = definition(string({definition.Path}) == name);
                 method = macd.source.CallbackSourceEdits.handlerText(handler, name, obj.ClassName, ending, ...
-                    component.Factory == "uifigure" && name == "CloseRequestFcn");
+                    component.Factory == "uifigure" && name == "CloseRequestFcn", definition.CallbackSignature);
             end
             if action == "Add" || ~isempty(original.BindingSpan) || ~isempty(original.MethodSpan)
                 after(end + 1) = macd.model.CallbackEdit(componentId, name, action, handler, method, original, obj.CurrentText);

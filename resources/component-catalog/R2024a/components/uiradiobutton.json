@@ -671,6 +671,12 @@
               "effectStatus": "unsupported",
               "affectedPaths": [],
               "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
             }
           }
         },
@@ -707,6 +713,12 @@
               "effectStatus": "unsupported",
               "affectedPaths": [],
               "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
             }
           }
         }

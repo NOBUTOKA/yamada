@@ -40,6 +40,8 @@ classdef PropertyDefinition
         Order double = 0
         % ValueSchema - Typed literal constraints and adapter-specific options.
         ValueSchema struct = struct()
+        % CallbackSignature - Reviewed event argument contract, unresolved when absent.
+        CallbackSignature macd.model.CallbackSignature = macd.model.CallbackSignature()
         % Application - Initialization dependencies independent of display order.
         Application macd.model.PropertyApplicationPolicy = macd.model.PropertyApplicationPolicy()
         % ApplicableStyles - Styles for which this property definition applies.
@@ -79,6 +81,9 @@ classdef PropertyDefinition
             if isfield(metadata, "category"), obj.Category = string(metadata.category); end
             if isfield(metadata, "order"), obj.Order = double(metadata.order); end
             if isfield(metadata, "valueSchema"), obj.ValueSchema = metadata.valueSchema; end
+            if isfield(metadata, "callbackSignature")
+                obj.CallbackSignature = macd.model.CallbackSignature(metadata.callbackSignature);
+            end
             if isfield(metadata, "application")
                 obj.Application = macd.model.PropertyApplicationPolicy( ...
                     metadata.application, "property." + path + ".application");

@@ -1030,7 +1030,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.CheckedNodesChangedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "CheckedNodesChangedFcn: The callback documents the CheckedNodesChangedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "SelectionChangedFcn",
@@ -1083,7 +1096,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.SelectedNodesChangedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "SelectionChangedFcn: The callback documents the SelectedNodesChangedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "NodeExpandedFcn",
@@ -1136,7 +1162,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.NodeExpandedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "NodeExpandedFcn: The callback documents the NodeExpandedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "NodeCollapsedFcn",
@@ -1189,7 +1228,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.NodeCollapsedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "NodeCollapsedFcn: The callback documents the NodeCollapsedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "NodeTextChangedFcn",
@@ -1242,7 +1294,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.NodeTextChangedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "NodeTextChangedFcn: The callback documents the NodeTextChangedData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      }
     },
     {
       "path": "ClickedFcn",
@@ -1295,7 +1360,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.metadata.Property.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "ClickedFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "DoubleClickedFcn",
@@ -1348,7 +1426,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.metadata.Property.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "DoubleClickedFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "CreateFcn",
@@ -1401,7 +1492,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "CreateFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "DeleteFcn",
@@ -1454,7 +1558,20 @@
       ],
       "runtimeObservations": [
         "dev/component-data/ProbeCatalogSetterAccess.m: R2024a owned instance matlab.graphics.internal.GraphicsMetaProperty.SetAccess=public; recorded in SETTER_ACCESS_RUNTIME_REVIEW.json."
-      ]
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.checkboxtree-properties.html",
+            "detail": "DeleteFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      }
     },
     {
       "path": "Interruptible",

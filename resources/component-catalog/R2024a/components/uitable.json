@@ -988,6 +988,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.CellEditData",
+                "shape": []
+              }
             }
           }
         },
@@ -1024,6 +1030,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
             }
           }
         },
@@ -1060,6 +1072,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.KeyData",
+                "shape": []
+              }
             }
           }
         },
@@ -1096,6 +1114,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.KeyData",
+                "shape": []
+              }
             }
           }
         },
@@ -1132,6 +1156,12 @@
               "effectStatus": "unsupported",
               "affectedPaths": [],
               "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
             }
           }
         },
@@ -1168,6 +1198,12 @@
               "effectStatus": "unsupported",
               "affectedPaths": [],
               "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
             }
           }
         },
@@ -1204,6 +1240,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
             }
           }
         }
@@ -1873,6 +1915,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.SelectionChangedData",
+                "shape": []
+              }
             }
           }
         },
@@ -1909,6 +1957,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.DisplayDataChangedData",
+                "shape": []
+              }
             }
           }
         },
@@ -1945,6 +1999,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
             }
           }
         },
@@ -1981,6 +2041,12 @@
               "effectStatus": "independent",
               "affectedPaths": [],
               "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
             }
           }
         },
