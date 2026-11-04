@@ -141,6 +141,36 @@ classdef SourceFormatting
             result = string(regexp(text(first + 1:offset), '^[ \t]*', 'match', 'once'));
         end
 
+        function edits = completeLineDeletions(source, edits)
+            % completeLineDeletions Remove owned lines while preserving the preceding statement's CRLF boundary.
+            arguments (Input)
+                source (1, 1) string
+                edits (1, :) struct
+            end
+            arguments (Output)
+                edits (1, :) struct
+            end
+            edits = macd.source.SourceFormatting.cleanDeletions(source, edits);
+            text = char(source);
+            for index = 1:numel(edits)
+                edit = edits(index);
+                if edit.Text ~= "", continue, end
+                if text(edit.Start) == char(13) && edit.Start < numel(text) && text(edit.Start + 1) == newline
+                    edit.Start = edit.Start + 2;
+                elseif text(edit.Start) == newline
+                    edit.Start = edit.Start + 1;
+                end
+                preceding = find(text(1:edit.Start - 1) == newline, 1, "last");
+                if isempty(preceding), preceding = 0; end
+                following = find(text(edit.End + 1:end) == newline, 1);
+                if ~isempty(following) && isempty(regexp(text(preceding + 1:edit.Start - 1), '[^ \t\r]', 'once')) && ...
+                        isempty(regexp(text(edit.End + 1:edit.End + following - 1), '[^ \t\r]', 'once'))
+                    edit.End = edit.End + following;
+                end
+                edits(index) = edit;
+            end
+        end
+
         function edits = cleanDeletions(source, edits)
             % cleanDeletions Remove trivia only when owned removals vacate a whole line.
             arguments (Input)

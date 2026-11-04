@@ -53,7 +53,7 @@ classdef SourceHistoryRebaser
                             edit.Owners(ownerIndex).Insertions, mappings{cursor});
                     end
                 end
-                if edit.Kind == "source-subtree-insert" || (edit.Kind == "rename" && isfield(edit, "IndexedRename"))
+                if any(edit.Kind == ["source-subtree-insert", "source-subtree-delete"]) || (edit.Kind == "rename" && isfield(edit, "IndexedRename"))
                     forwardField = "ComponentForward"; inverseField = "ComponentInverse";
                     if edit.Kind == "rename", forwardField = "IdentifierForward"; inverseField = "IdentifierInverse"; end
                     if isempty(edit.StagedEdit)
@@ -123,9 +123,11 @@ classdef SourceHistoryRebaser
             end
             original = macd.source.SourcePatchBatch(before, edit.SourceForward);
             edits = struct("Start", {}, "End", {}, "Text", {});
+            shift = 0;
             for index = 1:numel(original.Edits)
                 forward = original.Edits(index);
-                inverse = original.InverseEdits(index);
+                inverse = struct("Start", forward.Start + shift, "End", forward.Start + shift + strlength(forward.Text) - 1);
+                shift = shift + strlength(forward.Text) - (forward.End - forward.Start + 1);
                 [first, valid] = beforeMap.mapBoundary(forward.Start - 1, "right");
                 assert(valid);
                 last = first;

@@ -137,9 +137,16 @@ classdef SourceSettingStore < handle
             indexed = obj.Ranges;
             excluded = find(obj.Active & ismember(obj.Owners, excludedOwner));
             indexed(:, excluded) = repmat({macd.model.SourceSpan.empty}, 5, numel(excluded));
+            if isfield(execution, "ScopeMethods"), indexed(5, :) = {macd.model.SourceSpan.empty}; end
             [ranges, valid] = batch.mapSpanCells(indexed);
             ranges(:, excluded) = obj.Ranges(:, excluded);
             assert(all(valid, "all"), "macd:SourceLiteralTransaction:WiderProof", "Indexed settings require syntax rebinding.");
+            if isfield(execution, "ScopeMethods")
+                for slot = slots
+                    match = find(string({execution.ScopeMethods.Name}) == obj.Records(slot).OwnerMethod);
+                    if isscalar(match), ranges{5, slot} = execution.ScopeMethods(match).Span; end
+                end
+            end
             settings = obj.Records;
             if ~isempty(slots)
                 statements = [ranges{1, slots}];

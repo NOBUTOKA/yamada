@@ -162,7 +162,7 @@ classdef PropertyInsertionPlanner
         end
 
         function [plans, parsed] = batch(document, registry)
-            % batch Combine tentative owned insertions and validate every pending literal in one parse.
+            % batch Combine owned insertions and validate pending literals against one indexed candidate.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 registry (1, 1) macd.model.ComponentRegistry
@@ -194,15 +194,15 @@ classdef PropertyInsertionPlanner
                 % Include generated components before checking placement and all final values once.
                 detached = document.structuralCandidate();
                 detached.Metadata.ResolvingCombinedPropertySource = true;
-                [source, diagnostics] = macd.source.RoundTripGenerator(registry).generatePreparedInsertions(detached, plans);
+                [source, diagnostics, edits] = macd.source.RoundTripGenerator(registry).generatePreparedInsertions(detached, plans);
                 if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics), return, end
-                edits = struct("Start", {}, "End", {}, "Text", {});
+                source = document.CurrentText;
             else
                 source = document.CurrentText;
             end
             [accepted, candidate] = macd.source.PropertyInsertionPlanner.candidate( ...
                 source, edits, document.sourceComponentName(owners(1).Id), ...
-                macd.model.PropertyEntry.empty, registry);
+                macd.model.PropertyEntry.empty, registry, false, document);
             if ~accepted, return, end
             % Final values of other unsaved requests must survive the same intermediate-state checks.
             for original = reshape(document.Components, 1, [])
@@ -224,7 +224,7 @@ classdef PropertyInsertionPlanner
                 % This proof includes every actual generated statement, rather than a partial owner view.
                 context = document.evaluationContext(registry);
                 context.rememberConfiguration("combined", parsed);
-                context.remember("complete-insertion-source", source);
+                context.remember("complete-insertion-source", candidate.CurrentText);
             end
         end
 
@@ -362,7 +362,7 @@ classdef PropertyInsertionPlanner
                         earlier = plan.Placements(ismember(string({plan.Placements.Path}), prerequisites));
                         if any([earlier.Offset] > edit.End), continue, end
                         [accepted, candidate, found, failure] = macd.source.PropertyInsertionPlanner.candidate( ...
-                            source, [base plan.Edits edit], name, requested, registry, deferValidation);
+                            source, [base plan.Edits edit], name, requested, registry, deferValidation, document);
                         if accepted
                             plan.Edits(end + 1) = edit;
                             plan.Placements(end + 1) = struct("Path", entry.Path, "Method", "nameValue", ...
@@ -399,7 +399,7 @@ classdef PropertyInsertionPlanner
                     text = macd.source.PropertyInsertionPlanner.assignment(source, document, name, entry, anchor);
                     edit = struct("Start", anchor.Offset + 1, "End", anchor.Offset, "Text", text);
                     [accepted, candidate, found, failure] = macd.source.PropertyInsertionPlanner.candidate( ...
-                        source, [base plan.Edits edit], name, requested, registry, deferValidation);
+                        source, [base plan.Edits edit], name, requested, registry, deferValidation, document);
                     if accepted
                         plan.Edits(end + 1) = edit;
                         plan.Placements(end + 1) = struct("Path", entry.Path, "Method", "assignment", ...
@@ -563,8 +563,8 @@ classdef PropertyInsertionPlanner
             end
         end
 
-        function [accepted, document, component, reason] = candidate(source, edits, name, requested, registry, deferValidation)
-            % candidate Reparse an owned candidate and check intermediate and requested final states.
+        function [accepted, document, component, reason] = candidate(source, edits, name, requested, registry, deferValidation, baseline)
+            % candidate Project owned edits and check intermediate and requested final states.
             arguments (Input)
                 source (1, 1) string
                 edits struct
@@ -572,6 +572,7 @@ classdef PropertyInsertionPlanner
                 requested macd.model.PropertyEntry
                 registry (1, 1) macd.model.ComponentRegistry
                 deferValidation (1, 1) logical = false
+                baseline macd.model.DocumentModel = macd.model.DocumentModel.empty
             end
             arguments (Output)
                 accepted (1, 1) logical
@@ -583,7 +584,7 @@ classdef PropertyInsertionPlanner
             document = macd.model.DocumentModel.empty;
             component = macd.model.ComponentRecord.empty;
             reason = "";
-            % Tentative first slots are accepted only after the complete batch is reparsed.
+            % Tentative first slots are accepted only after the complete batch is validated.
             if deferValidation, accepted = true; return, end
             edits = macd.source.CallbackSourceEdits.combineInsertions(edits);
             [~, order] = sort([edits.Start], 'descend');
@@ -591,9 +592,13 @@ classdef PropertyInsertionPlanner
                 edit = edits(index);
                 source = extractBefore(source, edit.Start) + edit.Text + extractAfter(source, edit.End);
             end
-            propertyNames = name;
-            if isempty(requested), propertyNames = strings(1, 0); end
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry, "", propertyNames);
+            assert(~isempty(baseline), "macd:PropertyInsertionPlanner:MissingBaseline", "Editor candidates require loaded source ownership.");
+            try
+                [document, ~] = baseline.editedSourceCandidate(source, edits, registry);
+            catch exception
+                reason = string(exception.message); return
+            end
+            diagnostics = document.Diagnostics;
             reason = strjoin(string({diagnostics(string({diagnostics.Severity}) == "error").Message}), newline);
             if macd.validation.ModelValidator.hasErrors(diagnostics), return, end
             component = document.getComponentByName(name);

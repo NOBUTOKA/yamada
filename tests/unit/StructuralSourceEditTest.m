@@ -3,7 +3,50 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
     %   Public edits must preserve literal values, unrelated source, occurrence
     %   identities and subsequent edits after Undo, Redo and Save As.
 
+    properties (TestParameter)
+        Operation = {"insert", "delete", "callbackAdd", "callbackDelete", "reparent"}
+    end
+
     methods (Test)
+        function editorCommandsRetainBindingsAcrossSaveAndHistory(testCase, Operation)
+            % editorCommandsRetainBindingsAcrossSaveAndHistory Compare every structural command with independent source loading.
+            [document, registry] = fixture();
+            source = replace(document.CurrentText, "uibutton(app.UIFigure, ""push"")", ...
+                "uibutton(app.UIFigure, ""push"", FontSize=13)");
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            button = document.getComponentByName("BottomRightButton");
+            if Operation == "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry); end
+            switch Operation
+                case "insert", document.insertComponent(registry, "uilabel", document.RootComponentId);
+                case "delete", document.removeSubtree(button.Id, registry);
+                case "callbackAdd", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+                case "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
+                case "reparent", document.reparentSubtree(button.Id, document.getComponentByName("CenterPanel").Id, registry);
+            end
+            verifyBindings(testCase, document, registry);
+            document.ClassName = "SavedCommandHistory";
+            source = macd.source.AppClassIdentityRewriter.rewrite(document.CurrentText, document.ClassName);
+            checkpoint = macd.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
+            document.confirmSavedSource(checkpoint, registry); saved = document.CurrentText;
+            document.undo(); verifyBindings(testCase, document, registry);
+            document.redo(); verifyBindings(testCase, document, registry);
+            testCase.verifyEqual(document.CurrentText, saved);
+        end
+
+        function deletionRefreshesExecutionEffectFlags(testCase)
+            % deletionRefreshesExecutionEffectFlags Remove a source-only setter without leaving stale document restrictions.
+            [document, registry] = fixture();
+            source = replace(document.CurrentText, "app.TopLeftLabel.Text = ""Top left"";", ...
+                "app.TopLeftLabel.Text = ""Top left"";" + newline + "app.TopLeftLabel.UnrecognizedSetting = 1;");
+            document = macd.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyTrue(document.Metadata.HasUnrecognizedSetter);
+            label = document.getComponentByName("TopLeftLabel");
+            document.removeSubtree(label.Id, registry);
+            testCase.verifyFalse(document.Metadata.HasUnrecognizedSetter);
+            document.undo(); testCase.verifyTrue(document.Metadata.HasUnrecognizedSetter);
+            document.redo(); testCase.verifyFalse(document.Metadata.HasUnrecognizedSetter);
+        end
+
         function pastedSubtreeAndDistinctEditsRetainSourceBindings(testCase)
             % pastedSubtreeAndDistinctEditsRetainSourceBindings Compare nested copies and their later edits with independent parsing.
             [document, registry] = fixture();

@@ -73,6 +73,18 @@ classdef SourcePatchBatch
                     "ExpectedText", edit.Text);
                 shift = shift + strlength(edit.Text) - (edit.End - edit.Start + 1);
             end
+            % Adjacent removal and insertion become one replacement at the inverse boundary.
+            index = 1;
+            while index < numel(obj.InverseEdits)
+                left = obj.InverseEdits(index); right = obj.InverseEdits(index + 1);
+                if left.Start == right.Start
+                    left.End = max(left.End, right.End); left.Text = left.Text + right.Text;
+                    left.ExpectedText = left.ExpectedText + right.ExpectedText;
+                    obj.InverseEdits(index) = left; obj.InverseEdits(index + 1) = [];
+                else
+                    index = index + 1;
+                end
+            end
         end
 
         function source = apply(obj, source)

@@ -118,6 +118,133 @@ classdef DocumentModel < handle
         end
     end
 
+    methods (Access = {?macd.source.SubtreeReparentSourceEdits, ?macd.source.PropertyInsertionPlanner, ?macd.source.PropertySourcePlan})
+        function [candidate, state] = editedSourceCandidate(obj, text, edits, registry, stateId)
+            % editedSourceCandidate Bind only changed owners against projected lexical and initialization indexes.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                text (1, 1) string
+                edits (1, :) struct
+                registry (1, 1) macd.model.ComponentRegistry
+                stateId (1, 1) string = ""
+            end
+            arguments (Output)
+                candidate (1, 1) macd.model.DocumentModel
+                state (1, 1) macd.model.CurrentSourceState
+            end
+            batch = macd.source.SourcePatchBatch(obj.CurrentText, edits); assert(batch.AfterText == text);
+            before = obj.sourceAnalysis();
+            indexed = obj;
+            if any(arrayfun(@(record) isempty(record.SourceSpans.Creation), obj.Components))
+                indexed = obj.structuralCandidate();
+                indexed.Components = indexed.Components(arrayfun(@(record) ~isempty(record.SourceSpans.Creation), indexed.Components));
+            end
+            macd.model.SourceSettingRebinder.executionSequences(indexed, obj.CurrentSource, macd.source.SourcePatchBatch(obj.CurrentText), registry);
+            analysis = before.withEditorPatches(batch, obj.Components, registry);
+            execution = analysis.executionIndex(); state = obj.CurrentSource.withBatch(batch, stateId, analysis);
+            mapping = macd.source.EditorSourceProjection.statementMap(before, analysis, batch);
+            changed = strings(1, 0);
+            for component = obj.Components
+                if isempty(component.SourceSpans.Creation) || any(arrayfun(@(setting) isempty(setting.SourceSpan), component.Settings))
+                    changed(end + 1) = component.Id; %#ok<AGROW>
+                    continue
+                end
+                ranges = [component.SourceSpans.Declaration component.SourceSpans.Creation component.Settings.SourceSpan];
+                [~, survives] = batch.mapSpanCells(arrayfun(@(span) {span}, ranges));
+                if ~all(survives), changed(end + 1) = component.Id; continue, end %#ok<AGROW>
+                for span = ranges
+                    if any(arrayfun(@(edit) edit.Start <= span.EndOffset && edit.End >= span.StartOffset || ...
+                            edit.Start > span.StartOffset && edit.Start <= span.EndOffset, batch.Edits))
+                        changed(end + 1) = component.Id; break %#ok<AGROW>
+                    end
+                end
+            end
+            additions = setdiff(1:numel(analysis.Statements), mapping(mapping > 0));
+            for index = additions
+                name = regexp(analysis.Statements(index).Text, '^app\.(\w+)(?:\.|\s*=)', 'tokens', 'once');
+                if isempty(name), continue, end
+                component = obj.getComponentByName(string(name{1}));
+                if ~isempty(component), changed(end + 1) = component.Id; end %#ok<AGROW>
+            end
+            changed = unique(changed, "stable"); candidate = obj.structuralCandidate();
+            projectionExecution = execution; projectionExecution.ScopeMethods = analysis.Layout.Methods;
+            projection = obj.prepareSettingProjection(batch, projectionExecution, changed);
+            rangeExecution = rmfield(execution, "Trace");
+            for component = obj.Components
+                other = candidate.getComponent(component.Id);
+                owner = find(string({obj.Components.Id}) == component.Id, 1);
+                if execution.Owners(owner) == 0
+                    changed(changed == component.Id) = []; continue
+                end
+                if any(changed == component.Id)
+                    [declaration, valid] = batch.mapSpan(component.SourceSpans.Declaration);
+                    if ~valid
+                        original = before.statementIndices(component.SourceSpans.Declaration);
+                        if isscalar(original) && mapping(original) > 0
+                            declaration = analysis.Statements(mapping(original)).Span; valid = true;
+                        end
+                    end
+                    if isempty(declaration)
+                        for position = additions
+                            if ~isempty(regexp(analysis.Statements(position).Text, '^' + regexptranslate('escape', component.Name) + '\s+[A-Za-z]\w*(?:\.\w+)*$', 'once'))
+                                declaration = analysis.Statements(position).Span; valid = true; break
+                            end
+                        end
+                    end
+                    assert(valid);
+                    owner = find(string({obj.Components.Id}) == component.Id, 1);
+                    creation = analysis.Statements(execution.Owners(owner)).Span;
+                    other.SourceSpans = struct("Declaration", declaration, "Creation", creation);
+                else
+                    update = macd.model.SourceLocationUpdate(component, batch, struct("SettingId", {}, "Value", {}), ...
+                        rangeExecution, analysis, obj.ownerSettingProjection(component, projection));
+                    update.assertCurrent(component); update.applyToCandidate(other);
+                end
+                visits = find(execution.Trace.Order == analysis.statementIndices(other.SourceSpans.Creation));
+                assert(~isempty(visits)); other.Metadata.InitializationCreationSequence = execution.Creation(visits(end));
+                other.Metadata.InitializationCreationCertain = isscalar(visits) && execution.Trace.Certain(visits(end));
+            end
+            % Partial builder plans exclude generated records that were not emitted.
+            for index = fliplr(find(execution.Owners == 0))
+                candidate.removeComponentAt(candidate.getComponent(obj.Components(index).Id));
+            end
+            execution.Owners = execution.Owners(execution.Owners > 0); analysis.rememberExecution(execution);
+            [candidate.Diagnostics, candidate.UnknownRegions] = macd.model.SourceLocationUpdate.annotations(obj, batch);
+            trace = execution.Trace;
+            candidate.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
+                "Returns", trace.Returns, "Layout", analysis.Layout);
+            if isfield(candidate.Metadata, "ResolvingCombinedPropertySource")
+                candidate.Metadata = rmfield(candidate.Metadata, "ResolvingCombinedPropertySource");
+            end
+            candidate.OriginalText = state.Text;
+            candidate.publishCurrentSource(state);
+            identity = macd.source.SourcePatchBatch(state.Text);
+            for id = changed
+                other = candidate.getComponent(id); old = other.Settings;
+                other.applyProjectedSettings(macd.model.PropertySetting.empty);
+                [settings, ~, factoryArguments] = macd.model.SourceSettingRebinder.rebind(candidate, other, state, identity, registry);
+                for index = 1:numel(settings)
+                    setting = settings(index); matches = old(string({old.Path}) == setting.Path & string({old.Method}) == setting.Method);
+                    preceding = settings(1:index); ordinal = nnz(string({preceding.Path}) == setting.Path & string({preceding.Method}) == setting.Method);
+                    if ordinal <= numel(matches)
+                        record = setting.toStruct(); previous = matches(ordinal);
+                        record.Location.Id = previous.Id; record.Location.SourceSnapshotId = previous.SourceSnapshotId;
+                        record.Location.StatementId = previous.StatementId; record.Location.InitializationScopeId = previous.InitializationScopeId;
+                        settings(index) = macd.model.PropertySetting(record.Path, record.Value, record.Location);
+                    end
+                end
+                settings = obj.canonicalizeSettings(settings);
+                other.synchronizeSourceSettings(settings, factoryArguments);
+            end
+            macd.model.SourceEffectSummary.refresh(candidate, registry);
+            candidate.publishCurrentSource(state);
+            diagnostics = candidate.validatePropertyCommit(registry);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+        end
+    end
+
     methods (Access = ?macd.model.SavedSourceCheckpoint)
         function proof = captureValidationProof(obj, registry)
             % captureValidationProof Capture only a tracked, exact and fully validated immutable result set.
@@ -799,9 +926,25 @@ classdef DocumentModel < handle
             if any(effectivePaths == "Position")
                 component.setProperty("Position", obj.nextAbsolutePosition(parent, definition.DefaultSize));
             end
+            [base, staged] = obj.prepareStagedLiterals(registry);
+            candidate = base.structuralCandidate(); candidate.addComponent(component, parentId);
+            edits = macd.source.RoundTripGenerator(registry).componentInsertionEdits(candidate, component);
+            batch = macd.source.SourcePatchBatch(base.CurrentText, edits);
+            [candidate, state] = base.prepareComponentPublication(candidate, batch, component.Name, registry, "", obj);
+            frozen = macd.model.SubtreeSnapshot(candidate, component.Id);
+            inserted = frozen.materialize(); component = inserted(1);
+            before = obj.CurrentSource; beforeChildren = parent.Children;
             obj.addComponentAt(component, parentId, numel(obj.Components) + 1);
-            obj.recordHistory(struct("Kind", "insert", "Component", component, ...
-                "ParentId", parentId, "Index", find(obj.Components == component, 1)));
+            obj.publishParsedSource(state, registry, candidate, true);
+            combined = batch;
+            if ~isempty(staged), combined = obj.sourceDifference(before.Text, state.Text); end
+            edit = struct("Kind", "source-subtree-insert", "ParentId", parentId, ...
+                "Snapshot", frozen, "InsertedComponents", inserted, "BeforeChildren", beforeChildren, "AfterChildren", parent.Children, ...
+                "SourceForward", combined.Edits, "SourceInverse", combined.InverseEdits, ...
+                "ComponentForward", batch.Edits, "ComponentInverse", batch.InverseEdits, "StagedEdit", staged, ...
+                "SourceBeforeId", before.StateId, "SourceAfterId", obj.CurrentSource.StateId);
+            obj.SourcePublication = true; cleanup = onCleanup(@() obj.endSourcePublication());
+            obj.recordHistory(edit);
         end
 
         function entry = setProperty(obj, componentId, path, value, registry)
@@ -1045,11 +1188,12 @@ classdef DocumentModel < handle
                     target = candidate.getComponent(string(change.ComponentId));
                     target.setProperty(string(change.Path), change.Value);
                 end
-                [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+                [source, diagnostics, sourcePatches] = macd.source.RoundTripGenerator(registry).generate(candidate);
                 if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:DocumentModel:UnsafePropertyEdit", "%s", strjoin(string({diagnostics.Message}), newline));
                 end
-                [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+                [parsed, ~] = candidate.editedSourceCandidate(source, sourcePatches, registry);
+                diagnostics = parsed.Diagnostics;
                 if macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:DocumentModel:UnsafePropertyEdit", "%s", strjoin(string({diagnostics.Message}), newline));
                 end
@@ -1541,7 +1685,7 @@ classdef DocumentModel < handle
             previousDiagnostics = obj.Diagnostics;
             obj.CallbackEdits = after;
             try
-                [callbackSource, diagnostics] = macd.source.RoundTripGenerator(registry).generate(obj);
+                [callbackSource, diagnostics, callbackPatches] = macd.source.RoundTripGenerator(registry).generate(obj);
                 if macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:DocumentModel:UnsafeCallbackSource", "%s", ...
                         strjoin(string({diagnostics.Message}), newline));
@@ -1553,7 +1697,7 @@ classdef DocumentModel < handle
                 rethrow(exception)
             end
             % Commit only a fully generated intention snapshot; original bodies remain untouched.
-            obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after, "DeletedHandler", state.HandlerName), callbackSource);
+            obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after, "DeletedHandler", state.HandlerName), callbackSource, macd.model.DocumentModel.empty, callbackPatches);
         end
 
         function candidate = structuralCandidate(obj, registry)
@@ -1611,47 +1755,27 @@ classdef DocumentModel < handle
                     error("macd:DocumentModel:UnsafeSubtreeEdit", "Callback ownership prevents complete subtree deletion.");
                 end
             end
-            % Source removals retain original ownership even after placement changes.
-            sourceRemoved = removed;
-            if strlength(obj.CurrentText) > 0
-                originalDocument = macd.source.AppSourceParser.parseText(obj.CurrentText, registry);
-                for sourceIndex = 1:numel(sourceRemoved)
-                    originalComponent = originalDocument.getComponent(sourceRemoved(sourceIndex).Id);
-                    if ~isempty(originalComponent), sourceRemoved(sourceIndex) = originalComponent; end
-                end
-            end
+            % The live canonical ranges already describe the exact current source.
             rewrittenReferences = macd.source.SubtreeSourceEdits.detachedParentReferences(obj, ids);
-            macd.source.SubtreeSourceEdits.deletion(obj.CurrentText, sourceRemoved, rewrittenReferences);
-
-            % Preflight on independent records before changing document or history.
-            candidate = obj.structuralCandidate();
-            root = obj.getComponent(id);
-            parent = obj.getComponent(root.ParentId);
-            beforeChildren = parent.Children;
-            beforeComponents = obj.Components;
-            beforePending = obj.PendingEdits;
-            afterPending = beforePending;
-            afterPending{end + 1} = struct("Kind", "delete-subtree", "Records", macd.model.SourceOwnership.snapshot(sourceRemoved), ...
-                "RewrittenReferences", rewrittenReferences);
-            candidate.Components(ismember(string({candidate.Components.Id}), ids)) = [];
-            candidateParent = candidate.getComponent(parent.Id);
-            candidateParent.removeChild(id);
-            candidate.PendingEdits = afterPending;
-            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
-            if macd.validation.ModelValidator.hasErrors(diagnostics)
-                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
-            end
-
-            % Commit the validated collection and parent order with one history record.
-            obj.Components = obj.Components(~ismember(string({obj.Components.Id}), ids));
-            parent.removeChild(id);
-            obj.PendingEdits = afterPending;
-            obj.GeneratedText = source;
-            obj.Diagnostics = diagnostics;
-            obj.recordHistory(struct("Kind", "subtree-delete", "ParentId", parent.Id, ...
-                "BeforeChildren", beforeChildren, "AfterChildren", parent.Children, ...
-                "BeforeComponents", beforeComponents, "AfterComponents", obj.Components, ...
-                "BeforePending", {beforePending}, "AfterPending", {afterPending}));
+            edits = macd.source.SubtreeSourceEdits.deletion(obj.CurrentText, removed, rewrittenReferences);
+            edits = macd.source.SourceFormatting.completeLineDeletions(obj.CurrentText, edits);
+            batch = macd.source.SourcePatchBatch(obj.CurrentText, edits);
+            candidate = obj.structuralCandidate(); root = obj.getComponent(id); parent = obj.getComponent(root.ParentId);
+            beforeChildren = parent.Children; beforeOrder = string({obj.Components.Id});
+            candidate.Components = candidate.Components(~ismember(string({candidate.Components.Id}), ids));
+            candidateParent = candidate.getComponent(parent.Id); candidateParent.removeChild(id);
+            [candidate, state] = obj.prepareComponentPublication(candidate, batch, string({removed.Name}), registry);
+            before = obj.CurrentSource;
+            obj.Components = obj.Components(~ismember(string({obj.Components.Id}), ids)); parent.removeChild(id);
+            obj.publishParsedSource(state, registry, candidate, true);
+            edit = struct("Kind", "source-subtree-delete", "ParentId", parent.Id, ...
+                "Snapshot", snapshot, "InsertedComponents", removed, "BeforeChildren", beforeChildren, "AfterChildren", parent.Children, ...
+                "BeforeOrder", beforeOrder, "AfterOrder", string({obj.Components.Id}), ...
+                "SourceForward", batch.Edits, "SourceInverse", batch.InverseEdits, ...
+                "ComponentForward", batch.Edits, "ComponentInverse", batch.InverseEdits, "StagedEdit", struct([]), ...
+                "SourceBeforeId", before.StateId, "SourceAfterId", obj.CurrentSource.StateId);
+            obj.SourcePublication = true; cleanup = onCleanup(@() obj.endSourcePublication());
+            obj.recordHistory(edit);
         end
 
         function reparentSubtree(obj, id, parentId, registry, measuredPosition, targetCell, targetPosition)
@@ -1712,12 +1836,13 @@ classdef DocumentModel < handle
             candidate.Components = candidate.Components(indices);
             candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", ...
                 "OriginalRecords", snapshot.Records);
-            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            [source, diagnostics, sourcePatches] = macd.source.RoundTripGenerator(registry).generate(candidate);
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
             % A preserved later setter must not undo the requested destination geometry.
-            [placedDocument, placedDiagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            [placedDocument, ~] = candidate.editedSourceCandidate(source, sourcePatches, registry);
+            placedDiagnostics = placedDocument.Diagnostics;
             if macd.validation.ModelValidator.hasErrors(placedDiagnostics)
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({placedDiagnostics.Message}), newline));
             end
@@ -1731,7 +1856,7 @@ classdef DocumentModel < handle
             catch exception
                 error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", string(exception.message));
             end
-            afterSnapshot = macd.model.SubtreeSnapshot(candidate, id);
+            afterSnapshot = macd.model.SubtreeSnapshot(placedDocument, id);
             afterRoot = afterSnapshot.Records(1);
             afterParents = struct("Id", {oldParent.Id, newParent.Id}, ...
                 "Children", {candidateOldParent.Children, candidateNewParent.Children});
@@ -1747,7 +1872,7 @@ classdef DocumentModel < handle
                 "BeforeRoot", snapshot.Records(1), "AfterRoot", afterRoot, ...
                 "BeforeParents", beforeParents, "AfterParents", afterParents, ...
                 "BeforeComponents", beforeComponents, "AfterComponents", afterComponents, ...
-                "BeforePending", {beforePending}, "AfterPending", {candidate.PendingEdits}), source, placedDocument);
+                "BeforePending", {beforePending}, "AfterPending", {candidate.PendingEdits}), source, placedDocument, sourcePatches);
         end
 
         function snapshot = copySubtree(obj, id, registry)
@@ -1764,6 +1889,9 @@ classdef DocumentModel < handle
                 error("macd:DocumentModel:UnsafeSubtreeCopy", "The document root cannot be copied.");
             end
             snapshot = macd.model.SubtreeSnapshot(obj, id);
+            analysis = obj.sourceAnalysis();
+            direct = false(1, 0);
+            if any(arrayfun(@macd.model.SourceOwnership.hasSource, snapshot.Records)), [direct, ~] = analysis.directInitializationScope(); end
             for record = snapshot.Records
                 if ~record.IsEditable
                     error("macd:DocumentModel:UnsafeSubtreeCopy", "A subtree component is read-only.");
@@ -1805,11 +1933,8 @@ classdef DocumentModel < handle
                             isempty(record.SourceSpans.Declaration) || ~record.SourceSpans.Declaration.isKnown()
                         error("macd:DocumentModel:UnsafeSubtreeCopy", "Creation or declaration ownership is missing.");
                     end
-                    statements = macd.source.MatlabLexicalScanner.splitStatements(obj.CurrentText);
-                    [direct, ~] = macd.source.SubtreeReparentSourceEdits.directScope(statements);
                     span = record.SourceSpans.Creation;
-                    matches = find(arrayfun(@(statement) statement.Span.StartOffset == span.StartOffset && ...
-                        statement.Span.EndOffset == span.EndOffset, statements));
+                    matches = analysis.statementIndices(span);
                     if numel(matches) ~= 1 || ~direct(matches)
                         error("macd:DocumentModel:UnsafeSubtreeCopy", "Component creation ownership is ambiguous.");
                     end
@@ -1954,7 +2079,7 @@ classdef DocumentModel < handle
             end
             edit = obj.History{obj.HistoryIndex};
             obj.assertHistorySource(edit, false);
-            if edit.Kind == "source-subtree-insert"
+            if any(edit.Kind == ["source-subtree-insert", "source-subtree-delete"])
                 obj.applyComponentHistory(edit, false);
             elseif edit.Kind == "rename" && isfield(edit, "IndexedRename")
                 obj.applyIdentifierHistory(edit, false);
@@ -1983,7 +2108,7 @@ classdef DocumentModel < handle
             end
             edit = obj.History{obj.HistoryIndex + 1};
             obj.assertHistorySource(edit, true);
-            if edit.Kind == "source-subtree-insert"
+            if any(edit.Kind == ["source-subtree-insert", "source-subtree-delete"])
                 obj.applyComponentHistory(edit, true);
             elseif edit.Kind == "rename" && isfield(edit, "IndexedRename")
                 obj.applyIdentifierHistory(edit, true);
@@ -2455,7 +2580,7 @@ classdef DocumentModel < handle
                 candidate (1, 1) macd.model.DocumentModel
                 state (1, 1) macd.model.CurrentSourceState
             end
-            [analysis, additions] = obj.sourceAnalysis().withComponentPatches(batch, names);
+            [analysis, additions] = obj.sourceAnalysis().withComponentPatches(batch, names, candidate, registry);
             execution = analysis.executionIndex();
             state = obj.CurrentSource.withBatch(batch, stateId, analysis);
             removed = string({obj.Components.Id}); removed = removed(~ismember(removed, string({candidate.Components.Id})));
@@ -2471,6 +2596,7 @@ classdef DocumentModel < handle
             trace = execution.Trace;
             candidate.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
                 "Returns", trace.Returns, "Layout", analysis.Layout);
+            macd.model.SourceEffectSummary.refresh(candidate, registry);
             candidate.publishCurrentSource(state);
             diagnostics = candidate.validatePropertyCommit(registry);
             if macd.validation.ModelValidator.hasErrors(diagnostics)
@@ -2510,10 +2636,20 @@ classdef DocumentModel < handle
                         definition = registry.get(component.Factory, component.CreationArguments);
                         [parentName, arguments, factorySettings, ~, supported] = macd.source.PropertySettingSyntax.factory(statement, definition, state.StateId);
                         parent = obj.getComponent(component.ParentId);
-                        assert(supported && ~isempty(parent) && parentName == parent.Name && isempty(factorySettings), ...
+                        assert(supported && ~isempty(parent) && parentName == parent.Name, ...
                             "macd:DocumentModel:UnsafeSubtreeEdit", "Emitted factories must match the prepared parent and positional arguments.");
                         component.Metadata.InitializationCreationSequence = execution.Creation(visit);
                         component.Metadata.InitializationCreationCertain = execution.Trace.Certain(visit);
+                        owner = analysis.Layout.Owner(index); scopes = analysis.Layout.Methods;
+                        scope = scopes(string({scopes.Name}) == owner); assert(isscalar(scope));
+                        for factoryIndex = 1:numel(factorySettings)
+                            record = factorySettings(factoryIndex).toStruct();
+                            record.Location.Sequence = execution.Creation(visit) + factoryIndex;
+                            captured = macd.model.PropertySetting(record.Path, record.Value, record.Location).withScope(owner, scope.Span);
+                            old = previous(string({previous.Path}) == captured.Path & string({previous.Method}) == "nameValue");
+                            if isscalar(old), captured = captured.withIdentity(old.Id, old.SourceSnapshotId); end
+                            settings(end + 1) = allocator.canonicalizeSettings(captured); %#ok<AGROW>
+                        end
                         continue
                     end
                     setting = macd.source.PropertySettingSyntax.assignment(statement, state.StateId, ...
@@ -2546,13 +2682,21 @@ classdef DocumentModel < handle
             end
             candidate = base.structuralCandidate(); names = string({edit.Snapshot.Records.Name});
             ids = string({edit.Snapshot.Records.Id}); parent = candidate.getComponent(edit.ParentId);
-            if forward
+            adding = forward ~= (edit.Kind == "source-subtree-delete");
+            if adding
                 inserted = edit.Snapshot.materialize(); candidate.Components = [candidate.Components inserted];
-                children = edit.AfterChildren; edits = edit.ComponentForward; stateId = edit.SourceAfterId;
             else
                 candidate.Components = candidate.Components(~ismember(string({candidate.Components.Id}), ids));
+            end
+            if forward
+                children = edit.AfterChildren; edits = edit.ComponentForward; stateId = edit.SourceAfterId;
+            else
                 children = edit.BeforeChildren; edits = edit.ComponentInverse; stateId = edit.SourceBeforeId;
                 if ~isempty(edit.StagedEdit), stateId = edit.StagedEdit.SourceAfterId; end
+            end
+            if isfield(edit, "BeforeOrder")
+                order = edit.BeforeOrder; if forward, order = edit.AfterOrder; end
+                [~, indices] = ismember(order, string({candidate.Components.Id})); candidate.Components = candidate.Components(indices);
             end
             for child = parent.Children, parent.removeChild(child); end
             for child = children, parent.addChild(child); end
@@ -2561,10 +2705,13 @@ classdef DocumentModel < handle
             if ~forward && ~isempty(edit.StagedEdit)
                 candidate.applySourceBatchHistory(edit.StagedEdit, false); state = candidate.CurrentSource;
             end
-            if forward
+            if adding
                 obj.Components = [obj.Components edit.InsertedComponents];
             else
                 obj.Components = obj.Components(~ismember(string({obj.Components.Id}), ids));
+            end
+            if isfield(edit, "BeforeOrder")
+                [~, indices] = ismember(order, string({obj.Components.Id})); obj.Components = obj.Components(indices);
             end
             parent = obj.getComponent(edit.ParentId);
             for child = parent.Children, parent.removeChild(child); end
@@ -2707,7 +2854,8 @@ classdef DocumentModel < handle
                 stateId = edit.SourceBeforeId;
             end
             batch = macd.source.SourcePatchBatch(obj.CurrentText, edits);
-            obj.publishParsedSource(obj.CurrentSource.withBatch(batch, stateId), obj.SourceRegistry);
+            [candidate, state] = obj.editedSourceCandidate(batch.AfterText, batch.Edits, obj.SourceRegistry, stateId);
+            obj.publishParsedSource(state, obj.SourceRegistry, candidate, true);
         end
 
         function applySourcePropertyHistory(obj, edit, forward)
@@ -2919,15 +3067,15 @@ classdef DocumentModel < handle
                 component.setProperty(string(change.Path), change.Value);
             end
             generator = macd.source.RoundTripGenerator(registry);
-            [source, diagnostics] = generator.generate(candidate);
+            [source, diagnostics, sourcePatches] = generator.generate(candidate);
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafePropertyEdit", "%s", ...
                     strjoin(string({diagnostics.Message}), newline));
             end
 
             % Reparse output without executing the app and check each requested literal.
-            propertyNames = strings(1, 0);
-            [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry, "", propertyNames);
+            [parsed, ~] = candidate.editedSourceCandidate(source, sourcePatches, registry);
+            diagnostics = parsed.Diagnostics;
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:DocumentModel:UnsafePropertyEdit", "%s", ...
                     strjoin(string({diagnostics.Message}), newline));
@@ -3072,13 +3220,14 @@ classdef DocumentModel < handle
             index = numel(obj.PendingEdits);
         end
 
-        function recordHistory(obj, edit, preparedSource, parsedCandidate)
+        function recordHistory(obj, edit, preparedSource, parsedCandidate, preparedEdits)
             % recordHistory Publish an already prepared source candidate and retain only primary reversible edits.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 edit (1, 1) struct
                 preparedSource (1, 1) string = ""
                 parsedCandidate macd.model.DocumentModel = macd.model.DocumentModel.empty
+                preparedEdits struct = struct([])
             end
             if ~obj.SourcePublication && ~isempty(obj.SourceRegistry)
                 obj.ensureCurrentSource(obj.SourceRegistry);
@@ -3090,13 +3239,20 @@ classdef DocumentModel < handle
                         text = edit.SourceCandidateText;
                         diagnostics = macd.model.Diagnostic.empty;
                     else
-                        [text, diagnostics] = macd.source.RoundTripGenerator(obj.SourceRegistry).generate(obj);
+                        [text, diagnostics, preparedEdits] = macd.source.RoundTripGenerator(obj.SourceRegistry).generate(obj);
                     end
                 if macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
                 end
-                batch = obj.sourceDifference(before.Text, text);
-                obj.publishParsedSource(before.withBatch(batch), obj.SourceRegistry, parsedCandidate);
+                if isempty(preparedEdits), batch = obj.sourceDifference(before.Text, text);
+                else, batch = macd.source.SourcePatchBatch(before.Text, preparedEdits); end
+                assert(batch.AfterText == text);
+                if isempty(parsedCandidate)
+                    [parsedCandidate, state] = obj.editedSourceCandidate(text, batch.Edits, obj.SourceRegistry);
+                else
+                    state = before.withBatch(batch, "", parsedCandidate.sourceAnalysis());
+                end
+                obj.publishParsedSource(state, obj.SourceRegistry, parsedCandidate, true);
                 catch exception
                     obj.SourcePublication = true;
                     cleanup = onCleanup(@() obj.endSourcePublication());

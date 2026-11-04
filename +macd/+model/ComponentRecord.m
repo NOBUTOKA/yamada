@@ -151,7 +151,7 @@ classdef ComponentRecord < handle
         end
     end
 
-    methods (Access = {?macd.model.SourceLocationUpdate, ?macd.model.SourceLiteralTransaction})
+    methods (Access = {?macd.model.SourceLocationUpdate, ?macd.model.SourceLiteralTransaction, ?macd.model.DocumentModel})
         function applyProjectedSettings(obj, settings)
             % applyProjectedSettings Adopt transaction-validated value records without reconstructing unchanged payloads.
             arguments (Input)

@@ -66,6 +66,8 @@ classdef AppSourceParser
 
         function [document, diagnostics] = parseText(source, registry, filePath, propertyNames)
             % parseText Parse handle-based source text into the shared document model.
+            %   Whole-source parsing is expensive. Avoid calls outside file loading and
+            %   saving; editor changes should use maintained indexes and local updates.
             %   Property names may bound semantic validation of an internally proven candidate.
             arguments (Input)
                 source string
@@ -347,38 +349,7 @@ classdef AppSourceParser
                 end
             end
 
-            % Construction callbacks can mutate any previously created object.
-            document.Metadata.HasUnresolvedLifecycleEffects = false;
-            document.Metadata.HasUnresolvedExecutableEffects = false;
-            document.Metadata.HasUnrecognizedSetter = false;
-            for member = document.Components
-                concrete = registry.get(member.Factory, member.CreationArguments);
-                for setting = member.Settings
-                    if setting.ValueKind == "expression"
-                        expression = strtrim(string(macd.source.ComponentNameRewriter.codeMask(setting.SourceExpression)));
-                        deferred = startsWith(expression, "@");
-                        blocked = string({document.Metadata.InitializationContext.Layout.Methods.Name});
-                        inert = macd.source.InitializationSourceAnalyzer.isLiteralDataCall(setting.SourceExpression, blocked);
-                        if ~deferred && ~inert && ~isempty(regexp(expression, '(?<![\w.@])(?:\w+\.)*\w+\s*\(', 'once'))
-                            document.Metadata.HasUnresolvedExecutableEffects = true;
-                        end
-                    end
-                    % Audited execution triggers can mutate other components, not only this setter's receiver.
-                    if any(setting.Path == ["Parent", "Children"]) || ...
-                            (member.Factory == "uitoggletool" && setting.Path == "State") || ...
-                            (member.Factory == "uihtml" && any(setting.Path == ["HTMLSource", "Data"]))
-                        document.Metadata.HasUnresolvedExecutableEffects = true;
-                    end
-                    if setting.Path == "CreateFcn" && setting.Method == "nameValue" && ...
-                            ~(setting.ValueKind == "literal" && isempty(setting.LiteralValue))
-                        document.Metadata.HasUnresolvedLifecycleEffects = true;
-                    end
-                    if ~any(string({concrete.Properties.Path}) == setting.Path) && ...
-                            ~any(setting.Path == ["Layout.Row", "Layout.Column"])
-                        document.Metadata.HasUnrecognizedSetter = true;
-                    end
-                end
-            end
+            macd.model.SourceEffectSummary.refresh(document, registry);
 
             % Combine parser findings with shared model validation diagnostics.
             validationDiagnostics = macd.validation.ModelValidator.validate( ...

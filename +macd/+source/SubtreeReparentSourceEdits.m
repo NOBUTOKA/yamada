@@ -48,7 +48,7 @@ classdef SubtreeReparentSourceEdits
             source = document.CurrentText;
             analysis = document.sourceAnalysis();
             statements = analysis.Statements;
-            [direct, methodSpan] = macd.source.SubtreeReparentSourceEdits.directScope(statements);
+            [direct, methodSpan] = analysis.directInitializationScope();
             parsed = document.Components(arrayfun(@macd.model.SourceOwnership.hasSource, document.Components));
             offsets = arrayfun(@(item) item.SourceSpans.Creation.StartOffset, parsed);
             initialization = analysis.initialization(offsets);
@@ -433,9 +433,9 @@ classdef SubtreeReparentSourceEdits
                 document.CurrentText, macd.model.SourceSpan(1, anchor), removals);
             suffix = extractAfter(document.CurrentText, anchor);
             source = prefix + block + suffix;
-            [candidate, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            patches = [removals struct("Start", anchor + 1, "End", anchor, "Text", block)];
+            [candidate, ~] = document.editedSourceCandidate(source, patches, registry);
             hasPending = false;
-            additions = struct("Start", {}, "End", {}, "Text", {});
             % All candidates share one source version; only their owned insertions are combined.
             for id = movedIds
                 original = document.getComponent(id);
@@ -443,23 +443,16 @@ classdef SubtreeReparentSourceEdits
                 pending = original.Properties(arrayfun(@(entry) isempty(entry.SourceSpan), original.Properties));
                 pending = pending(arrayfun(@(entry) isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
                     ~isfield(entry.Metadata, "SubtreeReferenceId"), pending));
-                for entry = pending, configured.setProperty(entry.Path, entry.LiteralValue); end
                 if isempty(pending), continue, end
                 hasPending = true;
-                plan = macd.source.PropertyInsertionPlanner.plan(candidate, configured, registry);
-                additions = [additions plan.Edits]; %#ok<AGROW>
+                changes = struct("Path", {}, "Value", {});
+                for entry = pending, changes(end + 1) = struct("Path", entry.Path, "Value", {entry.LiteralValue}); end %#ok<AGROW>
+                candidate.setPropertyBatch(configured.Id, changes, registry);
             end
-            additions = macd.source.CallbackSourceEdits.combineInsertions(additions);
             first = strlength(prefix) + 1;
-            last = strlength(prefix) + strlength(block);
-            if any([additions.Start] < first | [additions.End] > last)
-                error("macd:SubtreeReparentSourceEdits:UnsafeSource", "A pending property escapes the relocated initialization block.");
-            end
-            block = macd.source.SubtreeReparentSourceEdits.applyRange(source, macd.model.SourceSpan(first, last), additions);
-            emitted = prefix + block + suffix;
-            if hasPending || ~isequaln(emitted, source)
-                [candidate, diagnostics] = macd.source.AppSourceParser.parseText(emitted, registry);
-            end
+            last = strlength(candidate.CurrentText) - strlength(suffix);
+            if hasPending, block = extractBetween(candidate.CurrentText, first, last); end
+            diagnostics = candidate.Diagnostics;
             if macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:SubtreeReparentSourceEdits:UnsafeSource", "%s", strjoin(string({diagnostics.Message}), newline));
             end

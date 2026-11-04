@@ -26,6 +26,15 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             testCase.verifyEqual(batch.inverse().AfterText, "abcdef");
         end
 
+        function adjacentRemovalAndInsertionRestoreTheOriginalText(testCase)
+            % adjacentRemovalAndInsertionRestoreTheOriginalText Reverse a moved block at a shared replacement boundary.
+            source = "left|old|right";
+            batch = macd.source.SourcePatchBatch(source, [change(6, 8, ""), change(9, 8, "new block")]);
+            testCase.verifyEqual(batch.AfterText, "left|new block|right");
+            testCase.verifyEqual(batch.inverse().AfterText, source);
+            testCase.verifyEqual(batch.inverse().inverse().AfterText, batch.AfterText);
+        end
+
         function staleAndOverlappingBatchesAreRejected(testCase)
             % staleAndOverlappingBatchesAreRejected Refuse outdated fragments and noncanonical ranges.
             edit = change(2, 3, "X");

@@ -5,7 +5,7 @@ classdef PropertySourcePlan
 
     methods (Static)
         function plan = combined(document, component, registry)
-            % combined Reparse complete emitted initialization without executing the input app.
+            % combined Bind complete emitted initialization through editor-owned source indexes.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 component (1, 1) macd.model.ComponentRecord
@@ -25,7 +25,7 @@ classdef PropertySourcePlan
             % The detached candidate may use conservative states during generation.
             candidate = document.structuralCandidate();
             candidate.Metadata.ResolvingCombinedPropertySource = true;
-            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            [source, diagnostics, patches] = macd.source.RoundTripGenerator(registry).generate(candidate);
             if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
                 error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "%s", strjoin(string({diagnostics.Message}), newline));
             end
@@ -40,7 +40,8 @@ classdef PropertySourcePlan
             if reused
                 parsed = validated.Document;
             else
-                [parsed, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+                [parsed, ~] = candidate.editedSourceCandidate(source, patches, registry);
+                diagnostics = parsed.Diagnostics;
                 if macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:PropertySourcePlan:UnsafeCombinedPlacement", "%s", strjoin(string({diagnostics.Message}), newline));
                 end

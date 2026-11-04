@@ -21,7 +21,7 @@ classdef RoundTripGenerator
             obj.Registry = registry;
         end
 
-        function [source, diagnostics] = generate(obj, document)
+        function [source, diagnostics, edits] = generate(obj, document)
             % generate Produce a localized source preview for one parsed document.
             arguments (Input)
                 obj (1, 1) macd.source.RoundTripGenerator
@@ -30,8 +30,10 @@ classdef RoundTripGenerator
             arguments (Output)
                 source string
                 diagnostics macd.model.Diagnostic
+                edits struct
             end
 
+            edits = struct("Start", {}, "End", {}, "Text", {});
             % New documents keep the canonical generator as their source owner.
             evaluationScope = document.evaluationContext(obj.Registry).readScope(); %#ok<NASGU>
             if strlength(document.CurrentText) == 0
@@ -253,10 +255,10 @@ classdef RoundTripGenerator
     end
 
     methods (Access = {?macd.source.PropertyInsertionPlanner})
-        function [source, diagnostics] = generatePreparedInsertions(obj, document, plans)
-            % generatePreparedInsertions Emit an internal tentative source for mandatory whole-source validation.
+        function [source, diagnostics, edits] = generatePreparedInsertions(obj, document, plans)
+            % generatePreparedInsertions Emit internal tentative source for mandatory candidate validation.
             %   The value generator keeps these plans private to this call. The caller
-            %   must parse the complete source and verify every pending request.
+            %   must bind the emitted edits and verify every pending request.
             arguments (Input)
                 obj (1, 1) macd.source.RoundTripGenerator
                 document (1, 1) macd.model.DocumentModel
@@ -265,9 +267,10 @@ classdef RoundTripGenerator
             arguments (Output)
                 source string
                 diagnostics macd.model.Diagnostic
+                edits struct
             end
             obj.PreparedInsertions = plans;
-            [source, diagnostics] = obj.generate(document);
+            [source, diagnostics, edits] = obj.generate(document);
         end
     end
 

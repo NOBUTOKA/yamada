@@ -266,12 +266,14 @@ classdef SourceAnalysis < handle
             analysis.Execution = execution;
         end
 
-        function [analysis, additions] = withComponentPatches(obj, batch, names)
+        function [analysis, additions] = withComponentPatches(obj, batch, names, document, registry)
             % withComponentPatches Splice only emitted declarations and initializer statements into maintained indexes.
             arguments (Input)
                 obj (1, 1) macd.source.SourceAnalysis
                 batch (1, 1) macd.source.SourcePatchBatch
                 names (1, :) string
+                document (1, 1) macd.model.DocumentModel
+                registry (1, 1) macd.model.ComponentRegistry
             end
             arguments (Output)
                 analysis (1, 1) macd.source.SourceAnalysis
@@ -283,7 +285,7 @@ classdef SourceAnalysis < handle
             for index = 1:numel(obj.Statements)
                 span = obj.Statements(index).Span;
                 for edit = batch.Edits
-                    if edit.End >= edit.Start && edit.Start <= span.StartOffset && edit.End >= span.EndOffset
+                    if edit.End >= edit.Start && edit.Start <= span.StartOffset && edit.End >= obj.Statements(index).CodeOffsets(end)
                         assert(strlength(edit.Text) == 0, "macd:SourceAnalysis:StructuralPatch", "Only complete emitted statements may be removed.");
                         removed(end + 1) = index; %#ok<AGROW>
                     end
@@ -295,7 +297,11 @@ classdef SourceAnalysis < handle
                 assert(edit.End < edit.Start, "macd:SourceAnalysis:StructuralPatch", "Component publication only inserts complete statements.");
                 [anchor, ~] = obj.statementNeighbors(edit.End);
                 assert(isscalar(anchor), "macd:SourceAnalysis:StructuralPatch", "An insertion needs a known lexical neighbor.");
-                fragment = macd.source.MatlabLexicalScanner.splitStatements(edit.Text);
+                fragmentText = edit.Text;
+                tail = extractAfter(batch.AfterText, edit.Start + shift + strlength(edit.Text) - 1);
+                terminator = regexp(char(tail), '^[ \t\r]*\n', 'match', 'once');
+                if ~isempty(terminator), fragmentText = fragmentText + string(terminator); end
+                fragment = macd.source.MatlabLexicalScanner.splitStatements(fragmentText);
                 for emitted = fragment
                     span = emitted.Span;
                     statement = emitted.withSpan(macd.model.SourceSpan( ...
@@ -313,7 +319,14 @@ classdef SourceAnalysis < handle
                             "macd:SourceAnalysis:StructuralPatch", "Only declared component slots may be inserted.");
                     end
                     additions(end + 1) = statement; anchors(end + 1) = anchor; %#ok<AGROW>
-                    owners(end + 1) = owner; kinds(end + 1) = kind; counts(end + 1) = 1; %#ok<AGROW>
+                    count = 1;
+                    if kind == "creation"
+                        component = document.getComponentByName(owner);
+                        definition = registry.get(component.Factory, component.CreationArguments);
+                        [~, ~, settings, ~, supported] = macd.source.PropertySettingSyntax.factory(statement, definition, "candidate");
+                        assert(supported); count = count + numel(settings);
+                    end
+                    owners(end + 1) = owner; kinds(end + 1) = kind; counts(end + 1) = count; %#ok<AGROW>
                 end
                 shift = shift + strlength(edit.Text);
             end
@@ -328,11 +341,12 @@ classdef SourceAnalysis < handle
                 struct("OldName", {}, "NewName", {}), inserted, deleted);
         end
 
-        function [analysis, local, statistics] = withPatches(obj, batch)
+        function [analysis, local, statistics] = withPatches(obj, batch, editorOwned)
             % withPatches Rescan complete changed windows and relocate unaffected lexical statements.
             arguments (Input)
                 obj (1, 1) macd.source.SourceAnalysis
                 batch (1, 1) macd.source.SourcePatchBatch
+                editorOwned (1, 1) logical = false
             end
             arguments (Output)
                 analysis (1, 1) macd.source.SourceAnalysis
@@ -348,6 +362,7 @@ classdef SourceAnalysis < handle
                 return
             end
             if isempty(obj.Statements)
+                assert(~editorOwned, "macd:EditorSourceProjection:MissingBaseline", "Editor patches require loaded lexical ownership.");
                 analysis = macd.source.SourceAnalysis(batch.AfterText);
                 local = false;
                 statistics.FullScan = true;
@@ -413,6 +428,13 @@ classdef SourceAnalysis < handle
                     span = mapped{index};
                     matches = find([spans.StartOffset] == span.StartOffset & [spans.EndOffset] == span.EndOffset);
                 end
+                if numel(matches) ~= 1 && editorOwned && ~isempty(old.CodeOffsets)
+                    [code, survived] = batch.mapSpan(macd.model.SourceSpan(old.CodeOffsets(1), old.CodeOffsets(end)));
+                    if survived
+                        matches = find(arrayfun(@(item) ~isempty(item.CodeOffsets) && ...
+                            item.CodeOffsets(1) == code.StartOffset && item.CodeOffsets(end) == code.EndOffset, statements));
+                    end
+                end
                 if numel(matches) ~= 1 || statements(matches).Text ~= old.Text
                     local = false;
                     break
@@ -423,6 +445,7 @@ classdef SourceAnalysis < handle
             statements = [statements obj.Statements(retained).withSpans(mapped(retained))];
             statistics.ReusedStatements = nnz(retained);
             if ~local
+                assert(~editorOwned, "macd:EditorSourceProjection:InvalidBoundary", "Editor patches must preserve neighboring statements.");
                 analysis = macd.source.SourceAnalysis(batch.AfterText);
                 statistics.FullScan = true;
                 statistics.ScannedCharacters = statistics.ScannedCharacters + strlength(batch.AfterText);
@@ -438,10 +461,39 @@ classdef SourceAnalysis < handle
             analysis.Source = batch.AfterText;
             analysis.Statements = statements;
             analysis.indexStatements();
-            analysis.Layout = macd.source.CallbackSourceAnalyzer.sourceLayout(statements);
-            analysis.compileStatementFacts();
-            analysis.NameIndex = macd.source.ComponentNameRewriter.index(batch.AfterText);
+            if editorOwned
+                analysis.Layout = macd.source.EditorSourceProjection.layout(obj, analysis, batch);
+                mapping = macd.source.EditorSourceProjection.statementMap(obj, analysis, batch);
+                old = [string({obj.Layout.Methods.Name}) macd.source.EditorSourceProjection.changedMembers(obj, find(mapping == 0))];
+                current = [string({analysis.Layout.Methods.Name}) macd.source.EditorSourceProjection.changedMembers(analysis, ...
+                    setdiff(1:numel(analysis.Statements), mapping(mapping > 0)))];
+                analysis.NameIndex = macd.source.ComponentNameRewriter.projectIndex(obj.NameIndex, batch, ...
+                    struct("OldName", {}, "NewName", {}), setdiff(current, old), setdiff(old, current));
+            else
+                analysis.Layout = macd.source.CallbackSourceAnalyzer.sourceLayout(statements);
+                analysis.NameIndex = macd.source.ComponentNameRewriter.index(batch.AfterText);
+            end
+            if editorOwned, analysis.compileStatementFacts(obj, batch);
+            else, analysis.compileStatementFacts(); end
             % Source-bound trace/callback caches are rebuilt lazily from this exact lexical revision.
+        end
+
+        function analysis = withEditorPatches(obj, batch, components, registry)
+            % withEditorPatches Project known editor commands without parsing the class or retracing initialization.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+                batch (1, 1) macd.source.SourcePatchBatch
+                components macd.model.ComponentRecord
+                registry (1, 1) macd.model.ComponentRegistry
+            end
+            arguments (Output)
+                analysis (1, 1) macd.source.SourceAnalysis
+            end
+            [analysis, local] = obj.withPatches(batch, true); assert(local);
+            analysis.Execution = macd.source.EditorSourceProjection.execution(obj, analysis, batch, components, registry);
+            analysis.Trace = analysis.Execution.Trace; analysis.HasTrace = true;
+            owners = analysis.Execution.Owners;
+            analysis.TraceOffsets = sort(arrayfun(@(item) item.Span.StartOffset, analysis.Statements(owners(owners > 0))));
         end
 
         function result = matches(obj, source)
@@ -503,6 +555,25 @@ classdef SourceAnalysis < handle
             before = previous; after = following;
             if previous == 0, before = zeros(1, 0); end
             if following > numel(obj.StatementStarts), after = zeros(1, 0); end
+        end
+
+        function [direct, span] = directInitializationScope(obj)
+            % directInitializationScope Read the unique direct initializer proof from the exact-source layout.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+            end
+            arguments (Output)
+                direct logical
+                span (1, 1) macd.model.SourceSpan
+            end
+            methods = obj.Layout.Methods; matches = find(string({methods.Name}) == "createComponents");
+            assert(obj.Layout.Valid && isscalar(matches), "macd:SubtreeReparentSourceEdits:UnsafeSource", ...
+                "Unique initialization method ownership cannot be proven.");
+            span = methods(matches).Span; [~, header] = obj.statementNeighbors(span.StartOffset - 1);
+            assert(isscalar(header) && ~isempty(regexp(obj.Statements(header).Text, ...
+                '^function\s+createComponents\s*\(app\)', 'once')), "macd:SubtreeReparentSourceEdits:UnsafeSource", ...
+                "Initialization must be a supported instance method.");
+            direct = obj.Layout.Direct;
         end
 
         function result = canInsertGenerated(obj, creationOffsets)
@@ -591,16 +662,31 @@ classdef SourceAnalysis < handle
     end
 
     methods (Access = private)
-        function compileStatementFacts(obj)
+        function compileStatementFacts(obj, previous, batch)
             % compileStatementFacts Classify opaque boundaries and record insertion trivia once while reading source.
             arguments (Input)
                 obj (1, 1) macd.source.SourceAnalysis
+                previous macd.source.SourceAnalysis = macd.source.SourceAnalysis.empty
+                batch macd.source.SourcePatchBatch = macd.source.SourcePatchBatch.empty
             end
             count = numel(obj.Statements);
             facts = struct("Structural", false(1, count), "SafeLocal", false(1, count), ...
                 "ComponentName", strings(1, count), "AnchorOffset", zeros(1, count), "Indent", strings(1, count));
+            refresh = true(1, count);
+            if ~isempty(previous)
+                mapping = macd.source.EditorSourceProjection.statementMap(previous, obj, batch);
+                [anchors, valid] = batch.mapSpanCells(arrayfun(@(offset) {macd.model.SourceSpan(offset, offset)}, previous.Facts.AnchorOffset));
+                for old = find(mapping > 0 & valid)
+                    current = mapping(old);
+                    if previous.Statements(old).Text ~= obj.Statements(current).Text, continue, end
+                    for field = ["Structural", "SafeLocal", "ComponentName", "Indent"]
+                        facts.(field)(current) = previous.Facts.(field)(old);
+                    end
+                    facts.AnchorOffset(current) = anchors{old}.StartOffset; refresh(current) = false;
+                end
+            end
             source = char(obj.Source); lines = [0 find(source == newline) numel(source) + 1];
-            for index = 1:count
+            for index = find(refresh)
                 statement = obj.Statements(index); code = strtrim(statement.Text);
                 facts.Structural(index) = ~isempty(regexp(code, '^(end|arguments|function|return)(?!\w)', 'once'));
                 name = regexp(code, '^app\.(\w+)(?:\.\w+)*\s*=(?!=)', 'tokens', 'once');

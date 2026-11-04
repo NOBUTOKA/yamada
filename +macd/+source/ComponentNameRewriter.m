@@ -277,8 +277,8 @@ classdef ComponentNameRewriter
             end
             for edit = fliplr(batch.Edits)
                 code = macd.source.ComponentNameRewriter.codeMask(edit.Text);
-                help = char(edit.Text); help(~ismember(help, [newline char(13)])) = ' ';
-                if edit.End >= edit.Start && any(~isspace(names.Documentation(edit.Start:edit.End)))
+                help = macd.source.ComponentNameRewriter.documentationMask(edit.Text);
+                if ~isempty(mappings) && edit.End >= edit.Start && any(~isspace(names.Documentation(edit.Start:edit.End)))
                     help = char(edit.Text);
                     code(~ismember(code, [newline char(13)])) = ' ';
                 end

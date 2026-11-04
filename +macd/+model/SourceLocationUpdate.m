@@ -251,6 +251,8 @@ classdef SourceLocationUpdate
             regions = macd.model.UnknownSourceRegion.empty;
             for previous = document.UnknownRegions
                 [span, valid] = batch.mapSpan(previous.Span);
+                if ~valid && any(arrayfun(@(edit) strlength(edit.Text) == 0 && edit.Start <= previous.Span.StartOffset && ...
+                        edit.End >= previous.Span.EndOffset, batch.Edits)), continue, end
                 assert(valid, "macd:SourceLiteralTransaction:WiderProof", "Opaque statement ownership changed.");
                 regions(end + 1) = macd.model.UnknownSourceRegion(previous.Text, span, previous.Reason); %#ok<AGROW>
             end
@@ -268,6 +270,8 @@ classdef SourceLocationUpdate
             diagnostics = macd.model.Diagnostic.empty;
             for previous = previousDiagnostics
                 [span, valid] = batch.mapSpan(previous.SourceSpan);
+                if ~valid && any(arrayfun(@(edit) strlength(edit.Text) == 0 && edit.Start <= previous.SourceSpan.StartOffset && ...
+                        edit.End >= previous.SourceSpan.EndOffset, batch.Edits)), continue, end
                 assert(valid, "macd:SourceLiteralTransaction:WiderProof", "Diagnostic ownership changed.");
                 diagnostics(end + 1) = macd.model.Diagnostic(previous.Code, previous.Severity, ...
                     previous.Message, previous.ComponentId, span); %#ok<AGROW>
