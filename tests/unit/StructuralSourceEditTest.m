@@ -33,6 +33,21 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             testCase.verifyEqual(document.CurrentText, saved);
         end
 
+        function parentHistoryKeepsCurrentPositionsAcrossRepeatedReplay(testCase)
+            % parentHistoryKeepsCurrentPositionsAcrossRepeatedReplay Rebind placement settings after a source block moves later.
+            [document, registry] = fixture();
+            root = document.getComponentByName("TopLeftLabel");
+            original = document.CurrentText;
+            document.reparentSubtree(root.Id, document.getComponentByName("CenterPanel").Id, registry);
+            moved = document.CurrentText;
+            for iteration = 1:2
+                document.undo(); testCase.verifyEqual(document.CurrentText, original);
+                verifyBindings(testCase, document, registry);
+                document.redo(); testCase.verifyEqual(document.CurrentText, moved);
+                verifyBindings(testCase, document, registry);
+            end
+        end
+
         function deletionRefreshesExecutionEffectFlags(testCase)
             % deletionRefreshesExecutionEffectFlags Remove a source-only setter without leaving stale document restrictions.
             [document, registry] = fixture();

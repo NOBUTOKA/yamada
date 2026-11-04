@@ -3302,7 +3302,8 @@ classdef DocumentModel < handle
             obj.Components = components;
             root = obj.getComponent(id);
             root.restoreProperties(rootState.Properties);
-            if isfield(rootState, "Settings"), root.restoreSettings(rootState.Settings); end
+            % Source-backed replay derives current bindings from the primary patch.
+            if ~obj.SourcePublication && isfield(rootState, "Settings"), root.restoreSettings(rootState.Settings); end
             root.ParentId = rootState.ParentId;
             for state = parentStates
                 parent = obj.getComponent(state.Id);
