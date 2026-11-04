@@ -211,6 +211,31 @@ classdef RoundTripGenerator
     end
 
     methods (Access = ?macd.model.DocumentModel)
+        function edits = componentInsertionEdits(obj, document, components)
+            % componentInsertionEdits Emit only new component syntax using the existing generation policies.
+            arguments (Input)
+                obj (1, 1) macd.source.RoundTripGenerator
+                document (1, 1) macd.model.DocumentModel
+                components macd.model.ComponentRecord
+            end
+            arguments (Output)
+                edits struct
+            end
+            source = document.CurrentText;
+            [edits, diagnostics] = obj.additionEdits(source, document, components);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+            % Property declarations own the CR preceding their newline; insert after that whole line.
+            declaration = edits(1); ending = obj.lineEnding(document);
+            tail = extractAfter(source, declaration.End); nextLine = strfind(tail, newline);
+            assert(~isempty(nextLine), "macd:DocumentModel:UnsafeSubtreeEdit", "A declaration requires its existing line terminator.");
+            declaration.End = declaration.End + nextLine(1); declaration.Start = declaration.End + 1;
+            declaration.Text = extractAfter(declaration.Text, strlength(ending)) + ending;
+            edits(1) = declaration;
+            edits = macd.source.SourceFormatting.separateComponents(source, edits, document.sourceAnalysis());
+        end
+
         function [source, diagnostics] = generatePropertyCandidate(obj, document, name)
             % generatePropertyCandidate Bound property validation for an otherwise proven document checkpoint.
             arguments (Input)

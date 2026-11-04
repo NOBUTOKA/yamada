@@ -28,6 +28,7 @@ classdef SourceAnalysis < handle
         CallbackInsertion logical = false
         HasCallbackInsertion logical = false
         CallbackCandidates containers.Map
+        NameIndex struct = struct()
         StatementStarts double = []
         StatementEnds double = []
     end
@@ -47,6 +48,18 @@ classdef SourceAnalysis < handle
             obj.indexStatements();
             obj.Layout = macd.source.CallbackSourceAnalyzer.sourceLayout(obj.Statements);
             obj.compileStatementFacts();
+            obj.NameIndex = macd.source.ComponentNameRewriter.index(source);
+        end
+
+        function names = nameIndex(obj)
+            % nameIndex Read load-time declaration and identifier data projected through owned edits.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+            end
+            arguments (Output)
+                names (1, 1) struct
+            end
+            names = obj.NameIndex;
         end
 
         function result = executionIndex(obj)
@@ -69,7 +82,7 @@ classdef SourceAnalysis < handle
             obj.Execution = result;
         end
 
-        function [analysis, execution] = withLiteralPatches(obj, batch, additions, anchors, removed, constructorDelta, execution, addedOwner)
+        function [analysis, execution] = withLiteralPatches(obj, batch, additions, anchors, removed, constructorDelta, execution, addedOwner, mappings, addedKinds, addedCounts)
             % withLiteralPatches Apply editor-owned literal patches without rescanning or rediscovering source ownership.
             arguments (Input)
                 obj (1, 1) macd.source.SourceAnalysis
@@ -80,6 +93,9 @@ classdef SourceAnalysis < handle
                 constructorDelta double
                 execution (1, 1) struct
                 addedOwner (1, :) string
+                mappings struct = struct("OldName", {}, "NewName", {})
+                addedKinds (1, :) string = repmat("assignment", 1, numel(additions))
+                addedCounts (1, :) double = ones(1, numel(additions))
             end
             arguments (Output)
                 analysis (1, 1) macd.source.SourceAnalysis
@@ -114,7 +130,7 @@ classdef SourceAnalysis < handle
                 end
                 for which = fliplr(touched)
                     edit = edits(which);
-                    assert(edit.Start >= old.Span.StartOffset && edit.End < old.Span.EndOffset, ...
+                    assert(edit.Start >= old.Span.StartOffset && (edit.End < old.Span.EndOffset || (~isempty(mappings) && edit.End == old.Span.EndOffset)), ...
                         "macd:SourceLiteralTransaction:WiderProof", "Literal ownership must exclude structural delimiters.");
                     first = find(offsets >= edit.Start, 1);
                     if isempty(first), first = numel(offsets) + 1; end
@@ -151,20 +167,23 @@ classdef SourceAnalysis < handle
             counts = counts + constructorDelta;
             insertionVisits = zeros(size(anchors));
             for index = 1:numel(anchors)
+                if addedKinds(index) == "declaration", continue, end
                 anchor = find(beforeOrder == anchors(index));
                 assert(isscalar(anchor), "macd:SourceLiteralTransaction:WiderProof", "Insertion needs one execution visit.");
                 insertionVisits(index) = trace.Returns(anchor);
             end
             surviving = find(mapping(beforeOrder) > 0);
+            executable = find(addedKinds ~= "declaration");
+            insertionVisits = insertionVisits(executable);
             visitKeys = [surviving insertionVisits];
             added = [false(size(surviving)) true(size(insertionVisits))];
             [~, order] = sortrows([visitKeys(:) added(:) (1:numel(visitKeys))'], [1 2 3]);
-            physical = [mapping(beforeOrder(surviving)) addedPositions];
+            physical = [mapping(beforeOrder(surviving)) addedPositions(executable)];
             currentOrder = physical(order);
             certain = [trace.Certain(surviving) trace.Certain(insertionVisits)]; certain = certain(order);
-            currentCounts = [counts(surviving) ones(size(insertionVisits))]; currentCounts = currentCounts(order);
-            creation = [execution.Creation(surviving) > 0 false(size(insertionVisits))]; creation = creation(order);
-            assignment = [execution.Assignment(surviving) > 0 true(size(insertionVisits))]; assignment = assignment(order);
+            currentCounts = [counts(surviving) addedCounts(executable)]; currentCounts = currentCounts(order);
+            creation = [execution.Creation(surviving) > 0 addedKinds(executable) == "creation"]; creation = creation(order);
+            assignment = [execution.Assignment(surviving) > 0 addedKinds(executable) == "assignment"]; assignment = assignment(order);
             oldVisit = zeros(size(beforeOrder));
             oldPositions = find(~added(order)); oldVisit(surviving) = oldPositions;
             newPositions = zeros(size(insertionVisits));
@@ -176,7 +195,7 @@ classdef SourceAnalysis < handle
             for visit = surviving(trace.Returns(surviving) > surviving)
                 target = trace.Returns(visit);
                 owner = obj.Layout.Owner(beforeOrder(target));
-                extend = find(insertionVisits == target & obj.Layout.Owner(anchors) == owner);
+                extend = find(insertionVisits == target & obj.Layout.Owner(anchors(executable)) == owner);
                 if ~isempty(extend), returns(oldVisit(visit)) = max([returns(oldVisit(visit)) newPositions(extend)]); end
             end
             diagnostics = macd.model.SourceLocationUpdate.relocateDiagnostics(trace.Diagnostics, batch);
@@ -200,7 +219,8 @@ classdef SourceAnalysis < handle
                 end
             end
             execution.SequenceMap = sequenceMap;
-            execution.Owners = mapping(execution.Owners);
+            execution.Owners = [mapping(execution.Owners) addedPositions(addedKinds == "creation")];
+            execution.Owners = execution.Owners(execution.Owners > 0);
             [uniqueStatements, ~, groups] = unique(currentOrder);
             occurrences = accumarray(groups(:), 1);
             uniqueStatements = uniqueStatements(occurrences == 1);
@@ -225,11 +245,87 @@ classdef SourceAnalysis < handle
                 facts.ComponentName(position) = addedOwner(additionIndex);
                 facts.AnchorOffset(position) = statements(position).Span.EndOffset;
             end
+            beforeNames = facts.ComponentName;
+            for mapping = mappings
+                facts.ComponentName(beforeNames == mapping.OldName) = mapping.NewName;
+                if isfield(mapping, "Kind") && mapping.Kind == "method"
+                    analysisOwner = layout.Owner == mapping.OldName;
+                    layout.Owner(analysisOwner) = mapping.NewName;
+                    for methodIndex = find(string({layout.Methods.Name}) == mapping.OldName)
+                        layout.Methods(methodIndex).Name = mapping.NewName;
+                    end
+                end
+            end
+            analysis.Layout = layout;
+            analysis.NameIndex = macd.source.ComponentNameRewriter.projectIndex(obj.NameIndex, batch, mappings);
             analysis.Facts = facts;
             analysis.indexStatements(); analysis.Trace = trace; analysis.HasTrace = true;
             [offsets, valid] = batch.mapSpanCells(arrayfun(@(offset) {macd.model.SourceSpan(offset, offset)}, obj.TraceOffsets));
-            assert(all(valid)); analysis.TraceOffsets = cellfun(@(item) item.StartOffset, offsets);
+            analysis.TraceOffsets = sort([cellfun(@(item) item.StartOffset, offsets(valid)) ...
+                arrayfun(@(item) item.Span.StartOffset, additions(addedKinds == "creation"))]);
             analysis.Execution = execution;
+        end
+
+        function [analysis, additions] = withComponentPatches(obj, batch, names)
+            % withComponentPatches Splice only emitted declarations and initializer statements into maintained indexes.
+            arguments (Input)
+                obj (1, 1) macd.source.SourceAnalysis
+                batch (1, 1) macd.source.SourcePatchBatch
+                names (1, :) string
+            end
+            arguments (Output)
+                analysis (1, 1) macd.source.SourceAnalysis
+                additions macd.source.SourceStatement
+            end
+            additions = macd.source.SourceStatement.empty;
+            anchors = []; owners = strings(1, 0); kinds = strings(1, 0); counts = [];
+            removed = [];
+            for index = 1:numel(obj.Statements)
+                span = obj.Statements(index).Span;
+                for edit = batch.Edits
+                    if edit.End >= edit.Start && edit.Start <= span.StartOffset && edit.End >= span.EndOffset
+                        assert(strlength(edit.Text) == 0, "macd:SourceAnalysis:StructuralPatch", "Only complete emitted statements may be removed.");
+                        removed(end + 1) = index; %#ok<AGROW>
+                    end
+                end
+            end
+            shift = 0;
+            for edit = batch.Edits
+                if strlength(edit.Text) == 0, shift = shift - (edit.End - edit.Start + 1); continue, end
+                assert(edit.End < edit.Start, "macd:SourceAnalysis:StructuralPatch", "Component publication only inserts complete statements.");
+                [anchor, ~] = obj.statementNeighbors(edit.End);
+                assert(isscalar(anchor), "macd:SourceAnalysis:StructuralPatch", "An insertion needs a known lexical neighbor.");
+                fragment = macd.source.MatlabLexicalScanner.splitStatements(edit.Text);
+                for emitted = fragment
+                    span = emitted.Span;
+                    statement = emitted.withSpan(macd.model.SourceSpan( ...
+                        edit.Start + shift + span.StartOffset - 1, edit.Start + shift + span.EndOffset - 1));
+                    code = statement.Text;
+                    match = regexp(code, '^app\.(\w+)(\.[A-Za-z]\w*(?:\.\w+)*)?\s*=', 'tokens', 'once');
+                    kind = "declaration"; owner = "";
+                    if ~isempty(match)
+                        owner = string(match{1}); kind = "creation";
+                        if numel(match) > 1 && strlength(string(match{2})) > 0, kind = "assignment"; end
+                        assert(any(names == owner), "macd:SourceAnalysis:StructuralPatch", "Emitted statements must belong to inserted components.");
+                    else
+                        declared = regexp(code, '^([A-Za-z]\w*)\s+[A-Za-z]\w*(?:\.\w+)*$', 'tokens', 'once');
+                        assert(~isempty(declared) && any(names == string(declared{1})), ...
+                            "macd:SourceAnalysis:StructuralPatch", "Only declared component slots may be inserted.");
+                    end
+                    additions(end + 1) = statement; anchors(end + 1) = anchor; %#ok<AGROW>
+                    owners(end + 1) = owner; kinds(end + 1) = kind; counts(end + 1) = 1; %#ok<AGROW>
+                end
+                shift = shift + strlength(edit.Text);
+            end
+            execution = obj.Execution;
+            [analysis, ~] = obj.withLiteralPatches(batch, additions, anchors, unique(removed), ...
+                zeros(size(execution.Counts)), execution, owners, struct("OldName", {}, "NewName", {}), kinds, counts);
+            inserted = names;
+            if isempty(additions), inserted = strings(1, 0); end
+            deleted = strings(1, 0);
+            if ~isempty(removed), deleted = names; end
+            analysis.NameIndex = macd.source.ComponentNameRewriter.projectIndex(obj.NameIndex, batch, ...
+                struct("OldName", {}, "NewName", {}), inserted, deleted);
         end
 
         function [analysis, local, statistics] = withPatches(obj, batch)
@@ -344,6 +440,7 @@ classdef SourceAnalysis < handle
             analysis.indexStatements();
             analysis.Layout = macd.source.CallbackSourceAnalyzer.sourceLayout(statements);
             analysis.compileStatementFacts();
+            analysis.NameIndex = macd.source.ComponentNameRewriter.index(batch.AfterText);
             % Source-bound trace/callback caches are rebuilt lazily from this exact lexical revision.
         end
 
@@ -578,6 +675,7 @@ classdef SourceAnalysis < handle
             obj.indexStatements();
             obj.Layout = layout;
             obj.compileStatementFacts();
+            obj.NameIndex = macd.source.ComponentNameRewriter.index(source);
             obj.TraceOffsets = sort(offsets);
             obj.Trace = trace;
             obj.HasTrace = true;

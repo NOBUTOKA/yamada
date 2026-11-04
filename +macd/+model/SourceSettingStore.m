@@ -183,6 +183,17 @@ classdef SourceSettingStore < handle
             obj.Revision = obj.Revision + uint64(1);
         end
     end
+    methods (Access = ?macd.model.DocumentModel)
+        function reserveAfter(obj, previous)
+            % reserveAfter Keep detached candidate allocation above every issued live occurrence address.
+            arguments (Input)
+                obj (1, 1) macd.model.SourceSettingStore
+                previous (1, 1) macd.model.SourceSettingStore
+            end
+            obj.NextId = max(obj.NextId, previous.NextId);
+        end
+    end
+
     methods (Access = private)
         function reorder(obj)
             % reorder Maintain a source-order index after explicit insertion, removal or structural replacement.

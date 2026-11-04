@@ -53,6 +53,30 @@ classdef SourceHistoryRebaser
                             edit.Owners(ownerIndex).Insertions, mappings{cursor});
                     end
                 end
+                if edit.Kind == "source-subtree-insert" || (edit.Kind == "rename" && isfield(edit, "IndexedRename"))
+                    forwardField = "ComponentForward"; inverseField = "ComponentInverse";
+                    if edit.Kind == "rename", forwardField = "IdentifierForward"; inverseField = "IdentifierInverse"; end
+                    if isempty(edit.StagedEdit)
+                        edit.(forwardField) = transition.Edits; edit.(inverseField) = transition.InverseEdits;
+                    else
+                        staged = edit.StagedEdit;
+                        middle = macd.source.SourcePatchBatch(sources(cursor), staged.SourceForward).AfterText;
+                        renamedMiddle = macd.source.AppClassIdentityRewriter.rewrite(middle, className);
+                        middleMap = macd.model.SourceHistoryRebaser.lineChanges(middle, renamedMiddle);
+                        stagedBatch = macd.model.SourceHistoryRebaser.transition(staged, sources(cursor), ...
+                            renamed(cursor), renamedMiddle, mappings{cursor}, middleMap);
+                        staged.SourceForward = stagedBatch.Edits; staged.SourceInverse = stagedBatch.InverseEdits;
+                        for ownerIndex = 1:numel(staged.Owners)
+                            staged.Owners(ownerIndex).Insertions = macd.model.SourceHistoryRebaser.mapInsertions( ...
+                                staged.Owners(ownerIndex).Insertions, mappings{cursor});
+                        end
+                        component = struct("SourceForward", edit.(forwardField));
+                        componentBatch = macd.model.SourceHistoryRebaser.transition(component, middle, ...
+                            renamedMiddle, renamed(cursor + 1), middleMap, mappings{cursor + 1});
+                        edit.(forwardField) = componentBatch.Edits; edit.(inverseField) = componentBatch.InverseEdits;
+                        edit.StagedEdit = staged;
+                    end
+                end
                 history{cursor} = edit;
             end
             text = renamed(index + 1);

@@ -92,6 +92,21 @@ classdef PropertyState
             end
         end
 
+        function obj = withSourceSettings(obj, settings)
+            % withSourceSettings Refresh expression spelling after a proven identifier-only edit.
+            arguments (Input)
+                obj macd.model.PropertyState
+                settings macd.model.PropertySetting
+            end
+            arguments (Output)
+                obj macd.model.PropertyState
+            end
+            for index = 1:numel(obj)
+                setting = settings([settings.Id] == obj(index).LastSettingId);
+                if ~isempty(setting), obj(index).SourceExpression = setting.SourceExpression; end
+            end
+        end
+
         function [obj, valid] = remapIdentities(obj, sourceSettings, targetSettings, sourceOwners, targetOwners)
             % remapIdentities Rebind immutable occurrence and creation references after a proven semantic publication.
             arguments (Input)

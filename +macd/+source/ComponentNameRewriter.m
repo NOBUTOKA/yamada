@@ -96,21 +96,23 @@ classdef ComponentNameRewriter
             end
         end
 
-        function validate(source, oldName, newName)
+        function validate(source, oldName, newName, names)
             % validate Reject invalid names, class member collisions and unresolved app references.
             arguments (Input)
                 source (1, 1) string
                 oldName (1, 1) string
                 newName (1, 1) string
+                names (1, 1) struct = struct()
             end
 
+            if isempty(fieldnames(names)), names = macd.source.ComponentNameRewriter.index(source); end
             if ~isvarname(newName) || iskeyword(newName)
                 error("macd:DocumentModel:InvalidComponentName", "Use a valid MATLAB identifier (at most %d characters).", namelengthmax);
             end
-            if newName ~= oldName && any(macd.source.ComponentNameRewriter.memberNames(source) == newName)
+            if newName ~= oldName && any(names.Members == newName)
                 error("macd:DocumentModel:ComponentNameCollision", "The name '%s' is already a class member.", newName);
             end
-            code = macd.source.ComponentNameRewriter.codeMask(source);
+            code = names.Code;
             if ~isempty(regexp(code, '(?<![\w.])(?!app(?!\w))\w+\s*\.\s*' + regexptranslate('escape', oldName) + '(?!\w)', 'once'))
                 error("macd:DocumentModel:UnsafeComponentRename", "A reference through another object cannot be renamed safely.");
             end
@@ -136,17 +138,18 @@ classdef ComponentNameRewriter
             stem = extractBefore(stem, min(strlength(stem) + 1, namelengthmax - 8));
         end
 
-        function result = canRenameHandler(source, handler)
+        function result = canRenameHandler(source, handler, code)
             % canRenameHandler Reject local identifiers that shadow a candidate callback method.
             arguments (Input)
                 source (1, 1) string
                 handler (1, 1) string
+                code char = ''
             end
             arguments (Output)
                 result (1, 1) logical
             end
 
-            code = macd.source.ComponentNameRewriter.codeMask(source);
+            if isempty(code), code = macd.source.ComponentNameRewriter.codeMask(source); end
             declaration = regexp(code, '^\s*classdef(?:\s*\([^)]*\))?\s+(\w+)', 'tokens', 'once');
             className = "";
             if ~isempty(declaration), className = string(declaration{1}); end
@@ -168,25 +171,28 @@ classdef ComponentNameRewriter
             end
         end
 
-        function rewritten = rewrite(source, mappings)
+        function [rewritten, edits] = rewrite(source, mappings, names)
             % rewrite Apply simultaneous member renames and update their H1 help lines.
             arguments (Input)
                 source (1, 1) string
                 mappings struct
+                names (1, 1) struct = struct()
             end
             arguments (Output)
                 rewritten (1, 1) string
+                edits struct
             end
 
+            edits = struct("Start", {}, "End", {}, "Text", {});
             rewritten = source;
             if isempty(mappings), return, end
+            if isempty(fieldnames(names)), names = macd.source.ComponentNameRewriter.index(source); end
             text = char(source);
-            code = macd.source.ComponentNameRewriter.codeMask(source);
-            documentation = macd.source.ComponentNameRewriter.documentationMask(source);
+            code = names.Code;
+            documentation = names.Documentation;
             declaration = regexp(code, '^\s*classdef(?:\s*\([^)]*\))?\s+(\w+)', 'tokens', 'once');
             className = "";
             if ~isempty(declaration), className = string(declaration{1}); end
-            edits = struct("Start", {}, "End", {}, "Text", {});
             for mapping = mappings(:)'
                 if mapping.OldName == mapping.NewName, continue, end
                 token = regexptranslate('escape', char(mapping.OldName));
@@ -243,6 +249,48 @@ classdef ComponentNameRewriter
         end
     end
 
+    methods (Static)
+        function names = index(source)
+            % index Capture declaration names and inert identifier masks at source loading.
+            arguments (Input)
+                source (1, 1) string
+            end
+            arguments (Output)
+                names (1, 1) struct
+            end
+            names = struct("Code", macd.source.ComponentNameRewriter.codeMask(source), ...
+                "Documentation", macd.source.ComponentNameRewriter.documentationMask(source), ...
+                "Members", macd.source.ComponentNameRewriter.memberNames(source));
+        end
+
+        function names = projectIndex(names, batch, mappings, added, removed)
+            % projectIndex Carry masks and reserved members through editor-owned patches only.
+            arguments (Input)
+                names (1, 1) struct
+                batch (1, 1) macd.source.SourcePatchBatch
+                mappings struct = struct("OldName", {}, "NewName", {})
+                added string = strings(1, 0)
+                removed string = strings(1, 0)
+            end
+            arguments (Output)
+                names (1, 1) struct
+            end
+            for edit = fliplr(batch.Edits)
+                code = macd.source.ComponentNameRewriter.codeMask(edit.Text);
+                help = char(edit.Text); help(~ismember(help, [newline char(13)])) = ' ';
+                if edit.End >= edit.Start && any(~isspace(names.Documentation(edit.Start:edit.End)))
+                    help = char(edit.Text);
+                    code(~ismember(code, [newline char(13)])) = ' ';
+                end
+                names.Code = [names.Code(1:edit.Start - 1) code names.Code(edit.End + 1:end)];
+                names.Documentation = [names.Documentation(1:edit.Start - 1) help names.Documentation(edit.End + 1:end)];
+            end
+            before = names.Members;
+            for mapping = mappings, names.Members(before == mapping.OldName) = mapping.NewName; end
+            names.Members = [names.Members(~ismember(names.Members, removed)) added];
+        end
+    end
+
     methods (Static, Access = private)
         function [starts, ends] = excludeForeignMembers(text, starts, ends, className)
             % excludeForeignMembers Preserve identically named members of other objects or namespaces.
@@ -282,7 +330,7 @@ classdef ComponentNameRewriter
             text = char(source);
             code = macd.source.ComponentNameRewriter.codeMask(source);
             documentation = code;
-            documentation(~ismember(documentation, [char(10) char(13)])) = ' ';
+            documentation(~ismember(documentation, [newline char(13)])) = ' ';
             [starts, ends] = regexp(text, '[^\r\n]+');
             inHelp = false;
             inProperties = false;
